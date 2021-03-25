@@ -333,8 +333,14 @@ namespace ISM
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, class Ch = char
-	> NODISCARD BasicString<Ch> to_string(T && value) noexcept
+	template <class T, class Ch = char, std::enable_if_t<is_string_v<T>, int> = 0
+	> NODISCARD auto to_string(T && value) noexcept -> BasicString<Ch>
+	{
+		return BasicString<Ch>{ FWD(value) };
+	}
+
+	template <class T, class Ch = char, std::enable_if_t<!is_string_v<T>, int> = 0
+	> NODISCARD auto to_string(T && value) noexcept -> BasicString<Ch>
 	{
 		BasicStringStream<Ch> ss{};
 		ss << FWD(value);

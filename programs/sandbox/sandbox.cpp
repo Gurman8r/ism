@@ -1,6 +1,10 @@
 #include <main/main.hpp>
 #include <core/api/runtime.hpp>
 
+using namespace ISM;
+extern OS const * create_os(void * instance = {});
+static OS const * ANONYMOUS{ CHECK(create_os()) };
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define MAIN_PRINT (ISM::get_os().print)
@@ -32,8 +36,12 @@ namespace ISM
 		MAIN_PRINT("%d\n", o["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", o["DEF"].cast<String>().c_str());
 
-		MAIN_PRINT("%s\n", o.type().attr("__name__").cast<String>().c_str());
-		MAIN_PRINT("%s\n", STR(o.type().attr("__name__")).c_str());
+		MAIN_PRINT("%s\n", o.type().name().cast<String>().c_str());
+
+		o.type().name() = "changed";
+
+		MAIN_PRINT("%s\n", STR(o.type().name()).c_str());
+		MAIN_PRINT("%s\n", STR(123).c_str());
 
 		return Err_None;
 	}
@@ -43,10 +51,6 @@ namespace ISM
 
 int main(int argc, char * argv[])
 {
-	using namespace ISM;
-	extern OS const * create_os(void * instance = {});
-	static OS const * ANONYMOUS{ CHECK(create_os()) };
-
 	switch (Main::setup(argv[0], argc, argv))
 	{
 	case Err_None: break;

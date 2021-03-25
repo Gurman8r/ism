@@ -10,9 +10,9 @@ namespace ISM
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct CoreTag {};
+	struct _CoreTag {};
 
-	template <class T> constexpr bool is_core_v{ std::is_base_of_v<CoreTag, intrinsic_t<T>> };
+	template <class T> constexpr bool is_core_v{ std::is_base_of_v<_CoreTag, intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -197,8 +197,7 @@ namespace ISM
 
 		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(MethodDef);
 
-		template <class V
-		> static auto find_in(V & v, String const & i) -> MethodDef *
+		template <class V> static auto find_in(V & v, String const & i) -> MethodDef *
 		{
 			if (auto it{ std::find_if(v.begin(), v.end(), [&i
 			](MethodDef const & e) { return e.name == i; }) }
@@ -249,8 +248,7 @@ namespace ISM
 
 		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(GetSetDef);
 
-		template <class V
-		> static auto find_in(V & v, String const & i) -> GetSetDef *
+		template <class V> static auto find_in(V & v, String const & i) -> GetSetDef *
 		{
 			if (auto it{ std::find_if(v.begin(), v.end(), [&i
 			](GetSetDef const & e) { return e.name == i; }) }
@@ -282,7 +280,7 @@ namespace ISM
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Policy> class Accessor;
+	template <class Policy> struct Accessor;
 	namespace ACCESS
 	{
 		template <class T> struct AttrPolicy;
@@ -294,7 +292,7 @@ namespace ISM
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Derived
-	> class ObjectAPI : CoreTag
+	> class ObjectAPI : _CoreTag
 	{
 	private:
 		NODISCARD auto derived() const noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
@@ -312,12 +310,12 @@ namespace ISM
 		}
 
 	public:
+		NODISCARD auto type() const noexcept { return ISM::typeof(derived()); }
+		NODISCARD bool check(TYPE const & value) const noexcept { return type().is(value); }
+
 		NODISCARD bool is(ObjectAPI const & o) const noexcept { return derived().ptr() == o.derived().ptr(); }
 		NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
 		NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
-
-		NODISCARD auto type() const noexcept { return CHECK(derived().ptr())->ob_type; }
-		NODISCARD bool check(TYPE const & value) const noexcept { return type().is(value); }
 
 		NODISCARD auto hash() const noexcept { return ISM::core_hash(handle()); }
 		NODISCARD auto repr() const noexcept { return ISM::core_repr(handle()); }
@@ -340,6 +338,10 @@ namespace ISM
 		template <class O = OBJECT
 		> NODISCARD bool contains(O && v) const { return this->attr("__contains__")(FWD(v)); }
 
+		NODISCARD auto name() const { return this->attr("__name__"); }
+
+		NODISCARD auto doc() const { return this->attr("__doc__"); }
+
 		template <class ... Args
 		> OBJECT operator()(Args && ... args);
 	};
@@ -350,9 +352,9 @@ namespace ISM
 	> struct BaseHandle : public ObjectAPI<BaseHandle<T>>, public Ref<T>
 	{
 	public:
+		using value_type = typename T;
 		using Ref<T>::Ref;
 		using Ref<T>::operator=;
-		using value_type = typename T;
 
 		template <class U, std::enable_if_t<!std::is_convertible_v<U, Ref<T>>, int> = 0
 		> BaseHandle(U && value) : Ref<T>{}
@@ -387,31 +389,54 @@ namespace ISM
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	namespace IMPL
+	{
+		template <class T, class SFINAE = void> struct handle_type {};
+
+		template <class T
+		> struct handle_type<T, std::enable_if_t<std::is_integral_v<T>>> { using type = INT; };
+
+		template <class T
+		> struct handle_type<T, std::enable_if_t<std::is_floating_point_v<T>>> { using type = FLT; };
+
+		template <class T
+		> struct handle_type<T, std::enable_if_t<is_string_v<T>>> { using type = STR; };
+	}
+
+	template <class T> ALIAS(make_handle) typename IMPL::handle_type<intrinsic_t<T>>::type;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, std::enable_if_t<!is_core_v<T>, int> = 0
+	> NODISCARD auto typeof() noexcept { return ISM::typeof<make_handle<T>>(); }
+
+	template <class T, std::enable_if_t<is_core_v<T>, int> = 0
+	> NODISCARD auto typeof() noexcept { return T::type_static(); }
+
+	template <class T, std::enable_if_t<!is_core_v<T>, int> = 0
+	> NODISCARD auto typeof(T && v) { return ISM::object_or_cast(FWD(v)).type(); }
+
+	template <class T, std::enable_if_t<is_core_v<T>, int> = 0
+	> NODISCARD auto typeof(T const & v)
+	{
+		if LIKELY(v.is_valid())
+		{
+			return v.ptr()->ob_type;
+		}
+		else
+		{
+			return TYPE{};
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class T> struct Handle : BaseHandle<T>
 	{
 		using BaseHandle<T>::BaseHandle;
 		using BaseHandle<T>::operator=;
 		using typename BaseHandle<T>::value_type;
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	namespace IMPL
-	{
-		template <class T, class SFINAE = void
-		> struct type_handle {};
-
-		template <class T
-		> struct type_handle<T, std::enable_if_t<std::is_integral_v<T>>> { using type = INT; };
-
-		template <class T
-		> struct type_handle<T, std::enable_if_t<std::is_floating_point_v<T>>> { using type = FLT; };
-
-		template <class T
-		> struct type_handle<T, std::enable_if_t<is_string_v<T>>> { using type = STR; };
-	}
-
-	template <class T> ALIAS(make_handle) typename IMPL::type_handle<intrinsic_t<T>>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -537,7 +562,7 @@ namespace ISM
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Policy
-	> class Accessor : public ObjectAPI<Accessor<Policy>>
+	> struct Accessor : public ObjectAPI<Accessor<Policy>>
 	{
 	public:
 		using key_type = typename Policy::key_type;
@@ -547,11 +572,9 @@ namespace ISM
 		Accessor(Accessor &&) = default;
 
 		void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT{ a }); }
-
 		void operator=(Accessor const & a) & { operator=(OBJECT{ a }); }
 
 		template <class T> void operator=(T && value) && { Policy::set(m_obj, m_key, ISM::object_or_cast(FWD(value))); }
-		
 		template <class T> void operator=(T && value) & { get_cache() = ISM::object_or_cast(FWD(value)); }
 
 		template <class T
@@ -600,9 +623,6 @@ namespace ISM
 
 	ISM_API_DATA(CoreType) _CoreObject_Type;
 
-	template <class O = CoreObject, class ... Args, class = std::enable_if_t<std::is_base_of_v<CoreObject, O>>
-	> NODISCARD auto make_object(Args && ... args) { return Handle<O>{ memnew(O{ FWD(args)... }) }; }
-
 	class NODISCARD ISM_API CoreObject : public ObjectAPI<CoreObject>, public Reference
 	{
 	private:
@@ -616,11 +636,8 @@ namespace ISM
 		using self_type = typename CoreObject;
 		TYPE ob_type;
 
-	public:
 		NODISCARD static auto type_static() noexcept { return TYPE{ &_CoreObject_Type }; }
 
-		NODISCARD auto ptr() const noexcept { return const_cast<CoreObject *>(this); }
-		
 	public:
 		virtual ~CoreObject();
 		CoreObject(TYPE const & t);
@@ -629,6 +646,7 @@ namespace ISM
 		CoreObject(self_type &&) noexcept = default;
 		self_type & operator=(self_type const &) = default;
 		self_type & operator=(self_type &&) noexcept = default;
+		NODISCARD auto ptr() const noexcept { return const_cast<CoreObject *>(this); }
 	};
 
 	FORCE_INLINE void ISM::postinitialize_handler(CoreObject * value) { value->_postinitialize(); }
@@ -900,22 +918,26 @@ namespace ISM
 
 	public:
 		virtual ~CoreString() override;
-		CoreString(self_type const & o, allocator_type self = {}) : base_type{ o }, m_data{ o.m_data, self } {}
-		CoreString(TYPE const & t, storage_type const & v, allocator_type self = {}) : base_type{ t }, m_data{ v, self } {}
-		CoreString(TYPE const & t, cstring v, size_t n, allocator_type self = {}) : base_type{ t }, m_data{ v, n, self } {}
-		CoreString(TYPE const & t, cstring v, allocator_type self = {}) : base_type{ t }, m_data{ v, self } {}
-		CoreString(storage_type const & v, allocator_type self = {}) : base_type{ type_static() }, m_data{ v, self } {}
-		CoreString(cstring v, size_t n, allocator_type self = {}) : base_type{ type_static() }, m_data{ v, n, self } {}
-		CoreString(cstring v, allocator_type self = {}) : base_type{ type_static() }, m_data{ v, self } {}
-		CoreString(allocator_type self = {}) : base_type{ type_static() }, m_data{ self } {}
-		
+		CoreString(self_type const & o, allocator_type a = {}) : base_type{ o }, m_data{ o.m_data, a } {}
+		CoreString(TYPE const & t, storage_type const & v, allocator_type a = {}) : base_type{ t }, m_data{ v, a } {}
+		CoreString(TYPE const & t, cstring v, size_t n, allocator_type a = {}) : base_type{ t }, m_data{ v, n, a } {}
+		CoreString(TYPE const & t, cstring v, allocator_type a = {}) : base_type{ t }, m_data{ v, a } {}
+		CoreString(storage_type const & v, allocator_type a = {}) : base_type{ type_static() }, m_data{ v, a } {}
+		CoreString(cstring v, size_t n, allocator_type a = {}) : base_type{ type_static() }, m_data{ v, n, a } {}
+		CoreString(cstring v, allocator_type a = {}) : base_type{ type_static() }, m_data{ v, a } {}
+		CoreString(allocator_type a = {}) : base_type{ type_static() }, m_data{ a } {}
+
 		self_type & operator=(self_type const &) = default;
-		
 		template <class T> self_type & operator=(T && v) noexcept { m_data = FWD(v); return (*this); }
 		
 		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
-		
 		NODISCARD auto operator->() const { return const_cast<storage_type *>(&m_data); }
+
+		//template <class U, std::enable_if_t<!is_core_v<U> && !std::is_convertible_v<U, storage_type>, int> = 0
+		//> CoreString(U && u, allocator_type a = {}) : base_type{ type_static() }, m_data{ ISM::to_string(FWD(u)), a } {}
+		//
+		//template <class U, std::enable_if_t<!is_core_v<U> && !std::is_convertible_v<U, storage_type>, int> = 0
+		//> void operator=(U && u) { m_data = ISM::to_string(FWD(u)); }
 	};
 
 	template <> struct Handle<CoreString> : BaseHandle<CoreString>
@@ -924,6 +946,25 @@ namespace ISM
 		using BaseHandle::operator=;
 		using BaseHandle::value_type;
 		using storage_type = typename value_type::storage_type;
+
+		template <class U, class = std::enable_if_t<!is_core_v<U>>
+		> Handle(U && value) { this->instance(ISM::to_string(FWD(value))); }
+
+		template <class U
+		> Handle(Handle<U> const & value) : BaseHandle{ ISM::isinstance<STR>(value) ? value : value.str() } {}
+
+		template <class U, class = std::enable_if_t<!is_core_v<U>>
+		> void operator=(U && value)
+		{
+			if (this->is_valid())
+			{
+				(*this->ptr()) = ISM::to_string(FWD(value));
+			}
+			else
+			{
+				this->instance(ISM::to_string(FWD(value)));
+			}
+		}
 
 		NODISCARD auto c_str() const noexcept { return (****this).c_str(); }
 		NODISCARD auto data() const noexcept { return (****this).data(); }
@@ -955,20 +996,18 @@ namespace ISM
 
 	public:
 		virtual ~CoreList() override;
-		CoreList(self_type const & o, allocator_type self = {}) : base_type{ o }, m_data{ self } {}
-		CoreList(TYPE const & t, std::initializer_list<OBJECT> v, allocator_type self = {}) : base_type{ t }, m_data{ v, self } {}
-		CoreList(TYPE const & t, storage_type const & v, allocator_type self = {}) : base_type{ t }, m_data{ v, self } {}
-		CoreList(TYPE const & t, allocator_type self = {}) : base_type{ t }, m_data{ self } {}
-		CoreList(std::initializer_list<OBJECT> v, allocator_type self = {}) : base_type{ type_static() }, m_data{ v, self } {}
-		CoreList(storage_type const & v, allocator_type self = {}) : base_type{ type_static() }, m_data{ v, self } {}
-		CoreList(allocator_type self = {}) : base_type{ type_static() }, m_data{ self } {}
+		CoreList(self_type const & o, allocator_type a = {}) : base_type{ o }, m_data{ a } {}
+		CoreList(TYPE const & t, std::initializer_list<OBJECT> v, allocator_type a = {}) : base_type{ t }, m_data{ v, a } {}
+		CoreList(TYPE const & t, storage_type const & v, allocator_type a = {}) : base_type{ t }, m_data{ v, a } {}
+		CoreList(TYPE const & t, allocator_type a = {}) : base_type{ t }, m_data{ a } {}
+		CoreList(std::initializer_list<OBJECT> v, allocator_type a = {}) : base_type{ type_static() }, m_data{ v, a } {}
+		CoreList(storage_type const & v, allocator_type a = {}) : base_type{ type_static() }, m_data{ v, a } {}
+		CoreList(allocator_type a = {}) : base_type{ type_static() }, m_data{ a } {}
 
 		self_type & operator=(self_type const &) = default;
-
 		template <class T> self_type & operator=(T && v) noexcept { m_data = FWD(v); return (*this); }
 
 		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
-
 		NODISCARD auto operator->() const { return const_cast<storage_type *>(&m_data); }
 	};
 
@@ -1018,18 +1057,16 @@ namespace ISM
 
 	public:
 		virtual ~CoreDict() override;
-		CoreDict(self_type const & o, allocator_type self = {}) : base_type{ o }, m_data{ o.m_data } {}
-		CoreDict(TYPE const & t, storage_type const & v, allocator_type self = {}) : base_type{ t }, m_data{ v, self } {}
-		CoreDict(TYPE const & t, allocator_type self = {}) : base_type{ t }, m_data{ self } {}
-		CoreDict(storage_type const & v, allocator_type self = {}) : base_type{ type_static() }, m_data{ v, self } {}
-		CoreDict(allocator_type self = {}) : base_type{ type_static() }, m_data{ self } {}
+		CoreDict(self_type const & o, allocator_type a = {}) : base_type{ o }, m_data{ o.m_data } {}
+		CoreDict(TYPE const & t, storage_type const & v, allocator_type a = {}) : base_type{ t }, m_data{ v, a } {}
+		CoreDict(TYPE const & t, allocator_type a = {}) : base_type{ t }, m_data{ a } {}
+		CoreDict(storage_type const & v, allocator_type a = {}) : base_type{ type_static() }, m_data{ v, a } {}
+		CoreDict(allocator_type a = {}) : base_type{ type_static() }, m_data{ a } {}
 
 		self_type & operator=(self_type const &) = default;
-
 		template <class T> self_type & operator=(T && v) noexcept { m_data = FWD(v); return (*this); }
 
 		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
-
 		NODISCARD auto operator->() const { return const_cast<storage_type *>(&m_data); }
 	};
 
@@ -1078,13 +1115,11 @@ namespace ISM
 		CoreCapsule(void const * ptr, String const & name = "") : base_type{ type_static() }, m_data{ (void *)ptr, name } {}
 		CoreCapsule(storage_type const & v) : base_type{ type_static() }, m_data{ v } {}
 		CoreCapsule() : base_type{ type_static() }, m_data{} {}
-		
-		self_type & operator=(self_type const &) = default;
 
+		self_type & operator=(self_type const &) = default;
 		template <class T> self_type & operator=(T && v) noexcept { m_data = FWD(v); return (*this); }
 
 		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
-
 		NODISCARD auto operator->() const { return const_cast<storage_type *>(&m_data); }
 	};
 
@@ -1121,11 +1156,9 @@ namespace ISM
 		CoreFunction(nullptr_t) : self_type{} {}
 
 		self_type & operator=(self_type const &) = default;
-
 		template <class T> self_type & operator=(T && v) noexcept { m_data = FWD(v); return (*this); }
 
 		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
-
 		NODISCARD auto operator->() const { return const_cast<storage_type *>(&m_data); }
 
 	public:
@@ -1260,11 +1293,9 @@ namespace ISM
 		CoreModule() : base_type{ type_static() }, m_data{} {}
 
 		self_type & operator=(self_type const &) = default;
-
 		template <class T> self_type & operator=(T && v) noexcept { m_data = FWD(v); return (*this); }
 
 		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
-
 		NODISCARD auto operator->() const { return const_cast<storage_type *>(&m_data); }
 	};
 
@@ -1291,8 +1322,6 @@ namespace ISM
 	namespace IMPL { template <class T, class SFINAE = void> struct type_caster : type_caster_base<T> {}; }
 
 	template <class T> ALIAS(make_caster) IMPL::type_caster<intrinsic_t<T>>;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	namespace IMPL
 	{

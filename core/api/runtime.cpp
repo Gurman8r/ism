@@ -48,7 +48,7 @@ CoreType ISM::_CoreType_Type = COMPOSE(CoreType, t)
 	t.tp_name = "type";
 	t.tp_basicsize = sizeof(CoreType);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_Type_Subclass;
-	t.tp_create = (createfunc)[]() { return make_object<CoreType>(); };
+	t.tp_create = (createfunc)[]() { return TYPE{}.instance(); };
 
 	t.tp_dictoffset = offsetof(CoreType, tp_dict);
 	t.tp_weaklistoffset = offsetof(CoreType, tp_weaklist);
@@ -61,8 +61,9 @@ CoreType ISM::_CoreType_Type = COMPOSE(CoreType, t)
 	t.tp_getattr = _CoreObject_Type.tp_getattr;
 	t.tp_setattr = _CoreObject_Type.tp_setattr;
 
-	t.tp_compare = (cmpfunc)[](TYPE self, OBJECT v) {
-		if (isinstance<TYPE>(v)) { return UTIL::compare(self->tp_name, TYPE(v)->tp_name); }
+	t.tp_compare = (cmpfunc)[](TYPE self, OBJECT v)
+	{
+		if (isinstance<TYPE>(v)) return UTIL::compare(self->tp_name, TYPE(v)->tp_name);
 		return UTIL::compare(self.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](TYPE o) { return hashof(o->tp_name); };
@@ -84,19 +85,19 @@ CoreType ISM::_CoreType_Type = COMPOSE(CoreType, t)
 		},
 		GetSetDef{ "__qualname__",
 			(getter)[](TYPE o, auto) { return nullptr; },
-			(setter)[](TYPE o, auto v, auto) { return Err_None; },
+			(setter)[](TYPE o, OBJECT v, auto) { return Err_None; },
 		},
 		GetSetDef{ "__bases__",
 			(getter)[](TYPE o, auto) { return o->tp_bases; },
-			(setter)[](TYPE o, auto v, auto) { o->tp_bases = v; return Err_None; },
+			(setter)[](TYPE o, OBJECT v, auto) { o->tp_bases = v; return Err_None; },
 		},
 		GetSetDef{ "__module__",
 			(getter)[](TYPE o, auto) { return o->tp_dict["__module__"]; },
-			(setter)[](TYPE o, auto v, auto) { o->tp_dict["__module__"] = v; return Err_None; },
+			(setter)[](TYPE o, OBJECT v, auto) { o->tp_dict["__module__"] = v; return Err_None; },
 		},
 		GetSetDef{ "__abstractmethods__",
 			(getter)[](TYPE o, auto) { return o->tp_dict["__abstractmethods__"]; },
-			(setter)[](TYPE o, auto v, auto) { o->tp_dict["__abstractmethods__"] = v; return Err_None; },
+			(setter)[](TYPE o, OBJECT v, auto) { o->tp_dict["__abstractmethods__"] = v; return Err_None; },
 		},
 		GetSetDef{ "__doc__",
 			(getter)[](TYPE o, auto) { return STR(o->tp_doc); },
@@ -145,7 +146,7 @@ CoreType ISM::_CoreNone_Type = COMPOSE(CoreType, t)
 	t.tp_rtti = &typeid(CoreObject);
 	t.tp_name = "none";
 	t.tp_basicsize = sizeof(CoreObject);
-	t.tp_base = CoreObject::type_static();
+	t.tp_base = OBJECT::type_static();
 	t.tp_flags = TypeFlags_Default;
 	t.tp_doc = "";
 };
@@ -158,7 +159,7 @@ CoreType ISM::_CoreBool_Type = COMPOSE(CoreType, t)
 {
 	t.tp_name = "bool";
 	t.tp_basicsize = sizeof(CoreInt);
-	t.tp_base = CoreInt::type_static();
+	t.tp_base = INT::type_static();
 	t.tp_as_number = COMPOSE(AsNumber, m) {};
 };
 
@@ -181,8 +182,8 @@ CoreType ISM::_CoreInt_Type = COMPOSE(CoreType, t)
 		else return UTIL::compare(o.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](INT o) { return Hash<ssize_t>()(***o); };
-	t.tp_repr = (reprfunc)[](INT o) { return STR(to_string(***o)); };
-	t.tp_str = (reprfunc)[](INT o) { return STR(to_string(***o)); };
+	t.tp_repr = (reprfunc)[](INT o) { return STR(ISM::to_string(***o)); };
+	t.tp_str = (reprfunc)[](INT o) { return STR(ISM::to_string(***o)); };
 };
 
 CoreInt::~CoreInt() {}
@@ -249,7 +250,7 @@ CoreType ISM::_CoreList_Type = COMPOSE(CoreType, t)
 
 	t.tp_methods =
 	{
-		MethodDef{ "__contains__", (cfunction)[](LIST o, auto v) { return Core_False; } },
+		MethodDef{ "__contains__", (cfunction)[](LIST o, OBJECT v) { return Core_False; } },
 	};
 };
 
@@ -273,7 +274,7 @@ CoreType ISM::_CoreDict_Type = COMPOSE(CoreType, t)
 	t.tp_methods =
 	{
 		MethodDef{ "__contains__",
-			(cfunction)[](DICT o, auto v) { return Core_Boolean(o && v && (***o).end() != (***o).find(v)); },
+			(cfunction)[](DICT o, OBJECT v) { return Core_Boolean(o && v && (***o).end() != (***o).find(v)); },
 		},
 	};
 };
