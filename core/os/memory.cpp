@@ -1,0 +1,119 @@
+#include <core/os/memory.hpp>
+#include <core/os/os.hpp>
+#include <core/templates/batch.hpp>
+#include <core/error/error_macros.hpp>
+
+#ifndef IMPL_NOCLEANUP
+#define IMPL_NOCLEANUP 1
+#endif
+
+namespace ISM
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	enum : size_t { ID_index, ID_size, ID_addr, ID_desc };
+
+	static struct NODISCARD MemoryTracker final
+	{
+		size_t index{};
+
+		Batch<size_t, size_t, void *, cstring> records{};
+
+		~MemoryTracker()
+		{
+			if (!records.empty())
+			{
+				for (size_t i = 0; i < records.size(); ++i)
+				{
+					records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
+					{
+						std::printf("\nindex:%zu, size:%zu, addr:%p, desc: %s", index, size, addr, desc);
+					});
+				}
+			}
+
+#if IMPL_NOCLEANUP
+			VERIFY("MEMORY LEAKS DETECTED" && g_memory.records.empty());
+#else
+			while (!records.empty()) { memfree(records.back<ID_addr>()); }
+#endif
+		}
+	}
+	g_memory{};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void * Memory::alloc_static(size_t size, cstring desc)
+	{
+		auto const res{ std::pmr::get_default_resource() };
+
+		return std::get<ID_addr>(g_memory.records.push_back
+		(
+			++g_memory.index, size, res->allocate(size), desc
+		));
+	}
+
+	void * Memory::realloc_static(void * ptr, size_t oldsz, size_t newsz)
+	{
+		if (newsz == 0)
+		{
+			free_static(ptr);
+
+			return nullptr;
+		}
+		else if (ptr == nullptr)
+		{
+			return alloc_static(newsz);
+		}
+		else if (newsz <= oldsz)
+		{
+			return ptr;
+		}
+		else
+		{
+			void * temp{ alloc_static(newsz) };
+			if (temp)
+			{
+				copymem(temp, ptr, oldsz);
+
+				free_static(ptr);
+			}
+			return temp;
+		}
+	}
+
+	void Memory::free_static(void * ptr)
+	{
+		auto const res{ std::pmr::get_default_resource() };
+
+		if (size_t const i{ g_memory.records.lookup<ID_addr>(ptr) }
+		; i != g_memory.records.npos)
+		{
+			res->deallocate(ptr, g_memory.records.get<ID_size>(i));
+
+			g_memory.records.erase(i);
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+void * operator new(size_t size, ISM::cstring desc)
+{
+	return ISM::Memory::alloc_static(size, desc);
+}
+
+void * operator new(size_t size, void * (*alloc_fn)(size_t))
+{
+	return alloc_fn(size);
+}
+
+void operator delete(void * ptr, ISM::cstring desc)
+{
+	FATAL("this should never be called");
+}
+
+void operator delete(void * ptr, void * (*alloc_fn)(size_t))
+{
+	FATAL("this should never be called");
+}
