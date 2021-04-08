@@ -50,6 +50,8 @@ namespace ISM
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // generate trap
 #if defined(ISM_CC_MSVC)
 #	define DEBUG_TRAP()	_CSTD __debugbreak()
@@ -59,48 +61,64 @@ namespace ISM
 #	define DEBUG_TRAP()	_CSTD raise(SIGTRAP)
 #endif
 
-// builtin assert
-#if defined(ISM_CC_MSVC)
-#	define BUILTIN_ASSERT(msg, file, line)	_CSTD _wassert(WIDE(msg), WIDE(file), (unsigned)(line))
-#elif defined(assert)
-#	define BUILTIN_ASSERT(msg, file, line)	assert(msg)
-#else
-#	define BUILTIN_ASSERT(msg, file, line)	UNUSED(0)
-#endif
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// fatal
-#define FATAL(msg) BUILTIN_ASSERT(msg, __FILE__, __LINE__)
+namespace ISM
+{
+	inline void _ism_wassert(cwstring message, cwstring file, uint32_t line) noexcept
+	{
+#if defined(ISM_CC_MSVC)
+		_CSTD _wassert(message, file, line);
 
-// crash condition
-#define CRASH_COND(expr) \
-	((void)((!(expr)) || (FATAL(TOSTR(expr)), 0)))
+#elif defined(assert)
+		assert(message);
+
+#else
+#		error "wassert is unavailable"
+#endif
+	}
+
+// wide assert
+#define WIDE_ASSERT(message, file, line) \
+	(ISM::_ism_wassert)(message, file, line)
+}
+
+// assert
+#define ASSERT(message, file, line) \
+	WIDE_ASSERT(WIDE(message), WIDE(file), (unsigned)line)
+
+// fatal
+#define FATAL(message) \
+	ASSERT(message, __FILE__, __LINE__)
 
 // verify
 #define VERIFY(expr) \
 	((void)((!!(expr)) || (FATAL(TOSTR(expr)), 0)))
 
+namespace ISM
+{
+	template <class T
+	> auto _ism_check(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
+	{
+		return ((void)((!!(expr)) || (WIDE_ASSERT(message, file, line), 0))), FWD(expr);
+	}
+
 // check
-#define CHECK(expr) (([](auto && o) noexcept -> decltype(FWD(o))	\
-{																	\
-	return ((void)((!!(o)) || (FATAL(TOSTR(expr)), 0))), FWD(o);	\
-}																	\
-)(expr))															\
+#define CHECK(expr) \
+	(ISM::_ism_check)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // debug
 #if ISM_IS_DEBUG
-#define DEBUG_FATAL(msg)			FATAL(msg)
-#define DEBUG_CRASH_COND(expr)		CRASH_COND(expr)
-#define DEBUG_VERIFY(expr)			VERIFY(expr)
-#define DEBUG_CHECK(expr)			CHECK(expr)
+#define DEBUG_FATAL(message)	FATAL(message)
+#define DEBUG_VERIFY(expr)		VERIFY(expr)
+#define DEBUG_CHECK(expr)		CHECK(expr)
 #else
-#define DEBUG_FATAL(msg)			UNUSED(0)
-#define DEBUG_CRASH_COND(expr)		UNUSED(0)
-#define DEBUG_VERIFY(expr)			UNUSED(0)
-#define DEBUG_CHECK(expr)			UNUSED(0)
+#define DEBUG_FATAL(message)	UNUSED(0)
+#define DEBUG_VERIFY(expr)		UNUSED(0)
+#define DEBUG_CHECK(expr)		UNUSED(0)
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

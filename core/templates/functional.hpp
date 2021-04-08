@@ -11,6 +11,9 @@ namespace ISM
 	> class StdFn : public std::function<Signature> {
 		using _Mybase = std::function<Signature>;
 	public:
+		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(StdFn);
+		
+		using typename _Mybase::result_type;
 		using _Mybase::function;
 		NODISCARD operator _Mybase & () & noexcept { return static_cast<_Mybase &>(*this); }
 		NODISCARD operator _Mybase const & () const & noexcept { return static_cast<_Mybase const &>(*this); }

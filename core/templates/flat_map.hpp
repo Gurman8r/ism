@@ -254,27 +254,27 @@ namespace ISM
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Out = difference_type
-		> NODISCARD Out index_of(key_const_iterator it) const noexcept
+		> NODISCARD Out distance(key_const_iterator it) const noexcept
 		{
-			return m_pair.first.index_of<Out>(it);
+			return m_pair.first.distance<Out>(it);
 		}
 
 		template <class Out = difference_type
-		> NODISCARD Out index_of(key_const_reverse_iterator it) const noexcept
+		> NODISCARD Out distance(key_const_reverse_iterator it) const noexcept
 		{
-			return m_pair.first.index_of<Out>(it);
+			return m_pair.first.distance<Out>(it);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD value_iterator fetch(key_const_iterator it) noexcept
 		{
-			return std::next(m_pair.second.begin(), this->index_of(it));
+			return std::next(m_pair.second.begin(), this->distance(it));
 		}
 
 		NODISCARD value_const_iterator fetch(key_const_iterator it) const noexcept
 		{
-			return std::next(m_pair.second.cbegin(), this->index_of(it));
+			return std::next(m_pair.second.cbegin(), this->distance(it));
 		}
 
 		NODISCARD value_const_iterator cfetch(key_const_iterator it) const noexcept
@@ -286,12 +286,12 @@ namespace ISM
 
 		NODISCARD value_reverse_iterator rfetch(key_const_reverse_iterator it) noexcept
 		{
-			return std::next(m_pair.second.rbegin(), this->index_of(it));
+			return std::next(m_pair.second.rbegin(), this->distance(it));
 		}
 
 		NODISCARD value_const_reverse_iterator rfetch(key_const_reverse_iterator it) const noexcept
 		{
-			return std::next(m_pair.second.crbegin(), this->index_of(it));
+			return std::next(m_pair.second.crbegin(), this->distance(it));
 		}
 
 		NODISCARD value_const_reverse_iterator crfetch(key_const_reverse_iterator it) const noexcept
@@ -570,7 +570,7 @@ namespace ISM
 		{
 			return // must be private or the map could become unsorted
 			{
-				std::next(m_pair.first.begin(), this->index_of(it)),
+				std::next(m_pair.first.begin(), this->distance(it)),
 				m_pair.second.emplace(this->fetch(it), FWD(args)...)
 			};
 		}

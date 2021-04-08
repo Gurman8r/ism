@@ -48,19 +48,19 @@ namespace ISM
 		if (!m_ref) { return nullptr; }
 		Super * o{ Super::get_super_instance(m_ref) };
 		if (!o) { return nullptr; }
-		Reference * r{ super_cast<Reference>(o) };
+		Reference * r{ ISM::super_cast<Reference>(o) };
 		if (r) { return REF{ r }; }
 		return o;
 	}
 
 	void WeakRef::set_obj(Super * value)
 	{
-		m_ref = value ? value->get_super_id() : nullobj;
+		m_ref = value ? value->get_super_id() : nullptr;
 	}
 
 	void WeakRef::set_ref(REF const & value)
 	{
-		m_ref = value ? value->get_super_id() : nullobj;
+		m_ref = value ? value->get_super_id() : nullptr;
 	}
 
 	WeakRef::WeakRef() : Reference{} {}

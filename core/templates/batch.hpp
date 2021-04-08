@@ -40,8 +40,8 @@ namespace ISM
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I>	using value_i			= typename MPL::nth<I, value_types>;
-		template <class  T> using value_t			= typename T;
+		template <size_t I>	using element_i			= typename MPL::nth<I, value_types>;
+		template <class  T> using element_t			= typename T;
 		template <size_t I>	using vector_i			= typename MPL::nth<I, vector_types>;
 		template <class  T> using vector_t			= typename ISM::Vector<T>;
 		template <size_t I>	using iterator_i		= typename vector_i<I>::iterator;
@@ -768,26 +768,26 @@ namespace ISM
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I, class U = value_i<I>
-		> NODISCARD iterator_i<I> find(U && value) noexcept
+		template <size_t I, class U = element_i<I>
+		> NODISCARD auto find(U && value) noexcept -> iterator_i<I>
 		{
 			return std::find(this->begin<I>(), this->end<I>(), FWD(value));
 		}
 
-		template <size_t I, class U = value_i<I>
-		> NODISCARD const_iterator_i<I> find(U && value) const noexcept
+		template <size_t I, class U = element_i<I>
+		> NODISCARD auto find(U && value) const noexcept -> const_iterator_i<I>
 		{
 			return std::find(this->cbegin<I>(), this->cend<I>(), FWD(value));
 		}
 
 		template <class T, class U = T
-		> NODISCARD iterator_t<T> find(U && value) noexcept
+		> NODISCARD auto find(U && value) noexcept -> iterator_t<T>
 		{
 			return std::find(this->begin<T>(), this->end<T>(), FWD(value));
 		}
 
 		template <class T, class U = T
-		> NODISCARD const_iterator_t<T> find(U && value) const noexcept
+		> NODISCARD auto find(U && value) const noexcept -> const_iterator_t<T>
 		{
 			return std::find(this->cbegin<T>(), this->cend<T>(), FWD(value));
 		}
@@ -795,32 +795,32 @@ namespace ISM
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class Pr
-		> NODISCARD iterator_i<I> find_if(Pr && pr) noexcept
+		> NODISCARD auto find_if(Pr && pr) noexcept -> iterator_i<I>
 		{
 			return std::find_if(this->begin<I>(), this->end<I>(), FWD(pr));
 		}
 
 		template <size_t I, class Pr
-		> NODISCARD const_iterator_i<I> find_if(Pr && pr) const noexcept
+		> NODISCARD auto find_if(Pr && pr) const noexcept -> const_iterator_i<I>
 		{
 			return std::find_if(this->cbegin<I>(), this->cend<I>(), FWD(pr));
 		}
 
 		template <class T, class Pr
-		> NODISCARD iterator_t<T> find_if(Pr && pr) noexcept
+		> NODISCARD auto find_if(Pr && pr) noexcept -> iterator_t<T>
 		{
 			return std::find_if(this->begin<T>(), this->end<T>(), FWD(pr));
 		}
 
 		template <class T, class Pr
-		> NODISCARD const_iterator_t<T> find_if(Pr && pr) const noexcept
+		> NODISCARD auto find_if(Pr && pr) const noexcept -> const_iterator_t<T>
 		{
 			return std::find_if(this->cbegin<T>(), this->cend<T>(), FWD(pr));
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I, class U = value_i<I>
+		template <size_t I, class U = element_i<I>
 		> NODISCARD bool binary_search(U && value) const noexcept
 		{
 			return std::binary_search(this->cbegin<I>(), this->cend<I>(), FWD(value));
@@ -834,7 +834,7 @@ namespace ISM
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I, class U = value_i<I>
+		template <size_t I, class U = element_i<I>
 		> NODISCARD bool contains(U && value) const noexcept
 		{
 			return this->end<T>() != this->find<I>(FWD(value));
@@ -848,46 +848,46 @@ namespace ISM
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I> NODISCARD size_t index_of(const_iterator_i<I> it) const noexcept
+		template <size_t I> NODISCARD size_t distance(const_iterator_i<I> it) const noexcept
 		{
 			return (size_t)std::distance(this->cbegin<I>(), it);
 		}
 
-		template <class T> NODISCARD size_t index_of(const_iterator_t<T> it) const noexcept
+		template <class T> NODISCARD size_t distance(const_iterator_t<T> it) const noexcept
 		{
 			return (size_t)std::distance(this->cbegin<T>(), it);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I, class U = value_i<I>
-		> NODISCARD size_t lookup(U && value) const noexcept
+		template <size_t I, class U = element_i<I>
+		> NODISCARD size_t index_of(U && value) const noexcept
 		{
 			if (auto const it{ this->find<I>(FWD(value)) }; it == this->end<I>()) { return npos; }
-			else { return this->index_of<I>(it); }
+			else { return this->distance<I>(it); }
 		}
 
-		template <class T, class U = value_t<T>
-		> NODISCARD size_t lookup(U && value) const noexcept
+		template <class T, class U = element_t<T>
+		> NODISCARD size_t index_of(U && value) const noexcept
 		{
 			if (auto const it{ this->find<T>(FWD(value)) }; it == this->end<T>()) { return npos; }
-			else { return this->index_of<T>(it); }
+			else { return this->distance<T>(it); }
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class Pr
-		> NODISCARD size_t lookup_if(Pr && pr) const noexcept
+		> NODISCARD size_t index_of_if(Pr && pr) const noexcept
 		{
 			if (auto const it{ this->find_if<I>(FWD(pr)) }; it == this->end<I>()) { return npos; }
-			else { return this->index_of<I>(it); }
+			else { return this->distance<I>(it); }
 		}
 
 		template <class T, class Pr
-		> NODISCARD size_t lookup_if(Pr && pr) const noexcept
+		> NODISCARD size_t index_of_if(Pr && pr) const noexcept
 		{
 			if (auto const it{ this->find_if<T>(FWD(pr)) }; it == this->end<T>()) { return npos; }
-			else { return this->index_of<T>(it); }
+			else { return this->distance<T>(it); }
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -912,7 +912,7 @@ namespace ISM
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I, class It = const_iterator_i<I>, class U = value_i<I>
+		template <size_t I, class It = const_iterator_i<I>, class U = element_i<I>
 		> auto insert(It && it, U && value) noexcept -> iterator_i<I>
 		{
 			return this->get<I>().emplace
@@ -921,7 +921,7 @@ namespace ISM
 			);
 		}
 
-		template <class T, class It = const_iterator_t<T>, class U = value_t<T>
+		template <class T, class It = const_iterator_t<T>, class U = element_t<T>
 		> auto insert(It && it, U && value) noexcept -> iterator_t<T>
 		{
 			return this->get<T>().emplace
@@ -932,13 +932,13 @@ namespace ISM
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I, class U = value_i<I>
+		template <size_t I, class U = element_i<I>
 		> decltype(auto) push_back(U && value) noexcept
 		{
 			return this->get<I>().emplace_back(FWD(value));
 		}
 
-		template <class T, class U = value_t<T>
+		template <class T, class U = element_t<T>
 		> decltype(auto) push_back(U && value) noexcept
 		{
 			return this->get<T>().emplace_back(FWD(value));
@@ -1003,59 +1003,59 @@ namespace ISM
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t From, size_t To
-		> NODISCARD auto map_unchecked(value_i<From> const & from) -> value_i<To>
+		> NODISCARD auto map_unchecked(element_i<From> const & from) -> element_i<To>
 		{
-			return this->get<To>(this->lookup<From>(from));
+			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <size_t From, size_t To
-		> NODISCARD auto map_unchecked(value_i<From> const & from) const -> value_i<To> const &
+		> NODISCARD auto map_unchecked(element_i<From> const & from) const -> element_i<To> const &
 		{
-			return this->get<To>(this->lookup<From>(from));
+			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <size_t From, class To
-		> NODISCARD auto map_unchecked(value_i<From> const & from) -> To &
+		> NODISCARD auto map_unchecked(element_i<From> const & from) -> To &
 		{
-			return this->get<To>(this->lookup<From>(from));
+			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <size_t From, class To
-		> NODISCARD auto map_unchecked(value_i<From> const & from) const -> To const &
+		> NODISCARD auto map_unchecked(element_i<From> const & from) const -> To const &
 		{
-			return this->get<To>(this->lookup<From>(from));
+			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <class From, size_t To
-		> NODISCARD auto map_unchecked(From const & from) -> value_i<To> &
+		> NODISCARD auto map_unchecked(From const & from) -> element_i<To> &
 		{
-			return this->get<To>(this->lookup<From>(from));
+			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <class From, size_t To
-		> NODISCARD auto map_unchecked(From const & from) const -> value_i<To> const &
+		> NODISCARD auto map_unchecked(From const & from) const -> element_i<To> const &
 		{
-			return this->get<To>(this->lookup<From>(from));
+			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <class From, class To
 		> NODISCARD auto map_unchecked(From const & from) -> To &
 		{
-			return this->get<To>(this->lookup<From>(from));
+			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <class From, class To
 		> NODISCARD auto map_unchecked(From const & from) const -> To const &
 		{
-			return this->get<To>(this->lookup<From>(from));
+			return this->get<To>(this->index_of<From>(from));
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t From, size_t To
-		> NODISCARD auto map(value_i<From> const & from) -> value_i<To> *
+		> NODISCARD auto map(element_i<From> const & from) -> element_i<To> *
 		{
-			if (size_t const i{ this->lookup<From>(from) }; i != npos)
+			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
 				return std::addressof(this->get<To>(i));
 			}
@@ -1066,9 +1066,9 @@ namespace ISM
 		}
 
 		template <size_t From, size_t To
-		> NODISCARD auto map(value_i<From> const & from) const -> value_i<To> const *
+		> NODISCARD auto map(element_i<From> const & from) const -> element_i<To> const *
 		{
-			if (size_t const i{ this->lookup<From>(from) }; i != npos)
+			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
 				return std::addressof(this->get<To>(i));
 			}
@@ -1079,9 +1079,9 @@ namespace ISM
 		}
 
 		template <size_t From, class To
-		> NODISCARD auto map(value_i<From> const & from) -> To *
+		> NODISCARD auto map(element_i<From> const & from) -> To *
 		{
-			if (size_t const i{ this->lookup<From>(from) }; i != npos)
+			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
 				return std::addressof(this->get<To>(i));
 			}
@@ -1092,9 +1092,9 @@ namespace ISM
 		}
 
 		template <size_t From, class To
-		> NODISCARD auto map(value_i<From> const & from) const -> To const *
+		> NODISCARD auto map(element_i<From> const & from) const -> To const *
 		{
-			if (size_t const i{ this->lookup<From>(from) }; i != npos)
+			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
 				return std::addressof(this->get<To>(i));
 			}
@@ -1105,9 +1105,9 @@ namespace ISM
 		}
 
 		template <class From, size_t To
-		> NODISCARD auto map(From const & from) -> value_i<To> *
+		> NODISCARD auto map(From const & from) -> element_i<To> *
 		{
-			if (size_t const i{ this->lookup<From>(from) }; i != npos)
+			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
 				return std::addressof(this->get<To>(i));
 			}
@@ -1118,9 +1118,9 @@ namespace ISM
 		}
 
 		template <class From, size_t To
-		> NODISCARD auto map(From const & from) const -> value_i<To> const *
+		> NODISCARD auto map(From const & from) const -> element_i<To> const *
 		{
-			if (size_t const i{ this->lookup<From>(from) }; i != npos)
+			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
 				return std::addressof(this->get<To>(i));
 			}
@@ -1133,7 +1133,7 @@ namespace ISM
 		template <class From, class To
 		> NODISCARD auto map(From const & from) -> To *
 		{
-			if (size_t const i{ this->lookup<From>(from) }; i != npos)
+			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
 				return std::addressof(this->get<To>(i));
 			}
@@ -1146,7 +1146,7 @@ namespace ISM
 		template <class From, class To
 		> NODISCARD auto map(From const & from) const -> To const *
 		{
-			if (size_t const i{ this->lookup<From>(from) }; i != npos)
+			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
 				return std::addressof(this->get<To>(i));
 			}

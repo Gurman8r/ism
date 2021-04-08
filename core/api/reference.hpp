@@ -38,100 +38,144 @@ namespace ISM
 		std::is_base_of_v<Ref<T>, R<T>>
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class T> class Ref
 	{
-	private:
-		T * m_ref{};
+	public:
+		using self_type		= Ref<T>;
+		using element_type	= typename T;
+		using pointer		= typename element_type *;
 
-		void ref(Ref const & value)
+	private:
+		pointer m_ref{};
+
+		auto ref(self_type const & value) -> self_type &
 		{
-			if (value.m_ref == m_ref) { return; }
+			if (value.m_ref == m_ref) { return (*this); }
 			unref();
 			m_ref = value.m_ref;
 			if (m_ref) { m_ref->inc_ref(); }
+			return (*this);
 		}
 
-		void ref_pointer(T * value)
+		auto ref_pointer(pointer value) -> self_type &
 		{
-			VERIFY(value);
-			if (value->init_ref()) { m_ref = value; }
-		}
-
-	public:
-		NODISCARD bool operator==(T const * value) const { return m_ref == value; }
-		NODISCARD bool operator!=(T const * value) const { return m_ref != value; }
-		NODISCARD bool operator<(Ref<T> const & value) const { return m_ref < value.m_ref; }
-		NODISCARD bool operator==(Ref<T> const & value) const { return m_ref == value.m_ref; }
-		NODISCARD bool operator!=(Ref<T> const & value) const { return m_ref != value.m_ref; }
-
-		NODISCARD auto operator->() const -> T const * { return m_ref; }
-		NODISCARD auto operator->() -> T * { return m_ref; }
-
-		NODISCARD auto operator*() const -> T const * { return m_ref; }
-		NODISCARD auto operator*() -> T * { return m_ref; }
-
-		NODISCARD auto ptr() const -> T const * { return m_ref; }
-		NODISCARD auto ptr() -> T * { return m_ref; }
-
-		NODISCARD operator bool() const { return m_ref != nullptr; }
-
-		void operator=(nullptr_t) { unref(); }
-		void operator=(Ref const & value) { ref(value); }
-
-		template <class U
-		> void operator=(Ref<U> const & value)
-		{
-			Reference * refb{ const_cast<Reference *>(static_cast<Reference const *>(value.ptr())) };
-			if (!refb) { unref(); return; }
-			Ref r;
-			r.m_ref = ISM::super_cast<T>(refb);
-			ref(r);
-			r.m_ref = nullptr;
-		}
-
-		template <class U
-		> void reference_ptr(U * value)
-		{
-			if (m_ref == value) { return; }
-			unref();
-			T * r{ ISM::super_cast<T>(value) };
-			if (r) { ref_pointer(r); }
-		}
-
-		void unref()
-		{
-			if (m_ref && m_ref->dec_ref()) { ISM::memdelete(m_ref); }
-			m_ref = nullptr;
-		}
-
-		template <class ... Args
-		> Ref<T> & instance(Args && ... args)
-		{
-			ref(ISM::construct_or_initialize<T>(FWD(args)...));
+			if (CHECK(value)->init_ref()) { m_ref = value; }
 			return (*this);
 		}
 
 	public:
-		Ref(nullptr_t) : Ref{} {}
-
-		Ref(Ref const & value) { ref(value); }
-
-		template <class U
-		> Ref(Ref<U> const & value)
-		{
-			Reference * refb{ const_cast<Reference *>(static_cast<Reference const *>(value.ptr())) };
-			if (!refb) { unref(); return; }
-			Ref r;
-			r.m_ref = ISM::super_cast<T>(refb);
-			ref(r);
-			r.m_ref = nullptr;
-		}
-
-		Ref(T * value) { if (value) { ref_pointer(value); } }
+		virtual ~Ref() { unref(); }
 
 		Ref() {}
 
-		~Ref() { unref(); }
+		Ref(nullptr_t) {}
+
+		Ref(pointer value) { if (value) { ref_pointer(value); } }
+
+		Ref(self_type const & value) { ref(value); }
+
+		template <class U
+		> Ref(Ref<U> const & value) { reset(value); }
+
+		Ref(Any const & value)
+		{
+			Super * object{ ISM::any_cast<Super *>(value) };
+			if (!object) { return; }
+			
+			pointer r{ ISM::super_cast<element_type>(object) };
+			if (r && r->inc_ref()) { m_ref = r; }
+		}
+
+	public:
+		auto operator=(nullptr_t) -> self_type &
+		{
+			return unref();
+		}
+
+		auto operator=(self_type const & value) -> self_type &
+		{
+			return reset(value);
+		}
+
+		template <class U
+		> auto operator=(Ref<U> const & value) -> self_type &
+		{
+			return reset(value);
+		}
+
+		auto operator=(Any const & value) -> self_type &
+		{
+			Super * object{ ISM::any_cast<Super *>(value) };
+			if (object == m_ref) { return (*this); }
+			
+			unref();
+			if (!object) { return (*this); }
+			
+			pointer r{ ISM::super_cast<element_type>(object) };
+			if (r && r->int_ref()) { m_ref = r; }
+			return (*this);
+		}
+
+	public:
+		template <class ... Args
+		> auto instance(Args && ... args) -> self_type &
+		{
+			return ref(ISM::construct_or_initialize<element_type>(FWD(args)...));
+		}
+
+		auto unref() -> self_type &
+		{
+			if (m_ref && m_ref->dec_ref()) { ISM::memdelete(m_ref); }
+			m_ref = nullptr;
+			return (*this);
+		}
+
+		template <class U
+		> auto reset(U * value) -> self_type &
+		{
+			if (m_ref == value) { return (*this); }
+			unref();
+			pointer r{ ISM::super_cast<element_type>(value) };
+			return r ? ref_pointer(r) : (*this);
+		}
+
+		auto reset(self_type const & value) -> self_type &
+		{
+			return ref(value);
+		}
+
+		template <class U
+		> auto reset(Ref<U> const & value) -> self_type &
+		{
+			Reference * other{ const_cast<Reference *>(static_cast<Reference const *>(value.ptr())) };
+			if (!other) { return unref(); }
+			
+			self_type r;
+			r.m_ref = ISM::super_cast<element_type>(other);
+			ref(r);
+			r.m_ref = nullptr;
+			return (*this);
+		}
+
+	public:
+		NODISCARD operator bool() const { return m_ref != nullptr; }
+
+		NODISCARD auto ptr() const -> element_type const * { return m_ref; }
+		NODISCARD auto ptr() -> pointer { return m_ref; }
+
+		NODISCARD auto operator*() const -> element_type const * { return m_ref; }
+		NODISCARD auto operator*() -> pointer { return m_ref; }
+
+		NODISCARD auto operator->() const -> element_type const * { return m_ref; }
+		NODISCARD auto operator->() -> pointer { return m_ref; }
+
+		NODISCARD bool operator==(element_type const * value) const { return m_ref == value; }
+		NODISCARD bool operator!=(element_type const * value) const { return m_ref != value; }
+		NODISCARD bool operator<(self_type const & value) const { return m_ref < value.m_ref; }
+		NODISCARD bool operator==(self_type const & value) const { return m_ref == value.m_ref; }
+		NODISCARD bool operator!=(self_type const & value) const { return m_ref != value.m_ref; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

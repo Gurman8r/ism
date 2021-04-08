@@ -67,20 +67,21 @@ CoreType ISM::_CoreType_Type = COMPOSE(CoreType, t)
 		return UTIL::compare(self.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](TYPE o) { return hashof(o->tp_name); };
-	t.tp_repr = (reprfunc)[](TYPE o) { return STR(o->tp_name); };
-	t.tp_str = (reprfunc)[](TYPE o) { return STR(o->tp_name); };
+	t.tp_len = (lenfunc)[](auto) { return -1; };
+	t.tp_repr = (reprfunc)[](TYPE o) { return STR{}.instance(o->tp_name); };
+	t.tp_str = (reprfunc)[](TYPE o) { return STR{}.instance(o->tp_name); };
 
 	t.tp_getsets =
 	{
-		GetSetDef{ "__basicsize__", (getter)[](TYPE o, auto) { return INT(o->tp_basicsize); }, },
-		GetSetDef{ "__flags__", (getter)[](TYPE o, auto) { return INT(o->tp_flags); }, },
+		GetSetDef{ "__basicsize__", (getter)[](TYPE o, auto) { return INT{}.instance(o->tp_basicsize); }, },
+		GetSetDef{ "__flags__", (getter)[](TYPE o, auto) { return INT{}.instance(o->tp_flags); }, },
 		GetSetDef{ "__base__", (getter)[](TYPE o, auto) { return o->tp_base; }, },
 		GetSetDef{ "__mro__", (getter)[](TYPE o, auto) { return o->tp_mro; }, },
 		GetSetDef{ "__dict__", (getter)[](TYPE o, auto) { return o->tp_dict; }, },
 		GetSetDef{ "__weaklist__", (getter)[](TYPE o, auto) { return o->tp_weaklist; }, },
 		
 		GetSetDef{ "__name__",
-			(getter)[](TYPE o, auto) { return STR(o->tp_name); },
+			(getter)[](TYPE o, auto) { return STR{}.instance(o->tp_name); },
 			(setter)[](TYPE o, STR v, auto) { o->tp_name = ***v; return Err_None; },
 		},
 		GetSetDef{ "__qualname__",
@@ -100,7 +101,7 @@ CoreType ISM::_CoreType_Type = COMPOSE(CoreType, t)
 			(setter)[](TYPE o, OBJECT v, auto) { o->tp_dict["__abstractmethods__"] = v; return Err_None; },
 		},
 		GetSetDef{ "__doc__",
-			(getter)[](TYPE o, auto) { return STR(o->tp_doc); },
+			(getter)[](TYPE o, auto) { return STR{}.instance(o->tp_doc); },
 			(setter)[](TYPE o, STR v, auto) { o->tp_doc = ***v; return Err_None; },
 		},
 		GetSetDef{ "__text_signature__",
@@ -163,9 +164,17 @@ CoreType ISM::_CoreBool_Type = COMPOSE(CoreType, t)
 	t.tp_as_number = COMPOSE(AsNumber, m) {};
 };
 
-CoreInt ISM::_Core_True{ CoreBool_Type, true };
+CoreInt ISM::_Core_True = COMPOSE(CoreInt, v)
+{
+	v.ob_type = CoreBool_Type;
+	v.m_data = true;
+};
 
-CoreInt ISM::_Core_False{ CoreBool_Type, false };
+CoreInt ISM::_Core_False = COMPOSE(CoreInt, v)
+{
+	v.ob_type = CoreBool_Type;
+	v.m_data = false;
+};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -182,8 +191,9 @@ CoreType ISM::_CoreInt_Type = COMPOSE(CoreType, t)
 		else return UTIL::compare(o.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](INT o) { return Hash<ssize_t>()(***o); };
-	t.tp_repr = (reprfunc)[](INT o) { return STR(ISM::to_string(***o)); };
-	t.tp_str = (reprfunc)[](INT o) { return STR(ISM::to_string(***o)); };
+	t.tp_len = (lenfunc)[](auto) { return -1; };
+	t.tp_repr = (reprfunc)[](INT o) { return STR{}.instance(ISM::to_string(***o)); };
+	t.tp_str = (reprfunc)[](INT o) { return STR{}.instance(ISM::to_string(***o)); };
 };
 
 CoreInt::~CoreInt() {}
@@ -203,8 +213,9 @@ CoreType ISM::_CoreFloat_Type = COMPOSE(CoreType, t)
 		else return UTIL::compare(o.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](FLT o) { return Hash<double_t>()(***o); };
-	t.tp_repr = (reprfunc)[](FLT o) { return STR(to_string(***o)); };
-	t.tp_str = (reprfunc)[](FLT o) { return STR(to_string(***o)); };
+	t.tp_len = (lenfunc)[](auto) { return -1; };
+	t.tp_repr = (reprfunc)[](FLT o) { return STR{}.instance(to_string(***o)); };
+	t.tp_str = (reprfunc)[](FLT o) { return STR{}.instance(to_string(***o)); };
 };
 
 CoreFloat::~CoreFloat() {}
@@ -226,6 +237,7 @@ CoreType ISM::_CoreString_Type = COMPOSE(CoreType, t)
 		else return UTIL::compare(o.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](STR o) { return hashof(***o); };
+	t.tp_len = (lenfunc)[](STR o) { return o->size(); };
 	t.tp_repr = (reprfunc)[](STR o) { return o; };
 	t.tp_str = (reprfunc)[](STR o) { return o; };
 };
@@ -247,6 +259,7 @@ CoreType ISM::_CoreList_Type = COMPOSE(CoreType, t)
 		if (isinstance<LIST>(v)) return UTIL::compare(***o, ***LIST(v));
 		else return UTIL::compare(o.ptr(), v.ptr());
 	};
+	t.tp_len = (lenfunc)[](LIST o) { return o->size(); };
 
 	t.tp_methods =
 	{
@@ -270,6 +283,7 @@ CoreType ISM::_CoreDict_Type = COMPOSE(CoreType, t)
 	{
 		return UTIL::compare(o.ptr(), v.ptr());
 	};
+	t.tp_len = (lenfunc)[](DICT o) { return o->size(); };
 
 	t.tp_methods =
 	{
@@ -294,26 +308,28 @@ CoreType ISM::_CoreCapsule_Type = COMPOSE(CoreType, t)
 	{
 		return UTIL::compare(o.ptr(), v.ptr());
 	};
+	t.tp_len = (lenfunc)[](auto) { return -1; };
 };
 
 CoreCapsule::~CoreCapsule() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-CoreType ISM::_CoreFunction_Type = COMPOSE(CoreType, t)
+CoreType ISM::_CoreMethod_Type = COMPOSE(CoreType, t)
 {
-	t.tp_rtti = &typeid(CoreFunction);
+	t.tp_rtti = &typeid(CoreMethod);
 	t.tp_name = "cfunction";
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
-	t.tp_create = (createfunc)[]() { return FUNCTION{}.instance(); };
+	t.tp_create = (createfunc)[]() { return METHOD{}.instance(); };
 
-	t.tp_compare = (cmpfunc)[](FUNCTION o, OBJECT v)
+	t.tp_compare = (cmpfunc)[](METHOD o, OBJECT v)
 	{
 		return UTIL::compare(o.ptr(), v.ptr());
 	};
+	t.tp_len = (lenfunc)[](auto) { return -1; };
 };
 
-CoreFunction::~CoreFunction() {}
+CoreMethod::~CoreMethod() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -324,7 +340,7 @@ CoreType ISM::_CoreGeneric_Type = COMPOSE(CoreType, t)
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_create = (createfunc)[]() { return GENERIC{}.instance(); };
 
-	t.tp_compare = (cmpfunc)[](FUNCTION o, OBJECT v)
+	t.tp_compare = (cmpfunc)[](METHOD o, OBJECT v)
 	{
 		return UTIL::compare(o.ptr(), v.ptr());
 	};
@@ -351,26 +367,23 @@ CoreType ISM::_CoreModule_Type = COMPOSE(CoreType, t)
 		}
 		return UTIL::compare(o.ptr(), v.ptr());
 	};
+	t.tp_len = (lenfunc)[](auto) { return -1; };
 
 	t.tp_getsets =
 	{
 		GetSetDef{ "__dict__", (getter)[](MODULE o, auto) { return o->m_data.dict; }, },
 
 		GetSetDef{ "__doc__",
-			(getter)[](MODULE o, auto) { return STR(o->m_data.doc); },
+			(getter)[](MODULE o, auto) { return STR{}.instance(o->m_data.doc); },
 			(setter)[](MODULE o, STR v, auto) { o->m_data.doc = ***v; return Err_None; },
 		},
 		GetSetDef{ "__name__",
-			(getter)[](MODULE o, auto) { return STR(o->m_data.name); },
+			(getter)[](MODULE o, auto) { return STR{}.instance(o->m_data.name); },
 			(setter)[](MODULE o, STR v, auto) { o->m_data.name = ***v; return Err_None; },
 		},
 	};
 };
 
 CoreModule::~CoreModule() {}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-CoreDict CoreImport::module_dict{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

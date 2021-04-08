@@ -200,13 +200,13 @@ namespace ISM
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Out = difference_type
-		> NODISCARD Out index_of(const_iterator it) const noexcept
+		> NODISCARD Out distance(const_iterator it) const noexcept
 		{
 			return static_cast<Out>(std::distance(cbegin(), it));
 		}
 
 		template <class Out = difference_type
-		> NODISCARD Out index_of(const_reverse_iterator it) const noexcept
+		> NODISCARD Out distance(const_reverse_iterator it) const noexcept
 		{
 			return static_cast<Out>(std::distance(crbegin(), it));
 		}

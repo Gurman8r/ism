@@ -15,18 +15,6 @@
 
 namespace ISM
 {
-	template <class T, class = std::enable_if_t<std::is_scalar_v<T>>
-	> struct ImplStaticID final
-	{
-		ImplStaticID() noexcept = default;
-
-		operator T() const & noexcept { static T last_id{}; return last_id++; }
-	};
-#define STATIC_ID(T) (::ISM::ImplStaticID<T>{})
-}
-
-namespace ISM
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class To, class From, class = std::enable_if_t<is_trivially_convertible_v<To, From>>

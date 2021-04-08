@@ -5,6 +5,8 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#define _ISM				::ISM::
+
 // concat implementation
 #define IMPL_CONCAT(a, b)	a##b
 
@@ -32,6 +34,7 @@
 // crt wide string
 #define WIDE(str)			CAT(L, str)
 
+// string variable
 #define STRVAR(name, str)	static char const name[] = { str }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

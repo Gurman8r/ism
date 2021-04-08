@@ -1,7 +1,9 @@
 #ifndef _ISM_ERROR_HPP_
 #define _ISM_ERROR_HPP_
 
-#include <core/typedefs.hpp>
+// WIP
+
+#include <core/templates/type_traits.hpp>
 
 namespace ISM
 {

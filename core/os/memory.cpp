@@ -86,7 +86,7 @@ namespace ISM
 	{
 		auto const res{ std::pmr::get_default_resource() };
 
-		if (size_t const i{ g_memory.records.lookup<ID_addr>(ptr) }
+		if (size_t const i{ g_memory.records.index_of<ID_addr>(ptr) }
 		; i != g_memory.records.npos)
 		{
 			res->deallocate(ptr, g_memory.records.get<ID_size>(i));

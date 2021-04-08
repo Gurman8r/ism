@@ -25,12 +25,6 @@ namespace ISM
 
 	DECL_HANDLE(SuperID);
 
-	struct nullobj_t : std::integral_constant<SuperID, nullptr> { struct _Tag {}; constexpr explicit nullobj_t(_Tag) {} };
-
-	inline constexpr nullobj_t nullobj{ nullobj_t::_Tag{} };
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	class Super;
 	class Reference;
 	class Resource;
@@ -82,11 +76,22 @@ namespace ISM
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, class = std::enable_if_t<is_super_v<T>>
-	> NODISCARD T * super_cast(Super * from) { return dynamic_cast<T *>(from); }
+	template <class To, class From
+	> NODISCARD auto super_cast(From from)
+	{
+		using U = intrinsic_t<From>;
 
-	template <class T, class = std::enable_if_t<is_super_v<T>>
-	> NODISCARD T const * super_cast(Super const * from) { return dynamic_cast<T const *>(from); }
+		static_assert(is_super_v<To> && is_super_v<U>);
+
+		if constexpr (std::is_same_v<decltype(*from), U const &>)
+		{
+			return dynamic_cast<To const *>(from);
+		}
+		else
+		{
+			return dynamic_cast<To *>(from);
+		}
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

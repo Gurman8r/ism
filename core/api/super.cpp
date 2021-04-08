@@ -10,7 +10,7 @@ namespace ISM
 	bool Super::_predelete()
 	{
 		m_predelete_ok = 1;
-		if (m_predelete_ok) {}
+		if (m_predelete_ok) { /**/ }
 		return m_predelete_ok;
 	}
 
@@ -26,7 +26,7 @@ namespace ISM
 	Super::~Super()
 	{
 		unregister_super_instance(this);
-		m_super_id = nullobj;
+		m_super_id = nullptr;
 		m_predelete_ok = 2;
 	}
 
@@ -36,11 +36,11 @@ namespace ISM
 	{
 		if (!id) { return nullptr; }
 		
-		auto & data{ get_internals().super_data };
-		
-		if (size_t i{ data.lookup<SuperID>(id) }; i != data.npos)
+		auto & super_data{ get_internals().super_data };
+
+		if (size_t i{ super_data.index_of<SuperID>(id) }; i != super_data.npos)
 		{
-			return data.get<Super *>(i);
+			return super_data.get<Super *>(i);
 		}
 
 		return nullptr;
@@ -48,13 +48,13 @@ namespace ISM
 
 	SuperID Super::register_super_instance(Super * value)
 	{
-		if (!value) { return nullobj; }
+		if (!value) { return nullptr; }
 
-		auto & data{ get_internals().super_data };
+		auto & super_data{ get_internals().super_data };
 		
 		static SuperID id{};
 
-		data.push_back(++id, value);
+		super_data.push_back(++id, value);
 
 		return id;
 	}
@@ -63,15 +63,15 @@ namespace ISM
 	{
 		if (!value) { return; }
 
-		auto & data{ get_internals().super_data };
+		auto & super_data{ get_internals().super_data };
 
 		SuperID id{ value->get_super_id() };
 
 		if (!id) { return; }
 
-		if (size_t i{ data.lookup<SuperID>(id) }; i != data.npos)
+		if (size_t i{ super_data.index_of<SuperID>(id) }; i != super_data.npos)
 		{
-			data.erase(i);
+			super_data.erase(i);
 		}
 	}
 

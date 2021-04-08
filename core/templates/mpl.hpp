@@ -41,7 +41,7 @@ namespace ISM::MPL
 	template <class Tup, class Fn, size_t ... Is
 	> constexpr void impl_tuple_expand(Tup && tp, Fn && fn, std::index_sequence<Is...>) noexcept
 	{
-		FWD(fn)(std::get<Is>(FWD(tp))...);
+		fn(std::get<Is>(FWD(tp))...);
 	}
 
 	template <class Tup, class Fn
@@ -53,14 +53,44 @@ namespace ISM::MPL
 			std::make_index_sequence<std::tuple_size_v<std::decay_t<Tup>>>());
 	}
 
+	// "unpacks" the contents of a tuple inside a function call
+	template <class Tup, class Fn
+	> constexpr void tuple_expand(Tup && tp, Fn && fn) noexcept
+	{
+		MPL::impl_tuple_expand(FWD(tp), FWD(fn));
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class Fn, class ... Args
 	> constexpr void impl_for_args(Fn && fn, Args && ... args) noexcept
 	{
 		if constexpr (0 < sizeof...(args)) // sanity check
 		{
-			(void)std::initializer_list<int>{ (FWD(fn)(FWD(args)), 0)... };
+			(void)std::initializer_list<int>{ (fn(FWD(args)), 0)... };
 		}
 	}
+
+	// invoke function on every argument
+	template <class Fn, class ... Args
+	> constexpr void for_args(Fn && fn, Args && ... args) noexcept
+	{
+		MPL::impl_for_args(FWD(fn), FWD(args)...);
+	}
+
+	// invoke function on every argument with index
+	template <class Fn, class ... Args
+	> constexpr void for_args_i(Fn && fn, Args && ... args) noexcept
+	{
+		size_t i{};
+		MPL::for_args([&](auto && e) noexcept
+		{
+			fn(i++, FWD(e));
+		}
+		, FWD(args)...);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Tup, class Fn
 	> constexpr void impl_for_tuple(Tup && tp, Fn && fn) noexcept
@@ -71,45 +101,22 @@ namespace ISM::MPL
 		});
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// "unpacks" the contents of a tuple inside a function call
-	template <class Tup, class Fn
-	> constexpr void tuple_expand(Tup && tp, Fn && fn) noexcept
-	{
-		MPL::impl_tuple_expand(FWD(tp), FWD(fn));
-	}
-
-	// invokes a function on every passed object
-	template <class Fn, class ... Args
-	> constexpr void for_args(Fn && fn, Args && ... args) noexcept
-	{
-		MPL::impl_for_args(FWD(fn), FWD(args)...);
-	}
-
-	// invokes a function on every element of a tuple
+	// invoke function on every tuple element
 	template <class Tup, class Fn
 	> constexpr void for_tuple(Tup && tp, Fn && fn) noexcept
 	{
 		MPL::impl_for_tuple(FWD(tp), FWD(fn));
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// invokes a function on every passed object with index
-	template <class Fn, class ... Args
-	> constexpr void for_args_i(Fn && fn, Args && ... args) noexcept
-	{
-		size_t i{};
-		MPL::for_args([&](auto && e) noexcept { FWD(fn)(i, FWD(e)); ++i; }, FWD(args)...);
-	}
-
-	// invokes a function on every element of a tuple with index
+	// invoke function on every tuple element with index
 	template <class Tup, class Fn
 	> constexpr void for_tuple_i(Tup && tp, Fn && fn) noexcept
 	{
 		size_t i{};
-		MPL::for_tuple(FWD(tp), [&](auto && e) noexcept { FWD(fn)(i, FWD(e)); ++i; });
+		MPL::for_tuple(FWD(tp), [&](auto && e) noexcept
+		{
+			fn(i++, FWD(e));
+		});
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -264,14 +271,20 @@ namespace ISM::MPL
 	> constexpr void for_type_list_i(Fn && fn) noexcept
 	{
 		size_t i{};
-		MPL::for_type_list<Ls>([&](auto tag) noexcept { FWD(fn)(i, tag); ++i; });
+		MPL::for_type_list<Ls>([&](auto tag) noexcept
+		{
+			fn(i++, tag);
+		});
 	}
 
 	template <class ... Ts, class Fn
 	> constexpr void for_types_i(Fn && fn) noexcept
 	{
 		size_t i{};
-		MPL::for_types<Ts...>([&](auto tag) noexcept { FWD(fn)(i, tag); ++i; });
+		MPL::for_types<Ts...>([&](auto tag) noexcept
+		{
+			fn(i++, tag);
+		});
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
