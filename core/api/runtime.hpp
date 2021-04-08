@@ -1,7 +1,7 @@
 #ifndef _ISM_RUNTIME_HPP_
 #define _ISM_RUNTIME_HPP_
 
-#include <core/api/reference.hpp>
+#include <core/api/callable.hpp>
 
 #define ISM_INTERNALS_ID "__ism_internals__"
 #define ISM_MODULE_LOCAL_ID "__ism_module_local__"
@@ -1357,6 +1357,20 @@ namespace ISM
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <class T
+	> auto object_convert(void const * src) noexcept -> decltype(auto)
+	{
+		return ISM::make_caster<T>::convert(src);
+	}
+
+	template <class T, class U = T
+	> void object_encode(U && src, void *& dst) noexcept
+	{
+		ISM::make_caster<T>::encode(FWD(src), dst);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	NODISCARD inline OBJECT getattr(OBJECT const & o, OBJECT const & i)
 	{
 		TYPE t{ o.type() };
@@ -1444,32 +1458,6 @@ namespace ISM
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct FunctionRecord;
-
-	struct FunctionCall
-	{
-		FunctionCall(FunctionRecord const & func, OBJECT parent) : func{ func }, parent{ parent }
-		{
-		}
-
-		FunctionRecord const & func;
-
-		OBJECT parent;
-	};
-
-	struct FunctionRecord
-	{
-		Vector<OBJECT> args;
-
-		StdFn<OBJECT(FunctionCall & call)> impl;
-
-		void * data[3]{};
-
-		void(*free)(FunctionRecord * rec);
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	ISM_API_DATA(CoreType) _CoreMethod_Type;
 
 	class NODISCARD ISM_API CoreMethod : public CoreObject
@@ -1477,112 +1465,34 @@ namespace ISM
 	public:
 		using base_type = typename CoreObject;
 		using self_type = typename CoreMethod;
-		using storage_type = FunctionRecord;
+		using storage_type = typename CALLABLE;
 		storage_type m_data;
 
 		NODISCARD static auto type_static() noexcept { return TYPE{ &_CoreMethod_Type }; }
 
 	public:
 		virtual ~CoreMethod() override;
-		explicit CoreMethod(self_type const & o) : base_type{ o }, m_data{ o.m_data } {}
-		CoreMethod() : base_type{ type_static() }, m_data{} {}
-		CoreMethod(nullptr_t) : self_type{} {}
+		CoreMethod() noexcept : base_type{ type_static() }, m_data{} {}
+		CoreMethod(nullptr_t) noexcept : base_type{ type_static() }, m_data{ nullptr } {}
+		CoreMethod(self_type const & o) : base_type{ o }, m_data{ o.m_data } {}
+		CoreMethod(self_type && o) noexcept : base_type{ o }, m_data{ std::move(o.m_data) } {}
+		CoreMethod(storage_type const & v) : base_type{ type_static() }, m_data{ v } {}
+		CoreMethod(storage_type && v) noexcept : base_type{ type_static() }, m_data{ std::move(v) } {}
 		self_type & operator=(self_type const &) = default;
+		self_type & operator=(self_type &&) noexcept = default;
 
 		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
 		NODISCARD auto operator->() const { return const_cast<storage_type *>(&m_data); }
 
-	public:
-		template <class Ret, class ... Args, class ... Extra
-		> CoreMethod(Ret(*fn)(Args...), Extra && ... extra) : self_type{}
+		template <class O
+		> CoreMethod(ObjectAPI<O> const & o) : self_type{}
 		{
-			this->initialize(fn, fn, FWD(extra)...);
 		}
 
-		template <class Fn, class ... Extra, class = std::enable_if_t<is_lambda_v<Fn>>
-		> CoreMethod(Fn && fn, Extra && ... extra) : self_type{}
+		template <class Arg0, class ... Args
+		> CoreMethod(Arg0 && arg0, Args && ... args) : self_type{}
 		{
-			this->initialize(FWD(fn), (function_signature_t<Fn> *)nullptr, FWD(extra)...);
-		}
-
-		template <class Ret, class C, class ... Args, class ... Extra
-		> CoreMethod(Ret(C::*fn)(Args...), Extra && ... extra) : self_type{}
-		{
-			this->initialize([fn](C * c, Args ... args) -> Ret
-			{
-				return (c->*fn)(FWD(args)...);
-			}
-			, (Ret(*)(C *, Args...))nullptr, FWD(extra)...);
-		}
-
-		template <class Ret, class C, class ... Args, class ... Extra
-		> CoreMethod(Ret(C::*fn)(Args...) &, Extra && ... extra) : self_type{}
-		{
-			this->initialize([fn](C * c, Args ... args) -> Ret
-			{
-				return (c->*fn)(FWD(args)...);
-			}
-			, Ret(*)(C *, Args...)nullptr, FWD(extra)...);
-		}
-
-		template <class Ret, class C, class ... Args, class ... Extra
-		> CoreMethod(Ret(C::*fn)(Args...) const, Extra && ... extra) : self_type{}
-		{
-			this->initialize([fn](C const * c, Args ... args) -> Ret
-			{
-				return (c->*fn)(FWD(args)...);
-			}
-			, (Ret(*)(C const *, Args...))nullptr, FWD(extra)...);
-		}
-
-		template <class Ret, class C, class ... Args, class ... Extra
-		> CoreMethod(Ret(C::*fn)(Args...) const &, Extra && ... extra) : self_type{}
-		{
-			this->initialize([fn](C const * c, Args ... args) -> Ret
-			{
-				return (c->*fn)(FWD(args)...);
-			}
-			, (Ret(*)(C const *, Args...))nullptr, FWD(extra)...);
-		}
-
-	protected:
-		template <class Func, class Ret, class ... Args, class ... Extra
-		> void initialize(Func && fn, Ret(*)(Args...), Extra && ... extra)
-		{
-			struct capture { std::remove_reference_t<Func> fn; };
-
-			if (sizeof(capture) <= sizeof(m_data.data))
-			{
-				::new ((capture *)&m_data.data) capture{ FWD(fn) };
-
-				if (!std::is_trivially_destructible_v<Func>)
-				{
-					m_data.free = [](FunctionRecord * r) { ((capture *)&r->data)->~capture(); };
-				}
-			}
-			else
-			{
-				m_data.data[0] = memnew(capture{ FWD(fn) });
-
-				m_data.free = [](FunctionRecord * r) { ISM::memdelete((capture *)r->data[0]); };
-			}
-
-			using cast_in = ISM::argument_loader<Args...>;
-			using cast_out = ISM::make_caster<std::conditional_t<std::is_void_v<Ret>, void_type, Ret>>;
-
-			m_data.impl = ([](FunctionCall & call) -> OBJECT
-			{
-				cast_in args_converter{};
-
-				OBJECT result{};
-
-				return result;
-			});
-		}
-
-		static CoreObject * dispatch(CoreObject * self, CoreObject const ** argv, int32_t argc, Err & error)
-		{
-			return nullptr;
+			m_data = ISM::bind_method(FWD(arg0), FWD(args)...);
 		}
 	};
 

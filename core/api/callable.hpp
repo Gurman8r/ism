@@ -1,7 +1,9 @@
 #ifndef _ISM_CALLABLE_HPP_
 #define _ISM_CALLABLE_HPP_
 
-#include <core/api/runtime.hpp>
+#include <core/api/reference.hpp>
+#include <core/templates/functional.hpp>
+#include <core/templates/mpl.hpp>
 
 namespace ISM
 {
@@ -26,24 +28,24 @@ namespace ISM
 		{
 			void * retv{};
 
-			if constexpr (constexpr size_t argc{ sizeof...(Args) }; argc == 0)
+			if constexpr (constexpr size_t argc{ sizeof...(Args) }; 0 < argc)
 			{
-				ptrcall(inst, NULL, retv);
+				void const * argv[argc]{};
+
+				auto const capture{ std::forward_as_tuple(FWD(args)...) };
+
+				Callable::collect_arguments(argv, &capture);
+
+				ptrcall(inst, argv, retv);
 			}
 			else
 			{
-				void const * argv[argc]{};
-				
-				auto const capture{ std::forward_as_tuple(FWD(args)...) };
-				
-				Callable::collect_arguments(argv, &capture);
-				
-				ptrcall(inst, argv, retv);
+				ptrcall(inst, NULL, retv);
 			}
 
 			if constexpr (!std::is_same_v<R, void>)
 			{
-				return ISM::make_caster<R>::convert(retv);
+				return ISM::object_convert<R>(retv);
 			}
 		}
 
@@ -57,13 +59,11 @@ namespace ISM
 		template <class Capture, size_t I, size_t N
 		> static void impl_collect_arguments(void const ** v, Capture const & c)
 		{
-			static_assert(std::tuple_size_v<Capture> <= N);
-
 			if constexpr (I < N)
 			{
 				using U = typename std::tuple_element_t<I, Capture>;
 
-				ISM::make_caster<U>::encode(std::get<I>(c), const_cast<void *&>(v[I]));
+				ISM::object_encode<U>(std::get<I>(c), const_cast<void *&>(v[I]));
 
 				Callable::impl_collect_arguments<Capture, I + 1, N>(v, c);
 			}
@@ -76,7 +76,9 @@ namespace ISM
 	template <class ... P
 	> struct Callable_V : Callable
 	{
-		static constexpr auto indices{ std::make_index_sequence<sizeof...(P)>{} };
+		static constexpr size_t nargs{ sizeof...(P) };
+
+		static constexpr auto indices{ std::make_index_sequence<nargs>() };
 
 		StdFn<void(P...)> impl;
 
@@ -85,15 +87,15 @@ namespace ISM
 
 		virtual void ptrcall(void * inst, void const ** args, void *& retv) const override
 		{
-			ISM::ptrcall_v_helper<P...>(*this, args, indices);
+			this->expand_ptrcall(args, indices);
+		}
+
+		template <size_t ... I
+		> void expand_ptrcall(void const ** args, std::index_sequence<I...>) const
+		{
+			impl(ISM::object_convert<P>(args[I])...);
 		}
 	};
-
-	template <class ... P, size_t ... I
-	> void ptrcall_v_helper(Callable_V<P...> const & call, void const ** args, std::index_sequence<I...>)
-	{
-		call.impl(ISM::make_caster<P>::convert(args[I])...);
-	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -101,7 +103,9 @@ namespace ISM
 	template <class R, class ... P
 	> struct Callable_R : Callable
 	{
-		static constexpr auto indices{ std::make_index_sequence<sizeof...(P)>{} };
+		static constexpr size_t nargs{ sizeof...(P) };
+
+		static constexpr auto indices{ std::make_index_sequence<nargs>() };
 
 		StdFn<R(P...)> impl;
 
@@ -110,15 +114,15 @@ namespace ISM
 
 		virtual void ptrcall(void * inst, void const ** args, void *& retv) const override
 		{
-			ISM::ptrcall_r_helper<R, P...>(*this, args, retv, indices);
+			this->expand_ptrcall(args, retv, indices);
+		}
+
+		template <size_t ... I
+		> void expand_ptrcall(void const ** args, void *& retv, std::index_sequence<I...>) const
+		{
+			ISM::object_encode<R>(impl(ISM::object_convert<P>(args[I])...), retv);
 		}
 	};
-
-	template <class R, class ... P, size_t ... I
-	> void ptrcall_r_helper(Callable_R<R, P...> const & call, void const ** args, void *& retv, std::index_sequence<I...>)
-	{
-		ISM::make_caster<R>::encode(call.impl(ISM::make_caster<P>::convert(args[I])...), retv);
-	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -126,7 +130,9 @@ namespace ISM
 	template <class T, class ... P
 	> struct Callable_T : Callable
 	{
-		static constexpr auto indices{ std::make_index_sequence<sizeof...(P)>{} };
+		static constexpr size_t nargs{ sizeof...(P) };
+
+		static constexpr auto indices{ std::make_index_sequence<nargs>() };
 
 		StdFn<void(T *, P...)> impl;
 
@@ -135,15 +141,15 @@ namespace ISM
 
 		virtual void ptrcall(void * inst, void const ** args, void *& retv) const override
 		{
-			ISM::ptrcall_t_helper<T, P...>((T *)inst, *this, args, retv, indices);
+			this->expand_ptrcall((T *)inst, args, retv, indices);
+		}
+
+		template <size_t ... I
+		> void expand_ptrcall(T * inst, void const ** args, void *& retv, std::index_sequence<I...>) const
+		{
+			impl(inst, ISM::object_convert<P>(args[I])...);
 		}
 	};
-
-	template <class T, class ... P, size_t ... I
-	> void ptrcall_t_helper(T * inst, Callable_T<T, P...> const & call, void const ** args, void *& retv, std::index_sequence<I...>)
-	{
-		call.impl(inst, ISM::make_caster<P>::convert(args[I])...);
-	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -151,7 +157,9 @@ namespace ISM
 	template <class T, class ... P
 	> struct Callable_TC : Callable
 	{
-		static constexpr auto indices{ std::make_index_sequence<sizeof...(P)>{} };
+		static constexpr size_t nargs{ sizeof...(P) };
+
+		static constexpr auto indices{ std::make_index_sequence<nargs>() };
 
 		StdFn<void(T const *, P...)> impl;
 
@@ -160,15 +168,15 @@ namespace ISM
 
 		virtual void ptrcall(void * inst, void const ** args, void *& retv) const override
 		{
-			ISM::ptrcall_tc_helper<T, P...>((T const *)inst, *this, args, retv, indices);
+			this->expand_ptrcall((T const *)inst, args, retv, indices);
+		}
+
+		template <size_t ... I
+		> void expand_ptrcall(T const * inst, void const ** args, void *& retv, std::index_sequence<I...>) const
+		{
+			impl(inst, ISM::object_convert<P>(args[I])...);
 		}
 	};
-
-	template <class T, class ... P, size_t ... I
-	> void ptrcall_tc_helper(T const * inst, Callable_TC<T, P...> const & call, void const ** args, void *& retv, std::index_sequence<I...>)
-	{
-		call.impl(inst, ISM::make_caster<P>::convert(args[I])...);
-	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -176,7 +184,9 @@ namespace ISM
 	template <class T, class R, class ... P
 	> struct Callable_TR : Callable
 	{
-		static constexpr auto indices{ std::make_index_sequence<sizeof...(P)>{} };
+		static constexpr size_t nargs{ sizeof...(P) };
+
+		static constexpr auto indices{ std::make_index_sequence<nargs>() };
 
 		StdFn<R(T *, P...)> impl;
 
@@ -185,15 +195,15 @@ namespace ISM
 
 		virtual void ptrcall(void * inst, void const ** args, void *& retv) const override
 		{
-			ISM::ptrcall_tr_helper<T, R, P...>((T *)inst, *this, args, retv, indices);
+			this->expand_ptrcall((T *)inst, args, retv, indices);
+		}
+
+		template <size_t ... I
+		> void expand_ptrcall(T * inst, void const ** args, void *& retv, std::index_sequence<I...>) const
+		{
+			ISM::object_encode<R>(impl(inst, ISM::object_convert<P>(args[I])...), retv);
 		}
 	};
-
-	template <class T, class R, class ... P, size_t ... I
-	> void ptrcall_tr_helper(T * inst, Callable_TR<T, R, P...> const & call, void const ** args, void *& retv, std::index_sequence<I...>)
-	{
-		ISM::make_caster<R>::encode(call.impl(inst, ISM::make_caster<P>::convert(args[I])...), retv);
-	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -201,7 +211,9 @@ namespace ISM
 	template <class T, class R, class ... P
 	> struct Callable_TRC : Callable
 	{
-		static constexpr auto indices{ std::make_index_sequence<sizeof...(P)>{} };
+		static constexpr size_t nargs{ sizeof...(P) };
+
+		static constexpr auto indices{ std::make_index_sequence<nargs>() };
 
 		StdFn<R(T const *, P...)> impl;
 
@@ -210,87 +222,87 @@ namespace ISM
 
 		virtual void ptrcall(void * inst, void const ** args, void *& retv) const override
 		{
-			ISM::ptrcall_trc_helper<T, R, P...>((T const *)inst, *this, args, retv, indices);
+			this->expand_ptrcall((T const *)inst, args, retv, indices);
+		}
+
+		template <size_t ... I
+		> void expand_ptrcall(T const * inst, void const ** args, void *& retv, std::index_sequence<I...>) const
+		{
+			ISM::object_encode<R>(impl(inst, ISM::object_convert<P>(args[I])...), retv);
 		}
 	};
-
-	template <class T, class R, class ... P, size_t ... I
-	> void ptrcall_trc_helper(T const * inst, Callable_TRC<T, R, P...> const & call, void const ** args, void *& retv, std::index_sequence<I...>)
-	{
-		ISM::make_caster<R>::encode(call.impl(inst, ISM::make_caster<P>::convert(args[I])...), retv);
-	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class R, class ... P
-	> auto bind_method(R(*method)(P...)) noexcept
+	> auto bind_method(R(*f)(P...)) noexcept
 	{
 		if constexpr (std::is_same_v<R, void>)
 		{
-			return CALLABLE{ memnew((Callable_V<P...>)(method)) };
+			return CALLABLE{ memnew((Callable_V<P...>)(f)) };
 		}
 		else
 		{
-			return CALLABLE{ memnew((Callable_R<R, P...>)(method)) };
+			return CALLABLE{ memnew((Callable_R<R, P...>)(f)) };
 		}
 	}
 
 	template <class T, class R, class ... P
-	> auto bind_method(R(T::*method)(P...)) noexcept
+	> auto bind_method(R(T::*f)(P...)) noexcept
 	{
 		if constexpr (std::is_same_v<R, void>)
 		{
-			return CALLABLE{ memnew((Callable_T<T, P...>)(method)) };
+			return CALLABLE{ memnew((Callable_T<T, P...>)(f)) };
 		}
 		else
 		{
-			return CALLABLE{ memnew((Callable_TR<T, R, P...>)(method)) };
+			return CALLABLE{ memnew((Callable_TR<T, R, P...>)(f)) };
 		}
 	}
 
 	template <class T, class R, class ... P
-	> auto bind_method(R(T::*method)(P...) const) noexcept
+	> auto bind_method(R(T::*f)(P...) const) noexcept
 	{
 		if constexpr (std::is_same_v<R, void>)
 		{
-			return CALLABLE{ memnew((Callable_TC<T, P...>)(method)) };
+			return CALLABLE{ memnew((Callable_TC<T, P...>)(f)) };
 		}
 		else
 		{
-			return CALLABLE{ memnew((Callable_TRC<T, R, P...>)(method)) };
+			return CALLABLE{ memnew((Callable_TRC<T, R, P...>)(f)) };
 		}
 	}
 
 	template <class R, class ... P
-	> auto bind_method(StdFn<R(P...)> && method) noexcept
+	> auto bind_method(StdFn<R(P...)> && f) noexcept
 	{
 		if constexpr (std::is_same_v<R, void>)
 		{
-			return CALLABLE{ memnew((Callable_V<P...>)(FWD(method))) };
+			return CALLABLE{ memnew((Callable_V<P...>)(FWD(f))) };
 		}
 		else
 		{
-			return CALLABLE{ memnew((Callable_R<R, P...>)(FWD(method))) };
+			return CALLABLE{ memnew((Callable_R<R, P...>)(FWD(f))) };
 		}
 	}
 
 	template <class F, class ... P
-	> auto bind_method(std::_Binder<std::_Unforced, F, P...> && method) noexcept
+	> auto bind_method(std::_Binder<std::_Unforced, F, P...> && f) noexcept
 	{
-		return ISM::bind_method(StdFn<void(P...)>(FWD(method)));
+		return ISM::bind_method(StdFn<void(P...)>(FWD(f)));
 	}
 
 	template <class R, class F, class ... P
-	> auto bind_method(std::_Binder<R, F, P...> && method) noexcept
+	> auto bind_method(std::_Binder<R, F, P...> && f) noexcept
 	{
 		using U = std::_Binder_result_type<R, F>;
-		return ISM::bind_method(StdFn<U(P...)>(FWD(method)));
+		return ISM::bind_method(StdFn<U(P...)>(FWD(f)));
 	}
 
 	template <class F, class ... Extra, class = std::enable_if_t<is_lambda_v<F>>
-	> auto bind_method(F && method, Extra && ... extra) noexcept
+	> auto bind_method(F && f, Extra && ... extra) noexcept
 	{
-		return ISM::bind_method(std::bind(FWD(method), FWD(extra)...));
+		return ISM::bind_method(std::bind(FWD(f), FWD(extra)...));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

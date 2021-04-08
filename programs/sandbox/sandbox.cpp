@@ -1,5 +1,5 @@
 #include <main/main.hpp>
-#include <core/api/callable.hpp>
+#include <core/api/runtime.hpp>
 
 using namespace ISM;
 extern OS const * create_os(void * obj = {});
@@ -41,18 +41,22 @@ namespace ISM
 
 	Err test_main(int32_t argc, char * argv[])
 	{
+		METHOD{}.instance([&]() { MAIN_PRINT("AHHH: %s\n", PRETTY_FUNCTION); })->m_data->call(0);
 		bind_method([&]() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); })->call(0);
+		MAIN_PRINT("\n");
+
 		bind_method(hello)->call(0);
 		bind_method(say)->call(0, String{ "Goodbye, World!" });
 		MAIN_PRINT("%d\n", bind_method(get_int)->call<int>(0));
 		MAIN_PRINT("%f\n", bind_method(get_float)->call<float>(0));
+		MAIN_PRINT("\n");
 		
 		Test test{};
 		bind_method(&Test::test_static)->call(0);
 		bind_method(&Test::test_const)->call(&test);
 		MAIN_PRINT("\n");
 
-		OBJECT o{ make_generic(DICT::type_static()) };
+		OBJECT o{ make_generic(typeof<DICT>()) };
 		o["ABC"] = 42;
 		o["DEF"] = "Hello, World!";
 		MAIN_PRINT("%d\n", o["ABC"].cast<int>());
