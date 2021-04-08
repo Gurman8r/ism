@@ -33,7 +33,7 @@ namespace ISM
 			std::tuple_size_v<value_tuple>
 		};
 
-		static constexpr auto tuple_sequence
+		static constexpr auto indices
 		{
 			std::make_index_sequence<tuple_size>{}
 		};
@@ -257,12 +257,12 @@ namespace ISM
 
 		NODISCARD decltype(auto) get(size_t const i) noexcept
 		{
-			return this->get(i, tuple_sequence);
+			return this->get(i, indices);
 		}
 
 		NODISCARD decltype(auto) get(size_t const i) const noexcept
 		{
-			return this->get(i, tuple_sequence);
+			return this->get(i, indices);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -347,12 +347,12 @@ namespace ISM
 
 		NODISCARD decltype(auto) back() noexcept
 		{
-			return this->back(tuple_sequence);
+			return this->back(indices);
 		}
 
 		NODISCARD decltype(auto) back() const noexcept
 		{
-			return this->back(tuple_sequence);
+			return this->back(indices);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -437,12 +437,12 @@ namespace ISM
 
 		NODISCARD decltype(auto) front() noexcept
 		{
-			return this->front(tuple_sequence);
+			return this->front(indices);
 		}
 
 		NODISCARD decltype(auto) front() const noexcept
 		{
-			return this->front(tuple_sequence);
+			return this->front(indices);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -485,12 +485,12 @@ namespace ISM
 
 		template <class Fn> void expand_all(Fn && fn) noexcept
 		{
-			this->expand(FWD(fn), tuple_sequence);
+			this->expand(FWD(fn), indices);
 		}
 
 		template <class Fn> void expand_all(Fn && fn) const noexcept
 		{
-			this->expand(FWD(fn), tuple_sequence);
+			this->expand(FWD(fn), indices);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -533,12 +533,12 @@ namespace ISM
 
 		template <class Fn> void expand_all(size_t const i, Fn && fn) noexcept
 		{
-			this->expand(i, FWD(fn), tuple_sequence);
+			this->expand(i, FWD(fn), indices);
 		}
 
 		template <class Fn> void expand_all(size_t const i, Fn && fn) const noexcept
 		{
-			this->expand(i, FWD(fn), tuple_sequence);
+			this->expand(i, FWD(fn), indices);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

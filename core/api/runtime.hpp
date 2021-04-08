@@ -1134,13 +1134,27 @@ namespace ISM
 
 	namespace IMPL
 	{
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		template <> struct type_caster<bool>
 		{
 			NODISCARD static OBJECT cast(bool src, return_value_policy, OBJECT)
 			{
 				return (OBJECT)Core_Boolean(src);
 			}
+
+			static bool convert(void const * src)
+			{
+				return src != nullptr;
+			}
+
+			static void encode(bool src, void *& dst)
+			{
+				dst = (void *)(src ? 1 : 0);
+			}
 		};
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class T
 		> struct type_caster<T, std::enable_if_t<std::is_integral_v<T> && !is_char_v<T>>>
@@ -1149,7 +1163,33 @@ namespace ISM
 			{
 				return INT{}.instance(src);
 			}
+
+			static auto convert(void const * src) -> T
+			{
+				if constexpr (sizeof(void *) == sizeof(int32_t))
+				{
+					return static_cast<T>(ISM::bit_cast<int32_t>(src));
+				}
+				else
+				{
+					return static_cast<T>(ISM::bit_cast<int64_t>(src));
+				}
+			}
+
+			static void encode(T src, void *& dst)
+			{
+				if constexpr (sizeof(void *) == sizeof(int32_t))
+				{
+					dst = ISM::bit_cast<void *>(static_cast<int32_t>(src));
+				}
+				else
+				{
+					dst = ISM::bit_cast<void *>(static_cast<int64_t>(src));
+				}
+			}
 		};
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class T
 		> struct type_caster<T, std::enable_if_t<std::is_floating_point_v<T>>>
@@ -1158,7 +1198,33 @@ namespace ISM
 			{
 				return FLT{}.instance(src);
 			}
+
+			static auto convert(void const * src) -> T
+			{
+				if constexpr (sizeof(void *) == sizeof(float32_t))
+				{
+					return static_cast<T>(ISM::bit_cast<float32_t>(src));
+				}
+				else
+				{
+					return static_cast<T>(ISM::bit_cast<float64_t>(src));
+				}
+			}
+
+			static void encode(T src, void *& dst)
+			{
+				if constexpr (sizeof(void *) == sizeof(float32_t))
+				{
+					dst = ISM::bit_cast<void *>(static_cast<float32_t>(src));
+				}
+				else
+				{
+					dst = ISM::bit_cast<void *>(static_cast<float64_t>(src));
+				}
+			}
 		};
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class T> struct void_caster
 		{
@@ -1184,6 +1250,8 @@ namespace ISM
 
 		template <> struct type_caster<nullptr_t> : void_caster<nullptr_t> {};
 
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		template <class S> struct string_caster
 		{
 			using string_type = typename S;
@@ -1192,11 +1260,23 @@ namespace ISM
 			{
 				return STR{}.instance(src);
 			}
+
+			static string_type convert(void const * src)
+			{
+				return *CHECK((string_type const *)src);
+			}
+
+			static void encode(string_type const & src, void *& dst)
+			{
+				dst = (void *)std::addressof(src);
+			}
 		};
 
 		template <class Ch, class Tr, class Al
 		> struct type_caster<std::basic_string<Ch, Tr, Al>, std::enable_if_t<is_char_v<Ch>>>
 			: string_caster<std::basic_string<Ch, Tr, Al>> {};
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class T
 		> struct type_caster<T, std::enable_if_t<is_char_v<T>>> : type_caster<std::basic_string<T>>
@@ -1214,6 +1294,8 @@ namespace ISM
 			}
 		};
 
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		template <class T> struct core_caster
 		{
 			NODISCARD static OBJECT cast(OBJECT const & src, return_value_policy, OBJECT)
@@ -1223,6 +1305,8 @@ namespace ISM
 		};
 
 		template <class T> struct type_caster<T, std::enable_if_t<is_core_v<T>>> : core_caster<T> {};
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -1344,31 +1428,6 @@ namespace ISM
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class ... Args
-	> struct argument_loader
-	{
-	};
-
-	template <return_value_policy Policy
-	> struct simple_collector
-	{
-		template <class ... Args
-		> simple_collector(Args && ... args)
-		{
-		}
-
-		OBJECT call(CoreObject * ptr) const
-		{
-			return nullptr;
-		}
-	};
-
-	template <return_value_policy Policy, class ... Args
-	> auto collect_arguments(Args && ... args) -> simple_collector<Policy>
-	{
-		return simple_collector<Policy>{ FWD(args)... };
-	}
 
 	template<class Derived
 	> template <class ...Args

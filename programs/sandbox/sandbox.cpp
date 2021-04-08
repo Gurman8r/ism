@@ -32,41 +32,36 @@ namespace ISM
 		auto test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
 	};
 
-	void say_hello() { MAIN_PRINT("Hello, World!\n"); }
+	void hello() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); }
 
-	void pass_int(int i) { MAIN_PRINT("%d\n", i); }
+	void say(String const & s) { MAIN_PRINT("Say: %s\n", s.c_str()); }
 
-	int get_int() { return 123; }
-
-	void say(String const & s) { MAIN_PRINT("%s\n", s.c_str()); }
+	auto get_int() { return 123; }
+	auto get_float() { return 4.56f; }
 
 	Err test_main(int32_t argc, char * argv[])
 	{
-		bind_method(say_hello)->call(NULL);
-
-		bind_method([&]() { MAIN_PRINT("Hello, World!\n"); })->call(NULL);
-
-		bind_method(say)->call(NULL, String{ "Goodbye, World!" });
-
+		bind_method([&]() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); })->call(0);
+		bind_method(hello)->call(0);
+		bind_method(say)->call(0, String{ "Goodbye, World!" });
+		MAIN_PRINT("%d\n", bind_method(get_int)->call<int>(0));
+		MAIN_PRINT("%f\n", bind_method(get_float)->call<float>(0));
+		
 		Test test{};
-		bind_method(&Test::test_static)->call(NULL);
+		bind_method(&Test::test_static)->call(0);
 		bind_method(&Test::test_const)->call(&test);
-
-		return Err_None;
+		MAIN_PRINT("\n");
 
 		OBJECT o{ make_generic(DICT::type_static()) };
 		o["ABC"] = 42;
 		o["DEF"] = "Hello, World!";
-
 		MAIN_PRINT("%d\n", o["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", o["DEF"].cast<String>().c_str());
-
 		MAIN_PRINT("%s\n", o.type().attr("__name__").cast<std::string>().c_str());
-
 		o.type().attr("__name__") = "changed";
-
 		MAIN_PRINT("%s\n", STR(o.type().attr("__name__"))->c_str());
 
+		MAIN_PRINT("\n");
 		return Err_None;
 	}
 }
