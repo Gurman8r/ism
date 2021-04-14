@@ -4,7 +4,7 @@
 #include <core/templates/vector.hpp>
 #include <core/templates/mpl.hpp>
 
-namespace ISM
+namespace ism
 {
 	// tuple<vector<Ts>...>
 	template <class ... _Ts
@@ -15,10 +15,10 @@ namespace ISM
 
 		using self_type			= typename Batch<_Ts...>;
 		using allocator_type	= typename PolymorphicAllocator<byte>;
-		using value_types		= typename MPL::type_list<_Ts...>;
-		using value_tuple		= typename MPL::tuple<value_types>;
-		using vector_types		= typename MPL::remap<ISM::Vector, value_types>;
-		using vector_tuple		= typename MPL::tuple<vector_types>;
+		using value_types		= typename mpl::type_list<_Ts...>;
+		using value_tuple		= typename mpl::tuple<value_types>;
+		using vector_types		= typename mpl::remap<ism::Vector, value_types>;
+		using vector_tuple		= typename mpl::tuple<vector_types>;
 		using init_type			= typename std::initializer_list<value_tuple>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -40,25 +40,30 @@ namespace ISM
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I>	using element_i			= typename MPL::nth<I, value_types>;
+		template <size_t I>	using element_i			= typename mpl::nth<I, value_types>;
 		template <class  T> using element_t			= typename T;
-		template <size_t I>	using vector_i			= typename MPL::nth<I, vector_types>;
-		template <class  T> using vector_t			= typename ISM::Vector<T>;
+		template <size_t I>	using vector_i			= typename mpl::nth<I, vector_types>;
+		template <class  T> using vector_t			= typename ism::Vector<T>;
 		template <size_t I>	using iterator_i		= typename vector_i<I>::iterator;
 		template <class  T>	using iterator_t		= typename vector_t<T>::iterator;
 		template <size_t I>	using const_iterator_i	= typename vector_i<I>::const_iterator;
 		template <class  T>	using const_iterator_t	= typename vector_t<T>::const_iterator;
 
-		using iterator_types		= typename MPL::remap<iterator_t, value_types>;
-		using iterator_tuple		= typename MPL::tuple<iterator_types>;
+		using iterator_types		= typename mpl::remap<iterator_t, value_types>;
+		using iterator_tuple		= typename mpl::tuple<iterator_types>;
 
-		using const_iterator_types	= typename MPL::remap<const_iterator_t, value_types>;
-		using const_iterator_tuple	= typename MPL::tuple<const_iterator_types>;
+		using const_iterator_types	= typename mpl::remap<const_iterator_t, value_types>;
+		using const_iterator_tuple	= typename mpl::tuple<const_iterator_types>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		Batch() noexcept
 			: m_data{}
+		{
+		}
+
+		Batch(std::allocator_arg_t, allocator_type alloc) noexcept
+			: m_data{ std::allocator_arg, alloc }
 		{
 		}
 
@@ -546,13 +551,13 @@ namespace ISM
 		template <class Fn
 		> void for_tuple(Fn && fn) noexcept
 		{
-			MPL::for_tuple(m_data, FWD(fn));
+			mpl::for_tuple(m_data, FWD(fn));
 		}
 
 		template <class Fn
 		> void for_tuple(Fn && fn) const noexcept
 		{
-			MPL::for_tuple(m_data, FWD(fn));
+			mpl::for_tuple(m_data, FWD(fn));
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -562,7 +567,7 @@ namespace ISM
 		{
 			this->expand<Is...>([&](auto && ... vs) noexcept
 			{
-				MPL::for_args([&](auto & v) noexcept
+				mpl::for_args([&](auto & v) noexcept
 				{
 					std::invoke(FWD(fn), v);
 				}
@@ -575,7 +580,7 @@ namespace ISM
 		{
 			this->expand<Ts...>([&](auto && ... vs) noexcept
 			{
-				MPL::for_args([&](auto & v) noexcept
+				mpl::for_args([&](auto & v) noexcept
 				{
 					std::invoke(FWD(fn), v);
 				}

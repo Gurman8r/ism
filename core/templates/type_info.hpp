@@ -6,24 +6,24 @@
 #include <typeinfo>
 #include <typeindex>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// compile time type info
-	namespace CTTI
+	namespace ctti
 	{
 #if defined(ISM_CC_MSVC)
 #	define PRETTY_FUNCTION		__FUNCSIG__
-#	define PRETTY_TYPE_PREFIX	"class ISM::StringView __cdecl ISM::CTTI::raw<"
+#	define PRETTY_TYPE_PREFIX	"class ism::StringView __cdecl ism::ctti::raw<"
 #	define PRETTY_TYPE_SUFFIX	">(void)"
 #elif defined(ISM_CC_CLANG)
 #	define PRETTY_FUNCTION		__PRETTY_FUNCTION__
-#	define PRETTY_TYPE_PREFIX	"ISM::StringView ISM::CTTI::raw() [T = "
+#	define PRETTY_TYPE_PREFIX	"ism::StringView ism::ctti::raw() [T = "
 #	define PRETTY_TYPE_SUFFIX	"]"
 #elif defined(ISM_CC_GCC)
 #	define PRETTY_FUNCTION		__PRETTY_FUNCTION__
-#	define PRETTY_TYPE_PREFIX	"constexpr ISM::StringView ISM::CTTI::raw() [with T = "
+#	define PRETTY_TYPE_PREFIX	"constexpr ism::StringView ism::ctti::raw() [with T = "
 #	define PRETTY_TYPE_SUFFIX	"]"
 #else
 #	error TypeObject information is not available.
@@ -35,30 +35,27 @@ namespace ISM
 				.remove_suffix(sizeof(PRETTY_TYPE_SUFFIX) - 1);
 		}
 
-		template <class T> constexpr StringView type_v{ CTTI::raw<T>() };
+		template <class T> constexpr StringView type_v{ ctti::raw<T>() };
 
-		template <class T> NODISCARD static constexpr StringView type()
+		template <class T> NODISCARD constexpr StringView type()
 		{
-			return CTTI::type_v<T>;
+			return ctti::type_v<T>;
 		}
 
 		template <class T> NODISCARD constexpr hash_t hash()
 		{
-			return ISM::hashof(CTTI::type<T>());
+			return ism::hashof(ctti::type<T>());
 		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// run time type info
-	namespace RTTI
+	namespace rtti
 	{
-		ALIAS(Index)	std::type_index;
-		ALIAS(Info)		std::type_info;
-
 		static String & filter(String & name)
 		{
-			MPL::for_args([&name](auto search)
+			mpl::for_args([&name](auto search)
 			{
 				for (size_t pos = 0;;)
 				{
@@ -71,37 +68,46 @@ namespace ISM
 			return name;
 		}
 
-		template <class T> static String type()
+		template <class T> NODISCARD String type() noexcept
 		{
 			String name{ typeid(T).name() };
-			return RTTI::filter(name);
+			return rtti::filter(name);
+		}
+
+		template <class T> NODISCARD hash_t hash() noexcept
+		{
+			return ism::hashof(rtti::type<T>());
 		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD constexpr hash_t hashof() noexcept { return CTTI::hash<T>(); }
-
-	template <class T> constexpr hash_t hashof_v{ ISM::hashof<T>() };
-
-	inline bool same_type(RTTI::Info const & lhs, RTTI::Info const & rhs)
+	inline bool same_type(std::type_info const & lhs, std::type_info const & rhs)
 	{
 		return lhs.name() == rhs.name() || std::strcmp(lhs.name(), rhs.name()) == 0;
 	}
 
-	template <> struct ISM::EqualTo<RTTI::Index>
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> NODISCARD constexpr hash_t hashof() noexcept { return ctti::hash<T>(); }
+
+	template <class T> constexpr hash_t hashof_v{ ism::hashof<T>() };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <> struct ism::EqualTo<std::type_index>
 	{
-		bool operator()(RTTI::Index const & lhs, RTTI::Index const & rhs) const
+		bool operator()(std::type_index const & lhs, std::type_index const & rhs) const
 		{
 			return lhs.name() == rhs.name() || std::strcmp(lhs.name(), rhs.name()) == 0;
 		}
 	};
 
-	template <> struct ISM::Hash<RTTI::Index>
+	template <> struct ism::Hash<std::type_index>
 	{
-		hash_t operator()(RTTI::Index const & t) const
+		hash_t operator()(std::type_index const & t) const
 		{
-			return ISM::Hash<String>()(t.name());
+			return ism::Hash<String>()(t.name());
 		}
 	};
 

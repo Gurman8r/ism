@@ -3,7 +3,7 @@
 
 #include <xfilesystem_abi.h>
 
-namespace ISM
+namespace ism
 {
 	Path FileSystem::get_current_path()
 	{

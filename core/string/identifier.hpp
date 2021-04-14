@@ -3,7 +3,7 @@
 
 #include <core/string/string_view.hpp>
 
-namespace ISM
+namespace ism
 {
 	// string name
 	class ISM_API Identifier
@@ -78,7 +78,7 @@ namespace ISM
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 
-	template <> struct ISM::Hash<Identifier>
+	template <> struct ism::Hash<Identifier>
 	{
 		Hash() = default;
 		hash_t operator()(Identifier const & value) const

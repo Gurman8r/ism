@@ -1,5 +1,5 @@
 #include <core/os/keyboard.hpp>
 
-namespace ISM
+namespace ism
 {
 }

@@ -2,7 +2,7 @@
 
 #if ISM_MULTICORE
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

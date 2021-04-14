@@ -3,7 +3,7 @@
 
 #include <core/templates/vector.hpp>
 
-namespace ISM
+namespace ism
 {
 	// BASIC FLAT SET
 	template <
@@ -493,7 +493,7 @@ namespace ISM
 	};
 }
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

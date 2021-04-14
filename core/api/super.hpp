@@ -19,7 +19,7 @@
 #include <core/templates/set.hpp>
 #include <core/templates/type_info.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -28,34 +28,34 @@ namespace ISM
 	class Super;
 	class Reference;
 	class Resource;
-	class Script;
 
 	template <class T> class Ref;
 	ALIAS(REF) Ref<Reference>;
 	ALIAS(RES) Ref<Resource>;
-	ALIAS(SCR) Ref<Script>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class T> struct is_super : std::is_base_of<Super, T> {};
-	template <class T> constexpr bool is_super_v{ ISM::is_super<T>::value };
+	template <class T> constexpr bool is_super_v{ ism::is_super<T>::value };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API Super
 	{
 	private:
+		friend class SuperDB;
 		friend class Reference;
 		template <class T> friend class Ref;
-		friend bool predelete_handler(Super *);
-		friend void postinitialize_handler(Super *);
-
-		void _postinitialize();
-		bool _predelete();
 
 		SuperID m_super_id{};
 		int32_t m_predelete_ok{};
 		bool m_is_reference{};
+
+	protected:
+		friend bool predelete_handler(Super *);
+		friend void postinitialize_handler(Super *);
+		virtual void _postinitialize();
+		virtual bool _predelete();
 
 	public:
 		Super(bool is_ref = false);
@@ -65,14 +65,13 @@ namespace ISM
 		NODISCARD SuperID get_super_id() const { return m_super_id; }
 
 		NODISCARD bool is_reference() const { return m_is_reference; }
-
-		static Super * get_super_instance(SuperID id);
-
-	protected:
-		static SuperID register_super_instance(Super * value);
-
-		static void unregister_super_instance(Super * value);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	FORCE_INLINE void ism::postinitialize_handler(Super * value) { value->_postinitialize(); }
+
+	FORCE_INLINE bool ism::predelete_handler(Super * value) { return value->_predelete(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -95,9 +94,20 @@ namespace ISM
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	FORCE_INLINE void ISM::postinitialize_handler(Super * value) { value->_postinitialize(); }
+	class ISM_API SuperDB final
+	{
+	private:
+		friend class Super;
 
-	FORCE_INLINE bool ISM::predelete_handler(Super * value) { return value->_predelete(); }
+		static Batch<SuperID, Super *> g_supers;
+
+		static SuperID add_instance(Super * value);
+
+		static void remove_instance(SuperID value);
+
+	public:
+		static Super * get_instance(SuperID id);
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

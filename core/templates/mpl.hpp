@@ -4,9 +4,9 @@
 // Sources:
 // https://www.youtube.com/watch?v=NTWSeQtHZ9M
 // https://github.com/SuperV1234/cppcon2015
-// https://github.com/SuperV1234/cppcon2015/tree/master/Other/ecs/Utils/MPL
+// https://github.com/SuperV1234/cppcon2015/tree/master/Other/ecs/Utils/detail
 // https://github.com/SuperV1234/cppcon2015/blob/master/Other/ecs/Utils/MetaFor.hpp
-// https://github.com/SuperV1234/cppcon2015/blob/master/Other/ecs/Utils/MPL/TypeListOps.hpp
+// https://github.com/SuperV1234/cppcon2015/blob/master/Other/ecs/Utils/detail/TypeListOps.hpp
 // https://stackoverflow.com/questions/18063451/get-index-of-a-tuple-elements-type
 // https://stackoverflow.com/questions/25958259/how-do-i-find-out-if-a-tuple-contains-a-type
 // https://stackoverflow.com/questions/37029886/how-to-construct-a-tuple-from-an-array
@@ -17,8 +17,8 @@
 
 #define MPL_TAG(type_tag) decltype(type_tag)::type
 
-// MPL STRUCTURES
-namespace ISM::MPL
+// DETAIL STRUCTURES
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -34,7 +34,7 @@ namespace ISM::MPL
 }
 
 // LOOPS
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -47,7 +47,7 @@ namespace ISM::MPL
 	template <class Tup, class Fn
 	> constexpr void impl_tuple_expand(Tup && tp, Fn && fn) noexcept
 	{
-		MPL::impl_tuple_expand(
+		mpl::impl_tuple_expand(
 			FWD(tp),
 			FWD(fn),
 			std::make_index_sequence<std::tuple_size_v<std::decay_t<Tup>>>());
@@ -57,7 +57,7 @@ namespace ISM::MPL
 	template <class Tup, class Fn
 	> constexpr void tuple_expand(Tup && tp, Fn && fn) noexcept
 	{
-		MPL::impl_tuple_expand(FWD(tp), FWD(fn));
+		mpl::impl_tuple_expand(FWD(tp), FWD(fn));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -65,7 +65,7 @@ namespace ISM::MPL
 	template <class Fn, class ... Args
 	> constexpr void impl_for_args(Fn && fn, Args && ... args) noexcept
 	{
-		if constexpr (0 < sizeof...(args)) // sanity check
+		if constexpr (0 < sizeof...(args))
 		{
 			(void)std::initializer_list<int>{ (fn(FWD(args)), 0)... };
 		}
@@ -75,7 +75,7 @@ namespace ISM::MPL
 	template <class Fn, class ... Args
 	> constexpr void for_args(Fn && fn, Args && ... args) noexcept
 	{
-		MPL::impl_for_args(FWD(fn), FWD(args)...);
+		mpl::impl_for_args(FWD(fn), FWD(args)...);
 	}
 
 	// invoke function on every argument with index
@@ -83,7 +83,7 @@ namespace ISM::MPL
 	> constexpr void for_args_i(Fn && fn, Args && ... args) noexcept
 	{
 		size_t i{};
-		MPL::for_args([&](auto && e) noexcept
+		mpl::for_args([&](auto && e) noexcept
 		{
 			fn(i++, FWD(e));
 		}
@@ -95,9 +95,9 @@ namespace ISM::MPL
 	template <class Tup, class Fn
 	> constexpr void impl_for_tuple(Tup && tp, Fn && fn) noexcept
 	{
-		MPL::impl_tuple_expand(FWD(tp), [&fn](auto && ... rest) noexcept
+		mpl::impl_tuple_expand(FWD(tp), [&fn](auto && ... rest) noexcept
 		{
-			MPL::for_args(fn, FWD(rest)...);
+			mpl::for_args(fn, FWD(rest)...);
 		});
 	}
 
@@ -105,7 +105,7 @@ namespace ISM::MPL
 	template <class Tup, class Fn
 	> constexpr void for_tuple(Tup && tp, Fn && fn) noexcept
 	{
-		MPL::impl_for_tuple(FWD(tp), FWD(fn));
+		mpl::impl_for_tuple(FWD(tp), FWD(fn));
 	}
 
 	// invoke function on every tuple element with index
@@ -113,7 +113,7 @@ namespace ISM::MPL
 	> constexpr void for_tuple_i(Tup && tp, Fn && fn) noexcept
 	{
 		size_t i{};
-		MPL::for_tuple(FWD(tp), [&](auto && e) noexcept
+		mpl::for_tuple(FWD(tp), [&](auto && e) noexcept
 		{
 			fn(i++, FWD(e));
 		});
@@ -123,7 +123,7 @@ namespace ISM::MPL
 }
 
 // CONCAT - combine types
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -152,7 +152,7 @@ namespace ISM::MPL
 }
 
 // REMAP - modify inner types
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -175,7 +175,7 @@ namespace ISM::MPL
 }
 
 // RENAME - modify outer type
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -199,7 +199,7 @@ namespace ISM::MPL
 }
 
 // CONTAINS - check type_list contains type
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -222,7 +222,7 @@ namespace ISM::MPL
 }
 
 // INDEX OF - get index of type in a type_list
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -241,7 +241,7 @@ namespace ISM::MPL
 }
 
 // GENERAL
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
@@ -256,32 +256,35 @@ namespace ISM::MPL
 	template <class Ls, class Fn
 	> constexpr void for_type_list(Fn && fn) noexcept
 	{
-		MPL::for_tuple(MPL::tag_tuple<Ls>{}, fn);
+		if constexpr (0 < mpl::size<Ls>())
+		{
+			mpl::for_tuple(mpl::tag_tuple<Ls>{}, fn);
+		}
 	}
-
-	template <class T0, class ... Ts, class Fn
-	> constexpr void for_types(Fn && fn) noexcept
-	{
-		MPL::for_type_list<MPL::type_list<T0, Ts...>>(FWD(fn));
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ls, class Fn
 	> constexpr void for_type_list_i(Fn && fn) noexcept
 	{
 		size_t i{};
-		MPL::for_type_list<Ls>([&](auto tag) noexcept
+		mpl::for_type_list<Ls>([&](auto tag) noexcept
 		{
 			fn(i++, tag);
 		});
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class ... Ts, class Fn
+	> constexpr void for_types(Fn && fn) noexcept
+	{
+		mpl::for_type_list<mpl::type_list<Ts...>>(FWD(fn));
 	}
 
 	template <class ... Ts, class Fn
 	> constexpr void for_types_i(Fn && fn) noexcept
 	{
 		size_t i{};
-		MPL::for_types<Ts...>([&](auto tag) noexcept
+		mpl::for_types<Ts...>([&](auto tag) noexcept
 		{
 			fn(i++, tag);
 		});
@@ -306,7 +309,7 @@ namespace ISM::MPL
 }
 
 // REPEAT - size N type_list of T
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -332,7 +335,7 @@ namespace ISM::MPL
 }
 
 // FILTER - remove types from type_list
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -361,7 +364,7 @@ namespace ISM::MPL
 }
 
 // ALL - used to run a check against all types in a type_list
-namespace ISM::MPL
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

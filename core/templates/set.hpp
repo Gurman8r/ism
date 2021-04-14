@@ -5,7 +5,7 @@
 
 #include <set>
 
-namespace ISM
+namespace ism
 {
 #if 1
 	// set

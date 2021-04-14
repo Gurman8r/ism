@@ -1,6 +1,6 @@
 #include <core/io/logger.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -13,11 +13,11 @@ namespace ISM
 			err_type = "ERROR";
 		} break;
 
-		case ISM::Logger::ERR_ERROR: {
+		case ism::Logger::ERR_ERROR: {
 			err_type = "ERROR";
 		} break;
 
-		case ISM::Logger::ERR_WARNING: {
+		case ism::Logger::ERR_WARNING: {
 			err_type = "WARNING";
 		} break;
 		}

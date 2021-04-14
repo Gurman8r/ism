@@ -34,7 +34,7 @@ public:																											\
 	inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
 }
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

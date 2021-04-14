@@ -3,7 +3,7 @@
 
 #include <core/input/input_event.hpp>
 
-namespace ISM
+namespace ism
 {
 	class ISM_API Input : public Super
 	{

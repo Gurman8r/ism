@@ -1,6 +1,6 @@
 #include <core/input/input_event.hpp>
 
-namespace ISM
+namespace ism
 {
 	InputEvent::~InputEvent()
 	{

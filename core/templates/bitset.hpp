@@ -39,7 +39,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ISM
+namespace ism
 {
 	template <size_t _Count = 64
 	> struct Bitset
@@ -136,7 +136,7 @@ namespace ISM
 		{
 			if (this != std::addressof(value))
 			{
-				ISM::UTIL::swap(m_words, value.m_words);
+				ism::util::swap(m_words, value.m_words);
 			}
 		}
 

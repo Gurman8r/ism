@@ -2,7 +2,7 @@
 
 #include <inih/INIReader.h>
 
-namespace ISM
+namespace ism
 {
 	ConfigFile::~ConfigFile()
 	{

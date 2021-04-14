@@ -5,7 +5,7 @@
 
 #include <optional>
 
-namespace ISM
+namespace ism
 {
 	ALIAS(nullopt_t) std::nullopt_t;
 

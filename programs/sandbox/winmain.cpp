@@ -6,15 +6,15 @@
 
 extern INT main(INT, CHAR * []);
 
-ISM::OS const * create_os(void * instance = {})
+ism::OS & __implement_os(void * instance)
 {
-	static ISM::OS_Windows os{ instance ? (HINSTANCE)instance : GetModuleHandle(NULL) };
-	return std::addressof(os);
+	RETURN_STATIC(ism::OS_Windows(instance ? (HINSTANCE)instance : GetModuleHandle(NULL)));
 }
 
 INT CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, INT nCmdShow)
 {
-	create_os(hInstance);
+	__implement_os(hInstance);
+
 	return main(__argc, __argv);
 }
 

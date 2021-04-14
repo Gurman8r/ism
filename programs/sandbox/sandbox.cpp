@@ -1,13 +1,11 @@
 #include <main/main.hpp>
-#include <core/api/runtime.hpp>
+#include <core/api/bind.hpp>
 
-using namespace ISM;
-extern OS const * create_os(void * obj = {});
-static OS const * ANONYMOUS{ CHECK(create_os()) };
+using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define MAIN_PRINT (ISM::get_os().print)
+#define MAIN_PRINT (ism::get_os().print)
 
 #if ISM_OS_WINDOWS
 #define MAIN_PAUSE() \
@@ -15,48 +13,40 @@ static OS const * ANONYMOUS{ CHECK(create_os()) };
 #else
 #define MAIN_PAUSE() \
 	([]() noexcept -> int { \
-		ISM::MAIN_PRINT("Press enter to continue . . ."); \
-		ISM::get_os().get_stdin_string(true); \
+		ism::MAIN_PRINT("Press enter to continue . . ."); \
+		ism::get_os().get_stdin_string(true); \
 		return 0; \
 	})()
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ISM
+namespace ism
 {
-	struct Test
+	//struct Test
+	//{
+	//	static void test_static() { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
+	//
+	//	auto test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
+	//};
+	//
+	//void hello() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); }
+	//void say(String const & s) { MAIN_PRINT("Say: %s\n", s.c_str()); }
+	//auto get_int() { return 123; }
+	//auto get_uint() { return 456u; }
+	//auto get_float() { return 7.89f; }
+	//auto get_string() -> String { return "abc"; }
+
+	void test_main(int32_t argc, char * argv[])
 	{
-		static void test_static() { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
+		VERIFY(core::get_interpreter());
 
-		auto test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
-	};
+		LIST list = LIST::create();
+		list->append("");
+		list[0] = "IT WORKS\n\n";
+		MAIN_PRINT("%s", STR(list[0])->c_str());
 
-	void hello() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); }
-
-	void say(String const & s) { MAIN_PRINT("Say: %s\n", s.c_str()); }
-
-	auto get_int() { return 123; }
-	auto get_float() { return 4.56f; }
-
-	Err test_main(int32_t argc, char * argv[])
-	{
-		METHOD{}.instance([&]() { MAIN_PRINT("AHHH: %s\n", PRETTY_FUNCTION); })->m_data->call(0);
-		bind_method([&]() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); })->call(0);
-		MAIN_PRINT("\n");
-
-		bind_method(hello)->call(0);
-		bind_method(say)->call(0, String{ "Goodbye, World!" });
-		MAIN_PRINT("%d\n", bind_method(get_int)->call<int>(0));
-		MAIN_PRINT("%f\n", bind_method(get_float)->call<float>(0));
-		MAIN_PRINT("\n");
-		
-		Test test{};
-		bind_method(&Test::test_static)->call(0);
-		bind_method(&Test::test_const)->call(&test);
-		MAIN_PRINT("\n");
-
-		OBJECT o{ make_generic(typeof<DICT>()) };
+		OBJECT o{ DICT::create() };
 		o["ABC"] = 42;
 		o["DEF"] = "Hello, World!";
 		MAIN_PRINT("%d\n", o["ABC"].cast<int>());
@@ -65,15 +55,19 @@ namespace ISM
 		o.type().attr("__name__") = "changed";
 		MAIN_PRINT("%s\n", STR(o.type().attr("__name__"))->c_str());
 
+
 		MAIN_PRINT("\n");
-		return Err_None;
 	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+extern ism::OS & __implement_os(void * instance = nullptr);
+
 int main(int argc, char * argv[])
 {
+	auto & ANONYMOUS{ __implement_os() };
+
 	switch (Main::setup(argv[0], argc, argv))
 	{
 	case Err_None: break;
@@ -82,11 +76,9 @@ int main(int argc, char * argv[])
 
 	VERIFY(Main::start());
 
-	Err result{ test_main(argc, argv) };
+	test_main(argc, argv);
 
 	Main::cleanup();
-
-	VERIFY(result == Err_None);
 
 	return MAIN_PAUSE();
 }

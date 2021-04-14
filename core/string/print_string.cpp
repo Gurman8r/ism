@@ -1,7 +1,7 @@
 #include <core/string/print_string.hpp>
 #include <core/os/os.hpp>
 
-namespace ISM
+namespace ism
 {
 	void print_line(String const & s)
 	{

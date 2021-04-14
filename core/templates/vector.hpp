@@ -6,7 +6,7 @@
 #include <forward_list>
 #include <vector>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

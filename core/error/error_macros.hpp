@@ -6,7 +6,7 @@
 #include <cassert>
 #include <stdexcept>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -32,8 +32,8 @@ namespace ISM
 	struct ErrorScope final
 	{
 		void * type, * value, * trace;
-		ErrorScope() { ISM::_err_fetch(&type, &value, &trace); }
-		~ErrorScope() { ISM::_err_restore(type, value, trace); }
+		ErrorScope() { ism::_err_fetch(&type, &value, &trace); }
+		~ErrorScope() { ism::_err_restore(type, value, trace); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -63,7 +63,7 @@ namespace ISM
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ISM
+namespace ism
 {
 	inline void _ism_wassert(cwstring message, cwstring file, uint32_t line) noexcept
 	{
@@ -80,7 +80,7 @@ namespace ISM
 
 // wide assert
 #define WIDE_ASSERT(message, file, line) \
-	(ISM::_ism_wassert)(message, file, line)
+	(ism::_ism_wassert)(message, file, line)
 }
 
 // assert
@@ -95,7 +95,7 @@ namespace ISM
 #define VERIFY(expr) \
 	((void)((!!(expr)) || (FATAL(TOSTR(expr)), 0)))
 
-namespace ISM
+namespace ism
 {
 	template <class T
 	> auto _ism_check(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
@@ -105,7 +105,7 @@ namespace ISM
 
 // check
 #define CHECK(expr) \
-	(ISM::_ism_check)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
+	(ism::_ism_check)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -124,16 +124,16 @@ namespace ISM
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ERR_PRINT_ERROR(desc) \
-	ISM::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), ISM::ERR_HANDLER_ERROR)
+	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), ism::ERR_HANDLER_ERROR)
 
 #define ERR_PRINT_ERROR_MSG(desc, message) \
-	ISM::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), (message), ISM::ERR_HANDLER_ERROR)
+	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), (message), ism::ERR_HANDLER_ERROR)
 
 #define ERR_PRINT_WARNING(desc) \
-	ISM::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), ISM::ERR_HANDLER_WARNING)
+	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), ism::ERR_HANDLER_WARNING)
 
 #define ERR_PRINT_WARNING_MSG(desc, message) \
-	ISM::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), (message), ISM::ERR_HANDLER_ERROR)
+	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), (message), ism::ERR_HANDLER_ERROR)
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

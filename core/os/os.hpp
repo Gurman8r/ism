@@ -8,20 +8,17 @@
 
 #include <iostream>
 
-namespace ISM
+namespace ism
 {
 	class ISM_API OS
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	private:
 		static OS * singleton;
 
 		String				m_exepath{};
 		Vector<String>		m_cmdline{};
 		int32_t				m_exit_code{};
 		CompositeLogger *	m_logger{};
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	protected:
 		friend class Main;
@@ -41,8 +38,6 @@ namespace ISM
 		virtual void set_main_loop(MainLoop * p_main_loop) = 0;
 
 		virtual void delete_main_loop() = 0;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	public:
 		FORCE_INLINE static OS * get_singleton() { return singleton; }

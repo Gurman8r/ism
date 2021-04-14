@@ -1,6 +1,6 @@
 #include <drivers/opengl/opengl_device.hpp>
 
-namespace ISM
+namespace ism
 {
 	OpenglDevice::OpenglDevice()
 	{

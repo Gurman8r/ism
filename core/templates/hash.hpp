@@ -3,7 +3,7 @@
 
 #include <core/templates/type_traits.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -3,7 +3,7 @@
 
 #include <core/io/resource.hpp>
 
-namespace ISM
+namespace ism
 {
 	// key modifiers
 	enum keymods_ : int32_t
@@ -33,7 +33,7 @@ namespace ISM
 	};
 }
 
-namespace ISM
+namespace ism
 {
 	class ISM_API InputEvent : public Resource
 	{

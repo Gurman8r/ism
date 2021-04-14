@@ -6,7 +6,7 @@
 
 #include <unordered_map>
 
-namespace ISM
+namespace ism
 {
 	// hash_map
 	template <class _Kt, class _Vt, class _Hash = Hash<_Kt>, class _KeyEq = EqualTo<_Kt>

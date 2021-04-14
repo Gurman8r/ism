@@ -1,6 +1,6 @@
 #include <core/input/input.hpp>
 
-namespace ISM
+namespace ism
 {
 	Input * Input::singleton{};
 

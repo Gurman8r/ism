@@ -6,7 +6,7 @@
 
 #include <unordered_set>
 
-namespace ISM
+namespace ism
 {
 	// hash_set
 	template <class _Ty, class _Hash = Hash<_Ty>, class _KeyEq = EqualTo<_Ty>

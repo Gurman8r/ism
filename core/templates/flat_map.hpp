@@ -4,7 +4,7 @@
 #include <core/templates/flat_set.hpp>
 #include <core/templates/optional.hpp>
 
-namespace ISM
+namespace ism
 {
 	// BASIC FLAT MAP
 	template <
@@ -584,7 +584,7 @@ namespace ISM
 	};
 }
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -5,11 +5,11 @@
 
 #define DEBUG_PRINT(fmt, ...) _STD printf(fmt, ##__VA_ARGS__)
 
-#define PRINT_LINE(fmt, ...) ISM::print_line(fmt, ##__VA_ARGS__)
+#define PRINT_LINE(fmt, ...) ism::print_line(fmt, ##__VA_ARGS__)
 
-#define PRINT_ERROR(fmt, ...) ISM::print_error(fmt, ##__VA_ARGS__)
+#define PRINT_ERROR(fmt, ...) ism::print_error(fmt, ##__VA_ARGS__)
 
-namespace ISM
+namespace ism
 {
 	ISM_API_FUNC(void) print_line(String const & s);
 

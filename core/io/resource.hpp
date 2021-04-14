@@ -3,7 +3,7 @@
 
 #include <core/api/reference.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

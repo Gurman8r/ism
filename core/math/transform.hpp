@@ -3,7 +3,7 @@
 
 #include <core/math/vector4.hpp>
 
-namespace ISM
+namespace ism
 {
 	struct Transform
 	{

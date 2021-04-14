@@ -48,7 +48,7 @@
 
 static_assert(ISM_OS_WINDOWS);
 
-namespace ISM
+namespace ism
 {
 	class ISM_API OS_Windows : public OS
 	{

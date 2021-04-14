@@ -8,7 +8,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-namespace ISM
+namespace ism
 {
 	Err ImageLoader::load_image(Ref<Image> image, String const & path, bool flip_vertically, int32_t req_comp)
 	{

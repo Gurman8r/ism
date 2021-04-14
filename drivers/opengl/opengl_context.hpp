@@ -3,7 +3,7 @@
 
 #include <core/typedefs.hpp>
 
-namespace ISM
+namespace ism
 {
 	class ISM_API OpenglContext
 	{

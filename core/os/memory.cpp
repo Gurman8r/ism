@@ -7,7 +7,7 @@
 #define IMPL_NOCLEANUP 1
 #endif
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -98,9 +98,9 @@ namespace ISM
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-void * operator new(size_t size, ISM::cstring desc)
+void * operator new(size_t size, ism::cstring desc)
 {
-	return ISM::Memory::alloc_static(size, desc);
+	return ism::Memory::alloc_static(size, desc);
 }
 
 void * operator new(size_t size, void * (*alloc_fn)(size_t))
@@ -108,7 +108,7 @@ void * operator new(size_t size, void * (*alloc_fn)(size_t))
 	return alloc_fn(size);
 }
 
-void operator delete(void * ptr, ISM::cstring desc)
+void operator delete(void * ptr, ism::cstring desc)
 {
 	FATAL("this should never be called");
 }

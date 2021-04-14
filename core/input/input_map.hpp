@@ -3,7 +3,7 @@
 
 #include <core/api/super.hpp>
 
-namespace ISM
+namespace ism
 {
 	class ISM_API InputMap : public Super
 	{

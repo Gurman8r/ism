@@ -3,7 +3,7 @@
 
 #include <core/templates/array.hpp>
 
-namespace ISM
+namespace ism
 {
 	struct Vec2
 	{

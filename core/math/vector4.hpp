@@ -3,7 +3,7 @@
 
 #include <core/math/vector3.hpp>
 
-namespace ISM
+namespace ism
 {
 	struct Vec4
 	{

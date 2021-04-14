@@ -7,7 +7,7 @@
 #include <string>
 #include <sstream>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

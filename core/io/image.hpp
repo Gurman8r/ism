@@ -3,7 +3,7 @@
 
 #include <core/io/resource.hpp>
 
-namespace ISM
+namespace ism
 {
 	ALIAS(Color32) uint32_t;
 

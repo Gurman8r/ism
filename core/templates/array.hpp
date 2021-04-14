@@ -4,7 +4,7 @@
 #include <core/templates/utility.hpp>
 
 // FIXED SIZE ARRAY
-namespace ISM
+namespace ism
 {
 	template <class _Ty, size_t _N
 	> class NODISCARD Array
@@ -38,7 +38,7 @@ namespace ISM
 			{
 				for (size_t i = 0; i < _N; ++i)
 				{
-					ISM::UTIL::swap(m_data[i], other.m_data[i]);
+					ism::util::swap(m_data[i], other.m_data[i]);
 				}
 			}
 		}
@@ -124,7 +124,7 @@ namespace ISM
 }
 
 // ZERO SIZE ARRAY
-namespace ISM
+namespace ism
 {
 	template <class _Ty
 	> class NODISCARD Array<_Ty, 0>
@@ -231,14 +231,14 @@ namespace ISM
 }
 
 // ARRAY OPERATORS
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Tx, class Ty, size_t N
 	> constexpr bool operator==(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
 	{
-		return UTIL::range_equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+		return util::range_equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <class Tx, class Ty, size_t N
@@ -250,7 +250,7 @@ namespace ISM
 	template <class Tx, class Ty, size_t N
 	> constexpr bool operator<(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
 	{
-		return UTIL::range_less(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
+		return util::range_less(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <class Tx, class Ty, size_t N
@@ -280,21 +280,21 @@ namespace std
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <size_t I, class T, size_t N
-	> NODISCARD constexpr T & get(ISM::Array<T, N> & value) noexcept
+	> NODISCARD constexpr T & get(ism::Array<T, N> & value) noexcept
 	{
 		static_assert(I < N, "Array index out of bounds");
 		return value.at(I);
 	}
 
 	template <size_t I, class T, size_t N
-	> NODISCARD constexpr T const & get(ISM::Array<T, N> const & value) noexcept
+	> NODISCARD constexpr T const & get(ism::Array<T, N> const & value) noexcept
 	{
 		static_assert(I < N, "Array index out of bounds");
 		return value.at(I);
 	}
 
 	template <size_t I, class T, size_t N
-	> NODISCARD constexpr T && get(ISM::Array<T, N> && value) noexcept
+	> NODISCARD constexpr T && get(ism::Array<T, N> && value) noexcept
 	{
 		static_assert(I < N, "Array index out of bounds");
 		return std::move(value.at(I));
@@ -304,10 +304,10 @@ namespace std
 }
 
 // MAKE ARRAY
-namespace ISM
+namespace ism
 {
 	template <class D, class... Args
-	> using array_return_type = Array<typename ISM::return_type_t<D, Args...>, sizeof...(Args)>;
+	> using array_return_type = Array<typename ism::return_type_t<D, Args...>, sizeof...(Args)>;
 
 	template <class D = void, class... Args
 	> NODISCARD constexpr array_return_type<D, Args...> make_array(Args && ... args)

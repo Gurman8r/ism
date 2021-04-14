@@ -5,7 +5,7 @@
 
 #include <string_view>
 
-namespace ISM
+namespace ism
 {
 	// string view
 	class StringView

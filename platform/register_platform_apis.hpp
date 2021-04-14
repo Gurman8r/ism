@@ -3,7 +3,7 @@
 
 #include <core/language_features.hpp>
 
-namespace ISM
+namespace ism
 {
 	ISM_API_FUNC(void) register_platform_apis();
 

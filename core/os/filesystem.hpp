@@ -5,7 +5,7 @@
 
 #include <fstream>
 
-namespace ISM
+namespace ism
 {
 	class ISM_API FileSystem
 	{

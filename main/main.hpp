@@ -3,7 +3,7 @@
 
 #include <core/os/os.hpp>
 
-namespace ISM
+namespace ism
 {
 	class ISM_API Main final
 	{

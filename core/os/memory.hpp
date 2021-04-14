@@ -8,12 +8,9 @@
 #include <memory>
 #include <memory_resource>
 
-#define GLOBAL_NEW	::new
-#define GLOBAL_DEL	::delete
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ISM
+namespace ism
 {
 	class ISM_API Memory final
 	{
@@ -26,33 +23,33 @@ namespace ISM
 	};
 }
 
-#define memalloc (ISM::Memory::alloc_static)
+#define memalloc (ism::Memory::alloc_static)
 
-#define memrealloc(ptr, size) ISM::Memory::realloc_static(ptr, size, size)
+#define memrealloc(ptr, size) ism::Memory::realloc_static(ptr, size, size)
 
-#define memrealloc_sized(ptr, oldsz, newsz) ISM::Memory::realloc_static(ptr, oldsz, newsz)
+#define memrealloc_sized(ptr, oldsz, newsz) ism::Memory::realloc_static(ptr, oldsz, newsz)
 
-#define memfree (ISM::Memory::free_static)
+#define memfree (ism::Memory::free_static)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_API_FUNC(void *) operator new(size_t size, ISM::cstring desc);
+ISM_API_FUNC(void *) operator new(size_t size, ism::cstring desc);
 
 ISM_API_FUNC(void *) operator new(size_t size, void * (*alloc_fn)(size_t));
 
-FORCE_INLINE void * operator new(size_t size, void * ptr, size_t check, ISM::cstring desc) { return ptr; }
+FORCE_INLINE void * operator new(size_t size, void * ptr, size_t check, ism::cstring desc) { return ptr; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_API_FUNC(void) operator delete(void * ptr, ISM::cstring desc);
+ISM_API_FUNC(void) operator delete(void * ptr, ism::cstring desc);
 
 ISM_API_FUNC(void) operator delete(void * ptr, void * (*alloc_fn)(size_t));
 
-FORCE_INLINE void operator delete(void * placement, void * ptr, size_t check, ISM::cstring desc) {}
+FORCE_INLINE void operator delete(void * placement, void * ptr, size_t check, ism::cstring desc) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -60,17 +57,17 @@ namespace ISM
 
 	template <class T> T * _post_initialize(T * value)
 	{
-		::ISM::postinitialize_handler(value);
+		::ism::postinitialize_handler(value);
 
 		return value;
 	}
 
-#define memnew(T) ::ISM::_post_initialize(new ("") T)
+#define memnew(T) ::ism::_post_initialize(new ("") T)
 
-#define memnew_placement(ptr, T) ::ISM::_post_initialize(new (ptr, sizeof(T), "") T)
+#define memnew_placement(ptr, T) ::ism::_post_initialize(new (ptr, sizeof(T), "") T)
 
 	template <class T, class ... Args
-	> NODISCARD T * construct_or_initialize(Args && ... args)
+	> NODISCARD auto construct_or_initialize(Args && ... args) -> T *
 	{
 		if constexpr (0 == sizeof...(Args))
 		{
@@ -92,7 +89,7 @@ namespace ISM
 
 	template <class T> void memdelete(T * ptr)
 	{
-		if (!::ISM::predelete_handler(ptr)) { return; }
+		if (!::ism::predelete_handler(ptr)) { return; }
 
 		if constexpr (!std::is_trivially_destructible_v<T>) { ptr->~T(); }
 
@@ -103,7 +100,7 @@ namespace ISM
 	do {							\
 		if (ptr)					\
 		{							\
-			ISM::memdelete(ptr);	\
+			ism::memdelete(ptr);	\
 		}							\
 	} while (0)
 
@@ -111,14 +108,14 @@ namespace ISM
 
 #if 1
 	// Polymorphic Allocator
-	template <class _Ty = byte
-	> ALIAS(PolymorphicAllocator) typename std::pmr::polymorphic_allocator<_Ty>;
+	template <class T = byte
+	> ALIAS(PolymorphicAllocator) typename std::pmr::polymorphic_allocator<T>;
 #else
 	// Polymorphic Allocator
-	template <class _Ty = byte
-	> class PolymorphicAllocator : public std::pmr::polymorphic_allocator<_Ty>
+	template <class T = byte
+	> class PolymorphicAllocator : public std::pmr::polymorphic_allocator<T>
 	{
-		using _Mybase = std::pmr::polymorphic_allocator<_Ty>;
+		using _Mybase = std::pmr::polymorphic_allocator<T>;
 	public:
 		using _Mybase::polymorphic_allocator;
 		NODISCARD operator _Mybase & () & noexcept { return static_cast<_Mybase &>(*this); }
@@ -143,8 +140,6 @@ namespace ISM
 	// Global Delete
 	struct GlobalDelete final
 	{
-		constexpr GlobalDelete() = default;
-
 		void operator()(void * const ptr) const
 		{
 			::operator delete(ptr);
@@ -152,14 +147,19 @@ namespace ISM
 	};
 
 	// Default Delete
-	template <class T
-	> struct DefaultDelete final
+	template <class T> struct DefaultDelete
 	{
-		constexpr DefaultDelete() = default;
-
 		template <class U> void operator()(U * value) const
 		{
 			memdelete((T *)value);
+		}
+	};
+
+	template <> struct DefaultDelete<void>
+	{
+		void operator()(void * value) const
+		{
+			memfree(value);
 		}
 	};
 
@@ -173,22 +173,45 @@ namespace ISM
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class _Ty, class _Dx = DefaultDelete<_Ty>
-	> ALIAS(Unique) typename std::unique_ptr<_Ty, _Dx>; // unique pointer
+	template <class T
+	> ALIAS(Shared) typename std::shared_ptr<T>;
 
-	template <class T, class Dx = DefaultDelete<T>, class ... Args
-	> NODISCARD Unique<T, Dx> make_scope(Args && ... args)
+	template <class T, class ... Args
+	> NODISCARD auto make_shared(Args && ... args)
 	{
-		return { memnew((T)(FWD(args)...)), Dx{} };
+		return std::make_shared<T>(FWD(args)...);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class _Ty
-	> ALIAS(Scary) typename std::unique_ptr<_Ty, NoDelete>; // non-deleting pointer
+	template <class T, class Dx = DefaultDelete<T>
+	> ALIAS(Unique) typename std::unique_ptr<T, Dx>; // unique pointer
+
+	template <class T, class Dx = DefaultDelete<T>
+	> NODISCARD auto make_scope() -> Unique<T, Dx>
+	{
+		return { memnew(T), Dx{} };
+	}
+
+	template <class T, class Dx = DefaultDelete<T>
+	> NODISCARD auto make_scope(T * ptr) -> Unique<T, Dx>
+	{
+		return { ptr, Dx{} };
+	}
+
+	template <class T, class Dx
+	> NODISCARD auto make_scope(T * ptr, Dx && dx) -> Unique<T, Dx>
+	{
+		return { ptr, FWD(dx) };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T
+	> ALIAS(Scary) typename std::unique_ptr<T, NoDelete>; // non-deleting pointer
 
 	template <class T, class ... Args
-	> NODISCARD Scary<T> make_scary(Args && ... args)
+	> NODISCARD auto make_scary(Args && ... args) -> Scary<T>
 	{
 		return { memnew((T)(FWD(args)...)), NoDelete{} };
 	}

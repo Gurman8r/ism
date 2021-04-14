@@ -1,10 +1,8 @@
 #include <core/register_core_types.hpp>
-#include <core/config/engine.hpp>
-#include <core/config/project_settings.hpp>
 
-void ISM::register_core_types()
+void ism::register_core_types()
 {
-	VERIFY(Engine::get_singleton());
+	//VERIFY(Engine::get_singleton());
 	//ObjectDB::setup();
 	//register_global_constants();
 	//Var::register_types();
@@ -19,15 +17,15 @@ void ISM::register_core_types()
 	//ClassDB::register_class<MainLoop>();
 }
 
-void ISM::register_core_driver_types()
+void ism::register_core_driver_types()
 {
 }
 
-void ISM::register_core_settings()
+void ism::register_core_settings()
 {
 }
 
-void ISM::register_core_singletons()
+void ism::register_core_singletons()
 {
 	//ClassDB::register_class<Input>();
 	//ClassDB::register_class<ProjectSettings>();
@@ -35,11 +33,11 @@ void ISM::register_core_singletons()
 	//get_engine().add_singleton({ "ProjectSettings", ProjectSettings::get_singleton() });
 }
 
-void ISM::unregister_core_driver_types()
+void ism::unregister_core_driver_types()
 {
 }
 
-void ISM::unregister_core_types()
+void ism::unregister_core_types()
 {
 	//ClassDB::cleanup_defaults();
 	//ObjectDB::cleanup();

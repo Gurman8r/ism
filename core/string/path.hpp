@@ -3,7 +3,7 @@
 
 #include <core/string/string_utility.hpp>
 
-namespace ISM
+namespace ism
 {
 	class ISM_API Path
 	{
@@ -46,11 +46,11 @@ namespace ISM
 
 		NODISCARD auto wstring() const noexcept -> WideString { return m_text; }
 
-		NODISCARD auto string() const noexcept -> String { return ISM::narrow(m_text); }
+		NODISCARD auto string() const noexcept -> String { return ism::narrow(m_text); }
 
 		NODISCARD operator WideString() const noexcept { return m_text; }
 
-		NODISCARD operator String() const noexcept { return ISM::narrow(m_text); }
+		NODISCARD operator String() const noexcept { return ism::narrow(m_text); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -72,20 +72,20 @@ namespace ISM
 
 		Path(cwstring value) : m_text{ value } {}
 
-		Path(cstring value) : m_text{ ISM::widen((String)value) } {}
+		Path(cstring value) : m_text{ ism::widen((String)value) } {}
 
 		Path(Path const & value) : m_text{ value.m_text } {}
 
 		Path(WideString const & value) : m_text{ value } {}
 
-		Path(String const & value) : m_text{ ISM::widen(value) } {}
+		Path(String const & value) : m_text{ ism::widen(value) } {}
 
-		Path(StringView const & value) : m_text{ ISM::widen((String)value) } {}
+		Path(StringView const & value) : m_text{ ism::widen((String)value) } {}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 
-	template <> struct ISM::Hash<Path>
+	template <> struct ism::Hash<Path>
 	{
 		Hash() = default;
 		hash_t operator()(Path const & value) const

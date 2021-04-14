@@ -4,7 +4,7 @@
 #include <core/string/string_utility.hpp>
 #include <core/templates/vector.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

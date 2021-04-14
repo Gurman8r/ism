@@ -8,7 +8,7 @@
 #define FWD(x) _STD forward<decltype(x)>(x) // automatic forward
 
 // traits
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -218,7 +218,7 @@ namespace ISM
 #define ISM_EXPAND_SIDE_EFFECTS(PATTERN) (((PATTERN), void()), ...)
 #else
 	using expand_side_effects = bool[];
-#define ISM_EXPAND_SIDE_EFFECTS(PATTERN) (void)ISM::expand_side_effects{ ((PATTERN), void(), false)..., false }
+#define ISM_EXPAND_SIDE_EFFECTS(PATTERN) (void)ism::expand_side_effects{ ((PATTERN), void(), false)..., false }
 #endif
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -315,7 +315,7 @@ namespace ISM
 }
 
 // operators
-namespace ISM
+namespace ism
 {
 	template <class _Ty> struct Plus
 	{

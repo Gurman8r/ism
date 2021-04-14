@@ -1,10 +1,11 @@
 #include <main/main.hpp>
 #include <core/error/error_macros.hpp>
-#include <core/config/engine.hpp>
-#include <core/config/project_settings.hpp>
+#include <core/os/main_loop.hpp>
 #include <core/register_core_types.hpp>
 
-namespace ISM
+#include <core/api/bind.hpp>
+
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -12,8 +13,7 @@ namespace ISM
 	uint32_t	Main::g_frame_index	{};
 	int32_t		Main::g_iterating	{};
 
-	Engine *			g_engine	{};
-	ProjectSettings *	g_globals	{};
+	RuntimeState * g_runtime{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -21,12 +21,10 @@ namespace ISM
 	{
 		get_os().initialize();
 
-		g_engine = memnew(Engine);
+		g_runtime = memnew(RuntimeState);
 
 		register_core_types();
 		register_core_driver_types();
-
-		g_globals = memnew(ProjectSettings);
 
 		register_core_settings();
 
@@ -102,8 +100,7 @@ namespace ISM
 
 		get_os().finalize();
 
-		memdelete_nonzero(g_globals);
-		memdelete_nonzero(g_engine);
+		memdelete_nonzero(g_runtime);
 
 		unregister_core_driver_types();
 		unregister_core_types();

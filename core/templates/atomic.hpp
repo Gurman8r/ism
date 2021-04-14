@@ -9,7 +9,7 @@
 #define ISM_MULTICORE 0
 #endif
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

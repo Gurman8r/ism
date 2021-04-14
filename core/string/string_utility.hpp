@@ -5,7 +5,7 @@
 
 #include <core/templates/optional.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -34,6 +34,12 @@ namespace ISM
 
 	template <class Ch, size_t N
 	> constexpr bool is_string_v<Ch [N]>{ is_char_v<Ch> };
+
+	template <class Ch, size_t N
+	> constexpr bool is_string_v<Ch (&)[N]>{ is_char_v<Ch> };
+
+	template <class Ch, size_t N
+	> constexpr bool is_string_v<Ch const (&)[N]>{ is_char_v<Ch> };
 
 	template <class Ch, size_t N
 	> constexpr bool is_string_v<Ch const [N]>{ is_char_v<Ch> };
@@ -78,14 +84,14 @@ namespace ISM
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ch = char
 	> NODISCARD constexpr size_t strlen(Ch const * s)
 	{
-		return *s ? (1 + ISM::strlen(s + 1)) : 0;
+		return *s ? (1 + ism::strlen(s + 1)) : 0;
 	}
 
 	template <class Ch = char
@@ -110,7 +116,7 @@ namespace ISM
 		while (*ptr)
 		{
 			if (index == count) { break; }
-			ptr += ISM::strlen(ptr) + 1;
+			ptr += ism::strlen(ptr) + 1;
 			count++;
 		}
 		return *ptr ? ptr : (Ch const *)nullptr;
@@ -251,7 +257,7 @@ namespace ISM
 	template <class Ch = char
 	> NODISCARD Optl<bool> to_bool(BasicString<Ch> const & value) noexcept
 	{
-		switch (hashof(ISM::to_lower(value)))
+		switch (hashof(ism::to_lower(value)))
 		{
 		default				: return std::nullopt;
 		case hashof("1")	:
@@ -268,67 +274,67 @@ namespace ISM
 	template <class Ch = char
 	> NODISCARD Optl<int8_t> to_i8(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ISM::parse_answer<int8_t>(value.c_str(), &_CSTD strtol, base);
+		return ism::parse_answer<int8_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<int16_t> to_i16(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ISM::parse_answer<int16_t>(value.c_str(), &_CSTD strtol, base);
+		return ism::parse_answer<int16_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<int32_t> to_i32(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ISM::parse_answer<int32_t>(value.c_str(), &_CSTD strtol, base);
+		return ism::parse_answer<int32_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<int64_t> to_i64(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ISM::parse_answer<int64_t>(value.c_str(), &_CSTD strtoll, base);
+		return ism::parse_answer<int64_t>(value.c_str(), &_CSTD strtoll, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<uint8_t> to_u8(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ISM::parse_answer<uint8_t>(value.c_str(), &_CSTD strtoul, base);
+		return ism::parse_answer<uint8_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<uint16_t> to_u16(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ISM::parse_answer<uint16_t>(value.c_str(), &_CSTD strtoul, base);
+		return ism::parse_answer<uint16_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<uint32_t> to_u32(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ISM::parse_answer<uint32_t>(value.c_str(), &_CSTD strtoul, base);
+		return ism::parse_answer<uint32_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<uint64_t> to_u64(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ISM::parse_answer<uint64_t>(value.c_str(), &_CSTD strtoull, base);
+		return ism::parse_answer<uint64_t>(value.c_str(), &_CSTD strtoull, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<float32_t> to_f32(BasicString<Ch> const & value) noexcept
 	{
-		return ISM::parse_answer<float32_t>(value.c_str(), &_CSTD strtod);
+		return ism::parse_answer<float32_t>(value.c_str(), &_CSTD strtod);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<float64_t> to_f64(BasicString<Ch> const & value) noexcept
 	{
-		return ISM::parse_answer<float64_t>(value.c_str(), &_CSTD strtod);
+		return ism::parse_answer<float64_t>(value.c_str(), &_CSTD strtod);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optl<float80_t> to_f80(BasicString<Ch> const & value) noexcept
 	{
-		return ISM::parse_answer<float80_t>(value.c_str(), &_CSTD strtold);
+		return ism::parse_answer<float80_t>(value.c_str(), &_CSTD strtold);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

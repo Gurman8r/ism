@@ -1,6 +1,6 @@
 #include <core/io/image.hpp>
 
-namespace ISM
+namespace ism
 {
 	void Image::flip_vertically()
 	{

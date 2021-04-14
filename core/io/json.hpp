@@ -5,7 +5,7 @@
 
 #include <nlohmann/json.hpp>
 
-namespace ISM
+namespace ism
 {
 	ALIAS(JSON) nlohmann::basic_json
 	<

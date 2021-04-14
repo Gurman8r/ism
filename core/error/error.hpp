@@ -5,7 +5,7 @@
 
 #include <core/templates/type_traits.hpp>
 
-namespace ISM
+namespace ism
 {
 	typedef enum Err_ : int32_t
 	{

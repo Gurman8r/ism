@@ -5,7 +5,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define _ISM				::ISM::
+#define _ISM				::ism::
 
 // concat implementation
 #define IMPL_CONCAT(a, b)	a##b
@@ -61,25 +61,27 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ISM::IMPL
+namespace ism::impl
 {
 	// compose
-	template <class T> struct CompositionHelper {};
+	template <class T> struct ComposeHelper {};
+
 	template <class T, class Fn = void(*)(T &)
-	> constexpr auto operator+(CompositionHelper<T>, Fn fn) { T x{}; fn((T &)x); return x; }
-#define COMPOSE(T, v, ...) (ISM::IMPL::CompositionHelper<T>{}) + [##__VA_ARGS__](T & v) noexcept->void
+	> constexpr auto operator+(ComposeHelper<T>, Fn fn) { T x{}; fn((T &)x); return x; }
+
+#define COMPOSE(T, v, ...) (ism::impl::ComposeHelper<T>{}) + [##__VA_ARGS__](T & v) noexcept -> void
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define IMPL_RETURN_STATIC(name, expr) static auto name{ expr }; return name
+#define IMPL_RETURN_STATIC(name, expr) static auto name = expr; return name
 
 #define RETURN_STATIC(expr) IMPL_RETURN_STATIC(ANONYMOUS, expr)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // SCOPE_ENTER
-namespace ISM::IMPL
+namespace ism::impl
 {
 	// invoke function in Constructor
 	template <class Fn> struct OnScopeEnter final
@@ -96,7 +98,7 @@ namespace ISM::IMPL
 }
 
 // scope enter ex
-#define SCOPE_ENTER_EX(...) (ISM::IMPL::OnScopeEnterTag{}) + [##__VA_ARGS__]() noexcept
+#define SCOPE_ENTER_EX(...) (ism::impl::OnScopeEnterTag{}) + [##__VA_ARGS__]() noexcept
 
 // scope enter
 #define SCOPE_ENTER(...) auto ANONYMOUS = SCOPE_ENTER_EX(##__VA_ARGS__)
@@ -104,7 +106,7 @@ namespace ISM::IMPL
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // SCOPE_EXIT
-namespace ISM::IMPL
+namespace ism::impl
 {
 	// invoke function in destructor
 	template <class Fn> struct OnScopeExit final
@@ -125,7 +127,7 @@ namespace ISM::IMPL
 }
 
 // scope exit ex
-#define SCOPE_EXIT_EX(...) (ISM::IMPL::OnScopeExitTag{}) + [##__VA_ARGS__]() noexcept
+#define SCOPE_EXIT_EX(...) (ism::impl::OnScopeExitTag{}) + [##__VA_ARGS__]() noexcept
 
 // scope exit
 #define SCOPE_EXIT(...) auto ANONYMOUS = SCOPE_EXIT_EX(##__VA_ARGS__)

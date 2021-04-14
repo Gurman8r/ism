@@ -3,7 +3,7 @@
 
 #include <core/typedefs.hpp>
 
-namespace ISM
+namespace ism
 {
 	enum KeyCode_ : int32_t
 	{

@@ -3,7 +3,7 @@
 
 #include <core/api/super.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -43,30 +43,27 @@ namespace ISM
 	template <class T> class Ref
 	{
 	public:
-		using self_type		= Ref<T>;
-		using element_type	= typename T;
-		using pointer		= typename element_type *;
+		using element_type = typename T;
+		using pointer = typename element_type *;
 
 	private:
 		pointer m_ref{};
 
-		auto ref(self_type const & value) -> self_type &
+		void ref(Ref const & value)
 		{
-			if (value.m_ref == m_ref) { return (*this); }
+			if (value.m_ref == m_ref) { return; }
 			unref();
 			m_ref = value.m_ref;
 			if (m_ref) { m_ref->inc_ref(); }
-			return (*this);
 		}
 
-		auto ref_pointer(pointer value) -> self_type &
+		void ref_pointer(pointer value)
 		{
 			if (CHECK(value)->init_ref()) { m_ref = value; }
-			return (*this);
 		}
 
 	public:
-		virtual ~Ref() { unref(); }
+		~Ref() { unref(); }
 
 		Ref() {}
 
@@ -74,89 +71,86 @@ namespace ISM
 
 		Ref(pointer value) { if (value) { ref_pointer(value); } }
 
-		Ref(self_type const & value) { ref(value); }
+		Ref(Ref const & value) { ref(value); }
 
 		template <class U
 		> Ref(Ref<U> const & value) { reset(value); }
 
 		Ref(Any const & value)
 		{
-			Super * object{ ISM::any_cast<Super *>(value) };
+			Super * object{ ism::any_cast<Super *>(value) };
 			if (!object) { return; }
 			
-			pointer r{ ISM::super_cast<element_type>(object) };
+			pointer r{ ism::super_cast<element_type>(object) };
 			if (r && r->inc_ref()) { m_ref = r; }
 		}
 
 	public:
-		auto operator=(nullptr_t) -> self_type &
+		void operator=(nullptr_t)
 		{
-			return unref();
+			unref();
 		}
 
-		auto operator=(self_type const & value) -> self_type &
+		void operator=(Ref const & value)
 		{
-			return reset(value);
+			reset(value);
 		}
 
 		template <class U
-		> auto operator=(Ref<U> const & value) -> self_type &
+		> void operator=(Ref<U> const & value)
 		{
-			return reset(value);
+			reset(value);
 		}
 
-		auto operator=(Any const & value) -> self_type &
+		void operator=(Any const & value)
 		{
-			Super * object{ ISM::any_cast<Super *>(value) };
-			if (object == m_ref) { return (*this); }
+			Super * object{ ism::any_cast<Super *>(value) };
+			if (object == m_ref) { return; }
 			
 			unref();
-			if (!object) { return (*this); }
+			if (!object) { return; }
 			
-			pointer r{ ISM::super_cast<element_type>(object) };
+			pointer r{ ism::super_cast<element_type>(object) };
 			if (r && r->int_ref()) { m_ref = r; }
-			return (*this);
 		}
 
 	public:
 		template <class ... Args
-		> auto instance(Args && ... args) -> self_type &
+		> void instance(Args && ... args)
 		{
-			return ref(ISM::construct_or_initialize<element_type>(FWD(args)...));
+			ref(ism::construct_or_initialize<element_type>(FWD(args)...));
 		}
 
-		auto unref() -> self_type &
+		void unref()
 		{
-			if (m_ref && m_ref->dec_ref()) { ISM::memdelete(m_ref); }
+			if (m_ref && m_ref->dec_ref()) { ism::memdelete(m_ref); }
 			m_ref = nullptr;
-			return (*this);
 		}
 
 		template <class U
-		> auto reset(U * value) -> self_type &
+		> void reset(U * value)
 		{
-			if (m_ref == value) { return (*this); }
+			if (m_ref == value) { return; }
 			unref();
-			pointer r{ ISM::super_cast<element_type>(value) };
-			return r ? ref_pointer(r) : (*this);
+			pointer r{ ism::super_cast<element_type>(value) };
+			if (r) { ref_pointer(r) }
 		}
 
-		auto reset(self_type const & value) -> self_type &
+		void reset(Ref const & value)
 		{
-			return ref(value);
+			ref(value);
 		}
 
 		template <class U
-		> auto reset(Ref<U> const & value) -> self_type &
+		> void reset(Ref<U> const & value)
 		{
 			Reference * other{ const_cast<Reference *>(static_cast<Reference const *>(value.ptr())) };
-			if (!other) { return unref(); }
+			if (!other) { unref(); return; }
 			
-			self_type r;
-			r.m_ref = ISM::super_cast<element_type>(other);
+			Ref r;
+			r.m_ref = ism::super_cast<element_type>(other);
 			ref(r);
 			r.m_ref = nullptr;
-			return (*this);
 		}
 
 	public:
@@ -173,22 +167,22 @@ namespace ISM
 
 		NODISCARD bool operator==(element_type const * value) const { return m_ref == value; }
 		NODISCARD bool operator!=(element_type const * value) const { return m_ref != value; }
-		NODISCARD bool operator<(self_type const & value) const { return m_ref < value.m_ref; }
-		NODISCARD bool operator==(self_type const & value) const { return m_ref == value.m_ref; }
-		NODISCARD bool operator!=(self_type const & value) const { return m_ref != value.m_ref; }
+		NODISCARD bool operator<(Ref const & value) const { return m_ref < value.m_ref; }
+		NODISCARD bool operator==(Ref const & value) const { return m_ref == value.m_ref; }
+		NODISCARD bool operator!=(Ref const & value) const { return m_ref != value.m_ref; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct ISM::Hash<Ref<T>>
+	template <class T> struct ism::Hash<Ref<T>>
 	{
 		hash_t operator()(Ref<T> const & v) const
 		{
-			return ISM::Hash<void const *>()(v.ptr());
+			return ism::Hash<void const *>()(v.ptr());
 		}
 	};
 
-	template <class T> struct ISM::EqualTo<Ref<T>>
+	template <class T> struct ism::EqualTo<Ref<T>>
 	{
 		bool operator()(Ref<T> const & a, Ref<T> const & b) const
 		{
@@ -196,7 +190,7 @@ namespace ISM
 		}
 	};
 
-	template <class T> struct ISM::Less<Ref<T>>
+	template <class T> struct ism::Less<Ref<T>>
 	{
 		bool operator()(Ref<T> const & a, Ref<T> const & b) const
 		{

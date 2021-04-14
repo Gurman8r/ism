@@ -1,6 +1,6 @@
 #include <platform/windows/os_windows.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

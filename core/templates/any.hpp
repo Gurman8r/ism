@@ -5,7 +5,7 @@
 
 #include <any>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -70,7 +70,7 @@ namespace ISM
 			std::is_constructible_v<std::remove_cv_t<T>, std::_Remove_cvref_t<T> const &>,
 			"any_cast<T>(Any const&) requires remove_cv_t<T> to be constructible from "
 			"const remove_cv_t<remove_reference_t<T>>&");
-		auto const ptr{ ISM::any_cast<std::_Remove_cvref_t<T>>(&value) };
+		auto const ptr{ ism::any_cast<std::_Remove_cvref_t<T>>(&value) };
 		if (!ptr) { std::_Throw_bad_any_cast(); }
 		return static_cast<std::remove_cv_t<T>>(*ptr);
 	}
@@ -81,7 +81,7 @@ namespace ISM
 		static_assert(
 			std::is_constructible_v<std::remove_cv_t<T>, std::_Remove_cvref_t<T> &>,
 			"any_cast<T>(Any&) requires remove_cv_t<T> to be constructible from remove_cv_t<remove_reference_t<T>>&");
-		auto const ptr = ISM::any_cast<std::_Remove_cvref_t<T>>(&value);
+		auto const ptr = ism::any_cast<std::_Remove_cvref_t<T>>(&value);
 		if (!ptr) { std::_Throw_bad_any_cast(); }
 		return static_cast<std::remove_cv_t<T>>(*ptr);
 	}
@@ -92,7 +92,7 @@ namespace ISM
 		static_assert(
 			std::is_constructible_v<std::remove_cv_t<T>, std::_Remove_cvref_t<T>>,
 			"any_cast<T>(Any&&) requires remove_cv_t<T> to be constructible from remove_cv_t<remove_reference_t<T>>");
-		auto const ptr = ISM::any_cast<std::_Remove_cvref_t<T>>(&value);
+		auto const ptr = ism::any_cast<std::_Remove_cvref_t<T>>(&value);
 		if (!ptr) { std::_Throw_bad_any_cast(); }
 		return static_cast<std::remove_cv_t<T>>(std::move(*ptr));
 	}

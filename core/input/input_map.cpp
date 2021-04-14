@@ -1,6 +1,6 @@
 #include <core/input/input_map.hpp>
 
-namespace ISM
+namespace ism
 {
 	InputMap::~InputMap()
 	{

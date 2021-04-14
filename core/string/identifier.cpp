@@ -1,6 +1,6 @@
 #include <core/string/identifier.hpp>
 
-namespace ISM
+namespace ism
 {
 	Identifier::~Identifier() {}
 }

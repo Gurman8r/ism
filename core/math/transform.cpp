@@ -1,5 +1,5 @@
 #include <core/math/transform.hpp>
 
-namespace ISM
+namespace ism
 {
 }

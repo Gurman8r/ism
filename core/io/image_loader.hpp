@@ -3,7 +3,7 @@
 
 #include <core/io/image.hpp>
 
-namespace ISM
+namespace ism
 {
 	class ISM_API ImageLoader
 	{

@@ -1,6 +1,6 @@
 #include <drivers/opengl/opengl_context.hpp>
 
-namespace ISM
+namespace ism
 {
 	OpenglContext::OpenglContext()
 	{

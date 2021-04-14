@@ -1,11 +1,13 @@
 #include <core/api/super.hpp>
-#include <core/api/internals.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Super::_postinitialize() {}
+	void Super::_postinitialize()
+	{
+		m_super_id = SuperDB::add_instance(this);
+	}
 
 	bool Super::_predelete()
 	{
@@ -14,65 +16,39 @@ namespace ISM
 		return m_predelete_ok;
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	Super::Super(bool is_ref)
+	Super::Super(bool is_ref) : m_is_reference{ is_ref }
 	{
-		m_is_reference = is_ref;
-		m_super_id = register_super_instance(this);
-		VERIFY(m_super_id);
 	}
 
 	Super::~Super()
 	{
-		unregister_super_instance(this);
-		m_super_id = nullptr;
+		SuperDB::remove_instance(m_super_id);
+		m_super_id = SuperID{};
 		m_predelete_ok = 2;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Super * Super::get_super_instance(SuperID id)
+	decltype(SuperDB::g_supers) SuperDB::g_supers{};
+
+	SuperID SuperDB::add_instance(Super * value)
 	{
-		if (!id) { return nullptr; }
-		
-		auto & super_data{ get_internals().super_data };
+		if (!value || g_supers.contains<Super *>(value)) { return SuperID{}; }
 
-		if (size_t i{ super_data.index_of<SuperID>(id) }; i != super_data.npos)
-		{
-			return super_data.get<Super *>(i);
-		}
-
-		return nullptr;
-	}
-
-	SuperID Super::register_super_instance(Super * value)
-	{
-		if (!value) { return nullptr; }
-
-		auto & super_data{ get_internals().super_data };
-		
-		static SuperID id{};
-
-		super_data.push_back(++id, value);
-
+		static SuperID id{}; id++;
+		g_supers.push_back(id, value);
 		return id;
 	}
 
-	void Super::unregister_super_instance(Super * value)
+	void SuperDB::remove_instance(SuperID id)
 	{
-		if (!value) { return; }
+		if (size_t i{ g_supers.index_of<SuperID>(id) }
+		; i != g_supers.npos) { g_supers.erase(i); }
+	}
 
-		auto & super_data{ get_internals().super_data };
-
-		SuperID id{ value->get_super_id() };
-
-		if (!id) { return; }
-
-		if (size_t i{ super_data.index_of<SuperID>(id) }; i != super_data.npos)
-		{
-			super_data.erase(i);
-		}
+	Super * SuperDB::get_instance(SuperID id)
+	{
+		return *g_supers.map<SuperID, Super *>(id);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

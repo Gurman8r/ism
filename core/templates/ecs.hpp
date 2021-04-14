@@ -1,7 +1,7 @@
 #ifndef _ML_ECS_HPP_
 #define _ML_ECS_HPP_
 
-// Data Oriented ECS - Vittorio Romeo
+// Data Oriented ecs - Vittorio Romeo
 // https://github.com/SuperV1234/cppcon2015
 // https://www.youtube.com/watch?v=NTWSeQtHZ9M
 
@@ -12,11 +12,11 @@
 
 // system declarator helper
 #define DECL_ECS_SYSTEM(S, X, ...)									\
-	using S = typename MPL::type_list<##__VA_ARGS__>;					\
-	template <class> struct X final : ISM::ECS::DETAIL::x_base<S>	\
+	using S = typename mpl::type_list<##__VA_ARGS__>;				\
+	template <class> struct X final : ism::ecs::detail::x_base<S>	\
 
 // UTILITY
-namespace ISM::ECS::DETAIL
+namespace ism::ecs::detail
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -39,7 +39,7 @@ namespace ISM::ECS::DETAIL
 }
 
 // (T) TAGS
-namespace ISM::ECS::DETAIL
+namespace ism::ecs::detail
 {
 	// Tags
 	template <class ... _Tags
@@ -49,26 +49,26 @@ namespace ISM::ECS::DETAIL
 
 		using self_type = typename Tags<_Tags...>;
 
-		using type_list = typename MPL::type_list<_Tags...>;
+		using type_list = typename mpl::type_list<_Tags...>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		static constexpr size_t count() noexcept
 		{
-			return MPL::size<type_list>();
+			return mpl::size<type_list>();
 		}
 
 		template <class T
 		> static constexpr bool contains() noexcept
 		{
-			return MPL::contains<T, type_list>();
+			return mpl::contains<T, type_list>();
 		}
 
 		template <class T
 		> static constexpr size_t index() noexcept
 		{
 			static_assert(self_type::contains<T>(), "tag not found");
-			return MPL::index_of<T, type_list>();
+			return mpl::index_of<T, type_list>();
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -77,14 +77,14 @@ namespace ISM::ECS::DETAIL
 		> using impl_filter = std::bool_constant<self_type::contains<T>()>;
 
 		template <class T
-		> using filter = typename MPL::filter<impl_filter, T>;
+		> using filter = typename mpl::filter<impl_filter, T>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 }
 
 // (C) COMPONENTS
-namespace ISM::ECS::DETAIL
+namespace ism::ecs::detail
 {
 	// Components
 	template <class ... _Components
@@ -94,7 +94,7 @@ namespace ISM::ECS::DETAIL
 
 		using self_type = typename Components<_Components...>;
 
-		using type_list = typename MPL::type_list<_Components...>;
+		using type_list = typename mpl::type_list<_Components...>;
 
 		using storage_type = typename Batch<_Components...>;
 
@@ -102,20 +102,20 @@ namespace ISM::ECS::DETAIL
 
 		static constexpr size_t count() noexcept
 		{
-			return MPL::size<type_list>();
+			return mpl::size<type_list>();
 		}
 
 		template <class T
 		> static constexpr bool contains() noexcept
 		{
-			return MPL::contains<T, type_list>();
+			return mpl::contains<T, type_list>();
 		}
 
 		template <class T
 		> static constexpr size_t index() noexcept
 		{
 			static_assert(self_type::contains<T>(), "component not found");
-			return MPL::index_of<T, type_list>();
+			return mpl::index_of<T, type_list>();
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -124,14 +124,14 @@ namespace ISM::ECS::DETAIL
 		> using impl_filter = std::bool_constant<self_type::contains<T>()>;
 
 		template <class T
-		> using filter = typename MPL::filter<impl_filter, T>;
+		> using filter = typename mpl::filter<impl_filter, T>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 }
 
 // (S) SIGNATURES
-namespace ISM::ECS::DETAIL
+namespace ism::ecs::detail
 {
 	// Signatures
 	template <class ... _Signatures
@@ -141,26 +141,26 @@ namespace ISM::ECS::DETAIL
 
 		using self_type = typename Signatures<_Signatures...>;
 
-		using type_list = typename MPL::type_list<_Signatures...>;
+		using type_list = typename mpl::type_list<_Signatures...>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		static constexpr size_t count() noexcept
 		{
-			return MPL::size<type_list>();
+			return mpl::size<type_list>();
 		}
 
 		template <class T
 		> static constexpr bool contains() noexcept
 		{
-			return MPL::contains<T, type_list>();
+			return mpl::contains<T, type_list>();
 		}
 
 		template <class T
 		> static constexpr size_t index() noexcept
 		{
 			static_assert(self_type::contains<T>(), "signature not found");
-			return MPL::index_of<T, type_list>();
+			return mpl::index_of<T, type_list>();
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -168,7 +168,7 @@ namespace ISM::ECS::DETAIL
 }
 
 // (X) SYSTEMS
-namespace ISM::ECS::DETAIL
+namespace ism::ecs::detail
 {
 	// Systems
 	template <template <class> class ... _Systems
@@ -178,29 +178,29 @@ namespace ISM::ECS::DETAIL
 
 		using self_type = typename Systems<_Systems...>;
 
-		using type_list = typename MPL::type_list<x_wrapper<_Systems>...>;
+		using type_list = typename mpl::type_list<x_wrapper<_Systems>...>;
 
 		template <class Traits
-		> using storage_type = typename MPL::tuple<MPL::type_list<_Systems<Traits>...>>;
+		> using storage_type = typename mpl::tuple<mpl::type_list<_Systems<Traits>...>>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		static constexpr size_t count() noexcept
 		{
-			return MPL::size<type_list>();
+			return mpl::size<type_list>();
 		}
 
 		template <template <class> class X
 		> static constexpr bool contains() noexcept
 		{
-			return MPL::contains<x_wrapper<X>, type_list>();
+			return mpl::contains<x_wrapper<X>, type_list>();
 		}
 
 		template <template <class> class X
 		> static constexpr size_t index() noexcept
 		{
 			static_assert(self_type::contains<X>(), "system not found");
-			return MPL::index_of<x_wrapper<X>, type_list>();
+			return mpl::index_of<x_wrapper<X>, type_list>();
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -208,7 +208,7 @@ namespace ISM::ECS::DETAIL
 }
 
 // (O) OPTIONS
-namespace ISM::ECS::DETAIL
+namespace ism::ecs::detail
 {
 	// Options
 	template <
@@ -223,7 +223,7 @@ namespace ISM::ECS::DETAIL
 		static_assert(0 < grow_base, "growth base negative or zero");
 
 		// growth multiplier
-		static constexpr float_t grow_mult{ ISM::ratio_cast<GrowMult>() };
+		static constexpr float_t grow_mult{ ism::ratio_cast<GrowMult>() };
 		static_assert(1.f <= grow_mult, "expression would result in negative growth");
 
 		// growth calculator
@@ -237,7 +237,7 @@ namespace ISM::ECS::DETAIL
 }
 
 // (U) TRAITS
-namespace ISM::ECS::DETAIL
+namespace ism::ecs::detail
 {
 	template <
 		class T = Tags			<>,	// Tags
@@ -275,7 +275,7 @@ namespace ISM::ECS::DETAIL
 		using component_storage = typename components_type::storage_type;
 		using system_storage	= typename systems_type::template storage_type<self_type>;
 		using signature_type	= typename Bitset<component_count + tag_count>;
-		using signature_storage	= typename MPL::array<signature_type, signature_count>;
+		using signature_storage	= typename mpl::array<signature_type, signature_count>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -358,21 +358,21 @@ namespace ISM::ECS::DETAIL
 		{
 			// generate bitsets for each signature_type
 			signature_storage temp{};
-			MPL::for_type_list<typename signatures_type::type_list
+			mpl::for_type_list<typename signatures_type::type_list
 			>([&temp](auto s)
 			{
 				// get the signature_type's Bitset
 				auto & b{ std::get<self_type::signature_id<decltype(s)::type>()>(temp) };
 
 				// enable component bits
-				MPL::for_type_list<components_type::template filter<decltype(s)::type>
+				mpl::for_type_list<components_type::template filter<decltype(s)::type>
 				>([&b](auto c)
 				{
 					b.set(self_type::component_bit<decltype(c)::type>());
 				});
 
 				// enable tag bits
-				MPL::for_type_list<tags_type::template filter<decltype(s)::type>
+				mpl::for_type_list<tags_type::template filter<decltype(s)::type>
 				>([&b](auto t)
 				{
 					b.set(self_type::tag_bit<decltype(t)::type>());
@@ -386,9 +386,9 @@ namespace ISM::ECS::DETAIL
 }
 
 // (M) MANAGER
-namespace ISM::ECS
+namespace ism::ecs
 {
-	template <class U = DETAIL::traits<>
+	template <class U = detail::traits<>
 	> struct manager final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -1006,7 +1006,7 @@ namespace ISM::ECS
 		template <class Fn
 		> self_type & for_components(size_t const i, Fn && fn) noexcept
 		{
-			MPL::for_type_list<typename Components::type_list>([&](auto c) noexcept
+			mpl::for_type_list<typename Components::type_list>([&](auto c) noexcept
 			{
 				using C = typename decltype(c)::type;
 				if (this->has_component<C>(i))
@@ -1063,7 +1063,7 @@ namespace ISM::ECS
 		{
 			using req_comp = Components::template filter<S>;
 
-			using helper = MPL::rename<expand_call_helper, req_comp>;
+			using helper = mpl::rename<expand_call_helper, req_comp>;
 
 			helper::call(i, *this, FWD(fn));
 		}
@@ -1099,7 +1099,7 @@ namespace ISM::ECS
 }
 
 // TESTS
-namespace ISM::ECS::Tests
+namespace ism::ecs::Tests
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -1116,18 +1116,18 @@ namespace ISM::ECS::Tests
 	struct C4 {};
 
 	// Signatures
-	using S0 = MPL::type_list<>;				// 00000000
-	using S1 = MPL::type_list<C0, C1>;			// 11000000
-	using S2 = MPL::type_list<C0, C4, T0>;		// 10001100
-	using S3 = MPL::type_list<C1, T0, C3, T2>;	// 01010101
+	using S0 = mpl::type_list<>;				// 00000000
+	using S1 = mpl::type_list<C0, C1>;			// 11000000
+	using S2 = mpl::type_list<C0, C4, T0>;		// 10001100
+	using S3 = mpl::type_list<C1, T0, C3, T2>;	// 01010101
 
 	// traits
-	using U = DETAIL::traits<
-		DETAIL::Tags		<T0, T1, T2>,
-		DETAIL::Components	<C0, C1, C2, C3, C4>,
-		DETAIL::Signatures	<S0, S1, S2, S3>,
-		DETAIL::Systems		<>,
-		DETAIL::Options		<>
+	using U = detail::traits<
+		detail::Tags		<T0, T1, T2>,
+		detail::Components	<C0, C1, C2, C3, C4>,
+		detail::Signatures	<S0, S1, S2, S3>,
+		detail::Systems		<>,
+		detail::Options		<>
 	>;
 
 	// tests

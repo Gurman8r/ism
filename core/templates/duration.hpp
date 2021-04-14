@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-namespace ISM
+namespace ism
 {
 	ALIAS(NanoSeconds)	std::chrono::duration<float_t, Nano>;
 	ALIAS(MicroSeconds)	std::chrono::duration<float_t, Micro>;

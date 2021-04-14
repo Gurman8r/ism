@@ -1,6 +1,6 @@
 #include <core/api/reference.hpp>
 
-namespace ISM
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -46,21 +46,21 @@ namespace ISM
 	Any WeakRef::get_ref() const
 	{
 		if (!m_ref) { return nullptr; }
-		Super * o{ Super::get_super_instance(m_ref) };
+		Super * o{ SuperDB::get_instance(m_ref) };
 		if (!o) { return nullptr; }
-		Reference * r{ ISM::super_cast<Reference>(o) };
+		Reference * r{ ism::super_cast<Reference>(o) };
 		if (r) { return REF{ r }; }
 		return o;
 	}
 
 	void WeakRef::set_obj(Super * value)
 	{
-		m_ref = value ? value->get_super_id() : nullptr;
+		m_ref = value ? value->get_super_id() : SuperID{};
 	}
 
 	void WeakRef::set_ref(REF const & value)
 	{
-		m_ref = value ? value->get_super_id() : nullptr;
+		m_ref = value ? value->get_super_id() : SuperID{};
 	}
 
 	WeakRef::WeakRef() : Reference{} {}
