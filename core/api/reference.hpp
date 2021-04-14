@@ -86,39 +86,44 @@ namespace ism
 		}
 
 	public:
-		void operator=(nullptr_t)
+		Ref & operator=(nullptr_t)
 		{
 			unref();
+			return (*this);
 		}
 
-		void operator=(Ref const & value)
+		Ref & operator=(Ref const & value)
 		{
 			reset(value);
+			return (*this);
 		}
 
 		template <class U
-		> void operator=(Ref<U> const & value)
+		> Ref & operator=(Ref<U> const & value)
 		{
 			reset(value);
+			return (*this);
 		}
 
-		void operator=(Any const & value)
+		Ref & operator=(Any const & value)
 		{
 			Super * object{ ism::any_cast<Super *>(value) };
-			if (object == m_ref) { return; }
+			if (object == m_ref) { return (*this); }
 			
 			unref();
-			if (!object) { return; }
+			if (!object) { return (*this); }
 			
 			pointer r{ ism::super_cast<element_type>(object) };
 			if (r && r->int_ref()) { m_ref = r; }
+			return (*this);
 		}
 
 	public:
 		template <class ... Args
-		> void instance(Args && ... args)
+		> Ref & instance(Args && ... args)
 		{
 			ref(ism::construct_or_initialize<element_type>(FWD(args)...));
+			return (*this);
 		}
 
 		void unref()

@@ -66,6 +66,8 @@ namespace ism
 			}, (R(*)(C const *, Args...))nullptr, FWD(extra)...);
 		}
 
+		NODISCARD OBJECT name() const { return attr("__name__"); }
+
 	protected:
 		template <class Fn, class R, class ... Args, class ... Extra
 		> void initialize(Fn && f, R(*)(Args...), Extra && ... extra)
@@ -223,10 +225,8 @@ namespace ism
 		{
 		}
 
-		CoreModule(cstring name) : base_type{ type_static() }, m_data{}
+		CoreModule(cstring name) : self_type{ storage_type{ DICT::create(), STR::create(name) } }
 		{
-			m_data.dict = DICT::create();
-			m_data.name = STR::create(name);
 		}
 
 		template <class F, class ... Extra
@@ -236,7 +236,7 @@ namespace ism
 				FWD(f),
 				_Name{ name },
 				_Scope{ handle() },
-				_Sibling{ ism::getattr(handle(), name, Core_Null) },
+				_Sibling{ ism::getattr(handle(), name, nullptr) },
 				FWD(extra)...) };
 
 			add_object(name, func, true);
@@ -246,15 +246,19 @@ namespace ism
 
 		MODULE def_submodule(cstring name, cstring doc = "")
 		{
-			return Core_Null;
+			return nullptr;
 		}
 
 		void reload()
 		{
 		}
 
-		void add_object(cstring name, OBJECT value, bool overwrite = false)
+		template <class Name = cstring, class O = OBJECT
+		> void add_object(Name && name, O && value, bool overwrite = false)
 		{
+			auto i{ object_or_cast(FWD(name)) };
+			if (m_data.dict->contains(i) && !overwrite) { return; }
+			m_data.dict->insert(std::move(i), object_or_cast(FWD(value)));
 		}
 	};
 
@@ -262,28 +266,24 @@ namespace ism
 
 	inline MODULE create_extension_module(cstring name)
 	{
-		auto dict{ core::get_interpreter()->modules };
-
-		if (dict->contains(name)) { return Core_Null; }
-
-		auto m{ MODULE::create(name) };
-
-
-		return m;
+		auto & d{ ***(get_interpstate()->modules) };
+		auto i{ object_or_cast(name) };
+		if (d.find(i) != d.end()) { return nullptr; }
+		return d.try_emplace(std::move(i), MODULE::create(name)).first->second;
 	}
 
-	inline MODULE import_extension_module(cstring name)
+	inline MODULE import_module(cstring name)
 	{
-		auto dict{ core::get_interpreter()->modules };
-
-		if (!dict->contains(name)) { return Core_Null; }
-
-		return dict[name];
+		auto & d{ ***(get_interpstate()->modules) };
+		auto i{ object_or_cast(name) };
+		if (auto it{ d.find(i) }; it != d.end()) { return it->second; }
+		return nullptr;
 	}
 
 	inline DICT globals()
 	{
-		return ism::import_extension_module("__main__").attr("__dict__");
+		if (auto frame{ get_framestate() }; frame) { return CHECK(frame->globals); }
+		return import_module("__main__").attr("__dict__");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -300,7 +300,7 @@ namespace ism
 		using base_type = CoreObject;
 		using self_type = CoreGeneric;
 
-		NODISCARD static auto type_static() { return ism::typeof<TYPE>(); }
+		NODISCARD static auto type_static() { return CoreType_Type; }
 
 	public:
 		virtual ~CoreGeneric() override = default;

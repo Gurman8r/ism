@@ -39,17 +39,17 @@ namespace ism
 
 	void test_main(int32_t argc, char * argv[])
 	{
-		VERIFY(core::get_interpreter());
+		VERIFY(create_extension_module("__main__"));
+		VERIFY(globals().is_valid());
 
-		LIST list = LIST::create();
-		list->append("");
-		list[0] = "IT WORKS\n\n";
+		LIST list = globals()["a"] = LIST::create();
+		list->append("IT WORKS\n");
 		MAIN_PRINT("%s", STR(list[0])->c_str());
 
 		OBJECT o{ DICT::create() };
-		o["ABC"] = 42;
+		globals()["ABC"] = 42;
 		o["DEF"] = "Hello, World!";
-		MAIN_PRINT("%d\n", o["ABC"].cast<int>());
+		MAIN_PRINT("%d\n", globals()["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", o["DEF"].cast<String>().c_str());
 		MAIN_PRINT("%s\n", o.type().attr("__name__").cast<std::string>().c_str());
 		o.type().attr("__name__") = "changed";
@@ -70,7 +70,7 @@ int main(int argc, char * argv[])
 
 	switch (Main::setup(argv[0], argc, argv))
 	{
-	case Err_None: break;
+	case Error_None: break;
 	default: FATAL("An unknown error occurred during setup and the program was unable to start.");
 	}
 

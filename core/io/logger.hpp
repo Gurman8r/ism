@@ -11,7 +11,7 @@ namespace ism
 	class ISM_API Logger
 	{
 	public:
-		enum Err
+		enum Error
 		{
 			ERR_ERROR,
 			ERR_WARNING,
@@ -19,7 +19,7 @@ namespace ism
 
 		virtual void logv(cstring fmt, va_list args, bool is_error = false) = 0;
 
-		virtual void log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Err type = ERR_ERROR);
+		virtual void log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Error type = ERR_ERROR);
 
 		void logf(cstring fmt, ...);
 

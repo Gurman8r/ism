@@ -11,7 +11,8 @@ CoreType ism::_CoreModule_Type = COMPOSE(CoreType, t)
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_create = (createfunc)[]() { return MODULE::create(); };
 
-	t.tp_dictoffset = offsetof(CoreModule, m_data) + offsetof(CoreModule::storage_type, dict);
+	t.tp_getattr = (getattrfunc)_getattr_string;
+	t.tp_setattr = (setattrfunc)_setattr_string;
 
 	t.tp_compare = (cmpfunc)[](MODULE o, OBJECT v)
 	{
@@ -25,14 +26,8 @@ CoreType ism::_CoreModule_Type = COMPOSE(CoreType, t)
 
 	t.tp_getsets =
 	{
-		GetSetDef{ "__dict__", (getter)[](MODULE o, auto) {
-			return o->m_data.dict;
-		}, },
-
-		GetSetDef{ "__name__",
-			(getter)[](MODULE o, auto) { return o->m_data.name; },
-			(setter)[](MODULE o, STR v, auto) { o->m_data.name = v; return Err_None; },
-		},
+		GetSetDef{ "__dict__", (getter)[](MODULE o, auto) { return (***o).dict; }, },
+		GetSetDef{ "__name__", (getter)[](MODULE o, auto) { return (***o).name; }, },
 	};
 };
 

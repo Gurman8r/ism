@@ -13,33 +13,9 @@ CoreType ism::_CoreObject_Type = COMPOSE(CoreType, t)
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_create = (createfunc)[]() { FATAL("constructor not implemented"); return nullptr; };
 
-	t.tp_getattr = (getattrfunc)[](OBJECT o, cstring i) -> OBJECT
-	{
-		if (auto def{ GetSetDef::find_in(o.type()->tp_getsets, i) }; def && def->get)
-		{
-			return def->get(o, def);
-		}
-		return nullptr;
-	};
-	
-	t.tp_setattr = (setattrfunc)[](OBJECT o, cstring i, OBJECT v) -> Err
-	{
-		if (auto def{ GetSetDef::find_in(o.type()->tp_getsets, i) }; def && def->set)
-		{
-			def->set(o, v, def);
-			return Err_None;
-		}
-		return Err_Unknown;
-	};
+	t.tp_getattr = (getattrfunc)_getattr_string;
+	t.tp_setattr = (setattrfunc)_setattr_string;
 };
-
-void CoreObject::_postinitialize() { Super::_postinitialize(); }
-
-bool CoreObject::_predelete() { return Super::_predelete(); }
-
-CoreObject::CoreObject(TYPE const & t) : Reference{}, ob_type{ t }
-{
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -51,16 +27,12 @@ CoreType ism::_CoreType_Type = COMPOSE(CoreType, t)
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_Type_Subclass;
 	t.tp_create = (createfunc)[]() { return TYPE::create(); };
 
-	t.tp_dictoffset = offsetof(CoreType, tp_dict);
-	t.tp_weaklistoffset = offsetof(CoreType, tp_weaklist);
-	t.tp_vectorcalloffset = offsetof(CoreType, tp_vectorcall);
-
 	t.tp_as_number = COMPOSE(AsNumber, n) {};
 	t.tp_as_sequence = COMPOSE(AsSequence, s) {};
 	t.tp_as_mapping = COMPOSE(AsMapping, m) {};
 
-	t.tp_getattr = _CoreObject_Type.tp_getattr;
-	t.tp_setattr = _CoreObject_Type.tp_setattr;
+	t.tp_getattr = (getattrfunc)_getattr_string;
+	t.tp_setattr = (setattrfunc)_setattr_string;
 
 	t.tp_compare = (cmpfunc)[](TYPE self, OBJECT v)
 	{
@@ -83,27 +55,27 @@ CoreType ism::_CoreType_Type = COMPOSE(CoreType, t)
 		
 		GetSetDef{ "__name__",
 			(getter)[](TYPE o, auto) { return STR::create(o->tp_name); },
-			(setter)[](TYPE o, STR v, auto) { o->tp_name = ***v; return Err_None; },
+			(setter)[](TYPE o, STR v, auto) { o->tp_name = ***v; return Error_None; },
 		},
 		GetSetDef{ "__qualname__",
 			(getter)[](TYPE o, auto) { return nullptr; },
-			(setter)[](TYPE o, OBJECT v, auto) { return Err_None; },
+			(setter)[](TYPE o, OBJECT v, auto) { return Error_None; },
 		},
 		GetSetDef{ "__bases__",
 			(getter)[](TYPE o, auto) { return o->tp_bases; },
-			(setter)[](TYPE o, OBJECT v, auto) { o->tp_bases = v; return Err_None; },
+			(setter)[](TYPE o, OBJECT v, auto) { return (o->tp_bases = v), Error_None; },
 		},
 		GetSetDef{ "__module__",
 			(getter)[](TYPE o, auto) { return o->tp_dict["__module__"]; },
-			(setter)[](TYPE o, OBJECT v, auto) { o->tp_dict["__module__"] = v; return Err_None; },
+			(setter)[](TYPE o, OBJECT v, auto) { return (o->tp_dict["__module__"] = v), Error_None; },
 		},
 		GetSetDef{ "__abstractmethods__",
 			(getter)[](TYPE o, auto) { return o->tp_dict["__abstractmethods__"]; },
-			(setter)[](TYPE o, OBJECT v, auto) { o->tp_dict["__abstractmethods__"] = v; return Err_None; },
+			(setter)[](TYPE o, OBJECT v, auto) { return (o->tp_dict["__abstractmethods__"] = v), Error_None; },
 		},
 		GetSetDef{ "__doc__",
 			(getter)[](TYPE o, auto) { return STR::create(o->tp_doc); },
-			(setter)[](TYPE o, STR v, auto) { o->tp_doc = ***v; return Err_None; },
+			(setter)[](TYPE o, STR v, auto) { return (o->tp_doc = ***v), Error_None; },
 		},
 		GetSetDef{ "__text_signature__",
 			(getter)[](TYPE o, auto) { return nullptr; },

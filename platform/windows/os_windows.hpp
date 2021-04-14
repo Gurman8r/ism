@@ -78,11 +78,11 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	public:
-		virtual Err open_dynamic_library(String const & path, void *& instance) override;
+		virtual Error open_dynamic_library(String const & path, void *& instance) override;
 		
-		virtual Err close_dynamic_library(void * instance) override;
+		virtual Error close_dynamic_library(void * instance) override;
 		
-		virtual Err get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) override;
+		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -96,7 +96,7 @@ namespace ism
 		
 		virtual String get_stdin_string(bool block = true) override;
 		
-		virtual Err set_cwd(String const & path) override;
+		virtual Error set_cwd(String const & path) override;
 		
 		NODISCARD virtual String get_name() const override;
 

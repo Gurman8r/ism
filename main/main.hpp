@@ -14,7 +14,7 @@ namespace ism
 		static int32_t	g_iterating;
 
 	public:
-		static Err setup(cstring exepath, int32_t argc, char * argv[]);
+		static Error setup(cstring exepath, int32_t argc, char * argv[]);
 
 		static bool start();
 

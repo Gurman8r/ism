@@ -45,26 +45,26 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Err OS_Windows::open_dynamic_library(String const & path, void *& instance)
+	Error OS_Windows::open_dynamic_library(String const & path, void *& instance)
 	{
-		if (path.empty()) { return Err_Unknown; }
+		if (path.empty()) { return Error_Unknown; }
 		instance = LoadLibraryA(path.c_str());
-		if (!instance) { return Err_Unknown; }
-		return Err_None;
+		if (!instance) { return Error_Unknown; }
+		return Error_None;
 	}
 
-	Err OS_Windows::close_dynamic_library(void * instance)
+	Error OS_Windows::close_dynamic_library(void * instance)
 	{
 		FreeLibrary((HMODULE)instance);
-		return Err_None;
+		return Error_None;
 	}
 
-	Err OS_Windows::get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional)
+	Error OS_Windows::get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional)
 	{
-		if (!instance || name.empty()) { return Err_Unknown; }
+		if (!instance || name.empty()) { return Error_Unknown; }
 		symbol = GetProcAddress((HMODULE)instance, name.c_str());
-		if (!symbol && !is_optional) { return Err_Unknown; }
-		return Err_None;
+		if (!symbol && !is_optional) { return Error_Unknown; }
+		return Error_None;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -101,9 +101,9 @@ namespace ism
 		return String{};
 	}
 
-	Err OS_Windows::set_cwd(String const & path)
+	Error OS_Windows::set_cwd(String const & path)
 	{
-		return Err_Unknown;
+		return Error_Unknown;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

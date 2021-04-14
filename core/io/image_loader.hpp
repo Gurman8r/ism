@@ -8,7 +8,7 @@ namespace ism
 	class ISM_API ImageLoader
 	{
 	public:
-		static Err load_image(Ref<Image> image, String const & path, bool flip_vertically = true, int32_t req_comp = 4);
+		static Error load_image(Ref<Image> image, String const & path, bool flip_vertically = true, int32_t req_comp = 4);
 	};
 }
 

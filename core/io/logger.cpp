@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Logger::log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Err type)
+	void Logger::log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Error type)
 	{
 		cstring err_type;
 		switch (type)

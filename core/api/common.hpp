@@ -74,7 +74,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Policy> struct Accessor;
+	template <class Policy> class Accessor;
 	namespace accessor_policies
 	{
 		template <class I> struct Attr;
@@ -187,13 +187,13 @@ namespace ism
 	ALIAS(lenfunc)			StdFn<ssize_t(OBJECT o)>;
 
 	ALIAS(getattrfunc)		StdFn<OBJECT(OBJECT self, cstring name)>;
-	ALIAS(setattrfunc)		StdFn<Err(OBJECT self, cstring name, OBJECT value)>;
+	ALIAS(setattrfunc)		StdFn<Error(OBJECT self, cstring name, OBJECT value)>;
 
 	ALIAS(getattrofunc)		StdFn<OBJECT(OBJECT o, OBJECT name)>;
-	ALIAS(setattrofunc)		StdFn<Err(OBJECT o, OBJECT name, OBJECT value)>;
+	ALIAS(setattrofunc)		StdFn<Error(OBJECT o, OBJECT name, OBJECT value)>;
 
 	ALIAS(descrgetfunc)		StdFn<OBJECT(OBJECT, OBJECT, OBJECT)>;
-	ALIAS(descrsetfunc)		StdFn<Err(OBJECT, OBJECT, OBJECT)>;
+	ALIAS(descrsetfunc)		StdFn<Error(OBJECT, OBJECT, OBJECT)>;
 
 	ALIAS(cmpfunc)			StdFn<int32_t(OBJECT a, OBJECT b)>;
 	ALIAS(hashfunc)			StdFn<hash_t(OBJECT o)>;
@@ -201,14 +201,14 @@ namespace ism
 
 	ALIAS(allocfunc)		StdFn<void * (size_t size)>;
 	ALIAS(freefunc)			StdFn<void(void * ptr)>;
-	ALIAS(initproc)			StdFn<Err(OBJECT self, OBJECT args)>;
+	ALIAS(initproc)			StdFn<Error(OBJECT self, OBJECT args)>;
 	ALIAS(createfunc)		StdFn<OBJECT()>;
 
 	ALIAS(cfunction)		StdFn<OBJECT(OBJECT self, OBJECT args)>;
 	ALIAS(vectorcallfunc)	StdFn<OBJECT(OBJECT callable, OBJECT const * args, size_t nargs)>;
 
 	ALIAS(getter)			StdFn<OBJECT(OBJECT self, void * context)>;
-	ALIAS(setter)			StdFn<Err(OBJECT self, OBJECT value, void * context)>;
+	ALIAS(setter)			StdFn<Error(OBJECT self, OBJECT value, void * context)>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -271,25 +271,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class NODISCARD MethodDef
+	struct NODISCARD MethodDef
 	{
-	public:
 		String		name{};
 		cfunction	method{};
 		int32_t		flags{ MethodFlags_None };
 		String		doc{};
-
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(MethodDef);
-
-		template <class V> static auto find_in(V & v, String const & i) -> MethodDef *
-		{
-			if (auto it{ std::find_if(v.begin(), v.end(), [&i
-			](MethodDef const & e) { return e.name == i; }) }
-			; it != v.end()) {
-				return std::addressof(*it);
-			}
-			return nullptr;
-		}
 	};
 
 	template <> struct ism::Hash<MethodDef>
@@ -313,26 +300,13 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class NODISCARD GetSetDef
+	struct NODISCARD GetSetDef
 	{
-	public:
 		String name{};
 		getter get{};
 		setter set{};
 		void * closure{};
 		String doc{};
-
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(GetSetDef);
-
-		template <class V> static auto find_in(V & v, String const & i) -> GetSetDef *
-		{
-			if (auto it{ std::find_if(v.begin(), v.end(), [&i
-			](GetSetDef const & e) { return e.name == i; }) }
-			; it != v.end()) {
-				return std::addressof(*it);
-			}
-			return nullptr;
-		}
 	};
 
 	template <> struct ism::Hash<GetSetDef>

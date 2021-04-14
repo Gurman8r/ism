@@ -123,11 +123,8 @@ namespace ism
 	> struct Handle : public ObjectAPI<Handle<T>>, public Ref<T>
 	{
 	public:
-		using base_type = Ref<T>;
-		using base_type::Ref;
-		using base_type::operator=;
-		using typename base_type::element_type;
-		using typename base_type::pointer;
+		using Ref<T>::Ref;
+		using Ref<T>::operator=;
 
 		NODISCARD static auto type_static() { return ism::typeof<T>(); }
 
@@ -166,7 +163,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Policy
-	> struct Accessor : public ObjectAPI<Accessor<Policy>>
+	> class Accessor : public ObjectAPI<Accessor<Policy>>
 	{
 	public:
 		using key_type = typename Policy::key_type;
@@ -175,13 +172,20 @@ namespace ism
 		Accessor(Accessor const &) = default;
 		Accessor(Accessor &&) = default;
 
-		void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT{ a }); }
-		void operator=(Accessor const & a) & { operator=(OBJECT{ a }); }
+		void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT(a)); }
+		void operator=(Accessor const & a) & { operator=(OBJECT(a)); }
 
-		template <class T> void operator=(T && v) && { Policy::set(m_obj, m_key, ism::object_or_cast(FWD(v))); }
-		template <class T> void operator=(T && v) & { get_cache() = ism::object_or_cast(FWD(v)); }
+		template <class T> auto & operator=(T && v) && {
+			Policy::set(m_obj, m_key, object_or_cast(FWD(v)));
+			return (*this);
+		}
 
-		NODISCARD auto ptr() const -> CoreObject * { return get_cache().ptr(); }
+		template <class T> auto & operator=(T && v) & {
+			get_cache() = object_or_cast(FWD(v));
+			return (*this);
+		}
+
+		NODISCARD auto ptr() const { return const_cast<CoreObject *>(get_cache().ptr()); }
 
 		template <class T
 		> NODISCARD auto cast() const -> T { return get_cache().template cast<T>(); }
@@ -238,10 +242,6 @@ namespace ism
 
 	class NODISCARD ISM_API CoreObject : public ObjectAPI<CoreObject>, public Reference
 	{
-	protected:
-		virtual void _postinitialize() override;
-		virtual bool _predelete() override;
-
 	public:
 		using base_type = Reference;
 		using self_type = CoreObject;
@@ -254,7 +254,7 @@ namespace ism
 
 	public:
 		virtual ~CoreObject() override = default;
-		explicit CoreObject(TYPE const & t);
+		explicit CoreObject(TYPE const & t) : Reference{}, ob_type{ t } {}
 		CoreObject() : self_type{ type_static() } {}
 		CoreObject(self_type const &) = default;
 		CoreObject(self_type &&) noexcept = default;
@@ -293,7 +293,7 @@ namespace ism
 	> NODISCARD TYPE typeof(T const & o) { return o.type(); }
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o) noexcept { return ism::typeof(ism::object_or_cast(FWD(o))); }
+	> NODISCARD TYPE typeof(T && o) noexcept { return ism::typeof(object_or_cast(FWD(o))); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -306,25 +306,24 @@ namespace ism
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD bool isinstance(OBJECT const & o) noexcept
 	{
-		return ism::isinstance<make_handle<T>>(o);
+		return isinstance<make_handle<T>>(o);
 	}
 
 	template <class A, class B = A
 	> NODISCARD bool isinstance(A const & o, B const & t)
 	{
-		return ism::isinstance(o, ism::isinstance<TYPE>(o) ? t : t.type());
+		return isinstance(o, isinstance<TYPE>(o) ? t : t.type());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class O = OBJECT
-	> NODISCARD OBJECT getattr(O const & o, OBJECT const & i)
+	> NODISCARD OBJECT getattr(O && o, OBJECT const & i)
 	{
 		TYPE t{ o.type() };
-		if (!ism::isinstance<STR>(i)) { return nullptr; }
-		else if (t->tp_getattro)
+		if (t->tp_getattro)
 		{
-			return t->tp_getattro(o, i);
+			return t->tp_getattro(o, STR(i));
 		}
 		else if (t->tp_getattr)
 		{
@@ -334,12 +333,12 @@ namespace ism
 	}
 
 	template <class O = OBJECT
-	> NODISCARD OBJECT getattr(O const & o, cstring i)
+	> NODISCARD OBJECT getattr(O && o, cstring i)
 	{
 		TYPE t{ o.type() };
 		if (t->tp_getattro)
 		{
-			return t->tp_getattro(o, ism::object_or_cast(i));
+			return t->tp_getattro(o, object_or_cast(i));
 		}
 		else if (t->tp_getattr)
 		{
@@ -352,7 +351,7 @@ namespace ism
 	> NODISCARD OBJECT getattr(O && o, I && i, D && defval) noexcept
 	{
 		OBJECT result{ ism::getattr(FWD(o), FWD(i)) };
-		return result ? result : ism::object_or_cast(FWD(defval));
+		return result ? result : object_or_cast(FWD(defval));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -366,34 +365,34 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class V = OBJECT
-	> Err setattr(OBJECT o, OBJECT const & i, V && v)
+	> Error setattr(OBJECT o, OBJECT const & i, V && v)
 	{
 		TYPE t{ o.type() };
-		if (!ism::isinstance<STR>(i)) { return Err_Unknown; }
+		if (!isinstance<STR>(i)) { return Error_Unknown; }
 		else if (t->tp_getattro)
 		{
-			return t->tp_setattro(o, i, ism::object_or_cast(FWD(v)));
+			return t->tp_setattro(o, i, object_or_cast(FWD(v)));
 		}
 		else if (t->tp_setattr)
 		{
-			return t->tp_setattr(o, STR(i)->c_str(), ism::object_or_cast(FWD(v)));
+			return t->tp_setattr(o, STR(i)->c_str(), object_or_cast(FWD(v)));
 		}
-		return Err_Unknown;
+		return Error_Unknown;
 	}
 
 	template <class V = OBJECT
-	> Err setattr(OBJECT o, cstring i, V && v)
+	> Error setattr(OBJECT o, cstring i, V && v)
 	{
 		TYPE t{ o.type() };
 		if (t->tp_getattro)
 		{
-			return t->tp_setattro(o, ism::object_or_cast(i), ism::object_or_cast(FWD(v)));
+			return t->tp_setattro(o, object_or_cast(i), object_or_cast(FWD(v)));
 		}
 		else if (t->tp_setattr)
 		{
-			return t->tp_setattr(o, i, ism::object_or_cast(FWD(v)));
+			return t->tp_setattr(o, i, object_or_cast(FWD(v)));
 		}
-		return Err_Unknown;
+		return Error_Unknown;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -401,42 +400,38 @@ namespace ism
 	template <class O = OBJECT, class I = OBJECT
 	> NODISCARD OBJECT getitem(O && o, I && i)
 	{
-		OBJECT index{ object_or_cast(FWD(i)) };
+		auto index{ object_or_cast(FWD(i)) };
 		if (isinstance<DICT>(o))
 		{
-			VERIFY(isinstance<STR>(index));
-			return (***DICT(o))[STR(index)];
+			return (***DICT(o))[index];
 		}
 		else if (isinstance<LIST>(o))
 		{
-			VERIFY(isinstance<INT>(index));
 			return (***LIST(o))[***INT(index)];
 		}
 		return nullptr;
 	}
 
 	template <class O = OBJECT, class I = OBJECT, class V = OBJECT
-	> Err setitem(O && o, I && i, V && v)
+	> Error setitem(O && o, I && i, V && v)
 	{
-		OBJECT index{ object_or_cast(FWD(i)) };
-		OBJECT value{ object_or_cast(FWD(v)) };
+		auto index{ object_or_cast(FWD(i)) };
+		auto value{ object_or_cast(FWD(v)) };
 		if (isinstance<DICT>(o))
 		{
-			VERIFY(isinstance<STR>(index));
-			return ((***DICT(o))[STR(index)] = value), Err_None;
+			return ((***DICT(o))[index] = value), Error_None;
 		}
 		else if (isinstance<LIST>(o))
 		{
-			VERIFY(isinstance<INT>(index));
-			return ((***LIST(o))[***INT(index)] = value), Err_None;
+			return ((***LIST(o))[***INT(index)] = value), Error_None;
 		}
-		return Err_Unknown;
+		return Error_Unknown;
 	}
-	
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD auto object_or_cast(T && o) -> decltype(FWD(o)) { return FWD(o); }
+	> NODISCARD auto object_or_cast(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD OBJECT object_or_cast(T && o);
@@ -450,11 +445,11 @@ namespace ism
 	{
 		if (value)
 		{
-			//if (ism::isinstance<INSTANCE_METHOD>(value))
+			//if (isinstance<INSTANCE_METHOD>(value))
 			//{
 			//
 			//}
-			//else if (ism::isinstance<METHOD>(value))
+			//else if (isinstance<METHOD>(value))
 			//{
 			//}
 		}
@@ -483,7 +478,7 @@ namespace ism
 	public:
 		virtual ~CoreType() override = default;
 		explicit CoreType(TYPE const & t) : base_type{ t } {}
-		CoreType() : base_type{ type_static() } {}
+		CoreType() : self_type{ type_static() } {}
 		CoreType(self_type const &) = default;
 		CoreType(self_type &&) noexcept = default;
 		CoreType & operator=(self_type const &) = default;
@@ -495,10 +490,6 @@ namespace ism
 		ssize_t					tp_basicsize;
 		int32_t					tp_flags;
 		String					tp_doc;
-
-		ssize_t					tp_dictoffset;
-		ssize_t					tp_vectorcalloffset;
-		ssize_t					tp_weaklistoffset;
 
 		Optl<AsNumber>			tp_as_number;
 		Optl<AsSequence>		tp_as_sequence;
@@ -534,31 +525,18 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class O = OBJECT> NODISCARD OBJECT * _get_dict_ptr(O const & o)
+	inline OBJECT _getattr_string(OBJECT o, cstring i)
 	{
 		TYPE t{ o.type() };
-		auto dictoffset{ t->tp_dictoffset };
-		if (dictoffset == 0) { return nullptr; }
-		VERIFY(0 < dictoffset);
-		return (OBJECT *)((char *)o.ptr() + dictoffset);
+		for (GetSetDef & e : t->tp_getsets) { if (i == e.name) { return e.get(o, &e); } }
+		return nullptr;
 	}
 
-	template <class O = OBJECT> NODISCARD OBJECT * _get_weaklist_ptr(O const & o)
+	inline Error _setattr_string(OBJECT o, cstring i, OBJECT v)
 	{
 		TYPE t{ o.type() };
-		auto weaklistoffset{ t->tp_weaklistoffset };
-		if (weaklistoffset == 0) { return nullptr; }
-		VERIFY(0 < weaklistoffset);
-		return (OBJECT *)((char *)o.ptr() + weaklistoffset);
-	}
-
-	template <class O = OBJECT> NODISCARD OBJECT * _get_vectorcall_ptr(O const & o)
-	{
-		TYPE t{ o.type() };
-		auto vectorcalloffset{ t->tp_vectorcalloffset };
-		if (vectorcalloffset == 0) { return nullptr; }
-		VERIFY(0 < vectorcalloffset);
-		return (OBJECT *)((char *)o.ptr() + vectorcalloffset);
+		for (GetSetDef & e : t->tp_getsets) { if (i == e.name) { return e.set(o, v, &e); } }
+		return Error_Unknown;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -714,7 +692,7 @@ namespace ism
 		template <class O
 		> CoreString(ObjectAPI<O> const & o) : self_type{}
 		{
-			if (ism::isinstance<STR>(o))
+			if (isinstance<STR>(o))
 			{
 				auto s{ const_cast<CoreString *>(static_cast<CoreString const *>(o.handle().ptr())) };
 				VERIFY(s);
@@ -795,14 +773,20 @@ namespace ism
 		NODISCARD auto front() const { return m_data.front(); }
 		NODISCARD auto back() const { return m_data.back(); }
 
-		template <class O = OBJECT
-		> auto append(O && o) { return m_data.emplace_back(ism::object_or_cast(FWD(o))); }
+		template <class V = OBJECT
+		> bool contains(V && v) const {
+			return end() != std::find(begin(), end(), object_or_cast(FWD(v)));
+		}
 
-		template <class O = OBJECT
-		> auto insert(size_t i, O && o) { return m_data.insert(begin() + i, ism::object_or_cast(FWD(o))); }
+		template <class V = OBJECT
+		> void append(V && v) {
+			m_data.emplace_back(object_or_cast(FWD(v)));
+		}
 
-		template <class O = OBJECT
-		> auto insert(OBJECT i, O && o) { return this->insert(i.cast<size_t>(), FWD(o)); }
+		template <class I = OBJECT, class V = OBJECT
+		> void insert(I && i, V && v) {
+			m_data.insert(begin() + (***INT(object_or_cast(FWD(i)))), object_or_cast(FWD(v)));
+		}
 
 		NODISCARD auto begin() noexcept -> iterator { return m_data.begin(); }
 		NODISCARD auto begin() const noexcept -> const_iterator { return m_data.begin(); }
@@ -858,11 +842,15 @@ namespace ism
 		NODISCARD bool empty() const noexcept { return m_data.empty(); }
 		NODISCARD auto size() const noexcept { return m_data.size(); }
 
-		template <class K = OBJECT
-		> auto find(K && k) const { return m_data.find(object_or_cast(FWD(k))); }
+		template <class I = OBJECT
+		> bool contains(I && i) const {
+			return end() != m_data.find(object_or_cast(FWD(i)));
+		}
 
-		template <class K = OBJECT
-		> bool contains(K && k) const { return this->find(FWD(k)) != end(); }
+		template <class I = OBJECT, class V = OBJECT
+		> void insert(I && i, V && v) {
+			m_data.try_emplace(object_or_cast(FWD(i)), object_or_cast(FWD(v)));
+		}
 
 		NODISCARD auto begin() noexcept -> iterator { return m_data.begin(); }
 		NODISCARD auto begin() const noexcept -> const_iterator { return m_data.begin(); }

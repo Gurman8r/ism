@@ -7,12 +7,12 @@
 
 namespace ism
 {
-	typedef enum Err_ : int32_t
+	typedef enum Error_ : int32_t
 	{
-		Err_Unknown = -1,
-		Err_None = 0,
+		Error_Unknown = -1,
+		Error_None = 0,
 	}
-	Err;
+	Error;
 }
 
 #endif // !_ISM_ERROR_HPP_

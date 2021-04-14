@@ -37,7 +37,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void OS::print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Logger::Err type)
+	void OS::print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Logger::Error type)
 	{
 		m_logger->log_error(func, file, line, desc, message, type);
 	}

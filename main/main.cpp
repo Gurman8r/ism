@@ -17,7 +17,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Err Main::setup(cstring exepath, int32_t argc, char * argv[])
+	Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 	{
 		get_os().initialize();
 
@@ -53,7 +53,7 @@ namespace ism
 
 		get_os().set_cmdline(exepath, { argv, argv + argc });
 
-		return Err_None;
+		return Error_None;
 	}
 
 	bool Main::start()

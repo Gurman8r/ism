@@ -28,12 +28,12 @@ void ism::_err_restore(void * type, void * value, void * trace)
 
 void ism::_err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType log_type)
 {
-	get_os().print_error(func, file, line, desc, "", (Logger::Err)log_type);
+	get_os().print_error(func, file, line, desc, "", (Logger::Error)log_type);
 }
 
 void ism::_err_print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType log_type)
 {
-	get_os().print_error(func, file, line, desc, message, (Logger::Err)log_type);
+	get_os().print_error(func, file, line, desc, message, (Logger::Error)log_type);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

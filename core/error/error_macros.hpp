@@ -103,9 +103,13 @@ namespace ism
 		return ((void)((!!(expr)) || (WIDE_ASSERT(message, file, line), 0))), FWD(expr);
 	}
 
+// check message
+#define CHECK_MSG(expr, msg) \
+	(ism::_ism_check)(expr, WIDE(msg), WIDE(__FILE__), (unsigned)__LINE__)
+
 // check
 #define CHECK(expr) \
-	(ism::_ism_check)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
+	CHECK_MSG(expr, TOSTR(expr))
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
