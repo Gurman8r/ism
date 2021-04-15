@@ -12,20 +12,20 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <class T
+	> ALIAS(TypeMap) HashMap<std::type_index, T>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct _API_Tag {};
-
 	template <class Derived> class ObjectAPI;
-
-	template <class T> constexpr bool is_api_v{ std::is_base_of_v<_API_Tag, intrinsic_t<T>> };
+	template <class T> constexpr bool is_object_api_v{ std::is_base_of_v<_API_Tag, intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T> struct Handle;
-	
 	template <class> constexpr bool is_handle_v{ false };
-
 	template <class T> constexpr bool is_handle_v<Handle<T>>{ true };
-
 	template <template <class> class H, class T> constexpr bool is_handle_v<H<T>>{ std::is_base_of_v<Handle<T>, H<T> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -82,6 +82,14 @@ namespace ism
 	}
 	template <class I> ALIAS(AttrAccessor) Accessor<accessor_policies::Attr<I>>;
 	template <class I> ALIAS(ItemAccessor) Accessor<accessor_policies::Item<I>>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct TypeInfo;
+	class StackFrame;
+	class InterpreterState;
+	class RuntimeState;
+	class ThreadState;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -205,62 +213,58 @@ namespace ism
 	ALIAS(createfunc)		StdFn<OBJECT()>;
 
 	ALIAS(cfunction)		StdFn<OBJECT(OBJECT self, OBJECT args)>;
-	ALIAS(vectorcallfunc)	StdFn<OBJECT(OBJECT callable, OBJECT const * args, size_t nargs)>;
+	ALIAS(vectorcallfunc)	StdFn<OBJECT(OBJECT self, OBJECT const * args, size_t nargs)>;
 
 	ALIAS(getter)			StdFn<OBJECT(OBJECT self, void * context)>;
 	ALIAS(setter)			StdFn<Error(OBJECT self, OBJECT value, void * context)>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD AsNumber final
+	struct NODISCARD NumberMethods
 	{
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(AsNumber);
+		binaryfunc	operator_add{};
+		binaryfunc	operator_subtract{};
+		binaryfunc	operator_multiply{};
+		binaryfunc	operator_divide{};
+		binaryfunc	operator_remainder{};
+		ternaryfunc	operator_power{};
+		binaryfunc	operator_lshift{};
+		binaryfunc	operator_rshift{};
+		binaryfunc	operator_and{};
+		binaryfunc	operator_xor{};
+		binaryfunc	operator_or{};
 
-		binaryfunc	operator_add;
-		binaryfunc	operator_subtract;
-		binaryfunc	operator_multiply;
-		binaryfunc	operator_divide;
-		binaryfunc	operator_remainder;
-		ternaryfunc	operator_power;
-		binaryfunc	operator_lshift;
-		binaryfunc	operator_rshift;
-		binaryfunc	operator_and;
-		binaryfunc	operator_xor;
-		binaryfunc	operator_or;
+		binaryfunc	operator_inplace_add{};
+		binaryfunc	operator_inplace_subtract{};
+		binaryfunc	operator_inplace_multiply{};
+		binaryfunc	operator_inplace_divide{};
+		binaryfunc	operator_inplace_remainder{};
+		ternaryfunc	operator_inplace_power{};
+		binaryfunc	operator_inplace_lshift{};
+		binaryfunc	operator_inplace_rshift{};
+		binaryfunc	operator_inplace_and{};
+		binaryfunc	operator_inplace_xor{};
+		binaryfunc	operator_inplace_or{};
 
-		binaryfunc	operator_inplace_add;
-		binaryfunc	operator_inplace_subtract;
-		binaryfunc	operator_inplace_multiply;
-		binaryfunc	operator_inplace_divide;
-		binaryfunc	operator_inplace_remainder;
-		ternaryfunc	operator_inplace_power;
-		binaryfunc	operator_inplace_lshift;
-		binaryfunc	operator_inplace_rshift;
-		binaryfunc	operator_inplace_and;
-		binaryfunc	operator_inplace_xor;
-		binaryfunc	operator_inplace_or;
-
-		unaryfunc	operator_positive;
-		unaryfunc	operator_negative;
-		unaryfunc	operator_absolute;
-		inquiry		operator_bool;
-		unaryfunc	operator_invert;
-		unaryfunc	operator_integer;
-		unaryfunc	operator_decimal;
+		unaryfunc	operator_positive{};
+		unaryfunc	operator_negative{};
+		unaryfunc	operator_absolute{};
+		inquiry		operator_bool{};
+		unaryfunc	operator_invert{};
+		unaryfunc	operator_integer{};
+		unaryfunc	operator_decimal{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD AsSequence final
+	struct NODISCARD SequenceMethods
 	{
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(AsSequence);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD AsMapping final
+	struct NODISCARD MappingMethods
 	{
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(AsMapping);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

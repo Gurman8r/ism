@@ -1,5 +1,5 @@
 #include <core/api/types.hpp>
-#include <core/api/runtime.hpp>
+#include <core/api/internals.hpp>
 
 using namespace ism;
 
@@ -13,8 +13,8 @@ CoreType ism::_CoreObject_Type = COMPOSE(CoreType, t)
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_create = (createfunc)[]() { FATAL("constructor not implemented"); return nullptr; };
 
-	t.tp_getattr = (getattrfunc)_getattr_string;
-	t.tp_setattr = (setattrfunc)_setattr_string;
+	t.tp_getattr = (getattrfunc)_get_attr_string;
+	t.tp_setattr = (setattrfunc)_set_attr_string;
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -27,12 +27,16 @@ CoreType ism::_CoreType_Type = COMPOSE(CoreType, t)
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_Type_Subclass;
 	t.tp_create = (createfunc)[]() { return TYPE::create(); };
 
-	t.tp_as_number = COMPOSE(AsNumber, n) {};
-	t.tp_as_sequence = COMPOSE(AsSequence, s) {};
-	t.tp_as_mapping = COMPOSE(AsMapping, m) {};
+	t.tp_dictoffset = offsetof(CoreType, tp_dict);
+	t.tp_weaklistoffset = offsetof(CoreType, tp_weaklist);
+	t.tp_vectorcalloffset = offsetof(CoreType, tp_vectorcall);
 
-	t.tp_getattr = (getattrfunc)_getattr_string;
-	t.tp_setattr = (setattrfunc)_setattr_string;
+	t.tp_as_number = COMPOSE(NumberMethods, n) {};
+	t.tp_as_sequence = COMPOSE(SequenceMethods, s) {};
+	t.tp_as_mapping = COMPOSE(MappingMethods, m) {};
+
+	t.tp_getattr = (getattrfunc)_get_attr_string;
+	t.tp_setattr = (setattrfunc)_set_attr_string;
 
 	t.tp_compare = (cmpfunc)[](TYPE self, OBJECT v)
 	{
@@ -113,7 +117,7 @@ CoreType ism::_CoreType_Type = COMPOSE(CoreType, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-CoreType ism::_CoreNull_Type = COMPOSE(CoreType, t)
+CoreType ism::_CoreNone_Type = COMPOSE(CoreType, t)
 {
 	t.tp_rtti = &typeid(CoreObject);
 	t.tp_name = "none";
@@ -123,7 +127,7 @@ CoreType ism::_CoreNull_Type = COMPOSE(CoreType, t)
 	t.tp_doc = "";
 };
 
-CoreObject ism::_Core_Null{ CoreNull_Type };
+CoreObject ism::_Core_None{ CoreNone_Type };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -132,7 +136,7 @@ CoreType ism::_CoreBool_Type = COMPOSE(CoreType, t)
 	t.tp_name = "bool";
 	t.tp_basicsize = sizeof(CoreInt);
 	t.tp_base = INT::type_static();
-	t.tp_as_number = COMPOSE(AsNumber, m) {};
+	t.tp_as_number = COMPOSE(NumberMethods, m) {};
 };
 
 CoreInt ism::_Core_True = COMPOSE(CoreInt, v)
@@ -159,7 +163,7 @@ CoreType ism::_CoreInt_Type = COMPOSE(CoreType, t)
 	t.tp_compare = (cmpfunc)[](INT o, OBJECT v)
 	{
 		if (isinstance<INT>(v)) return util::compare(***o, ***INT(v));
-		else return util::compare(o.ptr(), v.ptr());
+		return util::compare(o.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](INT o) { return Hash<ssize_t>()(***o); };
 	t.tp_len = (lenfunc)[](auto) { return -1; };
@@ -179,7 +183,7 @@ CoreType ism::_CoreFloat_Type = COMPOSE(CoreType, t)
 	t.tp_compare = (cmpfunc)[](FLT o, OBJECT v)
 	{
 		if (isinstance<FLT>(v)) return util::compare(***o, ***FLT(v));
-		else return util::compare(o.ptr(), v.ptr());
+		return util::compare(o.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](FLT o) { return Hash<double_t>()(***o); };
 	t.tp_len = (lenfunc)[](auto) { return -1; };
@@ -201,7 +205,7 @@ CoreType ism::_CoreString_Type = COMPOSE(CoreType, t)
 	{
 		if (isinstance<STR>(v)) return util::compare(***o, ***STR(v));
 		else if (STR str{ v.str() }) return util::compare(***o, ***str);
-		else return util::compare(o.ptr(), v.ptr());
+		return util::compare(o.ptr(), v.ptr());
 	};
 	t.tp_hash = (hashfunc)[](STR o) { return hashof(***o); };
 	t.tp_len = (lenfunc)[](STR o) { return o->size(); };
@@ -222,7 +226,7 @@ CoreType ism::_CoreList_Type = COMPOSE(CoreType, t)
 	t.tp_compare = (cmpfunc)[](LIST o, OBJECT v)
 	{
 		if (isinstance<LIST>(v)) return util::compare(***o, ***LIST(v));
-		else return util::compare(o.ptr(), v.ptr());
+		return util::compare(o.ptr(), v.ptr());
 	};
 	t.tp_len = (lenfunc)[](LIST o) { return o->size(); };
 

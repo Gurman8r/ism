@@ -1,5 +1,5 @@
-#ifndef _ISM_BIND_HPP_
-#define _ISM_BIND_HPP_
+#ifndef _ISM_MODSUPPORT_HPP_
+#define _ISM_MODSUPPORT_HPP_
 
 #include <core/api/init.hpp>
 
@@ -17,9 +17,7 @@ namespace ism
 
 	public:
 		virtual ~CoreCppFunction() override = default;
-		
 		CoreCppFunction() : base_type{} {}
-		
 		CoreCppFunction(nullptr_t) : base_type{} {}
 
 		template <class R, class ... Args, class ... Extra
@@ -37,33 +35,25 @@ namespace ism
 		template <class R, class C, class ... Args, class ... Extra
 		> CoreCppFunction(R(C:: * f)(Args...), Extra && ... extra)
 		{
-			this->initialize([f](C * c, Args ... args) -> R {
-				return (c->*f)(FWD(args)...);
-			}, (R(*)(C *, Args...))nullptr, FWD(extra)...);
+			this->initialize([f](C * c, Args ... args) -> R { return (c->*f)(args...); }, (R(*)(C *, Args...))nullptr, FWD(extra)...);
 		}
 
 		template <class R, class C, class ... Args, class ... Extra
 		> CoreCppFunction(R(C:: * f)(Args...) &, Extra && ... extra)
 		{
-			this->initialize([f](C * c, Args ... args) -> R {
-				return (c->*f)(FWD(args)...);
-			}, (R(*)(C *, Args...))nullptr, FWD(extra)...);
+			this->initialize([f](C * c, Args ... args) -> R { return (c->*f)(args...); }, (R(*)(C *, Args...))nullptr, FWD(extra)...);
 		}
 
 		template <class R, class C, class ... Args, class ... Extra
 		> CoreCppFunction(R(C:: * f)(Args...) const, Extra && ... extra)
 		{
-			this->initialize([f](C const * c, Args ... args) -> R {
-				return (c->*f)(FWD(args)...);
-			}, (R(*)(C const *, Args...))nullptr, FWD(extra)...);
+			this->initialize([f](C const * c, Args ... args) -> R { return (c->*f)(args...); }, (R(*)(C const *, Args...))nullptr, FWD(extra)...);
 		}
 
 		template <class R, class C, class ... Args, class ... Extra
 		> CoreCppFunction(R(C:: * f)(Args...) const &, Extra && ... extra)
 		{
-			this->initialize([f](C const * c, Args ... args) -> R {
-				return (c->*f)(FWD(args)...);
-			}, (R(*)(C const *, Args...))nullptr, FWD(extra)...);
+			this->initialize([f](C const * c, Args ... args) -> R { return (c->*f)(args...); }, (R(*)(C const *, Args...))nullptr, FWD(extra)...);
 		}
 
 		NODISCARD OBJECT name() const { return attr("__name__"); }
@@ -90,7 +80,6 @@ namespace ism
 			else
 			{
 				rec->data[0] = memnew(Capture{ FWD(f) });
-
 				rec->free_data = [](FunctionRecord * r) { memdelete((Capture *)r->data[0]); };
 			}
 
@@ -173,23 +162,8 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct ModuleDef
-	{
-		cstring name, doc;
-
-		ssize_t size;
-
-		Vector<MethodDef> methods;
-
-		inquiry clear;
-
-		freefunc free;
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	ISM_API_DATA(CoreType)	_CoreModule_Type;
-#define CoreModule_Type		(ism::TYPE{ &_CoreModule_Type })
+#define CoreModule_Type		(ism::TYPE(&ism::_CoreModule_Type))
 
 	class NODISCARD ISM_API CoreModule : public CoreObject
 	{
@@ -199,34 +173,29 @@ namespace ism
 
 		NODISCARD static auto type_static() { return CoreModule_Type; }
 
-		struct storage_type
-		{
-			DICT	dict;
-			STR		name;
-			void *	state;
-		}
-		m_data;
+		DICT		m_dict{};
+		STR			m_name{};
+		STR			m_doc{};
+		inquiry		m_clear{};
+		freefunc	m_free{};
 
 	public:
 		virtual ~CoreModule() override = default;
-		CoreModule() : base_type{ type_static() }, m_data{} {}
-		CoreModule(storage_type const & v) : base_type{ type_static() }, m_data{ v } {}
-		CoreModule(storage_type && v) noexcept : base_type{ type_static() }, m_data{ std::move(v) } {}
+		CoreModule() : base_type{ type_static() } {}
 		CoreModule(self_type const &) = default;
 		CoreModule(self_type &&) noexcept = default;
 		self_type & operator=(self_type const &) = default;
 		self_type & operator=(self_type &&) noexcept = default;
 
-		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
-		NODISCARD auto operator->() const { return const_cast<storage_type *>(&m_data); }
-
 		template <class O
-		> CoreModule(ObjectAPI<O> const & o) : self_type{}
+		> CoreModule(Handle<O> const & o) : self_type{}
 		{
 		}
 
-		CoreModule(cstring name) : self_type{ storage_type{ DICT::create(), STR::create(name) } }
+		CoreModule(cstring name) : self_type{}
 		{
+			m_dict = DICT::create();
+			m_name = STR::create(name);
 		}
 
 		template <class F, class ... Extra
@@ -236,7 +205,7 @@ namespace ism
 				FWD(f),
 				_Name{ name },
 				_Scope{ handle() },
-				_Sibling{ ism::getattr(handle(), name, nullptr) },
+				_Sibling{ getattr(handle(), name, nullptr) },
 				FWD(extra)...) };
 
 			add_object(name, func, true);
@@ -257,8 +226,8 @@ namespace ism
 		> void add_object(Name && name, O && value, bool overwrite = false)
 		{
 			auto i{ object_or_cast(FWD(name)) };
-			if (m_data.dict->contains(i) && !overwrite) { return; }
-			m_data.dict->insert(std::move(i), object_or_cast(FWD(value)));
+			if (m_dict->contains(i) && !overwrite) { return; }
+			m_dict->insert(std::move(i), object_or_cast(FWD(value)));
 		}
 	};
 
@@ -266,24 +235,24 @@ namespace ism
 
 	inline MODULE create_extension_module(cstring name)
 	{
-		auto & d{ ***(get_interpstate()->modules) };
+		DICT d{ get_interpreter()->modules };
 		auto i{ object_or_cast(name) };
-		if (d.find(i) != d.end()) { return nullptr; }
-		return d.try_emplace(std::move(i), MODULE::create(name)).first->second;
+		if (d->contains(i)) { return nullptr; }
+		return MODULE(d[i] = MODULE::create(name));
 	}
 
-	inline MODULE import_module(cstring name)
+	inline MODULE import(cstring name)
 	{
-		auto & d{ ***(get_interpstate()->modules) };
+		DICT d{ get_interpreter()->modules };
 		auto i{ object_or_cast(name) };
-		if (auto it{ d.find(i) }; it != d.end()) { return it->second; }
-		return nullptr;
+		if (!d->contains(i)) { return nullptr; }
+		return MODULE(d[i]);
 	}
 
 	inline DICT globals()
 	{
-		if (auto frame{ get_framestate() }; frame) { return CHECK(frame->globals); }
-		return import_module("__main__").attr("__dict__");
+		if (auto frame{ get_frame() }; frame) { return CHECK(frame->globals); }
+		return import("__main__").attr("__dict__");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -452,4 +421,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_BIND_HPP_
+#endif // !_ISM_MODSUPPORT_HPP_

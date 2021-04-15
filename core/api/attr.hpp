@@ -7,13 +7,31 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct _Doc { cstring value; };
-
-	struct _Name { cstring value; };
+	struct _IsMethod { OBJECT class_; };
+	
+	struct _IsOperator {};
+	
+	struct _IsFinal {};
 
 	struct _Scope { OBJECT value; };
-
+	
+	struct _Doc { cstring value; };
+	
+	struct _Name { cstring value; };
+	
 	struct _Sibling { OBJECT value; };
+
+	struct _MultipleInheritance {};
+	
+	struct _DynamicAttr {};
+	
+	struct _MetaClass { OBJECT value; };
+
+	struct _ModuleLocal { bool const value; };
+
+	struct _Arithmetic {};
+
+	struct _Prepend {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

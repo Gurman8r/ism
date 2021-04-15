@@ -1,9 +1,7 @@
 #include <main/main.hpp>
-#include <core/error/error_macros.hpp>
 #include <core/os/main_loop.hpp>
+#include <core/api/internals.hpp>
 #include <core/register_core_types.hpp>
-
-#include <core/api/bind.hpp>
 
 namespace ism
 {

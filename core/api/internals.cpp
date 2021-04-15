@@ -1,15 +1,15 @@
-#include <core/api/runtime.hpp>
-#include <core/api/bind.hpp>
+#include <core/api/internals.hpp>
+#include <core/api/modsupport.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-FrameState::FrameState()
+StackFrame::StackFrame()
 {
 }
 
-FrameState::~FrameState()
+StackFrame::~StackFrame()
 {
 }
 
@@ -18,7 +18,7 @@ FrameState::~FrameState()
 ThreadState::ThreadState(InterpreterState * interp) : interp{ interp }
 {
 	thread_id = std::this_thread::get_id();
-	id = ++interp->tstate_next_id;
+	VERIFY(-1 < (id = ++interp->tstate_next_id));
 	prev = interp->tstate_head;
 	if (prev) { prev->next = this; }
 	interp->tstate_head = this;
@@ -37,8 +37,7 @@ ThreadState::~ThreadState()
 InterpreterState::InterpreterState(RuntimeState * runtime) : runtime{ runtime }
 {
 	thread_id = std::this_thread::get_id();
-	id = ++runtime->interpreters.next_id;
-	VERIFY(-1 < id);
+	VERIFY(-1 < (id = ++runtime->interpreters.next_id));
 	prev = runtime->interpreters.head;
 	if (prev) { prev->next = this; }
 	runtime->interpreters.head = this;

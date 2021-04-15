@@ -109,7 +109,7 @@ namespace ism
 
 // check
 #define CHECK(expr) \
-	CHECK_MSG(expr, TOSTR(expr))
+	(ism::_ism_check)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

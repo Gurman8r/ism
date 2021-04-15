@@ -1,5 +1,5 @@
-#ifndef _ISM_RUNTIME_HPP_
-#define _ISM_RUNTIME_HPP_
+#ifndef _ISM_INTERNALS_HPP_
+#define _ISM_INTERNALS_HPP_
 
 #include <core/api/types.hpp>
 
@@ -7,17 +7,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace core {}
-
-	class FrameState;
-	class InterpreterState;
-	class RuntimeState;
-	class ThreadState;
-
-	template <class T
-	> ALIAS(TypeMap) HashMap<std::type_index, T>;
-
-	struct TypeInfo
+	struct NODISCARD TypeInfo
 	{
 		TYPE type;
 
@@ -30,20 +20,20 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API FrameState
+	class NODISCARD ISM_API StackFrame
 	{
 	public:
-		FrameState();
-		~FrameState();
+		StackFrame();
+		~StackFrame();
 
-		FrameState * back{};
+		StackFrame * back{};
 
 		DICT builtins{}, globals{}, locals{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API ThreadState
+	class NODISCARD ISM_API ThreadState
 	{
 	public:
 		ThreadState(InterpreterState * interp);
@@ -53,16 +43,16 @@ namespace ism
 
 		InterpreterState * interp{};
 
-		FrameState * frame{};
+		StackFrame * frame{};
 
-		uint64_t id{};
+		int64_t id{};
 
 		std::thread::id thread_id{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API InterpreterState
+	class NODISCARD ISM_API InterpreterState
 	{
 	public:
 		InterpreterState(RuntimeState * runtime);
@@ -79,19 +69,19 @@ namespace ism
 		bool finalizing{};
 
 		DICT dict{}, builtins{}, modules{}, importlib{};
-		OBJECT import_func;
+		OBJECT import_func{};
 
 		void(*exitfunc)(OBJECT) {};
 		OBJECT exitmodule{};
 
-		uint64_t tstate_next_id{};
+		int64_t tstate_next_id{ -1 };
 
 		std::thread::id thread_id{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API RuntimeState
+	class NODISCARD ISM_API RuntimeState
 	{
 	private:
 		static RuntimeState * singleton;
@@ -108,7 +98,6 @@ namespace ism
 		struct _interpreters
 		{
 			InterpreterState * head{}, * main{};
-			
 			int64_t next_id{ -1 };
 		}
 		interpreters;
@@ -123,9 +112,7 @@ namespace ism
 		registry;
 
 		std::thread::id main_thread{};
-
 		Vector<void(*)()> exitfuncs{};
-
 		ThreadState * tstate_current{};
 	};
 
@@ -134,14 +121,15 @@ namespace ism
 	NODISCARD inline auto get_runtime() -> RuntimeState * { return RuntimeState::singleton; }
 	NODISCARD inline void set_runtime(RuntimeState * value) { RuntimeState::singleton = value; }
 
-	NODISCARD inline auto get_threadstate() { return get_runtime()->tstate_current; }
-	NODISCARD inline auto get_interpstate() { return get_threadstate()->interp; }
-	NODISCARD inline auto get_framestate() { return get_threadstate()->frame; }
+	NODISCARD inline auto get_registry() -> auto & { return get_runtime()->registry; }
+	NODISCARD inline auto get_thread_state() { return get_runtime()->tstate_current; }
+	NODISCARD inline auto get_interpreter() { return get_thread_state()->interp; }
+	NODISCARD inline auto get_frame() { return get_thread_state()->frame; }
 
 	NODISCARD inline auto get_head_interpreter() { return get_runtime()->interpreters.head; }
 	NODISCARD inline auto get_main_interpreter() { return get_runtime()->interpreters.main; }
 	inline void set_main_interpreter(InterpreterState * value) { get_runtime()->interpreters.main = value; }
-	
+
 	NODISCARD inline auto lookup_interpreter(int64_t id) -> InterpreterState *
 	{
 		if (id < 0) { return nullptr; }
@@ -155,7 +143,7 @@ namespace ism
 	template <class K = String
 	> NODISCARD void * get_shared_data(K && key) noexcept
 	{
-		auto & shared_data{ get_runtime()->registry.shared_data };
+		auto & shared_data{ get_registry().shared_data };
 		auto it{ shared_data.find(FWD(key)) };
 		return (it != shared_data.end()) ? it->second : nullptr;
 	}
@@ -163,20 +151,18 @@ namespace ism
 	template <class K = String
 	> void * set_shared_data(K && key, void * value) noexcept
 	{
-		auto & shared_data{ get_runtime()->registry.shared_data };
+		auto & shared_data{ get_registry().shared_data };
 		return shared_data.insert_or_assign(FWD(key), value).first->second;
 	}
 
 	template <class T, class K, class Fn
 	> NODISCARD T & get_or_create_shared_data(K && key, Fn && fn) noexcept
 	{
-		auto & shared_data{ get_runtime()->registry.shared_data };
+		auto & shared_data{ get_registry().shared_data };
 		if (auto it{ shared_data.find(FWD(key)) }; it != shared_data.end()) {
 			return *static_cast<T *>(it->second);
 		}
-		else {
-			return *static_cast<T *>(shared_data.insert({ FWD(key), std::invoke(FWD(fn)) }).first->second);
-		}
+		return *static_cast<T *>(shared_data.insert({ FWD(key), std::invoke(FWD(fn)) }).first->second);
 	}
 
 	template <class T, class K = String
@@ -188,4 +174,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_RUNTIME_HPP_
+#endif // !_ISM_INTERNALS_HPP_

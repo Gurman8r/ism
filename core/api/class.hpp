@@ -3,14 +3,11 @@
 
 #include <core/api/attr.hpp>
 
-namespace ism
+namespace ism::detail
 {
-	namespace detail
+	inline String get_fully_qualified_tp_name(TYPE const & t)
 	{
-		inline String get_fully_qualified_tp_name(TYPE const & t)
-		{
-			return "";
-		}
+		return "";
 	}
 }
 
