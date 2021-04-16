@@ -46,8 +46,8 @@ namespace ism
 	//class CoreProperty;
 
 	class CoreCppFunction;
-	class CoreGeneric;
 	class CoreModule;
+	class CoreGeneric;
 
 	template <class T> constexpr bool is_core_object_v{ std::is_base_of_v<CoreObject, intrinsic_t<T>> };
 
@@ -69,8 +69,8 @@ namespace ism
 	//ALIAS(PROPERTY)			Handle<CoreProperty>;
 
 	ALIAS(CPP_FUNCTION)		Handle<CoreCppFunction>;
-	ALIAS(GENERIC)			Handle<CoreGeneric>;
 	ALIAS(MODULE)			Handle<CoreModule>;
+	ALIAS(GENERIC)			Handle<CoreGeneric>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -192,19 +192,17 @@ namespace ism
 	ALIAS(binaryfunc)		StdFn<OBJECT(OBJECT a, OBJECT b)>;
 	ALIAS(ternaryfunc)		StdFn<OBJECT(OBJECT a, OBJECT b, OBJECT c)>;
 	ALIAS(inquiry)			StdFn<bool(OBJECT o)>;
-	ALIAS(lenfunc)			StdFn<ssize_t(OBJECT o)>;
 
 	ALIAS(getattrfunc)		StdFn<OBJECT(OBJECT self, cstring name)>;
 	ALIAS(setattrfunc)		StdFn<Error(OBJECT self, cstring name, OBJECT value)>;
-
-	ALIAS(getattrofunc)		StdFn<OBJECT(OBJECT o, OBJECT name)>;
-	ALIAS(setattrofunc)		StdFn<Error(OBJECT o, OBJECT name, OBJECT value)>;
-
+	ALIAS(getattrofunc)		StdFn<OBJECT(OBJECT self, OBJECT name)>;
+	ALIAS(setattrofunc)		StdFn<Error(OBJECT self, OBJECT name, OBJECT value)>;
 	ALIAS(descrgetfunc)		StdFn<OBJECT(OBJECT, OBJECT, OBJECT)>;
 	ALIAS(descrsetfunc)		StdFn<Error(OBJECT, OBJECT, OBJECT)>;
 
 	ALIAS(cmpfunc)			StdFn<int32_t(OBJECT a, OBJECT b)>;
 	ALIAS(hashfunc)			StdFn<hash_t(OBJECT o)>;
+	ALIAS(lenfunc)			StdFn<ssize_t(OBJECT o)>;
 	ALIAS(reprfunc)			StdFn<STR(OBJECT o)>;
 
 	ALIAS(allocfunc)		StdFn<void * (size_t size)>;
@@ -285,7 +283,7 @@ namespace ism
 
 	template <> struct ism::Hash<MethodDef>
 	{
-		hash_t operator()(MethodDef const & a) const { return hashof(a.name); }
+		hash_t operator()(MethodDef const & a) const { return hash(a.name); }
 	};
 
 	template <> struct ism::EqualTo<MethodDef>
@@ -315,7 +313,7 @@ namespace ism
 
 	template <> struct ism::Hash<GetSetDef>
 	{
-		hash_t operator()(GetSetDef const & a) const { return hashof(a.name); }
+		hash_t operator()(GetSetDef const & a) const { return hash(a.name); }
 	};
 
 	template <> struct ism::EqualTo<GetSetDef>

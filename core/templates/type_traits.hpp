@@ -223,50 +223,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class itype, class SFINAE = void
-	> struct polymorphic_type_hook_base
-	{
-		static void const * get(itype const * src, std::type_info const *&) { return src; }
-	};
-
-	template <class itype
-	> struct polymorphic_type_hook_base<itype, std::enable_if_t<std::is_polymorphic_v<itype>>>
-	{
-		static void const * get(itype const * src, std::type_info const *& type) {
-			type = src ? &typeid(*src) : nullptr;
-			return dynamic_cast<void const *>(src);
-		}
-	};
-
-	template <class itype, class SFINAE = void
-	> struct polymorphic_type_hook : public polymorphic_type_hook_base<itype> {};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class ... Ts> struct call_guard;
-
-	template <class ... Ts> using call_guard_t = typename call_guard<Ts...>::type;
-
-	template <> struct call_guard<> { using type = void_type; };
-
-	template <class T> struct call_guard<T>
-	{
-		static_assert(std::is_default_constructible_v<T>, "The guard type must be default constructible");
-
-		using type = T;
-	};
-
-	template <class T, class ... Ts> struct call_guard<T, Ts...>
-	{
-		struct type
-		{
-			T guard{};
-			call_guard_t<Ts...> next{};
-		};
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class T, class SFINAE = void> struct has_operator_delete : std::false_type {};
 
 	template <class T, class SFINAE = void> struct has_operator_delete_size : std::false_type {};

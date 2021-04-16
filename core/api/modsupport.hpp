@@ -15,10 +15,20 @@ namespace ism
 		using self_type = CoreCppFunction;
 		using base_type::type_static;
 
+		FunctionRecord m_rec{};
+
 	public:
-		virtual ~CoreCppFunction() override = default;
 		CoreCppFunction() : base_type{} {}
 		CoreCppFunction(nullptr_t) : base_type{} {}
+		CoreCppFunction(self_type const &) = default;
+		CoreCppFunction(self_type &&) noexcept = default;
+		self_type & operator=(self_type const &) = default;
+		self_type & operator=(self_type &&) noexcept = default;
+
+		virtual ~CoreCppFunction() override
+		{
+			if (m_rec.free_data) { m_rec.free_data(&m_rec); }
+		}
 
 		template <class R, class ... Args, class ... Extra
 		> CoreCppFunction(R(*f)(Args...), Extra && ... extra)
@@ -59,98 +69,128 @@ namespace ism
 		NODISCARD OBJECT name() const { return attr("__name__"); }
 
 	protected:
-		template <class Fn, class R, class ... Args, class ... Extra
-		> void initialize(Fn && f, R(*)(Args...), Extra && ... extra)
+		template <class Fn, class Return, class ... Args, class ... Extra
+		> void initialize(Fn && f, Return(*)(Args...), Extra && ... extra)
 		{
-			constexpr size_t nargs{ sizeof...(Args) };
-
 			struct Capture { std::remove_reference_t<Fn> f; };
 
-			auto rec{ memnew(FunctionRecord) };
-
-			if (sizeof(Capture) <= sizeof(rec->data))
+			if (sizeof(Capture) <= sizeof(m_rec.data))
 			{
-				::new((Capture *)&rec->data) Capture{ FWD(f) };
+				::new((Capture *)&m_rec.data) Capture{ FWD(f) };
 
-				if (!std::is_trivially_destructible_v<Fn>)
+				if constexpr (!std::is_trivially_destructible_v<Fn>)
 				{
-					rec->free_data = [](FunctionRecord * r) { ((Capture *)&r->data)->~Capture(); };
+					m_rec.free_data = [](FunctionRecord * r)
+					{
+						((Capture *)&r->data)->~Capture();
+					};
 				}
 			}
 			else
 			{
-				rec->data[0] = memnew(Capture{ FWD(f) });
-				rec->free_data = [](FunctionRecord * r) { memdelete((Capture *)r->data[0]); };
+				m_rec.data[0] = memnew(Capture{ FWD(f) });
+
+				m_rec.free_data = [](FunctionRecord * r)
+				{
+					memdelete((Capture *)r->data[0]);
+				};
 			}
 
-			using cast_in = ArgumentLoader<Args...>;
-			using cast_out = make_caster<std::conditional_t<std::is_void_v<R>, void_type, R>>;
+			using cast_in = argument_loader<Args...>;
+			using cast_out = detail::make_caster<std::conditional_t<std::is_void_v<Return>, void_type, Return>>;
 
-			rec->impl = [](FunctionCall & call) -> OBJECT
+			m_rec.impl = [](FunctionCall & call) -> OBJECT
 			{
-				cast_in args_convt{};
-				if (!args_convt.load_args(call)) { return TRY_NEXT_OVERLOAD; }
+				cast_in args_converter{};
+				if (!args_converter.load_args(call)) { return TRY_NEXT_OVERLOAD; }
 
-				// precall
+				process_attributes<Extra...>::precall(call);
 
 				auto data{ (sizeof(Capture) <= sizeof(call.func.data) ? &call.func.data : call.func.data[0]) };
 
 				auto cap{ const_cast<Capture *>(reinterpret_cast<Capture const *>(data)) };
 
-				ReturnPolicy policy{ call.func.policy };
+				ReturnPolicy policy{ detail::return_policy_override<Return>::policy(call.func.policy) };
 
-				OBJECT result{ cast_out::cast(std::move(args_convt).template call<R>(cap->f), policy, call.parent) };
+				using Guard = extract_guard_t<Extra...>;
 
-				// postcall
+				OBJECT result{ cast_out::cast(std::move(args_converter).call<Return, Guard>(cap->f), policy, call.parent) };
+
+				process_attributes<Extra...>::postcall(call, result);
 
 				return result;
 			};
 
-			Array<std::type_info const *, nargs> types{};
-			mpl::for_types_i<Args...>([&](size_t i, auto tag) noexcept
+			if constexpr (std::is_convertible_v<Fn, Return(*)(Args...)> && sizeof(Capture) == sizeof(void *))
 			{
-				types[i] = &typeid(decltype(tag)::type);
-			});
-
-			initialize_generic(rec, "signature", types, nargs);
-		}
-
-		void initialize_generic(FunctionRecord * rec, cstring text, std::type_info const * const * types, size_t nargs)
-		{
-		}
-
-		static void destruct(FunctionRecord * rec)
-		{
-			while (rec)
-			{
-				FunctionRecord * next{ rec->next };
-				if (rec->free_data) { rec->free_data(rec); }
-				memdelete_nonzero(rec->def);
-				memdelete(rec);
-				rec = next;
+				m_rec.is_stateless = true;
+				m_rec.data[1] = const_cast<void *>(reinterpret_cast<void const *>(&typeid(Return(*)(Args...))));
 			}
-		}
 
-		static OBJECT dispatcher(CAPSULE self, LIST args_in)
-		{
-			FunctionRecord const
-				* overloads{ (FunctionRecord *)self->get_pointer() },
-				* it{ overloads };
-
-			OBJECT
-				parent{ !args_in->empty() ? args_in->front() : nullptr },
-				result{ TRY_NEXT_OVERLOAD };
-
-			for (; it != nullptr; it = it->next)
+			m_rec.nargs = sizeof...(Args);
+			m_rec.args.reserve(m_rec.nargs);
+			for (size_t i = 0; i < m_rec.nargs; ++i)
 			{
-				FunctionRecord const & func{ *it };
+				auto & arg{ m_rec.args.emplace_back(ArgumentRecord{}) };
+				arg.name = "";
+				arg.value = OBJECT{};
+				arg.convert = false;
+				arg.none = false;
+			}
+
+			m_vectorcall = [](CPP_FUNCTION self, OBJECT const * argv, size_t argc) -> OBJECT
+			{
+				OBJECT parent{ 0 < argc ? argv[0] : nullptr };
+
+				FunctionRecord const & func{ self->m_rec };
 
 				FunctionCall call{ func, parent };
 
-				result = func.impl(call);
-			}
+				size_t args_to_copy{ MIN(func.nargs, argc) }, args_copied{};
 
-			return result;
+				bool bad_arg{};
+
+				// copy arguments
+				for (; args_copied < args_to_copy; ++args_copied)
+				{
+					ArgumentRecord const * arg_rec{ args_copied < func.args.size() ? &func.args[args_copied] : nullptr };
+
+					OBJECT arg{ argv[args_copied] };
+
+					if (!arg_rec && !arg_rec->none && arg.is_none()) { bad_arg = true; break; }
+
+					call.args.push_back(arg);
+
+					call.args_convert.push_back(arg_rec ? arg_rec->convert : false);
+				}
+
+				VERIFY(!bad_arg);
+
+				// fill in missing arguments
+				if (args_copied < func.nargs)
+				{
+					for (; args_copied < args_to_copy; ++args_copied)
+					{
+						auto const & arg{ func.args[args_copied] };
+
+						OBJECT value{};
+
+						if (arg.value) { value = arg.value; }
+
+						if (!value) { break; }
+
+						call.args.push_back(value);
+
+						call.args_convert.push_back(arg.convert);
+					}
+
+					VERIFY(func.nargs <= args_copied);
+				}
+
+				OBJECT result{};
+				result = func.impl(call);
+				return result;
+			};
 		}
 	};
 
@@ -180,7 +220,6 @@ namespace ism
 		freefunc	m_free{};
 
 	public:
-		virtual ~CoreModule() override = default;
 		CoreModule() : base_type{ type_static() } {}
 		CoreModule(self_type const &) = default;
 		CoreModule(self_type &&) noexcept = default;
@@ -218,16 +257,16 @@ namespace ism
 			return nullptr;
 		}
 
-		void reload()
-		{
-		}
-
 		template <class Name = cstring, class O = OBJECT
 		> void add_object(Name && name, O && value, bool overwrite = false)
 		{
 			auto i{ object_or_cast(FWD(name)) };
 			if (m_dict->contains(i) && !overwrite) { return; }
 			m_dict->insert(std::move(i), object_or_cast(FWD(value)));
+		}
+
+		void reload()
+		{
 		}
 	};
 
@@ -241,7 +280,7 @@ namespace ism
 		return MODULE(d[i] = MODULE::create(name));
 	}
 
-	inline MODULE import(cstring name)
+	inline MODULE import_module(cstring name)
 	{
 		DICT d{ get_interpreter()->modules };
 		auto i{ object_or_cast(name) };
@@ -251,8 +290,8 @@ namespace ism
 
 	inline DICT globals()
 	{
-		if (auto frame{ get_frame() }; frame) { return CHECK(frame->globals); }
-		return import("__main__").attr("__dict__");
+		if (auto frame{ get_stack_frame() }; frame) { return CHECK(frame->globals); }
+		return import_module("__main__").attr("__dict__");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -272,7 +311,6 @@ namespace ism
 		NODISCARD static auto type_static() { return CoreType_Type; }
 
 	public:
-		virtual ~CoreGeneric() override = default;
 		explicit CoreGeneric(TYPE const & t) : base_type{ t } {}
 		CoreGeneric() : base_type{ type_static() } {}
 		CoreGeneric(self_type const &) = default;
@@ -298,8 +336,6 @@ namespace ism
 		using base_type::type_static;
 
 	public:
-		virtual ~CoreClass() override = default;
-
 		template <class ... Extra
 		> CoreClass(OBJECT scope, cstring name, Extra && ... extra) : base_type{}
 		{
@@ -417,6 +453,23 @@ namespace ism
 
 	template <class Fn, class Rv = detail::initimpl::Factory<Fn>
 	> NODISCARD auto init(Fn && fn) -> Rv { return { FWD(fn) }; }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism::detail
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	inline std::pair<decltype(RuntimeState::_registry::registered_types_core)::iterator, bool> all_type_info_get_cache(TYPE const & t)
+	{
+		auto res{ get_registry().registered_types_core.try_emplace(t) };
+		if (res.second)
+		{
+			// set up a weak reference to automatically remove it if the type gets destroyed
+		}
+		return res;
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

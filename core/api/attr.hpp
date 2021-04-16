@@ -34,39 +34,64 @@ namespace ism
 	struct _Prepend {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	template <class... Ts> struct call_guard;
+
+	template <> struct call_guard<> { using type = void_type; };
+
+	template <class T> struct call_guard<T>
+	{
+		static_assert(std::is_default_constructible<T>::value, "The guard type must be default constructible");
+
+		using type = T;
+	};
+
+	template <class T, class ... Ts> struct call_guard<T, Ts...>
+	{
+		struct type
+		{
+			T guard{}; // Compose multiple guard types with left-to-right default-constructor order
+			
+			typename call_guard<Ts...>::type next{};
+		};
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct ArgumentRecord
 	{
-		cstring name;
+		String name{};
 
-		OBJECT value;
+		OBJECT value{};
 		
-		bool convert, none;
+		bool convert{}, none{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct FunctionRecord
 	{
-		cstring name, doc, signature;
+		String name{}, doc{}, signature{};
 
-		Vector<ArgumentRecord> args;
+		Vector<ArgumentRecord> args{};
 
-		OBJECT(*impl)(FunctionCall & call);
+		StdFn<OBJECT(FunctionCall &)> impl{};
 
-		void * data[3];
+		void * data[3]{};
 
-		void(*free_data)(FunctionRecord * ptr);
+		StdFn<void(FunctionRecord *)> free_data{};
 
-		ReturnPolicy policy;
+		ReturnPolicy policy{};
 
-		uint16_t nargs;
+		bool is_constructor{}, is_stateless{}, is_operator{}, is_method{}, has_args{}, prepend{};
 
-		MethodDef * def;
+		uint16_t nargs{};
 
-		OBJECT scope, sibling;
+		MethodDef * def{};
 
-		FunctionRecord * next;
+		OBJECT scope{}, sibling{};
+
+		FunctionRecord * next{};
 	};
 
 	inline FunctionCall::FunctionCall(FunctionRecord const & f, OBJECT parent) : func{ f }, parent{ parent }
@@ -79,13 +104,13 @@ namespace ism
 
 	struct TypeRecord
 	{
-		OBJECT scope;
+		OBJECT scope{};
 
-		cstring name, doc;
+		String name{}, doc{};
 
-		std::type_info const * rtti;
+		std::type_info const * cpptype{};
 
-		size_t type_size, type_align;
+		size_t type_size{}, type_align{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -148,6 +173,14 @@ namespace ism
 			UNUSED(sink);
 		}
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T
+	> using is_call_guard = is_instantiation<call_guard, T>;
+
+	template <class ... Extra
+	> using extract_guard_t = typename exactly_one_t<is_call_guard, call_guard<>, Extra...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

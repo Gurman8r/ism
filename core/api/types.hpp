@@ -3,6 +3,62 @@
 
 #include <core/api/common.hpp>
 
+// data
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_DATA(CoreType)	_CoreObject_Type;
+#define CoreObject_Type		(ism::TYPE(&ism::_CoreObject_Type))
+
+	ISM_API_DATA(CoreType)	_CoreType_Type;
+#define CoreType_Type		(ism::TYPE(&ism::_CoreType_Type))
+
+	ISM_API_DATA(CoreType)	_CoreNone_Type;
+#define CoreNone_Type		(ism::TYPE(&ism::_CoreNone_Type))
+
+	ISM_API_DATA(CoreType)	_CoreBool_Type;
+#define CoreBool_Type		(ism::TYPE(&ism::_CoreBool_Type))
+
+	ISM_API_DATA(CoreType)	_CoreInt_Type;
+#define CoreInt_Type		(ism::TYPE(&ism::_CoreInt_Type))
+
+	ISM_API_DATA(CoreType)	_CoreFloat_Type;
+#define CoreFloat_Type		(ism::TYPE(&ism::_CoreFloat_Type))
+
+	ISM_API_DATA(CoreType)	_CoreString_Type;
+#define CoreString_Type		(ism::TYPE(&ism::_CoreString_Type))
+
+	ISM_API_DATA(CoreType)	_CoreList_Type;
+#define CoreList_Type		(ism::TYPE(&ism::_CoreList_Type))
+
+	ISM_API_DATA(CoreType)	_CoreDict_Type;
+#define CoreDict_Type		(ism::TYPE(&ism::_CoreDict_Type))
+
+	ISM_API_DATA(CoreType)	_CoreCapsule_Type;
+#define CoreCapsule_Type	(ism::TYPE(&ism::_CoreCapsule_Type))
+
+	ISM_API_DATA(CoreType)	_CoreFunction_Type;
+#define CoreFunction_Type	(ism::TYPE(&ism::_CoreFunction_Type))
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_DATA(CoreObject)	_Core_None;
+	ISM_API_DATA(CoreInt)		_Core_True;
+	ISM_API_DATA(CoreInt)		_Core_False;
+#define Core_None				(ism::OBJECT(&ism::_Core_None))
+#define Core_True				(ism::INT(&ism::_Core_True))
+#define Core_False				(ism::INT(&ism::_Core_False))
+#define Core_Boolean(b)			((b) ? Core_True : Core_False)
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism::detail
+{
+	NODISCARD inline bool isinstance_generic(OBJECT const & o, std::type_info const & t);
+}
+
 // object api
 namespace ism
 {
@@ -15,21 +71,26 @@ namespace ism
 		NODISCARD auto derived() const noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
 
 	public:
-		NODISCARD auto handle() const noexcept
+		NODISCARD auto handle() const & noexcept
 		{
 			if constexpr (is_core_object_v<Derived>)
 			{
 				return Handle<Derived>{ derived().ptr() };
 			}
-			else
+			else if constexpr (is_handle_v<Derived>)
 			{
 				return derived();
+			}
+			else
+			{
+				return OBJECT{ derived(); };
 			}
 		}
 
 		NODISCARD auto type() const noexcept
 		{
-			return CHECK(derived().ptr())->ob_type;
+			auto self{ derived().ptr() };
+			return self ? self->ob_type : CoreNone_Type;
 		}
 
 		NODISCARD auto hash() const noexcept
@@ -41,7 +102,7 @@ namespace ism
 		NODISCARD auto len() const noexcept
 		{
 			TYPE t{ type() };
-			return t->tp_len ? t->tp_len(handle()) : size_t{};
+			return t->tp_len ? t->tp_len(handle()) : ssize_t{ -1 };
 		}
 
 		NODISCARD auto repr() const noexcept
@@ -96,7 +157,7 @@ namespace ism
 
 		NODISCARD auto doc() const { return attr("__doc__"); }
 
-		template <class ... Args
+		template <ReturnPolicy policy = ReturnPolicy::AutomaticReference, class ... Args
 		> OBJECT operator()(Args && ... args);
 	};
 
@@ -119,7 +180,10 @@ namespace ism
 		template <class T> NODISCARD T cast() &&;
 
 		template <class ... Args
-		> NODISCARD static auto create(Args && ... args) { return Handle{ memnew(T{ FWD(args)... }) }; }
+		> NODISCARD static auto create(Args && ... args)
+		{
+			return Handle<T>(memnew(T(FWD(args)...)));
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -203,9 +267,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_DATA(CoreType)	_CoreObject_Type;
-#define CoreObject_Type		(ism::TYPE(&ism::_CoreObject_Type))
-
 	class NODISCARD ISM_API CoreObject : public ObjectAPI<CoreObject>, public Reference
 	{
 	public:
@@ -219,7 +280,6 @@ namespace ism
 		TYPE ob_type;
 
 	public:
-		virtual ~CoreObject() override = default;
 		explicit CoreObject(TYPE const & t) : Reference{}, ob_type{ t } {}
 		CoreObject() : self_type{ type_static() } {}
 		CoreObject(self_type const &) = default;
@@ -243,6 +303,9 @@ namespace ism
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof() noexcept { return T::type_static(); }
 
+	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
+	> NODISCARD TYPE typeof() noexcept { return false; }
+
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T const & o) { return o.type(); }
 
@@ -257,6 +320,12 @@ namespace ism
 	> NODISCARD bool isinstance(OBJECT const & o) noexcept
 	{
 		return typeof(o).is(typeof<T>());
+	}
+
+	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
+	> NODISCARD bool isinstance(OBJECT const & o) noexcept
+	{
+		return false;
 	}
 
 	template <class A, class B = A
@@ -307,7 +376,7 @@ namespace ism
 	template <class O = OBJECT, class I = OBJECT
 	> NODISCARD bool hasattr(O && o, I && i)
 	{
-		return getattr(FWD(o), FWD(i)).handle().is_valid();
+		return getattr(FWD(o), FWD(i)).is_valid();
 	}
 
 	template <class V = OBJECT
@@ -346,48 +415,51 @@ namespace ism
 	template <class O = OBJECT, class I = OBJECT
 	> NODISCARD OBJECT getitem(O && o, I && i)
 	{
-		auto index{ object_or_cast(FWD(i)) };
-		if (isinstance<DICT>(o))
+		if (!o.is_valid())
 		{
-			return (***DICT(o))[index];
+			return nullptr;
+		}
+		else if (isinstance<DICT>(o))
+		{
+			return (***DICT(o))[object_or_cast(FWD(i))];
 		}
 		else if (isinstance<LIST>(o))
 		{
-			return (***LIST(o))[***INT(index)];
+			return (***LIST(o))[***INT(object_or_cast(FWD(i)))];
 		}
-		else if (OBJECT * dptr{ _get_dict_ptr(o) })
+		else if (OBJECT dict{ ism::_get_dict(o) })
 		{
-			return getitem(*dptr, index);
+			return ism::getitem(dict, object_or_cast(FWD(i)));
 		}
-		//else if (auto get{ getattr(o, "__getitem__") })
-		//{
-		//	return get(FWD(o), FWD(i));
-		//}
-		return nullptr;
+		else
+		{
+			return nullptr;
+		}
 	}
 
 	template <class O = OBJECT, class I = OBJECT, class V = OBJECT
 	> Error setitem(O && o, I && i, V && v)
 	{
-		auto index{ object_or_cast(FWD(i)) };
-		auto value{ object_or_cast(FWD(v)) };
-		if (isinstance<DICT>(o))
+		if (!o.is_valid())
 		{
-			return ((***DICT(o))[index] = value), Error_None;
+			return Error_Unknown;
+		}
+		else if (isinstance<DICT>(o))
+		{
+			return ((***DICT(o))[object_or_cast(FWD(i))] = object_or_cast(FWD(v))), Error_None;
 		}
 		else if (isinstance<LIST>(o))
 		{
-			return ((***LIST(o))[***INT(index)] = value), Error_None;
+			return ((***LIST(o))[***INT(object_or_cast(FWD(i)))] = object_or_cast(FWD(v))), Error_None;
 		}
-		else if (OBJECT * dptr{ _get_dict_ptr(o) })
+		else if (OBJECT dict{ ism::_get_dict(o) })
 		{
-			return setitem(DICT(*dptr), index, value);
+			return ism::setitem(dict, object_or_cast(FWD(i)), object_or_cast(FWD(v)));
 		}
-		//else if (auto set{ getattr(o, "__setitem__") })
-		//{
-		//	return set(FWD(o), FWD(i), FWD(v)), Error_None;
-		//}
-		return Error_Unknown;
+		else
+		{
+			return Error_Unknown;
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -416,9 +488,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_DATA(CoreType)	_CoreType_Type;
-#define CoreType_Type		(ism::TYPE(&ism::_CoreType_Type))
-
 	class NODISCARD ISM_API CoreType : public CoreObject
 	{
 	public:
@@ -428,7 +497,6 @@ namespace ism
 		NODISCARD static auto type_static() { return CoreType_Type; }
 
 	public:
-		virtual ~CoreType() override = default;
 		explicit CoreType(TYPE const & t) : base_type{ t } {}
 		CoreType() : self_type{ type_static() } {}
 		CoreType(self_type const &) = default;
@@ -454,7 +522,7 @@ namespace ism
 		Vector<GetSetDef>		tp_getsets{};
 		Vector<MethodDef>		tp_methods{};
 
-		OBJECT					tp_call{};
+		binaryfunc				tp_call{};
 		cmpfunc					tp_compare{};
 		hashfunc				tp_hash{};
 		lenfunc					tp_len{};
@@ -472,40 +540,49 @@ namespace ism
 		OBJECT					tp_bases{};
 		OBJECT					tp_cache{};
 		createfunc				tp_create{};
-		OBJECT					tp_dict{};
 		OBJECT					tp_mro{};
 		OBJECT					tp_subclasses{};
+		OBJECT					tp_dict{};
 		OBJECT					tp_weaklist{};
 		vectorcallfunc			tp_vectorcall{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline OBJECT * _get_dict_ptr(OBJECT o)
+	inline OBJECT _get_dict(OBJECT o)
 	{
-		TYPE t{ typeof(o) };
-		ssize_t offset{ t->tp_dictoffset };
-		if (offset == 0) { return nullptr; }
-		if (offset < 0) { VERIFY(!"offset cannot less than zero"); }
-		return (OBJECT *)((char *)o.ptr() + offset);
+		if (ssize_t offset{ typeof(o)->tp_dictoffset }; 0 < offset)
+		{
+			return *reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(o.ptr()) + offset);
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 
-	inline OBJECT * _get_weaklist_ptr(OBJECT o)
+	inline OBJECT _get_weaklist(OBJECT o)
 	{
-		TYPE t{ typeof(o) };
-		ssize_t offset{ t->tp_weaklistoffset };
-		if (offset == 0) { return nullptr; }
-		if (offset < 0) { VERIFY(!"offset cannot less than zero"); }
-		return (OBJECT *)((char *)o.ptr() + offset);
+		if (ssize_t offset{ typeof(o)->tp_weaklistoffset }; 0 < offset)
+		{
+			return *reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(o.ptr()) + offset);
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 
-	inline OBJECT * _get_vectorcall_ptr(OBJECT o)
+	inline vectorcallfunc _get_vectorcall(OBJECT o)
 	{
-		TYPE t{ typeof(o) };
-		ssize_t offset{ t->tp_vectorcalloffset };
-		if (offset == 0) { return nullptr; }
-		if (offset < 0) { VERIFY(!"offset cannot less than zero"); }
-		return (OBJECT *)((char *)o.ptr() + offset);
+		if (ssize_t offset{ typeof(o)->tp_vectorcalloffset }; 0 < offset)
+		{
+			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(o.ptr()) + offset);
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -527,36 +604,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// constants
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_DATA(CoreType)		_CoreNone_Type;
-	ISM_API_DATA(CoreObject)	_Core_None;
-#define CoreNone_Type			(ism::TYPE(&ism::_CoreNone_Type))
-#define Core_None				(ism::OBJECT(&ism::_Core_None))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_DATA(CoreType)	_CoreBool_Type;
-	ISM_API_DATA(CoreInt)	_Core_True;
-	ISM_API_DATA(CoreInt)	_Core_False;
-#define CoreBool_Type		(ism::TYPE(&ism::_CoreBool_Type))
-#define Core_True			(ism::INT(&ism::_Core_True))
-#define Core_False			(ism::INT(&ism::_Core_False))
-#define Core_Boolean(b)		((b) ? Core_True : Core_False)
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
 // int
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_DATA(CoreType)	_CoreInt_Type;
-#define CoreInt_Type		(ism::TYPE(&ism::_CoreInt_Type))
 
 	class NODISCARD ISM_API CoreInt : public CoreObject
 	{
@@ -570,7 +621,6 @@ namespace ism
 		storage_type m_data;
 
 	public:
-		virtual ~CoreInt() override = default;
 		CoreInt() : base_type{ type_static() }, m_data{} {}
 		CoreInt(self_type const &) = default;
 		CoreInt(self_type &&) noexcept = default;
@@ -597,9 +647,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_DATA(CoreType)	_CoreFloat_Type;
-#define CoreFloat_Type		(ism::TYPE(&ism::_CoreFloat_Type))
-
 	class NODISCARD ISM_API CoreFloat : public CoreObject
 	{
 	public:
@@ -612,7 +659,6 @@ namespace ism
 		storage_type m_data;
 
 	public:
-		virtual ~CoreFloat() override = default;
 		CoreFloat() : base_type{ type_static() }, m_data{} {}
 		CoreFloat(self_type const &) = default;
 		CoreFloat(self_type &&) noexcept = default;
@@ -639,9 +685,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_DATA(CoreType)	_CoreString_Type;
-#define CoreString_Type		(ism::TYPE(&ism::_CoreString_Type))
-
 	class NODISCARD ISM_API CoreString : public CoreObject
 	{
 	public:
@@ -657,7 +700,6 @@ namespace ism
 		storage_type m_data;
 
 	public:
-		virtual ~CoreString() override = default;
 		CoreString() : base_type{ type_static() }, m_data{} {}
 		CoreString(storage_type const & v) : base_type{ type_static() }, m_data{ v } {}
 		CoreString(storage_type && v) noexcept : base_type{ type_static() }, m_data{ std::move(v) } {}
@@ -711,9 +753,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_DATA(CoreType)	_CoreList_Type;
-#define CoreList_Type		(ism::TYPE(&ism::_CoreList_Type))
-
 	class NODISCARD ISM_API CoreList : public CoreObject
 	{
 	public:
@@ -729,7 +768,6 @@ namespace ism
 		storage_type m_data;
 
 	public:
-		virtual ~CoreList() override = default;
 		CoreList() : base_type{ type_static() }, m_data{} {}
 		CoreList(std::initializer_list<OBJECT> v) : base_type{ type_static() }, m_data{ v } {}
 		CoreList(storage_type const & v) : base_type{ type_static() }, m_data{ v } {}
@@ -753,6 +791,9 @@ namespace ism
 
 		NODISCARD auto front() const { return m_data.front(); }
 		NODISCARD auto back() const { return m_data.back(); }
+
+		void reserve(size_t count) { m_data.reserve(count); }
+		void resize(size_t count) { m_data.reserve(count); }
 
 		template <class V = OBJECT
 		> bool contains(V && v) const {
@@ -787,9 +828,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_DATA(CoreType)	_CoreDict_Type;
-#define CoreDict_Type		(ism::TYPE(&ism::_CoreDict_Type))
-
 	class NODISCARD ISM_API CoreDict : public CoreObject
 	{
 	public:
@@ -805,7 +843,6 @@ namespace ism
 		storage_type m_data;
 
 	public:
-		virtual ~CoreDict() override = default;
 		CoreDict() : base_type{ type_static() }, m_data{} {}
 		CoreDict(storage_type const & v) : base_type{ type_static() }, m_data{ v } {}
 		CoreDict(storage_type && v) noexcept : base_type{ type_static() }, m_data{ std::move(v) } {}
@@ -851,9 +888,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_DATA(CoreType)	_CoreCapsule_Type;
-#define CoreCapsule_Type	(ism::TYPE(&ism::_CoreCapsule_Type))
-
 	class NODISCARD ISM_API CoreCapsule : public CoreObject
 	{
 	public:
@@ -863,10 +897,9 @@ namespace ism
 		NODISCARD static auto type_static() { return CoreCapsule_Type; }
 
 		void * m_ptr{};
-		void(*m_closure)(void *) {};
+		void(*m_closure)(CoreObject *) {};
 
 	public:
-		virtual ~CoreCapsule() override { if (m_closure) { m_closure(m_ptr); } }
 		CoreCapsule() : base_type{ type_static() } {}
 		CoreCapsule(nullptr_t) : base_type{ type_static() } {}
 		CoreCapsule(self_type const &) = default;
@@ -874,19 +907,30 @@ namespace ism
 		self_type & operator=(self_type const &) = default;
 		self_type & operator=(self_type &&) noexcept = default;
 
+		virtual ~CoreCapsule() override
+		{
+			if (m_closure) { m_closure((CoreObject *)m_ptr); }
+		}
+
 		template <class O
 		> CoreCapsule(Handle<O> const & o) : self_type{}
 		{
 		}
 
-		CoreCapsule(void const * ptr, void(*closure)(void *) = nullptr) : self_type{}
+		CoreCapsule(void const * ptr, cstring name = "", void(*closure)(CoreObject *) = nullptr) : self_type{}
 		{
 			m_ptr = (void *)ptr;
 			m_closure = closure;
 		}
 
-		template <class T = void
-		> NODISCARD auto get_pointer() const -> T * { return static_cast<T *>(m_ptr); }
+		CoreCapsule(void const * ptr, void(*closure)(CoreObject *)) : self_type{ ptr, "", closure } {}
+
+		CoreCapsule(void const * ptr, void(*closure)(void *)) : self_type{ ptr, (void(*)(CoreObject *))closure } {}
+
+		CoreCapsule(void(*closure)(void *)) : self_type{ nullptr, closure } {}
+
+		template <class T = void *
+		> NODISCARD auto get_pointer() const -> T { return static_cast<T>(m_ptr); }
 
 		void set_pointer(void const * value) { m_ptr = (void *)value; }
 	};
@@ -899,9 +943,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_DATA(CoreType)	_CoreFunction_Type;
-#define CoreFunction_Type	(ism::TYPE(&ism::_CoreFunction_Type))
-
 	class ISM_API CoreFunction : public CoreObject
 	{
 	public:
@@ -910,8 +951,11 @@ namespace ism
 
 		NODISCARD static auto type_static() { return CoreFunction_Type; }
 
+		DICT m_dict{};
+		LIST m_weakreflist{};
+		vectorcallfunc m_vectorcall{};
+
 	public:
-		virtual ~CoreFunction() override = default;
 		explicit CoreFunction(TYPE const & t) : base_type{ t } {}
 		CoreFunction() : base_type{ type_static() } {}
 		CoreFunction(self_type const &) = default;
@@ -919,19 +963,17 @@ namespace ism
 		self_type & operator=(self_type const &) = default;
 		self_type & operator=(self_type &&) noexcept = default;
 
+		bool is_cpp_function() const { return cpp_function().is_valid(); }
+
 		OBJECT cpp_function() const
 		{
 			OBJECT f{ get_function(handle()) };
-
 			if (f)
 			{
 				return f;
 			}
-
 			return nullptr;
 		}
-
-		bool is_cpp_function() const { return cpp_function().is_valid(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

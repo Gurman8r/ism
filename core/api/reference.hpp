@@ -12,7 +12,7 @@ namespace ism
 		RefCount m_refcount, m_refcount_init;
 
 	public:
-		NODISCARD int32_t get_reference_count() const { return m_refcount.get(); }
+		NODISCARD int32_t ref_count() const { return m_refcount.get(); }
 
 		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
 
@@ -80,16 +80,16 @@ namespace ism
 		> Ref & operator=(Ref<U> const & value) { reset(value); return (*this); }
 
 	public:
-		template <class ... Args
-		> void revalue(Args && ... args)
-		{
-			ref(ism::construct_or_initialize<T>(FWD(args)...));
-		}
-
 		void unref()
 		{
 			if (m_ref && m_ref->dec_ref()) { ism::memdelete(m_ref); }
 			m_ref = nullptr;
+		}
+
+		template <class ... Args
+		> void revalue(Args && ... args)
+		{
+			ref(ism::construct_or_initialize<T>(FWD(args)...));
 		}
 
 		template <class U
@@ -166,7 +166,7 @@ namespace ism
 
 	class ISM_API WeakRef : public Reference
 	{
-		SuperID m_ref;
+		InstanceID m_ref;
 
 	public:
 		NODISCARD Any get_ref() const;

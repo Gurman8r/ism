@@ -40,7 +40,7 @@ namespace ism
 
 		NODISCARD auto size() const noexcept -> size_t { return m_text.size(); }
 
-		NODISCARD auto hash_code() const noexcept -> hash_t { return hashof(m_text); }
+		NODISCARD auto hash_code() const noexcept -> hash_t { return hash(m_text); }
 
 		NODISCARD bool empty() const noexcept { return m_text.empty(); }
 

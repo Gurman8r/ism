@@ -43,7 +43,7 @@ CoreType ism::_CoreType_Type = COMPOSE(CoreType, t)
 		if (isinstance<TYPE>(v)) return util::compare(self->tp_name, TYPE(v)->tp_name);
 		return util::compare(self.ptr(), v.ptr());
 	};
-	t.tp_hash = (hashfunc)[](TYPE o) { return hashof(o->tp_name); };
+	t.tp_hash = (hashfunc)[](TYPE o) { return hash(o->tp_name); };
 	t.tp_len = (lenfunc)[](auto) { return -1; };
 	t.tp_repr = (reprfunc)[](TYPE o) { return STR::create(o->tp_name); };
 	t.tp_str = (reprfunc)[](TYPE o) { return STR::create(o->tp_name); };
@@ -207,7 +207,7 @@ CoreType ism::_CoreString_Type = COMPOSE(CoreType, t)
 		else if (STR str{ v.str() }) return util::compare(***o, ***str);
 		return util::compare(o.ptr(), v.ptr());
 	};
-	t.tp_hash = (hashfunc)[](STR o) { return hashof(***o); };
+	t.tp_hash = (hashfunc)[](STR o) { return hash(***o); };
 	t.tp_len = (lenfunc)[](STR o) { return o->size(); };
 	t.tp_repr = (reprfunc)[](STR o) { return o; };
 	t.tp_str = (reprfunc)[](STR o) { return o; };
@@ -285,7 +285,11 @@ CoreType ism::_CoreFunction_Type = COMPOSE(CoreType, t)
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_create = (createfunc)[]() { return FUNCTION::create(); };
 
-	t.tp_compare = (cmpfunc)[](FUNCTION o, OBJECT v)
+	t.tp_dictoffset = offsetof(CoreFunction, m_dict);
+	t.tp_weaklistoffset = offsetof(CoreFunction, m_weakreflist);
+	t.tp_vectorcalloffset = offsetof(CoreFunction, m_vectorcall);
+
+	t.tp_compare = (cmpfunc)[](FUNCTION o, OBJECT v)	
 	{
 		return util::compare(o.ptr(), v.ptr());
 	};

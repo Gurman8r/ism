@@ -44,7 +44,7 @@ namespace ism
 
 		template <class T> NODISCARD constexpr hash_t hash()
 		{
-			return ism::hashof(ctti::type<T>());
+			return ism::hash(ctti::type<T>());
 		}
 	}
 
@@ -76,7 +76,7 @@ namespace ism
 
 		template <class T> NODISCARD hash_t hash() noexcept
 		{
-			return ism::hashof(rtti::type<T>());
+			return ism::hash(rtti::type<T>());
 		}
 	}
 
@@ -89,9 +89,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD constexpr hash_t hashof() noexcept { return ctti::hash<T>(); }
+	template <class T> NODISCARD constexpr hash_t hash() noexcept { return ctti::hash<T>(); }
 
-	template <class T> constexpr hash_t hashof_v{ ism::hashof<T>() };
+	template <class T> constexpr hash_t hashof_v{ ism::hash<T>() };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

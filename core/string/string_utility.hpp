@@ -257,17 +257,17 @@ namespace ism
 	template <class Ch = char
 	> NODISCARD Optl<bool> to_bool(BasicString<Ch> const & value) noexcept
 	{
-		switch (hashof(ism::to_lower(value)))
+		switch (hash(ism::to_lower(value)))
 		{
 		default				: return std::nullopt;
-		case hashof("1")	:
-		case hashof("true")	:
-		case hashof("on")	:
-		case hashof("yes")	: return make_optl(true);
-		case hashof("0")	:
-		case hashof("false"):
-		case hashof("off")	:
-		case hashof("no")	: return make_optl(false);
+		case hash("1")	:
+		case hash("true")	:
+		case hash("on")	:
+		case hash("yes")	: return make_optl(true);
+		case hash("0")	:
+		case hash("false"):
+		case hash("off")	:
+		case hash("no")	: return make_optl(false);
 		}
 	}
 

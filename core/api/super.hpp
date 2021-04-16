@@ -23,7 +23,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	DECL_HANDLE(SuperID);
+	DECL_HANDLE(InstanceID);
 
 	class Super;
 	class Reference;
@@ -45,9 +45,8 @@ namespace ism
 	private:
 		friend class SuperDB;
 		friend class Reference;
-		template <class T> friend class Ref;
 
-		SuperID m_super_id{};
+		InstanceID m_instance_id{};
 		int32_t m_predelete_ok{};
 		bool m_is_reference{};
 
@@ -57,12 +56,14 @@ namespace ism
 		virtual void _postinitialize();
 		virtual bool _predelete();
 
+		Super(bool is_ref);
+
 	public:
-		Super(bool is_ref = false);
+		Super();
 
 		virtual ~Super();
 
-		NODISCARD SuperID get_super_id() const { return m_super_id; }
+		NODISCARD InstanceID get_instance_id() const { return m_instance_id; }
 
 		NODISCARD bool is_reference() const { return m_is_reference; }
 	};
@@ -99,14 +100,14 @@ namespace ism
 	private:
 		friend class Super;
 
-		static Batch<SuperID, Super *> g_supers;
+		static Batch<InstanceID, Super *> g_supers;
 
-		static SuperID add_instance(Super * value);
+		static InstanceID add_instance(Super * value);
 
-		static void remove_instance(SuperID value);
+		static void remove_instance(InstanceID value);
 
 	public:
-		static Super * get_instance(SuperID id);
+		static Super * get_instance(InstanceID id);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

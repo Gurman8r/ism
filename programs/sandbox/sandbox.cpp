@@ -23,24 +23,31 @@ using namespace ism;
 
 namespace ism
 {
-	//struct Test
-	//{
-	//	static void test_static() { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
-	//
-	//	auto test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
-	//};
-	//
-	//void hello() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); }
-	//void say(String const & s) { MAIN_PRINT("Say: %s\n", s.c_str()); }
-	//auto get_int() { return 123; }
-	//auto get_uint() { return 456u; }
-	//auto get_float() { return 7.89f; }
-	//auto get_string() -> String { return "abc"; }
+	struct Test : public Reference
+	{
+		static void test_static() { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
+	
+		auto test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
+	};
+	
+	void hello() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); }
+	void say(String const & s) { MAIN_PRINT("Say: %s\n", s.c_str()); }
+	auto get_int() { return 123; }
+	auto get_uint() { return 456u; }
+	auto get_float() { return 7.89f; }
+	auto get_string() -> String { return "abc"; }
 
 	void test_main(int32_t argc, char * argv[])
 	{
 		VERIFY(create_extension_module("__main__"));
 		VERIFY(globals().is_valid());
+
+		CoreCppFunction func1(&say);
+		CoreCppFunction func2(&get_string);
+		String s = func2().cast<String>();
+		func1(s);
+
+		return;
 
 		LIST list = globals()["a"] = LIST::create();
 		list->append("IT WORKS\n");
@@ -51,10 +58,9 @@ namespace ism
 		o["DEF"] = "Hello, World!";
 		MAIN_PRINT("%d\n", globals()["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", o["DEF"].cast<String>().c_str());
-		MAIN_PRINT("%s\n", o.type().attr("__name__").cast<std::string>().c_str());
-		o.type().attr("__name__") = "changed";
-		MAIN_PRINT("%s\n", STR(o.type().attr("__name__"))->c_str());
-
+		MAIN_PRINT("%s\n", typeof(o).attr("__name__").cast<std::string>().c_str());
+		typeof(o).attr("__name__") = "changed";
+		MAIN_PRINT("%s\n", STR(typeof(o).attr("__name__"))->c_str());
 
 		MAIN_PRINT("\n");
 	}

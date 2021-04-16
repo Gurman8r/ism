@@ -9,13 +9,17 @@ namespace ism
 
 	struct NODISCARD TypeInfo
 	{
-		TYPE type;
+		TYPE type{};
 
-		std::type_info const * rtti;
+		std::type_info const * cpptype{};
 
-		size_t type_size, type_align;
+		size_t type_size, type_align{};
 
-		void(*operator_new)(size_t);
+		void(*operator_new)(size_t) {};
+		Vector<OBJECT (*)(OBJECT, TYPE)> implicit_conversions;
+		Vector<std::pair<std::type_info const *, void * (*)(void *)>> implicit_casts;
+		Vector<bool (*)(OBJECT, void *&)> * direct_conversions;
+		void * (*module_local_load)(OBJECT, TypeInfo const *) {};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -104,8 +108,8 @@ namespace ism
 
 		struct _registry
 		{
-			TypeMap<TypeInfo *> cpp_types{};
-			HashMap<TYPE, Vector<TypeInfo *>> core_types{};
+			TypeMap<TypeInfo *> registered_types_cpp{};
+			HashMap<TYPE, Vector<TypeInfo *>> registered_types_core{};
 			TypeMap<Vector<bool(*)(OBJECT, void *&)>> direct_conversions{};
 			HashMap<String, void *> shared_data{};
 		}
@@ -120,12 +124,10 @@ namespace ism
 
 	NODISCARD inline auto get_runtime() -> RuntimeState * { return RuntimeState::singleton; }
 	NODISCARD inline void set_runtime(RuntimeState * value) { RuntimeState::singleton = value; }
-
 	NODISCARD inline auto get_registry() -> auto & { return get_runtime()->registry; }
 	NODISCARD inline auto get_thread_state() { return get_runtime()->tstate_current; }
 	NODISCARD inline auto get_interpreter() { return get_thread_state()->interp; }
-	NODISCARD inline auto get_frame() { return get_thread_state()->frame; }
-
+	NODISCARD inline auto get_stack_frame() { return get_thread_state()->frame; }
 	NODISCARD inline auto get_head_interpreter() { return get_runtime()->interpreters.head; }
 	NODISCARD inline auto get_main_interpreter() { return get_runtime()->interpreters.main; }
 	inline void set_main_interpreter(InterpreterState * value) { get_runtime()->interpreters.main = value; }
@@ -139,6 +141,12 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	inline TypeMap<TypeInfo *> & registered_local_types_cpp()
+	{
+		static TypeMap<TypeInfo *> locals{};
+		return locals;
+	}
 
 	template <class K = String
 	> NODISCARD void * get_shared_data(K && key) noexcept

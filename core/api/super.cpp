@@ -6,7 +6,7 @@ namespace ism
 
 	void Super::_postinitialize()
 	{
-		m_super_id = SuperDB::add_instance(this);
+		m_instance_id = SuperDB::add_instance(this);
 	}
 
 	bool Super::_predelete()
@@ -20,10 +20,14 @@ namespace ism
 	{
 	}
 
+	Super::Super() : Super{ false }
+	{
+	}
+
 	Super::~Super()
 	{
-		SuperDB::remove_instance(m_super_id);
-		m_super_id = SuperID{};
+		SuperDB::remove_instance(m_instance_id);
+		m_instance_id = InstanceID{};
 		m_predelete_ok = 2;
 	}
 
@@ -31,24 +35,24 @@ namespace ism
 
 	decltype(SuperDB::g_supers) SuperDB::g_supers{};
 
-	SuperID SuperDB::add_instance(Super * value)
+	InstanceID SuperDB::add_instance(Super * value)
 	{
-		if (!value || g_supers.contains<Super *>(value)) { return SuperID{}; }
+		if (!value || g_supers.contains<Super *>(value)) { return InstanceID{}; }
 
-		static SuperID id{}; id++;
+		static InstanceID id{}; id++;
 		g_supers.push_back(id, value);
 		return id;
 	}
 
-	void SuperDB::remove_instance(SuperID id)
+	void SuperDB::remove_instance(InstanceID id)
 	{
-		if (size_t i{ g_supers.index_of<SuperID>(id) }
+		if (size_t i{ g_supers.index_of<InstanceID>(id) }
 		; i != g_supers.npos) { g_supers.erase(i); }
 	}
 
-	Super * SuperDB::get_instance(SuperID id)
+	Super * SuperDB::get_instance(InstanceID id)
 	{
-		return *g_supers.map<SuperID, Super *>(id);
+		return *g_supers.map<InstanceID, Super *>(id);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

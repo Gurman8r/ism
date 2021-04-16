@@ -55,12 +55,12 @@ namespace ism
 
 	void WeakRef::set_obj(Super * value)
 	{
-		m_ref = value ? value->get_super_id() : SuperID{};
+		m_ref = value ? value->get_instance_id() : InstanceID{};
 	}
 
 	void WeakRef::set_ref(REF const & value)
 	{
-		m_ref = value ? value->get_super_id() : SuperID{};
+		m_ref = value ? value->get_instance_id() : InstanceID{};
 	}
 
 	WeakRef::WeakRef() : Reference{} {}

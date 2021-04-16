@@ -32,33 +32,6 @@ namespace ism
 	constexpr size_t size_in_ptrs(size_t s) { return 1 + ((s - 1) >> ism::log2(sizeof(void *))); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	
-	template <class T, class SFINAE = void> struct is_copy_constructible : std::is_copy_constructible<T> {};
-
-	template <class T> constexpr bool is_copy_constructible_v{ is_copy_constructible<T>::value };
-
-	template <class Container> struct is_copy_constructible<Container, std::enable_if_t<all_of<
-		std::is_copy_constructible<Container>,
-		std::is_same<typename Container::value_type &, class Container::reference>,
-		std::negation<std::is_same<Container, class Container::value_type>>
-	>::value>> : is_copy_constructible<typename Container::value_type> {};
-
-	template <class T1, class T2> struct is_copy_constructible<std::pair<T1, T2>>
-		: all_of<is_copy_constructible<T1>, is_copy_constructible<T2>> {};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, class SFINAE = void> struct is_copy_assignable : std::is_copy_assignable<T> {};
-
-	template <class Container> struct is_copy_assignable<Container, std::enable_if_t<all_of<
-		std::is_copy_assignable<Container>,
-		std::is_same<typename Container::value_type &, class Container::reference>
-	>::value>> : is_copy_assignable<typename Container::value_type> {};
-
-	template <class T1, class T2> struct is_copy_assignable<std::pair<T1, T2>>
-		: all_of<is_copy_assignable<T1>, is_copy_assignable<T2>> {};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 namespace ism
