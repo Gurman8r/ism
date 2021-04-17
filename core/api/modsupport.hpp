@@ -92,7 +92,7 @@ namespace ism
 
 				m_rec.free_data = [](FunctionRecord * r)
 				{
-					memdelete((Capture *)r->data[0]);
+					ism::memdelete((Capture *)r->data[0]);
 				};
 			}
 
@@ -101,20 +101,20 @@ namespace ism
 
 			m_rec.impl = [](FunctionCall & call) -> OBJECT
 			{
-				cast_in args_converter{};
-				if (!args_converter.load_args(call)) { return TRY_NEXT_OVERLOAD; }
+				cast_in args{};
+				if (!args.load_args(call)) { return TRY_NEXT_OVERLOAD; }
 
 				process_attributes<Extra...>::precall(call);
 
 				auto data{ (sizeof(Capture) <= sizeof(call.func.data) ? &call.func.data : call.func.data[0]) };
 
-				auto cap{ const_cast<Capture *>(reinterpret_cast<Capture const *>(data)) };
+				auto capture{ const_cast<Capture *>(reinterpret_cast<Capture const *>(data)) };
 
 				ReturnPolicy policy{ detail::return_policy_override<Return>::policy(call.func.policy) };
 
 				using Guard = extract_guard_t<Extra...>;
 
-				OBJECT result{ cast_out::cast(std::move(args_converter).call<Return, Guard>(cap->f), policy, call.parent) };
+				OBJECT result{ cast_out::cast(std::move(args).call<Return, Guard>(capture->f), policy, call.parent) };
 
 				process_attributes<Extra...>::postcall(call, result);
 
@@ -148,47 +148,44 @@ namespace ism
 
 				size_t args_to_copy{ MIN(func.nargs, argc) }, args_copied{};
 
+				// copy passed arguments
 				bool bad_arg{};
-
-				// copy arguments
 				for (; args_copied < args_to_copy; ++args_copied)
 				{
 					ArgumentRecord const * arg_rec{ args_copied < func.args.size() ? &func.args[args_copied] : nullptr };
-
 					OBJECT arg{ argv[args_copied] };
-
-					if (!arg_rec && !arg_rec->none && arg.is_none()) { bad_arg = true; break; }
-
+					if (arg_rec && !arg_rec->none && arg.is_none())
+					{
+						bad_arg = true;
+						break;
+					}
 					call.args.push_back(arg);
-
 					call.args_convert.push_back(arg_rec ? arg_rec->convert : false);
 				}
-
 				VERIFY(!bad_arg);
 
-				// fill in missing arguments
+				// fill in missing args
 				if (args_copied < func.nargs)
 				{
 					for (; args_copied < args_to_copy; ++args_copied)
 					{
-						auto const & arg{ func.args[args_copied] };
-
-						OBJECT value{};
-
-						if (arg.value) { value = arg.value; }
-
-						if (!value) { break; }
-
-						call.args.push_back(value);
-
-						call.args_convert.push_back(arg.convert);
+						if (auto const & arg{ func.args[args_copied] }; arg.value)
+						{
+							call.args.push_back(arg.value);
+							call.args_convert.push_back(arg.convert);
+						}
+						else
+						{
+							break;
+						}
 					}
-
 					VERIFY(func.nargs <= args_copied);
 				}
 
 				OBJECT result{};
+
 				result = func.impl(call);
+
 				return result;
 			};
 		}

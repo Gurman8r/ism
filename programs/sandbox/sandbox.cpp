@@ -43,9 +43,8 @@ namespace ism
 		VERIFY(globals().is_valid());
 
 		CoreCppFunction func1(&say);
-		CoreCppFunction func2(&get_string);
-		String s = func2().cast<String>();
-		func1(s);
+		CoreCppFunction func2([]() { return "abc"; });
+		func1(func2());
 
 		return;
 

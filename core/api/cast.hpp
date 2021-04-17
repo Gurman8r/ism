@@ -171,7 +171,7 @@ namespace ism::detail
 
 		static std::pair<const void *, TypeInfo const *> src_and_type(void const * src, std::type_info const & cast_type, std::type_info const * rtti_type = {})
 		{
-			if (auto * tpi{ get_type_info(cast_type) }) { return { src, const_cast<TypeInfo const *>(tpi) }; }
+			if (auto tpi{ get_type_info(cast_type) }) { return { src, const_cast<TypeInfo const *>(tpi) }; }
 			return { nullptr, nullptr };
 		}
 

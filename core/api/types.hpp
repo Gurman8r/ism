@@ -175,9 +175,10 @@ namespace ism
 		using Ref<T>::Ref;
 		using Ref<T>::operator=;
 
-		NODISCARD static auto type_static() { return typeof<T>(); }
 		template <class T> NODISCARD T cast() const &;
 		template <class T> NODISCARD T cast() &&;
+
+		NODISCARD static auto type_static() { return typeof<T>(); }
 
 		template <class ... Args
 		> NODISCARD static auto create(Args && ... args)
