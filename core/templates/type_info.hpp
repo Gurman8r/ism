@@ -28,7 +28,7 @@ namespace ism
 #else
 #	error TypeObject information is not available.
 #endif
-		template <class T> NODISCARD static constexpr StringView raw()
+		template <class T> NODISCARD constexpr StringView raw()
 		{
 			return StringView{ PRETTY_FUNCTION }
 				.remove_prefix(sizeof(PRETTY_TYPE_PREFIX) - 1)
@@ -53,7 +53,7 @@ namespace ism
 	// run time type info
 	namespace rtti
 	{
-		static String & filter(String & name)
+		inline String & filter(String name)
 		{
 			mpl::for_args([&name](auto search)
 			{
@@ -70,8 +70,7 @@ namespace ism
 
 		template <class T> NODISCARD String type() noexcept
 		{
-			String name{ typeid(T).name() };
-			return rtti::filter(name);
+			return rtti::filter(typeid(T).name());
 		}
 
 		template <class T> NODISCARD hash_t hash() noexcept

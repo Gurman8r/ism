@@ -46,10 +46,13 @@ namespace ism
 	Any WeakRef::get_ref() const
 	{
 		if (!m_ref) { return nullptr; }
+
 		Super * o{ SuperDB::get_instance(m_ref) };
 		if (!o) { return nullptr; }
-		Reference * r{ ism::super_cast<Reference>(o) };
+
+		Reference * r{ super_cast<Reference>(o) };
 		if (r) { return REF{ r }; }
+
 		return o;
 	}
 
@@ -62,10 +65,6 @@ namespace ism
 	{
 		m_ref = value ? value->get_instance_id() : InstanceID{};
 	}
-
-	WeakRef::WeakRef() : Reference{} {}
-
-	WeakRef::~WeakRef() {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

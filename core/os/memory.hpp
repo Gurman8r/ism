@@ -106,23 +106,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if 1
 	// Polymorphic Allocator
 	template <class T = byte
-	> ALIAS(PolymorphicAllocator) typename std::pmr::polymorphic_allocator<T>;
-#else
-	// Polymorphic Allocator
-	template <class T = byte
-	> class PolymorphicAllocator : public std::pmr::polymorphic_allocator<T>
-	{
-		using _Mybase = std::pmr::polymorphic_allocator<T>;
-	public:
-		using _Mybase::polymorphic_allocator;
-		NODISCARD operator _Mybase & () & noexcept { return static_cast<_Mybase &>(*this); }
-		NODISCARD operator _Mybase const & () const & noexcept { return static_cast<_Mybase const &>(*this); }
-		NODISCARD operator _Mybase && () && noexcept { return static_cast<_Mybase &&>(std::move(*this)); }
-	};
-#endif
+	> ALIAS(PolymorphicAllocator) typename _STD pmr::polymorphic_allocator<T>;
 
 	// Default Allocator
 	class DefaultAllocator final

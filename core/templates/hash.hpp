@@ -79,7 +79,7 @@ namespace ism
 	template <class H = FNV1A, class Arg0, class Arg1, class ... Args
 	> NODISCARD constexpr hash_t hash(Arg0 && arg0, Arg1 && arg1, Args && ... args)
 	{
-		return H{}(FWD(arg0), FWD(arg0), FWD(args)...);
+		return H{}(FWD(arg0), FWD(arg1), FWD(args)...);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

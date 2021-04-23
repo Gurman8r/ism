@@ -39,11 +39,7 @@ namespace ism
 	class CoreDict;
 	class CoreCapsule;
 	class CoreFunction;
-
-	//class CoreMethod;
-	//class CoreInstanceMethod;
-	//class CoreStaticMethod;
-	//class CoreProperty;
+	class CoreProperty;
 
 	class CoreCppFunction;
 	class CoreModule;
@@ -62,11 +58,8 @@ namespace ism
 	ALIAS(DICT)				Handle<CoreDict>;
 	ALIAS(CAPSULE)			Handle<CoreCapsule>;
 	ALIAS(FUNCTION)			Handle<CoreFunction>;
-
-	//ALIAS(METHOD)			Handle<CoreMethod>;
-	//ALIAS(INSTANCE_METHOD)	Handle<CoreInstanceMethod>;
-	//ALIAS(STATIC_METHOD)	Handle<CoreStaticMethod>;
-	//ALIAS(PROPERTY)			Handle<CoreProperty>;
+	ALIAS(PROPERTY)			Handle<CoreProperty>;
+	ALIAS(STATIC_PROPERTY)	PROPERTY;
 
 	ALIAS(CPP_FUNCTION)		Handle<CoreCppFunction>;
 	ALIAS(MODULE)			Handle<CoreModule>;
@@ -103,16 +96,17 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum class ReturnPolicy : uint8_t
+	typedef enum ReturnPolicy_ : uint8_t
 	{
-		Automatic,
-		AutomaticReference,
-		TakeOwnership,
-		Copy,
-		Move,
-		Reference,
-		ReferenceInternal,
-	};
+		ReturnPolicy_Automatic,
+		ReturnPolicy_AutomaticReference,
+		ReturnPolicy_TakeOwnership,
+		ReturnPolicy_Copy,
+		ReturnPolicy_Move,
+		ReturnPolicy_Reference,
+		ReturnPolicy_ReferenceInternal,
+	}
+	ReturnPolicy;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -183,43 +177,52 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// method types
+// method suites
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(unaryfunc)		StdFn<OBJECT(OBJECT a)>;
-	ALIAS(binaryfunc)		StdFn<OBJECT(OBJECT a, OBJECT b)>;
-	ALIAS(ternaryfunc)		StdFn<OBJECT(OBJECT a, OBJECT b, OBJECT c)>;
-	ALIAS(inquiry)			StdFn<bool(OBJECT o)>;
+	ALIAS(unaryfunc)		OBJECT(*)(OBJECT a);
+	ALIAS(binaryfunc)		OBJECT(*)(OBJECT a, OBJECT b);
+	ALIAS(ternaryfunc)		OBJECT(*)(OBJECT a, OBJECT b, OBJECT c);
+	
+	ALIAS(inquiry)			bool(*)(OBJECT o);
+	ALIAS(sizeargfunc)		OBJECT(*)(OBJECT o, ssize_t i);
+	ALIAS(sizesizeargfunc)	OBJECT(*)(OBJECT o, ssize_t i, ssize_t j);
+	ALIAS(objobjproc)		int32_t(*)(OBJECT a, OBJECT b);
 
-	ALIAS(getattrfunc)		StdFn<OBJECT(OBJECT self, cstring name)>;
-	ALIAS(setattrfunc)		StdFn<Error(OBJECT self, cstring name, OBJECT value)>;
-	ALIAS(getattrofunc)		StdFn<OBJECT(OBJECT self, OBJECT name)>;
-	ALIAS(setattrofunc)		StdFn<Error(OBJECT self, OBJECT name, OBJECT value)>;
-	ALIAS(descrgetfunc)		StdFn<OBJECT(OBJECT, OBJECT, OBJECT)>;
-	ALIAS(descrsetfunc)		StdFn<Error(OBJECT, OBJECT, OBJECT)>;
+	ALIAS(visitproc)		void(*)(OBJECT, void *);
+	ALIAS(traverseproc)		void(*)(OBJECT, visitproc, void *);
 
-	ALIAS(cmpfunc)			StdFn<int32_t(OBJECT a, OBJECT b)>;
-	ALIAS(hashfunc)			StdFn<hash_t(OBJECT o)>;
-	ALIAS(lenfunc)			StdFn<ssize_t(OBJECT o)>;
-	ALIAS(reprfunc)			StdFn<STR(OBJECT o)>;
+	ALIAS(getattrfunc)		OBJECT(*)(OBJECT self, cstring name);
+	ALIAS(setattrfunc)		Error(*)(OBJECT self, cstring name, OBJECT value);
+	ALIAS(getattrofunc)		OBJECT(*)(OBJECT self, OBJECT name);
+	ALIAS(setattrofunc)		Error(*)(OBJECT self, OBJECT name, OBJECT value);
+	ALIAS(descrgetfunc)		OBJECT(*)(OBJECT, OBJECT, OBJECT);
+	ALIAS(descrsetfunc)		Error(*)(OBJECT, OBJECT, OBJECT);
 
-	ALIAS(allocfunc)		StdFn<void * (size_t size)>;
-	ALIAS(freefunc)			StdFn<void(void * ptr)>;
-	ALIAS(initproc)			StdFn<Error(OBJECT self, OBJECT args)>;
-	ALIAS(createfunc)		StdFn<OBJECT()>;
+	ALIAS(cmpfunc)			int32_t(*)(OBJECT a, OBJECT b);
+	ALIAS(hashfunc)			hash_t(*)(OBJECT o);
+	ALIAS(lenfunc)			ssize_t(*)(OBJECT o);
+	ALIAS(reprfunc)			STR(*)(OBJECT o);
 
-	ALIAS(cfunction)		StdFn<OBJECT(OBJECT self, OBJECT args)>;
-	ALIAS(vectorcallfunc)	StdFn<OBJECT(OBJECT self, OBJECT const * args, size_t nargs)>;
+	ALIAS(allocfunc)		OBJECT(*)(TYPE type, size_t nitems);
+	ALIAS(freefunc)			void(*)(void * ptr);
+	ALIAS(initproc)			Error(*)(OBJECT self, OBJECT args);
+	ALIAS(newfunc)			OBJECT(*)(TYPE type, OBJECT args);
+	ALIAS(destructor)		void(*)(CoreObject * ptr);
 
-	ALIAS(getter)			StdFn<OBJECT(OBJECT self, void * context)>;
-	ALIAS(setter)			StdFn<Error(OBJECT self, OBJECT value, void * context)>;
+	ALIAS(cfunction)		OBJECT(*)(OBJECT self, OBJECT args);
+	ALIAS(vectorcallfunc)	OBJECT(*)(OBJECT self, OBJECT const * argc, size_t argv);
+	ALIAS(getter)			OBJECT(*)(OBJECT self, void * context);
+	ALIAS(setter)			Error(*)(OBJECT self, OBJECT value, void * context);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct NODISCARD NumberMethods
 	{
+		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(NumberMethods);
+
 		binaryfunc	operator_add{};
 		binaryfunc	operator_subtract{};
 		binaryfunc	operator_multiply{};
@@ -257,146 +260,49 @@ namespace ism
 
 	struct NODISCARD SequenceMethods
 	{
+		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(SequenceMethods);
+
+		lenfunc		sequence_length{};
+		sizeargfunc	sequence_item{};
+		objobjproc	sequence_contains{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct NODISCARD MappingMethods
 	{
+		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(MappingMethods);
+
+		lenfunc		mapping_length{};
+		binaryfunc	mapping_subscript{};
 	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// definitions
-namespace ism
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct NODISCARD MethodDef
 	{
-		String		name{};
+		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(MethodDef);
+
+		cstring		name{};
 		cfunction	method{};
-		int32_t		flags{ MethodFlags_None };
-		String		doc{};
-	};
+		cstring		doc{};
 
-	template <> struct ism::Hash<MethodDef>
-	{
-		hash_t operator()(MethodDef const & a) const { return hash(a.name); }
-	};
-
-	template <> struct ism::EqualTo<MethodDef>
-	{
-		bool operator()(MethodDef const & a, MethodDef const & b) const { return &a == &b || a.name == b.name; }
-
-		bool operator()(MethodDef const & a, String const & i) const { return a.name == i; }
-	};
-
-	template <> struct ism::Less<MethodDef>
-	{
-		bool operator()(MethodDef const & a, MethodDef const & b) const { return &a != &b && a.name < b.name; }
-
-		bool operator()(MethodDef const & a, String const & i) const { return a.name < i; }
+		NODISCARD constexpr operator bool() const noexcept { return name && *name; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct NODISCARD GetSetDef
 	{
-		String name{};
-		getter get{};
-		setter set{};
-		void * closure{};
-		String doc{};
-	};
+		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(GetSetDef);
 
-	template <> struct ism::Hash<GetSetDef>
-	{
-		hash_t operator()(GetSetDef const & a) const { return hash(a.name); }
-	};
+		cstring		name{};
+		getter		get{};
+		setter		set{};
+		void *		closure{};
+		cstring		doc{};
 
-	template <> struct ism::EqualTo<GetSetDef>
-	{
-		bool operator()(GetSetDef const & a, GetSetDef const & b) const { return &a == &b || a.name == b.name; }
-
-		bool operator()(GetSetDef const & a, String const & i) const { return a.name == i; }
-	};
-
-	template <> struct ism::Less<GetSetDef>
-	{
-		bool operator()(GetSetDef const & a, GetSetDef const & b) const { return &a != &b && a.name < b.name; }
-
-		bool operator()(GetSetDef const & a, String const & i) const { return a.name < i; }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// comparators
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, class U
-	> NODISCARD bool operator==(ObjectAPI<T> const & a, ObjectAPI<U> const & b) { return a.equal_to(b); }
-
-	template <class T, class U
-	> NODISCARD bool operator!=(ObjectAPI<T> const & a, ObjectAPI<U> const & b) { return a.not_equal_to(b); }
-
-	template <class T, class U
-	> NODISCARD bool operator<(ObjectAPI<T> const & a, ObjectAPI<U> const & b) { return a.less(b); }
-
-	template <class T, class U
-	> NODISCARD bool operator<=(ObjectAPI<T> const & a, ObjectAPI<U> const & b) { return a.less_equal(b); }
-
-	template <class T, class U
-	> NODISCARD bool operator>(ObjectAPI<T> const & a, ObjectAPI<U> const & b) { return a.greater(b); }
-
-	template <class T, class U
-	> NODISCARD bool operator>=(ObjectAPI<T> const & a, ObjectAPI<U> const & b) { return a.greater_equal(b); }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T> struct ism::Hash<Handle<T>>
-	{
-		NODISCARD hash_t operator()(Handle<T> const & o) const { return o.hash(); }
-	};
-
-	template <class T> struct ism::EqualTo<Handle<T>>
-	{
-		template <class U
-		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.equal_to(b); }
-	};
-
-	template <class T> struct ism::NotEqualTo<Handle<T>>
-	{
-		template <class U
-		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.not_equal_to(b); }
-	};
-
-	template <class T> struct ism::Less<Handle<T>>
-	{
-		template <class U
-		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.less(b); }
-	};
-
-	template <class T> struct ism::Greater<Handle<T>>
-	{
-		template <class U
-		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.greater(b); }
-	};
-
-	template <class T> struct ism::LessEqual<Handle<T>>
-	{
-		template <class U
-		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.less_equal(b); }
-	};
-
-	template <class T> struct ism::GreaterEqual<Handle<T>>
-	{
-		template <class U
-		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.greater_equal(b); }
+		NODISCARD constexpr operator bool() const noexcept { return name && *name; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

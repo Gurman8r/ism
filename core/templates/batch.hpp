@@ -72,6 +72,12 @@ namespace ism
 		{
 		}
 
+		Batch(size_t nitems, allocator_type alloc = {}) noexcept
+			: m_data{ std::allocator_arg, alloc }
+		{
+			this->reserve(nitems);
+		}
+
 		Batch(init_type value, allocator_type alloc = {}) noexcept
 			: m_data{ std::allocator_arg, alloc }
 		{

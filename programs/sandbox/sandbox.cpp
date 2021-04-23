@@ -23,8 +23,10 @@ using namespace ism;
 
 namespace ism
 {
-	struct Test : public Reference
+	struct Test
 	{
+		int x{}; String y;
+
 		static void test_static() { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
 	
 		auto test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
@@ -35,24 +37,31 @@ namespace ism
 	auto get_int() { return 123; }
 	auto get_uint() { return 456u; }
 	auto get_float() { return 7.89f; }
-	auto get_string() -> String { return "abc"; }
+	auto get_string() { return "abc"; }
 
 	void test_main(int32_t argc, char * argv[])
 	{
-		VERIFY(create_extension_module("__main__"));
+		MODULE m{ create_extension_module("__main__") };
 		VERIFY(globals().is_valid());
 
-		CoreCppFunction func1(&say);
-		CoreCppFunction func2([]() { return "abc"; });
-		func1(func2());
+		CoreClass<Test>(m, "Test")
+			//.def(init<>())
+			//.def_readwrite("x", &Test::x)
+			//.def_static("hello", hello)
+			;
 
-		return;
+		m->def("hello", hello);
+		globals()["hello"]();
 
-		LIST list = globals()["a"] = LIST::create();
-		list->append("IT WORKS\n");
-		MAIN_PRINT("%s", STR(list[0])->c_str());
+		globals()["say"] = CPP_FUNCTION({ say, detail::scope(m) });
+		globals()["get_string"] = CPP_FUNCTION(get_string);
+		globals()["say"](globals()["get_string"]());
 
-		OBJECT o{ DICT::create() };
+		LIST list = globals()["a"] = LIST(CoreList{});
+		list->append("IT WORKS");
+		MAIN_PRINT("%s\n", STR(list[0])->c_str());
+
+		OBJECT o{ DICT(CoreDict{}) };
 		globals()["ABC"] = 42;
 		o["DEF"] = "Hello, World!";
 		MAIN_PRINT("%d\n", globals()["ABC"].cast<int>());

@@ -16,9 +16,13 @@ namespace ism
 		size_t type_size, type_align{};
 
 		void(*operator_new)(size_t) {};
+
 		Vector<OBJECT (*)(OBJECT, TYPE)> implicit_conversions;
+
 		Vector<std::pair<std::type_info const *, void * (*)(void *)>> implicit_casts;
+
 		Vector<bool (*)(OBJECT, void *&)> * direct_conversions;
+
 		void * (*module_local_load)(OBJECT, TypeInfo const *) {};
 	};
 
@@ -89,8 +93,8 @@ namespace ism
 	{
 	private:
 		static RuntimeState * singleton;
-		friend RuntimeState * get_runtime();
-		friend void set_runtime(RuntimeState *);
+		friend RuntimeState * get_default_runtime();
+		friend void set_default_runtime(RuntimeState *);
 
 	public:
 		RuntimeState();
@@ -98,6 +102,10 @@ namespace ism
 
 		bool preinitializing{}, preinitialized{},  initialized{};
 		void * finalizing{};
+
+		std::thread::id main_thread{};
+		Vector<void(*)()> exitfuncs{};
+		ThreadState * tstate_current{};
 
 		struct _interpreters
 		{
@@ -114,23 +122,19 @@ namespace ism
 			HashMap<String, void *> shared_data{};
 		}
 		registry;
-
-		std::thread::id main_thread{};
-		Vector<void(*)()> exitfuncs{};
-		ThreadState * tstate_current{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_runtime() -> RuntimeState * { return RuntimeState::singleton; }
-	NODISCARD inline void set_runtime(RuntimeState * value) { RuntimeState::singleton = value; }
-	NODISCARD inline auto get_registry() -> auto & { return get_runtime()->registry; }
-	NODISCARD inline auto get_thread_state() { return get_runtime()->tstate_current; }
-	NODISCARD inline auto get_interpreter() { return get_thread_state()->interp; }
-	NODISCARD inline auto get_stack_frame() { return get_thread_state()->frame; }
-	NODISCARD inline auto get_head_interpreter() { return get_runtime()->interpreters.head; }
-	NODISCARD inline auto get_main_interpreter() { return get_runtime()->interpreters.main; }
-	inline void set_main_interpreter(InterpreterState * value) { get_runtime()->interpreters.main = value; }
+	NODISCARD inline auto get_default_runtime() -> RuntimeState * { return RuntimeState::singleton; }
+	NODISCARD inline void set_default_runtime(RuntimeState * value) { RuntimeState::singleton = value; }
+	NODISCARD inline auto get_default_registry() -> auto & { return get_default_runtime()->registry; }
+	NODISCARD inline auto get_default_thread() { return get_default_runtime()->tstate_current; }
+	NODISCARD inline auto get_default_interpreter() { return get_default_thread()->interp; }
+	NODISCARD inline auto get_default_frame() { return get_default_thread()->frame; }
+	NODISCARD inline auto get_head_interpreter() { return get_default_runtime()->interpreters.head; }
+	NODISCARD inline auto get_main_interpreter() { return get_default_runtime()->interpreters.main; }
+	inline void set_main_interpreter(InterpreterState * value) { get_default_runtime()->interpreters.main = value; }
 
 	NODISCARD inline auto lookup_interpreter(int64_t id) -> InterpreterState *
 	{
@@ -140,18 +144,27 @@ namespace ism
 		return nullptr;
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	inline TypeMap<TypeInfo *> & registered_local_types_cpp()
+	NODISCARD inline TypeMap<TypeInfo *> & registered_local_types_cpp()
 	{
 		static TypeMap<TypeInfo *> locals{};
 		return locals;
 	}
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism::detail
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class K = String
 	> NODISCARD void * get_shared_data(K && key) noexcept
 	{
-		auto & shared_data{ get_registry().shared_data };
+		auto & shared_data{ get_default_registry().shared_data };
 		auto it{ shared_data.find(FWD(key)) };
 		return (it != shared_data.end()) ? it->second : nullptr;
 	}
@@ -159,18 +172,22 @@ namespace ism
 	template <class K = String
 	> void * set_shared_data(K && key, void * value) noexcept
 	{
-		auto & shared_data{ get_registry().shared_data };
+		auto & shared_data{ get_default_registry().shared_data };
 		return shared_data.insert_or_assign(FWD(key), value).first->second;
 	}
 
 	template <class T, class K, class Fn
 	> NODISCARD T & get_or_create_shared_data(K && key, Fn && fn) noexcept
 	{
-		auto & shared_data{ get_registry().shared_data };
-		if (auto it{ shared_data.find(FWD(key)) }; it != shared_data.end()) {
+		auto & shared_data{ get_default_registry().shared_data };
+		if (auto it{ shared_data.find(FWD(key)) }; it != shared_data.end())
+		{
 			return *static_cast<T *>(it->second);
 		}
-		return *static_cast<T *>(shared_data.insert({ FWD(key), std::invoke(FWD(fn)) }).first->second);
+		else
+		{
+			return *static_cast<T *>(shared_data.insert({ FWD(key), std::invoke(FWD(fn)) }).first->second);
+		}
 	}
 
 	template <class T, class K = String

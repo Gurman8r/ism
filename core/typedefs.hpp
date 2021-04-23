@@ -11,6 +11,11 @@
 	struct CAT(__, name) { bool unused; };	\
 	ALIAS(name) CAT(__, name) *
 
+// declare tag
+#define DECL_TAG(type, var) \
+	struct type { struct _Tag {}; constexpr explicit type(_Tag) {} }; \
+	inline constexpr type var{ type::_Tag{} }; \
+
 // strong typedef
 #define STRONG_TYPEDEF(m_to, m_from)																			\
 class m_to final {																								\

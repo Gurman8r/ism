@@ -7,11 +7,15 @@
 
 #define _ISM				::ism::
 
+// array size
+#undef ARRAYSIZE
+#define ARRAYSIZE(arr)		(sizeof(arr) / sizeof(*arr))
+
 // concat implementation
-#define IMPL_CONCAT(a, b)	a##b
+#define __ISM_CONCAT(a, b)	a##b
 
 // concatenate
-#define CAT(a, b)			IMPL_CONCAT(a, b)
+#define CAT(a, b)			__ISM_CONCAT(a, b)
 
 // ternary comparison
 #define CMP(lhs, rhs)		(((lhs) != (rhs)) ? (((lhs) < (rhs)) ? -1 : 1) : 0)
@@ -21,9 +25,6 @@
 
 // max
 #define MAX(lhs, rhs)		((lhs) > (rhs) ? (lhs) : (rhs))
-
-// unused expression
-#define UNUSED(expr)		((void)(expr))
 
 // expression to string
 #define TOSTR(expr)			#expr
@@ -61,15 +62,31 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism::impl
+// unused expression
+#define UNUSED(expr)		((void)(expr))
+
+// sink implementation
+#define IMPL_SINK(var, ...)	int var[] = { ##__VA_ARGS__ }; UNUSED(var);
+
+// sink
+#define SINK(...)			IMPL_SINK(ANONYMOUS, ##__VA_ARGS__)
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+namespace ism
 {
-	// compose
-	template <class T> struct ComposeHelper {};
+	// composer
+	template <class T> struct ValueComposer {};
 
 	template <class T, class Fn = void(*)(T &)
-	> constexpr auto operator+(ComposeHelper<T>, Fn fn) { T x{}; fn((T &)x); return x; }
+	> constexpr auto operator+(ValueComposer<T>, Fn fn)
+	{
+		T x{};
+		fn((T &)x);
+		return x;
+	}
 
-#define COMPOSE(T, v, ...) (ism::impl::ComposeHelper<T>{}) + [##__VA_ARGS__](T & v) noexcept -> void
+#define COMPOSE(T, v, ...) (ism::ValueComposer<T>{}) + [##__VA_ARGS__](T & v) noexcept -> void
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -134,21 +151,27 @@ namespace ism::impl
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type) \
+#define COPY_AND_MOVE_CONSTRUCTABLE(type) \
 public: \
-	type() noexcept = default; \
 	type(type const &) = default; \
 	type & operator=(type const &) = default; \
 	type(type &&) noexcept = default; \
-	type & operator=(type &&) noexcept = default;
+	type & operator=(type &&) noexcept = default; \
 
-#define CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type) \
+#define DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type) \
+	COPY_AND_MOVE_CONSTRUCTABLE(type) \
+	type() = default; \
+
+#define CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(type) \
 public: \
-	constexpr type() noexcept = default; \
 	constexpr type(type const &) = default; \
 	constexpr type(type &&) noexcept = default; \
 	constexpr type & operator=(type const &) = default; \
-	constexpr type & operator=(type &&) noexcept = default;
+	constexpr type & operator=(type &&) noexcept = default; \
+
+#define CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type) \
+	CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(type) \
+	constexpr type() noexcept = default; \
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

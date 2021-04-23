@@ -42,7 +42,7 @@ namespace ism
 
 	template <class T> class Ref
 	{
-	private:
+	protected:
 		T * m_ref{};
 
 		void ref(Ref const & value)
@@ -97,7 +97,7 @@ namespace ism
 		{
 			if (m_ref == value) { return; }
 			unref();
-			T * r{ ism::super_cast<T>(value) };
+			T * r{ super_cast<T>(value) };
 			if (r) { ref_pointer(r) }
 		}
 
@@ -112,7 +112,7 @@ namespace ism
 			Reference * other{ const_cast<Reference *>(static_cast<Reference const *>(value.ptr())) };
 			if (!other) { unref(); return; }
 			Ref r;
-			r.m_ref = ism::super_cast<T>(other);
+			r.m_ref = super_cast<T>(other);
 			ref(r);
 			r.m_ref = nullptr;
 		}
@@ -120,19 +120,20 @@ namespace ism
 	public:
 		NODISCARD operator bool() const { return m_ref != nullptr; }
 
-		NODISCARD auto ptr() const -> T const * { return m_ref; }
-		NODISCARD auto ptr() -> T * { return m_ref; }
+		NODISCARD auto ptr() const { return const_cast<T *>(m_ref); }
 
-		NODISCARD auto operator*() const -> T const * { return m_ref; }
-		NODISCARD auto operator*() -> T * { return m_ref; }
+		NODISCARD auto operator*() const { return const_cast<T *>(m_ref); }
 
-		NODISCARD auto operator->() const -> T const * { return m_ref; }
-		NODISCARD auto operator->() -> T * { return m_ref; }
+		NODISCARD auto operator->() const { return const_cast<T *>(m_ref); }
 
 		NODISCARD bool operator==(T const * value) const { return m_ref == value; }
+		
 		NODISCARD bool operator!=(T const * value) const { return m_ref != value; }
+		
 		NODISCARD bool operator<(Ref const & value) const { return m_ref < value.m_ref; }
+		
 		NODISCARD bool operator==(Ref const & value) const { return m_ref == value.m_ref; }
+		
 		NODISCARD bool operator!=(Ref const & value) const { return m_ref != value.m_ref; }
 	};
 
@@ -140,26 +141,43 @@ namespace ism
 
 	template <class T> struct ism::Hash<Ref<T>>
 	{
-		hash_t operator()(Ref<T> const & v) const
-		{
-			return ism::Hash<void const *>()(v.ptr());
-		}
+		NODISCARD hash_t operator()(Ref<T> const & v) const { return ism::Hash<void const *>()(v.ptr()); }
 	};
 
 	template <class T> struct ism::EqualTo<Ref<T>>
 	{
-		bool operator()(Ref<T> const & a, Ref<T> const & b) const
-		{
-			return a.ptr() == b.ptr();
-		}
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() == b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() == b.ptr(); }
+	};
+
+	template <class T> struct ism::NotEqualTo<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() != b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() != b.ptr(); }
 	};
 
 	template <class T> struct ism::Less<Ref<T>>
 	{
-		bool operator()(Ref<T> const & a, Ref<T> const & b) const
-		{
-			return a.ptr() < b.ptr();
-		}
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() < b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() < b.ptr(); }
+	};
+
+	template <class T> struct ism::Greater<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() ? b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() > b.ptr(); }
+	};
+
+	template <class T> struct ism::LessEqual<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() <= b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() <= b.ptr(); }
+	};
+
+	template <class T> struct ism::GreaterEqual<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() >= b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() >= b.ptr(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -169,15 +187,17 @@ namespace ism
 		InstanceID m_ref;
 
 	public:
+		WeakRef() : Reference{} {}
+
+		WeakRef(Super * value) : WeakRef{} { set_obj(value); }
+
+		WeakRef(REF const & value) : WeakRef{} { set_ref(value); }
+
 		NODISCARD Any get_ref() const;
 
 		void set_obj(Super * value);
 
 		void set_ref(REF const & value);
-
-		WeakRef();
-
-		virtual ~WeakRef() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

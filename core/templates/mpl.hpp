@@ -15,7 +15,7 @@
 
 #include <core/templates/utility.hpp>
 
-#define MPL_TAG(type_tag) decltype(type_tag)::type
+#define TAG_TYPE(tag) std::decay_t<decltype(tag)::type>
 
 // DETAIL STRUCTURES
 namespace ism::mpl

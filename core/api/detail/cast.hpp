@@ -7,11 +7,21 @@ namespace ism::detail
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline bool isinstance_generic(OBJECT const & o, std::type_info const & t)
+	NODISCARD inline TYPE typeof_generic(std::type_info const & t)
+	{
+		return nullptr;
+	}
+
+	NODISCARD inline bool isinstance_generic(OBJECT const & o, std::type_info const & t)
 	{
 		return false;
 	}
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism::detail
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	inline std::pair<decltype(RuntimeState::_registry::registered_types_core)::iterator, bool> all_type_info_get_cache(TYPE const & t);
@@ -23,7 +33,7 @@ namespace ism::detail
 		Vector<TYPE> check{};
 		for (OBJECT parent : ***LIST(t->tp_bases)) { check.push_back(parent); }
 		
-		auto const & type_dict{ get_registry().registered_types_core };
+		auto const & type_dict{ get_default_registry().registered_types_core };
 		for (size_t i = 0; i < check.size(); i++)
 		{
 			auto & type{ check[i] };
@@ -48,18 +58,18 @@ namespace ism::detail
 
 	inline Vector<TypeInfo *> const & all_type_info(TYPE const & t)
 	{
-		auto ins = all_type_info_get_cache(t);
+		auto ins{ all_type_info_get_cache(t) };
 		if (ins.second) { all_type_info_populate(t, ins.first->second); }
 		return ins.first->second;
 	}
-
-	inline TypeInfo * get_type_info(TYPE const & t)
-	{
-		auto & bases{ all_type_info(t) };
-		if (bases.empty()) { return nullptr; }
-		if (bases.size() > 1) { VERIFY(!"type has multiple bases registered"); }
-		return bases.front();
-	}
+	
+	//inline TypeInfo * get_type_info(TYPE const & t)
+	//{
+	//	auto & bases{ all_type_info(t) };
+	//	if (bases.empty()) { return nullptr; }
+	//	if (bases.size() > 1) { VERIFY(!"type has multiple bases registered"); }
+	//	return bases.front();
+	//}
 
 	inline TypeInfo * get_local_type_info(std::type_index const & t)
 	{
@@ -70,7 +80,7 @@ namespace ism::detail
 
 	inline TypeInfo * get_global_type_info(std::type_index const & t)
 	{
-		auto & types{ get_registry().registered_types_cpp };
+		auto & types{ get_default_registry().registered_types_cpp };
 		if (auto it{ types.find(t) }; it != types.end()) { return it->second; }
 		return nullptr;
 	}
@@ -98,6 +108,10 @@ namespace ism::detail
 
 	struct type_caster_generic
 	{
+		TypeInfo const * typeinfo{};
+		std::type_info const * cpptype{};
+		void * value{};
+
 		type_caster_generic(std::type_info const & info) : typeinfo{}, cpptype{ &info }, value{} {}
 		type_caster_generic(TypeInfo const * tinfo) : typeinfo{ typeinfo }, cpptype{ typeinfo ? typeinfo->cpptype : nullptr } {}
 		NODISCARD bool load(OBJECT const & src, bool convert) { return load_impl<type_caster_generic>(src, convert); }
@@ -108,6 +122,13 @@ namespace ism::detail
 			if (!src) { return Core_None; }
 
 			return nullptr;
+		}
+
+		void check_holder_compat() {}
+
+		void load_value(void **& v_h)
+		{
+			// TODO...
 		}
 
 		bool try_implicit_casts(OBJECT src, bool convert)
@@ -134,8 +155,6 @@ namespace ism::detail
 			}
 			return false;
 		}
-
-		void check_holder_compat() {}
 		
 		static void * local_load(OBJECT src, TypeInfo const * ti)
 		{
@@ -146,19 +165,7 @@ namespace ism::detail
 
 		bool try_load_foreign_module_local(OBJECT src)
 		{
-			constexpr auto local_key{ "__module_local__" };
-			TYPE ptype{ typeof(src) };
-			if (!hasattr(ptype, local_key)) { return false; }
-			auto foreign_typeinfo{ CAPSULE(ptype.attr(local_key))->get_pointer<TypeInfo *>() };
-			if (foreign_typeinfo->module_local_load == &local_load || (cpptype && !same_type(*cpptype, *foreign_typeinfo->cpptype)))
-			{
-				return false;
-			}
-			if (auto result{ foreign_typeinfo->module_local_load(src, foreign_typeinfo) })
-			{
-				value = result;
-				return true;
-			}
+			// TODO...
 			return false;
 		}
 
@@ -174,10 +181,6 @@ namespace ism::detail
 			if (auto tpi{ get_type_info(cast_type) }) { return { src, const_cast<TypeInfo const *>(tpi) }; }
 			return { nullptr, nullptr };
 		}
-
-		TypeInfo const * typeinfo{};
-		std::type_info const * cpptype{};
-		void * value{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -258,15 +261,23 @@ namespace ism::detail
 	{
 		using itype = intrinsic_t<T>;
 
+		template <typename T> using cast_op_type = detail::cast_op_type<T>;
+
+		operator itype * () { return (T *)value; }
+		operator itype & () { return *((itype *)CHECK(value)); }
+
 		type_caster_base() : type_caster_base{ typeid(T) } {}
+
 		explicit type_caster_base(std::type_info const & info) : type_caster_generic{ info } {}
 
-		static OBJECT cast(itype const & src, ReturnPolicy policy, OBJECT parent) {
+		static OBJECT cast(itype const & src, ReturnPolicy policy, OBJECT parent)
+		{
 			return cast(&src, policy, parent);
 		}
 
-		static OBJECT cast(itype && src, ReturnPolicy policy, OBJECT parent) {
-			return cast(&src, ReturnPolicy::Move, parent);
+		static OBJECT cast(itype && src, ReturnPolicy policy, OBJECT parent)
+		{
+			return cast(&src, ReturnPolicy_Move, parent);
 		}
 
 		static std::pair<const void *, TypeInfo const *> src_and_type(itype const * src)
@@ -299,26 +310,19 @@ namespace ism::detail
 		static OBJECT cast_holder(itype const * src, void const * holder)
 		{
 			auto st{ src_and_type(src) };
-			return type_caster_generic::cast(st.first, ReturnPolicy::TakeOwnership, {}, st.second, nullptr, nullptr, holder);
+			return type_caster_generic::cast(st.first, ReturnPolicy_TakeOwnership, {}, st.second, nullptr, nullptr, holder);
 		}
-
-		template <typename T> using cast_op_type = detail::cast_op_type<T>;
-
-		operator itype * () { return (T *)value; }
-		operator itype & () { return *((itype *)CHECK(value)); }
 
 	protected:
 		using Constructor = void * (*)(void const *);
 
 		template <class T, class = std::enable_if_t<is_copy_constructible_v<T>>
-		> static auto make_copy_constructor(T const * x) -> decltype(new T(*x), Constructor{})
-		{
+		> static auto make_copy_constructor(T const * x) -> decltype(new T(*x), Constructor{}) {
 			return [](void const * arg) -> void * { return memnew(T(*reinterpret_cast<T const *>(arg))); };
 		}
 
 		template <class T, class = std::enable_if_t<std::is_move_constructible_v<T>>
-		> static auto make_move_constructor(T const * x) -> decltype(new T(std::move(*const_cast<T *>(x))), Constructor{})
-		{
+		> static auto make_move_constructor(T const * x) -> decltype(new T(std::move(*const_cast<T *>(x))), Constructor{}) {
 			return [](void const * arg) -> void * { return memnew(T(std::move(*const_cast<T *>(reinterpret_cast<T const *>(arg))))); };
 		}
 
@@ -353,7 +357,7 @@ namespace ism::detail
 		> static OBJECT cast(T * src, ReturnPolicy policy, OBJECT parent) \
 		{ \
 			if (!src) { return Core_None; } \
-			if (policy == ReturnPolicy::TakeOwnership) \
+			if (policy == ReturnPolicy_TakeOwnership) \
 			{ \
 				auto h{ cast(std::move(*src), policy, parent) }; \
 				delete src; \
@@ -367,7 +371,7 @@ namespace ism::detail
 		operator m_type * () { return &value; } \
 		operator m_type & () { return value; } \
 		operator m_type && () { return std::move(value); } \
-		template <class T> using cast_op_type = _ISM detail::movable_cast_op_type<T>; \
+		template <class T> using cast_op_type = detail::movable_cast_op_type<T>; \
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -386,22 +390,22 @@ namespace ism::detail
 
 	template <class T> struct type_caster<T, std::enable_if_t<std::is_arithmetic_v<T> && !is_char_v<T>>>
 	{
-		using _type_0 = std::conditional_t<sizeof(T) <= sizeof(int32_t), int32_t, int64_t>;
-		using _type_1 = std::conditional_t<std::is_signed_v<T>, _type_0, std::make_unsigned_t<_type_0>>;
-		using convt_t = std::conditional_t<std::is_floating_point_v<T>, double_t, _type_1>;
+		using _type0 = std::conditional_t<sizeof(T) <= sizeof(int32_t), int32_t, int64_t>;
+		using _type1 = std::conditional_t<std::is_signed_v<T>, _type0, std::make_unsigned_t<_type0>>;
+		using _convt = std::conditional_t<std::is_floating_point_v<T>, double_t, _type1>;
 
 		NODISCARD bool load(OBJECT const & src, bool convert)
 		{
 			if (!src) { return false; }
-			if (isinstance<INT>(src)) { value = (convt_t)(***INT(src)); return true; }
-			if (isinstance<FLT>(src)) { value = (convt_t)(***FLT(src)); return true; }
+			if (isinstance<INT>(src)) { value = (_convt)(***INT(src)); return true; }
+			if (isinstance<FLT>(src)) { value = (_convt)(***FLT(src)); return true; }
 			return false;
 		}
 
 		NODISCARD static OBJECT cast(T src, ReturnPolicy, OBJECT)
 		{
-			if constexpr (std::is_floating_point_v<T>) { return FLT::create(src); }
-			else { return INT::create(src); }
+			if constexpr (std::is_floating_point_v<T>) { return FLT(src); }
+			else { return INT(src); }
 		}
 
 		ISM_TYPE_CASTER(T, std::is_integral_v<T> ? "int" : "float");
@@ -426,7 +430,7 @@ namespace ism::detail
 
 		NODISCARD static OBJECT cast(void const * src, ReturnPolicy, OBJECT)
 		{
-			return src ? CAPSULE::create(src) : Core_None;
+			return src ? CAPSULE({ src }) : Core_None;
 		}
 	};
 
@@ -444,7 +448,7 @@ namespace ism::detail
 			return false;
 		}
 
-		NODISCARD static OBJECT cast(bool src, ReturnPolicy, OBJECT) { return Core_Boolean(src); }
+		NODISCARD static OBJECT cast(bool src, ReturnPolicy, OBJECT) { return Core_Bool(src); }
 
 		ISM_TYPE_CASTER(bool, "bool");
 	};
@@ -462,7 +466,7 @@ namespace ism::detail
 
 		NODISCARD static OBJECT cast(T const & src, ReturnPolicy, OBJECT)
 		{
-			return STR::create(src);
+			return STR(src);
 		}
 
 		ISM_TYPE_CASTER(T, "string");
@@ -484,32 +488,131 @@ namespace ism::detail
 
 		NODISCARD static auto cast(T const * src, ReturnPolicy, OBJECT)
 		{
-			return STR::create(src);
+			return STR(src);
 		}
 
 		NODISCARD static auto cast(T src, ReturnPolicy, OBJECT)
 		{
-			return INT::create(src);
+			return INT(src);
 		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, class Holder
-	> struct copyable_holder_caster : type_caster_base<T>
+	template <class T> struct holder_helper
 	{
-		// for holder types like std::shared_ptr, etc...
+		static auto get(T const & p) -> decltype(p.get()) { return p.get(); }
 	};
+
+	template <class type, class holder_type
+	> struct copyable_holder_caster : type_caster_base<type>
+	{
+	public:
+		using base = type_caster_base<type>;
+		static_assert(std::is_base_of<base, type_caster<type>>::value,
+			"Holder classes are only supported for custom types");
+		using base::base;
+		using base::cast;
+		using base::typeinfo;
+		using base::value;
+
+		bool load(OBJECT src, bool convert)
+		{
+			return base::template load_impl<copyable_holder_caster<type, holder_type>>(src, convert);
+		}
+
+		explicit operator type * () { return this->value; }
+		explicit operator type & () { return *(static_cast<type *>(this->value)); }
+		explicit operator holder_type * () { return std::addressof(holder); }
+		explicit operator holder_type & () { return holder; }
+
+		static OBJECT cast(holder_type const & src, ReturnPolicy, OBJECT)
+		{
+			auto const * ptr{ holder_helper<holder_type>::get(src) };
+			return type_caster_base<type>::cast_holder(ptr, &src);
+		}
+
+	protected:
+		friend type_caster_generic;
+
+		void check_holder_compat()
+		{
+			VERIFY(!typeinfo->default_holder && "Unable to load a custom holder type from a default-holder instance");
+		}
+
+		bool load_value(void **& v_h)
+		{
+			return false;
+		}
+
+		template <class T = holder_type
+		> bool try_implicit_casts(OBJECT src, bool convert)
+		{
+			if constexpr (std::is_constructible_v<T, T const &, type *>)
+			{
+				for (auto & cast : typeinfo->implicit_casts)
+				{
+					copyable_holder_caster sub_caster{ *cast.first };
+					if (sub_caster.load(src, convert))
+					{
+						value = cast.second(sub_caster.value);
+						holder = holder_type{ sub_caster.holder, (type *)value };
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		static bool try_direct_conversions(OBJECT) { return false; }
+
+		holder_type holder;
+	};
+
+	/// Specialize for the common std::shared_ptr, so users don't need to
+	template <class T
+	> struct type_caster<std::shared_ptr<T>>
+		: copyable_holder_caster<T, std::shared_ptr<T>> { };
+
+	template <class T, class Holder
+	> struct move_only_holder_caster
+	{
+		static_assert(
+			std::is_base_of_v<type_caster_base<T>, type_caster<T>>,
+			"Holder classes are only supported for custom types");
+
+		static OBJECT cast(Holder && src, ReturnPolicy, OBJECT)
+		{
+			auto ptr{ holder_helper<Holder>::get(src) };
+			return type_caster_base<T>::cast_holder(ptr, std::addressof(src));
+		}
+	};
+
+	template <class type, class deleter
+	> struct type_caster<std::unique_ptr<type, deleter>>
+		: move_only_holder_caster<type, std::unique_ptr<type, deleter>> { };
+
+	template <class type, class holder_type
+	> using type_caster_holder = std::conditional_t<
+		is_copy_constructible_v<holder_type>,
+		copyable_holder_caster<type, holder_type>,
+		move_only_holder_caster<type, holder_type>>;
+
+	template <class T, bool Value = false
+	> struct always_construct_holder { static constexpr bool value = Value; };
+
+	template <class base, class holder
+	> struct is_holder_type : std::is_base_of<type_caster_holder<base, holder>, type_caster<holder>> {};
+
+	template <class base, class deleter
+	> struct is_holder_type<base, std::unique_ptr<base, deleter>> : std::true_type {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T> struct object_caster
 	{
-		template <class U = T, std::enable_if_t<std::is_same_v<U, OBJECT>, int> = 0
-		> NODISCARD bool load(OBJECT const & src, bool) { value = src; return static_cast<bool>(value); }
-
-		template <class U = T, std::enable_if_t<is_handle_v<U>, int> = 0
-		> NODISCARD bool load(OBJECT const & src, bool)
+		template <class U = T
+		> NODISCARD bool load(Handle<U> const & src, bool)
 		{
 			if (!isinstance<T>(src)) { return false; }
 			value = src;
@@ -571,7 +674,7 @@ namespace ism::detail
 	{
 		static ReturnPolicy policy(ReturnPolicy p)
 		{
-			return !std::is_lvalue_reference_v<Return> && !std::is_pointer_v<Return> ? ReturnPolicy::Move : p;
+			return !std::is_lvalue_reference_v<Return> && !std::is_pointer_v<Return> ? ReturnPolicy_Move : p;
 		}
 	};
 
@@ -593,17 +696,12 @@ namespace ism::detail
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// obj -> c++
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD T cast(OBJECT const & o)
 	{
-		return detail::cast_op<T>(detail::load_type<T>(o));
+		return cast_op<T>(load_type<T>(o));
 	}
 
 	// obj -> obj
@@ -612,215 +710,85 @@ namespace ism
 
 	// c++ -> obj
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-	> NODISCARD OBJECT cast(T && o, ReturnPolicy policy = ReturnPolicy::AutomaticReference, OBJECT parent = {})
+	> NODISCARD OBJECT cast(T && o, ReturnPolicy policy = ReturnPolicy_AutomaticReference, OBJECT parent = {})
 	{
 		using U = std::remove_reference_t<T>;
 
-		if (policy == ReturnPolicy::Automatic) {
+		if (policy == ReturnPolicy_Automatic) {
 			policy = (std::is_pointer_v<U>
-				? ReturnPolicy::TakeOwnership
+				? ReturnPolicy_TakeOwnership
 				: (std::is_lvalue_reference_v<T>
-					? ReturnPolicy::Copy
-					: ReturnPolicy::Move));
+					? ReturnPolicy_Copy
+					: ReturnPolicy_Move));
 		}
-		else if (policy == ReturnPolicy::AutomaticReference) {
+		else if (policy == ReturnPolicy_AutomaticReference) {
 			policy = (std::is_pointer_v<U>
-				? ReturnPolicy::Reference
+				? ReturnPolicy_Reference
 				: (std::is_lvalue_reference_v<T>
-					? ReturnPolicy::Copy
-					: ReturnPolicy::Move));
+					? ReturnPolicy_Copy
+					: ReturnPolicy_Move));
 		}
 
-		return detail::make_caster<T>::cast(FWD(o), policy, parent);
+		return make_caster<T>::cast(FWD(o), policy, parent);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> auto move(OBJECT && o) -> std::enable_if_t<!detail::move_never_v<T>, T>
+	> auto move(OBJECT && o) -> std::enable_if_t<!move_never_v<T>, T>
 	{
 		if (o && o->ref_count() > 1) {
 			VERIFY(!"Unable to cast Core instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
 		}
-		T ret{ std::move(detail::load_type<T>(o).operator T & ()) };
+		T ret{ std::move(load_type<T>(o).operator T & ()) };
 		return ret;
 	}
 
 	template <class T
-	> auto cast(OBJECT && o) -> std::enable_if_t<detail::move_always<T>::value, T>
+	> auto cast(OBJECT && o) -> std::enable_if_t<move_always_v<T>, T>
 	{
-		return _ISM move<T>(std::move(o));
+		return move<T>(std::move(o));
 	}
 
 	template <class T
-	> auto cast(OBJECT && o) -> std::enable_if_t<detail::move_if_unreferenced<T>::value, T>
+	> auto cast(OBJECT && o) -> std::enable_if_t<move_if_unreferenced_v<T>, T>
 	{
-		if (o && o->ref_count() > 1) return _ISM cast<T>(o);
-		else return _ISM move<T>(std::move(o));
+		if (o && o->ref_count() > 1) { return cast<T>(o); }
+		else { return move<T>(std::move(o)); }
 	}
 
 	template <class T
-	> auto cast(OBJECT && o) -> std::enable_if_t<detail::move_never_v<T>, T>
+	> auto cast(OBJECT && o) -> std::enable_if_t<move_never_v<T>, T>
 	{
-		return _ISM cast<T>(o);
+		return cast<T>(o);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class O> template <class T> inline T Handle<O>::cast() const &
-	{
-		if constexpr (!std::is_same_v<T, void>) { return _ISM cast<T>(*this); }
-	}
-
-	template <class O> template <class T> inline T Handle<O>::cast() &&
-	{
-		if constexpr (!std::is_same_v<T, void>) { return _ISM cast<T>(std::move(*this)); }
-	}
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
-	> NODISCARD OBJECT object_or_cast(T && o) { return _ISM cast(FWD(o)); }
+	> NODISCARD OBJECT object_or_cast(T && o) { return cast(FWD(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 }
 
-namespace ism
+template <class O> template <class T> inline T ism::Handle<O>::cast() const &
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	if constexpr (!std::is_void_v<T>) { return detail::cast<T>(*this); }
+}
 
-	struct FunctionRecord;
+template <class O> template <class T> inline T ism::Handle<O>::cast() &&
+{
+	if constexpr (!std::is_void_v<T>) { return detail::cast<T>(std::move(*this)); }
+}
 
-	struct FunctionCall
-	{
-		FunctionCall(FunctionRecord const & func, OBJECT parent);
+template <class T> inline T ism::CoreObject::cast() const &
+{
+	if constexpr (!std::is_void_v<T>) { return detail::cast<T>(*this); }
+}
 
-		FunctionRecord const & func;
-
-		Vector<OBJECT> args{};
-
-		Vector<bool> args_convert{};
-
-		OBJECT parent{};
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class ... Args
-	> struct argument_loader
-	{
-	public:
-		static constexpr size_t nargs{ sizeof...(Args) };
-
-		using indices = std::make_index_sequence<nargs>;
-
-		std::tuple<detail::make_caster<Args>...> argcasters;
-
-		bool load_args(FunctionCall & call)
-		{
-			return impl_load_sequence(call, indices{});
-		}
-
-		template <class Return, class Guard, class F
-		> auto call(F && f) && -> std::conditional_t<std::is_void_v<Return>, void_type, Return>
-		{
-			if constexpr (std::is_void_v<Return>)
-			{
-				std::move(*this).template call_impl<Return>(FWD(f), indices{}, Guard{});
-				return void_type{};
-			}
-			else
-			{
-				return std::move(*this).template call_impl<Return>(FWD(f), indices{}, Guard{});
-			}
-		}
-
-	private:
-		static bool impl_load_sequence(FunctionCall &, std::index_sequence<>) noexcept { return true; }
-
-		template <size_t ... I> bool impl_load_sequence(FunctionCall & call, std::index_sequence<I...>)
-		{
-			return !(... || !std::get<I>(argcasters).load(call.args[I], call.args_convert[I]));
-		}
-
-		template <class R, class F, size_t ... I, class Guard
-		> R call_impl(F && f, std::index_sequence<I...>, Guard &&) &&
-		{
-			return f(detail::cast_op<Args>(std::move(std::get<I>(argcasters)))...);
-		}
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct Arg
-	{
-		constexpr explicit Arg(cstring name = nullptr) : name{ name }, flag_convert{ false }, flag_none{ true } {}
-
-		Arg & noconvert(bool value = true) { flag_convert = value; return (*this); }
-		Arg & none(bool value = true) { flag_none = value; return (*this); }
-
-		cstring name;
-
-		bool flag_convert, flag_none;
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	inline OBJECT call_object(OBJECT callable, OBJECT args)
-	{
-		if (vectorcallfunc func{ _get_vectorcall(callable) })
-		{
-			auto list{ (CoreList *)args.ptr() };
-			return func(callable, list->data(), list->size());
-		}
-		else if (TYPE t{ typeof(callable) }; t->tp_call)
-		{
-			return t->tp_call(callable, args);
-		}
-		else
-		{
-			return nullptr;
-		}
-	}
-
-	template <ReturnPolicy policy
-	> struct argument_collector
-	{
-		template <class ... Args
-		> explicit argument_collector(Args && ... values) : m_args{ LIST::create() }
-		{
-			m_args->reserve(sizeof...(Args));
-
-			mpl::for_args([&](auto && e) noexcept
-			{
-				m_args->append(detail::make_caster<decltype(e)>::cast(FWD(e), policy, nullptr));
-			}
-			, FWD(values)...);
-		}
-
-		LIST const & args() const & { return m_args; }
-
-		LIST args() && { return std::move(m_args); }
-
-		OBJECT call(OBJECT callable) { return call_object(callable, m_args); }
-
-	private:
-		LIST m_args{};
-	};
-
-	template <ReturnPolicy policy, class ... Args
-	> auto collect_arguments(Args && ... args) noexcept
-	{
-		return argument_collector<policy>{ FWD(args)... };
-	}
-
-	template <class Derived
-	> template <ReturnPolicy policy, class ...Args
-	> OBJECT ObjectAPI<Derived>::operator()(Args && ... args)
-	{
-		return collect_arguments<policy>(FWD(args)...).call(handle());
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+template <class T> inline T ism::CoreObject::cast() &&
+{
+	if constexpr (!std::is_void_v<T>) { return detail::cast<T>(std::move(*this)); }
 }
 
 #endif // !_ISM_CAST_HPP_
