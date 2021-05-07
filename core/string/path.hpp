@@ -46,11 +46,11 @@ namespace ism
 
 		NODISCARD auto wstring() const noexcept -> WideString { return m_text; }
 
-		NODISCARD auto string() const noexcept -> String { return ism::narrow(m_text); }
+		NODISCARD auto string() const noexcept -> String { return util::narrow(m_text); }
 
 		NODISCARD operator WideString() const noexcept { return m_text; }
 
-		NODISCARD operator String() const noexcept { return ism::narrow(m_text); }
+		NODISCARD operator String() const noexcept { return util::narrow(m_text); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -72,15 +72,15 @@ namespace ism
 
 		Path(cwstring value) : m_text{ value } {}
 
-		Path(cstring value) : m_text{ ism::widen((String)value) } {}
+		Path(cstring value) : m_text{ util::widen((String)value) } {}
 
 		Path(Path const & value) : m_text{ value.m_text } {}
 
 		Path(WideString const & value) : m_text{ value } {}
 
-		Path(String const & value) : m_text{ ism::widen(value) } {}
+		Path(String const & value) : m_text{ util::widen(value) } {}
 
-		Path(StringView const & value) : m_text{ ism::widen((String)value) } {}
+		Path(StringView const & value) : m_text{ util::widen((String)value) } {}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

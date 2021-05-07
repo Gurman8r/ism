@@ -3,6 +3,7 @@
 
 #include <core/api/super.hpp>
 
+// reference
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -12,6 +13,10 @@ namespace ism
 		RefCount m_refcount, m_refcount_init;
 
 	public:
+		virtual ~Reference() override;
+
+		Reference();
+
 		NODISCARD int32_t ref_count() const { return m_refcount.get(); }
 
 		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
@@ -21,41 +26,35 @@ namespace ism
 		bool inc_ref(); // returns false if refcount is at zero and didn't get increased
 
 		bool dec_ref();
-
-		Reference();
-
-		virtual ~Reference() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
-	template <class> constexpr bool is_ref_v{ false };
-
-	template <class T> constexpr bool is_ref_v<Ref<T>>{ true };
-
-	template <template <class> class R, class T> constexpr bool is_ref_v<R<T>>
-	{
-		std::is_base_of_v<Ref<T>, R<T>>
-	};
-
+// ref<T>
+namespace ism
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T> class Ref
 	{
+	public:
+		using value_type = typename T;
+
 	protected:
-		T * m_ref{};
+		T * m_reference{};
 
 		void ref(Ref const & value)
 		{
-			if (value.m_ref == m_ref) { return; }
+			if (value.m_reference == m_reference) { return; }
 			unref();
-			m_ref = value.m_ref;
-			if (m_ref) { m_ref->inc_ref(); }
+			m_reference = value.m_reference;
+			if (m_reference) { m_reference->inc_ref(); }
 		}
 
 		void ref_pointer(T * value)
 		{
-			if (CHECK(value)->init_ref()) { m_ref = value; }
+			if (CHECK(value)->init_ref()) { m_reference = value; }
 		}
 
 	public:
@@ -82,20 +81,20 @@ namespace ism
 	public:
 		void unref()
 		{
-			if (m_ref && m_ref->dec_ref()) { ism::memdelete(m_ref); }
-			m_ref = nullptr;
+			if (m_reference && m_reference->dec_ref()) { memdelete(m_reference); }
+			m_reference = nullptr;
 		}
 
 		template <class ... Args
 		> void revalue(Args && ... args)
 		{
-			ref(ism::construct_or_initialize<T>(FWD(args)...));
+			ref(construct_or_initialize<T>(FWD(args)...));
 		}
 
 		template <class U
 		> void reset(U * value)
 		{
-			if (m_ref == value) { return; }
+			if (m_reference == value) { return; }
 			unref();
 			T * r{ super_cast<T>(value) };
 			if (r) { ref_pointer(r) }
@@ -112,79 +111,49 @@ namespace ism
 			Reference * other{ const_cast<Reference *>(static_cast<Reference const *>(value.ptr())) };
 			if (!other) { unref(); return; }
 			Ref r;
-			r.m_ref = super_cast<T>(other);
+			r.m_reference = super_cast<T>(other);
 			ref(r);
-			r.m_ref = nullptr;
+			r.m_reference = nullptr;
+		}
+
+		T * release()
+		{
+			T * temp{ m_reference };
+			m_reference = nullptr;
+			return m_reference;
 		}
 
 	public:
-		NODISCARD operator bool() const { return m_ref != nullptr; }
+		NODISCARD operator bool() const { return m_reference != nullptr; }
 
-		NODISCARD auto ptr() const { return const_cast<T *>(m_ref); }
+		NODISCARD auto ptr() const { return const_cast<T *>(m_reference); }
 
-		NODISCARD auto operator*() const { return const_cast<T *>(m_ref); }
+		NODISCARD auto operator*() const { return const_cast<T *>(m_reference); }
 
-		NODISCARD auto operator->() const { return const_cast<T *>(m_ref); }
+		NODISCARD auto operator->() const { return const_cast<T *>(m_reference); }
 
-		NODISCARD bool operator==(T const * value) const { return m_ref == value; }
+		NODISCARD bool operator==(T const * value) const { return m_reference == value; }
 		
-		NODISCARD bool operator!=(T const * value) const { return m_ref != value; }
+		NODISCARD bool operator!=(T const * value) const { return m_reference != value; }
 		
-		NODISCARD bool operator<(Ref const & value) const { return m_ref < value.m_ref; }
+		NODISCARD bool operator<(Ref const & value) const { return m_reference < value.m_reference; }
 		
-		NODISCARD bool operator==(Ref const & value) const { return m_ref == value.m_ref; }
+		NODISCARD bool operator==(Ref const & value) const { return m_reference == value.m_reference; }
 		
-		NODISCARD bool operator!=(Ref const & value) const { return m_ref != value.m_ref; }
+		NODISCARD bool operator!=(Ref const & value) const { return m_reference != value.m_reference; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
-	template <class T> struct ism::Hash<Ref<T>>
-	{
-		NODISCARD hash_t operator()(Ref<T> const & v) const { return ism::Hash<void const *>()(v.ptr()); }
-	};
-
-	template <class T> struct ism::EqualTo<Ref<T>>
-	{
-		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() == b; }
-		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() == b.ptr(); }
-	};
-
-	template <class T> struct ism::NotEqualTo<Ref<T>>
-	{
-		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() != b; }
-		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() != b.ptr(); }
-	};
-
-	template <class T> struct ism::Less<Ref<T>>
-	{
-		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() < b; }
-		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() < b.ptr(); }
-	};
-
-	template <class T> struct ism::Greater<Ref<T>>
-	{
-		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() ? b; }
-		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() > b.ptr(); }
-	};
-
-	template <class T> struct ism::LessEqual<Ref<T>>
-	{
-		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() <= b; }
-		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() <= b.ptr(); }
-	};
-
-	template <class T> struct ism::GreaterEqual<Ref<T>>
-	{
-		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() >= b; }
-		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() >= b.ptr(); }
-	};
-
+// weak ref
+namespace ism
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API WeakRef : public Reference
 	{
-		InstanceID m_ref;
+		InstanceID m_reference;
 
 	public:
 		WeakRef() : Reference{} {}
@@ -202,5 +171,48 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
+
+template <class T> struct ism::Hash<ism::Ref<T>>
+{
+	NODISCARD hash_t operator()(Ref<T> const & v) const { return ism::Hash<void const *>()(v.ptr()); }
+};
+
+template <class T> struct ism::EqualTo<ism::Ref<T>>
+{
+	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() == b; }
+	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() == b.ptr(); }
+};
+
+template <class T> struct ism::NotEqualTo<ism::Ref<T>>
+{
+	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() != b; }
+	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() != b.ptr(); }
+};
+
+template <class T> struct ism::Less<ism::Ref<T>>
+{
+	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() < b; }
+	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() < b.ptr(); }
+};
+
+template <class T> struct ism::Greater<ism::Ref<T>>
+{
+	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() ? b; }
+	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() > b.ptr(); }
+};
+
+template <class T> struct ism::LessEqual<ism::Ref<T>>
+{
+	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() <= b; }
+	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() <= b.ptr(); }
+};
+
+template <class T> struct ism::GreaterEqual<ism::Ref<T>>
+{
+	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() >= b; }
+	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() >= b.ptr(); }
+};
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #endif // !_ISM_REFERENCE_HPP_

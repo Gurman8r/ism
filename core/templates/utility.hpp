@@ -1,21 +1,44 @@
 #ifndef _ISM_UTILITY_HPP_
 #define _ISM_UTILITY_HPP_
 
+// Sources:
+// https://www.youtube.com/watch?v=NTWSeQtHZ9M
+// https://github.com/SuperV1234/cppcon2015
+// https://github.com/SuperV1234/cppcon2015/tree/master/Other/ecs/Utils/detail
+// https://github.com/SuperV1234/cppcon2015/blob/master/Other/ecs/Utils/MetaFor.hpp
+// https://github.com/SuperV1234/cppcon2015/blob/master/Other/ecs/Utils/detail/TypeListOps.hpp
+// https://stackoverflow.com/questions/18063451/get-index-of-a-tuple-elements-type
+// https://stackoverflow.com/questions/25958259/how-do-i-find-out-if-a-tuple-contains-a-type
+// https://stackoverflow.com/questions/37029886/how-to-construct-a-tuple-from-an-array
+// https://stackoverflow.com/questions/36580855/construct-tuple-by-passing-the-same-argument-to-each-element-with-explicit-const
+// https://stackoverflow.com/questions/22560100/how-to-initialize-all-tuple-elements-by-the-same-arguments
+
 #include <core/templates/type_traits.hpp>
+
 #include <core/os/copymem.hpp>
 
 #include <stdarg.h>
 #include <algorithm>
+#include <functional>
 #include <initializer_list>
 #include <iterator>
-#include <tuple>
 #include <utility>
 
 #include <gcem/include/gcem.hpp>
 
-namespace ism
+namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class To, class From
+	> constexpr bool is_trivially_convertible_v
+	{
+		"requires To is trivially default constructible and is copy or move constructible"
+		&& sizeof(To) == sizeof(From)
+		&& std::is_trivially_copyable_v<From>
+		&& std::is_trivial_v<To>
+		&& (std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)
+	};
 
 	template <class To, class From, class = std::enable_if_t<is_trivially_convertible_v<To, From>>
 	> NODISCARD To bit_cast(From const & value) noexcept
@@ -27,41 +50,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	constexpr int32_t log2(size_t n, int k = 0) { return (n <= 1) ? k : ism::log2(n >> 1, k + 1); }
-
-	constexpr size_t size_in_ptrs(size_t s) { return 1 + ((s - 1) >> ism::log2(sizeof(void *))); }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism
-{
-	template<class
-	> struct is_ref_wrapper : std::false_type {};
-
-	template <class T
-	> struct is_ref_wrapper<std::reference_wrapper<T>> : std::true_type {};
-
-	template <class T
-	> using not_ref_wrapper = std::negation<is_ref_wrapper<std::decay_t<T>>>;
-
-	template <class D, class...
-	> struct return_type_helper { using type = D; };
-
-	template <class... Args
-	> struct return_type_helper<void, Args...> : std::common_type<Args...>
-	{
-		static_assert(
-			std::conjunction_v<not_ref_wrapper<Args>...>,
-			"Args cannot contain reference_wrappers when D is void");
-	};
-
-	template <class ... Types
-	> using return_type_t = typename return_type_helper<Types...>::type;
-}
-
-namespace ism::util
-{
 	template <class T
 	> constexpr void swap(T & lhs, T & rhs) noexcept
 	{
@@ -91,6 +79,8 @@ namespace ism::util
 			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))
 			: (lBegin == lEnd && rBegin == rEnd);
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_UTILITY_HPP_

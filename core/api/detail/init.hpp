@@ -1,5 +1,5 @@
-#ifndef _ISM_INIT_HPP_
-#define _ISM_INIT_HPP_
+#ifndef _ISM_API_DETAIL_INIT_HPP_
+#define _ISM_API_DETAIL_INIT_HPP_
 
 #include <core/api/detail/class.hpp>
 
@@ -29,7 +29,7 @@ namespace ism::detail::initimpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Func, class = function_signature_t<Func>
+	template <class Func, class = mpl::function_signature_t<Func>
 	> struct factory;
 
 	template <class Func, class R, class ... Args
@@ -66,4 +66,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_INIT_HPP_
+#endif // !_ISM_API_DETAIL_INIT_HPP_

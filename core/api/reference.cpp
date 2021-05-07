@@ -4,6 +4,10 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	Reference::~Reference() {}
+
+	Reference::Reference() : Super{ true } { m_refcount.init(); m_refcount_init.init(); }
+
 	bool Reference::init_ref()
 	{
 		if (inc_ref())
@@ -23,6 +27,7 @@ namespace ism
 		bool success{ rc_val != 0 };
 		if (success && rc_val <= 2 /* higher is not relevant */)
 		{
+			// TODO...
 		}
 		return success;
 	}
@@ -33,21 +38,18 @@ namespace ism
 		bool die{ rc_val == 0 };
 		if (rc_val <= 1 /* higher is not relevant */)
 		{
+			// TODO...
 		}
 		return die;
 	}
-
-	Reference::Reference() : Super{ true } { m_refcount.init(); m_refcount_init.init(); }
-
-	Reference::~Reference() {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Any WeakRef::get_ref() const
 	{
-		if (!m_ref) { return nullptr; }
+		if (!m_reference) { return nullptr; }
 
-		Super * o{ SuperDB::get_instance(m_ref) };
+		Super * o{ SuperDB::get_instance(m_reference) };
 		if (!o) { return nullptr; }
 
 		Reference * r{ super_cast<Reference>(o) };
@@ -58,12 +60,12 @@ namespace ism
 
 	void WeakRef::set_obj(Super * value)
 	{
-		m_ref = value ? value->get_instance_id() : InstanceID{};
+		m_reference = value ? value->get_instance_id() : InstanceID{};
 	}
 
 	void WeakRef::set_ref(REF const & value)
 	{
-		m_ref = value ? value->get_instance_id() : InstanceID{};
+		m_reference = value ? value->get_instance_id() : InstanceID{};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

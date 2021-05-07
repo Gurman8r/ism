@@ -1,5 +1,5 @@
-#ifndef _ISM_CALL_HPP_
-#define _ISM_CALL_HPP_
+#ifndef _ISM_API_DETAIL_CALL_HPP_
+#define _ISM_API_DETAIL_CALL_HPP_
 
 #include <core/api/detail/cast.hpp>
 
@@ -235,7 +235,10 @@ namespace ism::detail
 	public:
 		function_call & operator()(OBJECT const * argv, size_t argc)
 		{
-			size_t num_args{ this->func.argument_count }, num_to_copy{ MIN(num_args, argc) }, num_copied{};
+			size_t
+				num_args	{ this->func.argument_count },
+				num_to_copy	{ MIN(num_args, argc) },
+				num_copied	{};
 
 			// copy passed arguments
 			for (; num_copied < num_to_copy; ++num_copied)
@@ -303,4 +306,4 @@ template <class Derived
 	return detail::collect_arguments<policy>(FWD(args)...).call(handle());
 }
 
-#endif // !_ISM_CALL_HPP_
+#endif // !_ISM_API_DETAIL_CALL_HPP_

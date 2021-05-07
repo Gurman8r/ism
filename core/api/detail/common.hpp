@@ -1,9 +1,7 @@
-#ifndef _ISM_COMMON_HPP_
-#define _ISM_COMMON_HPP_
+#ifndef _ISM_API_DETAIL_COMMON_HPP_
+#define _ISM_API_DETAIL_COMMON_HPP_
 
 #include <core/api/reference.hpp>
-#include <core/templates/functional.hpp>
-#include <core/templates/mpl.hpp>
 
 #define TRY_NEXT_OVERLOAD ((ism::CoreObject *)1)
 
@@ -19,11 +17,11 @@ namespace ism
 
 	struct _API_Tag {};
 	template <class Derived> class ObjectAPI;
-	template <class T> constexpr bool is_object_api_v{ std::is_base_of_v<_API_Tag, intrinsic_t<T>> };
+	template <class T> constexpr bool is_object_api_v{ std::is_base_of_v<_API_Tag, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct Handle;
+	template <class T> class Handle;
 	template <class> constexpr bool is_handle_v{ false };
 	template <class T> constexpr bool is_handle_v<Handle<T>>{ true };
 	template <template <class> class H, class T> constexpr bool is_handle_v<H<T>>{ std::is_base_of_v<Handle<T>, H<T> };
@@ -45,7 +43,7 @@ namespace ism
 	class CoreModule;
 	class CoreGeneric;
 
-	template <class T> constexpr bool is_core_object_v{ std::is_base_of_v<CoreObject, intrinsic_t<T>> };
+	template <class T> constexpr bool is_core_object_v{ std::is_base_of_v<CoreObject, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -86,30 +84,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace detail { String get_fully_qualified_tp_name(TYPE const & t); }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// enums
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	typedef enum ReturnPolicy_ : uint8_t
-	{
-		ReturnPolicy_Automatic,
-		ReturnPolicy_AutomaticReference,
-		ReturnPolicy_TakeOwnership,
-		ReturnPolicy_Copy,
-		ReturnPolicy_Move,
-		ReturnPolicy_Reference,
-		ReturnPolicy_ReferenceInternal,
-	}
-	ReturnPolicy;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	typedef enum DataType_ : int32_t
 	{
 		DataType_Invalid = -1,
@@ -129,6 +103,20 @@ namespace ism
 #endif
 	}
 	DataType;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	typedef enum ReturnPolicy_ : uint8_t
+	{
+		ReturnPolicy_Automatic,
+		ReturnPolicy_AutomaticReference,
+		ReturnPolicy_TakeOwnership,
+		ReturnPolicy_Copy,
+		ReturnPolicy_Move,
+		ReturnPolicy_Reference,
+		ReturnPolicy_ReferenceInternal,
+	}
+	ReturnPolicy;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -155,24 +143,6 @@ namespace ism
 		TypeFlags_Default = TypeFlags_None,
 	}
 	TypeFlags;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	typedef enum MethodFlags_ : int32_t
-	{
-		MethodFlags_None,
-		MethodFlags_VarArgs		= 1 << 0,
-		MethodFlags_Keywords	= 1 << 1,
-		MethodFlags_NoArgs		= 1 << 2,
-		MethodFlags_O			= 1 << 3,
-		MethodFlags_Class		= 1 << 4,
-		MethodFlags_Static		= 1 << 5,
-		MethodFlags_Coexist		= 1 << 6,
-		MethodFlags_FastCall	= 1 << 7,
-		MethodFlags_Stackless	= 1 << 8,
-		MethodFlags_Method		= 1 << 9,
-	}
-	MethodFlags;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -206,7 +176,7 @@ namespace ism
 	ALIAS(lenfunc)			ssize_t(*)(OBJECT o);
 	ALIAS(reprfunc)			STR(*)(OBJECT o);
 
-	ALIAS(allocfunc)		OBJECT(*)(TYPE type, size_t nitems);
+	ALIAS(allocfunc)		void * (*)(size_t size);
 	ALIAS(freefunc)			void(*)(void * ptr);
 	ALIAS(initproc)			Error(*)(OBJECT self, OBJECT args);
 	ALIAS(newfunc)			OBJECT(*)(TYPE type, OBJECT args);
@@ -221,8 +191,6 @@ namespace ism
 
 	struct NODISCARD NumberMethods
 	{
-		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(NumberMethods);
-
 		binaryfunc	operator_add{};
 		binaryfunc	operator_subtract{};
 		binaryfunc	operator_multiply{};
@@ -260,8 +228,6 @@ namespace ism
 
 	struct NODISCARD SequenceMethods
 	{
-		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(SequenceMethods);
-
 		lenfunc		sequence_length{};
 		sizeargfunc	sequence_item{};
 		objobjproc	sequence_contains{};
@@ -271,8 +237,6 @@ namespace ism
 
 	struct NODISCARD MappingMethods
 	{
-		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(MappingMethods);
-
 		lenfunc		mapping_length{};
 		binaryfunc	mapping_subscript{};
 	};
@@ -281,8 +245,6 @@ namespace ism
 
 	struct NODISCARD MethodDef
 	{
-		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(MethodDef);
-
 		cstring		name{};
 		cfunction	method{};
 		cstring		doc{};
@@ -294,8 +256,6 @@ namespace ism
 
 	struct NODISCARD GetSetDef
 	{
-		CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(GetSetDef);
-
 		cstring		name{};
 		getter		get{};
 		setter		set{};
@@ -308,4 +268,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_COMMON_HPP_
+#endif // !_ISM_API_DETAIL_COMMON_HPP_

@@ -204,7 +204,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> using is_shared_ptr = is_instantiation<std::shared_ptr, T>;
+	template <class T> using is_shared_ptr = mpl::is_instantiation<std::shared_ptr, T>;
 
 	template <class T> constexpr bool is_shared_ptr_v{ is_shared_ptr<T>::value };
 

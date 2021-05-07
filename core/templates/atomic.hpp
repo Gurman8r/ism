@@ -5,29 +5,15 @@
 
 #include <atomic>
 
-#ifndef ISM_MULTICORE
+#undef ISM_MULTICORE
 #define ISM_MULTICORE 0
-#endif
+static_assert(!ISM_MULTICORE, "thread support not implemented");
 
+#if !ISM_MULTICORE
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if ISM_MULTICORE
-	ISM_API uint32_t atomic_conditional_increment(uint32_t volatile * value);
-	ISM_API uint32_t atomic_decrement(uint32_t volatile * value);
-	ISM_API uint32_t atomic_increment(uint32_t volatile * value);
-	ISM_API uint32_t atomic_sub(uint32_t volatile * value, uint32_t volatile amount);
-	ISM_API uint32_t atomic_add(uint32_t volatile * value, uint32_t volatile amount);
-	ISM_API uint32_t atomic_exchange_if_greater(uint32_t volatile * value, uint32_t volatile amount);
-
-	ISM_API uint64_t atomic_conditional_increment(uint64_t volatile * value);
-	ISM_API uint64_t atomic_decrement(uint64_t volatile * value);
-	ISM_API uint64_t atomic_increment(uint64_t volatile * value);
-	ISM_API uint64_t atomic_sub(uint64_t volatile * value, uint64_t volatile amount);
-	ISM_API uint64_t atomic_add(uint64_t volatile * value, uint64_t volatile amount);
-	ISM_API uint64_t atomic_exchange_if_greater(uint64_t volatile * value, uint64_t volatile amount);
-#else
 	template <class T
 	> FORCE_INLINE static T atomic_conditional_increment(T volatile * value)
 	{
@@ -70,8 +56,82 @@ namespace ism
 		if (amount > *value) { *value = amount; }
 		return *value;
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+#else
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	uint32_t atomic_conditional_increment(uint32_t volatile * value)
+	{
+		return 0;
+	}
+
+	uint32_t atomic_decrement(uint32_t volatile * value)
+	{
+		return 0;
+	}
+
+	uint32_t atomic_increment(uint32_t volatile * value)
+	{
+		return 0;
+	}
+
+	uint32_t atomic_sub(uint32_t volatile * value, uint32_t volatile amount)
+	{
+		return 0;
+	}
+
+	uint32_t atomic_add(uint32_t volatile * value, uint32_t volatile amount)
+	{
+		return 0;
+	}
+
+	uint32_t atomic_exchange_if_greater(uint32_t volatile * value, uint32_t volatile amount)
+	{
+		return 0;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	uint64_t atomic_conditional_increment(uint64_t volatile * value)
+	{
+		return 0;
+	}
+
+	uint64_t atomic_decrement(uint64_t volatile * value)
+	{
+		return 0;
+	}
+
+	uint64_t atomic_increment(uint64_t volatile * value)
+	{
+		return 0;
+	}
+
+	uint64_t atomic_sub(uint64_t volatile * value, uint64_t volatile amount)
+	{
+		return 0;
+	}
+
+	uint64_t atomic_add(uint64_t volatile * value, uint64_t volatile amount)
+	{
+		return 0;
+	}
+
+	uint64_t atomic_exchange_if_greater(uint64_t volatile * value, uint64_t volatile amount)
+	{
+		return 0;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 #endif
 
+namespace ism
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API RefCount final

@@ -35,7 +35,7 @@ namespace ism
 	public:
 		AnyContainer() = default;
 
-		template <class It, class = std::enable_if_t<is_input_iterator_v<It>>
+		template <class It, class = std::enable_if_t<mpl::is_input_iterator_v<It>>
 		> AnyContainer(It first, It last) : v{ first, last } {}
 
 		template <class Container, class = std::enable_if_t<std::is_convertible_v<decltype(*std::begin(std::declval<Container const &>())), T>>

@@ -43,6 +43,8 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	struct void_type {};
+
 #ifdef ISM_CC_MSVC
 	ALIAS(int8_t)		signed __int8;
 	ALIAS(int16_t)		signed __int16;

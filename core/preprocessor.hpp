@@ -5,7 +5,15 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define _ISM				::ism::
+#define ISM_NAMESPACE ism
+
+#define _ISM ::ISM_NAMESPACE::
+
+#define ISM_NAMESPACE_BEGIN(name) namespace name {
+
+#define ISM_NAMESPACE_END(name) }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // array size
 #undef ARRAYSIZE
@@ -37,6 +45,8 @@
 
 // string variable
 #define STRVAR(name, str)	static char const name[] = { str }
+
+#define DECLEXPR(expr)		decltype(expr) expr
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -73,7 +83,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism
+namespace ism::impl
 {
 	// composer
 	template <class T> struct ValueComposer {};
@@ -86,7 +96,7 @@ namespace ism
 		return x;
 	}
 
-#define COMPOSE(T, v, ...) (ism::ValueComposer<T>{}) + [##__VA_ARGS__](T & v) noexcept -> void
+#define COMPOSE(T, v, ...) (ism::impl::ValueComposer<T>{}) + [##__VA_ARGS__](T & v) noexcept -> void
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

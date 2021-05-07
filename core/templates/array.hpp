@@ -307,7 +307,7 @@ namespace std
 namespace ism
 {
 	template <class D, class... Args
-	> using array_return_type = Array<typename ism::return_type_t<D, Args...>, sizeof...(Args)>;
+	> using array_return_type = Array<typename mpl::return_type_t<D, Args...>, sizeof...(Args)>;
 
 	template <class D = void, class... Args
 	> NODISCARD constexpr array_return_type<D, Args...> make_array(Args && ... args)

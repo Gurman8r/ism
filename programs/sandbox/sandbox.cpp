@@ -25,13 +25,15 @@ namespace ism
 {
 	struct Test
 	{
-		int x{}; String y;
+		int x{};
+
+		String y{};
 
 		static void test_static() { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
-	
+
 		auto test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
 	};
-	
+
 	void hello() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); }
 	void say(String const & s) { MAIN_PRINT("Say: %s\n", s.c_str()); }
 	auto get_int() { return 123; }
@@ -41,30 +43,32 @@ namespace ism
 
 	void test_main(int32_t argc, char * argv[])
 	{
-		MODULE m{ create_extension_module("__main__") };
-		VERIFY(globals().is_valid());
+		MODULE scope{ create_extension_module("__main__") };
+		(**scope)
+			.def("hello", hello)
+			.def("say", say)
+			.def("get_int", get_int)
+			.def("get_uint", get_uint)
+			.def("get_float", get_float)
+			.def("get_string", get_string)
 
-		CoreClass<Test>(m, "Test")
-			//.def(init<>())
-			//.def_readwrite("x", &Test::x)
-			//.def_static("hello", hello)
+			.def("pass_ptr", [](void * ptr) { return ptr; })
+
 			;
+		scope["hello"]();
+		scope["say"](scope["get_string"]());
+		VERIFY(scope["pass_ptr"]((void *)123).cast<void const *>() == (void *)123);
 
-		m->def("hello", hello);
-		globals()["hello"]();
+		//_CoreDict_Type.add_methods(_CoreDict_Type.tp_methods);
 
-		globals()["say"] = CPP_FUNCTION({ say, detail::scope(m) });
-		globals()["get_string"] = CPP_FUNCTION(get_string);
-		globals()["say"](globals()["get_string"]());
-
-		LIST list = globals()["a"] = LIST(CoreList{});
+		LIST list = scope["a"] = LIST(CoreList{});
 		list->append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0])->c_str());
 
 		OBJECT o{ DICT(CoreDict{}) };
-		globals()["ABC"] = 42;
+		scope["ABC"] = 42;
 		o["DEF"] = "Hello, World!";
-		MAIN_PRINT("%d\n", globals()["ABC"].cast<int>());
+		MAIN_PRINT("%d\n", scope["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", o["DEF"].cast<String>().c_str());
 		MAIN_PRINT("%s\n", typeof(o).attr("__name__").cast<std::string>().c_str());
 		typeof(o).attr("__name__") = "changed";

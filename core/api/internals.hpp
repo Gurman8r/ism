@@ -116,9 +116,8 @@ namespace ism
 
 		struct _registry
 		{
-			TypeMap<TypeInfo *> registered_types_cpp{};
-			HashMap<TYPE, Vector<TypeInfo *>> registered_types_core{};
 			TypeMap<Vector<bool(*)(OBJECT, void *&)>> direct_conversions{};
+
 			HashMap<String, void *> shared_data{};
 		}
 		registry;
@@ -144,21 +143,11 @@ namespace ism
 		return nullptr;
 	}
 
-	NODISCARD inline TypeMap<TypeInfo *> & registered_local_types_cpp()
-	{
-		static TypeMap<TypeInfo *> locals{};
-		return locals;
-	}
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 namespace ism::detail
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class K = String

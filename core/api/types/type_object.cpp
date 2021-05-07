@@ -1,23 +1,11 @@
-#include <core/api/types.hpp>
+#include <core/api/types/type_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-CoreType ism::_CoreObject_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "object";
-	t.tp_basicsize = sizeof(CoreObject);
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
-
-	t.tp_getattr = (getattrfunc)detail::getattr_string;
-	t.tp_setattr = (setattrfunc)detail::setattr_string;
-	t.tp_getattro = (getattrofunc)detail::getattr_object;
-	t.tp_setattro = (setattrofunc)detail::setattr_object;
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreObject *)ptr); };
-};
+DECLEXPR(CoreType::ob_class) { nullptr };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -109,7 +97,7 @@ static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m)
 {
 };
 
-CoreType ism::_CoreType_Type = COMPOSE(CoreType, t)
+void CoreType::_bind_class(CoreType & t)
 {
 	t.tp_name = "type";
 	t.tp_basicsize = sizeof(CoreType);
@@ -123,32 +111,30 @@ CoreType ism::_CoreType_Type = COMPOSE(CoreType, t)
 	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 
-	t.tp_getattr = (getattrfunc)detail::getattr_string;
-	t.tp_setattr = (setattrfunc)detail::setattr_string;
-	t.tp_getattro = (getattrofunc)detail::getattr_object;
-	t.tp_setattro = (setattrofunc)detail::setattr_object;
+	t.tp_getattr = (getattrfunc)detail::impl_getattr_string;
+	t.tp_setattr = (setattrfunc)detail::impl_setattr_string;
+	t.tp_getattro = (getattrofunc)detail::impl_getattr_object;
+	t.tp_setattro = (setattrofunc)detail::impl_setattr_object;
 
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreType *)ptr); };
+	t.tp_operator_delete = (freefunc)[](void * ptr) { memdelete((CoreType *)ptr); };
 
 	t.tp_getsets = type_getsets;
 	t.tp_methods = type_methods;
-
-	t.tp_as_number = &type_as_number;
-	t.tp_as_sequence = &type_as_sequence;
-	t.tp_as_mapping = &type_as_mapping;
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
 		if (isinstance<TYPE>(v)) return util::compare(TYPE(o)->tp_name, TYPE(v)->tp_name);
 		return util::compare(o.ptr(), v.ptr());
 	};
-};
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 bool CoreType::ready()
 {
 	if (has_feature(TypeFlags_Ready)) { return true; }
 
-	if (!tp_base && this != &_CoreObject_Type) { tp_base = &_CoreObject_Type; }
+	if (!tp_base && this != typeof<OBJECT>().ptr()) { tp_base = typeof<OBJECT>(); }
 
 	if (tp_base && !tp_base->tp_dict) { VERIFY(tp_base->ready()); }
 
@@ -184,9 +170,9 @@ bool CoreType::ready()
 		VERIFY(!"type participates in gc and is a base type but has inappropriate tp_free slot");
 	}
 
-	copy_slot(*tp_base, &CoreType::tp_as_number);
-	copy_slot(*tp_base, &CoreType::tp_as_sequence);
-	copy_slot(*tp_base, &CoreType::tp_as_mapping);
+	copy_val(*tp_base, &CoreType::tp_as_number);
+	copy_val(*tp_base, &CoreType::tp_as_sequence);
+	copy_val(*tp_base, &CoreType::tp_as_mapping);
 
 	for (TYPE base : ***LIST(tp_bases))
 	{
@@ -233,23 +219,23 @@ void CoreType::inherit_special(CoreType const * base)
 		tp_clear = tp_base->tp_clear;
 	}
 
-	if (tp_base != &_CoreObject_Type || has_feature(TypeFlags_HeapType) && !tp_new)
+	if (tp_base != typeof<OBJECT>().ptr() || has_feature(TypeFlags_HeapType) && !tp_new)
 	{
 		tp_new = tp_base->tp_new;
 	}
 
-	copy_slot(*tp_base, &CoreType::tp_basicsize);
-	copy_slot(*tp_base, &CoreType::tp_itemsize);
-	copy_slot(*tp_base, &CoreType::tp_weaklist_offset);
-	copy_slot(*tp_base, &CoreType::tp_dict_offset);
+	copy_val(*tp_base, &CoreType::tp_basicsize);
+	copy_val(*tp_base, &CoreType::tp_itemsize);
+	copy_val(*tp_base, &CoreType::tp_weaklist_offset);
+	copy_val(*tp_base, &CoreType::tp_dict_offset);
 
 	if (LIST mro{ tp_base->tp_mro }; !mro) { return; }
-	else if (mro->contains(CoreType_Type)) { enable_feature(TypeFlags_Type_Subclass); }
-	else if (mro->contains(CoreInt_Type)) { enable_feature(TypeFlags_Int_Subclass); }
-	else if (mro->contains(CoreFloat_Type)) { enable_feature(TypeFlags_Float_Subclass); }
-	else if (mro->contains(CoreString_Type)) { enable_feature(TypeFlags_Str_Subclass); }
-	else if (mro->contains(CoreList_Type)) { enable_feature(TypeFlags_List_Subclass); }
-	else if (mro->contains(CoreDict_Type)) { enable_feature(TypeFlags_Dict_Subclass); }
+	else if (mro->contains(typeof<TYPE>())) { enable_feature(TypeFlags_Type_Subclass); }
+	else if (mro->contains(typeof<INT>())) { enable_feature(TypeFlags_Int_Subclass); }
+	else if (mro->contains(typeof<FLT>())) { enable_feature(TypeFlags_Float_Subclass); }
+	else if (mro->contains(typeof<STR>())) { enable_feature(TypeFlags_Str_Subclass); }
+	else if (mro->contains(typeof<LIST>())) { enable_feature(TypeFlags_List_Subclass); }
+	else if (mro->contains(typeof<DICT>())) { enable_feature(TypeFlags_Dict_Subclass); }
 }
 
 void CoreType::inherit_slots(CoreType const * base)
@@ -314,14 +300,14 @@ void CoreType::inherit_slots(CoreType const * base)
 	copy_slot(base, basebase, &CoreType::tp_len);
 	copy_slot(base, basebase, &CoreType::tp_repr);
 	copy_slot(base, basebase, &CoreType::tp_str);
-	
+
 	copy_slot(base, basebase, &CoreType::tp_vectorcall_offset);
 	if (!tp_call && base->has_feature(TypeFlags_HaveVectorCall) && !has_feature(TypeFlags_HeapType))
 	{
 		enable_feature(TypeFlags_HaveVectorCall);
 	}
 	copy_slot(base, basebase, &CoreType::tp_call);
-	
+
 	if (!tp_compare && !tp_hash && !tp_dict->contains("__eq__") && !tp_dict->contains("__hash__"))
 	{
 		tp_compare = base->tp_compare;
@@ -342,246 +328,5 @@ void CoreType::inherit_slots(CoreType const * base)
 	copy_slot(base, basebase, &CoreType::tp_finalize);
 	copy_slot(base, basebase, &CoreType::tp_free);
 }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-CoreType ism::_CoreNone_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "none";
-	t.tp_basicsize = sizeof(CoreObject);
-	t.tp_base = CoreObject_Type;
-	t.tp_flags = TypeFlags_Default;
-	t.tp_doc = "";
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) {};
-};
-
-CoreObject ism::_Core_None = COMPOSE(CoreObject, v) { v.ob_type = CoreNone_Type; };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static NumberMethods bool_as_number = COMPOSE(NumberMethods, m)
-{
-};
-
-CoreType ism::_CoreBool_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "bool";
-	t.tp_basicsize = sizeof(CoreInt);
-	t.tp_base = CoreInt_Type;
-	t.tp_as_number = &bool_as_number;
-	t.tp_delete = (destructor)[](CoreObject * ptr) {};
-};
-
-CoreInt ism::_Core_True = COMPOSE(CoreInt, v) { v.ob_type = CoreBool_Type; v = 1; };
-
-CoreInt ism::_Core_False = COMPOSE(CoreInt, v) { v.ob_type = CoreBool_Type; v = 0; };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-CoreType ism::_CoreInt_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "int";
-	t.tp_basicsize = sizeof(CoreInt);
-	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
-
-	t.tp_hash = (hashfunc)[](OBJECT o) { return Hash<int64_t>()(***INT(o)); };
-	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(to_string(***INT(o))); };
-	t.tp_str = (reprfunc)[](OBJECT o) { return STR(to_string(***INT(o))); };
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreInt *)ptr); };
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		if (isinstance<INT>(v)) return util::compare(***INT(o), ***INT(v));
-		return util::compare(o.ptr(), v.ptr());
-	};
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-CoreType ism::_CoreFloat_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "float";
-	t.tp_basicsize = sizeof(CoreFloat);
-	t.tp_flags = TypeFlags_Default | TypeFlags_Float_Subclass;
-
-	t.tp_hash = (hashfunc)[](OBJECT o) { return Hash<double_t>()(***FLT(o)); };
-	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(to_string(***FLT(o))); };
-	t.tp_str = (reprfunc)[](OBJECT o) { return STR(to_string(***FLT(o))); };
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreFloat *)ptr); };
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		if (isinstance<FLT>(v)) return util::compare(***FLT(o), ***FLT(v));
-		return util::compare(o.ptr(), v.ptr());
-	};
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-CoreType ism::_CoreString_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "str";
-	t.tp_basicsize = sizeof(CoreString);
-	t.tp_flags = TypeFlags_Default | TypeFlags_Str_Subclass;
-
-	t.tp_hash = (hashfunc)[](OBJECT o) { return hash(***STR(o)); };
-	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)STR(o)->size(); };
-	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(o); };
-	t.tp_str = (reprfunc)[](OBJECT o) { return STR(o); };
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreString *)ptr); };
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		if (isinstance<STR>(v)) return util::compare(***STR(o), ***STR(v));
-		else if (auto s{ STR({ v }) }) return util::compare(***STR(o), ***s);
-		return util::compare(o.ptr(), v.ptr());
-	};
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static MethodDef list_methods[] =
-{
-	{ "__contains__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return Core_Bool(LIST(self)->contains(value));
-	} },
-	{ /* sentinal */ },
-};
-
-CoreType ism::_CoreList_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "list";
-	t.tp_basicsize = sizeof(CoreList);
-	t.tp_flags = TypeFlags_Default | TypeFlags_List_Subclass;
-
-	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)LIST(o)->size(); };
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreList *)ptr); };
-
-	t.tp_methods = list_methods;
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		if (isinstance<LIST>(v)) return util::compare(***LIST(o), ***LIST(v));
-		return util::compare(o.ptr(), v.ptr());
-	};
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static MethodDef dict_methods[] =
-{
-	{ "__contains__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return Core_Bool(DICT(self)->contains(value));
-	} },
-	{ /* sentinal */ },
-};
-
-CoreType ism::_CoreDict_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "dict";
-	t.tp_basicsize = sizeof(CoreDict);
-	t.tp_flags = TypeFlags_Default | TypeFlags_Dict_Subclass;
-
-	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)DICT(o)->size(); };
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreDict *)ptr); };
-
-	t.tp_methods = dict_methods;
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		return util::compare(o.ptr(), v.ptr());
-	};
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static GetSetDef capsule_getsets[] =
-{
-	{ "__name__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return STR((***CAPSULE(self)).name); },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return ((***CAPSULE(self)).name = ***STR(value)), Error_None; },
-	},
-	{ "__doc__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return STR((***CAPSULE(self)).doc); },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return ((***CAPSULE(self)).doc = ***STR(value)), Error_None; },
-	},
-	{ /* sentinal */ },
-};
-
-CoreType ism::_CoreCapsule_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "capsule";
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreCapsule *)ptr); };
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		return util::compare(o.ptr(), v.ptr());
-	};
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static GetSetDef function_getsets[] =
-{
-	{ "__dict__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return FUNCTION(self)->m_dict; },
-	},
-	{ /* sentinal */ },
-};
-
-CoreType ism::_CoreFunction_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "function";
-	t.tp_basicsize = sizeof(CoreFunction);
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall;
-
-	t.tp_dict_offset = offsetof(CoreFunction, m_dict);
-	t.tp_vectorcall_offset = offsetof(CoreFunction, m_vectorcall);
-
-	t.tp_getattr = (getattrfunc)detail::getattr_string;
-	t.tp_setattr = (setattrfunc)detail::setattr_string;
-	t.tp_getattro = (getattrofunc)detail::getattr_object;
-	t.tp_setattro = (setattrofunc)detail::setattr_object;
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreFunction *)ptr); };
-
-	t.tp_getsets = function_getsets;
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		return util::compare(o.ptr(), v.ptr());
-	};
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static GetSetDef property_getsets[] =
-{
-	{ /* sentinal */ },
-};
-
-CoreType ism::_CoreProperty_Type = COMPOSE(CoreType, t)
-{
-	t.tp_name = "property";
-	t.tp_basicsize = sizeof(CoreProperty);
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
-
-	t.tp_delete = (destructor)[](CoreObject * ptr) { memdelete((CoreProperty *)ptr); };
-
-	t.tp_getsets = property_getsets;
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		return util::compare(o.ptr(), v.ptr());
-	};
-};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

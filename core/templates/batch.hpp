@@ -2,7 +2,6 @@
 #define _ISM_BATCH_HPP_
 
 #include <core/templates/vector.hpp>
-#include <core/templates/mpl.hpp>
 
 namespace ism
 {
@@ -678,6 +677,23 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		void pop_front() noexcept
+		{
+			this->for_tuple([&](auto & v) noexcept { v.erase(v.begin()); });
+		}
+
+		template <size_t ... Is> void pop_front() noexcept
+		{
+			this->for_indices<Is...>([&](auto & v) noexcept { v.erase(v.begin()); });
+		}
+
+		template <class ... Ts> void pop_front() noexcept
+		{
+			this->for_types<Ts...>([&](auto & v) noexcept { v.erase(v.begin()); });
+		}
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		void reserve(size_t const value)
 		{
 			this->for_tuple([&](auto & v) { v.reserve(value); });
@@ -791,13 +807,13 @@ namespace ism
 			return std::find(this->cbegin<I>(), this->cend<I>(), FWD(value));
 		}
 
-		template <class T, class U = T
+		template <class T, class U = element_t<T>
 		> NODISCARD auto find(U && value) noexcept -> iterator_t<T>
 		{
 			return std::find(this->begin<T>(), this->end<T>(), FWD(value));
 		}
 
-		template <class T, class U = T
+		template <class T, class U = element_t<T>
 		> NODISCARD auto find(U && value) const noexcept -> const_iterator_t<T>
 		{
 			return std::find(this->cbegin<T>(), this->cend<T>(), FWD(value));
@@ -837,7 +853,7 @@ namespace ism
 			return std::binary_search(this->cbegin<I>(), this->cend<I>(), FWD(value));
 		}
 
-		template <class T, class U = T
+		template <class T, class U = element_t<T>
 		> NODISCARD bool binary_search(U && value) const noexcept
 		{
 			return std::binary_search(this->cbegin<T>(), this->cend<T>(), FWD(value));
@@ -851,7 +867,7 @@ namespace ism
 			return this->end<T>() != this->find<I>(FWD(value));
 		}
 
-		template <class T, class U = T
+		template <class T, class U = element_t<T>
 		> NODISCARD bool contains(U && value) const noexcept
 		{
 			return this->end<T>() != this->find<T>(FWD(value));
@@ -988,7 +1004,7 @@ namespace ism
 			this->get<I>().swap(value);
 		}
 
-		template <class T, class U = T
+		template <class T, class U = element_t<T>
 		> void swap(U & value) noexcept
 		{
 			this->get<T>().swap(value);

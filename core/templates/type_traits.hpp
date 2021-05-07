@@ -3,32 +3,94 @@
 
 #include <core/typedefs.hpp>
 
-#include <type_traits>
+#include <tuple>
 
 #define FWD(x) _STD forward<decltype(x)>(x) // automatic forward
 
-// traits
+// operators
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class To, class From
-	> constexpr bool is_trivially_convertible_v
+	template <class _Ty> struct Plus
 	{
-		"requires To is trivially default constructible and is copy or move constructible"
-		&& sizeof(To) == sizeof(From)
-		&& std::is_trivially_copyable_v<From>
-		&& std::is_trivial_v<To>
-		&& (std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)
+		using result_type = typename _Ty;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs + rhs; }
 	};
 
+	template <class _Ty> struct Minus
+	{
+		using result_type = typename _Ty;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs - rhs; }
+	};
+
+	template <class _Ty> struct Multiplies
+	{
+		using result_type = typename _Ty;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs * rhs; }
+	};
+
+	template <class _Ty> struct EqualTo
+	{
+		using result_type = typename bool;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs == rhs; }
+	};
+
+	template <class _Ty> struct NotEqualTo
+	{
+		using result_type = typename bool;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs != rhs; }
+	};
+
+	template <class _Ty> struct Less
+	{
+		using result_type = typename bool;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs < rhs; }
+	};
+
+	template <class _Ty> struct Greater
+	{
+		using result_type = typename bool;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs > rhs; }
+	};
+
+	template <class _Ty> struct LessEqual
+	{
+		using result_type = typename bool;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs <= rhs; }
+	};
+
+	template <class _Ty> struct GreaterEqual
+	{
+		using result_type = typename bool;
+		using first_argument_type = typename _Ty;
+		using second_argument_type = typename _Ty;
+		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs >= rhs; }
+	};
+}
+
+// traits
+namespace ism::mpl
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class ...> struct void_t_impl { using type = void; };
 
 	template <class ... Ts> using void_t = typename void_t_impl<Ts...>::type;
-
-	struct void_type {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -47,6 +109,40 @@ namespace ism
 	template <class T, template<class> class ... Pr> constexpr bool satisfies_all_of_v{ satisfies_all_of<T, Pr...>::value };
 	template <class T, template<class> class ... Pr> constexpr bool satisfies_any_of_v{ satisfies_any_of<T, Pr...>::value };
 	template <class T, template<class> class ... Pr> constexpr bool satisfies_none_of_v{ satisfies_none_of<T, Pr...>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class Ch> constexpr bool is_char_v{ any_of_v<
+		std::is_same<Ch, char>,
+#if ISM_CXX_20
+		std::is_same<Ch, char8_t>,
+#endif
+		std::is_same<Ch, char16_t>,
+		std::is_same<Ch, char32_t>,
+		std::is_same<Ch, wchar_t>
+	> };
+
+	template <class T> constexpr bool is_numeric_v{ std::is_arithmetic_v<T> && !mpl::is_char_v<T> };
+
+	template <class> constexpr bool is_string_v{ false };
+
+	template <class Ch
+	> constexpr bool is_string_v<Ch *>{ is_char_v<Ch> };
+
+	template <class Ch
+	> constexpr bool is_string_v<Ch const *>{ is_char_v<Ch> };
+
+	template <class Ch, size_t N
+	> constexpr bool is_string_v<Ch[N]>{ is_char_v<Ch> };
+
+	template <class Ch, size_t N
+	> constexpr bool is_string_v<Ch(&)[N]>{ is_char_v<Ch> };
+
+	template <class Ch, size_t N
+	> constexpr bool is_string_v<Ch const (&)[N]>{ is_char_v<Ch> };
+
+	template <class Ch, size_t N
+	> constexpr bool is_string_v<Ch const [N]>{ is_char_v<Ch> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -268,100 +364,433 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template<class
+	> struct is_ref_wrapper : std::false_type {};
+
+	template <class T
+	> struct is_ref_wrapper<std::reference_wrapper<T>> : std::true_type {};
+
+	template <class T
+	> using not_ref_wrapper = std::negation<is_ref_wrapper<std::decay_t<T>>>;
+
+	template <class D, class...
+	> struct return_type_helper { using type = D; };
+
+	template <class... Args
+	> struct return_type_helper<void, Args...> : std::common_type<Args...>
+	{
+		static_assert(
+			std::conjunction_v<not_ref_wrapper<Args>...>,
+			"Args cannot contain reference_wrappers when D is void");
+	};
+
+	template <class ... Types
+	> using return_type_t = typename return_type_helper<Types...>::type;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, class SFINAE = void
+	> struct is_copy_constructible : std::is_copy_constructible<T> {};
+
+	template <class Container
+	> struct is_copy_constructible<Container, std::enable_if_t<mpl::all_of_v<
+		std::is_copy_constructible<Container>,
+		std::is_same<typename Container::value_type &,
+		typename Container::reference>,
+		std::negation<std::is_same<Container, typename Container::value_type>>
+		>>> : is_copy_constructible<typename Container::value_type> {};
+
+	template <class T1, class T2
+	> struct is_copy_constructible<std::pair<T1, T2>> : mpl::all_of<is_copy_constructible<T1>, is_copy_constructible<T2>> {};
+
+	template <class T> constexpr bool is_copy_constructible_v{ is_copy_constructible<T>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, class SFINAE = void
+	> struct is_copy_assignable : std::is_copy_assignable<T> {};
+
+	template <class Container
+	> struct is_copy_assignable<Container, std::enable_if_t<mpl::all_of_v<
+		std::is_copy_assignable<Container>,
+		std::is_same<typename Container::value_type &, typename Container::reference>
+		>>> : is_copy_assignable<typename Container::value_type> {};
+
+	template <class T1, class T2
+	> struct is_copy_assignable<std::pair<T1, T2>> : mpl::all_of<is_copy_assignable<T1>, is_copy_assignable<T2>> {};
+
+	template <class T> constexpr bool is_copy_assignable_v{ is_copy_assignable<T>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class itype, class SFINAE = void
+	> struct polymorphic_type_hook_base
+	{
+		static void const * get(itype const * src, std::type_info const *&) { return src; }
+	};
+
+	template <class itype
+	> struct polymorphic_type_hook_base<itype, std::enable_if_t<std::is_polymorphic_v<itype>>>
+	{
+		static void const * get(itype const * src, std::type_info const *& type) {
+			type = src ? &typeid(*src) : nullptr;
+			return dynamic_cast<void const *>(src);
+		}
+	};
+
+	template <class itype, class SFINAE = void
+	> struct polymorphic_type_hook : public polymorphic_type_hook_base<itype> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// operators
-namespace ism
+// DETAIL STRUCTURES
+namespace ism::mpl
 {
-	template <class _Ty> struct Plus
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// type_list
+	template <class ... Ts
+	> struct type_list { static constexpr size_t size{ sizeof...(Ts) }; };
+
+	// type_tag
+	template <class T
+	> struct type_tag { using type = typename T; };
+
+#define TAG_TYPE(tag) std::decay_t<decltype(tag)::type>
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// LOOPS
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class Tup, class Fn, size_t ... Is
+	> constexpr void impl_tuple_expand(Tup && tp, Fn && fn, std::index_sequence<Is...>) noexcept
 	{
-		using result_type = typename _Ty;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs + rhs;
+		fn(std::get<Is>(FWD(tp))...);
+	}
+
+	template <class Tup, class Fn
+	> constexpr void impl_tuple_expand(Tup && tp, Fn && fn) noexcept
+	{
+		mpl::impl_tuple_expand(
+			FWD(tp),
+			FWD(fn),
+			std::make_index_sequence<std::tuple_size_v<std::decay_t<Tup>>>());
+	}
+
+	// "unpacks" the contents of a tuple inside a function call
+	template <class Tup, class Fn
+	> constexpr void tuple_expand(Tup && tp, Fn && fn) noexcept
+	{
+		mpl::impl_tuple_expand(FWD(tp), FWD(fn));
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class Fn, class ... Args
+	> constexpr void impl_for_args(Fn && fn, Args && ... args) noexcept
+	{
+		if constexpr (0 < sizeof...(args))
+		{
+			(void)std::initializer_list<int>{ (fn(FWD(args)), 0)... };
 		}
+	}
+
+	// invoke function on every argument
+	template <class Fn, class ... Args
+	> constexpr void for_args(Fn && fn, Args && ... args) noexcept
+	{
+		mpl::impl_for_args(FWD(fn), FWD(args)...);
+	}
+
+	// invoke function on every argument with index
+	template <class Fn, class ... Args
+	> constexpr void for_args_i(Fn && fn, Args && ... args) noexcept
+	{
+		size_t i{};
+		mpl::for_args([&](auto && e) noexcept
+		{
+			fn(i++, FWD(e));
+		}
+		, FWD(args)...);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class Tup, class Fn
+	> constexpr void impl_for_tuple(Tup && tp, Fn && fn) noexcept
+	{
+		mpl::impl_tuple_expand(FWD(tp), [&fn](auto && ... rest) noexcept
+		{
+			mpl::for_args(fn, FWD(rest)...);
+		});
+	}
+
+	// invoke function on every tuple element
+	template <class Tup, class Fn
+	> constexpr void for_tuple(Tup && tp, Fn && fn) noexcept
+	{
+		mpl::impl_for_tuple(FWD(tp), FWD(fn));
+	}
+
+	// invoke function on every tuple element with index
+	template <class Tup, class Fn
+	> constexpr void for_tuple_i(Tup && tp, Fn && fn) noexcept
+	{
+		size_t i{};
+		mpl::for_tuple(FWD(tp), [&](auto && e) noexcept
+		{
+			fn(i++, FWD(e));
+		});
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// CONCAT - combine types
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class ...
+	> struct impl_concat
+	{
+		using type = typename type_list<>;
 	};
 
-	template <class _Ty> struct Minus
+	template <class ... Ts
+	> ALIAS(concat) typename impl_concat<Ts...>::type;
+
+	template <class ... Ts
+	> struct impl_concat<type_list<Ts...>>
 	{
-		using result_type = typename _Ty;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs - rhs;
-		}
+		using type = typename type_list<Ts...>;
 	};
 
-	template <class _Ty> struct Multiplies
+	template <class ... Ts0, class ... Ts1, class ... Rest
+	> struct impl_concat<type_list<Ts0...>, type_list<Ts1...>, Rest...>
 	{
-		using result_type = typename _Ty;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs * rhs;
-		}
+		using type = typename concat<type_list<Ts0..., Ts1...>, Rest...>;
 	};
 
-	template <class _Ty> struct EqualTo
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// REMAP - modify inner types
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <template <class> class Pr, class
+	> struct impl_remap
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs == rhs;
-		}
+		using type = typename type_list<>;
 	};
 
-	template <class _Ty> struct NotEqualTo
+	template <template <class> class Pr, class Ls
+	> ALIAS(remap) typename impl_remap<Pr, Ls>::type;
+
+	template <template <class> class Pr, class T, class ... Ts
+	> struct impl_remap<Pr, type_list<T, Ts...>>
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs != rhs;
-		}
+		using type = typename concat<type_list<Pr<T>>, remap<Pr, type_list<Ts...>>>;
 	};
 
-	template <class _Ty> struct Less
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// RENAME - modify outer type
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <template <class...> class To, class T
+	> struct impl_rename;
+
+	template <
+		template <class ...> class To,
+		template <class...> class From,
+		class ... Ts
+	> struct impl_rename<To, From<Ts...>>
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs < rhs;
-		}
+		using type = typename To<Ts...>;
 	};
 
-	template <class _Ty> struct Greater
+	template<
+		template <class...> class To, class T
+	> ALIAS(rename) typename impl_rename<To, T>::type;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// CONTAINS - check type_list contains type
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, class Ls
+	> struct contains;
+
+	template <class T
+	> struct contains<T, type_list<>>
+		: std::false_type {};
+
+	template <class T, class U, class ... Ts
+	> struct contains<T, type_list<U, Ts...>>
+		: contains<T, type_list<Ts...>> {};
+
+	template <class T, class ... Ts
+	> struct contains<T, type_list<T, Ts...>>
+		: std::true_type {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// INDEX OF - get index of type in a type_list
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, class Ls
+	> struct index_of;
+
+	template <class T, class ... Ts
+	> struct index_of<T, type_list<T, Ts...>>
+		: std::integral_constant<size_t, 0> {};
+
+	template <class T, class U, class ... Ts
+	> struct index_of<T, type_list<U, Ts...>>
+		: std::integral_constant<size_t, 1 + index_of<T, type_list<Ts...>>::value> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// GENERAL
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	template <class Ls
+	> ALIAS(tuple) typename rename<std::tuple, Ls>;
+	
+	template <class Ls
+	> ALIAS(tag_tuple) typename tuple<remap<type_tag, Ls>>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class Ls, class Fn
+	> constexpr void for_type_list(Fn && fn) noexcept
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs > rhs;
+		if constexpr (0 < mpl::size<Ls>())
+		{
+			mpl::for_tuple(mpl::tag_tuple<Ls>{}, fn);
 		}
+	}
+
+	template <class Ls, class Fn
+	> constexpr void for_type_list_i(Fn && fn) noexcept
+	{
+		size_t i{};
+		mpl::for_type_list<Ls>([&](auto tag) noexcept
+		{
+			fn(i++, tag);
+		});
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class ... Ts, class Fn
+	> constexpr void for_types(Fn && fn) noexcept
+	{
+		mpl::for_type_list<mpl::type_list<Ts...>>(FWD(fn));
+	}
+
+	template <class ... Ts, class Fn
+	> constexpr void for_types_i(Fn && fn) noexcept
+	{
+		size_t i{};
+		mpl::for_types<Ts...>([&](auto tag) noexcept
+		{
+			fn(i++, tag);
+		});
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class Ls
+	> constexpr size_t size() noexcept { return Ls::size; }
+
+	template <class Ls, class T> ALIAS(push_back) typename concat<Ls, type_list<T>>;
+
+	template <class Ls, class T> ALIAS(push_front) typename concat<type_list<T>, Ls>;
+
+	template <size_t I, class Ls> ALIAS(nth) typename std::tuple_element_t<I, tuple<Ls>>;
+
+	template <class Ls> ALIAS(head) typename nth<0, Ls>;
+
+	template <class Ls> ALIAS(tail) typename nth<size<Ls>() - 1, Ls>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// REPEAT - size N type_list of T
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <size_t N, class T
+	> struct impl_repeat
+	{
+		using type = typename push_back<typename impl_repeat<N - 1, T>::type, T>;
 	};
 
-	template <class _Ty> struct LessEqual
+	template <class T
+	> struct impl_repeat<0, T>
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs <= rhs;
-		}
+		using type = typename type_list<>;
 	};
 
-	template <class _Ty> struct GreaterEqual
+	template <size_t N, class T
+	> ALIAS(repeat) typename impl_repeat<N, T>::type;
+
+	template <class T, size_t N
+	> ALIAS(array) typename tuple<repeat<N, T>>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// FILTER - remove types from type_list
+namespace ism::mpl
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <template <class> class Pr, class
+	> struct impl_filter
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename _Ty;
-		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const {
-			return lhs >= rhs;
-		}
+		using type = typename type_list<>;
 	};
+
+	template <template <class> class Pr, class Ls
+	> ALIAS(filter) typename impl_filter<Pr, Ls>::type;
+
+	template <template <class> class Pr, class T, class ... Ts
+	> struct impl_filter<Pr, type_list<T, Ts...>>
+	{
+		using next = typename filter<Pr, type_list<Ts...>>;
+
+		using type = typename std::conditional_t<
+			(Pr<T>{}),
+			concat<type_list<T>, next>,
+			next
+		>;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_TYPE_TRAITS_HPP_

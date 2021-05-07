@@ -1,5 +1,5 @@
-#ifndef _ISM_CLASS_HPP_
-#define _ISM_CLASS_HPP_
+#ifndef _ISM_API_DETAIL_CLASS_HPP_
+#define _ISM_API_DETAIL_CLASS_HPP_
 
 #include <core/api/detail/attr.hpp>
 
@@ -7,20 +7,13 @@ namespace ism::detail
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline String get_fully_qualified_tp_name(TYPE const & t)
-	{
-		return "";
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	inline OBJECT getattr_string(OBJECT o, cstring name)
+	inline OBJECT impl_getattr_string(OBJECT o, cstring name)
 	{
 		if (!o.is_valid())
 		{
 			return nullptr;
 		}
-		else if (GetSetDef * def{ get_getset_def(o, name) })
+		else if (GetSetDef * def{ get_property_def(o, name) })
 		{
 			return CHECK(def->get)(o, def);
 		}
@@ -34,13 +27,13 @@ namespace ism::detail
 		}
 	}
 
-	inline Error setattr_string(OBJECT o, cstring name, OBJECT v)
+	inline Error impl_setattr_string(OBJECT o, cstring name, OBJECT v)
 	{
 		if (!o.is_valid())
 		{
 			return Error_Unknown;
 		}
-		else if (GetSetDef * def{ get_getset_def(o, name) })
+		else if (GetSetDef * def{ get_property_def(o, name) })
 		{
 			return CHECK(def->set)(o, v, def);
 		}
@@ -56,7 +49,7 @@ namespace ism::detail
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline OBJECT getattr_object(OBJECT o, OBJECT name)
+	inline OBJECT impl_getattr_object(OBJECT o, OBJECT name)
 	{
 		if (!o.is_valid())
 		{
@@ -64,7 +57,7 @@ namespace ism::detail
 		}
 		else if (isinstance<STR>(name))
 		{
-			return getattr_string(o, STR(name)->c_str());
+			return impl_getattr_string(o, STR(name)->c_str());
 		}
 		else if (OBJECT * dict{ get_dict_ptr(o) })
 		{
@@ -76,7 +69,7 @@ namespace ism::detail
 		}
 	}
 
-	inline Error setattr_object(OBJECT o, OBJECT name, OBJECT v)
+	inline Error impl_setattr_object(OBJECT o, OBJECT name, OBJECT v)
 	{
 		if (!o.is_valid())
 		{
@@ -84,7 +77,7 @@ namespace ism::detail
 		}
 		else if (isinstance<STR>(name))
 		{
-			return setattr_string(o, STR(name)->c_str(), v);
+			return impl_setattr_string(o, STR(name)->c_str(), v);
 		}
 		else if (OBJECT * dict{ get_dict_ptr(o) })
 		{
@@ -99,4 +92,4 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_CLASS_HPP_
+#endif // !_ISM_API_DETAIL_CLASS_HPP_

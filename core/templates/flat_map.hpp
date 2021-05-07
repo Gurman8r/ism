@@ -65,10 +65,10 @@ namespace ism
 		using reverse_iterator_pair				= typename std::pair<key_reverse_iterator, value_reverse_iterator>;
 		using const_reverse_iterator_pair		= typename std::pair<key_const_reverse_iterator, value_const_reverse_iterator>;
 
-		using optl_iterator_pair				= typename Optl<iterator_pair>;
-		using optl_const_iterator_pair			= typename Optl<const_iterator_pair>;
-		using optl_reverse_iterator_pair		= typename Optl<iterator_pair>;
-		using optl_const_reverse_iterator_pair	= typename Optl<const_iterator_pair>;
+		using optl_iterator_pair				= typename Optional<iterator_pair>;
+		using optl_const_iterator_pair			= typename Optional<const_iterator_pair>;
+		using optl_reverse_iterator_pair		= typename Optional<iterator_pair>;
+		using optl_const_reverse_iterator_pair	= typename Optional<const_iterator_pair>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
