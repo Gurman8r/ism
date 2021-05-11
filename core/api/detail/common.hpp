@@ -21,13 +21,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> class Handle;
-	template <class> constexpr bool is_handle_v{ false };
-	template <class T> constexpr bool is_handle_v<Handle<T>>{ true };
-	template <template <class> class H, class T> constexpr bool is_handle_v<H<T>>{ std::is_base_of_v<Handle<T>, H<T> };
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	class CoreObject;
 	class CoreType;
 	class CoreInt;
@@ -38,7 +31,6 @@ namespace ism
 	class CoreCapsule;
 	class CoreFunction;
 	class CoreProperty;
-
 	class CoreCppFunction;
 	class CoreModule;
 	class CoreGeneric;
@@ -46,6 +38,8 @@ namespace ism
 	template <class T> constexpr bool is_core_object_v{ std::is_base_of_v<CoreObject, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> class Handle;
 
 	ALIAS(OBJECT)			Handle<CoreObject>;
 	ALIAS(TYPE)				Handle<CoreType>;
@@ -57,8 +51,6 @@ namespace ism
 	ALIAS(CAPSULE)			Handle<CoreCapsule>;
 	ALIAS(FUNCTION)			Handle<CoreFunction>;
 	ALIAS(PROPERTY)			Handle<CoreProperty>;
-	ALIAS(STATIC_PROPERTY)	PROPERTY;
-
 	ALIAS(CPP_FUNCTION)		Handle<CoreCppFunction>;
 	ALIAS(MODULE)			Handle<CoreModule>;
 	ALIAS(GENERIC)			Handle<CoreGeneric>;
@@ -239,17 +231,6 @@ namespace ism
 	{
 		lenfunc		mapping_length{};
 		binaryfunc	mapping_subscript{};
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct NODISCARD MethodDef
-	{
-		cstring		name{};
-		cfunction	method{};
-		cstring		doc{};
-
-		NODISCARD constexpr operator bool() const noexcept { return name && *name; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

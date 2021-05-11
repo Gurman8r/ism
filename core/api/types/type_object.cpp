@@ -5,10 +5,6 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreType::ob_class) { nullptr };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 static GetSetDef type_getsets[] =
 {
 	{ "__basicsize__",
@@ -62,28 +58,28 @@ static GetSetDef type_getsets[] =
 	{ /* sentinal */ },
 };
 
-static MethodDef type_methods[] =
-{
-	{ "mro", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return TYPE(self)->tp_mro;
-	} },
-	{ "__subclasses__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return TYPE(self)->tp_subclasses;
-	} },
-	{ "__instancecheck__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return nullptr;
-	} },
-	{ "__subclasscheck__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return nullptr;
-	} },
-	{ "__dir__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return nullptr;
-	} },
-	{ "__sizeof__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return nullptr;
-	} },
-	{ /* sentinal */ },
-};
+//static MethodDef type_methods[] =
+//{
+//	{ "mro", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
+//		return TYPE(self)->tp_mro;
+//	} },
+//	{ "__subclasses__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
+//		return TYPE(self)->tp_subclasses;
+//	} },
+//	{ "__instancecheck__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
+//		return nullptr;
+//	} },
+//	{ "__subclasscheck__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
+//		return nullptr;
+//	} },
+//	{ "__dir__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
+//		return nullptr;
+//	} },
+//	{ "__sizeof__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
+//		return nullptr;
+//	} },
+//	{ /* sentinal */ },
+//};
 
 static NumberMethods type_as_number = COMPOSE(NumberMethods, m)
 {
@@ -97,11 +93,12 @@ static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m)
 {
 };
 
-void CoreType::_bind_class(CoreType & t)
+DECLEXPR(CoreType::ob_type_static) = COMPOSE(CoreType, t)
 {
 	t.tp_name = "type";
 	t.tp_basicsize = sizeof(CoreType);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass;
+	t.tp_base = typeof<OBJECT>();
 
 	t.tp_dict_offset = offsetof(CoreType, tp_dict);
 	t.tp_weaklist_offset = offsetof(CoreType, tp_weaklist);
@@ -116,16 +113,37 @@ void CoreType::_bind_class(CoreType & t)
 	t.tp_getattro = (getattrofunc)detail::impl_getattr_object;
 	t.tp_setattro = (setattrofunc)detail::impl_setattr_object;
 
-	t.tp_operator_delete = (freefunc)[](void * ptr) { memdelete((CoreType *)ptr); };
+	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreType *)ptr); };
+
+	t.tp_finalize = (destructor)[](CoreObject * ptr)
+	{
+		if (CoreType * t{ super_cast<CoreType>(ptr) })
+		{
+			t->tp_bases = nullptr;
+			t->tp_cache = nullptr;
+			t->tp_dict = nullptr;
+			t->tp_mro = nullptr;
+			t->tp_subclasses = nullptr;
+			t->tp_dict = nullptr;
+			t->tp_weaklist = nullptr;
+		}
+	};
 
 	t.tp_getsets = type_getsets;
-	t.tp_methods = type_methods;
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
 		if (isinstance<TYPE>(v)) return util::compare(TYPE(o)->tp_name, TYPE(v)->tp_name);
 		return util::compare(o.ptr(), v.ptr());
 	};
+};
+
+void CoreType::_bind_class(CoreType & t)
+{
+	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
+		return Core_Bool(TYPE(self)->tp_dict->contains(value));
+	});
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -134,7 +152,7 @@ bool CoreType::ready()
 {
 	if (has_feature(TypeFlags_Ready)) { return true; }
 
-	if (!tp_base && this != typeof<OBJECT>().ptr()) { tp_base = typeof<OBJECT>(); }
+	if (!tp_base && this != *typeof<OBJECT>()) { tp_base = typeof<OBJECT>(); }
 
 	if (tp_base && !tp_base->tp_dict) { VERIFY(tp_base->ready()); }
 
@@ -144,26 +162,26 @@ bool CoreType::ready()
 
 	if (!tp_dict) { tp_dict = DICT(CoreDict{}); }
 
-	if (tp_methods) { add_methods(tp_methods); }
+	//if (tp_methods) { add_methods(tp_methods); }
 
-	if (tp_getsets) { add_getsets(tp_getsets); }
+	//if (tp_getsets) { add_getsets(tp_getsets); }
 
-	VERIFY(mro_internal(nullptr));
+	//VERIFY(mro_internal(nullptr));
 
 	if (tp_base) { inherit_special(*tp_base); }
 
-	for (TYPE const & base : ***LIST(tp_mro))
-	{
-		inherit_slots(*base);
-	}
+	//for (TYPE base : ***LIST(tp_mro))
+	//{
+	//	inherit_slots(*base);
+	//}
 
-	if (!has_feature(TypeFlags_HeapType))
-	{
-		for (TYPE const & b : ***LIST(tp_mro))
-		{
-			VERIFY("static type has dynamically allocated base type" && !b->has_feature(TypeFlags_HeapType));
-		}
-	}
+	//if (!has_feature(TypeFlags_HeapType))
+	//{
+	//	for (TYPE const & b : ***LIST(tp_mro))
+	//	{
+	//		VERIFY("static type has dynamically allocated base type" && !b->has_feature(TypeFlags_HeapType));
+	//	}
+	//}
 
 	if (has_feature(TypeFlags_HaveGc | TypeFlags_BaseType) && (!tp_free || tp_free == memfree))
 	{
@@ -174,27 +192,12 @@ bool CoreType::ready()
 	copy_val(*tp_base, &CoreType::tp_as_sequence);
 	copy_val(*tp_base, &CoreType::tp_as_mapping);
 
-	for (TYPE base : ***LIST(tp_bases))
-	{
-		base->add_subclass(handle());
-	}
+	//for (TYPE base : ***LIST(tp_bases))
+	//{
+	//	base->add_subclass(handle());
+	//}
 
-	enable_feature(TypeFlags_Ready);
-	return true;
-}
-
-void CoreType::add_methods(MethodDef * methods)
-{
-	for (MethodDef * def{ methods }; def && *def; ++def)
-	{
-	}
-}
-
-void CoreType::add_getsets(GetSetDef * getsets)
-{
-	for (GetSetDef * def{ getsets }; def && *def; ++def)
-	{
-	}
+	return enable_feature(TypeFlags_Ready), true;
 }
 
 bool CoreType::add_subclass(TYPE const & type)

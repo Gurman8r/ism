@@ -3,11 +3,9 @@
 
 #include <core/string/string_utility.hpp>
 
-#define DEBUG_PRINT(fmt, ...) _STD printf(fmt, ##__VA_ARGS__)
+#define PRINT_LINE(s) ism::print_line(s)
 
-#define PRINT_LINE(fmt, ...) ism::print_line(fmt, ##__VA_ARGS__)
-
-#define PRINT_ERROR(fmt, ...) ism::print_error(fmt, ##__VA_ARGS__)
+#define PRINT_ERROR(s) ism::print_error(S)
 
 namespace ism
 {

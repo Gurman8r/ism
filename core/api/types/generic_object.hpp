@@ -15,10 +15,6 @@ namespace ism
 	protected:
 		static void _bind_class(CoreType & t);
 
-	public:
-		DICT m_dict{ CoreDict{} };
-		vectorcallfunc m_vectorcall{};
-
 	protected:
 		void def_property_static_impl(cstring name, OBJECT fget, OBJECT fset, detail::function_record * rec_func)
 		{
@@ -27,6 +23,11 @@ namespace ism
 			//OBJECT property{ is_static ? typeof<STATIC_PROPERTY>() : typeof<PROPERTY>() };
 			attr(name) = PROPERTY({ fget, fset, nullptr });
 		}
+
+	public:
+		DICT m_dict{ CoreDict{} };
+
+		vectorcallfunc m_vectorcall{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

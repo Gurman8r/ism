@@ -51,15 +51,12 @@ namespace ism
 			.def("get_uint", get_uint)
 			.def("get_float", get_float)
 			.def("get_string", get_string)
-
 			.def("pass_ptr", [](void * ptr) { return ptr; })
-
 			;
+
 		scope["hello"]();
 		scope["say"](scope["get_string"]());
 		VERIFY(scope["pass_ptr"]((void *)123).cast<void const *>() == (void *)123);
-
-		//_CoreDict_Type.add_methods(_CoreDict_Type.tp_methods);
 
 		LIST list = scope["a"] = LIST(CoreList{});
 		list->append("IT WORKS");

@@ -247,7 +247,7 @@ namespace ism::detail
 
 				OBJECT arg{ argv[num_copied] };
 
-				VERIFY("BAD ARGUMENT" && !(arg_rec && !arg_rec->none && arg.is_none()));
+				VERIFY("BAD ARGUMENT" && !(arg_rec && !arg_rec->none && arg.is_null()));
 
 				this->args.push_back(arg, arg_rec ? arg_rec->convert : false);
 			}
@@ -299,11 +299,14 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-template <class Derived
-> template <ism::ReturnPolicy policy, class ...Args
-> inline ism::OBJECT ism::ObjectAPI<Derived>::operator()(Args && ... args)
+namespace ism
 {
-	return detail::collect_arguments<policy>(FWD(args)...).call(handle());
+	template <class Derived
+	> template <ReturnPolicy policy, class ...Args
+	> inline OBJECT ObjectAPI<Derived>::operator()(Args && ... args)
+	{
+		return detail::collect_arguments<policy>(FWD(args)...).call(handle());
+	}
 }
 
 #endif // !_ISM_API_DETAIL_CALL_HPP_

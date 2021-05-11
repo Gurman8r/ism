@@ -3,8 +3,6 @@
 
 using namespace ism;
 
-DECLEXPR(CoreModule::ob_class) { nullptr };
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static GetSetDef module_getsets[] =
@@ -19,18 +17,12 @@ static GetSetDef module_getsets[] =
 	{ /* sentinal */ },
 };
 
-static MethodDef module_methods[] =
-{
-	{ "__contains__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-		return Core_Bool(MODULE(self)->m_dict->contains(value));
-	} },
-	{ /* sentinal */ },
-};
-
-void CoreModule::_bind_class(CoreType & t)
+DECLEXPR(CoreModule::ob_type_static) = COMPOSE(CoreType, t)
 {
 	t.tp_name = "module";
+	t.tp_basicsize = sizeof(CoreModule);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
+	t.tp_base = typeof<OBJECT>();
 
 	t.tp_dict_offset = offsetof(CoreModule, m_dict);
 
@@ -48,10 +40,22 @@ void CoreModule::_bind_class(CoreType & t)
 		return util::compare(self.ptr(), value.ptr());
 	};
 
-	t.tp_operator_delete = (freefunc)[](void * ptr) { memdelete((CoreModule *)ptr); };
-
 	t.tp_getsets = module_getsets;
-	t.tp_methods = module_methods;
+
+	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreModule *)ptr); };
 };
+
+void CoreModule::_bind_class(CoreType & t)
+{
+	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
+		return Core_Bool(MODULE(self)->m_dict->contains(value));
+	});
+
+	//t.tp_dict["__dict__"] = PROPERTY({
+	//	CPP_FUNCTION([](OBJECT self, void *) -> OBJECT { return MODULE(self)->m_name; }),
+	//	CPP_FUNCTION([](OBJECT self, OBJECT value, void *) -> Error { return (MODULE(self)->m_name = value), Error_None; }) });
+	//};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

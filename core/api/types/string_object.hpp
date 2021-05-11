@@ -15,22 +15,19 @@ namespace ism
 	protected:
 		static void _bind_class(CoreType & t);
 
-	private:
-		String m_data{};
-
 	public:
-		using storage_type = decltype(m_data);
+		using storage_type = String;
 		using item_type = typename storage_type::value_type;
 		using iterator = typename storage_type::iterator;
 		using const_iterator = typename storage_type::const_iterator;
 
-		CoreString(storage_type const & v) : base_type{ type_static() }, m_data{ v } {}
+		CoreString(storage_type const & v) : base_type{ &ob_type_static }, m_data{ v } {}
 
-		CoreString(storage_type && v) noexcept : base_type{ type_static() }, m_data{ std::move(v) } {}
+		CoreString(storage_type && v) noexcept : base_type{ &ob_type_static }, m_data{ std::move(v) } {}
 
-		CoreString(cstring v) : base_type{ type_static() }, m_data{ v } {}
+		CoreString(cstring v) : base_type{ &ob_type_static }, m_data{ v } {}
 
-		CoreString(cstring v, size_t n) : base_type{ type_static() }, m_data{ v, n } {}
+		CoreString(cstring v, size_t n) : base_type{ &ob_type_static }, m_data{ v, n } {}
 
 		CoreString(StringName const & v) : self_type{ v.string() } {}
 
@@ -91,6 +88,9 @@ namespace ism
 		NODISCARD auto end() const noexcept -> const_iterator { return m_data.end(); }
 		
 		NODISCARD auto cend() const noexcept -> const_iterator { return m_data.cend(); }
+
+	private:
+		storage_type m_data{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

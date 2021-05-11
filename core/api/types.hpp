@@ -5,7 +5,6 @@
 #include <core/api/types/type_object.hpp>
 #include <core/api/types/int_object.hpp>
 #include <core/api/types/float_object.hpp>
-#include <core/api/types/bool_object.hpp>
 #include <core/api/types/string_object.hpp>
 #include <core/api/types/list_object.hpp>
 #include <core/api/types/dict_object.hpp>

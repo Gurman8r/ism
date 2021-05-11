@@ -15,15 +15,15 @@ namespace ism
 	protected:
 		static void _bind_class(CoreType & t);
 
-	protected:
-		vectorcallfunc m_vectorcall{};
-
 	public:
 		CoreFunction(TYPE const & t, vectorcallfunc vectorcall) : base_type{ t }, m_vectorcall{ vectorcall } {}
 
 		NODISCARD vectorcallfunc get_vectorcall() const { return m_vectorcall; }
 
 		void set_vectorcall(vectorcallfunc vectorcall) { m_vectorcall = vectorcall; }
+
+	protected:
+		vectorcallfunc m_vectorcall{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

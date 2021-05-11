@@ -5,8 +5,6 @@
 
 #include <tuple>
 
-#define FWD(x) _STD forward<decltype(x)>(x) // automatic forward
-
 // operators
 namespace ism
 {

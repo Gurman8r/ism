@@ -33,6 +33,7 @@ namespace ism
 		reprfunc			tp_repr{};
 		reprfunc			tp_str{};
 		traverseproc		tp_traverse{};
+		vectorcallfunc		tp_vectorcall{};
 
 		getattrfunc			tp_getattr{};
 		setattrfunc			tp_setattr{};
@@ -40,12 +41,6 @@ namespace ism
 		setattrofunc		tp_setattro{};
 		descrgetfunc		tp_descrget{};
 		descrsetfunc		tp_descrset{};
-
-		TYPE				tp_base{};
-		OBJECT				tp_bases{};
-		OBJECT				tp_cache{};
-		OBJECT				tp_mro{};
-		OBJECT				tp_subclasses{};
 
 		destructor			tp_delete{};
 		initproc			tp_init{};
@@ -56,21 +51,17 @@ namespace ism
 		destructor			tp_finalize{};
 
 		GetSetDef *			tp_getsets{};
-		MethodDef *			tp_methods{};
+		NumberMethods *		tp_as_number{};
+		SequenceMethods *	tp_as_sequence{};
+		MappingMethods  *	tp_as_mapping{};
 
-		allocfunc tp_operator_new{};
-		freefunc tp_operator_delete{};
-
-		Optional<NumberMethods>		tp_as_number{ nullopt };
-		Optional<SequenceMethods>	tp_as_sequence{ nullopt };
-		Optional<MappingMethods>	tp_as_mapping{ nullopt };
-
-		//Batch<hash_t, StringName, OBJECT> m_getsets{};
-		//Batch<hash_t, StringName, OBJECT> m_methods{};
-
+		TYPE				tp_base{};
+		OBJECT				tp_bases{};
+		OBJECT				tp_cache{};
 		OBJECT				tp_dict{};
+		OBJECT				tp_mro{};
+		OBJECT				tp_subclasses{};
 		OBJECT				tp_weaklist{};
-		vectorcallfunc		tp_vectorcall{};
 
 	public:
 		NODISCARD bool has_feature(int32_t feature) const noexcept { return flag_read(tp_flags, feature); }
@@ -79,17 +70,13 @@ namespace ism
 
 		void disable_feature(int32_t feature) noexcept { flag_clear(tp_flags, feature); }
 
-		NODISCARD bool ready();
-
-	protected:
-		void add_methods(MethodDef * methods);
-		void add_getsets(GetSetDef * getsets);
+		bool ready();
 		bool add_subclass(TYPE const & type);
 		bool mro_internal(OBJECT * old_mro);
 		void inherit_special(CoreType const * base);
 		void inherit_slots(CoreType const * base);
 
-	protected:
+	public:
 		template <class Slot> bool slot_defined(CoreType const * base, Slot CoreType::*slot) const
 		{
 			return (this->*slot) && (!base || (this->*slot) != (base->*slot));
@@ -110,7 +97,7 @@ namespace ism
 			return ((*this->tp_as_mapping).*slot) && (!base || ((*this->tp_as_mapping).*slot) != ((*base->tp_as_mapping).*slot));
 		}
 
-	protected:
+	public:
 		template <class Slot> void copy_val(CoreType const * base, Slot CoreType::*slot)
 		{
 			if (!(this->*slot) && base)
@@ -169,39 +156,6 @@ namespace ism
 				}
 			}
 			return nullptr;
-		}
-
-		NODISCARD inline MethodDef * get_method_def(OBJECT o, cstring name)
-		{
-			if (hash_t id{ hash(name, strlen(name)) }; TYPE type{ typeof(o) })
-			{
-				for (MethodDef * def{ type->tp_methods }; def && *def; ++def)
-				{
-					if (id == hash(def->name, strlen(def->name)))
-					{
-						return def;
-					}
-				}
-			}
-			return nullptr;
-		}
-
-		NODISCARD inline auto get_as_number(OBJECT const & o) -> Optional<NumberMethods>
-		{
-			TYPE t{ typeof(o) };
-			return t ? t->tp_as_number : nullopt;
-		}
-
-		NODISCARD inline auto get_as_sequence(OBJECT const & o) -> Optional<SequenceMethods>
-		{
-			TYPE t{ typeof(o) };
-			return t ? t->tp_as_sequence : nullopt;
-		}
-
-		NODISCARD inline auto get_as_mapping(OBJECT const & o) -> Optional<MappingMethods>
-		{
-			TYPE t{ typeof(o) };
-			return t ? t->tp_as_mapping : nullopt;
 		}
 
 		NODISCARD inline auto get_dict_ptr(OBJECT const & o)

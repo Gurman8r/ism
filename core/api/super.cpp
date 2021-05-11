@@ -16,13 +16,18 @@ namespace ism
 	void Super::_postinitialize()
 	{
 		m_class_ptr = _get_class_namev();
-
-		m_instance_id = SuperDB::add_instance(this);
 	}
 
-	Super::Super(bool is_ref) { m_is_reference = is_ref; }
+	Super::Super(bool is_ref)
+	{
+		m_is_reference = is_ref;
+
+		m_instance_id = CHECK(SuperDB::add_instance(this));
+	}
 	
-	Super::Super() : Super{ false } {}
+	Super::Super() : Super{ false }
+	{
+	}
 
 	Super::~Super()
 	{
@@ -35,7 +40,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	decltype(SuperDB::g_supers) SuperDB::g_supers{};
+	DECLEXPR(SuperDB::g_supers) {};
 
 	InstanceID SuperDB::add_instance(Super * value)
 	{

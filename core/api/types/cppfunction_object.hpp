@@ -16,9 +16,6 @@ namespace ism
 	protected:
 		static void _bind_class(CoreType & t);
 
-	private:
-		detail::function_record m_data{};
-
 	public:
 		template <class Return, class ... Args, class ... Extra
 		> CoreCppFunction(Return(*f)(Args...), Extra && ... extra) : self_type{ detail::function_record{
@@ -68,7 +65,7 @@ namespace ism
 
 	protected:
 		explicit CoreCppFunction(detail::function_record && value) noexcept
-			: base_type{ type_static(), dispatcher }, m_data{ std::move(value) }
+			: base_type{ &ob_type_static, dispatcher }, m_data{ std::move(value) }
 		{
 		}
 
@@ -80,6 +77,9 @@ namespace ism
 
 			return func.impl(call(argv, argc));
 		}
+
+	private:
+		detail::function_record m_data{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

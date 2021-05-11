@@ -16,12 +16,6 @@ namespace ism
 		static void _bind_class(CoreType & t);
 
 	public:
-		DICT		m_dict{ CoreDict{} };
-		STR			m_name{};
-		STR			m_doc{};
-		inquiry		m_clear{};
-		freefunc	m_free{};
-
 		CoreModule(cstring name) : self_type{}
 		{
 			m_name = STR(name);
@@ -56,6 +50,13 @@ namespace ism
 		void reload()
 		{
 		}
+
+	public:
+		DICT		m_dict{ CoreDict{} };
+		STR			m_name{};
+		STR			m_doc{};
+		inquiry		m_clear{};
+		freefunc	m_free{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

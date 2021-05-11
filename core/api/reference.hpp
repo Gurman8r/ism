@@ -36,7 +36,11 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> class Ref
+	struct _Ref_Tag {};
+
+	template <class T> constexpr bool is_ref_v{ std::is_base_of_v<_Ref_Tag, T> };
+
+	template <class T> class Ref : _Ref_Tag
 	{
 	public:
 		using value_type = typename T;

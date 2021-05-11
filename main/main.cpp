@@ -19,10 +19,10 @@ namespace ism
 	{
 		get_os().initialize();
 
-		g_runtime = memnew(RuntimeState);
-
 		register_core_types();
 		register_core_driver_types();
+
+		g_runtime = memnew(RuntimeState);
 
 		register_core_settings();
 
@@ -99,7 +99,7 @@ namespace ism
 		get_os().finalize();
 
 		memdelete_nonzero(g_runtime);
-
+		
 		unregister_core_driver_types();
 		unregister_core_types();
 

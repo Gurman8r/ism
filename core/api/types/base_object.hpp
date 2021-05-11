@@ -3,9 +3,6 @@
 
 #include <core/api/detail/operators.hpp>
 
-// none
-#define Core_None (ism::OBJECT(&ism::CoreObject::g_none))
-
 // object_api
 namespace ism
 {
@@ -42,7 +39,6 @@ namespace ism
 		template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
 		> OBJECT operator()(Args && ... args); // call.hpp
 
-		NODISCARD bool is_none() const noexcept { return derived().ptr() == *Core_None; }
 		NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
 		NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
 
@@ -55,17 +51,6 @@ namespace ism
 		NODISCARD bool greater_equal(ObjectAPI const & o) const noexcept { return compare(o) >= 0; }
 
 		NODISCARD auto doc() const { return attr("__doc__"); }
-
-		NODISCARD auto type() const
-		{
-			auto * o{ CHECK(derived().ptr()) };
-
-			TYPE & t{ o->ob_type };
-
-			if (!t) { t.reset(o->_get_typev()); }
-
-			return t;
-		}
 
 	private:
 		NODISCARD auto compare(ObjectAPI const & o) const -> int32_t
@@ -90,10 +75,23 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> class Handle : public ObjectAPI<Handle<T>>, public Ref<T>
+	> class BaseHandle : public ObjectAPI<Handle<T>>, public Ref<T>
 	{
 	public:
-		~Handle() { destruct(m_reference); m_reference = nullptr; }
+		NODISCARD operator Ref<T> & () & noexcept { return *static_cast<Ref<T> *>(this); }
+
+		NODISCARD operator Ref<T> const & () const & noexcept { return *static_cast<Ref<T> const *>(this); }
+
+		NODISCARD operator Ref<T> && () && noexcept { return std::move(*static_cast<Ref<T> *>(this)); }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T
+	> class Handle : public BaseHandle<T>
+	{
+	public:
+		~Handle() { destruct(m_reference); }
 
 		Handle() {}
 		
@@ -101,10 +99,10 @@ namespace ism
 
 		Handle(T * value) { if (value) { ref_pointer(value); } }
 		
-		Handle(Handle const & value) { ref(value); }
+		Handle(Ref<T> const & value) { ref(value); }
 		
 		template <class U
-		> Handle(Handle<U> const & value) { reset(value); }
+		> Handle(Ref<U> const & value) { reset(value); }
 
 		Handle(T const & value) { revalue(value); }
 
@@ -112,40 +110,68 @@ namespace ism
 
 		Handle & operator=(nullptr_t) { unref(); return (*this); }
 
-		Handle & operator=(Handle const & value) { reset(value); return (*this); }
+		Handle & operator=(Ref<T> const & value) { reset(value); return (*this); }
 		
 		template <class U
-		> Handle & operator=(Handle<U> const & value) { reset(value); return (*this); }
+		> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }
 		
 		Handle & operator=(T const & value) { revalue(value); return (*this); }
 
 		Handle & operator=(T && value) noexcept { revalue(std::move(value)); return (*this); }
 
 	public:
-		static void initialize_class() noexcept { T::initialize_class(); }
-
-		NODISCARD static TYPE type_static() noexcept { return T::type_static(); }
-
 		template <class T> NODISCARD T cast() const &;
 
 		template <class T> NODISCARD T cast() &&;
 
 	protected:
-		static void destruct(T * ptr)
+		static void destruct(T *& ptr)
 		{
 			if (ptr && ptr->dec_ref())
 			{
-				if (TYPE & t{ ptr->ob_type }; t && t->tp_operator_delete)
+				if (TYPE t{ typeof(ptr) }; t && t->tp_free)
 				{
-					t->tp_operator_delete(ptr);
+					t->tp_free(ptr);
 				}
 				else
 				{
 					memdelete(ptr);
 				}
 			}
+			ptr = nullptr;
 		}
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// handle common
+#define ISM_HANDLE_COMMON(m_type)																		\
+public:																									\
+	Handle() {}																							\
+																										\
+	Handle(nullptr_t) {}																				\
+																										\
+	Handle(m_type * value) { if (value) { ref_pointer(value); } }										\
+																										\
+	Handle(Ref<T> const & value) { ref(value); }														\
+																										\
+	template <class U> Handle(Ref<U> const & value) { reset(value); }									\
+																										\
+	Handle(m_type const & value) { revalue(value); }													\
+																										\
+	Handle(m_type && value) noexcept { revalue(std::move(value)); }										\
+																										\
+	Handle & operator=(nullptr_t) { unref(); return (*this); }											\
+																										\
+	Handle & operator=(Ref<T> const & value) { reset(value); return (*this); }							\
+																										\
+	template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }		\
+																										\
+	Handle & operator=(m_type const & value) { revalue(value); return (*this); }						\
+																										\
+	Handle & operator=(m_type && value) noexcept { revalue(std::move(value)); return (*this); }			\
+																										\
+private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -235,45 +261,38 @@ namespace ism
 		ISM_SUPER_CLASS(CoreObject, Reference);
 
 	private:
-		template <class T> friend class ObjectAPI;
-		template <class T> friend class Handle;
+		friend class ClassDB;
 
-		static CoreType ob_class; // object class
+		static CoreType ob_type_static; // class type
 
 	protected:
-		mutable TYPE ob_type; // object type
-
-		virtual bool _predelete() override;
-
-		virtual void _postinitialize() override;
-
 		virtual void _initialize_classv() { initialize_class(); }
 
 		static void _bind_class(CoreType & t);
-
+		
 		NODISCARD static constexpr void (*_get_bind_class())(CoreType &) { return &CoreObject::_bind_class; }
 
-		virtual TYPE _get_typev() { return type_static(); }
+		virtual TYPE _get_typev() const { return get_type_static(); }
+
+		explicit CoreObject(TYPE const & t) : Reference{}, ob_type{ t } {}
 
 	public:
-		static CoreObject g_none; // global none
-
 		virtual ~CoreObject() override { ob_type = nullptr; }
 
-		explicit CoreObject(TYPE const & t) { ob_type = t; }
-
-	public:
 		static void initialize_class();
 
-		static void register_custom_data() {}
+		NODISCARD static TYPE get_type_static() { return TYPE(&ob_type_static); }
 
-		NODISCARD static TYPE type_static() { return TYPE(&ob_class); }
+		NODISCARD TYPE get_type() const { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
 
 		NODISCARD auto ptr() const { return const_cast<CoreObject *>(this); }
 
 		template <class T> NODISCARD T cast() const &;
 
 		template <class T> NODISCARD T cast() &&;
+
+	protected:
+		mutable TYPE ob_type; // instance type
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -282,15 +301,28 @@ namespace ism
 #define ISM_OBJECT_COMMON(m_class, m_inherits)												\
 	ISM_SUPER_CLASS(m_class, m_inherits)													\
 private:																					\
-	template <class T> friend class ObjectAPI;												\
-	template <class T> friend class Handle;													\
+	friend class ClassDB;																	\
 																							\
-	static CoreType ob_class;																\
+	static CoreType ob_type_static;															\
+																							\
+protected:																					\
+	virtual void _initialize_classv() override												\
+	{																						\
+		m_class::initialize_class();														\
+	}																						\
+																							\
+	FORCE_INLINE static constexpr void (*_get_bind_class())(CoreType & t)					\
+	{																						\
+		return &m_class::_bind_class;														\
+	}																						\
+																							\
+	FORCE_INLINE NODISCARD virtual TYPE _get_typev() const override							\
+	{																						\
+		return m_class::get_type_static();													\
+	}																						\
 																							\
 public:																						\
-	NODISCARD static TYPE type_static() { return TYPE(&m_class::ob_class); }				\
-																							\
-	NODISCARD static void initialize_class()												\
+	static void initialize_class()															\
 	{																						\
 		static SCOPE_ENTER(&)																\
 		{																					\
@@ -298,25 +330,22 @@ public:																						\
 																							\
 			if (m_class::_get_bind_class() != m_inherits::_get_bind_class())				\
 			{																				\
-				m_class::_bind_class(m_class::ob_class);									\
+				m_class::_bind_class(m_class::ob_type_static);								\
 			}																				\
 		};																					\
 	}																						\
 																							\
-protected:																					\
-	NODISCARD virtual TYPE _get_typev() override { return m_class::type_static(); }			\
-																							\
-	virtual void _initialize_classv() override { m_class::initialize_class(); }				\
-																							\
-	FORCE_INLINE static constexpr void (*_get_bind_class())(CoreType & t)					\
+	FORCE_INLINE NODISCARD static TYPE get_type_static()									\
 	{																						\
-		return &m_class::_bind_class;														\
+		return TYPE(&m_class::ob_type_static);												\
 	}																						\
 																							\
 public:																						\
 	explicit m_class(TYPE const & t) : m_inherits{ t } {}									\
 																							\
 private:
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object cvt
 #define ISM_OBJECT_CVT(m_class, m_inherits)													\
@@ -329,13 +358,15 @@ public:																						\
 																							\
 private:
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // object default
 #define ISM_OBJECT_DEFAULT(m_class, m_inherits)												\
 	ISM_OBJECT_CVT(m_class, m_inherits);													\
 public:																						\
 	virtual ~m_class() noexcept override = default;											\
 																							\
-	m_class() : m_inherits{ m_class::type_static() } {}										\
+	m_class() : m_inherits{ &m_class::ob_type_static } {}									\
 																							\
 private:
 
@@ -357,23 +388,31 @@ namespace ism
 		> classes;
 
 	public:
-		static void add_class(StringName const & name, TYPE t);
+		static void add_class(StringName const & name, CoreType & type);
 
-		template <class T> static void add_class()
+		template <class T
+		> static void add_class()
 		{
-			add_class(T::get_class_static(), T::type_static());
+			constexpr StringView class_name{ T::get_class_static() };
+
+			VERIFY(T::ob_type_static.ready());
+
+			add_class(class_name, T::ob_type_static);
 		}
 
-		template <class T> static void register_type()
+		template <class T
+		> static void register_class()
 		{
-			using U = std::conditional_t<is_handle_v<T>, typename T::value_type, mpl::intrinsic_t<T>>;
+			constexpr StringView class_name{ T::get_class_static() };
 
-			U::initialize_class();
+			T::initialize_class();
 
-			TYPE * t{ classes.map<hash_t, TYPE>(hash(U::get_class_static())) };
-			VERIFY(t);
-
-			U::register_custom_data();
+			TYPE * t{ classes.map<hash_t, TYPE>(hash(class_name)) };
+			
+			if (!t || !*t)
+			{
+				VERIFY(!"CLASS REGISTERATION FAILED");
+			}
 		}
 	};
 
@@ -407,7 +446,14 @@ namespace ism
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof() noexcept
 	{
-		return T::type_static();
+		if constexpr (is_ref_v<T>)
+		{
+			return typeof<T::value_type>();
+		}
+		else
+		{
+			return T::get_type_static();
+		}
 	}
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
@@ -417,9 +463,9 @@ namespace ism
 	}
 
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o)
+	> NODISCARD TYPE typeof(T && o) noexcept
 	{
-		return o ? o->type() : nullptr;
+		return o ? o->get_type() : nullptr;
 	}
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0

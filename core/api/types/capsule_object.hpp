@@ -8,15 +8,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class NODISCARD ISM_API CoreCapsule : public CoreObject
+	namespace detail
 	{
-		ISM_OBJECT_DEFAULT(CoreCapsule, CoreObject);
-
-	protected:
-		static void _bind_class(CoreType & t);
-
-	private:
-		struct storage_type
+		struct capsule_record
 		{
 			void * pointer{}, * context{};
 
@@ -24,9 +18,21 @@ namespace ism
 
 			String name{}, doc{};
 
-			~storage_type() { if (closure) { closure((CoreObject *)pointer); } }
-		}
-		m_data{};
+			~capsule_record() { if (closure) { closure((CoreObject *)pointer); } }
+		};
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class NODISCARD ISM_API CoreCapsule : public CoreObject
+	{
+		ISM_OBJECT_DEFAULT(CoreCapsule, CoreObject);
+
+	protected:
+		static void _bind_class(CoreType & t);
+
+	public:
+		using storage_type = detail::capsule_record;
 
 	public:
 		CoreCapsule(nullptr_t) : self_type{}
@@ -78,6 +84,9 @@ namespace ism
 		void set_context(void const * value) { m_data.context = (void *)value; }
 		
 		void set_pointer(void const * value) { m_data.pointer = (void *)value; }
+
+	private:
+		storage_type m_data{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

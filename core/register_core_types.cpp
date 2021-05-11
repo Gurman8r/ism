@@ -5,32 +5,19 @@ using namespace ism;
 
 void ism::register_core_types()
 {
-	//VERIFY(Engine::get_singleton());
-	//ObjectDB::setup();
-	//register_global_constants();
-	//Var::register_types();
-	//CoreStringNames::create();
-	//ClassDB::register_class<Object>();
-	//ClassDB::register_class<WeakRef>();
-	//ClassDB::register_class<Resource>();
-	//ClassDB::register_virtual_class<Script>();
-	//ClassDB::register_class<ConfigFile>();
-	//ClassDB::register_class<Image>();
-	//ClassDB::register_class<MainLoop>();
-
-	ClassDB::register_type<TYPE>();
-	ClassDB::register_type<OBJECT>();
-	ClassDB::register_type<INT>();
-	ClassDB::register_type<FLT>();
-	ClassDB::register_type<STR>();
-	ClassDB::register_type<LIST>();
-	ClassDB::register_type<DICT>();
-	ClassDB::register_type<CAPSULE>();
-	ClassDB::register_type<FUNCTION>();
-	ClassDB::register_type<PROPERTY>();
-	ClassDB::register_type<CPP_FUNCTION>();
-	ClassDB::register_type<MODULE>();
-	ClassDB::register_type<GENERIC>();
+	ClassDB::register_class<CoreObject>();
+	ClassDB::register_class<CoreType>();
+	ClassDB::register_class<CoreInt>();
+	ClassDB::register_class<CoreFloat>();
+	ClassDB::register_class<CoreString>();
+	ClassDB::register_class<CoreList>();
+	ClassDB::register_class<CoreDict>();
+	ClassDB::register_class<CoreCapsule>();
+	ClassDB::register_class<CoreFunction>();
+	ClassDB::register_class<CoreProperty>();
+	ClassDB::register_class<CoreCppFunction>();
+	ClassDB::register_class<CoreModule>();
+	ClassDB::register_class<CoreGeneric>();
 }
 
 void ism::register_core_driver_types()
@@ -43,10 +30,6 @@ void ism::register_core_settings()
 
 void ism::register_core_singletons()
 {
-	//ClassDB::register_class<Input>();
-	//ClassDB::register_class<ProjectSettings>();
-	//get_engine().add_singleton({ "Input", Input::get_singleton() });
-	//get_engine().add_singleton({ "ProjectSettings", ProjectSettings::get_singleton() });
 }
 
 void ism::unregister_core_driver_types()
@@ -55,8 +38,15 @@ void ism::unregister_core_driver_types()
 
 void ism::unregister_core_types()
 {
-	while (!ClassDB::classes.empty())
+	auto & db{ ClassDB::classes };
+
+	for (size_t i = 0; i < db.size(); ++i)
 	{
-		ClassDB::classes.pop_back();
+		typeof<TYPE>()->tp_finalize(*db.get<TYPE>(i));
+	}
+
+	while (!db.empty())
+	{
+		db.pop_back();
 	}
 }

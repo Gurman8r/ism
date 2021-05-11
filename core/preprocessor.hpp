@@ -46,7 +46,11 @@
 // string variable
 #define STRVAR(name, str)	static char const name[] = { str }
 
+// decltype variable
 #define DECLEXPR(expr)		decltype(expr) expr
+
+// automatic forward
+#define FWD(expr)			(std::forward<decltype(expr)>(expr))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -85,18 +89,22 @@
 
 namespace ism::impl
 {
-	// composer
-	template <class T> struct ValueComposer {};
+	template <class T> struct ComposeHelper final
+	{
+		T value;
+
+		constexpr ComposeHelper(T && value) noexcept : value{ FWD(value) } {}
+	};
 
 	template <class T, class Fn = void(*)(T &)
-	> constexpr auto operator+(ValueComposer<T>, Fn fn)
+	> constexpr auto operator+(ComposeHelper<T> && maker, Fn && fn) noexcept
 	{
-		T x{};
-		fn((T &)x);
-		return x;
+		fn(static_cast<T &>(maker.value));
+		return std::move(maker.value);
 	}
 
-#define COMPOSE(T, v, ...) (ism::impl::ValueComposer<T>{}) + [##__VA_ARGS__](T & v) noexcept -> void
+#define COMPOSE(T, v, ...) \
+	(ism::impl::ComposeHelper<T>(T{ ##__VA_ARGS__ })) + [&](T & v) noexcept -> void
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

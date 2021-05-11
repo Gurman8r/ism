@@ -45,14 +45,13 @@ namespace ism
 		friend bool predelete_handler(Super *);
 		friend void postinitialize_handler(Super *);
 
-	protected:
 		InstanceID m_instance_id{};
 		int32_t m_predelete_ok{};
 		bool m_is_reference{};
-
 		mutable StringName m_class_name{};
 		mutable StringName const * m_class_ptr{};
 
+	protected:
 		virtual bool _predelete();
 
 		virtual void _postinitialize();

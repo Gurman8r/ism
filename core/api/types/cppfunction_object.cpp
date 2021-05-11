@@ -3,8 +3,6 @@
 
 using namespace ism;
 
-DECLEXPR(CoreCppFunction::ob_class) { nullptr };
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static GetSetDef cppfunction_getsets[] =
@@ -20,10 +18,12 @@ static GetSetDef cppfunction_getsets[] =
 	{ /* sentinal */},
 };
 
-void CoreCppFunction::_bind_class(CoreType & t)
+DECLEXPR(CoreCppFunction::ob_type_static) = COMPOSE(CoreType, t)
 {
 	t.tp_name = "cpp_function";
+	t.tp_basicsize = sizeof(CoreCppFunction);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall;
+	t.tp_base = typeof<FUNCTION>();
 
 	t.tp_vectorcall_offset = offsetof(CoreCppFunction, m_vectorcall);
 
@@ -37,9 +37,14 @@ void CoreCppFunction::_bind_class(CoreType & t)
 		return util::compare(self.ptr(), value.ptr());
 	};
 
-	t.tp_operator_delete = (freefunc)[](void * ptr) { memdelete((CoreCppFunction *)ptr); };
+	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreCppFunction *)ptr); };
 
 	t.tp_getsets = cppfunction_getsets;
 };
+
+void CoreCppFunction::_bind_class(CoreType & t)
+{
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

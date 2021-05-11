@@ -87,7 +87,7 @@ namespace ism::detail
 		template <class T, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T>>, int> = 0 \
 		> static OBJECT cast(T * src, ReturnPolicy policy, OBJECT parent) \
 		{ \
-			if (!src) { return Core_None; } \
+			if (!src) { return nullptr; } \
 			if (policy == ReturnPolicy_TakeOwnership) \
 			{ \
 				auto h{ cast(std::move(*src), policy, parent) }; \
@@ -158,9 +158,9 @@ namespace ism::detail
 
 	template <class T> struct void_caster
 	{
-		NODISCARD bool load(OBJECT const & src, bool) { return (src.is_valid() && src.is_none()); }
+		NODISCARD bool load(OBJECT const & src, bool) { return (src.is_valid() && src.is_null()); }
 
-		NODISCARD static OBJECT cast(T, ReturnPolicy, OBJECT) { return Core_None; }
+		NODISCARD static OBJECT cast(T, ReturnPolicy, OBJECT) { return nullptr; }
 
 		ISM_TYPE_CASTER(T, "none");
 	};
@@ -173,7 +173,7 @@ namespace ism::detail
 	{
 		NODISCARD bool load(OBJECT const & src, bool)
 		{
-			if (src.is_null() || src.is_none())
+			if (src.is_null())
 			{
 				value = nullptr;
 				return true;
@@ -191,7 +191,7 @@ namespace ism::detail
 
 		template <class U> NODISCARD static OBJECT cast(U src, ReturnPolicy, OBJECT)
 		{
-			return src ? CAPSULE({ static_cast<void const *>(src) }) : Core_None;
+			return src ? CAPSULE({ static_cast<void const *>(src) }) : nullptr;
 		}
 		
 		static constexpr auto name{ "capsule" };

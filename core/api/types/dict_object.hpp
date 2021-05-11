@@ -15,26 +15,21 @@ namespace ism
 	protected:
 		static void _bind_class(CoreType & t);
 
-	private:
-		HashMap<OBJECT, OBJECT> m_data{};
-
-		using storage_type = decltype(m_data);
-
 	public:
+		using storage_type = HashMap<OBJECT, OBJECT>;
 		using item_type = typename storage_type::value_type;
 		using iterator = typename storage_type::iterator;
 		using const_iterator = typename storage_type::const_iterator;
 
-		CoreDict(storage_type const & v) : base_type{ type_static() }, m_data{ v } {}
+		CoreDict(storage_type const & v) : base_type{ &ob_type_static }, m_data{ v } {}
 
-		CoreDict(storage_type && v) noexcept : base_type{ type_static() }, m_data{ std::move(v) } {}
+		CoreDict(storage_type && v) noexcept : base_type{ &ob_type_static }, m_data{ std::move(v) } {}
 
 		CoreDict(std::initializer_list<item_type> init) : self_type{}
 		{
 			m_data.reserve(init.size());
-			for (item_type const & e : init) {
-				m_data.insert(e);
-			}
+
+			for (item_type const & e : init) { m_data.insert(e); }
 		}
 
 		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_data); }
@@ -65,6 +60,9 @@ namespace ism
 		NODISCARD auto end() const noexcept -> const_iterator { return m_data.end(); }
 		
 		NODISCARD auto cend() const noexcept -> const_iterator { return m_data.cend(); }
+
+	private:
+		storage_type m_data{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
