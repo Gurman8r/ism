@@ -9,6 +9,9 @@ namespace ism
 
 	class ISM_API Image : public Resource
 	{
+		ISM_SUPER_CLASS(Image, Resource);
+
+	private:
 		friend class ImageLoader;
 
 		int32_t m_width{}, m_height{}, m_channels{};

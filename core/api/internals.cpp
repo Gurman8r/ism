@@ -42,8 +42,8 @@ InterpreterState::InterpreterState(RuntimeState * runtime) : runtime{ runtime }
 	if (prev) { prev->next = this; }
 	runtime->interpreters.head = this;
 	if (!runtime->interpreters.main) { runtime->interpreters.main = this; }
-
 	tstate_head = memnew(ThreadState(this));
+
 	dict = DICT(CoreDict{});
 	builtins = DICT(CoreDict{});
 	modules = DICT(CoreDict{});

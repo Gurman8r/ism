@@ -1,7 +1,7 @@
-#ifndef _ISM_API_TYPES_BASE_OBJECT_HPP_
-#define _ISM_API_TYPES_BASE_OBJECT_HPP_
+#ifndef _ISM_BASE_OBJECT_HPP_
+#define _ISM_BASE_OBJECT_HPP_
 
-#include <core/api/detail/operators.hpp>
+#include <core/api/detail/common.hpp>
 
 // object_api
 namespace ism
@@ -34,13 +34,14 @@ namespace ism
 		> NODISCARD auto operator[](I && i) const { return ItemAccessor<I>{ handle(), FWD(i) }; }
 
 		template <class V = OBJECT
-		> NODISCARD bool contains(V && v) const { return attr("__contains__")(FWD(v)).cast<bool>(); }
+		> NODISCARD bool contains(V && v) const { return attr("__contains__")(handle(), FWD(v)); }
 
 		template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
-		> OBJECT operator()(Args && ... args); // call.hpp
+		> OBJECT operator()(Args && ... args) const; // call.hpp
 
 		NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
 		NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
+		NODISCARD bool is_type(TYPE const & t) const noexcept { return t.is(typeof(derived().ptr())); }
 
 		NODISCARD bool is(ObjectAPI const & o) const noexcept { return derived().ptr() == o.derived().ptr(); }
 		NODISCARD bool equal_to(ObjectAPI const & o) const noexcept { return compare(o) == 0; }
@@ -67,6 +68,26 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T
+	> NODISCARD bool operator==(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.equal_to(b); }
+
+	template <class T
+	> NODISCARD bool operator!=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.not_equal_to(b); }
+
+	template <class T
+	> NODISCARD bool operator<(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less(b); }
+
+	template <class T
+	> NODISCARD bool operator<=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less_equal(b); }
+
+	template <class T
+	> NODISCARD bool operator>(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater(b); }
+
+	template <class T
+	> NODISCARD bool operator>=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater_equal(b); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // handle
@@ -75,20 +96,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> class BaseHandle : public ObjectAPI<Handle<T>>, public Ref<T>
-	{
-	public:
-		NODISCARD operator Ref<T> & () & noexcept { return *static_cast<Ref<T> *>(this); }
-
-		NODISCARD operator Ref<T> const & () const & noexcept { return *static_cast<Ref<T> const *>(this); }
-
-		NODISCARD operator Ref<T> && () && noexcept { return std::move(*static_cast<Ref<T> *>(this)); }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T
-	> class Handle : public BaseHandle<T>
+	> class Handle : public ObjectAPI<Handle<T>>, public Ref<T>
 	{
 	public:
 		~Handle() { destruct(m_reference); }
@@ -144,33 +152,165 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// handle common
-#define ISM_HANDLE_COMMON(m_type)																		\
-public:																									\
-	Handle() {}																							\
-																										\
-	Handle(nullptr_t) {}																				\
-																										\
-	Handle(m_type * value) { if (value) { ref_pointer(value); } }										\
-																										\
-	Handle(Ref<T> const & value) { ref(value); }														\
-																										\
-	template <class U> Handle(Ref<U> const & value) { reset(value); }									\
-																										\
-	Handle(m_type const & value) { revalue(value); }													\
-																										\
-	Handle(m_type && value) noexcept { revalue(std::move(value)); }										\
-																										\
-	Handle & operator=(nullptr_t) { unref(); return (*this); }											\
-																										\
-	Handle & operator=(Ref<T> const & value) { reset(value); return (*this); }							\
-																										\
-	template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }		\
-																										\
-	Handle & operator=(m_type const & value) { revalue(value); return (*this); }						\
-																										\
-	Handle & operator=(m_type && value) noexcept { revalue(std::move(value)); return (*this); }			\
-																										\
+	template <class T> struct Hash<Handle<T>>
+	{
+		NODISCARD hash_t operator()(Handle<T> const & o) const { return hash(o); }
+	};
+
+	template <class T> struct EqualTo<Handle<T>>
+	{
+		template <class U
+		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.equal_to(b); }
+	};
+
+	template <class T> struct NotEqualTo<Handle<T>>
+	{
+		template <class U
+		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.not_equal_to(b); }
+	};
+
+	template <class T> struct Less<Handle<T>>
+	{
+		template <class U
+		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.less(b); }
+	};
+
+	template <class T> struct Greater<Handle<T>>
+	{
+		template <class U
+		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.greater(b); }
+	};
+
+	template <class T> struct LessEqual<Handle<T>>
+	{
+		template <class U
+		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.less_equal(b); }
+	};
+
+	template <class T> struct GreaterEqual<Handle<T>>
+	{
+		template <class U
+		> NODISCARD bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.greater_equal(b); }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// object
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class NODISCARD ISM_API CoreObject : public ObjectAPI<CoreObject>, public Reference
+	{
+		ISM_SUPER_CLASS(CoreObject, Reference);
+
+	private:
+		friend class ClassDB;
+
+		static CoreType ob_type_static; // class type
+
+	protected:
+		mutable TYPE ob_type; // instance type
+
+	protected:
+		virtual void _initialize_classv() { initialize_class(); }
+
+		static void _bind_methods(CoreType & t);
+		
+		NODISCARD static constexpr void (*_get_bind_methods())(CoreType &) { return &CoreObject::_bind_methods; }
+
+		virtual TYPE _get_typev() const { return get_type_static(); }
+
+		explicit CoreObject(TYPE const & t) : base_type{}, ob_type{ t } {}
+
+	public:
+		virtual ~CoreObject() override { ob_type = nullptr; }
+
+		static void initialize_class();
+
+		FORCE_INLINE static void register_custom_data() {}
+
+		NODISCARD static TYPE get_type_static() { return TYPE(&ob_type_static); }
+
+		NODISCARD TYPE get_type() const { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
+
+		NODISCARD auto ptr() const { return const_cast<CoreObject *>(this); }
+
+		template <class T> NODISCARD T cast() const &;
+
+		template <class T> NODISCARD T cast() &&;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// object common
+#define ISM_OBJECT_CLASS(m_class, m_inherits)												\
+	ISM_SUPER_CLASS(m_class, m_inherits)													\
+private:																					\
+	friend class ClassDB;																	\
+																							\
+	static CoreType ob_type_static;															\
+																							\
+protected:																					\
+	virtual void _initialize_classv() override												\
+	{																						\
+		m_class::initialize_class();														\
+	}																						\
+																							\
+	FORCE_INLINE static constexpr void (*_get_bind_methods())(CoreType & t)					\
+	{																						\
+		return &m_class::_bind_methods;														\
+	}																						\
+																							\
+	FORCE_INLINE NODISCARD virtual TYPE _get_typev() const override							\
+	{																						\
+		return m_class::get_type_static();													\
+	}																						\
+																							\
+public:																						\
+	static void initialize_class()															\
+	{																						\
+		static SCOPE_ENTER(&)																\
+		{																					\
+			ClassDB::add_class<m_class>();													\
+																							\
+			if (m_class::_get_bind_methods() != m_inherits::_get_bind_methods())			\
+			{																				\
+				m_class::_bind_methods(m_class::ob_type_static);							\
+			}																				\
+		};																					\
+	}																						\
+																							\
+	FORCE_INLINE NODISCARD static TYPE get_type_static()									\
+	{																						\
+		return TYPE(&m_class::ob_type_static);												\
+	}																						\
+																							\
+private:
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// object cvt
+#define ISM_OBJECT_CVT(m_class, m_inherits)													\
+	ISM_OBJECT_CLASS(m_class, m_inherits)													\
+public:																						\
+	explicit m_class(TYPE const & t) : m_inherits{ t } {}									\
+	m_class(m_class const &) = default;														\
+	m_class(m_class &&) noexcept = default;													\
+	m_class & operator=(m_class const &) = default;											\
+	m_class & operator=(m_class &&) noexcept = default;										\
+																							\
+private:
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// object default
+#define ISM_OBJECT_DEFAULT(m_class, m_inherits)												\
+	ISM_OBJECT_CVT(m_class, m_inherits);													\
+public:																						\
+	m_class() : m_inherits{ &m_class::ob_type_static } {}									\
+																							\
 private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -196,13 +336,13 @@ namespace ism
 
 		template <class T> decltype(auto) operator=(T && v) &&
 		{
-			Policy::set(m_obj, m_key, detail::object_forward(FWD(v)));
+			Policy::set(m_obj, m_key, object_forward(FWD(v)));
 			return (*this);
 		}
 
 		template <class T> decltype(auto) operator=(T && v) &
 		{
-			get_cache() = detail::object_forward(FWD(v));
+			get_cache() = object_forward(FWD(v));
 			return (*this);
 		}
 
@@ -251,191 +391,13 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// object
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class NODISCARD ISM_API CoreObject : public ObjectAPI<CoreObject>, public Reference
-	{
-		ISM_SUPER_CLASS(CoreObject, Reference);
-
-	private:
-		friend class ClassDB;
-
-		static CoreType ob_type_static; // class type
-
-	protected:
-		virtual void _initialize_classv() { initialize_class(); }
-
-		static void _bind_class(CoreType & t);
-		
-		NODISCARD static constexpr void (*_get_bind_class())(CoreType &) { return &CoreObject::_bind_class; }
-
-		virtual TYPE _get_typev() const { return get_type_static(); }
-
-		explicit CoreObject(TYPE const & t) : Reference{}, ob_type{ t } {}
-
-	public:
-		virtual ~CoreObject() override { ob_type = nullptr; }
-
-		static void initialize_class();
-
-		NODISCARD static TYPE get_type_static() { return TYPE(&ob_type_static); }
-
-		NODISCARD TYPE get_type() const { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
-
-		NODISCARD auto ptr() const { return const_cast<CoreObject *>(this); }
-
-		template <class T> NODISCARD T cast() const &;
-
-		template <class T> NODISCARD T cast() &&;
-
-	protected:
-		mutable TYPE ob_type; // instance type
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// object common
-#define ISM_OBJECT_COMMON(m_class, m_inherits)												\
-	ISM_SUPER_CLASS(m_class, m_inherits)													\
-private:																					\
-	friend class ClassDB;																	\
-																							\
-	static CoreType ob_type_static;															\
-																							\
-protected:																					\
-	virtual void _initialize_classv() override												\
-	{																						\
-		m_class::initialize_class();														\
-	}																						\
-																							\
-	FORCE_INLINE static constexpr void (*_get_bind_class())(CoreType & t)					\
-	{																						\
-		return &m_class::_bind_class;														\
-	}																						\
-																							\
-	FORCE_INLINE NODISCARD virtual TYPE _get_typev() const override							\
-	{																						\
-		return m_class::get_type_static();													\
-	}																						\
-																							\
-public:																						\
-	static void initialize_class()															\
-	{																						\
-		static SCOPE_ENTER(&)																\
-		{																					\
-			ClassDB::add_class<m_class>();													\
-																							\
-			if (m_class::_get_bind_class() != m_inherits::_get_bind_class())				\
-			{																				\
-				m_class::_bind_class(m_class::ob_type_static);								\
-			}																				\
-		};																					\
-	}																						\
-																							\
-	FORCE_INLINE NODISCARD static TYPE get_type_static()									\
-	{																						\
-		return TYPE(&m_class::ob_type_static);												\
-	}																						\
-																							\
-public:																						\
-	explicit m_class(TYPE const & t) : m_inherits{ t } {}									\
-																							\
-private:
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// object cvt
-#define ISM_OBJECT_CVT(m_class, m_inherits)													\
-	ISM_OBJECT_COMMON(m_class, m_inherits)													\
-public:																						\
-	m_class(m_class const &) = default;														\
-	m_class(m_class &&) noexcept = default;													\
-	m_class & operator=(m_class const &) = default;											\
-	m_class & operator=(m_class &&) noexcept = default;										\
-																							\
-private:
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// object default
-#define ISM_OBJECT_DEFAULT(m_class, m_inherits)												\
-	ISM_OBJECT_CVT(m_class, m_inherits);													\
-public:																						\
-	virtual ~m_class() noexcept override = default;											\
-																							\
-	m_class() : m_inherits{ &m_class::ob_type_static } {}									\
-																							\
-private:
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// class_db
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class ISM_API ClassDB final
-	{
-	public:
-		static Batch<
-			hash_t,
-			StringName,
-			TYPE
-		> classes;
-
-	public:
-		static void add_class(StringName const & name, CoreType & type);
-
-		template <class T
-		> static void add_class()
-		{
-			constexpr StringView class_name{ T::get_class_static() };
-
-			VERIFY(T::ob_type_static.ready());
-
-			add_class(class_name, T::ob_type_static);
-		}
-
-		template <class T
-		> static void register_class()
-		{
-			constexpr StringView class_name{ T::get_class_static() };
-
-			T::initialize_class();
-
-			TYPE * t{ classes.map<hash_t, TYPE>(hash(class_name)) };
-			
-			if (!t || !*t)
-			{
-				VERIFY(!"CLASS REGISTERATION FAILED");
-			}
-		}
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// helper functions
+// functions
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	namespace detail
 	{
-		template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
-		> NODISCARD auto object_forward(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
-
-		template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-		> NODISCARD OBJECT object_forward(T && o);
-
-		NODISCARD inline OBJECT object_forward(CoreObject * o) { return OBJECT{ o }; }
-
-		NODISCARD inline OBJECT object_forward(cstring s) { return object_forward(String{ s }); }
-
 		NODISCARD inline TYPE typeof_generic(std::type_info const & t);
 
 		NODISCARD inline bool isinstance_generic(OBJECT const & o, std::type_info const & t);
@@ -444,11 +406,23 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
+	> NODISCARD auto object_forward(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
+
+	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
+	> NODISCARD OBJECT object_forward(T && o);
+
+	NODISCARD inline OBJECT object_forward(CoreObject * o) { return OBJECT{ o }; }
+
+	NODISCARD inline OBJECT object_forward(cstring s) { return object_forward(String{ s }); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof() noexcept
 	{
 		if constexpr (is_ref_v<T>)
 		{
-			return typeof<T::value_type>();
+			return typeof<typename T::value_type>();
 		}
 		else
 		{
@@ -471,7 +445,7 @@ namespace ism
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept
 	{
-		return typeof(detail::object_forward(FWD(o)));
+		return typeof(object_forward(FWD(o)));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -516,14 +490,14 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class I = OBJECT
-	> NODISCARD OBJECT getattr(OBJECT o, I && i)
+	template <class Index = OBJECT
+	> NODISCARD OBJECT getattr(OBJECT o, Index && i)
 	{
 		if (TYPE t{ typeof(o) }; !t)
 		{
 			return nullptr;
 		}
-		else if constexpr (mpl::is_string_v<I>)
+		else if constexpr (mpl::is_string_v<Index>)
 		{
 			if (t->tp_getattr)
 			{
@@ -531,7 +505,7 @@ namespace ism
 			}
 			else if (t->tp_getattro)
 			{
-				return t->tp_getattro(o, detail::object_forward(FWD(i)));
+				return t->tp_getattro(o, object_forward(FWD(i)));
 			}
 			else
 			{
@@ -542,7 +516,7 @@ namespace ism
 		{
 			if (t->tp_getattro)
 			{
-				return t->tp_getattro(o, detail::object_forward(FWD(i)));
+				return t->tp_getattro(o, object_forward(FWD(i)));
 			}
 			else if (t->tp_getattr)
 			{
@@ -555,35 +529,35 @@ namespace ism
 		}
 	}
 
-	template <class I = OBJECT, class D = OBJECT
-	> NODISCARD OBJECT getattr(OBJECT o, I && i, D && defval) noexcept
+	template <class Index = OBJECT, class Defval = OBJECT
+	> NODISCARD OBJECT getattr(OBJECT o, Index && i, Defval && defval) noexcept
 	{
 		OBJECT result{ getattr(o, FWD(i)) };
-		return result ? result : detail::object_forward(FWD(defval));
+		return result ? result : object_forward(FWD(defval));
 	}
 
-	template <class I = OBJECT
-	> NODISCARD bool hasattr(OBJECT o, I && i)
+	template <class Index = OBJECT
+	> NODISCARD bool hasattr(OBJECT o, Index && i)
 	{
 		return getattr(FWD(o), FWD(i)).is_valid();
 	}
 
-	template <class I = OBJECT, class V = OBJECT
-	> Error setattr(OBJECT o, I && i, V && v)
+	template <class Index = OBJECT, class Value = OBJECT
+	> Error setattr(OBJECT o, Index && i, Value && v)
 	{
 		if (TYPE t{ typeof(o) }; !t)
 		{
 			return Error_Unknown;
 		}
-		else if constexpr (mpl::is_string_v<I>)
+		else if constexpr (mpl::is_string_v<Index>)
 		{
 			if (t->tp_setattr)
 			{
-				return t->tp_setattr(o, FWD(i), detail::object_forward(FWD(v)));
+				return t->tp_setattr(o, FWD(i), object_forward(FWD(v)));
 			}
 			else if (t->tp_getattro)
 			{
-				return t->tp_setattro(o, detail::object_forward(i), detail::object_forward(FWD(v)));
+				return t->tp_setattro(o, object_forward(i), object_forward(FWD(v)));
 			}
 			else
 			{
@@ -594,11 +568,11 @@ namespace ism
 		{
 			if (t->tp_getattro)
 			{
-				return t->tp_setattro(o, detail::object_forward(FWD(i)), detail::object_forward(FWD(v)));
+				return t->tp_setattro(o, object_forward(FWD(i)), object_forward(FWD(v)));
 			}
 			else if (t->tp_setattr)
 			{
-				return t->tp_setattr(o, STR(FWD(i))->c_str(), detail::object_forward(FWD(v)));
+				return t->tp_setattr(o, STR(FWD(i))->c_str(), object_forward(FWD(v)));
 			}
 			else
 			{
@@ -609,8 +583,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class I = OBJECT
-	> NODISCARD OBJECT getitem(OBJECT o, I && i)
+	template <class Index = OBJECT
+	> NODISCARD OBJECT getitem(OBJECT o, Index && i)
 	{
 		if (!o.is_valid())
 		{
@@ -618,15 +592,15 @@ namespace ism
 		}
 		else if (isinstance<DICT>(o))
 		{
-			return (***DICT(o))[detail::object_forward(FWD(i))];
+			return (***DICT(o))[object_forward(FWD(i))];
 		}
 		else if (isinstance<LIST>(o))
 		{
-			return (***LIST(o))[detail::object_forward(FWD(i)).cast<size_t>()];
+			return (***LIST(o))[object_forward(FWD(i)).cast<size_t>()];
 		}
-		else if (OBJECT * dict{ detail::get_dict_ptr(o) })
+		else if (OBJECT fget{ getattr(o, "__getitem__") })
 		{
-			return getitem(*dict, FWD(i));
+			return fget(o, FWD(i));
 		}
 		else
 		{
@@ -634,8 +608,8 @@ namespace ism
 		}
 	}
 
-	template <class I = OBJECT, class V = OBJECT
-	> Error setitem(OBJECT o, I && i, V && v)
+	template <class Index = OBJECT, class Value = OBJECT
+	> Error setitem(OBJECT o, Index && i, Value && v)
 	{
 		if (!o.is_valid())
 		{
@@ -643,15 +617,15 @@ namespace ism
 		}
 		else if (isinstance<DICT>(o))
 		{
-			return ((***DICT(o))[detail::object_forward(FWD(i))] = detail::object_forward(FWD(v))), Error_None;
+			return ((***DICT(o))[object_forward(FWD(i))] = object_forward(FWD(v))), Error_None;
 		}
 		else if (isinstance<LIST>(o))
 		{
-			return ((***LIST(o))[detail::object_forward(FWD(i)).cast<size_t>()] = detail::object_forward(FWD(v))), Error_None;
+			return ((***LIST(o))[object_forward(FWD(i)).cast<size_t>()] = object_forward(FWD(v))), Error_None;
 		}
-		else if (OBJECT * dict{ detail::get_dict_ptr(o) })
+		else if (OBJECT fset{ getattr(o, "__setitem__") })
 		{
-			return setitem(*dict, FWD(i), FWD(v));
+			return fset(o, FWD(i), FWD(v)), Error_None;
 		}
 		else
 		{
@@ -662,4 +636,49 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_TYPES_BASE_OBJECT_HPP_
+// class_db
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API ClassDB final
+	{
+	public:
+		static Batch<
+			hash_t,
+			StringName,
+			TYPE
+		> classes;
+
+	public:
+		static void add_class(StringName const & name, CoreType * type);
+
+		template <class T> static void add_class()
+		{
+			add_class(T::get_class_static(), &T::ob_type_static);
+		}
+
+		template <class T> static void register_class()
+		{
+			T::initialize_class();
+
+			TYPE * type{ classes.map<hash_t, TYPE>(hash(T::get_class_static())) };
+
+			VERIFY(type && *type);
+
+			(*type)->m_class_ptr = (StringName *)T::get_class_ptr_static();
+
+			T::register_custom_data();
+		}
+
+		NODISCARD static bool class_exists(StringName const & class_name);
+
+		NODISCARD static TYPE class_type(StringName const & class_name);
+
+		template <class T> NODISCARD static TYPE class_type() { return class_type(T::get_class_static()); }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+#endif // !_ISM_BASE_OBJECT_HPP_

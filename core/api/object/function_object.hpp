@@ -1,7 +1,7 @@
-#ifndef _ISM_API_TYPES_FUNCTION_OBJECT_HPP_
-#define _ISM_API_TYPES_FUNCTION_OBJECT_HPP_
+#ifndef _ISM_FUNCTION_OBJECT_HPP_
+#define _ISM_FUNCTION_OBJECT_HPP_
 
-#include <core/api/types/type_object.hpp>
+#include <core/api/object/type_object.hpp>
 
 // function
 namespace ism
@@ -13,20 +13,22 @@ namespace ism
 		ISM_OBJECT_DEFAULT(CoreFunction, CoreObject);
 
 	protected:
-		static void _bind_class(CoreType & t);
+		static void _bind_methods(CoreType & t);
+
+	protected:
+		vectorcallfunc m_vectorcall{};
 
 	public:
-		CoreFunction(TYPE const & t, vectorcallfunc vectorcall) : base_type{ t }, m_vectorcall{ vectorcall } {}
+		explicit CoreFunction(TYPE const & t, vectorcallfunc vectorcall) : base_type{ t }, m_vectorcall{ vectorcall } {}
+
+		explicit CoreFunction(vectorcallfunc vectorcall) : self_type{ &ob_type_static, vectorcall } {}
 
 		NODISCARD vectorcallfunc get_vectorcall() const { return m_vectorcall; }
 
 		void set_vectorcall(vectorcallfunc vectorcall) { m_vectorcall = vectorcall; }
-
-	protected:
-		vectorcallfunc m_vectorcall{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_TYPES_FUNCTION_OBJECT_HPP_
+#endif // !_ISM_FUNCTION_OBJECT_HPP_

@@ -1,4 +1,4 @@
-#include <core/api/types/base_object.hpp>
+#include <core/api/object/base_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -11,7 +11,7 @@ void CoreObject::initialize_class()
 	{
 		ClassDB::add_class<CoreObject>();
 
-		_bind_class(ob_type_static);
+		_bind_methods(ob_type_static);
 	};
 }
 
@@ -35,7 +35,7 @@ DECLEXPR(CoreObject::ob_type_static) = COMPOSE(CoreType, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreObject::_bind_class(CoreType & t)
+void CoreObject::_bind_methods(CoreType & t)
 {
 }
 
@@ -43,15 +43,27 @@ void CoreObject::_bind_class(CoreType & t)
 
 DECLEXPR(ClassDB::classes) {};
 
-void ClassDB::add_class(StringName const & name, CoreType & type)
+void ClassDB::add_class(StringName const & name, CoreType * type)
 {
 	VERIFY(name);
+	VERIFY(type);
+	VERIFY(type->ready());
 
 	hash_t const id{ name.hash_code() };
 
 	VERIFY(!classes.contains<hash_t>(id));
 
-	classes.push_back(id, name, TYPE(&type));
+	classes.push_back(id, name, TYPE(type));
+}
+
+bool ClassDB::class_exists(StringName const & class_name)
+{
+	return classes.contains<hash_t>(class_name.hash_code());
+}
+
+TYPE ClassDB::class_type(StringName const & class_name)
+{
+	return classes.map_unchecked<hash_t, TYPE>(class_name.hash_code());
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

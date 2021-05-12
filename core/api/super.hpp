@@ -33,6 +33,7 @@ namespace ism
 	ALIAS(RES) Ref<Resource>;
 
 	template <class T> struct is_super : std::is_base_of<Super, T> {};
+
 	template <class T> constexpr bool is_super_v{ ism::is_super<T>::value };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -45,33 +46,36 @@ namespace ism
 		friend bool predelete_handler(Super *);
 		friend void postinitialize_handler(Super *);
 
-		InstanceID m_instance_id{};
-		int32_t m_predelete_ok{};
-		bool m_is_reference{};
-		mutable StringName m_class_name{};
-		mutable StringName const * m_class_ptr{};
+		bool _predelete();
+
+		void _postinitialize();
+
+		void _construct_super(bool is_ref);
 
 	protected:
-		virtual bool _predelete();
+		bool		m_is_reference{};
+		InstanceID	m_instance_id{};
+		int32_t		m_predelete_ok{};
 
-		virtual void _postinitialize();
+		mutable StringName m_class_name{}, * m_class_ptr{};
 
+	protected:
 		FORCE_INLINE virtual StringName const * _get_class_namev() const
 		{
 			if (!m_class_name) { m_class_name = get_class_static(); }
 			return &m_class_name;
 		}
 
-		Super(bool is_ref);
+		Super(bool is_ref) { _construct_super(is_ref); }
 
-		Super();
+		Super() { _construct_super(false); }
 
 	public:
 		virtual ~Super();
 
-		NODISCARD InstanceID get_instance_id() const { return m_instance_id; }
-
 		NODISCARD bool is_reference() const { return m_is_reference; }
+
+		NODISCARD InstanceID get_instance_id() const { return m_instance_id; }
 
 		NODISCARD static void * get_class_ptr_static() { static int32_t ptr; return &ptr; }
 

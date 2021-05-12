@@ -1,21 +1,9 @@
-#include <core/api/types/module_object.hpp>
+#include <core/api/object/module_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static GetSetDef module_getsets[] =
-{
-	{ "__dict__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return MODULE(self)->m_dict; },
-	},
-	{ "__name__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return MODULE(self)->m_name; },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (MODULE(self)->m_name = value), Error_None; }
-	},
-	{ /* sentinal */ },
-};
 
 DECLEXPR(CoreModule::ob_type_static) = COMPOSE(CoreType, t)
 {
@@ -40,22 +28,27 @@ DECLEXPR(CoreModule::ob_type_static) = COMPOSE(CoreType, t)
 		return util::compare(self.ptr(), value.ptr());
 	};
 
-	t.tp_getsets = module_getsets;
-
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreModule *)ptr); };
 };
 
-void CoreModule::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreModule::_bind_methods(CoreType & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
-		return Core_Bool(MODULE(self)->m_dict->contains(value));
+	t.attr("__contains__") = CPP_FUNCTION([](MODULE self, OBJECT value) {
+		return MODULE(self->m_dict)->contains(value);
 	});
 
-	//t.tp_dict["__dict__"] = PROPERTY({
-	//	CPP_FUNCTION([](OBJECT self, void *) -> OBJECT { return MODULE(self)->m_name; }),
-	//	CPP_FUNCTION([](OBJECT self, OBJECT value, void *) -> Error { return (MODULE(self)->m_name = value), Error_None; }) });
-	//};
+	//t.attr("__dict__") = PROPERTY({
+	//	CPP_FUNCTION([](MODULE self) { return self->m_dict; }),
+	//	nullptr
+	//});
+	//
+	//t.attr("__name__") = PROPERTY({
+	//	CPP_FUNCTION([](MODULE self) { return self->m_name; }),
+	//	CPP_FUNCTION([](MODULE self, STR value) { self->m_name = value; })
+	//});
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

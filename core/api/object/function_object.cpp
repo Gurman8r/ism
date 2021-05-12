@@ -1,4 +1,4 @@
-#include <core/api/types/function_object.hpp>
+#include <core/api/object/function_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -35,7 +35,9 @@ DECLEXPR(CoreFunction::ob_type_static) = COMPOSE(CoreType, t)
 	};
 };
 
-void CoreFunction::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreFunction::_bind_methods(CoreType & t)
 {
 }
 

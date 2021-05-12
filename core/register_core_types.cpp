@@ -42,7 +42,9 @@ void ism::unregister_core_types()
 
 	for (size_t i = 0; i < db.size(); ++i)
 	{
-		typeof<TYPE>()->tp_finalize(*db.get<TYPE>(i));
+		TYPE & type{ db.get<TYPE>(i) };
+
+		typeof(type)->tp_finalize(*type);
 	}
 
 	while (!db.empty())

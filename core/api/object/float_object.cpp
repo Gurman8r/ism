@@ -1,4 +1,4 @@
-#include <core/api/types/float_object.hpp>
+#include <core/api/object/float_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -26,7 +26,9 @@ DECLEXPR(CoreFloat::ob_type_static) = COMPOSE(CoreType, t)
 	};
 };
 
-void CoreFloat::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreFloat::_bind_methods(CoreType & t)
 {
 }
 

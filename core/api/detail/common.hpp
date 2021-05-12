@@ -1,5 +1,5 @@
-#ifndef _ISM_API_DETAIL_COMMON_HPP_
-#define _ISM_API_DETAIL_COMMON_HPP_
+#ifndef _ISM_COMMON_HPP_
+#define _ISM_COMMON_HPP_
 
 #include <core/api/reference.hpp>
 
@@ -160,8 +160,8 @@ namespace ism
 	ALIAS(setattrfunc)		Error(*)(OBJECT self, cstring name, OBJECT value);
 	ALIAS(getattrofunc)		OBJECT(*)(OBJECT self, OBJECT name);
 	ALIAS(setattrofunc)		Error(*)(OBJECT self, OBJECT name, OBJECT value);
-	ALIAS(descrgetfunc)		OBJECT(*)(OBJECT, OBJECT, OBJECT);
-	ALIAS(descrsetfunc)		Error(*)(OBJECT, OBJECT, OBJECT);
+	ALIAS(descrgetfunc)		OBJECT(*)(OBJECT attr, OBJECT self, OBJECT type);
+	ALIAS(descrsetfunc)		Error(*)(OBJECT attr, OBJECT self, OBJECT type);
 
 	ALIAS(cmpfunc)			int32_t(*)(OBJECT a, OBJECT b);
 	ALIAS(hashfunc)			hash_t(*)(OBJECT o);
@@ -249,4 +249,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_DETAIL_COMMON_HPP_
+#endif // !_ISM_COMMON_HPP_

@@ -1,4 +1,4 @@
-#include <core/api/types/dict_object.hpp>
+#include <core/api/object/dict_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -23,9 +23,11 @@ DECLEXPR(CoreDict::ob_type_static) = COMPOSE(CoreType, t)
 	};
 };
 
-void CoreDict::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreDict::_bind_methods(CoreType & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
+	t.attr("__contains__") = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(DICT(self)->contains(value));
 	});
 }

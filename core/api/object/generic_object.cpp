@@ -1,4 +1,4 @@
-#include <core/api/types/generic_object.hpp>
+#include <core/api/object/generic_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -23,7 +23,9 @@ DECLEXPR(CoreGeneric::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreGeneric *)ptr); };
 };
 
-void CoreGeneric::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreGeneric::_bind_methods(CoreType & t)
 {
 }
 

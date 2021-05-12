@@ -44,29 +44,4 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	Any WeakRef::get_ref() const
-	{
-		if (!m_reference) { return nullptr; }
-
-		Super * o{ SuperDB::get_instance(m_reference) };
-		if (!o) { return nullptr; }
-
-		Reference * r{ super_cast<Reference>(o) };
-		if (r) { return REF{ r }; }
-
-		return o;
-	}
-
-	void WeakRef::set_obj(Super * value)
-	{
-		m_reference = value ? value->get_instance_id() : InstanceID{};
-	}
-
-	void WeakRef::set_ref(REF const & value)
-	{
-		m_reference = value ? value->get_instance_id() : InstanceID{};
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

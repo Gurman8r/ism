@@ -43,8 +43,8 @@ namespace ism
 
 	void test_main(int32_t argc, char * argv[])
 	{
-		MODULE scope{ create_extension_module("__main__") };
-		(**scope)
+		MODULE m{ create_extension_module("__main__") };
+		(**m)
 			.def("hello", hello)
 			.def("say", say)
 			.def("get_int", get_int)
@@ -54,22 +54,29 @@ namespace ism
 			.def("pass_ptr", [](void * ptr) { return ptr; })
 			;
 
-		scope["hello"]();
-		scope["say"](scope["get_string"]());
-		VERIFY(scope["pass_ptr"]((void *)123).cast<void const *>() == (void *)123);
+		CoreClass<Test>(m, "test")
+			.def(init<>())
+			.def(init<int>())
+			.def(init<int, String const &>())
+			.def_static("test_static", &Test::test_static)
+			;
 
-		LIST list = scope["a"] = LIST(CoreList{});
+		m.attr("hello")();
+		m.attr("say")(m.attr("get_string")());
+		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
+
+		LIST list = m.attr("a") = LIST(CoreList{});
 		list->append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0])->c_str());
 
-		OBJECT o{ DICT(CoreDict{}) };
-		scope["ABC"] = 42;
-		o["DEF"] = "Hello, World!";
-		MAIN_PRINT("%d\n", scope["ABC"].cast<int>());
-		MAIN_PRINT("%s\n", o["DEF"].cast<String>().c_str());
-		MAIN_PRINT("%s\n", typeof(o).attr("__name__").cast<std::string>().c_str());
-		typeof(o).attr("__name__") = "changed";
-		MAIN_PRINT("%s\n", STR(typeof(o).attr("__name__"))->c_str());
+		OBJECT d{ DICT(CoreDict{}) };
+		d["ABC"] = 42;
+		d["DEF"] = "Hello, World!";
+		MAIN_PRINT("%d\n", d["ABC"].cast<int>());
+		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
+		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<std::string>().c_str());
+		typeof(d).attr("__name__") = "changed";
+		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__"))->c_str());
 
 		MAIN_PRINT("\n");
 	}

@@ -7,27 +7,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD TypeInfo
-	{
-		TYPE type{};
-
-		std::type_info const * cpptype{};
-
-		size_t type_size, type_align{};
-
-		void(*operator_new)(size_t) {};
-
-		Vector<OBJECT (*)(OBJECT, TYPE)> implicit_conversions;
-
-		Vector<std::pair<std::type_info const *, void * (*)(void *)>> implicit_casts;
-
-		Vector<bool (*)(OBJECT, void *&)> * direct_conversions;
-
-		void * (*module_local_load)(OBJECT, TypeInfo const *) {};
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	class NODISCARD ISM_API StackFrame
 	{
 	public:

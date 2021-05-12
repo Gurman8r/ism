@@ -1,7 +1,7 @@
-#ifndef _ISM_API_TYPES_MODULE_OBJECT_HPP_
-#define _ISM_API_TYPES_MODULE_OBJECT_HPP_
+#ifndef _ISM_MODULE_OBJECT_HPP_
+#define _ISM_MODULE_OBJECT_HPP_
 
-#include <core/api/types/cppfunction_object.hpp>
+#include <core/api/object/cppfunction_object.hpp>
 
 // module
 namespace ism
@@ -13,7 +13,14 @@ namespace ism
 		ISM_OBJECT_DEFAULT(CoreModule, CoreObject);
 
 	protected:
-		static void _bind_class(CoreType & t);
+		static void _bind_methods(CoreType & t);
+
+	public:
+		DICT		m_dict{ CoreDict{} };
+		STR			m_name{};
+		STR			m_doc{};
+		inquiry		m_clear{};
+		freefunc	m_free{};
 
 	public:
 		CoreModule(cstring name) : self_type{}
@@ -42,21 +49,14 @@ namespace ism
 		template <class Name = cstring, class O = OBJECT
 		> void add_object(Name && name, O && value, bool overwrite = false)
 		{
-			auto i{ detail::object_forward(FWD(name)) };
+			auto i{ object_forward(FWD(name)) };
 			if (m_dict->contains(i) && !overwrite) { return; }
-			m_dict[i] = detail::object_forward(FWD(value));
+			m_dict[i] = object_forward(FWD(value));
 		}
 
 		void reload()
 		{
 		}
-
-	public:
-		DICT		m_dict{ CoreDict{} };
-		STR			m_name{};
-		STR			m_doc{};
-		inquiry		m_clear{};
-		freefunc	m_free{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -64,7 +64,7 @@ namespace ism
 	inline MODULE create_extension_module(cstring name)
 	{
 		DICT d{ get_default_interpreter()->modules };
-		auto i{ detail::object_forward(name) };
+		auto i{ object_forward(name) };
 		if (d->contains(i)) { return nullptr; }
 		else { return d[i] = MODULE({ name }); }
 	}
@@ -72,7 +72,7 @@ namespace ism
 	inline MODULE import_module(cstring name)
 	{
 		DICT d{ get_default_interpreter()->modules };
-		auto i{ detail::object_forward(name) };
+		auto i{ object_forward(name) };
 		if (!d->contains(i)) { return nullptr; }
 		else { return d[i]; }
 	}
@@ -92,4 +92,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_TYPES_MODULE_OBJECT_HPP_
+#endif // !_ISM_MODULE_OBJECT_HPP_

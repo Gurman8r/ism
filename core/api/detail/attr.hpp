@@ -1,5 +1,5 @@
-#ifndef _ISM_API_DETAIL_ATTR_HPP_
-#define _ISM_API_DETAIL_ATTR_HPP_
+#ifndef _ISM_ATTR_HPP_
+#define _ISM_ATTR_HPP_
 
 #include <core/api/detail/call.hpp>
 
@@ -21,28 +21,28 @@ namespace ism::detail
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define DECL_BASIC_PROCESSOR(m_class) \
+#define ISM_PROCESS_ATTRIBUTE(m_class) \
 	struct ism::detail::process_attribute<m_class> : ism::detail::process_attribute_default<m_class>
 
-#define DECL_BASIC_PROCESSOR_BASE(m_class, m_inherits) \
+#define ISM_PROCESS_ATTRIBUTE_BASE(m_class, m_inherits) \
 	struct ism::detail::process_attribute<m_class> : ism::detail::process_attribute_default<m_inherits>
 
-#define DECL_BASIC_PROCESSOR_SFINAE(m_class, m_sfinae) \
+#define ISM_PROCESS_ATTRIBUTE_SFINAE(m_class, m_sfinae) \
 	struct ism::detail::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::detail::process_attribute_default<m_class>
 
-#define DECL_BASIC_PROCESSOR_SFINAE_BASE(m_class, m_sfinae, m_inherits) \
+#define ISM_PROCESS_ATTRIBUTE_SFINAE_BASE(m_class, m_sfinae, m_inherits) \
 	struct ism::detail::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::detail::process_attribute_default<m_inherits>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // empty attribute
-#define DECL_BASIC_ATTRIBUTE_E(m_class) \
+#define ISM_BASIC_ATTRIBUTE_E(m_class) \
 	struct m_class final { \
 		explicit m_class() noexcept {} \
 	}
 
 // object attribute
-#define DECL_BASIC_ATTRIBUTE_O(m_class, m_value) \
+#define ISM_BASIC_ATTRIBUTE_O(m_class, m_value) \
 	struct m_class final { \
 		ism::CoreObject * const m_value; \
 		explicit m_class(ism::CoreObject * value) : m_value{ value } {} \
@@ -50,7 +50,7 @@ namespace ism::detail
 	}
 
 // string attribute
-#define DECL_BASIC_ATTRIBUTE_S(m_class, m_value) \
+#define ISM_BASIC_ATTRIBUTE_S(m_class, m_value) \
 	struct m_class final { \
 		char const * const m_value; \
 		explicit m_class(char const * value) : m_value{ value } {} \
@@ -58,7 +58,7 @@ namespace ism::detail
 	}
 
 // bool attribute
-#define DECL_BASIC_ATTRIBUTE_B(m_class, m_value) \
+#define ISM_BASIC_ATTRIBUTE_B(m_class, m_value) \
 	struct m_class final { \
 		bool const m_value; \
 		explicit m_class(bool value) : m_value{ value } {} \
@@ -71,107 +71,107 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// name
-	DECL_BASIC_ATTRIBUTE_S(name, value);
-	template <> DECL_BASIC_PROCESSOR(name) {
+	ISM_BASIC_ATTRIBUTE_S(name, value);
+	template <> ISM_PROCESS_ATTRIBUTE(name) {
 		static void init(function_record & r, name && a) { r.name = a.value; }
 		static void init(CoreType & r, name && a) { r.tp_name = a.value; }
 	};
 
 	// doc
-	DECL_BASIC_ATTRIBUTE_S(doc, value);
-	template <> DECL_BASIC_PROCESSOR(doc) {
+	ISM_BASIC_ATTRIBUTE_S(doc, value);
+	template <> ISM_PROCESS_ATTRIBUTE(doc) {
 		static void init(function_record & r, doc && a) { r.doc = a.value; }
 		static void init(CoreType & r, doc && a) { r.tp_doc = a.value; }
 	};
-	template <> DECL_BASIC_PROCESSOR(cstring) {
+	template <> ISM_PROCESS_ATTRIBUTE(cstring) {
 		static void init(function_record & r, cstring a) { r.doc = a; }
 		static void init(CoreType & r, cstring a) { r.tp_doc = a; }
 	};
-	template <> DECL_BASIC_PROCESSOR_BASE(char *, cstring) {};
+	template <> ISM_PROCESS_ATTRIBUTE_BASE(char *, cstring) {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// ReturnPolicy
-	template <> DECL_BASIC_PROCESSOR(ReturnPolicy) {
+	template <> ISM_PROCESS_ATTRIBUTE(ReturnPolicy) {
 		static void init(function_record & r, ReturnPolicy && a) { r.policy = a; }
 	};
 
 	// sibling
-	DECL_BASIC_ATTRIBUTE_O(sibling, value);
-	template <> DECL_BASIC_PROCESSOR(sibling) {
+	ISM_BASIC_ATTRIBUTE_O(sibling, value);
+	template <> ISM_PROCESS_ATTRIBUTE(sibling) {
 		static void init(function_record & r, sibling && a) { r.sibling = a.value; }
 	};
 
 	// is_method
-	DECL_BASIC_ATTRIBUTE_O(is_method, value);
-	template <> DECL_BASIC_PROCESSOR(is_method) {
+	ISM_BASIC_ATTRIBUTE_O(is_method, value);
+	template <> ISM_PROCESS_ATTRIBUTE(is_method) {
 		static void init(function_record & r, is_method && a) { r.is_method = true; r.scope = a.value; }
 	};
 
 	// scope
-	DECL_BASIC_ATTRIBUTE_O(scope, value);
-	template <> DECL_BASIC_PROCESSOR(scope) {
+	ISM_BASIC_ATTRIBUTE_O(scope, value);
+	template <> ISM_PROCESS_ATTRIBUTE(scope) {
 		static void init(function_record & r, scope && a) { r.scope = a.value; }
 	};
 
 	// is_operator
-	DECL_BASIC_ATTRIBUTE_E(is_operator);
-	template <> DECL_BASIC_PROCESSOR(is_operator) {
+	ISM_BASIC_ATTRIBUTE_E(is_operator);
+	template <> ISM_PROCESS_ATTRIBUTE(is_operator) {
 		static void init(function_record & r, is_operator && a) { r.is_operator = true; }
 	};
 
 	// is_constructor
-	DECL_BASIC_ATTRIBUTE_E(is_constructor);
-	template <> DECL_BASIC_PROCESSOR(is_constructor) {
+	ISM_BASIC_ATTRIBUTE_E(is_constructor);
+	template <> ISM_PROCESS_ATTRIBUTE(is_constructor) {
 		static void init(function_record & r, is_constructor && a) { r.is_constructor = true; }
 	};
 
 	// prepend
-	DECL_BASIC_ATTRIBUTE_E(prepend);
-	template <> DECL_BASIC_PROCESSOR(prepend) {
+	ISM_BASIC_ATTRIBUTE_E(prepend);
+	template <> ISM_PROCESS_ATTRIBUTE(prepend) {
 		static void init(function_record & r, prepend && a) { r.prepend = true; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// parent class
-	template <class T> DECL_BASIC_PROCESSOR_SFINAE(T, is_object_api_v<T>) {
+	template <class T> ISM_PROCESS_ATTRIBUTE_SFINAE(T, is_object_api_v<T>) {
 		static void init(CoreType & r, T && a) { r.bases->append(typeof(FWD(a))); }
 	};
 
 	// multiple inheritance
-	DECL_BASIC_ATTRIBUTE_E(multiple_inheritance);
-	template <> DECL_BASIC_PROCESSOR(multiple_inheritance) {
+	ISM_BASIC_ATTRIBUTE_E(multiple_inheritance);
+	template <> ISM_PROCESS_ATTRIBUTE(multiple_inheritance) {
 		static void init(CoreType & r, multiple_inheritance && a) { if (!r.tp_bases) { r.tp_bases = LIST(CoreList{}); } }
 	};
 
 	// dynamic_attr
-	DECL_BASIC_ATTRIBUTE_E(dynamic_attr);
-	template <> DECL_BASIC_PROCESSOR(dynamic_attr) {
+	ISM_BASIC_ATTRIBUTE_E(dynamic_attr);
+	template <> ISM_PROCESS_ATTRIBUTE(dynamic_attr) {
 		static void init(CoreType & r, dynamic_attr && a) { if (!r.tp_dict) { r.tp_dict = DICT(CoreDict{}); } }
 	};
 
 	// is_final
-	DECL_BASIC_ATTRIBUTE_E(is_final);
-	template <> DECL_BASIC_PROCESSOR(is_final) {
+	ISM_BASIC_ATTRIBUTE_E(is_final);
+	template <> ISM_PROCESS_ATTRIBUTE(is_final) {
 		static void init(CoreType & r, is_final && a) { /*r.tp_is_final = true;*/ }
 	};
 
 	// metaclass
-	DECL_BASIC_ATTRIBUTE_O(metaclass, value);
-	template <> DECL_BASIC_PROCESSOR(metaclass) {
+	ISM_BASIC_ATTRIBUTE_O(metaclass, value);
+	template <> ISM_PROCESS_ATTRIBUTE(metaclass) {
 		static void init(CoreType & r, type && a) { /*r.set_type(super_cast<CoreType>(a.value));*/ }
 	};
 
 	// module_local
-	DECL_BASIC_ATTRIBUTE_B(module_local, value);
-	template <> DECL_BASIC_PROCESSOR(module_local) {
+	ISM_BASIC_ATTRIBUTE_B(module_local, value);
+	template <> ISM_PROCESS_ATTRIBUTE(module_local) {
 		static void init(CoreType & r, module_local && a) { /*r.tp_module_local = a.value;*/ }
 	};
 
 	// arithmetic
-	DECL_BASIC_ATTRIBUTE_E(arithmetic);
-	template <> DECL_BASIC_PROCESSOR(arithmetic) {
+	ISM_BASIC_ATTRIBUTE_E(arithmetic);
+	template <> ISM_PROCESS_ATTRIBUTE(arithmetic) {
 		static void init(CoreType & r, arithmetic && a) { /* nothing to do here */ }
 	};
 
@@ -199,7 +199,7 @@ namespace ism::detail
 		};
 	};
 
-	template <class ... Ts> DECL_BASIC_PROCESSOR(call_guard<Ts...>) {};
+	template <class ... Ts> ISM_PROCESS_ATTRIBUTE(call_guard<Ts...>) {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -238,4 +238,4 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_DETAIL_ATTR_HPP_
+#endif // !_ISM_ATTR_HPP_

@@ -1,7 +1,7 @@
-#ifndef _ISM_API_TYPES_TYPE_OBJECT_HPP_
-#define _ISM_API_TYPES_TYPE_OBJECT_HPP_
+#ifndef _ISM_TYPE_OBJECT_HPP_
+#define _ISM_TYPE_OBJECT_HPP_
 
-#include <core/api/types/base_object.hpp>
+#include <core/api/object/base_object.hpp>
 
 // type
 namespace ism
@@ -13,11 +13,12 @@ namespace ism
 		ISM_OBJECT_DEFAULT(CoreType, CoreObject);
 
 	protected:
-		static void _bind_class(CoreType & t);
+		static void _bind_methods(CoreType & t);
 
 	public:
 		StringName			tp_name{};
-		ssize_t				tp_basicsize{}, tp_itemsize{};
+		ssize_t				tp_basicsize{};
+		ssize_t				tp_itemsize{};
 		int32_t				tp_flags{};
 		String				tp_doc{};
 
@@ -39,8 +40,8 @@ namespace ism
 		setattrfunc			tp_setattr{};
 		getattrofunc		tp_getattro{};
 		setattrofunc		tp_setattro{};
-		descrgetfunc		tp_descrget{};
-		descrsetfunc		tp_descrset{};
+		descrgetfunc		tp_descr_get{};
+		descrsetfunc		tp_descr_set{};
 
 		destructor			tp_delete{};
 		initproc			tp_init{};
@@ -70,13 +71,18 @@ namespace ism
 
 		void disable_feature(int32_t feature) noexcept { flag_clear(tp_flags, feature); }
 
+	protected:
 		bool ready();
+
 		bool add_subclass(TYPE const & type);
+
 		bool mro_internal(OBJECT * old_mro);
+
 		void inherit_special(CoreType const * base);
+
 		void inherit_slots(CoreType const * base);
 
-	public:
+	protected:
 		template <class Slot> bool slot_defined(CoreType const * base, Slot CoreType::*slot) const
 		{
 			return (this->*slot) && (!base || (this->*slot) != (base->*slot));
@@ -97,7 +103,6 @@ namespace ism
 			return ((*this->tp_as_mapping).*slot) && (!base || ((*this->tp_as_mapping).*slot) != ((*base->tp_as_mapping).*slot));
 		}
 
-	public:
 		template <class Slot> void copy_val(CoreType const * base, Slot CoreType::*slot)
 		{
 			if (!(this->*slot) && base)
@@ -198,4 +203,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_TYPES_TYPE_OBJECT_HPP_
+#endif // !_ISM_TYPE_OBJECT_HPP_

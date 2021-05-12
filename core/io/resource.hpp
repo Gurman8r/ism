@@ -9,6 +9,8 @@ namespace ism
 
 	class ISM_API Resource : public Reference
 	{
+		ISM_SUPER_CLASS(Resource, Reference);
+
 	public:
 		Resource();
 

@@ -1,5 +1,5 @@
-#ifndef _ISM_API_DETAIL_CLASS_HPP_
-#define _ISM_API_DETAIL_CLASS_HPP_
+#ifndef _ISM_CLASS_HPP_
+#define _ISM_CLASS_HPP_
 
 #include <core/api/detail/attr.hpp>
 
@@ -17,9 +17,9 @@ namespace ism::detail
 		{
 			return CHECK(def->get)(o, def);
 		}
-		else if (OBJECT * dict{ get_dict_ptr(o) })
+		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
-			return getitem(*dict, name);
+			return getitem(*dictptr, name);
 		}
 		else
 		{
@@ -37,9 +37,9 @@ namespace ism::detail
 		{
 			return CHECK(def->set)(o, v, def);
 		}
-		else if (OBJECT * dict{ get_dict_ptr(o) })
+		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
-			return setitem(*dict, name, v);
+			return setitem(*dictptr, name, v);
 		}
 		else
 		{
@@ -59,9 +59,9 @@ namespace ism::detail
 		{
 			return impl_getattr_string(o, STR(name)->c_str());
 		}
-		else if (OBJECT * dict{ get_dict_ptr(o) })
+		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
-			return getitem(*dict, name);
+			return getitem(*dictptr, name);
 		}
 		else
 		{
@@ -79,9 +79,9 @@ namespace ism::detail
 		{
 			return impl_setattr_string(o, STR(name)->c_str(), v);
 		}
-		else if (OBJECT * dict{ get_dict_ptr(o) })
+		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
-			return setitem(*dict, name, v);
+			return setitem(*dictptr, name, v);
 		}
 		else
 		{
@@ -92,4 +92,4 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_DETAIL_CLASS_HPP_
+#endif // !_ISM_CLASS_HPP_

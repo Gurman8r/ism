@@ -10,6 +10,9 @@ namespace ism
 
 	class ISM_API Reference : public Super
 	{
+		ISM_SUPER_CLASS(Reference, Super);
+
+	private:
 		RefCount m_refcount, m_refcount_init;
 
 	public:
@@ -42,9 +45,6 @@ namespace ism
 
 	template <class T> class Ref : _Ref_Tag
 	{
-	public:
-		using value_type = typename T;
-
 	protected:
 		T * m_reference{};
 
@@ -62,6 +62,8 @@ namespace ism
 		}
 
 	public:
+		using value_type = typename T;
+
 		~Ref() { unref(); }
 
 		Ref() {}
@@ -145,32 +147,6 @@ namespace ism
 		NODISCARD bool operator==(Ref const & value) const { return m_reference == value.m_reference; }
 		
 		NODISCARD bool operator!=(Ref const & value) const { return m_reference != value.m_reference; }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// weak ref
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class ISM_API WeakRef : public Reference
-	{
-		InstanceID m_reference;
-
-	public:
-		WeakRef() : Reference{} {}
-
-		WeakRef(Super * value) : WeakRef{} { set_obj(value); }
-
-		WeakRef(REF const & value) : WeakRef{} { set_ref(value); }
-
-		NODISCARD Any get_ref() const;
-
-		void set_obj(Super * value);
-
-		void set_ref(REF const & value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

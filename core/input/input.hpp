@@ -7,6 +7,8 @@ namespace ism
 {
 	class ISM_API Input : public Super
 	{
+		ISM_SUPER_CLASS(Input, Super);
+
 	private:
 		static Input * singleton;
 

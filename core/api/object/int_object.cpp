@@ -1,4 +1,4 @@
-#include <core/api/types/int_object.hpp>
+#include <core/api/object/int_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -26,14 +26,16 @@ DECLEXPR(CoreInt::ob_type_static) = COMPOSE(CoreType, t)
 	};
 };
 
-void CoreInt::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreInt::_bind_methods(CoreType & t)
 {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreInt::g_true) { nullptr, true };
+DECLEXPR(CoreInt::g_true) { true };
 
-DECLEXPR(CoreInt::g_false) { nullptr, false };
+DECLEXPR(CoreInt::g_false) { false };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,4 +1,5 @@
 #include <core/api/super.hpp>
+#include <core/api/modsupport.hpp>
 
 namespace ism
 {
@@ -7,34 +8,25 @@ namespace ism
 	bool Super::_predelete()
 	{
 		m_predelete_ok = 1;
-
 		if (m_predelete_ok) { m_class_ptr = nullptr; }
-
 		return m_predelete_ok;
 	}
 
 	void Super::_postinitialize()
 	{
-		m_class_ptr = _get_class_namev();
+		m_class_ptr = (StringName *)_get_class_namev();
 	}
 
-	Super::Super(bool is_ref)
+	void Super::_construct_super(bool is_ref)
 	{
 		m_is_reference = is_ref;
-
-		m_instance_id = CHECK(SuperDB::add_instance(this));
-	}
-	
-	Super::Super() : Super{ false }
-	{
+		m_instance_id = SuperDB::add_instance(this);
 	}
 
 	Super::~Super()
 	{
 		SuperDB::remove_instance(m_instance_id);
-
 		m_instance_id = InstanceID{};
-
 		m_predelete_ok = 2;
 	}
 
@@ -44,11 +36,11 @@ namespace ism
 
 	InstanceID SuperDB::add_instance(Super * value)
 	{
-		if (!value || g_supers.contains<Super *>(value)) { return InstanceID{}; }
+		//if (!value || g_supers.contains<Super *>(value)) { return InstanceID{}; }
 
 		static InstanceID id{}; ++id;
 		
-		g_supers.push_back(id, value);
+		//g_supers.push_back(id, value);
 		
 		return id;
 	}

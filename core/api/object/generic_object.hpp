@@ -1,7 +1,7 @@
-#ifndef _ISM_API_TYPES_GENERIC_OBJECT_HPP_
-#define _ISM_API_TYPES_GENERIC_OBJECT_HPP_
+#ifndef _ISM_GENERIC_OBJECT_HPP_
+#define _ISM_GENERIC_OBJECT_HPP_
 
-#include <core/api/types/module_object.hpp>
+#include <core/api/object/module_object.hpp>
 
 // generic
 namespace ism
@@ -13,7 +13,7 @@ namespace ism
 		ISM_OBJECT_DEFAULT(CoreGeneric, CoreObject);
 
 	protected:
-		static void _bind_class(CoreType & t);
+		static void _bind_methods(CoreType & t);
 
 	protected:
 		void def_property_static_impl(cstring name, OBJECT fget, OBJECT fset, detail::function_record * rec_func)
@@ -33,4 +33,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_TYPES_GENERIC_OBJECT_HPP_
+#endif // !_ISM_GENERIC_OBJECT_HPP_

@@ -1,4 +1,4 @@
-#include <core/api/types/type_object.hpp>
+#include <core/api/object/type_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -58,29 +58,6 @@ static GetSetDef type_getsets[] =
 	{ /* sentinal */ },
 };
 
-//static MethodDef type_methods[] =
-//{
-//	{ "mro", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-//		return TYPE(self)->tp_mro;
-//	} },
-//	{ "__subclasses__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-//		return TYPE(self)->tp_subclasses;
-//	} },
-//	{ "__instancecheck__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-//		return nullptr;
-//	} },
-//	{ "__subclasscheck__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-//		return nullptr;
-//	} },
-//	{ "__dir__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-//		return nullptr;
-//	} },
-//	{ "__sizeof__", (cfunction)[](OBJECT self, OBJECT value) -> OBJECT {
-//		return nullptr;
-//	} },
-//	{ /* sentinal */ },
-//};
-
 static NumberMethods type_as_number = COMPOSE(NumberMethods, m)
 {
 };
@@ -92,6 +69,8 @@ static SequenceMethods type_as_sequence = COMPOSE(SequenceMethods, m)
 static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m)
 {
 };
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 DECLEXPR(CoreType::ob_type_static) = COMPOSE(CoreType, t)
 {
@@ -135,14 +114,46 @@ DECLEXPR(CoreType::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
 		if (isinstance<TYPE>(v)) return util::compare(TYPE(o)->tp_name, TYPE(v)->tp_name);
-		return util::compare(o.ptr(), v.ptr());
+		return util::compare(*o, *v);
 	};
 };
 
-void CoreType::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreType::_bind_methods(CoreType & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
-		return Core_Bool(TYPE(self)->tp_dict->contains(value));
+	t.attr("test") = CPP_FUNCTION([]()
+	{
+		printf("%s\n", PRETTY_FUNCTION);
+	});
+
+	t.attr("mro") = CPP_FUNCTION([](TYPE self)
+	{
+	});
+
+	t.attr("__contains__") = CPP_FUNCTION([](TYPE self, OBJECT value)
+	{
+		return DICT(self->tp_dict)->contains(value);
+	});
+
+	t.attr("__instancecheck__") = CPP_FUNCTION([](TYPE self, OBJECT value)
+	{
+	});
+
+	t.attr("__subclasscheck__") = CPP_FUNCTION([](TYPE self, OBJECT value)
+	{
+	});
+
+	t.attr("__dir__") = CPP_FUNCTION([](TYPE self)
+	{
+	});
+
+	t.attr("__sizeof__") = CPP_FUNCTION([](TYPE self)
+	{
+	});
+
+	t.attr("__subclasses__") = CPP_FUNCTION([](TYPE self)
+	{
 	});
 }
 
@@ -162,26 +173,25 @@ bool CoreType::ready()
 
 	if (!tp_dict) { tp_dict = DICT(CoreDict{}); }
 
-	//if (tp_methods) { add_methods(tp_methods); }
-
-	//if (tp_getsets) { add_getsets(tp_getsets); }
-
-	//VERIFY(mro_internal(nullptr));
+	VERIFY(mro_internal(nullptr));
 
 	if (tp_base) { inherit_special(*tp_base); }
 
-	//for (TYPE base : ***LIST(tp_mro))
-	//{
-	//	inherit_slots(*base);
-	//}
-
-	//if (!has_feature(TypeFlags_HeapType))
-	//{
-	//	for (TYPE const & b : ***LIST(tp_mro))
-	//	{
-	//		VERIFY("static type has dynamically allocated base type" && !b->has_feature(TypeFlags_HeapType));
-	//	}
-	//}
+	if (LIST mro{ LIST(tp_mro) }; mro && !mro->empty())
+	{
+		for (TYPE b : ***mro)
+		{
+			inherit_slots(*b);
+		}
+		
+		if (!has_feature(TypeFlags_HeapType))
+		{
+			for (TYPE b : ***mro)
+			{
+				VERIFY("static type has dynamically allocated base type" && !b->has_feature(TypeFlags_HeapType));
+			}
+		}
+	}
 
 	if (has_feature(TypeFlags_HaveGc | TypeFlags_BaseType) && (!tp_free || tp_free == memfree))
 	{
@@ -192,10 +202,10 @@ bool CoreType::ready()
 	copy_val(*tp_base, &CoreType::tp_as_sequence);
 	copy_val(*tp_base, &CoreType::tp_as_mapping);
 
-	//for (TYPE base : ***LIST(tp_bases))
-	//{
-	//	base->add_subclass(handle());
-	//}
+	for (TYPE b : ***LIST(tp_bases))
+	{
+		b->add_subclass(handle());
+	}
 
 	return enable_feature(TypeFlags_Ready), true;
 }
@@ -209,7 +219,8 @@ bool CoreType::add_subclass(TYPE const & type)
 
 bool CoreType::mro_internal(OBJECT * old_mro)
 {
-	tp_mro = LIST(CoreList{});
+	if (tp_base) { tp_mro = LIST(CoreList{ tp_base }); }
+	
 	return true;
 }
 
@@ -222,7 +233,7 @@ void CoreType::inherit_special(CoreType const * base)
 		tp_clear = tp_base->tp_clear;
 	}
 
-	if (tp_base != typeof<OBJECT>().ptr() || has_feature(TypeFlags_HeapType) && !tp_new)
+	if (tp_base != *typeof<OBJECT>() || has_feature(TypeFlags_HeapType) && !tp_new)
 	{
 		tp_new = tp_base->tp_new;
 	}
@@ -296,6 +307,8 @@ void CoreType::inherit_slots(CoreType const * base)
 
 	basebase = *(base->tp_base);
 
+	copy_slot(base, basebase, &CoreType::tp_delete);
+
 	if (!tp_getattr && !tp_getattro) { tp_getattr = base->tp_getattr; tp_getattro = base->tp_getattro; }
 
 	if (!tp_setattr && !tp_setattro) { tp_setattr = base->tp_setattr; tp_setattro = base->tp_setattro; }
@@ -317,12 +330,12 @@ void CoreType::inherit_slots(CoreType const * base)
 		tp_hash = base->tp_hash;
 	}
 
-	copy_slot(base, basebase, &CoreType::tp_descrget);
-	if (base->tp_descrget && tp_descrget == base->tp_descrget && !has_feature(TypeFlags_HeapType) && base->has_feature(TypeFlags_MethodDescriptor))
+	copy_slot(base, basebase, &CoreType::tp_descr_get);
+	if (base->tp_descr_get && tp_descr_get == base->tp_descr_get && !has_feature(TypeFlags_HeapType) && base->has_feature(TypeFlags_MethodDescriptor))
 	{
 		enable_feature(TypeFlags_MethodDescriptor);
 	}
-	copy_slot(base, basebase, &CoreType::tp_descrset);
+	copy_slot(base, basebase, &CoreType::tp_descr_set);
 
 	copy_slot(base, basebase, &CoreType::tp_dict_offset);
 	copy_slot(base, basebase, &CoreType::tp_init);

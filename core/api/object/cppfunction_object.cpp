@@ -1,4 +1,4 @@
-#include <core/api/types/cppfunction_object.hpp>
+#include <core/api/object/cppfunction_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -18,6 +18,8 @@ static GetSetDef cppfunction_getsets[] =
 	{ /* sentinal */},
 };
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 DECLEXPR(CoreCppFunction::ob_type_static) = COMPOSE(CoreType, t)
 {
 	t.tp_name = "cpp_function";
@@ -32,10 +34,7 @@ DECLEXPR(CoreCppFunction::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_getattro = (getattrofunc)detail::impl_getattr_object;
 	t.tp_setattro = (setattrofunc)detail::impl_setattr_object;
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT value)
-	{
-		return util::compare(self.ptr(), value.ptr());
-	};
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT value) { return util::compare(*self, *value); };
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreCppFunction *)ptr); };
@@ -43,7 +42,7 @@ DECLEXPR(CoreCppFunction::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_getsets = cppfunction_getsets;
 };
 
-void CoreCppFunction::_bind_class(CoreType & t)
+void CoreCppFunction::_bind_methods(CoreType & t)
 {
 }
 

@@ -1,4 +1,4 @@
-#include <core/api/types/list_object.hpp>
+#include <core/api/object/list_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -24,9 +24,11 @@ DECLEXPR(CoreList::ob_type_static) = COMPOSE(CoreType, t)
 	};
 };
 
-void CoreList::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreList::_bind_methods(CoreType & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
+	t.attr("__contains__") = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(LIST(self)->contains(value));
 	});
 }

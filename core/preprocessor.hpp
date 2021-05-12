@@ -169,27 +169,25 @@ namespace ism::impl
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define COPY_AND_MOVE_CONSTRUCTABLE(type) \
-public: \
-	type(type const &) = default; \
-	type & operator=(type const &) = default; \
-	type(type &&) noexcept = default; \
-	type & operator=(type &&) noexcept = default; \
+#define COPY_AND_MOVE_CONSTRUCTABLE(type)			\
+	type(type const &) = default;					\
+	type & operator=(type const &) = default;		\
+	type(type &&) noexcept = default;				\
+	type & operator=(type &&) noexcept = default;	\
 
-#define DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type) \
-	COPY_AND_MOVE_CONSTRUCTABLE(type) \
-	type() = default; \
+#define DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type)	\
+	COPY_AND_MOVE_CONSTRUCTABLE(type)				\
+	type() noexcept = default;						\
 
-#define CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(type) \
-public: \
-	constexpr type(type const &) = default; \
-	constexpr type(type &&) noexcept = default; \
-	constexpr type & operator=(type const &) = default; \
-	constexpr type & operator=(type &&) noexcept = default; \
+#define CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(type)			\
+	constexpr type(type const &) = default;					\
+	constexpr type(type &&) noexcept = default;				\
+	constexpr type & operator=(type const &) = default;		\
+	constexpr type & operator=(type &&) noexcept = default;	\
 
-#define CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type) \
-	CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(type) \
-	constexpr type() noexcept = default; \
+#define CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type)	\
+	CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(type)				\
+	constexpr type() noexcept = default;					\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -1,4 +1,4 @@
-#include <core/api/types/string_object.hpp>
+#include <core/api/object/string_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -28,7 +28,9 @@ DECLEXPR(CoreString::ob_type_static) = COMPOSE(CoreType, t)
 	};
 };
 
-void CoreString::_bind_class(CoreType & t)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CoreString::_bind_methods(CoreType & t)
 {
 }
 

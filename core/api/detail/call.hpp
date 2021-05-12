@@ -1,5 +1,5 @@
-#ifndef _ISM_API_DETAIL_CALL_HPP_
-#define _ISM_API_DETAIL_CALL_HPP_
+#ifndef _ISM_CALL_HPP_
+#define _ISM_CALL_HPP_
 
 #include <core/api/detail/cast.hpp>
 
@@ -104,11 +104,13 @@ namespace ism::detail
 
 	struct NODISCARD argument_record
 	{
-		cstring name{};
+		String name{};
 
 		OBJECT value{};
 
 		bool convert{}, none{};
+
+		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(argument_record);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -135,12 +137,49 @@ namespace ism::detail
 		CoreObject * scope{}, * sibling{};
 
 	public:
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(function_record);
-
 		~function_record() { if (free_data) { free_data(this); } }
 
+		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(function_record);
+
+		template <class Return, class ... Args, class ... Extra
+		> function_record(Return(*f)(Args...), Extra && ... extra)
+		{
+			this->initialize( f, f, FWD(extra)...);
+		}
+
+		template <class Func, class ... Extra, class = std::enable_if_t<mpl::is_lambda_v<Func>>
+		> function_record(Func && f, Extra && ... extra)
+		{
+			this->initialize(FWD(f), (mpl::function_signature_t<Func> *)0, FWD(extra)...);
+		}
+
+		template <class Return, class Class, class ... Args, class ... Extra
+		> function_record(Return(Class:: * f)(Args...), Extra && ... extra)
+		{
+			this->initialize([f](Class * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class *, Args...))0, FWD(extra)...);
+		}
+
+		template <class Return, class Class, class ... Args, class ... Extra
+		> function_record(Return(Class:: * f)(Args...) &, Extra && ... extra)
+		{
+			this->initialize([f](Class * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class *, Args...))0, FWD(extra)...);
+		}
+
+		template <class Return, class Class, class ... Args, class ... Extra
+		> function_record(Return(Class:: * f)(Args...) const, Extra && ... extra)
+		{
+			this->initialize([f](Class const * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class const *, Args...))0, FWD(extra)...);
+		}
+
+		template <class Return, class Class, class ... Args, class ... Extra
+		> function_record(Return(Class:: * f)(Args...) const &, Extra && ... extra)
+		{
+			this->initialize([f](Class const * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class const *, Args...))0, FWD(extra)...);
+		}
+
+	protected:
 		template <class Func, class Return, class ... Args, class ... Extra
-		> function_record(Func && func, Return(*)(Args...), Extra && ... extra)
+		> void initialize(Func && func, Return(*)(Args...), Extra && ... extra)
 		{
 			struct Capture { std::remove_reference_t<Func> value; };
 
@@ -195,7 +234,7 @@ namespace ism::detail
 			{
 				types[i] = &typeid(TAG_TYPE(tag));
 			});
-			
+
 			// initialize generic
 			this->initialize_generic(types, argc);
 
@@ -207,7 +246,6 @@ namespace ism::detail
 			}
 		}
 
-	protected:
 		void initialize_generic(std::type_info const * const * info_in, size_t argc_in)
 		{
 			this->argument_count = argc_in;
@@ -216,7 +254,9 @@ namespace ism::detail
 
 			for (size_t i = 0; i < argc_in; ++i)
 			{
-				this->args.push_back({ "", nullptr, false, false });
+				String const arg_str{ "arg" + util::to_string(i) };
+
+				this->args.push_back({ arg_str, nullptr, false, false });
 			}
 		}
 	};
@@ -274,12 +314,17 @@ namespace ism::detail
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class /*Derived*/, class Func
 	> auto method_adaptor(Func && func) -> decltype(std::forward<Func>(func)) { return std::forward<Func>(func); }
 
 	template <class Derived, class Return, class Class, class ... Args
-	> auto method_adaptor(Return(Class::*pmf)(Args...)) -> Return(Derived:: *)(Args...)
+	> auto method_adaptor(Return(Class:: * pmf)(Args...))->Return(Derived:: *)(Args...)
 	{
 		static_assert(
 			is_accessible_base_of_v<Class, Derived>,
@@ -288,7 +333,7 @@ namespace ism::detail
 	}
 
 	template <class Derived, class Return, class Class, class ... Args
-	> auto method_adaptor(Return(Class::*pmf)(Args...) const) -> Return(Derived:: *)(Args...) const
+	> auto method_adaptor(Return(Class:: * pmf)(Args...) const)->Return(Derived:: *)(Args...) const
 	{
 		static_assert(
 			is_accessible_base_of_v<Class, Derived>,
@@ -297,16 +342,15 @@ namespace ism::detail
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-namespace ism
-{
 	template <class Derived
 	> template <ReturnPolicy policy, class ...Args
-	> inline OBJECT ObjectAPI<Derived>::operator()(Args && ... args)
+	> inline OBJECT ObjectAPI<Derived>::operator()(Args && ... args) const
 	{
 		return detail::collect_arguments<policy>(FWD(args)...).call(handle());
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_DETAIL_CALL_HPP_
+#endif // !_ISM_CALL_HPP_

@@ -1,5 +1,5 @@
-#ifndef _ISM_API_DETAIL_CAST_HPP_
-#define _ISM_API_DETAIL_CAST_HPP_
+#ifndef _ISM_CAST_HPP_
+#define _ISM_CAST_HPP_
 
 #include <core/api/internals.hpp>
 
@@ -123,7 +123,6 @@ namespace ism::detail
 	{
 		using _itype = CoreInt::storage_type;
 		using _ftype = CoreFloat::storage_type;
-
 		using _type0 = std::conditional_t<sizeof(T) <= sizeof(int32_t), int32_t, int64_t>;
 		using _type1 = std::conditional_t<std::is_signed_v<T>, _type0, std::make_unsigned_t<_type0>>;
 		using _convt = std::conditional_t<std::is_floating_point_v<T>, double_t, _type1>;
@@ -422,16 +421,15 @@ namespace ism::detail
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD OBJECT cast(T && o, ReturnPolicy policy = ReturnPolicy_AutomaticReference, OBJECT parent = {})
 	{
-		using U = std::remove_reference_t<T>;
 		if (policy == ReturnPolicy_Automatic) {
-			policy = (std::is_pointer_v<U>
+			policy = (std::is_pointer_v<std::remove_reference_t<T>>
 				? ReturnPolicy_TakeOwnership
 				: (std::is_lvalue_reference_v<T>
 					? ReturnPolicy_Copy
 					: ReturnPolicy_Move));
 		}
 		else if (policy == ReturnPolicy_AutomaticReference) {
-			policy = (std::is_pointer_v<U>
+			policy = (std::is_pointer_v<std::remove_reference_t<T>>
 				? ReturnPolicy_Reference
 				: (std::is_lvalue_reference_v<T>
 					? ReturnPolicy_Copy
@@ -478,15 +476,15 @@ namespace ism::detail
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
-	> NODISCARD OBJECT object_forward(T && o) { return detail::cast(FWD(o)); }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
+	> NODISCARD OBJECT object_forward(T && o) { return detail::cast(FWD(o)); }
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class O> template <class T> inline T Handle<O>::cast() const &
@@ -512,4 +510,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_API_DETAIL_CAST_HPP_
+#endif // !_ISM_CAST_HPP_
