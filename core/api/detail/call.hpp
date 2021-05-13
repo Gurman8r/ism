@@ -32,7 +32,7 @@ namespace ism::detail
 			{
 				return nullptr;
 			}
-			else if (vectorcallfunc func{ detail::get_vectorcall_func(callable) })
+			else if (vectorcallfunc func{ get_vectorcall_func(callable) })
 			{
 				return func(callable, m_args.data(), m_args.size());
 			}

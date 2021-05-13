@@ -483,7 +483,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
-	> NODISCARD OBJECT object_forward(T && o) { return detail::cast(FWD(o)); }
+	> NODISCARD OBJECT object_or_cast(T && o) { return detail::cast(FWD(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

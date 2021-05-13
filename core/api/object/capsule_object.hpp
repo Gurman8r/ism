@@ -29,10 +29,9 @@ namespace ism
 	protected:
 		static void _bind_class(CoreType & t);
 
-	protected:
+	public:
 		detail::capsule_record m_capsule{};
 
-	public:
 		using storage_type = decltype(m_capsule);
 
 		virtual ~CoreCapsule() override
@@ -83,7 +82,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// CAPSULE
 	template <> class Handle<CoreCapsule> : public BaseHandle<CoreCapsule>
 	{
 		ISM_HANDLE(CoreCapsule);
@@ -95,25 +93,10 @@ namespace ism
 
 		using storage_type = CoreCapsule::storage_type;
 
-		NODISCARD auto get_closure() const -> destructor { return (*m_ref)->closure; }
-
-		NODISCARD auto get_context() const -> void * { return (*m_ref)->context; }
-
-		NODISCARD auto get_pointer() const -> void * { return (*m_ref)->pointer; }
-
-		NODISCARD auto get_doc() const -> String const & { return (*m_ref)->doc; }
-
-		NODISCARD auto get_name() const -> String const & { return (*m_ref)->name; }
-
-		void set_closure(destructor value) { (*m_ref)->closure = value; }
-
-		void set_context(void const * value) { (*m_ref)->context = (void *)value; }
+		template <class T = void
+		> NODISCARD auto get_pointer() const { return static_cast<T *>((*m_ref)->pointer); }
 
 		void set_pointer(void const * value) { (*m_ref)->pointer = (void *)value; }
-
-		void set_doc(String const & value) { (*m_ref)->doc = value; }
-
-		void set_name(String const & value) { (*m_ref)->name = value; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

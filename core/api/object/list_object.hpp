@@ -15,14 +15,13 @@ namespace ism
 	protected:
 		static void _bind_methods(CoreType & t);
 
-	protected:
+	public:
 		Vector<OBJECT> m_list{};
 
-	public:
 		using storage_type = decltype(m_list);
-		
+
 		using iterator = storage_type::iterator;
-		
+
 		using const_iterator = storage_type::const_iterator;
 
 		CoreList(storage_type const & v) : base_type{ &ob_type_static }, m_list{ v } {}
@@ -43,7 +42,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// LIST
 	template <> class Handle<CoreList> : public BaseHandle<CoreList>
 	{
 		ISM_HANDLE(CoreList);
@@ -56,7 +54,7 @@ namespace ism
 		using storage_type = CoreList::storage_type;
 
 		using iterator = CoreList::iterator;
-		
+
 		using const_iterator = CoreList::const_iterator;
 
 		NODISCARD auto data() const noexcept { return (*m_ref)->data(); }
@@ -69,41 +67,56 @@ namespace ism
 
 		NODISCARD auto back() const { return (*m_ref)->back(); }
 
-		void reserve(size_t count) { (*m_ref)->reserve(count); }
+		void reserve(size_t count) const { (*m_ref)->reserve(count); }
 
-		void resize(size_t count) { (*m_ref)->reserve(count); }
+		void resize(size_t count) const { (*m_ref)->reserve(count); }
 
-		void shrink_to_fit() { (*m_ref)->shrink_to_fit(); }
+		void erase(size_t i) const { (*m_ref)->erase(begin() + i); }
 
-		void erase(size_t i) { (*m_ref)->erase(begin() + i); }
-
-		void erase(OBJECT const & i) { (*m_ref)->erase(begin() + i.cast<size_t>()); }
+		void erase(OBJECT const & i) const { (*m_ref)->erase(begin() + i.cast<size_t>()); }
 
 		template <class Value = OBJECT
-		> void append(Value && v) { (*m_ref)->emplace_back(object_forward(FWD(v))); }
+		> void append(Value && v) const { (*m_ref)->emplace_back(object_or_cast(FWD(v))); }
 
 		template <class Value = OBJECT
-		> bool contains(Value && v) const { return end() != std::find(begin(), end(), object_forward(FWD(v))); }
+		> bool contains(Value && v) const { return end() != std::find(begin(), end(), object_or_cast(FWD(v))); }
 
 		template <class Value = OBJECT
-		> auto find(Value && v) { return std::find(begin(), end(), object_forward(FWD(v))); }
+		> auto find(Value && v) const { return std::find(begin(), end(), object_or_cast(FWD(v))); }
 
 		template <class Value = OBJECT
-		> void insert(size_t i, Value && v) { (*m_ref)->insert(begin() + i, object_forward(FWD(v))); }
+		> void insert(size_t i, Value && v) const { (*m_ref)->insert(begin() + i, object_or_cast(FWD(v))); }
 
 		template <class Value = OBJECT
-		> void insert(OBJECT const & i, Value && v) { (*m_ref)->insert(begin() + i.cast<size_t>(), object_forward(FWD(v))); }
+		> void insert(OBJECT const & i, Value && v) { (*m_ref)->insert(begin() + i.cast<size_t>(), object_or_cast(FWD(v))); }
 
-		auto get(size_t i) const { return (*m_ref)[i]; }
+		template <class Index = OBJECT
+		> auto get(Index && i) const -> OBJECT
+		{
+			if constexpr (std::is_integral_v<Index>)
+			{
+				return (**m_ref)[static_cast<size_t>(i)];
+			}
+			else
+			{
+				return (**m_ref)[object_or_cast(FWD(i)).cast<size_t>()];
+			}
+		}
 
-		auto get(OBJECT const & i) const { return (*m_ref)[i.cast<size_t>()]; }
+		template <class Index = OBJECT, class Value = OBJECT
+		> auto set(Index && i, Value && v) const -> Error
+		{
+			if constexpr (std::is_integral_v<Index>)
+			{
+				return ((**m_ref)[static_cast<size_t>(i)] = object_or_cast(FWD(v))), Error_None;
+			}
+			else
+			{
+				return ((**m_ref)[object_or_cast(FWD(i)).cast<size_t>()] = object_or_cast(FWD(v))), Error_None;
+			}
+		}
 
-		template <class Value = OBJECT
-		> void set(size_t i, Value && v) { m_list[i] = object_forward(FWD(v)); }
-
-		template <class Value = OBJECT
-		> void set(OBJECT const & i, Value && v) { m_list[i.cast<size_t>()] = object_forward(FWD(v)); }
-
+	public:
 		NODISCARD auto begin() noexcept -> iterator { return (*m_ref)->begin(); }
 
 		NODISCARD auto begin() const noexcept -> const_iterator { return (*m_ref)->begin(); }

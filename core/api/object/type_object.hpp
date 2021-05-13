@@ -146,7 +146,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// TYPE
 	template <> class Handle<CoreType> : public BaseHandle<CoreType>
 	{
 		ISM_HANDLE(CoreType);
@@ -159,71 +158,68 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD auto hash(Handle<T> const & o) noexcept
+	template <class T> NODISCARD hash_t hash(Handle<T> const & o) noexcept
 	{
 		TYPE t{ typeof(o) };
-		return t && t->tp_hash ? t->tp_hash(o) : hash_t{ 0 };
+		return t && t->tp_hash ? t->tp_hash(o) : 0;
 	}
 
-	template <class T> NODISCARD auto len(Handle<T> const & o) noexcept
+	template <class T> NODISCARD ssize_t len(Handle<T> const & o) noexcept
 	{
 		TYPE t{ typeof(o) };
-		return t && t->tp_len ? t->tp_len(o) : ssize_t{ -1 };
+		return t && t->tp_len ? t->tp_len(o) : -1;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace detail
+	NODISCARD inline GetSetDef * get_property_def(OBJECT o, cstring name)
 	{
-		NODISCARD inline GetSetDef * get_property_def(OBJECT o, cstring name)
+		if (hash_t id{ hash(name, strlen(name)) }; TYPE type{ typeof(o) })
 		{
-			if (hash_t id{ hash(name, strlen(name)) }; TYPE type{ typeof(o) })
+			for (GetSetDef * def{ type->tp_getsets }; def && *def; ++def)
 			{
-				for (GetSetDef * def{ type->tp_getsets }; def && *def; ++def)
+				if (id == hash(def->name, strlen(def->name)))
 				{
-					if (id == hash(def->name, strlen(def->name)))
-					{
-						return def;
-					}
+					return def;
 				}
 			}
-			return nullptr;
 		}
+		return nullptr;
+	}
 
-		NODISCARD inline auto get_dict_ptr(OBJECT const & o)
+	NODISCARD inline auto get_dict_ptr(OBJECT const & o)
+	{
+		if (TYPE t{ typeof(o) }; t && 0 < t->tp_dict_offset)
 		{
-			if (TYPE t{ typeof(o) }; t && 0 < t->tp_dict_offset)
-			{
-				return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(o.ptr()) + t->tp_dict_offset);
-			}
-			else
-			{
-				return (OBJECT *)nullptr;
-			}
+			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(o.ptr()) + t->tp_dict_offset);
 		}
-
-		NODISCARD inline auto get_weaklist_ptr(OBJECT const & o)
+		else
 		{
-			if (TYPE t{ typeof(o) }; t && 0 < t->tp_weaklist_offset)
-			{
-				return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(o.ptr()) + t->tp_weaklist_offset);
-			}
-			else
-			{
-				return (OBJECT *)nullptr;
-			}
+			return (OBJECT *)nullptr;
 		}
+	}
 
-		NODISCARD inline auto get_vectorcall_func(OBJECT const & o)
+	NODISCARD inline auto get_weaklist_ptr(OBJECT const & o)
+	{
+		if (TYPE t{ typeof(o) }; t && 0 < t->tp_weaklist_offset)
 		{
-			if (TYPE t{ typeof(o) }; t && t->has_feature(TypeFlags_HaveVectorCall) && 0 < t->tp_vectorcall_offset)
-			{
-				return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(o.ptr()) + t->tp_vectorcall_offset);
-			}
-			else
-			{
-				return (vectorcallfunc)nullptr;
-			}
+			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(o.ptr()) + t->tp_weaklist_offset);
+		}
+		else
+		{
+			return (OBJECT *)nullptr;
+		}
+	}
+
+	NODISCARD inline auto get_vectorcall_func(OBJECT const & o)
+	{
+		if (TYPE t{ typeof(o) }; t && t->has_feature(TypeFlags_HaveVectorCall) && 0 < t->tp_vectorcall_offset)
+		{
+			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(o.ptr()) + t->tp_vectorcall_offset);
+		}
+		else
+		{
+			return (vectorcallfunc)nullptr;
 		}
 	}
 

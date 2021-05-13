@@ -97,60 +97,25 @@ namespace ism
 	template <class T> class BaseHandle : public ObjectAPI<Handle<T>>, public Ref<T>
 	{
 	public:
-		~BaseHandle() { default_destruct(m_ref); }
+		~BaseHandle()
+		{
+			if (dec_ref())
+			{
+				if (TYPE t{ typeof(m_ref) }; t && t->tp_free)
+				{
+					t->tp_free(m_ref);
+				}
+				else
+				{
+					memdelete(m_ref);
+				}
+			}
+			m_ref = nullptr;
+		}
 
 		template <class T> NODISCARD T cast() const &;
 
 		template <class T> NODISCARD T cast() &&;
-
-	protected:
-		static void default_destruct(T *& ptr)
-		{
-			if (ptr && ptr->dec_ref())
-			{
-				if (TYPE t{ typeof(ptr) }; t && t->tp_free)
-				{
-					t->tp_free(ptr);
-				}
-				else
-				{
-					memdelete(ptr);
-				}
-			}
-			ptr = nullptr;
-		}
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T> class Handle : public BaseHandle<T>
-	{
-	public:
-		~Handle() = default;
-
-		Handle() = default;
-		
-		Handle(nullptr_t) {}
-
-		Handle(T * value) { if (value) { ref_pointer(value); } }
-		
-		Handle(Ref<T> const & value) { ref(value); }
-		
-		template <class U> Handle(Ref<U> const & value) { reset(value); }
-
-		Handle(T const & value) { revalue(value); }
-
-		Handle(T && value) noexcept { revalue(std::move(value)); }
-
-		Handle & operator=(nullptr_t) { unref(); return (*this); }
-
-		Handle & operator=(Ref<T> const & value) { reset(value); return (*this); }
-		
-		template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }
-		
-		Handle & operator=(T const & value) { revalue(value); return (*this); }
-
-		Handle & operator=(T && value) noexcept { revalue(std::move(value)); return (*this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -181,6 +146,18 @@ public:																								\
 	Handle & operator=(m_class && value) noexcept { revalue(std::move(value)); return (*this); }	\
 																									\
 private:
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> class Handle : public BaseHandle<T>
+	{
+		ISM_HANDLE(T);
+
+	public:
+		~Handle() = default;
+
+		Handle() = default;
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -258,7 +235,7 @@ namespace ism
 		explicit CoreObject(CoreType const * t) : base_type{}, ob_type{ (CoreType *)t } {}
 
 	public:
-		virtual ~CoreObject() override { ob_type = nullptr; }
+		virtual ~CoreObject() override {}
 
 		static void initialize_class();
 
@@ -277,7 +254,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// OBJECT
 	template <> class Handle<CoreObject> : public BaseHandle<CoreObject>
 	{
 		ISM_HANDLE(CoreObject);
@@ -384,13 +360,13 @@ namespace ism
 
 		template <class T> decltype(auto) operator=(T && v) &&
 		{
-			Policy::set(m_obj, m_key, object_forward(FWD(v)));
+			Policy::set(m_obj, m_key, object_or_cast(FWD(v)));
 			return (*this);
 		}
 
 		template <class T> decltype(auto) operator=(T && v) &
 		{
-			get_cache() = object_forward(FWD(v));
+			get_cache() = object_or_cast(FWD(v));
 			return (*this);
 		}
 
@@ -454,14 +430,14 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
-	> NODISCARD auto object_forward(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
+	> NODISCARD auto object_or_cast(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-	> NODISCARD OBJECT object_forward(T && o);
+	> NODISCARD OBJECT object_or_cast(T && o);
 
-	NODISCARD inline OBJECT object_forward(CoreObject * o) { return OBJECT{ o }; }
+	NODISCARD inline OBJECT object_or_cast(CoreObject * o) { return OBJECT{ o }; }
 
-	NODISCARD inline OBJECT object_forward(cstring s) { return object_forward(String{ s }); }
+	NODISCARD inline OBJECT object_or_cast(cstring s) { return object_or_cast(String{ s }); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -487,13 +463,13 @@ namespace ism
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept
 	{
-		return TYPE(o ? o->get_type() : nullptr);
+		return o ? o->get_type() : nullptr;
 	}
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept
 	{
-		return typeof(object_forward(FWD(o)));
+		return typeof(object_or_cast(FWD(o)));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -533,7 +509,7 @@ namespace ism
 			}
 			else if (t->tp_getattro)
 			{
-				return t->tp_getattro(o, object_forward(FWD(i)));
+				return t->tp_getattro(o, object_or_cast(FWD(i)));
 			}
 			else
 			{
@@ -544,7 +520,7 @@ namespace ism
 		{
 			if (t->tp_getattro)
 			{
-				return t->tp_getattro(o, object_forward(FWD(i)));
+				return t->tp_getattro(o, object_or_cast(FWD(i)));
 			}
 			else if (t->tp_getattr)
 			{
@@ -561,13 +537,7 @@ namespace ism
 	> NODISCARD OBJECT getattr(OBJECT o, Index && i, Defval && defval) noexcept
 	{
 		OBJECT result{ getattr(o, FWD(i)) };
-		return result ? result : object_forward(FWD(defval));
-	}
-
-	template <class Index = OBJECT
-	> NODISCARD bool hasattr(OBJECT o, Index && i)
-	{
-		return getattr(FWD(o), FWD(i)).is_valid();
+		return result ? result : object_or_cast(FWD(defval));
 	}
 
 	template <class Index = OBJECT, class Value = OBJECT
@@ -581,11 +551,11 @@ namespace ism
 		{
 			if (t->tp_setattr)
 			{
-				return t->tp_setattr(o, FWD(i), object_forward(FWD(v)));
+				return t->tp_setattr(o, FWD(i), object_or_cast(FWD(v)));
 			}
 			else if (t->tp_getattro)
 			{
-				return t->tp_setattro(o, object_forward(i), object_forward(FWD(v)));
+				return t->tp_setattro(o, object_or_cast(i), object_or_cast(FWD(v)));
 			}
 			else
 			{
@@ -596,11 +566,11 @@ namespace ism
 		{
 			if (t->tp_getattro)
 			{
-				return t->tp_setattro(o, object_forward(FWD(i)), object_forward(FWD(v)));
+				return t->tp_setattro(o, object_or_cast(FWD(i)), object_or_cast(FWD(v)));
 			}
 			else if (t->tp_setattr)
 			{
-				return t->tp_setattr(o, STR(FWD(i)).c_str(), object_forward(FWD(v)));
+				return t->tp_setattr(o, STR(FWD(i)).c_str(), object_or_cast(FWD(v)));
 			}
 			else
 			{
@@ -618,17 +588,21 @@ namespace ism
 		{
 			return nullptr;
 		}
+		else if constexpr (mpl::is_string_v<Index>)
+		{
+			return DICT(o).get(FWD(i));
+		}
+		else if constexpr (std::is_integral_v<Index>)
+		{
+			return LIST(o).get(FWD(i));
+		}
 		else if (isinstance<DICT>(o))
 		{
-			return (***DICT(o))[object_forward(FWD(i))];
+			return DICT(o).get(FWD(i));
 		}
 		else if (isinstance<LIST>(o))
 		{
-			return (***LIST(o))[object_forward(FWD(i)).cast<size_t>()];
-		}
-		else if (OBJECT fget{ getattr(o, "__getitem__") })
-		{
-			return fget(o, FWD(i));
+			return LIST(o).get(FWD(i));
 		}
 		else
 		{
@@ -643,17 +617,21 @@ namespace ism
 		{
 			return Error_Unknown;
 		}
+		else if constexpr (mpl::is_string_v<Index>)
+		{
+			return DICT(o).set(FWD(i), FWD(v));
+		}
+		else if constexpr (std::is_integral_v<Index>)
+		{
+			return LIST(o).set(FWD(i), FWD(v));
+		}
 		else if (isinstance<DICT>(o))
 		{
-			return ((***DICT(o))[object_forward(FWD(i))] = object_forward(FWD(v))), Error_None;
+			return DICT(o).set(FWD(i), FWD(v));
 		}
 		else if (isinstance<LIST>(o))
 		{
-			return ((***LIST(o))[object_forward(FWD(i)).cast<size_t>()] = object_forward(FWD(v))), Error_None;
-		}
-		else if (OBJECT fset{ getattr(o, "__setitem__") })
-		{
-			return fset(o, FWD(i), FWD(v)), Error_None;
+			return LIST(o).set(FWD(i), FWD(v));
 		}
 		else
 		{

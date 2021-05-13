@@ -15,10 +15,9 @@ namespace ism
 	protected:
 		static void _bind_methods(CoreType & t);
 
-	protected:
+	public:
 		String m_string{};
 
-	public:
 		using storage_type = decltype(m_string);
 		
 		using iterator = storage_type::iterator;
@@ -62,7 +61,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// STRING
 	template <> class Handle<CoreString> : public BaseHandle<CoreString>
 	{
 		ISM_HANDLE(CoreString);
@@ -94,8 +92,6 @@ namespace ism
 
 		void resize(size_t count) { (*m_ref)->reserve(count); }
 
-		void shrink_to_fit() { (*m_ref)->shrink_to_fit(); }
-
 		void erase(size_t i) { (*m_ref)->erase(begin() + i); }
 
 		void erase(OBJECT const & i) { (*m_ref)->erase(begin() + i.cast<size_t>()); }
@@ -115,10 +111,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD auto repr(Handle<T> const & o) noexcept
+	template <class T> NODISCARD STR repr(Handle<T> const & o) noexcept
 	{
 		TYPE t{ typeof(o) };
-		return t && t->tp_repr ? t->tp_repr(o) : STR{ nullptr };
+		return t && t->tp_repr ? t->tp_repr(o) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

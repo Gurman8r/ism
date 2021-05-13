@@ -28,10 +28,9 @@ namespace ism
 	protected:
 		static void _bind_methods(CoreType & t);
 
-	protected:
+	public:
 		detail::property_record m_property{};
 
-	public:
 		using storage_type = decltype(m_property);
 
 		CoreProperty(OBJECT fget, OBJECT fset, void * closure = nullptr) : base_type{ &ob_type_static }
@@ -48,7 +47,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// PROPERTY
 	template <> class Handle<CoreProperty> : public BaseHandle<CoreProperty>
 	{
 		ISM_HANDLE(CoreProperty);

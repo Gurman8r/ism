@@ -15,10 +15,9 @@ namespace ism
 	protected:
 		static void _bind_methods(CoreType & t);
 
-	protected:
+	public:
 		detail::function_record m_cppfunction{};
 
-	public:
 		using storage_type = decltype(m_cppfunction);
 
 		explicit CoreCppFunction(storage_type && value) noexcept : base_type{ &ob_type_static, dispatcher }, m_cppfunction{ std::move(value) } {}
@@ -44,7 +43,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// CPP_FUNCTION
 	template <> class Handle<CoreCppFunction> : public BaseHandle<CoreCppFunction>
 	{
 		ISM_HANDLE(CoreCppFunction);

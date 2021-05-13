@@ -15,10 +15,9 @@ namespace ism
 	protected:
 		static void _bind_methods(CoreType & t);
 
-	protected:
+	public:
 		double_t m_float{};
 
-	public:
 		using storage_type = decltype(m_float);
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_floating_point_v<T>>
@@ -38,7 +37,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// FLOAT
 	template <> class Handle<CoreFloat> : public BaseHandle<CoreFloat>
 	{
 		ISM_HANDLE(CoreFloat);

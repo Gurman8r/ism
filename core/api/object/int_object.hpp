@@ -20,10 +20,9 @@ namespace ism
 	protected:
 		static void _bind_methods(CoreType & t);
 
-	protected:
+	public:
 		int64_t m_int{};
 
-	public:
 		using storage_type = decltype(m_int);
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
@@ -48,7 +47,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// INT
 	template <> class Handle<CoreInt> : public BaseHandle<CoreInt>
 	{
 		ISM_HANDLE(CoreInt);

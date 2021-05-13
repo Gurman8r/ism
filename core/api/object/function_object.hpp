@@ -15,10 +15,9 @@ namespace ism
 	protected:
 		static void _bind_methods(CoreType & t);
 
-	protected:
+	public:
 		vectorcallfunc m_vectorcall{};
 
-	public:
 		explicit CoreFunction(CoreType const * t, vectorcallfunc vectorcall) : base_type{ t }, m_vectorcall{ vectorcall } {}
 
 		explicit CoreFunction(vectorcallfunc vectorcall) : self_type{ &ob_type_static, vectorcall } {}
@@ -30,7 +29,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// FUNCTION
 	template <> class Handle<CoreFunction> : public BaseHandle<CoreFunction>
 	{
 		ISM_HANDLE(CoreFunction);

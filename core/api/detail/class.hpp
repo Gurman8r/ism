@@ -19,7 +19,7 @@ namespace ism::detail
 		}
 		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
-			return getitem(*dictptr, name);
+			return DICT(*dictptr).get(name);
 		}
 		else
 		{
@@ -39,7 +39,7 @@ namespace ism::detail
 		}
 		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
-			return setitem(*dictptr, name, v);
+			return DICT(*dictptr).set(name, v);
 		}
 		else
 		{
@@ -61,7 +61,7 @@ namespace ism::detail
 		}
 		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
-			return getitem(*dictptr, name);
+			return DICT(*dictptr).get(name);
 		}
 		else
 		{
@@ -81,7 +81,7 @@ namespace ism::detail
 		}
 		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
-			return setitem(*dictptr, name, v);
+			return DICT(*dictptr).set(name, v);
 		}
 		else
 		{

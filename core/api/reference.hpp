@@ -59,6 +59,11 @@ namespace ism
 	protected:
 		T * m_ref{};
 
+		NODISCARD bool dec_ref() noexcept // return true if the object should be destroyed
+		{
+			return m_ref && m_ref->dec_ref();
+		}
+
 		void ref(Ref const & value)
 		{
 			if (value.m_ref == m_ref) { return; }
@@ -69,7 +74,10 @@ namespace ism
 
 		void ref_pointer(T * value)
 		{
-			if (CHECK(value)->init_ref()) { m_ref = value; }
+			if (CHECK(value)->init_ref())
+			{
+				m_ref = value;
+			}
 		}
 
 	public:
@@ -98,7 +106,7 @@ namespace ism
 	public:
 		void unref()
 		{
-			if (m_ref && m_ref->dec_ref()) { memdelete(m_ref); }
+			if (dec_ref()) { memdelete(m_ref); }
 			m_ref = nullptr;
 		}
 
@@ -133,31 +141,24 @@ namespace ism
 			r.m_ref = nullptr;
 		}
 
-		T * release()
-		{
-			T * temp{ m_ref };
-			m_ref = nullptr;
-			return m_ref;
-		}
-
 	public:
-		NODISCARD operator bool() const { return m_ref != nullptr; }
+		NODISCARD operator bool() const noexcept { return m_ref != nullptr; }
 
-		NODISCARD auto ptr() const { return const_cast<T *>(m_ref); }
+		NODISCARD auto ptr() const noexcept { return const_cast<T *>(m_ref); }
 
-		NODISCARD auto operator*() const { return const_cast<T *>(m_ref); }
+		NODISCARD auto operator*() const noexcept { return const_cast<T *>(m_ref); }
 
-		NODISCARD auto operator->() const { return const_cast<T *>(m_ref); }
+		NODISCARD auto operator->() const noexcept { return const_cast<T *>(m_ref); }
 
-		NODISCARD bool operator==(T const * value) const { return m_ref == value; }
+		NODISCARD bool operator==(T const * value) const noexcept { return m_ref == value; }
 		
-		NODISCARD bool operator!=(T const * value) const { return m_ref != value; }
+		NODISCARD bool operator!=(T const * value) const noexcept { return m_ref != value; }
 		
-		NODISCARD bool operator<(Ref const & value) const { return m_ref < value.m_ref; }
+		NODISCARD bool operator<(Ref const & value) const noexcept { return m_ref < value.m_ref; }
 		
-		NODISCARD bool operator==(Ref const & value) const { return m_ref == value.m_ref; }
+		NODISCARD bool operator==(Ref const & value) const noexcept { return m_ref == value.m_ref; }
 		
-		NODISCARD bool operator!=(Ref const & value) const { return m_ref != value.m_ref; }
+		NODISCARD bool operator!=(Ref const & value) const noexcept { return m_ref != value.m_ref; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

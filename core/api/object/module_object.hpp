@@ -31,7 +31,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// MODULE
 	template <> class Handle<CoreModule> : public BaseHandle<CoreModule>
 	{
 		ISM_HANDLE(CoreModule);
@@ -57,9 +56,9 @@ namespace ism
 		template <class Name = cstring, class O = OBJECT
 		> void add_object(Name && name, O && value, bool overwrite = false)
 		{
-			if (auto i{ object_forward(FWD(name)) }; overwrite || !m_ref->m_dict->contains(i))
+			if (auto i{ object_or_cast(FWD(name)) }; overwrite || !m_ref->m_dict->contains(i))
 			{
-				m_ref->m_dict[i] = object_forward(FWD(value));
+				m_ref->m_dict[i] = object_or_cast(FWD(value));
 			}
 		}
 
@@ -78,7 +77,7 @@ namespace ism
 	inline MODULE create_extension_module(cstring name)
 	{
 		DICT d{ get_default_interpreter()->modules };
-		auto i{ object_forward(name) };
+		auto i{ object_or_cast(name) };
 		if (d.contains(i)) { return nullptr; }
 		else { return d[i] = MODULE({ name }); }
 	}
@@ -86,7 +85,7 @@ namespace ism
 	inline MODULE import_module(cstring name)
 	{
 		DICT d{ get_default_interpreter()->modules };
-		auto i{ object_forward(name) };
+		auto i{ object_or_cast(name) };
 		if (!d.contains(i)) { return nullptr; }
 		else { return d[i]; }
 	}
