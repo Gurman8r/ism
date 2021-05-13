@@ -1,4 +1,3 @@
-#include <core/api/object/string_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -13,7 +12,7 @@ DECLEXPR(CoreString::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_base = typeof<OBJECT>();
 
 	t.tp_hash = (hashfunc)[](OBJECT o) { return hash(***STR(o)); };
-	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)STR(o)->size(); };
+	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)STR(o).size(); };
 	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(o); };
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(o); };
 

@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API CoreGeneric : public CoreObject
 	{
-		ISM_OBJECT_DEFAULT(CoreGeneric, CoreObject);
+		ISM_OBJECT(CoreGeneric, CoreObject);
 
 	protected:
 		static void _bind_methods(CoreType & t);
@@ -28,6 +28,19 @@ namespace ism
 		DICT m_dict{ CoreDict{} };
 
 		vectorcallfunc m_vectorcall{};
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// GENERIC
+	template <> class Handle<CoreGeneric> : public BaseHandle<CoreGeneric>
+	{
+		ISM_HANDLE(CoreGeneric);
+
+	public:
+		Handle() = default;
+
+		~Handle() = default;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

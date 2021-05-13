@@ -13,11 +13,11 @@ namespace ism::detail
 		template <class ... Args
 		> explicit argument_collector(Args && ... values)
 		{
-			m_args->reserve(sizeof...(Args));
+			m_args.reserve(sizeof...(Args));
 
 			mpl::for_args([&](auto && e) noexcept
 			{
-				m_args->append(make_caster<decltype(e)>::cast(FWD(e), policy, nullptr));
+				m_args.append(make_caster<decltype(e)>::cast(FWD(e), policy, nullptr));
 			}
 			, FWD(values)...);
 		}
@@ -34,7 +34,7 @@ namespace ism::detail
 			}
 			else if (vectorcallfunc func{ detail::get_vectorcall_func(callable) })
 			{
-				return func(callable, m_args->data(), m_args->size());
+				return func(callable, m_args.data(), m_args.size());
 			}
 			else if (TYPE t{ typeof(callable) }; t && t->tp_call)
 			{

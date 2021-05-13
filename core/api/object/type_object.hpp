@@ -10,7 +10,7 @@ namespace ism
 
 	class NODISCARD ISM_API CoreType : public CoreObject
 	{
-		ISM_OBJECT_DEFAULT(CoreType, CoreObject);
+		ISM_OBJECT(CoreType, CoreObject);
 
 	protected:
 		static void _bind_methods(CoreType & t);
@@ -56,7 +56,7 @@ namespace ism
 		SequenceMethods *	tp_as_sequence{};
 		MappingMethods  *	tp_as_mapping{};
 
-		TYPE				tp_base{};
+		Ref<CoreType>		tp_base{ /* stored as Ref because Handle<CoreType> doesn't exist yet */ };
 		OBJECT				tp_bases{};
 		OBJECT				tp_cache{};
 		OBJECT				tp_dict{};
@@ -74,7 +74,7 @@ namespace ism
 	protected:
 		bool ready();
 
-		bool add_subclass(TYPE const & type);
+		bool add_subclass(CoreType const * type);
 
 		bool mro_internal(OBJECT * old_mro);
 
@@ -143,6 +143,33 @@ namespace ism
 			}
 		}
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// TYPE
+	template <> class Handle<CoreType> : public BaseHandle<CoreType>
+	{
+		ISM_HANDLE(CoreType);
+	
+	public:
+		Handle() = default;
+	
+		~Handle() = default;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> NODISCARD auto hash(Handle<T> const & o) noexcept
+	{
+		TYPE t{ typeof(o) };
+		return t && t->tp_hash ? t->tp_hash(o) : hash_t{ 0 };
+	}
+
+	template <class T> NODISCARD auto len(Handle<T> const & o) noexcept
+	{
+		TYPE t{ typeof(o) };
+		return t && t->tp_len ? t->tp_len(o) : ssize_t{ -1 };
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

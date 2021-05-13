@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API Reference : public Super
 	{
-		ISM_SUPER_CLASS(Reference, Super);
+		ISM_SUPER(Reference, Super);
 
 	private:
 		RefCount m_refcount, m_refcount_init;
@@ -32,6 +32,17 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, class =  std::enable_if_t<std::is_base_of_v<Reference, T>>
+	> void unref(T * value)
+	{
+		if (value && value->dec_ref())
+		{
+			memdelete(value);
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // ref<T>
@@ -46,19 +57,19 @@ namespace ism
 	template <class T> class Ref : _Ref_Tag
 	{
 	protected:
-		T * m_reference{};
+		T * m_ref{};
 
 		void ref(Ref const & value)
 		{
-			if (value.m_reference == m_reference) { return; }
+			if (value.m_ref == m_ref) { return; }
 			unref();
-			m_reference = value.m_reference;
-			if (m_reference) { m_reference->inc_ref(); }
+			m_ref = value.m_ref;
+			if (m_ref) { m_ref->inc_ref(); }
 		}
 
 		void ref_pointer(T * value)
 		{
-			if (CHECK(value)->init_ref()) { m_reference = value; }
+			if (CHECK(value)->init_ref()) { m_ref = value; }
 		}
 
 	public:
@@ -87,8 +98,8 @@ namespace ism
 	public:
 		void unref()
 		{
-			if (m_reference && m_reference->dec_ref()) { memdelete(m_reference); }
-			m_reference = nullptr;
+			if (m_ref && m_ref->dec_ref()) { memdelete(m_ref); }
+			m_ref = nullptr;
 		}
 
 		template <class ... Args
@@ -100,7 +111,7 @@ namespace ism
 		template <class U
 		> void reset(U * value)
 		{
-			if (m_reference == value) { return; }
+			if (m_ref == value) { return; }
 			unref();
 			T * r{ super_cast<T>(value) };
 			if (r) { ref_pointer(r) }
@@ -117,82 +128,82 @@ namespace ism
 			Reference * other{ const_cast<Reference *>(static_cast<Reference const *>(value.ptr())) };
 			if (!other) { unref(); return; }
 			Ref r;
-			r.m_reference = super_cast<T>(other);
+			r.m_ref = super_cast<T>(other);
 			ref(r);
-			r.m_reference = nullptr;
+			r.m_ref = nullptr;
 		}
 
 		T * release()
 		{
-			T * temp{ m_reference };
-			m_reference = nullptr;
-			return m_reference;
+			T * temp{ m_ref };
+			m_ref = nullptr;
+			return m_ref;
 		}
 
 	public:
-		NODISCARD operator bool() const { return m_reference != nullptr; }
+		NODISCARD operator bool() const { return m_ref != nullptr; }
 
-		NODISCARD auto ptr() const { return const_cast<T *>(m_reference); }
+		NODISCARD auto ptr() const { return const_cast<T *>(m_ref); }
 
-		NODISCARD auto operator*() const { return const_cast<T *>(m_reference); }
+		NODISCARD auto operator*() const { return const_cast<T *>(m_ref); }
 
-		NODISCARD auto operator->() const { return const_cast<T *>(m_reference); }
+		NODISCARD auto operator->() const { return const_cast<T *>(m_ref); }
 
-		NODISCARD bool operator==(T const * value) const { return m_reference == value; }
+		NODISCARD bool operator==(T const * value) const { return m_ref == value; }
 		
-		NODISCARD bool operator!=(T const * value) const { return m_reference != value; }
+		NODISCARD bool operator!=(T const * value) const { return m_ref != value; }
 		
-		NODISCARD bool operator<(Ref const & value) const { return m_reference < value.m_reference; }
+		NODISCARD bool operator<(Ref const & value) const { return m_ref < value.m_ref; }
 		
-		NODISCARD bool operator==(Ref const & value) const { return m_reference == value.m_reference; }
+		NODISCARD bool operator==(Ref const & value) const { return m_ref == value.m_ref; }
 		
-		NODISCARD bool operator!=(Ref const & value) const { return m_reference != value.m_reference; }
+		NODISCARD bool operator!=(Ref const & value) const { return m_ref != value.m_ref; }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> struct Hash<Ref<T>>
+	{
+		NODISCARD hash_t operator()(Ref<T> const & v) const { return Hash<void const *>()(v.ptr()); }
+	};
+
+	template <class T> struct EqualTo<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() == b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() == b.ptr(); }
+	};
+
+	template <class T> struct NotEqualTo<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() != b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() != b.ptr(); }
+	};
+
+	template <class T> struct Less<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() < b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() < b.ptr(); }
+	};
+
+	template <class T> struct Greater<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() ? b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() > b.ptr(); }
+	};
+
+	template <class T> struct LessEqual<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() <= b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() <= b.ptr(); }
+	};
+
+	template <class T> struct GreaterEqual<Ref<T>>
+	{
+		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() >= b; }
+		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() >= b.ptr(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
-
-template <class T> struct ism::Hash<ism::Ref<T>>
-{
-	NODISCARD hash_t operator()(Ref<T> const & v) const { return ism::Hash<void const *>()(v.ptr()); }
-};
-
-template <class T> struct ism::EqualTo<ism::Ref<T>>
-{
-	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() == b; }
-	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() == b.ptr(); }
-};
-
-template <class T> struct ism::NotEqualTo<ism::Ref<T>>
-{
-	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() != b; }
-	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() != b.ptr(); }
-};
-
-template <class T> struct ism::Less<ism::Ref<T>>
-{
-	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() < b; }
-	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() < b.ptr(); }
-};
-
-template <class T> struct ism::Greater<ism::Ref<T>>
-{
-	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() ? b; }
-	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() > b.ptr(); }
-};
-
-template <class T> struct ism::LessEqual<ism::Ref<T>>
-{
-	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() <= b; }
-	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() <= b.ptr(); }
-};
-
-template <class T> struct ism::GreaterEqual<ism::Ref<T>>
-{
-	NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() >= b; }
-	NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() >= b.ptr(); }
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #endif // !_ISM_REFERENCE_HPP_

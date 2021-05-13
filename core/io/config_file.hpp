@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API ConfigFile : public Resource
 	{
-		ISM_SUPER_CLASS(ConfigFile, Resource);
+		ISM_SUPER(ConfigFile, Resource);
 
 	public:
 		ConfigFile() {}

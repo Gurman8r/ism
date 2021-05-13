@@ -10,7 +10,7 @@ namespace ism
 
 	class NODISCARD ISM_API CoreModule : public CoreObject
 	{
-		ISM_OBJECT_DEFAULT(CoreModule, CoreObject);
+		ISM_OBJECT(CoreModule, CoreObject);
 
 	protected:
 		static void _bind_methods(CoreType & t);
@@ -27,31 +27,45 @@ namespace ism
 		{
 			m_name = STR(name);
 		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// MODULE
+	template <> class Handle<CoreModule> : public BaseHandle<CoreModule>
+	{
+		ISM_HANDLE(CoreModule);
+	
+	public:
+		Handle() = default;
+	
+		~Handle() = default;
 
 		template <class Func, class ... Extra
-		> CoreModule & def(cstring name, Func && func, Extra && ... extra)
+		> MODULE & def(cstring name, Func && func, Extra && ... extra)
 		{
 			CPP_FUNCTION cf({
 				FWD(func),
 				detail::name(name),
-				detail::scope(this),
+				detail::scope(ptr()),
 				detail::sibling(attr(name)),
 				FWD(extra)... });
 			attr(cf->name()) = cf;
 			return (*this);
 		}
 
-		MODULE def_submodule(cstring name, cstring doc = "")
-		{
-			return MODULE{};
-		}
-
 		template <class Name = cstring, class O = OBJECT
 		> void add_object(Name && name, O && value, bool overwrite = false)
 		{
-			auto i{ object_forward(FWD(name)) };
-			if (m_dict->contains(i) && !overwrite) { return; }
-			m_dict[i] = object_forward(FWD(value));
+			if (auto i{ object_forward(FWD(name)) }; overwrite || !m_ref->m_dict->contains(i))
+			{
+				m_ref->m_dict[i] = object_forward(FWD(value));
+			}
+		}
+
+		MODULE def_submodule(cstring name, cstring doc = "")
+		{
+			return MODULE{};
 		}
 
 		void reload()
@@ -65,7 +79,7 @@ namespace ism
 	{
 		DICT d{ get_default_interpreter()->modules };
 		auto i{ object_forward(name) };
-		if (d->contains(i)) { return nullptr; }
+		if (d.contains(i)) { return nullptr; }
 		else { return d[i] = MODULE({ name }); }
 	}
 
@@ -73,7 +87,7 @@ namespace ism
 	{
 		DICT d{ get_default_interpreter()->modules };
 		auto i{ object_forward(name) };
-		if (!d->contains(i)) { return nullptr; }
+		if (!d.contains(i)) { return nullptr; }
 		else { return d[i]; }
 	}
 

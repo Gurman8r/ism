@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API MainLoop : public Super
 	{
-		ISM_SUPER_CLASS(MainLoop, Super);
+		ISM_SUPER(MainLoop, Super);
 
 	private:
 		Any m_startup_script;

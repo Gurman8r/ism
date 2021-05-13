@@ -1,4 +1,3 @@
-#include <core/api/object/capsule_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -8,12 +7,12 @@ using namespace ism;
 static GetSetDef capsule_getsets[] =
 {
 	{ "__name__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return STR(CAPSULE(self)->get_name()); },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return CAPSULE(self)->set_name(***STR(value)), Error_None; },
+		(getter)[](OBJECT self, void *) -> OBJECT { return STR(CAPSULE(self).get_name()); },
+		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return CAPSULE(self).set_name(***STR(value)), Error_None; },
 	},
 	{ "__doc__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return STR(CAPSULE(self)->get_doc()); },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return CAPSULE(self)->set_doc(***STR(value)), Error_None; },
+		(getter)[](OBJECT self, void *) -> OBJECT { return STR(CAPSULE(self).get_doc()); },
+		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return CAPSULE(self).set_doc(***STR(value)), Error_None; },
 	},
 	{ /* sentinal */ },
 };

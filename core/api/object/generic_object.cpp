@@ -1,4 +1,3 @@
-#include <core/api/object/generic_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;

@@ -21,7 +21,7 @@ namespace ism::detail::initimpl
 		{
 			return c.def("__init__", [](Handle<Class> v_h, Args ... args)
 			{
-				v_h->holder().reset(memnew(Cpp<Class>{ std::forward<Args>(args)... }));
+				v_h->holder().reset(memnew(Cpp<Class>{ FWD(args)... }));
 			}
 			, is_constructor{}, FWD(extra)...);
 		}
@@ -44,7 +44,7 @@ namespace ism::detail::initimpl
 		{
 			return c.def("__init__", [func = std::move(class_factory)](Handle<Class> v_h, Args ... args)
 			{
-				v_h->holder().reset(func(std::forward<Args>(args)...));
+				v_h->holder().reset(func(FWD(args)...));
 			}
 			, is_constructor{}, FWD(extra)...);
 		}

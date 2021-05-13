@@ -1,4 +1,3 @@
-#include <core/api/object/list_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -12,7 +11,7 @@ DECLEXPR(CoreList::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_flags = TypeFlags_Default | TypeFlags_List_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
-	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)LIST(o)->size(); };
+	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)LIST(o).size(); };
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreList *)ptr); };

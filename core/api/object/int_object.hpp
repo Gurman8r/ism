@@ -15,7 +15,7 @@ namespace ism
 
 	class NODISCARD ISM_API CoreInt : public CoreObject
 	{
-		ISM_OBJECT_DEFAULT(CoreInt, CoreObject);
+		ISM_OBJECT(CoreInt, CoreObject);
 
 	protected:
 		static void _bind_methods(CoreType & t);
@@ -27,7 +27,7 @@ namespace ism
 		using storage_type = decltype(m_int);
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
-		> explicit CoreInt(TYPE const & t, T v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
+		> explicit CoreInt(CoreType const * t, T v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
 		> CoreInt(T v) : base_type{ &ob_type_static }, m_int{ static_cast<storage_type>(v) } {}
@@ -38,12 +38,27 @@ namespace ism
 		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
 		> NODISCARD operator T() const & { return static_cast<T>(m_int); }
 
-		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_int); }
+		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
 	public:
 		static CoreInt g_true; // global true
 
 		static CoreInt g_false; // global false
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// INT
+	template <> class Handle<CoreInt> : public BaseHandle<CoreInt>
+	{
+		ISM_HANDLE(CoreInt);
+
+	public:
+		Handle() = default;
+
+		~Handle() = default;
+
+		using storage_type = CoreInt::storage_type;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

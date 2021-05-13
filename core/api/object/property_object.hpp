@@ -23,7 +23,7 @@ namespace ism
 
 	class NODISCARD ISM_API CoreProperty : public CoreObject
 	{
-		ISM_OBJECT_DEFAULT(CoreProperty, CoreObject);
+		ISM_OBJECT(CoreProperty, CoreObject);
 
 	protected:
 		static void _bind_methods(CoreType & t);
@@ -41,11 +41,28 @@ namespace ism
 			m_property.closure = closure;
 		}
 
-		NODISCARD operator storage_type * () const { return const_cast<storage_type *>(&m_property); }
+		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_property); }
 
-		NODISCARD OBJECT get(OBJECT o) const { return m_property.get(o); }
+		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_property); }
+	};
 
-		Error set(OBJECT o, OBJECT v) const { return m_property.set(o, v), Error_None; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// PROPERTY
+	template <> class Handle<CoreProperty> : public BaseHandle<CoreProperty>
+	{
+		ISM_HANDLE(CoreProperty);
+
+	public:
+		Handle() = default;
+
+		~Handle() = default;
+
+		using storage_type = CoreProperty::storage_type;
+
+		NODISCARD OBJECT get(OBJECT o) const { return (*m_ref)->get(o); }
+
+		Error set(OBJECT o, OBJECT v) const { return (*m_ref)->set(o, v), Error_None; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

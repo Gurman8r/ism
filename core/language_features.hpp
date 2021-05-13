@@ -230,6 +230,12 @@
 #	define NEVER_INLINE
 #endif
 
+// novtable
+#ifdef ISM_CC_MSVC
+#define NOVTABLE __declspec(novtable)
+#else
+#define NOVTABLE
+#endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 // DISABLE ANNOYING COMPILER WARNINGS

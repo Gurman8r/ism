@@ -43,8 +43,7 @@ namespace ism
 
 	void test_main(int32_t argc, char * argv[])
 	{
-		MODULE m{ create_extension_module("__main__") };
-		(**m)
+		MODULE m = create_extension_module("__main__")
 			.def("hello", hello)
 			.def("say", say)
 			.def("get_int", get_int)
@@ -66,8 +65,8 @@ namespace ism
 		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
 
 		LIST list = m.attr("a") = LIST(CoreList{});
-		list->append("IT WORKS");
-		MAIN_PRINT("%s\n", STR(list[0])->c_str());
+		list.append("IT WORKS");
+		MAIN_PRINT("%s\n", STR(list[0]).c_str());
 
 		OBJECT d{ DICT(CoreDict{}) };
 		d["ABC"] = 42;
@@ -76,7 +75,7 @@ namespace ism
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
 		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<std::string>().c_str());
 		typeof(d).attr("__name__") = "changed";
-		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__"))->c_str());
+		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__")).c_str());
 
 		MAIN_PRINT("\n");
 	}

@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API CoreFunction : public CoreObject
 	{
-		ISM_OBJECT_DEFAULT(CoreFunction, CoreObject);
+		ISM_OBJECT(CoreFunction, CoreObject);
 
 	protected:
 		static void _bind_methods(CoreType & t);
@@ -19,13 +19,26 @@ namespace ism
 		vectorcallfunc m_vectorcall{};
 
 	public:
-		explicit CoreFunction(TYPE const & t, vectorcallfunc vectorcall) : base_type{ t }, m_vectorcall{ vectorcall } {}
+		explicit CoreFunction(CoreType const * t, vectorcallfunc vectorcall) : base_type{ t }, m_vectorcall{ vectorcall } {}
 
 		explicit CoreFunction(vectorcallfunc vectorcall) : self_type{ &ob_type_static, vectorcall } {}
 
 		NODISCARD vectorcallfunc get_vectorcall() const { return m_vectorcall; }
 
 		void set_vectorcall(vectorcallfunc vectorcall) { m_vectorcall = vectorcall; }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// FUNCTION
+	template <> class Handle<CoreFunction> : public BaseHandle<CoreFunction>
+	{
+		ISM_HANDLE(CoreFunction);
+
+	public:
+		Handle() = default;
+
+		~Handle() = default;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

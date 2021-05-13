@@ -1,4 +1,3 @@
-#include <core/api/object/type_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -177,7 +176,7 @@ bool CoreType::ready()
 
 	if (tp_base) { inherit_special(*tp_base); }
 
-	if (LIST mro{ LIST(tp_mro) }; mro && !mro->empty())
+	if (LIST mro{ LIST(tp_mro) }; mro && !mro.empty())
 	{
 		for (TYPE b : ***mro)
 		{
@@ -204,17 +203,19 @@ bool CoreType::ready()
 
 	for (TYPE b : ***LIST(tp_bases))
 	{
-		b->add_subclass(handle());
+		b->add_subclass(this);
 	}
 
 	return enable_feature(TypeFlags_Ready), true;
 }
 
-bool CoreType::add_subclass(TYPE const & type)
+bool CoreType::add_subclass(CoreType const * type)
 {
 	if (!tp_subclasses) { tp_subclasses = DICT(CoreDict{}); }
 
-	return (***DICT(tp_subclasses)).insert_or_assign(type, type).second;
+	//return (***DICT(tp_subclasses)).insert_or_assign(type, type).second;
+
+	return false;
 }
 
 bool CoreType::mro_internal(OBJECT * old_mro)

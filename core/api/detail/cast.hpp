@@ -179,7 +179,7 @@ namespace ism::detail
 			}
 			else if (isinstance<CAPSULE>(src))
 			{
-				value = CAPSULE(src)->get_pointer();
+				value = CAPSULE(src).get_pointer();
 				return true;
 			}
 			else
@@ -487,12 +487,12 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class O> template <class T> inline T Handle<O>::cast() const &
+	template <class O> template <class T> inline T BaseHandle<O>::cast() const &
 	{
 		if constexpr (!std::is_void_v<T>) { return detail::cast<T>(*this); }
 	}
 
-	template <class O> template <class T> inline T Handle<O>::cast() &&
+	template <class O> template <class T> inline T BaseHandle<O>::cast() &&
 	{
 		if constexpr (!std::is_void_v<T>) { return detail::cast<T>(std::move(*this)); }
 	}

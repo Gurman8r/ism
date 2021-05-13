@@ -57,7 +57,7 @@ namespace ism::detail
 		}
 		else if (isinstance<STR>(name))
 		{
-			return impl_getattr_string(o, STR(name)->c_str());
+			return impl_getattr_string(o, STR(name).c_str());
 		}
 		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
@@ -77,7 +77,7 @@ namespace ism::detail
 		}
 		else if (isinstance<STR>(name))
 		{
-			return impl_setattr_string(o, STR(name)->c_str(), v);
+			return impl_setattr_string(o, STR(name).c_str(), v);
 		}
 		else if (OBJECT * dictptr{ get_dict_ptr(o) }; dictptr && *dictptr)
 		{
