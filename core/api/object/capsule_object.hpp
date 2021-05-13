@@ -12,6 +12,8 @@ namespace ism
 	{
 		struct NODISCARD capsule_record
 		{
+			DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(capsule_record);
+
 			void * pointer{}, * context{};
 
 			destructor closure{};
@@ -30,55 +32,66 @@ namespace ism
 		static void _bind_class(CoreType & t);
 
 	public:
-		detail::capsule_record m_capsule{};
+		void * m_pointer{}, * m_context{};
 
-		using storage_type = decltype(m_capsule);
+		destructor m_closure{};
 
+		String m_name{}, m_doc{};
+
+	public:
 		virtual ~CoreCapsule() override
 		{
-			if (m_capsule.closure) { m_capsule.closure((CoreObject *)m_capsule.pointer); }
+			if (m_closure) { m_closure((CoreObject *)m_pointer); }
 		}
 
 		CoreCapsule(nullptr_t) : self_type{}
 		{
-			m_capsule = { nullptr, nullptr, nullptr };
+			m_pointer = nullptr;
+			m_context = nullptr;
+			m_closure = nullptr;
 		}
 
 		CoreCapsule(void const * value, destructor closure = nullptr) : self_type{}
 		{
-			m_capsule = { (void *)value, nullptr, closure };
+			m_pointer = (void *)value;
+			m_context = nullptr;
+			m_closure = closure;
 		}
 
 		CoreCapsule(void const * value, void(*closure)(void *)) : self_type{}
 		{
-			m_capsule = { (void *)value, nullptr, (destructor)[](CoreObject * o)
+			m_pointer = (void *)value;
+			m_context = nullptr;
+			m_closure = (destructor)[](CoreObject * o)
 			{
 				if (auto self{ super_cast<self_type>(o) })
 				{
-					auto closure{ reinterpret_cast<void(*)(void *)>(self->m_capsule.context) };
+					auto closure{ reinterpret_cast<void(*)(void *)>(self->m_context) };
 
-					closure(self->m_capsule.pointer);
+					closure(self->m_pointer);
 				}
-			} };
+			};
 		}
 
 		CoreCapsule(void(*closure)()) : self_type{}
 		{
-			m_capsule = { (void *)closure, nullptr, (destructor)[](CoreObject * o)
+			m_pointer = (void *)closure;
+			m_context = nullptr;
+			m_closure = (destructor)[](CoreObject * o)
 			{
 				if (auto self{ super_cast<self_type>(o) })
 				{
-					auto closure{ reinterpret_cast<void(*)()>(self->m_capsule.pointer) };
+					auto closure{ reinterpret_cast<void(*)()>(self->m_pointer) };
 
 					closure();
 				}
-			} };
+			};
 		}
-
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_capsule); }
-
-		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_capsule); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <> struct DefaultDelete<CoreCapsule> : DefaultDelete<CoreObject> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -91,12 +104,10 @@ namespace ism
 
 		~Handle() = default;
 
-		using storage_type = CoreCapsule::storage_type;
-
 		template <class T = void
-		> NODISCARD auto get_pointer() const { return static_cast<T *>((*m_ref)->pointer); }
+		> NODISCARD auto get_pointer() const { return static_cast<T *>((*m_ref).m_pointer); }
 
-		void set_pointer(void const * value) { (*m_ref)->pointer = (void *)value; }
+		void set_pointer(void const * value) { (*m_ref).m_pointer = (void *)value; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -42,6 +42,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <> struct DefaultDelete<CoreDict> : DefaultDelete<CoreObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <> class Handle<CoreDict> : public BaseHandle<CoreDict>
 	{
 		ISM_HANDLE(CoreDict);
@@ -57,26 +61,35 @@ namespace ism
 
 		using const_iterator = CoreDict::const_iterator;
 
-		NODISCARD bool empty() const noexcept { return (*m_ref)->empty(); }
+		NODISCARD bool empty() const { return (**m_ref).empty(); }
 
-		NODISCARD auto size() const noexcept { return (*m_ref)->size(); }
+		NODISCARD auto size() const { return (**m_ref).size(); }
 
-		template <class Index = OBJECT
-		> void erase(Index && i) const { (*m_ref)->erase(object_or_cast(FWD(i))); }
-
-		template <class Index = OBJECT
-		> bool contains(Index && i) const { return end() != (*m_ref)->find(object_or_cast(FWD(i))); }
+		void reserve(size_t count) const { (**m_ref).reserve(count); }
 
 		template <class Index = OBJECT
-		> auto find(Index && i) const { return (*m_ref)->find(object_or_cast(FWD(i))); }
+		> void erase(Index && i) const { (**m_ref).erase(object_or_cast(FWD(i))); }
+
+		template <class Index = OBJECT
+		> bool contains(Index && i) const { return end() != (**m_ref).find(object_or_cast(FWD(i))); }
+
+		template <class Index = OBJECT
+		> auto find(Index && i) const { return (**m_ref).find(object_or_cast(FWD(i))); }
 
 		template <class Index = OBJECT, class Value = OBJECT
-		> void insert(Index && i, Value && v) const { (*m_ref)->try_emplace(object_or_cast(FWD(i)), object_or_cast(FWD(v))); }
+		> void insert(Index && i, Value && v) const { (**m_ref).try_emplace(object_or_cast(FWD(i)), object_or_cast(FWD(v))); }
 
 		template <class Index = OBJECT
 		> auto get(Index && i) const -> OBJECT
 		{
 			return (**m_ref)[object_or_cast(FWD(i))];
+		}
+
+		template <class Index = OBJECT
+		> auto get(Index && i, OBJECT const & defval) const -> OBJECT
+		{
+			OBJECT name{ object_or_cast(FWD(i)) };
+			return name && contains(name) ? (**m_ref)[name] : defval;
 		}
 
 		template <class Index = OBJECT, class Value = OBJECT
@@ -86,17 +99,17 @@ namespace ism
 		}
 
 	public:
-		NODISCARD auto begin() noexcept -> iterator { return (*m_ref)->begin(); }
+		NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }
 
-		NODISCARD auto begin() const noexcept -> const_iterator { return (*m_ref)->begin(); }
+		NODISCARD auto begin() const -> const_iterator { return (**m_ref).begin(); }
 
-		NODISCARD auto cbegin() const noexcept -> const_iterator { return (*m_ref)->cbegin(); }
+		NODISCARD auto cbegin() const -> const_iterator { return (**m_ref).cbegin(); }
 
-		NODISCARD auto end() noexcept -> iterator { return (*m_ref)->end(); }
+		NODISCARD auto end() -> iterator { return (**m_ref).end(); }
 
-		NODISCARD auto end() const noexcept -> const_iterator { return (*m_ref)->end(); }
+		NODISCARD auto end() const -> const_iterator { return (**m_ref).end(); }
 
-		NODISCARD auto cend() const noexcept -> const_iterator { return (*m_ref)->cend(); }
+		NODISCARD auto cend() const -> const_iterator { return (**m_ref).cend(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

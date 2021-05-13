@@ -160,8 +160,8 @@ namespace ism
 	ALIAS(setattrfunc)		Error(*)(OBJECT self, cstring name, OBJECT value);
 	ALIAS(getattrofunc)		OBJECT(*)(OBJECT self, OBJECT name);
 	ALIAS(setattrofunc)		Error(*)(OBJECT self, OBJECT name, OBJECT value);
-	ALIAS(descrgetfunc)		OBJECT(*)(OBJECT attr, OBJECT self, OBJECT type);
-	ALIAS(descrsetfunc)		Error(*)(OBJECT attr, OBJECT self, OBJECT type);
+	ALIAS(descrgetfunc)		OBJECT(*)(OBJECT self, OBJECT obj, OBJECT type);
+	ALIAS(descrsetfunc)		Error(*)(OBJECT self, OBJECT obj, OBJECT value);
 
 	ALIAS(cmpfunc)			int32_t(*)(OBJECT a, OBJECT b);
 	ALIAS(hashfunc)			hash_t(*)(OBJECT o);

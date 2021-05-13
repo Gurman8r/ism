@@ -20,8 +20,14 @@ DECLEXPR(CoreFloat::ob_type_static) = COMPOSE(CoreType, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<FLT>(v)) return util::compare(***FLT(o), ***FLT(v));
-		return util::compare(o.ptr(), v.ptr());
+		if (isinstance<FLT>(v))
+		{
+			return util::compare(***FLT(o), ***FLT(v));
+		}
+		else
+		{
+			return util::compare(*o, *v);
+		}
 	};
 };
 

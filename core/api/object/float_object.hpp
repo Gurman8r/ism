@@ -37,6 +37,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <> struct DefaultDelete<CoreFloat> : DefaultDelete<CoreObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <> class Handle<CoreFloat> : public BaseHandle<CoreFloat>
 	{
 		ISM_HANDLE(CoreFloat);
@@ -47,6 +51,12 @@ namespace ism
 		~Handle() = default;
 
 		using storage_type = CoreFloat::storage_type;
+
+		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
+		> Handle(T v) { revalue(v); }
+
+		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
+		> operator T () const { return (T)(**m_ref); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

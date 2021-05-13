@@ -18,8 +18,14 @@ DECLEXPR(CoreList::ob_type_static) = COMPOSE(CoreType, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<LIST>(v)) return util::compare(***LIST(o), ***LIST(v));
-		return util::compare(o.ptr(), v.ptr());
+		if (isinstance<LIST>(v))
+		{
+			return util::compare(***LIST(o), ***LIST(v));
+		}
+		else
+		{
+			return util::compare(*o, *v);
+		}
 	};
 };
 

@@ -106,7 +106,7 @@ namespace ism
 	public:
 		void unref()
 		{
-			if (dec_ref()) { memdelete(m_ref); }
+			if (dec_ref()) { DefaultDelete<T>{}(m_ref); }
 			m_ref = nullptr;
 		}
 
@@ -139,6 +139,13 @@ namespace ism
 			r.m_ref = super_cast<T>(other);
 			ref(r);
 			r.m_ref = nullptr;
+		}
+
+		T * release()
+		{
+			T * temp{ m_ref };
+			m_ref = nullptr;
+			return temp;
 		}
 
 	public:

@@ -12,10 +12,6 @@ namespace ism
 	{
 		struct NODISCARD property_record
 		{
-			OBJECT get{};
-			OBJECT set{};
-			void * closure{};
-			String name{}, doc{};
 		};
 	}
 
@@ -29,21 +25,23 @@ namespace ism
 		static void _bind_methods(CoreType & t);
 
 	public:
-		detail::property_record m_property{};
+		OBJECT m_get{};
+		OBJECT m_set{};
+		void * m_closure{};
+		String m_name{}, m_doc{};
 
-		using storage_type = decltype(m_property);
-
+	public:
 		CoreProperty(OBJECT fget, OBJECT fset, void * closure = nullptr) : base_type{ &ob_type_static }
 		{
-			m_property.get = fget;
-			m_property.set = fset;
-			m_property.closure = closure;
+			m_get = fget;
+			m_set = fset;
+			m_closure = closure;
 		}
-
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_property); }
-
-		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_property); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <> struct DefaultDelete<CoreProperty> : DefaultDelete<CoreObject> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -56,11 +54,9 @@ namespace ism
 
 		~Handle() = default;
 
-		using storage_type = CoreProperty::storage_type;
+		NODISCARD OBJECT get(OBJECT o) const { return (*m_ref).m_get(o); }
 
-		NODISCARD OBJECT get(OBJECT o) const { return (*m_ref)->get(o); }
-
-		Error set(OBJECT o, OBJECT v) const { return (*m_ref)->set(o, v), Error_None; }
+		Error set(OBJECT o, OBJECT v) const { return (*m_ref).m_set(o, v), Error_None; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

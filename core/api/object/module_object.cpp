@@ -18,13 +18,16 @@ DECLEXPR(CoreModule::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_getattro = (getattrofunc)detail::impl_getattr_object;
 	t.tp_setattro = (setattrofunc)detail::impl_setattr_object;
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT value)
+	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<MODULE>(value))
+		if (isinstance<MODULE>(v))
 		{
-			return (self.ptr() == value.ptr()) ? 0 : util::compare(MODULE(self)->m_name, MODULE(value)->m_name);
+			return (*o == *v) ? 0 : util::compare(MODULE(o)->m_name, MODULE(v)->m_name);
 		}
-		return util::compare(self.ptr(), value.ptr());
+		else
+		{
+			return util::compare(*o, *v);
+		}
 	};
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
@@ -39,14 +42,14 @@ void CoreModule::_bind_methods(CoreType & t)
 		return MODULE(self->m_dict)->contains(value);
 	});
 
-	//t.attr("__dict__") = PROPERTY({
-	//	CPP_FUNCTION([](MODULE self) { return self->m_dict; }),
-	//	nullptr
-	//});
-	//
 	//t.attr("__name__") = PROPERTY({
 	//	CPP_FUNCTION([](MODULE self) { return self->m_name; }),
 	//	CPP_FUNCTION([](MODULE self, STR value) { self->m_name = value; })
+	//});
+	//
+	//t.attr("__doc__") = PROPERTY({
+	//	CPP_FUNCTION([](MODULE self) { return self->m_doc; }),
+	//	CPP_FUNCTION([](MODULE self, STR value) { self->m_doc = value; })
 	//});
 }
 

@@ -32,6 +32,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <> struct DefaultDelete<CoreGeneric> : DefaultDelete<CoreObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <> class Handle<CoreGeneric> : public BaseHandle<CoreGeneric>
 	{
 		ISM_HANDLE(CoreGeneric);

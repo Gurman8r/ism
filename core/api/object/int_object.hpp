@@ -47,6 +47,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <> struct DefaultDelete<CoreInt> : DefaultDelete<CoreObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <> class Handle<CoreInt> : public BaseHandle<CoreInt>
 	{
 		ISM_HANDLE(CoreInt);
@@ -57,6 +61,12 @@ namespace ism
 		~Handle() = default;
 
 		using storage_type = CoreInt::storage_type;
+
+		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
+		> Handle(T v) { revalue(v); }
+
+		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
+		> operator T () const { return (T)(**m_ref); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

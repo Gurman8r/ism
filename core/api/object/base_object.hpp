@@ -12,7 +12,7 @@ namespace ism
 	> class ObjectAPI : _API_Tag
 	{
 	private:
-		NODISCARD auto derived() const noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
+		NODISCARD auto derived() const & noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
 
 	public:
 		NODISCARD auto handle() const & noexcept
@@ -27,33 +27,40 @@ namespace ism
 			}
 		}
 
-		template <class I = cstring
-		> NODISCARD auto attr(I && i) const { return AttrAccessor<I>{ handle(), FWD(i) }; }
+		template <class Index = cstring
+		> NODISCARD auto attr(Index && i) const { return AttrAccessor<Index>{ handle(), FWD(i) }; }
 
-		template <class I = cstring
-		> NODISCARD auto operator[](I && i) const { return ItemAccessor<I>{ handle(), FWD(i) }; }
+		template <class Index = cstring
+		> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ handle(), FWD(i) }; }
 
-		template <class V = OBJECT
-		> NODISCARD bool contains(V && v) const { return attr("__contains__")(handle(), FWD(v)); }
+		template <class Value = OBJECT
+		> NODISCARD bool contains(Value && v) const { return attr("__contains__")(handle(), FWD(v)); }
 
 		template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
 		> OBJECT operator()(Args && ... args) const; // call.hpp
 
+		NODISCARD auto doc() const { return attr("__doc__"); }
+
 		NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
+		
 		NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
+		
 		NODISCARD bool is(ObjectAPI const & o) const noexcept { return derived().ptr() == o.derived().ptr(); }
 		
 		NODISCARD bool equal_to(ObjectAPI const & o) const noexcept { return compare(o) == 0; }
+		
 		NODISCARD bool not_equal_to(ObjectAPI const & o) const noexcept { return compare(o) != 0; }
+		
 		NODISCARD bool less(ObjectAPI const & o) const noexcept { return compare(o) < 0; }
+		
 		NODISCARD bool less_equal(ObjectAPI const & o) const noexcept { return compare(o) <= 0; }
+		
 		NODISCARD bool greater(ObjectAPI const & o) const noexcept { return compare(o) > 0; }
+		
 		NODISCARD bool greater_equal(ObjectAPI const & o) const noexcept { return compare(o) >= 0; }
 
-		NODISCARD auto doc() const { return attr("__doc__"); }
-
 	private:
-		NODISCARD auto compare(ObjectAPI const & o) const -> int32_t
+		NODISCARD auto compare(ObjectAPI const & o) const
 		{
 			if (TYPE t{ typeof(derived().ptr()) }; t && t->tp_compare)
 			{
@@ -97,21 +104,7 @@ namespace ism
 	template <class T> class BaseHandle : public ObjectAPI<Handle<T>>, public Ref<T>
 	{
 	public:
-		~BaseHandle()
-		{
-			if (dec_ref())
-			{
-				if (TYPE t{ typeof(m_ref) }; t && t->tp_free)
-				{
-					t->tp_free(m_ref);
-				}
-				else
-				{
-					memdelete(m_ref);
-				}
-			}
-			m_ref = nullptr;
-		}
+		~BaseHandle() = default;
 
 		template <class T> NODISCARD T cast() const &;
 
@@ -232,10 +225,10 @@ namespace ism
 
 		virtual CoreType * _get_typev() const { return get_type_static(); }
 
-		explicit CoreObject(CoreType const * t) : base_type{}, ob_type{ (CoreType *)t } {}
+		explicit CoreObject(CoreType const * t) noexcept : ob_type{ const_cast<CoreType *>(t) } {}
 
 	public:
-		virtual ~CoreObject() override {}
+		virtual ~CoreObject() override { ob_type = nullptr; }
 
 		static void initialize_class();
 
@@ -254,6 +247,23 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <> struct DefaultDelete<CoreObject>
+	{
+		template <class U> void operator()(U * ptr) const
+		{
+			if (TYPE t{ typeof(ptr) }; t && t->tp_free)
+			{
+				t->tp_free(ptr);
+			}
+			else
+			{
+				memdelete(ptr);
+			}
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <> class Handle<CoreObject> : public BaseHandle<CoreObject>
 	{
 		ISM_HANDLE(CoreObject);
@@ -266,7 +276,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object common
+// object class
 #define ISM_OBJECT_CLASS(m_class, m_inherits)										\
 	ISM_SUPER(m_class, m_inherits)													\
 private:																			\
@@ -311,6 +321,9 @@ public:																				\
 		return &m_class::ob_type_static;											\
 	}																				\
 																					\
+public:																				\
+	explicit m_class(CoreType const * t) noexcept : m_inherits{ t } {}				\
+																					\
 private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -319,7 +332,6 @@ private:
 #define ISM_OBJECT_CVT(m_class, m_inherits)						\
 	ISM_OBJECT_CLASS(m_class, m_inherits)						\
 public:															\
-	explicit m_class(CoreType const * t) : m_inherits{ t } {}	\
 	m_class(m_class const &) = default;							\
 	m_class(m_class &&) noexcept = default;						\
 	m_class & operator=(m_class const &) = default;				\
@@ -329,7 +341,7 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object default
+// object common
 #define ISM_OBJECT(m_class, m_inherits)						\
 	ISM_OBJECT_CVT(m_class, m_inherits);					\
 public:														\
@@ -351,7 +363,7 @@ namespace ism
 	public:
 		using key_type = typename Policy::key_type;
 
-		Accessor(OBJECT obj, key_type && key) : m_obj{ obj }, m_key{ FWD(key) } {}
+		Accessor(OBJECT obj, key_type key) : m_obj{ obj }, m_key{ key } {}
 		Accessor(Accessor const &) = default;
 		Accessor(Accessor &&) noexcept = default;
 
@@ -394,22 +406,22 @@ namespace ism
 	{
 		using key_type = T;
 
-		template <class O = OBJECT, class I = T
-		> static OBJECT get(O && o, I && i) { return ism::getattr(FWD(o), FWD(i)); }
+		template <class O = OBJECT, class Index = T
+		> static OBJECT get(O && o, Index && i) { return ism::getattr(FWD(o), FWD(i)); }
 
-		template <class O = OBJECT, class I = T, class V = OBJECT
-		> static void set(O && o, I && i, V && v) { ism::setattr(FWD(o), FWD(i), FWD(v)); }
+		template <class O = OBJECT, class Index = T, class Value = OBJECT
+		> static void set(O && o, Index && i, Value && v) { ism::setattr(FWD(o), FWD(i), FWD(v)); }
 	};
 
 	template <class T> struct accessor_policies::Item
 	{
 		using key_type = T;
 
-		template <class O = OBJECT, class I = T
-		> static OBJECT get(O && o, I && i) { return ism::getitem(FWD(o), FWD(i)); }
+		template <class O = OBJECT, class Index = T
+		> static OBJECT get(O && o, Index && i) { return ism::getitem(FWD(o), FWD(i)); }
 
-		template <class O = OBJECT, class I = T, class V = OBJECT
-		> static void set(O && o, I && i, V && v) { ism::setitem(FWD(o), FWD(i), FWD(v)); }
+		template <class O = OBJECT, class Index = T, class Value = OBJECT
+		> static void set(O && o, Index && i, Value && v) { ism::setitem(FWD(o), FWD(i), FWD(v)); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -477,7 +489,7 @@ namespace ism
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD bool isinstance(OBJECT const & o) noexcept
 	{
-		return typeof(o).is(typeof<T>());
+		return typeof(o) == typeof<T>();
 	}
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
@@ -489,7 +501,7 @@ namespace ism
 	template <class A, class B = A
 	> NODISCARD bool isinstance(A const & a, B const & b)
 	{
-		return typeof(a).is(isinstance<TYPE>(b) ? b : typeof(b));
+		return typeof(a) == (isinstance<TYPE>(b) ? b : typeof(b));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

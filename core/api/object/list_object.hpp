@@ -42,6 +42,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <> struct DefaultDelete<CoreList> : DefaultDelete<CoreObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <> class Handle<CoreList> : public BaseHandle<CoreList>
 	{
 		ISM_HANDLE(CoreList);
@@ -57,26 +61,26 @@ namespace ism
 
 		using const_iterator = CoreList::const_iterator;
 
-		NODISCARD auto data() const noexcept { return (*m_ref)->data(); }
+		NODISCARD auto data() const { return (**m_ref).data(); }
 
-		NODISCARD bool empty() const noexcept { return (*m_ref)->empty(); }
+		NODISCARD bool empty() const { return (**m_ref).empty(); }
 
-		NODISCARD auto size() const noexcept { return (*m_ref)->size(); }
+		NODISCARD auto size() const { return (**m_ref).size(); }
 
-		NODISCARD auto front() const { return (*m_ref)->front(); }
+		NODISCARD auto front() const { return (**m_ref).front(); }
 
-		NODISCARD auto back() const { return (*m_ref)->back(); }
+		NODISCARD auto back() const { return (**m_ref).back(); }
 
-		void reserve(size_t count) const { (*m_ref)->reserve(count); }
+		void reserve(size_t count) const { (**m_ref).reserve(count); }
 
-		void resize(size_t count) const { (*m_ref)->reserve(count); }
+		void resize(size_t count) const { (**m_ref).resize(count); }
 
-		void erase(size_t i) const { (*m_ref)->erase(begin() + i); }
+		void erase(size_t i) const { (**m_ref).erase(begin() + i); }
 
-		void erase(OBJECT const & i) const { (*m_ref)->erase(begin() + i.cast<size_t>()); }
+		void erase(OBJECT const & i) const { (**m_ref).erase(begin() + i.cast<size_t>()); }
 
 		template <class Value = OBJECT
-		> void append(Value && v) const { (*m_ref)->emplace_back(object_or_cast(FWD(v))); }
+		> void append(Value && v) const { (**m_ref).emplace_back(object_or_cast(FWD(v))); }
 
 		template <class Value = OBJECT
 		> bool contains(Value && v) const { return end() != std::find(begin(), end(), object_or_cast(FWD(v))); }
@@ -85,10 +89,10 @@ namespace ism
 		> auto find(Value && v) const { return std::find(begin(), end(), object_or_cast(FWD(v))); }
 
 		template <class Value = OBJECT
-		> void insert(size_t i, Value && v) const { (*m_ref)->insert(begin() + i, object_or_cast(FWD(v))); }
+		> void insert(size_t i, Value && v) const { (**m_ref).insert(begin() + i, object_or_cast(FWD(v))); }
 
 		template <class Value = OBJECT
-		> void insert(OBJECT const & i, Value && v) { (*m_ref)->insert(begin() + i.cast<size_t>(), object_or_cast(FWD(v))); }
+		> void insert(OBJECT const & i, Value && v) { (**m_ref).insert(begin() + i.cast<size_t>(), object_or_cast(FWD(v))); }
 
 		template <class Index = OBJECT
 		> auto get(Index && i) const -> OBJECT
@@ -117,17 +121,17 @@ namespace ism
 		}
 
 	public:
-		NODISCARD auto begin() noexcept -> iterator { return (*m_ref)->begin(); }
+		NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }
 
-		NODISCARD auto begin() const noexcept -> const_iterator { return (*m_ref)->begin(); }
+		NODISCARD auto begin() const -> const_iterator { return (**m_ref).begin(); }
 
-		NODISCARD auto cbegin() const noexcept -> const_iterator { return (*m_ref)->cbegin(); }
+		NODISCARD auto cbegin() const -> const_iterator { return (**m_ref).cbegin(); }
 
-		NODISCARD auto end() noexcept -> iterator { return (*m_ref)->end(); }
+		NODISCARD auto end() -> iterator { return (**m_ref).end(); }
 
-		NODISCARD auto end() const noexcept -> const_iterator { return (*m_ref)->end(); }
+		NODISCARD auto end() const -> const_iterator { return (**m_ref).end(); }
 
-		NODISCARD auto cend() const noexcept -> const_iterator { return (*m_ref)->cend(); }
+		NODISCARD auto cend() const -> const_iterator { return (**m_ref).cend(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -131,9 +131,9 @@ namespace ism::detail
 		{
 			if (!src) { return false; }
 
-			if (isinstance<FLT>(src)) { value = (_convt)(_ftype)(***FLT(src)); return true; }
+			if (isinstance<FLT>(src)) { value = (_convt)(_ftype)FLT(src); return true; }
 
-			if (isinstance<INT>(src)) { value = (_convt)(_itype)(***INT(src)); return true; }
+			if (isinstance<INT>(src)) { value = (_convt)(_itype)INT(src); return true; }
 
 			return false;
 		}
@@ -142,11 +142,11 @@ namespace ism::detail
 		{
 			if constexpr (std::is_floating_point_v<T>)
 			{
-				return FLT({ static_cast<_ftype>(src) });
+				return FLT(static_cast<_ftype>(src));
 			}
 			else
 			{
-				return INT({ static_cast<_itype>(src) });
+				return INT(static_cast<_itype>(src));
 			}
 		}
 
@@ -227,7 +227,7 @@ namespace ism::detail
 		NODISCARD bool load(OBJECT const & src, bool convert)
 		{
 			if (!src) { return false; }
-			value = ***STR(src);
+			value = (String)STR(src);
 			return true;
 		}
 

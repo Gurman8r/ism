@@ -38,26 +38,30 @@ namespace ism
 
 		CoreString(std::initializer_list<char> init) : self_type{ storage_type{ init.begin(), init.end() } } {}
 
-		template <class T> CoreString(Handle<T> const & o) noexcept : self_type{}
+		template <class T> CoreString(Handle<T> const & o) : self_type{}
 		{
 			if constexpr (std::is_same_v<T, self_type>)
 			{
-				m_string = ***o;
+				m_string = (String)o;
 			}
 			else if (isinstance<STR>(o))
 			{
-				m_string = ***STR(o);
+				m_string = (String)STR(o);
 			}
 			else if (TYPE t{ typeof(o) }; t && t->tp_str)
 			{
-				m_string = ***t->tp_str(o);
+				m_string = (String)t->tp_str(o);
 			}
 		}
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
-		
+
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <> struct DefaultDelete<CoreString> : DefaultDelete<CoreObject> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -76,37 +80,40 @@ namespace ism
 
 		using const_iterator = CoreString::const_iterator;
 
-		NODISCARD auto c_str() const noexcept { return (*m_ref)->c_str(); }
+		NODISCARD auto c_str() const { return (**m_ref).c_str(); }
 
-		NODISCARD auto data() const noexcept { return (*m_ref)->data(); }
+		NODISCARD auto data() const { return (**m_ref).data(); }
 
-		NODISCARD bool empty() const noexcept { return (*m_ref)->empty(); }
+		NODISCARD bool empty() const { return (**m_ref).empty(); }
 
-		NODISCARD auto size() const noexcept { return (*m_ref)->size(); }
+		NODISCARD auto size() const { return (**m_ref).size(); }
 
-		NODISCARD auto front() const { return (*m_ref)->front(); }
+		NODISCARD auto front() const { return (**m_ref).front(); }
 
-		NODISCARD auto back() const { return (*m_ref)->back(); }
+		NODISCARD auto back() const { return (**m_ref).back(); }
 
-		void reserve(size_t count) { (*m_ref)->reserve(count); }
+		void reserve(size_t count) { (**m_ref).reserve(count); }
 
-		void resize(size_t count) { (*m_ref)->reserve(count); }
+		void resize(size_t count) { (**m_ref).resize(count); }
 
-		void erase(size_t i) { (*m_ref)->erase(begin() + i); }
+		void erase(size_t i) { (**m_ref).erase(begin() + i); }
 
-		void erase(OBJECT const & i) { (*m_ref)->erase(begin() + i.cast<size_t>()); }
+		void erase(OBJECT const & i) { (**m_ref).erase(begin() + i.cast<size_t>()); }
 
-		NODISCARD auto begin() noexcept -> iterator { return (*m_ref)->begin(); }
+		NODISCARD operator storage_type () const { return m_ref ? (**m_ref) : String{}; }
 
-		NODISCARD auto begin() const noexcept -> const_iterator { return (*m_ref)->begin(); }
+	public:
+		NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }
 
-		NODISCARD auto cbegin() const noexcept -> const_iterator { return (*m_ref)->cbegin(); }
+		NODISCARD auto begin() const -> const_iterator { return (**m_ref).begin(); }
 
-		NODISCARD auto end() noexcept -> iterator { return (*m_ref)->end(); }
+		NODISCARD auto cbegin() const -> const_iterator { return (**m_ref).cbegin(); }
 
-		NODISCARD auto end() const noexcept -> const_iterator { return (*m_ref)->end(); }
+		NODISCARD auto end() -> iterator { return (**m_ref).end(); }
 
-		NODISCARD auto cend() const noexcept -> const_iterator { return (*m_ref)->cend(); }
+		NODISCARD auto end() const -> const_iterator { return (**m_ref).end(); }
+
+		NODISCARD auto cend() const -> const_iterator { return (**m_ref).cend(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

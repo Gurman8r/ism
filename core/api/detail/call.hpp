@@ -272,7 +272,6 @@ namespace ism::detail
 
 		Batch<OBJECT, bool> args{ func.argument_count };
 
-	public:
 		function_call & operator()(OBJECT const * argv, size_t argc)
 		{
 			size_t

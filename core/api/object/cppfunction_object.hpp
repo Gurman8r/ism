@@ -22,13 +22,13 @@ namespace ism
 
 		explicit CoreCppFunction(storage_type && value) noexcept : base_type{ &ob_type_static, dispatcher }, m_cppfunction{ std::move(value) } {}
 
-		template <class Func, class ... Extra
-		> CoreCppFunction(Func && f, Extra && ... extra) : self_type{ storage_type{ FWD(f), FWD(extra)... } } {}
+		template <class Func, class ... Extra> CoreCppFunction(Func && f, Extra && ... extra) : self_type{ storage_type{ FWD(f), FWD(extra)... } } {}
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_cppfunction); }
 
-		NODISCARD OBJECT name() const { return attr("__name__"); }
+		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_cppfunction); }
 
+	protected:
 		static OBJECT dispatcher(OBJECT callable, OBJECT const * argv, size_t argc)
 		{
 			if (!callable) { return nullptr; }
@@ -43,6 +43,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <> struct DefaultDelete<CoreCppFunction> : DefaultDelete<CoreObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <> class Handle<CoreCppFunction> : public BaseHandle<CoreCppFunction>
 	{
 		ISM_HANDLE(CoreCppFunction);
@@ -51,6 +55,10 @@ namespace ism
 		Handle() = default;
 	
 		~Handle() = default;
+
+		using storage_type = CoreCppFunction::storage_type;
+
+		NODISCARD OBJECT name() const { return attr("__name__"); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

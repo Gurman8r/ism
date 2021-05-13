@@ -31,6 +31,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <> struct DefaultDelete<CoreModule> : DefaultDelete<CoreObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <> class Handle<CoreModule> : public BaseHandle<CoreModule>
 	{
 		ISM_HANDLE(CoreModule);
@@ -49,7 +53,7 @@ namespace ism
 				detail::scope(ptr()),
 				detail::sibling(attr(name)),
 				FWD(extra)... });
-			attr(cf->name()) = cf;
+			attr(cf.name()) = cf;
 			return (*this);
 		}
 

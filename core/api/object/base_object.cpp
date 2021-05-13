@@ -30,6 +30,8 @@ DECLEXPR(CoreObject::ob_type_static) = COMPOSE(CoreType, t)
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreObject *)ptr); };
+
+	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -57,12 +59,12 @@ void ClassDB::add_class(StringName const & name, CoreType * type)
 
 bool ClassDB::class_exists(StringName const & class_name)
 {
-	return classes.contains<hash_t>(class_name.hash_code());
+	return classes.contains<hash_t>(hash(class_name));
 }
 
 TYPE ClassDB::class_type(StringName const & class_name)
 {
-	return classes.map_unchecked<hash_t, TYPE>(class_name.hash_code());
+	return classes.map_unchecked<hash_t, TYPE>(hash(class_name));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

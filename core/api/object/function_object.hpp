@@ -18,6 +18,7 @@ namespace ism
 	public:
 		vectorcallfunc m_vectorcall{};
 
+	public:
 		explicit CoreFunction(CoreType const * t, vectorcallfunc vectorcall) : base_type{ t }, m_vectorcall{ vectorcall } {}
 
 		explicit CoreFunction(vectorcallfunc vectorcall) : self_type{ &ob_type_static, vectorcall } {}
@@ -26,6 +27,10 @@ namespace ism
 
 		void set_vectorcall(vectorcallfunc vectorcall) { m_vectorcall = vectorcall; }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <> struct DefaultDelete<CoreFunction> : DefaultDelete<CoreObject> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

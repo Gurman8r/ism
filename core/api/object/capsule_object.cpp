@@ -22,13 +22,13 @@ DECLEXPR(CoreCapsule::ob_type_static) = COMPOSE(CoreType, t)
 void CoreCapsule::_bind_class(CoreType & t)
 {
 	t.attr("__name__") = PROPERTY({
-		CPP_FUNCTION([](CAPSULE self) { return self->m_capsule.name; }),
-		CPP_FUNCTION([](CAPSULE self, STR value) { self->m_capsule.name = value; })
+		CPP_FUNCTION([](CAPSULE self) { return self->m_name; }),
+		CPP_FUNCTION([](CAPSULE self, STR value) { self->m_name = value; })
 	});
 
 	t.attr("__doc__") = PROPERTY({
-		CPP_FUNCTION([](CAPSULE self) { return self->m_capsule.doc; }),
-		CPP_FUNCTION([](CAPSULE self, STR value) { self->m_capsule.doc = value; })
+		CPP_FUNCTION([](CAPSULE self) { return self->m_doc; }),
+		CPP_FUNCTION([](CAPSULE self, STR value) { self->m_doc = value; })
 	});
 }
 

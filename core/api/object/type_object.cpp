@@ -32,7 +32,7 @@ static GetSetDef type_getsets[] =
 	},
 	{ "__name__",
 		(getter)[](OBJECT self, void *) -> OBJECT { return STR(TYPE(self)->tp_name); },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_name = ***STR(value)), Error_None; },
+		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_name = (String)STR(value)), Error_None; },
 	},
 	{ "__qualname__",
 		(getter)[](OBJECT self, void *) -> OBJECT { return nullptr; },
@@ -52,7 +52,7 @@ static GetSetDef type_getsets[] =
 	},
 	{ "__doc__",
 		(getter)[](OBJECT self, void *) -> OBJECT { return STR(TYPE(self)->tp_doc); },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_doc = ***STR(value)), Error_None; },
+		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_doc = (String)STR(value)), Error_None; },
 	},
 	{ /* sentinal */ },
 };
@@ -112,8 +112,14 @@ DECLEXPR(CoreType::ob_type_static) = COMPOSE(CoreType, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<TYPE>(v)) return util::compare(TYPE(o)->tp_name, TYPE(v)->tp_name);
-		return util::compare(*o, *v);
+		if (isinstance<TYPE>(v))
+		{
+			return util::compare(TYPE(o)->tp_name, TYPE(v)->tp_name);
+		}
+		else
+		{
+			return util::compare(*o, *v);
+		}
 	};
 };
 
@@ -157,6 +163,22 @@ void CoreType::_bind_methods(CoreType & t)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+OBJECT CoreType::lookup(OBJECT name) const
+{
+	if (auto d{ DICT(tp_dict) }; !name || !d)
+	{
+		return nullptr;
+	}
+	else if (auto const it{ d.find(name) }; it != d.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
 
 bool CoreType::ready()
 {

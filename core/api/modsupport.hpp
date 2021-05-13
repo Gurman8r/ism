@@ -48,7 +48,7 @@ namespace ism
 				detail::is_method(this),
 				detail::sibling(attr(name)),
 				FWD(extra)... });
-			attr(cf->name()) = cf;
+			attr(cf.name()) = cf;
 			return (*this);
 		}
 	
@@ -73,7 +73,7 @@ namespace ism
 				detail::scope(this),
 				detail::sibling(attr(name)),
 				FWD(extra)... });
-			attr(cf->name()) = cf;
+			attr(cf.name()) = cf;
 			return (*this);
 		}
 	

@@ -16,10 +16,7 @@ DECLEXPR(CoreDict::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreDict *)ptr); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
-	{
-		return util::compare(o.ptr(), v.ptr());
-	};
+	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

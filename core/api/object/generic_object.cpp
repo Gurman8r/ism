@@ -13,10 +13,7 @@ DECLEXPR(CoreGeneric::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_dict_offset = offsetof(CoreGeneric, m_dict);
 	t.tp_vectorcall_offset = offsetof(CoreGeneric, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT value)
-	{
-		return util::compare(self.ptr(), value.ptr());
-	};
+	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreGeneric *)ptr); };
