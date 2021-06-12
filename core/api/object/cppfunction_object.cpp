@@ -1,6 +1,7 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -19,29 +20,29 @@ static GetSetDef cppfunction_getsets[] =
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreCppFunction::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(CppFunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "cpp_function";
-	t.tp_basicsize = sizeof(CoreCppFunction);
+	t.tp_basicsize = sizeof(CppFunctionObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall;
 	t.tp_base = typeof<FUNCTION>();
 
-	t.tp_vectorcall_offset = offsetof(CoreCppFunction, m_vectorcall);
+	t.tp_vectorcall_offset = offsetof(CppFunctionObject, m_vectorcall);
 
-	t.tp_getattr = (getattrfunc)detail::impl_getattr_string;
-	t.tp_setattr = (setattrfunc)detail::impl_setattr_string;
-	t.tp_getattro = (getattrofunc)detail::impl_getattr_object;
-	t.tp_setattro = (setattrofunc)detail::impl_setattr_object;
+	t.tp_getattr = (getattrfunc)api::impl_getattr_string;
+	t.tp_setattr = (setattrfunc)api::impl_setattr_string;
+	t.tp_getattro = (getattrofunc)api::impl_getattr_object;
+	t.tp_setattro = (setattrofunc)api::impl_setattr_object;
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreCppFunction *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((CppFunctionObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
 	t.tp_getsets = cppfunction_getsets;
 };
 
-void CoreCppFunction::_bind_methods(CoreType & t)
+void CppFunctionObject::_bind_methods(TypeObject & t)
 {
 	//t.attr("__name__") = PROPERTY({
 	//	CPP_FUNCTION([](CPP_FUNCTION self) { return self->m_cppfunction.name; }),

@@ -3,51 +3,41 @@
 
 #include <core/api/object/module_object.hpp>
 
-// generic
-namespace ism
+// generic object
+class ISM_API ism::api::GenericObject : public BaseObject
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	ISM_OBJECT(GenericObject, BaseObject);
 
-	class ISM_API CoreGeneric : public CoreObject
+protected:
+	static void _bind_methods(TypeObject & t);
+
+protected:
+	void def_property_static_impl(cstring name, OBJECT fget, OBJECT fset, api::function_record * rec_func)
 	{
-		ISM_OBJECT(CoreGeneric, CoreObject);
+		//bool const is_static{ rec_func && !(rec_func->is_method && rec_func->scope) };
+		//bool const has_doc{ rec_func && !rec_func->doc.empty() };
+		//OBJECT property{ is_static ? typeof<STATIC_PROPERTY>() : typeof<PROPERTY>() };
+		attr(name) = PROPERTY({ fget, fset, nullptr });
+	}
 
-	protected:
-		static void _bind_methods(CoreType & t);
+public:
+	DICT m_dict{ DictObject{} };
 
-	protected:
-		void def_property_static_impl(cstring name, OBJECT fget, OBJECT fset, detail::function_record * rec_func)
-		{
-			//bool const is_static{ rec_func && !(rec_func->is_method && rec_func->scope) };
-			//bool const has_doc{ rec_func && !rec_func->doc.empty() };
-			//OBJECT property{ is_static ? typeof<STATIC_PROPERTY>() : typeof<PROPERTY>() };
-			attr(name) = PROPERTY({ fget, fset, nullptr });
-		}
+	vectorcallfunc m_vectorcall{};
+};
 
-	public:
-		DICT m_dict{ CoreDict{} };
+// generic deleter
+template <> struct ism::DefaultDelete<ism::api::GenericObject> : DefaultDelete<ism::api::BaseObject> {};
 
-		vectorcallfunc m_vectorcall{};
-	};
+// generic handle
+template <> class ism::api::Handle<ism::api::GenericObject> : public BaseHandle<GenericObject>
+{
+	ISM_HANDLE(GenericObject);
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+public:
+	Handle() = default;
 
-	template <> struct DefaultDelete<CoreGeneric> : DefaultDelete<CoreObject> {};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// GENERIC
-	template <> class Handle<CoreGeneric> : public BaseHandle<CoreGeneric>
-	{
-		ISM_HANDLE(CoreGeneric);
-
-	public:
-		Handle() = default;
-
-		~Handle() = default;
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
+	~Handle() = default;
+};
 
 #endif // !_ISM_GENERIC_OBJECT_HPP_

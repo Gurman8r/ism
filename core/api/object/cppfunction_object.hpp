@@ -3,66 +3,56 @@
 
 #include <core/api/detail/initimpl.hpp>
 
-// cpp_function
-namespace ism
+// cppfunction object
+class NODISCARD ISM_API ism::api::CppFunctionObject : public FunctionObject
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	ISM_OBJECT(CppFunctionObject, FunctionObject);
 
-	class NODISCARD ISM_API CoreCppFunction : public CoreFunction
+protected:
+	static void _bind_methods(TypeObject & t);
+
+public:
+	api::function_record m_cppfunction{};
+
+	using storage_type = decltype(m_cppfunction);
+
+	explicit CppFunctionObject(storage_type && value) noexcept : base_type{ &ob_type_static, dispatcher }, m_cppfunction{ std::move(value) } {}
+
+	template <class Func, class ... Extra> CppFunctionObject(Func && f, Extra && ... extra) : self_type{ storage_type{ FWD(f), FWD(extra)... } } {}
+
+	NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_cppfunction); }
+
+	NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_cppfunction); }
+
+protected:
+	static OBJECT dispatcher(OBJECT callable, OBJECT const * argv, size_t argc)
 	{
-		ISM_OBJECT(CoreCppFunction, CoreFunction);
+		if (!callable) { return nullptr; }
 
-	protected:
-		static void _bind_methods(CoreType & t);
-
-	public:
-		detail::function_record m_cppfunction{};
-
-		using storage_type = decltype(m_cppfunction);
-
-		explicit CoreCppFunction(storage_type && value) noexcept : base_type{ &ob_type_static, dispatcher }, m_cppfunction{ std::move(value) } {}
-
-		template <class Func, class ... Extra> CoreCppFunction(Func && f, Extra && ... extra) : self_type{ storage_type{ FWD(f), FWD(extra)... } } {}
-
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_cppfunction); }
-
-		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_cppfunction); }
-
-	protected:
-		static OBJECT dispatcher(OBJECT callable, OBJECT const * argv, size_t argc)
-		{
-			if (!callable) { return nullptr; }
-
-			detail::function_record const & func{ **super_cast<CoreCppFunction>(*callable) };
+		api::function_record const & func{ **super_cast<CppFunctionObject>(*callable) };
 			
-			detail::function_call call{ func, (0 < argc ? argv[0] : nullptr) };
+		api::function_call call{ func, (0 < argc ? argv[0] : nullptr) };
 			
-			return func.impl(call(argv, argc));
-		}
-	};
+		return func.impl(call(argv, argc));
+	}
+};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// cppfunction deleter
+template <> struct ism::DefaultDelete<ism::api::CppFunctionObject> : DefaultDelete<ism::api::BaseObject> {};
 
-	template <> struct DefaultDelete<CoreCppFunction> : DefaultDelete<CoreObject> {};
+// cppfunction handle
+template <> class ism::api::Handle<ism::api::CppFunctionObject> : public BaseHandle<CppFunctionObject>
+{
+	ISM_HANDLE(CppFunctionObject);
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+public:
+	Handle() = default;
 
-	// CPP_FUNCTION
-	template <> class Handle<CoreCppFunction> : public BaseHandle<CoreCppFunction>
-	{
-		ISM_HANDLE(CoreCppFunction);
-	
-	public:
-		Handle() = default;
-	
-		~Handle() = default;
+	~Handle() = default;
 
-		using storage_type = CoreCppFunction::storage_type;
+	using storage_type = CppFunctionObject::storage_type;
 
-		NODISCARD OBJECT name() const { return attr("__name__"); }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
+	NODISCARD OBJECT name() const { return attr("__name__"); }
+};
 
 #endif // !_ISM_CPPFUNCTION_OBJECT_HPP_

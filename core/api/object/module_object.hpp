@@ -3,87 +3,80 @@
 
 #include <core/api/object/cppfunction_object.hpp>
 
-// module
-namespace ism
+// module object
+class NODISCARD ISM_API ism::api::ModuleObject : public BaseObject
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	ISM_OBJECT(ModuleObject, BaseObject);
 
-	class NODISCARD ISM_API CoreModule : public CoreObject
+protected:
+	static void _bind_methods(TypeObject & t);
+
+public:
+	DICT		m_dict{ DictObject{} };
+	STR			m_name{};
+	STR			m_doc{};
+	inquiry		m_clear{};
+	freefunc	m_free{};
+
+public:
+	ModuleObject(cstring name) : self_type{}
 	{
-		ISM_OBJECT(CoreModule, CoreObject);
+		m_name = STR(name);
+	}
+};
 
-	protected:
-		static void _bind_methods(CoreType & t);
+// module deleter
+template <> struct ism::DefaultDelete<ism::api::ModuleObject> : DefaultDelete<ism::api::BaseObject> {};
 
-	public:
-		DICT		m_dict{ CoreDict{} };
-		STR			m_name{};
-		STR			m_doc{};
-		inquiry		m_clear{};
-		freefunc	m_free{};
+// module handle
+template <> class ism::api::Handle<ism::api::ModuleObject> : public BaseHandle<ModuleObject>
+{
+	ISM_HANDLE(ModuleObject);
+	
+public:
+	Handle() = default;
+	
+	~Handle() = default;
 
-	public:
-		CoreModule(cstring name) : self_type{}
-		{
-			m_name = STR(name);
-		}
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <> struct DefaultDelete<CoreModule> : DefaultDelete<CoreObject> {};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// MODULE
-	template <> class Handle<CoreModule> : public BaseHandle<CoreModule>
+	template <class Func, class ... Extra
+	> MODULE & def(cstring name, Func && func, Extra && ... extra)
 	{
-		ISM_HANDLE(CoreModule);
-	
-	public:
-		Handle() = default;
-	
-		~Handle() = default;
+		CPP_FUNCTION cf({
+			FWD(func),
+			api::name(name),
+			api::scope(ptr()),
+			api::sibling(attr(name)),
+			FWD(extra)... });
+		attr(cf.name()) = cf;
+		return (*this);
+	}
 
-		template <class Func, class ... Extra
-		> MODULE & def(cstring name, Func && func, Extra && ... extra)
+	template <class T, class Name = cstring, class Value = OBJECT
+	> auto new_object(Name && name, Value && value, bool overwrite = false) -> Handle<T>
+	{
+	}
+
+	template <class Name = cstring, class Value = OBJECT
+	> void add_object(Name && name, Value && value, bool overwrite = false)
+	{
+		if (auto i{ object_or_cast(FWD(name)) }; overwrite || !m_ref->m_dict->contains(i))
 		{
-			CPP_FUNCTION cf({
-				FWD(func),
-				detail::name(name),
-				detail::scope(ptr()),
-				detail::sibling(attr(name)),
-				FWD(extra)... });
-			attr(cf.name()) = cf;
-			return (*this);
+			m_ref->m_dict[i] = object_or_cast(FWD(value));
 		}
+	}
 
-		template <class T, class Name = cstring, class Value = OBJECT
-		> auto new_object(Name && name, Value && value, bool overwrite = false) -> Handle<T>
-		{
-		}
+	MODULE def_submodule(cstring name, cstring doc = "")
+	{
+		return MODULE{};
+	}
 
-		template <class Name = cstring, class Value = OBJECT
-		> void add_object(Name && name, Value && value, bool overwrite = false)
-		{
-			if (auto i{ object_or_cast(FWD(name)) }; overwrite || !m_ref->m_dict->contains(i))
-			{
-				m_ref->m_dict[i] = object_or_cast(FWD(value));
-			}
-		}
+	void reload()
+	{
+	}
+};
 
-		MODULE def_submodule(cstring name, cstring doc = "")
-		{
-			return MODULE{};
-		}
-
-		void reload()
-		{
-		}
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+namespace ism::api
+{
 	inline MODULE create_extension_module(cstring name)
 	{
 		DICT d{ get_default_interpreter()->modules };
@@ -111,8 +104,6 @@ namespace ism
 			return import_module("__main__").attr("__dict__");
 		}
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_MODULE_OBJECT_HPP_

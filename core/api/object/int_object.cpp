@@ -1,13 +1,14 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreInt::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(IntObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "int";
-	t.tp_basicsize = sizeof(CoreInt);
+	t.tp_basicsize = sizeof(IntObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
@@ -16,7 +17,7 @@ DECLEXPR(CoreInt::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(util::to_string(***INT(o))); };
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreInt *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((IntObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -33,14 +34,14 @@ DECLEXPR(CoreInt::ob_type_static) = COMPOSE(CoreType, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreInt::_bind_methods(CoreType & t)
+void IntObject::_bind_methods(TypeObject & t)
 {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreInt::g_true) { true };
+DECLEXPR(IntObject::g_true) { true };
 
-DECLEXPR(CoreInt::g_false) { false };
+DECLEXPR(IntObject::g_false) { false };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

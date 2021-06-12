@@ -38,66 +38,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Super
-	{
-	private:
-		friend bool predelete_handler(Super *);
-		friend void postinitialize_handler(Super *);
-
-		static InstanceID g_superID;
-
-		bool _predelete();
-
-		void _postinitialize();
-
-		void _construct_super(bool is_ref);
-
-		void _destruct_super();
-
-	protected:
-		InstanceID	m_instance_id{};
-		uint8_t		m_predelete_ok{};
-		bool		m_is_reference{};
-
-		mutable StringName m_class_name{}, * m_class_ptr{};
-
-	protected:
-		FORCE_INLINE virtual StringName const * _get_class_namev() const
-		{
-			if (!m_class_name) { m_class_name = get_class_static(); }
-			return &m_class_name;
-		}
-
-		Super(bool is_ref) { _construct_super(is_ref); }
-
-		Super() { _construct_super(false); }
-
-	public:
-		virtual ~Super() noexcept { _destruct_super(); }
-
-		NODISCARD bool is_reference() const { return m_is_reference; }
-
-		NODISCARD InstanceID get_instance_id() const { return m_instance_id; }
-
-		NODISCARD static void * get_class_ptr_static() { static int32_t ptr; return &ptr; }
-
-		static void get_inheritance_list_static(Vector<String> * value) { value->push_back("Super"); }
-
-		NODISCARD static constexpr StringView get_parent_class_static() { return ""; }
-
-		NODISCARD static constexpr StringView get_class_static() { return "Super"; }
-
-		NODISCARD virtual String get_class() const { return "Super"; }
-
-		NODISCARD virtual bool is_class(String const & value) const { return value == "Super"; }
-
-		NODISCARD virtual bool is_class_ptr(void * value) const { return value == get_class_ptr_static(); }
-
-		NODISCARD StringName const & get_class_name() const { return !m_class_ptr ? *_get_class_namev() : *m_class_ptr; }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 #define ISM_SUPER_CLASS(m_class, m_inherits)														\
 protected:																							\
 	using self_type = m_class;																		\
@@ -155,6 +95,66 @@ public:																								\
 	}																								\
 																									\
 private:
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API Super
+	{
+	private:
+		friend bool predelete_handler(Super *);
+		friend void postinitialize_handler(Super *);
+
+		static InstanceID g_superID;
+
+		bool _predelete();
+
+		void _postinitialize();
+
+		void _construct_super(bool is_ref);
+
+		void _destruct_super();
+
+	protected:
+		InstanceID	m_instance_id{};
+		uint8_t		m_predelete_ok{};
+		bool		m_is_reference{};
+
+		mutable StringName m_class_name{}, * m_class_ptr{};
+
+	protected:
+		FORCE_INLINE virtual StringName const * _get_class_namev() const
+		{
+			if (!m_class_name) { m_class_name = get_class_static(); }
+			return &m_class_name;
+		}
+
+		Super(bool is_ref) { _construct_super(is_ref); }
+
+		Super() { _construct_super(false); }
+
+	public:
+		virtual ~Super() noexcept { _destruct_super(); }
+
+		NODISCARD bool is_reference() const { return m_is_reference; }
+
+		NODISCARD InstanceID get_instance_id() const { return m_instance_id; }
+
+		NODISCARD static void * get_class_ptr_static() { static int32_t ptr; return &ptr; }
+
+		static void get_inheritance_list_static(Vector<String> * value) { value->push_back("Super"); }
+
+		NODISCARD static constexpr StringView get_parent_class_static() { return ""; }
+
+		NODISCARD static constexpr StringView get_class_static() { return "Super"; }
+
+		NODISCARD virtual String get_class() const { return "Super"; }
+
+		NODISCARD virtual bool is_class(String const & value) const { return value == "Super"; }
+
+		NODISCARD virtual bool is_class_ptr(void * value) const { return value == get_class_ptr_static(); }
+
+		NODISCARD StringName const & get_class_name() const { return !m_class_ptr ? *_get_class_namev() : *m_class_ptr; }
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

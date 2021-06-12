@@ -1,22 +1,23 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreModule::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "module";
-	t.tp_basicsize = sizeof(CoreModule);
+	t.tp_basicsize = sizeof(ModuleObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_base = typeof<OBJECT>();
 
-	t.tp_dict_offset = offsetof(CoreModule, m_dict);
+	t.tp_dict_offset = offsetof(ModuleObject, m_dict);
 
-	t.tp_getattr = (getattrfunc)detail::impl_getattr_string;
-	t.tp_setattr = (setattrfunc)detail::impl_setattr_string;
-	t.tp_getattro = (getattrofunc)detail::impl_getattr_object;
-	t.tp_setattro = (setattrofunc)detail::impl_setattr_object;
+	t.tp_getattr = (getattrfunc)api::impl_getattr_string;
+	t.tp_setattr = (setattrfunc)api::impl_setattr_string;
+	t.tp_getattro = (getattrofunc)api::impl_getattr_object;
+	t.tp_setattro = (setattrofunc)api::impl_setattr_object;
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -31,12 +32,12 @@ DECLEXPR(CoreModule::ob_type_static) = COMPOSE(CoreType, t)
 	};
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreModule *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((ModuleObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreModule::_bind_methods(CoreType & t)
+void ModuleObject::_bind_methods(TypeObject & t)
 {
 	t.attr("__contains__") = CPP_FUNCTION([](MODULE self, OBJECT value) {
 		return MODULE(self->m_dict)->contains(value);

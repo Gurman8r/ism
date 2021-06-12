@@ -1,13 +1,14 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreProperty::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(PropertyObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "property";
-	t.tp_basicsize = sizeof(CoreProperty);
+	t.tp_basicsize = sizeof(PropertyObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_base = typeof<OBJECT>();
 
@@ -22,14 +23,14 @@ DECLEXPR(CoreProperty::ob_type_static) = COMPOSE(CoreType, t)
 	};
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreProperty *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((PropertyObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreProperty::_bind_methods(CoreType & t)
+void PropertyObject::_bind_methods(TypeObject & t)
 {
 }
 

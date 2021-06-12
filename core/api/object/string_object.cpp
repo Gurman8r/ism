@@ -1,23 +1,24 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreString::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(StringObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "str";
-	t.tp_basicsize = sizeof(CoreString);
+	t.tp_basicsize = sizeof(StringObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Str_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
-	t.tp_hash = (hashfunc)[](OBJECT o) { return hash((String)STR(o)); };
+	t.tp_hash = (hashfunc)[](OBJECT o) { return ism::hash((String)STR(o)); };
 	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)STR(o).size(); };
 	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(o); };
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(o); };
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreString *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((StringObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -38,7 +39,7 @@ DECLEXPR(CoreString::ob_type_static) = COMPOSE(CoreType, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreString::_bind_methods(CoreType & t)
+void StringObject::_bind_methods(TypeObject & t)
 {
 }
 

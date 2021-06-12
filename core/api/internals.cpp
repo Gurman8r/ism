@@ -2,6 +2,7 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -44,10 +45,10 @@ InterpreterState::InterpreterState(RuntimeState * runtime) : runtime{ runtime }
 	if (!runtime->interpreters.main) { runtime->interpreters.main = this; }
 	tstate_head = memnew(ThreadState(this));
 
-	dict = DICT(CoreDict{});
-	builtins = DICT(CoreDict{});
-	modules = DICT(CoreDict{});
-	importlib = DICT(CoreDict{});
+	dict = DICT::create();
+	builtins = DICT::create();
+	modules = DICT::create();
+	importlib = DICT::create();
 }
 
 InterpreterState::~InterpreterState()

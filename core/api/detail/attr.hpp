@@ -1,11 +1,11 @@
-#ifndef _ISM_ATTR_HPP_
-#define _ISM_ATTR_HPP_
+#ifndef _ISM_ATTR_DETAIL_HPP_
+#define _ISM_ATTR_DETAIL_HPP_
 
 #include <core/api/detail/call.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism::detail
+namespace ism::api
 {
 	template <class T, class SFINAE = void> struct process_attribute;
 
@@ -13,7 +13,7 @@ namespace ism::detail
 	{
 		using type = typename T;
 		static void init(T &&, function_record &) {}
-		static void init(T &&, CoreType &) {}
+		static void init(T &&, TypeObject &) {}
 		static void precall(function_call &) {}
 		static void postcall(function_call &, OBJECT) {}
 	};
@@ -22,16 +22,16 @@ namespace ism::detail
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ISM_PROCESS_ATTRIBUTE(m_class) \
-	struct ism::detail::process_attribute<m_class> : ism::detail::process_attribute_default<m_class>
+	struct ism::api::process_attribute<m_class> : ism::api::process_attribute_default<m_class>
 
 #define ISM_PROCESS_ATTRIBUTE_BASE(m_class, m_inherits) \
-	struct ism::detail::process_attribute<m_class> : ism::detail::process_attribute_default<m_inherits>
+	struct ism::api::process_attribute<m_class> : ism::api::process_attribute_default<m_inherits>
 
 #define ISM_PROCESS_ATTRIBUTE_SFINAE(m_class, m_sfinae) \
-	struct ism::detail::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::detail::process_attribute_default<m_class>
+	struct ism::api::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::api::process_attribute_default<m_class>
 
 #define ISM_PROCESS_ATTRIBUTE_SFINAE_BASE(m_class, m_sfinae, m_inherits) \
-	struct ism::detail::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::detail::process_attribute_default<m_inherits>
+	struct ism::api::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::api::process_attribute_default<m_inherits>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -44,9 +44,9 @@ namespace ism::detail
 // object attribute
 #define ISM_BASIC_ATTRIBUTE_O(m_class, m_value) \
 	struct m_class final { \
-		ism::CoreObject * const m_value; \
-		explicit m_class(ism::CoreObject * value) : m_value{ value } {} \
-		explicit m_class(ism::OBJECT value) : m_value{ *value } {} \
+		ism::api::BaseObject * const m_value; \
+		explicit m_class(ism::api::BaseObject * value) : m_value{ value } {} \
+		explicit m_class(ism::api::OBJECT value) : m_value{ *value } {} \
 	}
 
 // string attribute
@@ -66,7 +66,7 @@ namespace ism::detail
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -74,18 +74,18 @@ namespace ism::detail
 	ISM_BASIC_ATTRIBUTE_S(name, value);
 	template <> ISM_PROCESS_ATTRIBUTE(name) {
 		static void init(function_record & r, name && a) { r.name = a.value; }
-		static void init(CoreType & r, name && a) { r.tp_name = a.value; }
+		static void init(TypeObject & r, name && a) { r.tp_name = a.value; }
 	};
 
 	// doc
 	ISM_BASIC_ATTRIBUTE_S(doc, value);
 	template <> ISM_PROCESS_ATTRIBUTE(doc) {
 		static void init(function_record & r, doc && a) { r.doc = a.value; }
-		static void init(CoreType & r, doc && a) { r.tp_doc = a.value; }
+		static void init(TypeObject & r, doc && a) { r.tp_doc = a.value; }
 	};
 	template <> ISM_PROCESS_ATTRIBUTE(cstring) {
 		static void init(function_record & r, cstring a) { r.doc = a; }
-		static void init(CoreType & r, cstring a) { r.tp_doc = a; }
+		static void init(TypeObject & r, cstring a) { r.tp_doc = a; }
 	};
 	template <> ISM_PROCESS_ATTRIBUTE_BASE(char *, cstring) {};
 
@@ -136,43 +136,43 @@ namespace ism::detail
 
 	// parent class
 	template <class T> ISM_PROCESS_ATTRIBUTE_SFINAE(T, is_object_api_v<T>) {
-		static void init(CoreType & r, T && a) { r.bases->append(typeof(FWD(a))); }
+		static void init(TypeObject & r, T && a) { r.bases->append(typeof(FWD(a))); }
 	};
 
 	// multiple inheritance
 	ISM_BASIC_ATTRIBUTE_E(multiple_inheritance);
 	template <> ISM_PROCESS_ATTRIBUTE(multiple_inheritance) {
-		static void init(CoreType & r, multiple_inheritance && a) { if (!r.tp_bases) { r.tp_bases = LIST(CoreList{}); } }
+		static void init(TypeObject & r, multiple_inheritance && a) { if (!r.tp_bases) { r.tp_bases = LIST::create(); } }
 	};
 
 	// dynamic_attr
 	ISM_BASIC_ATTRIBUTE_E(dynamic_attr);
 	template <> ISM_PROCESS_ATTRIBUTE(dynamic_attr) {
-		static void init(CoreType & r, dynamic_attr && a) { if (!r.tp_dict) { r.tp_dict = DICT(CoreDict{}); } }
+		static void init(TypeObject & r, dynamic_attr && a) { if (!r.tp_dict) { r.tp_dict = DICT::create(); } }
 	};
 
 	// is_final
 	ISM_BASIC_ATTRIBUTE_E(is_final);
 	template <> ISM_PROCESS_ATTRIBUTE(is_final) {
-		static void init(CoreType & r, is_final && a) { /*r.tp_is_final = true;*/ }
+		static void init(TypeObject & r, is_final && a) { /*r.tp_is_final = true;*/ }
 	};
 
 	// metaclass
 	ISM_BASIC_ATTRIBUTE_O(metaclass, value);
 	template <> ISM_PROCESS_ATTRIBUTE(metaclass) {
-		static void init(CoreType & r, type && a) { /*r.set_type(super_cast<CoreType>(a.value));*/ }
+		static void init(TypeObject & r, type && a) { /*r.set_type(super_cast<TypeObject>(a.value));*/ }
 	};
 
 	// module_local
 	ISM_BASIC_ATTRIBUTE_B(module_local, value);
 	template <> ISM_PROCESS_ATTRIBUTE(module_local) {
-		static void init(CoreType & r, module_local && a) { /*r.tp_module_local = a.value;*/ }
+		static void init(TypeObject & r, module_local && a) { /*r.tp_module_local = a.value;*/ }
 	};
 
 	// arithmetic
 	ISM_BASIC_ATTRIBUTE_E(arithmetic);
 	template <> ISM_PROCESS_ATTRIBUTE(arithmetic) {
-		static void init(CoreType & r, arithmetic && a) { /* nothing to do here */ }
+		static void init(TypeObject & r, arithmetic && a) { /* nothing to do here */ }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -204,7 +204,7 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -238,4 +238,4 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_ATTR_HPP_
+#endif // !_ISM_ATTR_DETAIL_HPP_

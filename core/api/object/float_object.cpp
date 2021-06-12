@@ -1,13 +1,14 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreFloat::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(FloatObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "float";
-	t.tp_basicsize = sizeof(CoreFloat);
+	t.tp_basicsize = sizeof(FloatObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Float_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
@@ -16,7 +17,7 @@ DECLEXPR(CoreFloat::ob_type_static) = COMPOSE(CoreType, t)
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(util::to_string(***FLT(o))); };
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreFloat *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((FloatObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -33,7 +34,7 @@ DECLEXPR(CoreFloat::ob_type_static) = COMPOSE(CoreType, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreFloat::_bind_methods(CoreType & t)
+void FloatObject::_bind_methods(TypeObject & t)
 {
 }
 

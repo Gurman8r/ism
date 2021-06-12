@@ -1,20 +1,21 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreList::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(ListObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "list";
-	t.tp_basicsize = sizeof(CoreList);
+	t.tp_basicsize = sizeof(ListObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_List_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
 	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)LIST(o).size(); };
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreList *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((ListObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -31,7 +32,7 @@ DECLEXPR(CoreList::ob_type_static) = COMPOSE(CoreType, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreList::_bind_methods(CoreType & t)
+void ListObject::_bind_methods(TypeObject & t)
 {
 	t.attr("__contains__") = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(LIST(self)->contains(value));

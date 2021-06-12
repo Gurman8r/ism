@@ -1,12 +1,14 @@
-#ifndef _ISM_COMMON_HPP_
-#define _ISM_COMMON_HPP_
+#ifndef _ISM_COMMON_DETAIL_HPP_
+#define _ISM_COMMON_DETAIL_HPP_
 
 #include <core/api/reference.hpp>
 
 // types
-namespace ism
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ClassDB;
 
 	template <class T
 	> ALIAS(TypeMap) HashMap<std::type_index, T>;
@@ -19,39 +21,40 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class CoreObject;
-	class CoreType;
-	class CoreInt;
-	class CoreFloat;
-	class CoreString;
-	class CoreList;
-	class CoreDict;
-	class CoreCapsule;
-	class CoreFunction;
-	class CoreProperty;
-	class CoreCppFunction;
-	class CoreModule;
-	class CoreGeneric;
+	class BaseObject;
+	class TypeObject;
+	class IntObject;
+	class FloatObject;
+	class StringObject;
+	class ListObject;
+	class DictObject;
+	class CapsuleObject;
+	class FunctionObject;
+	class PropertyObject;
+	class CppFunctionObject;
+	class ModuleObject;
+	class GenericObject;
 
-	template <class T> constexpr bool is_core_object_v{ std::is_base_of_v<CoreObject, mpl::intrinsic_t<T>> };
+	template <class T> constexpr bool is_core_object_v{ std::is_base_of_v<BaseObject, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <class T> class BaseHandle;
 	template <class T> class Handle;
 
-	ALIAS(OBJECT)			Handle<CoreObject>;
-	ALIAS(TYPE)				Handle<CoreType>;
-	ALIAS(INT)				Handle<CoreInt>;
-	ALIAS(FLT)				Handle<CoreFloat>;
-	ALIAS(STR)				Handle<CoreString>;
-	ALIAS(LIST)				Handle<CoreList>;
-	ALIAS(DICT)				Handle<CoreDict>;
-	ALIAS(CAPSULE)			Handle<CoreCapsule>;
-	ALIAS(FUNCTION)			Handle<CoreFunction>;
-	ALIAS(PROPERTY)			Handle<CoreProperty>;
-	ALIAS(CPP_FUNCTION)		Handle<CoreCppFunction>;
-	ALIAS(MODULE)			Handle<CoreModule>;
-	ALIAS(GENERIC)			Handle<CoreGeneric>;
+	ALIAS(OBJECT)			Handle<BaseObject>;
+	ALIAS(TYPE)				Handle<TypeObject>;
+	ALIAS(INT)				Handle<IntObject>;
+	ALIAS(FLT)				Handle<FloatObject>;
+	ALIAS(STR)				Handle<StringObject>;
+	ALIAS(LIST)				Handle<ListObject>;
+	ALIAS(DICT)				Handle<DictObject>;
+	ALIAS(CAPSULE)			Handle<CapsuleObject>;
+	ALIAS(FUNCTION)			Handle<FunctionObject>;
+	ALIAS(PROPERTY)			Handle<PropertyObject>;
+	ALIAS(CPP_FUNCTION)		Handle<CppFunctionObject>;
+	ALIAS(MODULE)			Handle<ModuleObject>;
+	ALIAS(GENERIC)			Handle<GenericObject>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -138,7 +141,7 @@ namespace ism
 }
 
 // method suites
-namespace ism
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -170,7 +173,7 @@ namespace ism
 	ALIAS(freefunc)			void(*)(void * ptr);
 	ALIAS(initproc)			Error(*)(OBJECT self, OBJECT args);
 	ALIAS(newfunc)			OBJECT(*)(TYPE type, OBJECT args);
-	ALIAS(destructor)		void(*)(CoreObject * ptr);
+	ALIAS(destructor)		void(*)(BaseObject * ptr);
 
 	ALIAS(cfunction)		OBJECT(*)(OBJECT self, OBJECT args);
 	ALIAS(vectorcallfunc)	OBJECT(*)(OBJECT self, OBJECT const * argc, size_t argv);
@@ -247,4 +250,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_COMMON_HPP_
+#endif // !_ISM_COMMON_DETAIL_HPP_

@@ -1,9 +1,9 @@
-#ifndef _ISM_INITIMPL_HPP_
-#define _ISM_INITIMPL_HPP_
+#ifndef _ISM_INITIMPL_DETAIL_HPP_
+#define _ISM_INITIMPL_DETAIL_HPP_
 
 #include <core/api/detail/class.hpp>
 
-namespace ism::detail::initimpl
+namespace ism::api::initimpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -53,17 +53,17 @@ namespace ism::detail::initimpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class ... Args
-	> NODISCARD auto init() -> detail::initimpl::constructor<Args...> { return {}; }
+	> NODISCARD auto init() -> api::initimpl::constructor<Args...> { return {}; }
 
-	template <class Func, class Ret = detail::initimpl::factory<Func>
+	template <class Func, class Ret = api::initimpl::factory<Func>
 	> NODISCARD auto init(Func && fn) -> Ret { return { FWD(fn) }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_INITIMPL_HPP_
+#endif // !_ISM_INITIMPL_DETAIL_HPP_

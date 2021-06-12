@@ -2,22 +2,23 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 void ism::register_core_types()
 {
-	ClassDB::register_class<CoreObject>();
-	ClassDB::register_class<CoreType>();
-	ClassDB::register_class<CoreInt>();
-	ClassDB::register_class<CoreFloat>();
-	ClassDB::register_class<CoreString>();
-	ClassDB::register_class<CoreList>();
-	ClassDB::register_class<CoreDict>();
-	ClassDB::register_class<CoreCapsule>();
-	ClassDB::register_class<CoreFunction>();
-	ClassDB::register_class<CoreProperty>();
-	ClassDB::register_class<CoreCppFunction>();
-	ClassDB::register_class<CoreModule>();
-	ClassDB::register_class<CoreGeneric>();
+	ClassDB::register_class<BaseObject>();
+	ClassDB::register_class<TypeObject>();
+	ClassDB::register_class<IntObject>();
+	ClassDB::register_class<FloatObject>();
+	ClassDB::register_class<StringObject>();
+	ClassDB::register_class<ListObject>();
+	ClassDB::register_class<DictObject>();
+	ClassDB::register_class<CapsuleObject>();
+	ClassDB::register_class<FunctionObject>();
+	ClassDB::register_class<PropertyObject>();
+	ClassDB::register_class<CppFunctionObject>();
+	ClassDB::register_class<ModuleObject>();
+	ClassDB::register_class<GenericObject>();
 }
 
 void ism::register_core_driver_types()

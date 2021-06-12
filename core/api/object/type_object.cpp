@@ -1,6 +1,7 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -71,32 +72,32 @@ static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreType::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "type";
-	t.tp_basicsize = sizeof(CoreType);
+	t.tp_basicsize = sizeof(TypeObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
-	t.tp_dict_offset = offsetof(CoreType, tp_dict);
-	t.tp_weaklist_offset = offsetof(CoreType, tp_weaklist);
-	t.tp_vectorcall_offset = offsetof(CoreType, tp_vectorcall);
+	t.tp_dict_offset = offsetof(TypeObject, tp_dict);
+	t.tp_weaklist_offset = offsetof(TypeObject, tp_weaklist);
+	t.tp_vectorcall_offset = offsetof(TypeObject, tp_vectorcall);
 
 	t.tp_hash = (hashfunc)[](OBJECT o) { return hash(TYPE(o)->tp_name); };
 	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 
-	t.tp_getattr = (getattrfunc)detail::impl_getattr_string;
-	t.tp_setattr = (setattrfunc)detail::impl_setattr_string;
-	t.tp_getattro = (getattrofunc)detail::impl_getattr_object;
-	t.tp_setattro = (setattrofunc)detail::impl_setattr_object;
+	t.tp_getattr = (getattrfunc)api::impl_getattr_string;
+	t.tp_setattr = (setattrfunc)api::impl_setattr_string;
+	t.tp_getattro = (getattrofunc)api::impl_getattr_object;
+	t.tp_setattro = (setattrofunc)api::impl_setattr_object;
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreType *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((TypeObject *)ptr); };
 
-	t.tp_finalize = (destructor)[](CoreObject * ptr)
+	t.tp_finalize = (destructor)[](BaseObject * ptr)
 	{
-		if (CoreType * t{ super_cast<CoreType>(ptr) })
+		if (TypeObject * t{ super_cast<TypeObject>(ptr) })
 		{
 			t->tp_bases = nullptr;
 			t->tp_cache = nullptr;
@@ -125,7 +126,7 @@ DECLEXPR(CoreType::ob_type_static) = COMPOSE(CoreType, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreType::_bind_methods(CoreType & t)
+void TypeObject::_bind_methods(TypeObject & t)
 {
 	t.attr("test") = CPP_FUNCTION([]()
 	{
@@ -164,7 +165,7 @@ void CoreType::_bind_methods(CoreType & t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT CoreType::lookup(OBJECT name) const
+OBJECT TypeObject::lookup(OBJECT name) const
 {
 	if (auto d{ DICT(tp_dict) }; !name || !d)
 	{
@@ -180,7 +181,7 @@ OBJECT CoreType::lookup(OBJECT name) const
 	}
 }
 
-bool CoreType::ready()
+bool TypeObject::ready()
 {
 	if (has_feature(TypeFlags_Ready)) { return true; }
 
@@ -190,9 +191,9 @@ bool CoreType::ready()
 
 	if (!ob_type && tp_base) { ob_type = tp_base->ob_type; }
 
-	tp_bases = LIST(tp_base ? CoreList{ tp_base } : CoreList{});
+	tp_bases = LIST(tp_base ? ListObject{ tp_base } : ListObject{});
 
-	if (!tp_dict) { tp_dict = DICT(CoreDict{}); }
+	if (!tp_dict) { tp_dict = DICT::create(); }
 
 	VERIFY(mro_internal(nullptr));
 
@@ -219,9 +220,9 @@ bool CoreType::ready()
 		VERIFY(!"type participates in gc and is a base type but has inappropriate tp_free slot");
 	}
 
-	copy_val(*tp_base, &CoreType::tp_as_number);
-	copy_val(*tp_base, &CoreType::tp_as_sequence);
-	copy_val(*tp_base, &CoreType::tp_as_mapping);
+	copy_val(*tp_base, &TypeObject::tp_as_number);
+	copy_val(*tp_base, &TypeObject::tp_as_sequence);
+	copy_val(*tp_base, &TypeObject::tp_as_mapping);
 
 	for (TYPE b : ***LIST(tp_bases))
 	{
@@ -231,23 +232,23 @@ bool CoreType::ready()
 	return enable_feature(TypeFlags_Ready), true;
 }
 
-bool CoreType::add_subclass(CoreType const * type)
+bool TypeObject::add_subclass(TypeObject const * type)
 {
-	if (!tp_subclasses) { tp_subclasses = DICT(CoreDict{}); }
+	if (!tp_subclasses) { tp_subclasses = DICT::create(); }
 
 	//return (***DICT(tp_subclasses)).insert_or_assign(type, type).second;
 
 	return false;
 }
 
-bool CoreType::mro_internal(OBJECT * old_mro)
+bool TypeObject::mro_internal(OBJECT * old_mro)
 {
-	if (tp_base) { tp_mro = LIST(CoreList{ tp_base }); }
+	if (tp_base) { tp_mro = LIST(ListObject{ tp_base }); }
 	
 	return true;
 }
 
-void CoreType::inherit_special(CoreType const * base)
+void TypeObject::inherit_special(TypeObject const * base)
 {
 	if (!has_feature(TypeFlags_HaveGc) && tp_base->has_feature(TypeFlags_HaveGc) && (!tp_traverse && !tp_clear))
 	{
@@ -261,10 +262,10 @@ void CoreType::inherit_special(CoreType const * base)
 		tp_new = tp_base->tp_new;
 	}
 
-	copy_val(*tp_base, &CoreType::tp_basicsize);
-	copy_val(*tp_base, &CoreType::tp_itemsize);
-	copy_val(*tp_base, &CoreType::tp_weaklist_offset);
-	copy_val(*tp_base, &CoreType::tp_dict_offset);
+	copy_val(*tp_base, &TypeObject::tp_basicsize);
+	copy_val(*tp_base, &TypeObject::tp_itemsize);
+	copy_val(*tp_base, &TypeObject::tp_weaklist_offset);
+	copy_val(*tp_base, &TypeObject::tp_dict_offset);
 
 	if (LIST mro{ tp_base->tp_mro }; !mro) { return; }
 	else if (mro->contains(typeof<TYPE>())) { enable_feature(TypeFlags_Type_Subclass); }
@@ -275,9 +276,9 @@ void CoreType::inherit_special(CoreType const * base)
 	else if (mro->contains(typeof<DICT>())) { enable_feature(TypeFlags_Dict_Subclass); }
 }
 
-void CoreType::inherit_slots(CoreType const * base)
+void TypeObject::inherit_slots(TypeObject const * base)
 {
-	CoreType const * basebase{};
+	TypeObject const * basebase{};
 
 	if (tp_as_number && base->tp_as_number)
 	{
@@ -330,22 +331,22 @@ void CoreType::inherit_slots(CoreType const * base)
 
 	basebase = *(base->tp_base);
 
-	copy_slot(base, basebase, &CoreType::tp_delete);
+	copy_slot(base, basebase, &TypeObject::tp_delete);
 
 	if (!tp_getattr && !tp_getattro) { tp_getattr = base->tp_getattr; tp_getattro = base->tp_getattro; }
 
 	if (!tp_setattr && !tp_setattro) { tp_setattr = base->tp_setattr; tp_setattro = base->tp_setattro; }
 
-	copy_slot(base, basebase, &CoreType::tp_len);
-	copy_slot(base, basebase, &CoreType::tp_repr);
-	copy_slot(base, basebase, &CoreType::tp_str);
+	copy_slot(base, basebase, &TypeObject::tp_len);
+	copy_slot(base, basebase, &TypeObject::tp_repr);
+	copy_slot(base, basebase, &TypeObject::tp_str);
 
-	copy_slot(base, basebase, &CoreType::tp_vectorcall_offset);
+	copy_slot(base, basebase, &TypeObject::tp_vectorcall_offset);
 	if (!tp_call && base->has_feature(TypeFlags_HaveVectorCall) && !has_feature(TypeFlags_HeapType))
 	{
 		enable_feature(TypeFlags_HaveVectorCall);
 	}
-	copy_slot(base, basebase, &CoreType::tp_call);
+	copy_slot(base, basebase, &TypeObject::tp_call);
 
 	if (!tp_compare && !tp_hash && !tp_dict->contains("__eq__") && !tp_dict->contains("__hash__"))
 	{
@@ -353,19 +354,19 @@ void CoreType::inherit_slots(CoreType const * base)
 		tp_hash = base->tp_hash;
 	}
 
-	copy_slot(base, basebase, &CoreType::tp_descr_get);
+	copy_slot(base, basebase, &TypeObject::tp_descr_get);
 	if (base->tp_descr_get && tp_descr_get == base->tp_descr_get && !has_feature(TypeFlags_HeapType) && base->has_feature(TypeFlags_MethodDescriptor))
 	{
 		enable_feature(TypeFlags_MethodDescriptor);
 	}
-	copy_slot(base, basebase, &CoreType::tp_descr_set);
+	copy_slot(base, basebase, &TypeObject::tp_descr_set);
 
-	copy_slot(base, basebase, &CoreType::tp_dict_offset);
-	copy_slot(base, basebase, &CoreType::tp_init);
-	copy_slot(base, basebase, &CoreType::tp_alloc);
-	copy_slot(base, basebase, &CoreType::tp_is_gc);
-	copy_slot(base, basebase, &CoreType::tp_finalize);
-	copy_slot(base, basebase, &CoreType::tp_free);
+	copy_slot(base, basebase, &TypeObject::tp_dict_offset);
+	copy_slot(base, basebase, &TypeObject::tp_init);
+	copy_slot(base, basebase, &TypeObject::tp_alloc);
+	copy_slot(base, basebase, &TypeObject::tp_is_gc);
+	copy_slot(base, basebase, &TypeObject::tp_finalize);
+	copy_slot(base, basebase, &TypeObject::tp_free);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

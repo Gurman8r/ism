@@ -1,9 +1,9 @@
-#ifndef _ISM_CALL_HPP_
-#define _ISM_CALL_HPP_
+#ifndef _ISM_CALL_DETAIL_HPP_
+#define _ISM_CALL_DETAIL_HPP_
 
 #include <core/api/detail/cast.hpp>
 
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -50,7 +50,7 @@ namespace ism::detail
 		}
 
 	private:
-		LIST m_args{ CoreList{} };
+		LIST m_args{ ListObject{} };
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -145,7 +145,7 @@ namespace ism::detail
 
 		bool is_stateless{}, is_constructor{}, is_operator{}, is_method{}, prepend{};
 
-		CoreObject * scope{}, * sibling{};
+		BaseObject * scope{}, * sibling{};
 
 	public:
 		~function_record() { if (free_data) { free_data(this); } }
@@ -331,7 +331,7 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -362,10 +362,10 @@ namespace ism
 	> template <ReturnPolicy policy, class ...Args
 	> inline OBJECT ObjectAPI<Derived>::operator()(Args && ... args) const
 	{
-		return detail::collect_arguments<policy>(FWD(args)...).call(handle());
+		return api::collect_arguments<policy>(FWD(args)...).call(handle());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_CALL_HPP_
+#endif // !_ISM_CALL_DETAIL_HPP_

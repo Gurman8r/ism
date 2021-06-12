@@ -3,7 +3,7 @@
 
 #include <core/api/types.hpp>
 
-namespace ism
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -125,7 +125,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

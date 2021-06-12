@@ -1,14 +1,15 @@
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
+using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreObject::initialize_class()
+void BaseObject::initialize_class()
 {
 	static SCOPE_ENTER(&)
 	{
-		ClassDB::add_class<CoreObject>();
+		ClassDB::add_class<BaseObject>();
 
 		_bind_methods(ob_type_static);
 	};
@@ -16,27 +17,27 @@ void CoreObject::initialize_class()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CoreObject::ob_type_static) = COMPOSE(CoreType, t)
+DECLEXPR(BaseObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "object";
-	t.tp_basicsize = sizeof(CoreObject);
+	t.tp_basicsize = sizeof(BaseObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_base = nullptr;
 
-	t.tp_getattr = (getattrfunc)detail::impl_getattr_string;
-	t.tp_setattr = (setattrfunc)detail::impl_setattr_string;
-	t.tp_getattro = (getattrofunc)detail::impl_getattr_object;
-	t.tp_setattro = (setattrofunc)detail::impl_setattr_object;
+	t.tp_getattr = (getattrfunc)api::impl_getattr_string;
+	t.tp_setattr = (setattrfunc)api::impl_setattr_string;
+	t.tp_getattro = (getattrofunc)api::impl_getattr_object;
+	t.tp_setattro = (setattrofunc)api::impl_setattr_object;
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CoreObject *)ptr); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((BaseObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CoreObject::_bind_methods(CoreType & t)
+void BaseObject::_bind_methods(TypeObject & t)
 {
 }
 
@@ -44,7 +45,7 @@ void CoreObject::_bind_methods(CoreType & t)
 
 DECLEXPR(ClassDB::classes) {};
 
-void ClassDB::add_class(StringName const & name, CoreType * type)
+void ClassDB::add_class(StringName const & name, TypeObject * type)
 {
 	VERIFY(name);
 	VERIFY(type);

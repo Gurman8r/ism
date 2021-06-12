@@ -43,7 +43,7 @@ namespace ism
 
 	void test_main(int32_t argc, char * argv[])
 	{
-		MODULE m = create_extension_module("__main__")
+		api::MODULE m = api::create_extension_module("__main__")
 			.def("hello", hello)
 			.def("say", say)
 			.def("get_int", get_int)
@@ -53,10 +53,10 @@ namespace ism
 			.def("pass_ptr", [](void * ptr) { return ptr; })
 			;
 
-		CoreClass<Test>(m, "test")
-			.def(init<>())
-			.def(init<int>())
-			.def(init<int, String const &>())
+		api::Class_<Test>(m, "test")
+			.def(api::init<>())
+			.def(api::init<int>())
+			.def(api::init<int, String const &>())
 			.def_static("test_static", &Test::test_static)
 			;
 
@@ -64,18 +64,18 @@ namespace ism
 		m.attr("say")(m.attr("get_string")());
 		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
 
-		LIST list = m.attr("a") = LIST(CoreList{});
+		api::LIST list = m.attr("a") = api::LIST::create();
 		list.append("IT WORKS");
-		MAIN_PRINT("%s\n", STR(list[0]).c_str());
+		MAIN_PRINT("%s\n", api::STR(list[0]).c_str());
 
-		OBJECT d{ DICT(CoreDict{}) };
+		api::OBJECT d{ api::DICT::create() };
 		d["ABC"] = 42;
 		d["DEF"] = "Hello, World!";
 		MAIN_PRINT("%d\n", d["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
 		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<std::string>().c_str());
 		typeof(d).attr("__name__") = "changed";
-		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__")).c_str());
+		MAIN_PRINT("%s\n", api::STR(typeof(d).attr("__name__")).c_str());
 
 		MAIN_PRINT("\n");
 	}

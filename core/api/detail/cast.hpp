@@ -1,10 +1,10 @@
-#ifndef _ISM_CAST_HPP_
-#define _ISM_CAST_HPP_
+#ifndef _ISM_CAST_DETAIL_HPP_
+#define _ISM_CAST_DETAIL_HPP_
 
 #include <core/api/internals.hpp>
 
 // info
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -22,7 +22,7 @@ namespace ism::detail
 }
 
 // base casters
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -75,7 +75,7 @@ namespace ism::detail
 }
 
 // type casters
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -102,7 +102,7 @@ namespace ism::detail
 		operator m_type * () { return &value; } \
 		operator m_type & () { return value; } \
 		operator m_type && () { return std::move(value); } \
-		template <class T> using cast_op_type = detail::movable_cast_op_type<T>; \
+		template <class T> using cast_op_type = api::movable_cast_op_type<T>; \
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -121,8 +121,8 @@ namespace ism::detail
 
 	template <class T> struct type_caster<T, std::enable_if_t<mpl::is_numeric_v<T>>>
 	{
-		using _itype = CoreInt::storage_type;
-		using _ftype = CoreFloat::storage_type;
+		using _itype = IntObject::storage_type;
+		using _ftype = FloatObject::storage_type;
 		using _type0 = std::conditional_t<sizeof(T) <= sizeof(int32_t), int32_t, int64_t>;
 		using _type1 = std::conditional_t<std::is_signed_v<T>, _type0, std::make_unsigned_t<_type0>>;
 		using _convt = std::conditional_t<std::is_floating_point_v<T>, double_t, _type1>;
@@ -376,14 +376,14 @@ namespace ism::detail
 }
 
 // cast
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class T, class SFINAE = void
 	> struct return_policy_override { static ReturnPolicy policy(ReturnPolicy p) { return p; } };
 
-	template <class T> struct return_policy_override<T, std::enable_if_t<std::is_base_of_v<type_caster_generic, make_caster<T>>, void>>
+	template <class T> struct return_policy_override<T, std::enable_if_t<std::is_base_of_v<api::type_caster_generic, api::make_caster<T>>, void>>
 	{
 		static ReturnPolicy policy(ReturnPolicy p) { return !std::is_lvalue_reference_v<T> && !std::is_pointer_v<T> ? ReturnPolicy_Move : p; }
 	};
@@ -391,7 +391,7 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class SFINAE
-	> auto load_type(type_caster<T, SFINAE> & convt, OBJECT const & o) -> type_caster<T, SFINAE> &
+	> auto load_type(api::type_caster<T, SFINAE> & convt, OBJECT const & o) -> api::type_caster<T, SFINAE> &
 	{
 		if (!convt.load(o, true)) {
 			VERIFY(!"TYPE CONVERSION FAILED");
@@ -402,22 +402,22 @@ namespace ism::detail
 	template <class T
 	> auto load_type(OBJECT const & o) -> make_caster<T>
 	{
-		make_caster<T> convt;
+		api::make_caster<T> convt;
 		load_type(convt, o);
 		return convt;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// obj -> c++
+	// api -> c++
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD T cast(OBJECT const & o) { return cast_op<T>(load_type<T>(o)); }
 
-	// obj -> obj
+	// api -> api
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD T cast(OBJECT const & o) { return T{ o }; }
 
-	// c++ -> obj
+	// c++ -> api
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD OBJECT cast(T && o, ReturnPolicy policy = ReturnPolicy_AutomaticReference, OBJECT parent = {})
 	{
@@ -446,14 +446,14 @@ namespace ism::detail
 		if (o && o->ref_count() > 1) {
 			VERIFY(!"Unable to cast Core instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
 		}
-		T ret{ std::move(detail::load_type<T>(o).operator T & ()) };
+		T ret{ std::move(api::load_type<T>(o).operator T & ()) };
 		return ret;
 	}
 
 	template <class T
 	> auto cast(OBJECT && o) -> std::enable_if_t<move_always_v<T>, T>
 	{
-		return detail::move<T>(std::move(o));
+		return api::move<T>(std::move(o));
 	}
 
 	template <class T
@@ -461,53 +461,48 @@ namespace ism::detail
 	{
 		if (o && o->ref_count() > 1)
 		{
-			return detail::cast<T>(o);
+			return api::cast<T>(o);
 		}
 		else
 		{
-			return detail::move<T>(std::move(o));
+			return api::move<T>(std::move(o));
 		}
 	}
 
 	template <class T
 	> auto cast(OBJECT && o) -> std::enable_if_t<move_never_v<T>, T>
 	{
-		return detail::cast<T>(o);
+		return api::cast<T>(o);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
-	> NODISCARD OBJECT object_or_cast(T && o) { return detail::cast(FWD(o)); }
+	> NODISCARD OBJECT object_or_cast(T && o) { return api::cast(FWD(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class O> template <class T> inline T BaseHandle<O>::cast() const &
 	{
-		if constexpr (!std::is_void_v<T>) { return detail::cast<T>(*this); }
+		if constexpr (!std::is_void_v<T>) { return api::cast<T>(*this); }
 	}
 
 	template <class O> template <class T> inline T BaseHandle<O>::cast() &&
 	{
-		if constexpr (!std::is_void_v<T>) { return detail::cast<T>(std::move(*this)); }
+		if constexpr (!std::is_void_v<T>) { return api::cast<T>(std::move(*this)); }
 	}
 
-	template <class T> inline T CoreObject::cast() const &
+	template <class T> inline T BaseObject::cast() const &
 	{
-		if constexpr (!std::is_void_v<T>) { return detail::cast<T>(*this); }
+		if constexpr (!std::is_void_v<T>) { return api::cast<T>(*this); }
 	}
 
-	template <class T> inline T CoreObject::cast() &&
+	template <class T> inline T BaseObject::cast() &&
 	{
-		if constexpr (!std::is_void_v<T>) { return detail::cast<T>(std::move(*this)); }
+		if constexpr (!std::is_void_v<T>) { return api::cast<T>(std::move(*this)); }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_CAST_HPP_
+#endif // !_ISM_CAST_DETAIL_HPP_

@@ -1,9 +1,9 @@
-#ifndef _ISM_CLASS_HPP_
-#define _ISM_CLASS_HPP_
+#ifndef _ISM_CLASS_DETAIL_HPP_
+#define _ISM_CLASS_DETAIL_HPP_
 
 #include <core/api/detail/attr.hpp>
 
-namespace ism::detail
+namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -92,4 +92,4 @@ namespace ism::detail
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_CLASS_HPP_
+#endif // !_ISM_CLASS_DETAIL_HPP_
