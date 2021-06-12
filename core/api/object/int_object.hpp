@@ -51,6 +51,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// INT
 	template <> class Handle<CoreInt> : public BaseHandle<CoreInt>
 	{
 		ISM_HANDLE(CoreInt);

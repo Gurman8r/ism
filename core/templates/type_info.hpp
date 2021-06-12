@@ -26,7 +26,7 @@ namespace ism
 #	define PRETTY_TYPE_PREFIX	"constexpr ism::StringView ism::ctti::raw() [with T = "
 #	define PRETTY_TYPE_SUFFIX	"]"
 #else
-#	error TypeObject information is not available.
+#	error type information is unavailable
 #endif
 		template <class T> NODISCARD constexpr StringView raw()
 		{

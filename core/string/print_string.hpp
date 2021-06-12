@@ -3,9 +3,9 @@
 
 #include <core/string/string_utility.hpp>
 
-#define PRINT_LINE(s) ism::print_line(s)
+#define PRINT_LINE (ism::print_line)
 
-#define PRINT_ERROR(s) ism::print_error(S)
+#define PRINT_ERROR (ism::print_error)
 
 namespace ism
 {

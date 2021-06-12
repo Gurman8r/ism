@@ -35,6 +35,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// MODULE
 	template <> class Handle<CoreModule> : public BaseHandle<CoreModule>
 	{
 		ISM_HANDLE(CoreModule);
@@ -57,8 +58,13 @@ namespace ism
 			return (*this);
 		}
 
-		template <class Name = cstring, class O = OBJECT
-		> void add_object(Name && name, O && value, bool overwrite = false)
+		template <class T, class Name = cstring, class Value = OBJECT
+		> auto new_object(Name && name, Value && value, bool overwrite = false) -> Handle<T>
+		{
+		}
+
+		template <class Name = cstring, class Value = OBJECT
+		> void add_object(Name && name, Value && value, bool overwrite = false)
 		{
 			if (auto i{ object_or_cast(FWD(name)) }; overwrite || !m_ref->m_dict->contains(i))
 			{

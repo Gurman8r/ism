@@ -5,7 +5,10 @@
 
 namespace ism
 {
-	enum KeyCode_ : int32_t
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// key codes
+	typedef enum KeyCode_ : int32_t
 	{
 		KeyCode_Space			= 32,	// space
 		KeyCode_Apostrophe		= 39,	// apostrophe
@@ -129,9 +132,25 @@ namespace ism
 		KeyCode_Menu			= 348,	// menu
 
 		KeyCode_MAX
-	};
+	}
+	KeyCode;
 
-	ALIAS(KeyCode) int32_t;
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// key modifiers
+	typedef enum KeyMods_ : int32_t
+	{
+		keymods_none = 0 << 0,	// nullptr
+		keymods_shift = 0 << 1,	// shift
+		keymods_ctrl = 1 << 1,	// ctrl
+		keymods_alt = 1 << 2,	// alt
+		keymods_super = 1 << 3,	// super
+		keymods_caps = 1 << 4,	// caps
+		keymods_numlk = 1 << 5	// numlock
+	}
+	KeyMods;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_KEYBOARD_HPP_

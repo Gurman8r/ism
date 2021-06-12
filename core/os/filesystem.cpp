@@ -10,6 +10,7 @@ namespace ism
 		auto _current_path = [&](WideString & text) noexcept -> ulong_t
 		{
 			text.resize(__std_fs_max_path);
+
 			for (;;)
 			{
 				auto const req_size{ static_cast<ulong_t>(text.size()) };
@@ -26,11 +27,11 @@ namespace ism
 		};
 
 		Path path{};
-		
-		auto err{ _current_path(path.m_text) };
-		
+
+		auto const err{ _current_path(path.m_text) };
+
 		VERIFY(err == EXIT_SUCCESS);
-		
+
 		return path;
 	}
 	

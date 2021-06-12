@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API Reference : public Super
 	{
-		ISM_SUPER(Reference, Super);
+		ISM_SUPER_CLASS(Reference, Super);
 
 	private:
 		RefCount m_refcount, m_refcount_init;

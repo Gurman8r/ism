@@ -1,4 +1,4 @@
-#ifndef _ISM_BASE_OBJECT_HPP_
+ #ifndef _ISM_BASE_OBJECT_HPP_
 #define _ISM_BASE_OBJECT_HPP_
 
 #include <core/api/detail/common.hpp>
@@ -103,6 +103,9 @@ namespace ism
 
 	template <class T> class BaseHandle : public ObjectAPI<Handle<T>>, public Ref<T>
 	{
+	protected:
+		BaseHandle() = default;
+
 	public:
 		~BaseHandle() = default;
 
@@ -205,17 +208,17 @@ namespace ism
 
 	class NODISCARD ISM_API CoreObject : public ObjectAPI<CoreObject>, public Reference
 	{
-		ISM_SUPER(CoreObject, Reference);
+		ISM_SUPER_CLASS(CoreObject, Reference);
 
 	private:
 		friend class ClassDB;
 
 		friend class Handle<CoreObject>;
 
-		static CoreType ob_type_static; // class type
+		static CoreType ob_type_static; // static class type
 
 	protected:
-		mutable Ref<CoreType> ob_type; // instance type
+		mutable Ref<CoreType> ob_type; // instance class type
 
 		virtual void _initialize_classv() { initialize_class(); }
 
@@ -264,6 +267,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// OBJECT
 	template <> class Handle<CoreObject> : public BaseHandle<CoreObject>
 	{
 		ISM_HANDLE(CoreObject);
@@ -278,7 +282,7 @@ namespace ism
 
 // object class
 #define ISM_OBJECT_CLASS(m_class, m_inherits)										\
-	ISM_SUPER(m_class, m_inherits)													\
+	ISM_SUPER_CLASS(m_class, m_inherits)													\
 private:																			\
 	friend class ClassDB;															\
 																					\
@@ -364,6 +368,7 @@ namespace ism
 		using key_type = typename Policy::key_type;
 
 		Accessor(OBJECT obj, key_type key) : m_obj{ obj }, m_key{ key } {}
+		
 		Accessor(Accessor const &) = default;
 		Accessor(Accessor &&) noexcept = default;
 

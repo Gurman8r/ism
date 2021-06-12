@@ -3,8 +3,6 @@
 
 #include <core/api/reference.hpp>
 
-#define TRY_NEXT_OVERLOAD ((ism::CoreObject *)1)
-
 // types
 namespace ism
 {

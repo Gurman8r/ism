@@ -5,17 +5,7 @@
 
 namespace ism
 {
-	// key modifiers
-	enum keymods_ : int32_t
-	{
-		keymods_none	= 0 << 0,	// nullptr
-		keymods_shift	= 0 << 1,	// shift
-		keymods_ctrl	= 1 << 1,	// ctrl
-		keymods_alt		= 1 << 2,	// alt
-		keymods_super	= 1 << 3,	// super
-		keymods_caps	= 1 << 4,	// caps
-		keymods_numlk	= 1 << 5	// numlock
-	};
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// mouse buttons
 	enum mouse_button_ : int32_t
@@ -31,19 +21,22 @@ namespace ism
 
 		mouse_button_MAX
 	};
-}
+	
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism
-{
 	class ISM_API InputEvent : public Resource
 	{
-		ISM_SUPER(InputEvent, Resource);
+		ISM_SUPER_CLASS(InputEvent, Resource);
 
 	public:
 		virtual ~InputEvent() override;
 
-		InputEvent() {}
+		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(InputEvent);
+
+	public:
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_INPUT_EVENT_HPP_

@@ -186,6 +186,28 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		template <size_t I> NODISCARD constexpr bool read() const noexcept
+		{
+			return this->read(I);
+		}
+
+		template <size_t I> constexpr bool clear() noexcept
+		{
+			return this->clear(I);
+		}
+
+		template <size_t I> constexpr bool set() noexcept
+		{
+			return this->set(I);
+		}
+
+		template <size_t I> constexpr bool write(bool const b) noexcept
+		{
+			return this->write(I, b);
+		}
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		NODISCARD constexpr array_type arr() const noexcept
 		{
 			array_type temp{};

@@ -8,22 +8,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace detail
-	{
-		struct NODISCARD capsule_record
-		{
-			DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(capsule_record);
-
-			void * pointer{}, * context{};
-
-			destructor closure{};
-
-			String name{}, doc{};
-		};
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	class NODISCARD ISM_API CoreCapsule : public CoreObject
 	{
 		ISM_OBJECT(CoreCapsule, CoreObject);
@@ -95,6 +79,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// CAPSULE
 	template <> class Handle<CoreCapsule> : public BaseHandle<CoreCapsule>
 	{
 		ISM_HANDLE(CoreCapsule);

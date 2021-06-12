@@ -36,6 +36,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// GENERIC
 	template <> class Handle<CoreGeneric> : public BaseHandle<CoreGeneric>
 	{
 		ISM_HANDLE(CoreGeneric);

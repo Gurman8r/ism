@@ -41,9 +41,10 @@ namespace ism
 	class ISM_API Super
 	{
 	private:
-		friend class SuperDB;
 		friend bool predelete_handler(Super *);
 		friend void postinitialize_handler(Super *);
+
+		static InstanceID g_superID;
 
 		bool _predelete();
 
@@ -51,10 +52,12 @@ namespace ism
 
 		void _construct_super(bool is_ref);
 
+		void _destruct_super();
+
 	protected:
-		bool		m_is_reference{};
 		InstanceID	m_instance_id{};
-		int32_t		m_predelete_ok{};
+		uint8_t		m_predelete_ok{};
+		bool		m_is_reference{};
 
 		mutable StringName m_class_name{}, * m_class_ptr{};
 
@@ -70,7 +73,7 @@ namespace ism
 		Super() { _construct_super(false); }
 
 	public:
-		virtual ~Super();
+		virtual ~Super() noexcept { _destruct_super(); }
 
 		NODISCARD bool is_reference() const { return m_is_reference; }
 
@@ -95,39 +98,37 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define ISM_SUPER(m_class, m_inherits)																\
+#define ISM_SUPER_CLASS(m_class, m_inherits)														\
 protected:																							\
 	using self_type = m_class;																		\
 	using base_type = m_inherits;																	\
 																									\
 private:																							\
-	friend class SuperDB;																			\
-																									\
 	mutable StringName m_class_name;																\
 																									\
 public:																								\
-	virtual String get_class() const override														\
+	NODISCARD virtual String get_class() const override												\
 	{																								\
 		return String{ TOSTR(m_class) };															\
 	}																								\
 																									\
-	virtual StringName const * _get_class_namev() const override									\
+	NODISCARD virtual StringName const * _get_class_namev() const override							\
 	{																								\
 		if (!m_class_name) { m_class_name = m_class::get_class_static(); }							\
 		return &m_class_name;																		\
 	}																								\
 																									\
-	FORCE_INLINE static void * get_class_ptr_static()												\
+	NODISCARD FORCE_INLINE static void * get_class_ptr_static()										\
 	{																								\
 		static int32_t ptr; return &ptr;															\
 	}																								\
 																									\
-	FORCE_INLINE static constexpr StringView get_class_static()										\
+	NODISCARD FORCE_INLINE static constexpr StringView get_class_static()							\
 	{																								\
 		return TOSTR(m_class);																		\
 	}																								\
 																									\
-	FORCE_INLINE static constexpr StringView get_parent_class_static()								\
+	NODISCARD FORCE_INLINE static constexpr StringView get_parent_class_static()					\
 	{																								\
 		return m_inherits::get_class_static();														\
 	}																								\
@@ -138,17 +139,17 @@ public:																								\
 		value->push_back(String{ TOSTR(m_class) });													\
 	}																								\
 																									\
-	static constexpr StringView inherits_static()													\
+	NODISCARD static constexpr StringView inherits_static()											\
 	{																								\
 		return TOSTR(m_inherits);																	\
 	}																								\
 																									\
-	virtual bool is_class(String const & value) const override										\
+	NODISCARD virtual bool is_class(String const & value) const override							\
 	{																								\
 		return (value == TOSTR(m_class)) ? true : m_inherits::is_class(value);						\
 	}																								\
 																									\
-	virtual bool is_class_ptr(void * value) const override											\
+	NODISCARD virtual bool is_class_ptr(void * value) const override								\
 	{																								\
 		return (value == m_class::get_class_ptr_static()) ? true : m_inherits::is_class_ptr(value);	\
 	}																								\
@@ -179,23 +180,6 @@ private:
 			return dynamic_cast<To *>(from);
 		}
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class ISM_API SuperDB final
-	{
-	private:
-		friend class Super;
-
-		static Batch<InstanceID, Super *> g_supers;
-
-		static InstanceID add_instance(Super * value);
-
-		static void remove_instance(InstanceID value);
-
-	public:
-		static Super * get_instance(InstanceID id);
-	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

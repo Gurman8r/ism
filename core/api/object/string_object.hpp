@@ -65,6 +65,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// STR
 	template <> class Handle<CoreString> : public BaseHandle<CoreString>
 	{
 		ISM_HANDLE(CoreString);

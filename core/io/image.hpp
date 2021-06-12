@@ -5,11 +5,15 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ALIAS(Color32) uint32_t;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API Image : public Resource
 	{
-		ISM_SUPER(Image, Resource);
+		ISM_SUPER_CLASS(Image, Resource);
 
 	private:
 		friend class ImageLoader;
@@ -17,6 +21,11 @@ namespace ism
 		int32_t m_width{}, m_height{}, m_channels{};
 		
 		Vector<byte> m_pixels{};
+
+	public:
+		virtual ~Image() override;
+
+		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(Image);
 
 	public:
 		void flip_vertically();
@@ -38,12 +47,9 @@ namespace ism
 		void set_pixel(size_t i, Color32 value);
 
 		void set_pixel(size_t x, size_t y, Color32 value);
-
-		Image() {}
-
-		virtual ~Image() override;
-
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_IMAGE_HPP_

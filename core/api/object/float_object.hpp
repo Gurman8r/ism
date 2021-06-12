@@ -41,6 +41,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// FLT
 	template <> class Handle<CoreFloat> : public BaseHandle<CoreFloat>
 	{
 		ISM_HANDLE(CoreFloat);

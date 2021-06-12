@@ -169,25 +169,47 @@ namespace ism::impl
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define COPY_AND_MOVE_CONSTRUCTABLE(type)			\
-	type(type const &) = default;					\
-	type & operator=(type const &) = default;		\
-	type(type &&) noexcept = default;				\
-	type & operator=(type &&) noexcept = default;	\
+#define DEFAULT_CONSTRUCTABLE(T)							\
+	T() noexcept = default;									\
 
-#define DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type)	\
-	COPY_AND_MOVE_CONSTRUCTABLE(type)				\
-	type() noexcept = default;						\
+#define COPY_CONSTRUCTABLE(T)								\
+	T(T const &) = default;									\
+	T & operator=(T const &) = default;						\
 
-#define CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(type)			\
-	constexpr type(type const &) = default;					\
-	constexpr type(type &&) noexcept = default;				\
-	constexpr type & operator=(type const &) = default;		\
-	constexpr type & operator=(type &&) noexcept = default;	\
+#define MOVE_CONSTRUCTABLE(T)								\
+	T(T &&) noexcept = default;								\
+	T & operator=(T &&) noexcept = default;					\
 
-#define CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(type)	\
-	CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(type)				\
-	constexpr type() noexcept = default;					\
+#define COPY_AND_MOVE_CONSTRUCTABLE(T)						\
+	COPY_CONSTRUCTABLE(T)									\
+	MOVE_CONSTRUCTABLE(T)									\
+
+#define DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(T)				\
+	DEFAULT_CONSTRUCTABLE(T)								\
+	COPY_CONSTRUCTABLE(T)									\
+	MOVE_CONSTRUCTABLE(T)									\
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define CONSTEXPR_DEFAULT_CONSTRUCTABLE(T)					\
+	constexpr T() noexcept = default;						\
+
+#define CONSTEXPR_COPY_CONSTRUCTABLE(T)						\
+	constexpr T(T const &) = default;						\
+	constexpr T & operator=(T const &) = default;			\
+
+#define CONSTEXPR_MOVE_CONSTRUCTABLE(T)						\
+	constexpr T(T &&) noexcept = default;					\
+	constexpr T & operator=(T &&) noexcept = default;		\
+
+#define CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(T)			\
+	CONSTEXPR_COPY_CONSTRUCTABLE(T)							\
+	CONSTEXPR_MOVE_CONSTRUCTABLE(T)							\
+
+#define CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(T)	\
+	CONSTEXPR_DEFAULT_CONSTRUCTABLE(T)						\
+	CONSTEXPR_COPY_CONSTRUCTABLE(T)							\
+	CONSTEXPR_MOVE_CONSTRUCTABLE(T)							\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

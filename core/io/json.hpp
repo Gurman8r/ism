@@ -7,6 +7,8 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ALIAS(JSON) nlohmann::basic_json
 	<
 		std::map,
@@ -15,6 +17,8 @@ namespace ism
 		nlohmann::adl_serializer,
 		std::vector<uint8_t>
 	>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_JSON_HPP_

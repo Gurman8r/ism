@@ -45,6 +45,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// PROPERTY
 	template <> class Handle<CoreProperty> : public BaseHandle<CoreProperty>
 	{
 		ISM_HANDLE(CoreProperty);

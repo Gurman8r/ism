@@ -47,6 +47,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// CPP_FUNCTION
 	template <> class Handle<CoreCppFunction> : public BaseHandle<CoreCppFunction>
 	{
 		ISM_HANDLE(CoreCppFunction);

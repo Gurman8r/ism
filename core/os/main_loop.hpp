@@ -5,17 +5,19 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API MainLoop : public Super
 	{
-		ISM_SUPER(MainLoop, Super);
+		ISM_SUPER_CLASS(MainLoop, Super);
 
 	private:
 		Any m_startup_script;
 
 	public:
-		virtual ~MainLoop() noexcept = default;
+		MainLoop() {}
 
-		MainLoop() noexcept = default;
+		virtual ~MainLoop() override = default;
 
 		virtual void initialize();
 
@@ -25,6 +27,8 @@ namespace ism
 
 		void set_startup_script(Any const & value);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_MAIN_LOOP_HPP_

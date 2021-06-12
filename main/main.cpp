@@ -35,9 +35,7 @@ namespace ism
 		//register_scene_types();
 
 #if TOOLS_ENABLED
-		//ClassDB::set_current_api(ClassDB::API_EDITOR);
 		//register_editor_types();
-		//ClassDB::set_current_api(ClassDB::API_CORE);
 #endif
 
 		//register_platform_apis();

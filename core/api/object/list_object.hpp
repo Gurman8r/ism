@@ -46,6 +46,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// LIST
 	template <> class Handle<CoreList> : public BaseHandle<CoreList>
 	{
 		ISM_HANDLE(CoreList);

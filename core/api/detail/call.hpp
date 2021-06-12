@@ -7,8 +7,9 @@ namespace ism::detail
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// argument collector
 	template <ReturnPolicy policy = ReturnPolicy_AutomaticReference
-	> struct NODISCARD argument_collector
+	> struct NODISCARD argument_collector final
 	{
 		template <class ... Args
 		> explicit argument_collector(Args && ... values)
@@ -26,19 +27,21 @@ namespace ism::detail
 
 		NODISCARD LIST args() && { return std::move(m_args); }
 
-		NODISCARD OBJECT call(OBJECT callable)
+		NODISCARD OBJECT call(OBJECT o)
 		{
-			if (!callable || !m_args)
+			if (TYPE t; !m_args || !o || !(t = typeof(o)))
 			{
 				return nullptr;
 			}
-			else if (vectorcallfunc func{ get_vectorcall_func(callable) })
+			else if ((0 < t->tp_vectorcall_offset))
 			{
-				return func(callable, m_args.data(), m_args.size());
+				vectorcallfunc vc{ *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(o.ptr()) + t->tp_vectorcall_offset) };
+
+				return CHECK(vc)(o, m_args.data(), m_args.size());
 			}
-			else if (TYPE t{ typeof(callable) }; t && t->tp_call)
+			else if (binaryfunc tc{ t->tp_call })
 			{
-				return t->tp_call(callable, m_args);
+				return tc(o, m_args);
 			}
 			else
 			{
@@ -46,11 +49,13 @@ namespace ism::detail
 			}
 		}
 
-	private: LIST m_args{ CoreList{} };
+	private:
+		LIST m_args{ CoreList{} };
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// collect arguments
 	template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
 	> NODISCARD auto collect_arguments(Args && ... args)
 	{
@@ -59,9 +64,13 @@ namespace ism::detail
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// argument loader
 	template <class ... Args
-	> struct NODISCARD argument_loader
+	> struct NODISCARD argument_loader final
 	{
+		template <class Return, class Guard, class Func
+		> using return_type = std::conditional_t<std::is_void_v<Return>, void_type, Return>;
+
 		static constexpr size_t argument_count{ sizeof...(Args) };
 
 		static constexpr auto indices{ std::make_index_sequence<argument_count>() };
@@ -71,17 +80,17 @@ namespace ism::detail
 		NODISCARD bool load_args(Batch<OBJECT, bool> & args) { return impl_load_args(args, indices); }
 
 		template <class Return, class Guard, class Func
-		> NODISCARD auto call(Func && func) && -> std::conditional_t<std::is_void_v<Return>, void_type, Return>
+		> NODISCARD auto call(Func && func) && -> return_type<Return, void_type, Return>
 		{
 			if constexpr (std::is_void_v<Return>)
 			{
-				std::move(*this).call_impl<Return>(FWD(func), indices, Guard{});
+				std::move(*this).impl_call<Return>(FWD(func), indices, Guard{});
 
 				return void_type{};
 			}
 			else
 			{
-				return std::move(*this).call_impl<Return>(FWD(func), indices, Guard{});
+				return std::move(*this).impl_call<Return>(FWD(func), indices, Guard{});
 			}
 		}
 
@@ -94,7 +103,7 @@ namespace ism::detail
 		}
 
 		template <class Return, class Func, size_t ... I, class Guard
-		> Return call_impl(Func && func, std::index_sequence<I...>, Guard &&) &&
+		> Return impl_call(Func && func, std::index_sequence<I...>, Guard &&) &&
 		{
 			return func(cast_op<Args>(std::move(std::get<I>(argcasters)))...);
 		}
@@ -102,7 +111,8 @@ namespace ism::detail
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD argument_record
+	// argument record
+	struct NODISCARD argument_record final
 	{
 		String name{};
 
@@ -115,7 +125,8 @@ namespace ism::detail
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD function_record
+	// function record
+	struct NODISCARD function_record final
 	{
 	public:
 		String name{}, doc{}, signature{};
@@ -254,6 +265,8 @@ namespace ism::detail
 
 			for (size_t i = 0; i < argc_in; ++i)
 			{
+				// placeholder argument info
+
 				String const arg_str{ "arg" + util::to_string(i) };
 
 				this->args.push_back({ arg_str, nullptr, false, false });
@@ -263,7 +276,8 @@ namespace ism::detail
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD function_call
+	// function call
+	struct NODISCARD function_call final
 	{
 	public:
 		function_record const & func;
@@ -272,11 +286,11 @@ namespace ism::detail
 
 		Batch<OBJECT, bool> args{ func.argument_count };
 
-		function_call & operator()(OBJECT const * argv, size_t argc)
+		NODISCARD function_call & operator()(OBJECT const * in_argv, size_t in_argc)
 		{
 			size_t
 				num_args	{ this->func.argument_count },
-				num_to_copy	{ MIN(num_args, argc) },
+				num_to_copy	{ MIN(num_args, in_argc) },
 				num_copied	{};
 
 			// copy passed arguments
@@ -284,7 +298,7 @@ namespace ism::detail
 			{
 				argument_record const * arg_rec{ num_copied < func.args.size() ? &func.args[num_copied] : nullptr };
 
-				OBJECT arg{ argv[num_copied] };
+				OBJECT arg{ in_argv[num_copied] };
 
 				VERIFY("BAD ARGUMENT" && !(arg_rec && !arg_rec->none && arg.is_null()));
 
@@ -296,7 +310,7 @@ namespace ism::detail
 			{
 				for (; num_copied < num_args; ++num_copied)
 				{
-					if (auto const & arg{ func.args[num_copied] }; arg.value)
+					if (argument_record const & arg{ func.args[num_copied] }; arg.value)
 					{
 						this->args.push_back(arg.value, arg.convert);
 					}
@@ -305,9 +319,11 @@ namespace ism::detail
 						break;
 					}
 				}
+				
 				VERIFY("NOT ENOUGH ARGUMENTS" && (num_args <= num_copied));
 			}
 
+			// done.
 			return (*this);
 		}
 	};

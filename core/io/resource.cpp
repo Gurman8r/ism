@@ -4,13 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Resource::Resource() : Reference{}
-	{
-	}
-
-	Resource::~Resource()
-	{
-	}
+	Resource::~Resource() {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

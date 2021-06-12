@@ -7,12 +7,14 @@ namespace ism
 {
 	class ISM_API InputMap : public Super
 	{
-		ISM_SUPER(InputMap, Super);
+		ISM_SUPER_CLASS(InputMap, Super);
 
 	public:
 		virtual ~InputMap() override;
 
-		InputMap() {}
+		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(InputMap);
+
+	public:
 	};
 }
 

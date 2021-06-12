@@ -34,6 +34,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// FUNCTION
 	template <> class Handle<CoreFunction> : public BaseHandle<CoreFunction>
 	{
 		ISM_HANDLE(CoreFunction);

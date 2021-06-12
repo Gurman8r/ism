@@ -31,16 +31,16 @@ files{
 
 	"%{wks.location}/drivers/**.hpp", "%{wks.location}/drivers/**.cpp",
 
-	--"%{wks.location}/editor/**.hpp", "%{wks.location}/editor/**.cpp",
+	"%{wks.location}/editor/**.hpp", "%{wks.location}/editor/**.cpp",
 
 	"%{wks.location}/main/**.hpp", "%{wks.location}/main/**.cpp",
 
 	"%{wks.location}/platform/*.hpp", "%{wks.location}/platform/*.cpp",
 	"%{wks.location}/platform/%{_TARGET_OS}/**.hpp", "%{wks.location}/platform/%{_TARGET_OS}/**.cpp",
 
-	--"%{wks.location}/scene/**.hpp", "%{wks.location}/scene/**.cpp",
+	"%{wks.location}/scene/**.hpp", "%{wks.location}/scene/**.cpp",
 
-	--"%{wks.location}/servers/**.hpp", "%{wks.location}/servers/**.cpp",
+	"%{wks.location}/servers/**.hpp", "%{wks.location}/servers/**.cpp",
 }
 
 postbuildcommands{

@@ -10,6 +10,8 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API OS
 	{
 	private:
@@ -67,7 +69,11 @@ namespace ism
 		virtual ~OS();
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	NODISCARD inline OS & get_os() { return *CHECK(OS::get_singleton()); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_OS_HPP_

@@ -155,6 +155,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// TYPE
 	template <> class Handle<CoreType> : public BaseHandle<CoreType>
 	{
 		ISM_HANDLE(CoreType);

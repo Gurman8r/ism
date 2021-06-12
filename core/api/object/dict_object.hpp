@@ -46,6 +46,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// DICT
 	template <> class Handle<CoreDict> : public BaseHandle<CoreDict>
 	{
 		ISM_HANDLE(CoreDict);

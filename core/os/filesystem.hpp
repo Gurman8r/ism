@@ -7,6 +7,8 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API FileSystem
 	{
 	public:
@@ -14,6 +16,8 @@ namespace ism
 
 		NODISCARD static void set_current_path(Path const & value);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_FILESYSTEM_HPP_
