@@ -5,7 +5,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism::api
+namespace ism::api::attr
 {
 	template <class T, class SFINAE = void> struct process_attribute;
 
@@ -22,16 +22,16 @@ namespace ism::api
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ISM_PROCESS_ATTRIBUTE(m_class) \
-	struct ism::api::process_attribute<m_class> : ism::api::process_attribute_default<m_class>
+	struct ism::api::attr::process_attribute<m_class> : ism::api::attr::process_attribute_default<m_class>
 
 #define ISM_PROCESS_ATTRIBUTE_BASE(m_class, m_inherits) \
-	struct ism::api::process_attribute<m_class> : ism::api::process_attribute_default<m_inherits>
+	struct ism::api::attr::process_attribute<m_class> : ism::api::attr::process_attribute_default<m_inherits>
 
 #define ISM_PROCESS_ATTRIBUTE_SFINAE(m_class, m_sfinae) \
-	struct ism::api::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::api::process_attribute_default<m_class>
+	struct ism::api::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::api::attr::process_attribute_default<m_class>
 
 #define ISM_PROCESS_ATTRIBUTE_SFINAE_BASE(m_class, m_sfinae, m_inherits) \
-	struct ism::api::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::api::process_attribute_default<m_inherits>
+	struct ism::api::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::api::attr::process_attribute_default<m_inherits>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -66,7 +66,7 @@ namespace ism::api
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism::api
+namespace ism::api::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -142,13 +142,13 @@ namespace ism::api
 	// multiple inheritance
 	ISM_BASIC_ATTRIBUTE_E(multiple_inheritance);
 	template <> ISM_PROCESS_ATTRIBUTE(multiple_inheritance) {
-		static void init(TypeObject & r, multiple_inheritance && a) { if (!r.tp_bases) { r.tp_bases = LIST::create(); } }
+		static void init(TypeObject & r, multiple_inheritance && a) { if (!r.tp_bases) { r.tp_bases = LIST(ListObject{}); } }
 	};
 
 	// dynamic_attr
 	ISM_BASIC_ATTRIBUTE_E(dynamic_attr);
 	template <> ISM_PROCESS_ATTRIBUTE(dynamic_attr) {
-		static void init(TypeObject & r, dynamic_attr && a) { if (!r.tp_dict) { r.tp_dict = DICT::create(); } }
+		static void init(TypeObject & r, dynamic_attr && a) { if (!r.tp_dict) { r.tp_dict = DICT(DictObject{}); } }
 	};
 
 	// is_final
@@ -204,7 +204,7 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism::api
+namespace ism::api::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -120,7 +120,7 @@ namespace ism::api
 
 		bool convert{}, none{};
 
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(argument_record);
+		DEFAULT_COPYABLE_MOVABLE(argument_record);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -150,7 +150,7 @@ namespace ism::api
 	public:
 		~function_record() { if (free_data) { free_data(this); } }
 
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(function_record);
+		DEFAULT_COPYABLE_MOVABLE(function_record);
 
 		template <class Return, class ... Args, class ... Extra
 		> function_record(Return(*f)(Args...), Extra && ... extra)
@@ -216,7 +216,7 @@ namespace ism::api
 				argument_loader<Args...> args{};
 				if (!args.load_args(call.args)) { return nullptr; }
 
-				process_attributes<Extra...>::precall(call);
+				attr::process_attributes<Extra...>::precall(call);
 
 				auto data{ (sizeof(Capture) <= sizeof(call.func.data) ? &call.func.data : call.func.data[0]) };
 
@@ -224,19 +224,19 @@ namespace ism::api
 
 				ReturnPolicy policy{ return_policy_override<Return>::policy(call.func.policy) };
 
-				using Guard = extract_guard_t<Extra...>;
+				using Guard = attr::extract_guard_t<Extra...>;
 
 				using Yield = make_caster<std::conditional_t<std::is_void_v<Return>, void_type, Return>>;
 
 				OBJECT result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
 
-				process_attributes<Extra...>::postcall(call, result);
+				attr::process_attributes<Extra...>::postcall(call, result);
 
 				return result;
 			};
 
 			// process function attributes
-			process_attributes<Extra...>::init(*this, FWD(extra)...);
+			attr::process_attributes<Extra...>::init(*this, FWD(extra)...);
 
 			// generate type info
 			constexpr size_t argc{ sizeof...(Args) };

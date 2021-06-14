@@ -23,7 +23,7 @@ namespace ism::api::initimpl
 			{
 				v_h->holder().reset(memnew(Cpp<Class>{ FWD(args)... }));
 			}
-			, is_constructor{}, FWD(extra)...);
+			, attr::is_constructor{}, FWD(extra)...);
 		}
 	};
 
@@ -46,7 +46,7 @@ namespace ism::api::initimpl
 			{
 				v_h->holder().reset(func(FWD(args)...));
 			}
-			, is_constructor{}, FWD(extra)...);
+			, attr::is_constructor{}, FWD(extra)...);
 		}
 	};
 

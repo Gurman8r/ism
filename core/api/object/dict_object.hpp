@@ -9,11 +9,11 @@ class NODISCARD ISM_API ism::api::DictObject : public BaseObject
 	ISM_OBJECT(DictObject, BaseObject);
 
 protected:
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
 
-public:
 	HashMap<OBJECT, OBJECT> m_dict{};
 
+public:
 	using storage_type = decltype(m_dict);
 
 	using iterator = storage_type::iterator;
@@ -62,35 +62,28 @@ public:
 	void reserve(size_t count) const { (**m_ref).reserve(count); }
 
 	template <class Index = OBJECT
-	> void erase(Index && i) const { (**m_ref).erase(object_or_cast(FWD(i))); }
+	> void erase(Index && i) const { (**m_ref).erase(FWD_OBJ(i)); }
 
 	template <class Index = OBJECT
-	> bool contains(Index && i) const { return end() != (**m_ref).find(object_or_cast(FWD(i))); }
+	> bool contains(Index && i) const { return end() != (**m_ref).find(FWD_OBJ(i)); }
 
 	template <class Index = OBJECT
-	> auto find(Index && i) const { return (**m_ref).find(object_or_cast(FWD(i))); }
+	> auto find(Index && i) -> iterator { return (**m_ref).find(FWD_OBJ(i)); }
+
+	template <class Index = OBJECT
+	> auto find(Index && i) const -> const_iterator { return (**m_ref).find(FWD_OBJ(i)); }
 
 	template <class Index = OBJECT, class Value = OBJECT
-	> void insert(Index && i, Value && v) const { (**m_ref).try_emplace(object_or_cast(FWD(i)), object_or_cast(FWD(v))); }
+	> void insert(Index && i, Value && v) const { (**m_ref).try_emplace(FWD_OBJ(i), FWD_OBJ(v)); }
 
 	template <class Index = OBJECT
-	> auto get(Index && i) const -> OBJECT
-	{
-		return (**m_ref)[object_or_cast(FWD(i))];
-	}
+	> auto operator[](Index && i) const -> OBJECT & { return this->get(FWD(i)); }
 
 	template <class Index = OBJECT
-	> auto get(Index && i, OBJECT const & defval) const -> OBJECT
-	{
-		OBJECT name{ object_or_cast(FWD(i)) };
-		return name && contains(name) ? (**m_ref)[name] : defval;
-	}
+	> auto get(Index && i) const -> OBJECT & { return (**m_ref)[FWD_OBJ(i)]; }
 
 	template <class Index = OBJECT, class Value = OBJECT
-	> auto set(Index && i, Value && v) const -> Error
-	{
-		return ((**m_ref)[object_or_cast(FWD(i))] = object_or_cast(FWD(v))), Error_None;
-	}
+	> auto set(Index && i, Value && v) const -> Error { return ((**m_ref)[FWD_OBJ(i)] = FWD_OBJ(v)), Error_None; }
 
 public:
 	NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }

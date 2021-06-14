@@ -1,3 +1,4 @@
+#include <core/api/object/int_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,7 +6,7 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(IntObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(IntObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "int";
 	t.tp_basicsize = sizeof(IntObject);
@@ -34,14 +35,14 @@ DECLEXPR(IntObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void IntObject::_bind_methods(TypeObject & t)
+void IntObject::_bind_class(TypeObject & t)
 {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(IntObject::g_true) { true };
+STATIC_MEMBER(IntObject::g_true) { true };
 
-DECLEXPR(IntObject::g_false) { false };
+STATIC_MEMBER(IntObject::g_false) { false };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

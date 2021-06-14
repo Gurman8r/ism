@@ -34,7 +34,7 @@ namespace ism::api
 				t.tp_name = ctti::type_v<value_type>;
 			};
 
-			api::process_attributes<Extra...>::init(**type, FWD(extra)...);
+			attr::process_attributes<Extra...>::init(**type, FWD(extra)...);
 		}
 	
 		template <class Func, class ... Extra
@@ -42,22 +42,22 @@ namespace ism::api
 		{
 			CPP_FUNCTION cf({
 				method_adaptor<value_type>(FWD(func)),
-				api::name(name),
-				api::is_method(this),
-				api::sibling(attr(name)),
+				attr::name(name),
+				attr::is_method(this),
+				attr::sibling(attr(name)),
 				FWD(extra)... });
 			attr(cf.name()) = cf;
 			return (*this);
 		}
 	
 		template <class ... Args, class ... Extra
-		> Class_ & def(api::initimpl::constructor<Args...> && init, Extra && ... extra) noexcept
+		> Class_ & def(initimpl::constructor<Args...> && init, Extra && ... extra) noexcept
 		{
 			return FWD(init).execute(*this, FWD(extra)...);
 		}
 	
 		template <class ... Args, class ... Extra
-		> Class_ & def(api::initimpl::factory<Args...> && init, Extra && ... extra) noexcept
+		> Class_ & def(initimpl::factory<Args...> && init, Extra && ... extra) noexcept
 		{
 			return FWD(init).execute(*this, FWD(extra)...);
 		}
@@ -67,9 +67,9 @@ namespace ism::api
 		{
 			CPP_FUNCTION cf({
 				FWD(func),
-				api::name(name),
-				api::scope(this),
-				api::sibling(attr(name)),
+				attr::name(name),
+				attr::scope(this),
+				attr::sibling(attr(name)),
 				FWD(extra)... });
 			attr(cf.name()) = cf;
 			return (*this);
@@ -78,30 +78,30 @@ namespace ism::api
 		template <class C, class D, class ... Extra
 		> Class_ & def_readwrite(cstring name, D C::*pm, Extra && ... extra)
 		{
-			CPP_FUNCTION fget({ [pm](value_type const & c) -> D const & { return c.*pm; }, api::is_method(this) });
-			CPP_FUNCTION fset({ [pm](value_type & c, D const & value) { c.*pm = value; }, api::is_method(this) });
+			CPP_FUNCTION fget({ [pm](value_type const & c) -> D const & { return c.*pm; }, attr::is_method(this) });
+			CPP_FUNCTION fset({ [pm](value_type & c, D const & value) { c.*pm = value; }, attr::is_method(this) });
 			return this->def_property(name, fget, fset, ReturnPolicy_ReferenceInternal, FWD(extra)...);
 		}
 	
 		template <class C, class D, class ... Extra
 		> Class_ & def_readonly(cstring name, D const C::*pm, Extra && ... extra)
 		{
-			CPP_FUNCTION fget({ [pm](value_type const & c) -> D const & { return c.*pm; }, api::is_method(this) });
+			CPP_FUNCTION fget({ [pm](value_type const & c) -> D const & { return c.*pm; }, attr::is_method(this) });
 			return this->def_property_readonly(name, fget, ReturnPolicy_ReferenceInternal, FWD(extra)...);
 		}
 	
 		template <class D, class ... Extra
 		> Class_ & def_readwrite_static(cstring name, D * pm, Extra && ... extra)
 		{
-			CPP_FUNCTION fget({ [pm](object) -> D const & { return *pm; }, api::scope(this) });
-			CPP_FUNCTION fset({ [pm](object, D const & value) { *pm = value; }, api::scope(this) });
+			CPP_FUNCTION fget({ [pm](OBJECT) -> D const & { return *pm; }, attr::scope(this) });
+			CPP_FUNCTION fset({ [pm](OBJECT, D const & value) { *pm = value; }, attr::scope(this) });
 			return this->def_property_static(name, fget, fset, ReturnPolicy_Reference, FWD(extra)...);
 		}
 	
 		template <class D, class ... Extra
 		> Class_ & def_readonly_static(cstring name, D const * pm, Extra && ... extra)
 		{
-			CPP_FUNCTION fget({ [pm](object) -> D const & { return *pm; }, api::scope(this) });
+			CPP_FUNCTION fget({ [pm](OBJECT) -> D const & { return *pm; }, attr::scope(this) });
 			return this->def_property_readonly_static(name, fget, ReturnPolicy_Reference, FWD(extra)...);
 		}
 	
@@ -144,7 +144,7 @@ namespace ism::api
 		template <class ... Extra
 		> Class_ & def_property(cstring name, CPP_FUNCTION const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			return this->def_property_static(name, fget, fset, api::is_method(this), FWD(extra)...);
+			return this->def_property_static(name, fget, fset, attr::is_method(this), FWD(extra)...);
 		}
 	
 		template <class Getter, class ... Extra
@@ -156,13 +156,13 @@ namespace ism::api
 		template <class ... Extra
 		> Class_ & def_property_static(cstring name, CPP_FUNCTION const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			api::function_record * rec_fget{ &(***fget) }, * rec_fset{ &(***fset) }, * rec_active{ rec_fget };
+			attr::function_record * rec_fget{ &(***fget) }, * rec_fset{ &(***fset) }, * rec_active{ rec_fget };
 	
 			if (rec_fget)
 			{
 				String & doc_prev{ rec_fget->doc };
 				
-				api::process_attributes<Extra...>::init(*rec_fget, FWD(extra)...);
+				attr::process_attributes<Extra...>::init(*rec_fget, FWD(extra)...);
 				
 				if (!rec_fget->doc.empty() && rec_fget->doc != doc_prev) { rec_fget->doc = rec_fget->doc; }
 			}
@@ -171,7 +171,7 @@ namespace ism::api
 			{
 				String & doc_prev{ rec_fset->doc };
 				
-				api::process_attributes<Extra...>::init(*rec_fset, FWD(extra)...);
+				attr::process_attributes<Extra...>::init(*rec_fset, FWD(extra)...);
 				
 				if (!rec_fset->doc.empty() && rec_fset->doc != doc_prev) { rec_fset->doc = rec_fset->doc; }
 				

@@ -1,3 +1,4 @@
+#include <core/api/object/module_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,7 +6,7 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "module";
 	t.tp_basicsize = sizeof(ModuleObject);
@@ -14,10 +15,10 @@ DECLEXPR(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 	t.tp_dict_offset = offsetof(ModuleObject, m_dict);
 
-	t.tp_getattr = (getattrfunc)api::impl_getattr_string;
-	t.tp_setattr = (setattrfunc)api::impl_setattr_string;
-	t.tp_getattro = (getattrofunc)api::impl_getattr_object;
-	t.tp_setattro = (setattrofunc)api::impl_setattr_object;
+	t.tp_getattr = (getattrfunc)impl_getattr_string;
+	t.tp_setattr = (setattrfunc)impl_setattr_string;
+	t.tp_getattro = (getattrofunc)impl_getattr_object;
+	t.tp_setattro = (setattrofunc)impl_setattr_object;
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -37,7 +38,7 @@ DECLEXPR(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ModuleObject::_bind_methods(TypeObject & t)
+void ModuleObject::_bind_class(TypeObject & t)
 {
 	t.attr("__contains__") = CPP_FUNCTION([](MODULE self, OBJECT value) {
 		return MODULE(self->m_dict)->contains(value);

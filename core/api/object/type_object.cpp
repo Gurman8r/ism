@@ -1,3 +1,4 @@
+#include <core/api/object/type_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -72,7 +73,7 @@ static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "type";
 	t.tp_basicsize = sizeof(TypeObject);
@@ -87,10 +88,10 @@ DECLEXPR(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
 	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 
-	t.tp_getattr = (getattrfunc)api::impl_getattr_string;
-	t.tp_setattr = (setattrfunc)api::impl_setattr_string;
-	t.tp_getattro = (getattrofunc)api::impl_getattr_object;
-	t.tp_setattro = (setattrofunc)api::impl_setattr_object;
+	t.tp_getattr = (getattrfunc)impl_getattr_string;
+	t.tp_setattr = (setattrfunc)impl_setattr_string;
+	t.tp_getattro = (getattrofunc)impl_getattr_object;
+	t.tp_setattro = (setattrofunc)impl_setattr_object;
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((TypeObject *)ptr); };
@@ -126,7 +127,7 @@ DECLEXPR(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void TypeObject::_bind_methods(TypeObject & t)
+void TypeObject::_bind_class(TypeObject & t)
 {
 	t.attr("test") = CPP_FUNCTION([]()
 	{
@@ -165,22 +166,6 @@ void TypeObject::_bind_methods(TypeObject & t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT TypeObject::lookup(OBJECT name) const
-{
-	if (auto d{ DICT(tp_dict) }; !name || !d)
-	{
-		return nullptr;
-	}
-	else if (auto const it{ d.find(name) }; it != d.end())
-	{
-		return it->second;
-	}
-	else
-	{
-		return nullptr;
-	}
-}
-
 bool TypeObject::ready()
 {
 	if (has_feature(TypeFlags_Ready)) { return true; }
@@ -193,7 +178,7 @@ bool TypeObject::ready()
 
 	tp_bases = LIST(tp_base ? ListObject{ tp_base } : ListObject{});
 
-	if (!tp_dict) { tp_dict = DICT::create(); }
+	if (!tp_dict) { tp_dict = DICT(DictObject{}); }
 
 	VERIFY(mro_internal(nullptr));
 
@@ -234,7 +219,7 @@ bool TypeObject::ready()
 
 bool TypeObject::add_subclass(TypeObject const * type)
 {
-	if (!tp_subclasses) { tp_subclasses = DICT::create(); }
+	if (!tp_subclasses) { tp_subclasses = DICT(DictObject{}); }
 
 	//return (***DICT(tp_subclasses)).insert_or_assign(type, type).second;
 

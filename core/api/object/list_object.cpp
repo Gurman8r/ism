@@ -1,3 +1,4 @@
+#include <core/api/object/list_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,7 +6,7 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(ListObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(ListObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "list";
 	t.tp_basicsize = sizeof(ListObject);
@@ -32,7 +33,7 @@ DECLEXPR(ListObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ListObject::_bind_methods(TypeObject & t)
+void ListObject::_bind_class(TypeObject & t)
 {
 	t.attr("__contains__") = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(LIST(self)->contains(value));

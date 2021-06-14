@@ -9,11 +9,11 @@ class NODISCARD ISM_API ism::api::StringObject : public BaseObject
 	ISM_OBJECT(StringObject, BaseObject);
 
 protected:
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
 
-public:
 	String m_string{};
 
+public:
 	using storage_type = decltype(m_string);
 		
 	using iterator = storage_type::iterator;

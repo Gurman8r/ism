@@ -6,14 +6,14 @@
 
 extern INT main(INT, CHAR * []);
 
-ism::OS & __implement_os(void * instance)
+ism::OS & __ism_init(void * instance)
 {
 	RETURN_STATIC(ism::OS_Windows(instance ? (HINSTANCE)instance : GetModuleHandle(NULL)));
 }
 
 INT CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, INT nCmdShow)
 {
-	__implement_os(hInstance);
+	__ism_init(hInstance);
 
 	return main(__argc, __argv);
 }

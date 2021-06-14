@@ -1,11 +1,10 @@
 #include <core/api/super.hpp>
-#include <core/api/modsupport.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	DECLEXPR(Super::g_superID) {};
+	STATIC_MEMBER(Super::g_superID) {};
 
 	bool Super::_predelete()
 	{

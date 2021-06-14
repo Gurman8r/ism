@@ -13,7 +13,7 @@ namespace ism
 
 	class ISM_API Image : public Resource
 	{
-		ISM_SUPER_CLASS(Image, Resource);
+		ISM_SUPER(Image, Resource);
 
 	private:
 		friend class ImageLoader;
@@ -25,7 +25,7 @@ namespace ism
 	public:
 		virtual ~Image() override;
 
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(Image);
+		DEFAULT_COPYABLE_MOVABLE(Image);
 
 	public:
 		void flip_vertically();

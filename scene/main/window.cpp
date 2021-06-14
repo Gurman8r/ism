@@ -2,4 +2,5 @@
 
 namespace ism
 {
+	Window::~Window() {}
 }

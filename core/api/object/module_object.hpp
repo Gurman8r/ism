@@ -9,7 +9,7 @@ class NODISCARD ISM_API ism::api::ModuleObject : public BaseObject
 	ISM_OBJECT(ModuleObject, BaseObject);
 
 protected:
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
 
 public:
 	DICT		m_dict{ DictObject{} };
@@ -43,9 +43,9 @@ public:
 	{
 		CPP_FUNCTION cf({
 			FWD(func),
-			api::name(name),
-			api::scope(ptr()),
-			api::sibling(attr(name)),
+			attr::name(name),
+			attr::scope(ptr()),
+			attr::sibling(attr(name)),
 			FWD(extra)... });
 		attr(cf.name()) = cf;
 		return (*this);
@@ -81,16 +81,14 @@ namespace ism::api
 	{
 		DICT d{ get_default_interpreter()->modules };
 		auto i{ object_or_cast(name) };
-		if (d.contains(i)) { return nullptr; }
-		else { return d[i] = MODULE({ name }); }
+		return d.contains(i) ? MODULE{} : d[i] = MODULE({ name });
 	}
 
-	inline MODULE import_module(cstring name)
+	inline MODULE import(cstring name)
 	{
 		DICT d{ get_default_interpreter()->modules };
 		auto i{ object_or_cast(name) };
-		if (!d.contains(i)) { return nullptr; }
-		else { return d[i]; }
+		return !d.contains(i) ? MODULE{} : d[i];
 	}
 
 	inline DICT globals()
@@ -101,7 +99,7 @@ namespace ism::api
 		}
 		else
 		{
-			return import_module("__main__").attr("__dict__");
+			return api::import("__main__").attr("__dict__");
 		}
 	}
 }

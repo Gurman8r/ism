@@ -9,11 +9,11 @@ class NODISCARD ISM_API ism::api::ListObject : public BaseObject
 	ISM_OBJECT(ListObject, BaseObject);
 
 protected:
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
 
-public:
 	Vector<OBJECT> m_list{};
 
+public:
 	using storage_type = decltype(m_list);
 
 	using iterator = storage_type::iterator;
@@ -74,22 +74,25 @@ public:
 	void erase(OBJECT const & i) const { (**m_ref).erase(begin() + i.cast<size_t>()); }
 
 	template <class Value = OBJECT
-	> void append(Value && v) const { (**m_ref).emplace_back(object_or_cast(FWD(v))); }
+	> void append(Value && v) const { (**m_ref).emplace_back(FWD_OBJ(v)); }
 
 	template <class Value = OBJECT
-	> bool contains(Value && v) const { return end() != std::find(begin(), end(), object_or_cast(FWD(v))); }
+	> bool contains(Value && v) const { return end() != std::find(begin(), end(), FWD_OBJ(v)); }
 
 	template <class Value = OBJECT
-	> auto find(Value && v) const { return std::find(begin(), end(), object_or_cast(FWD(v))); }
+	> auto find(Value && v) const { return std::find(begin(), end(), FWD_OBJ(v)); }
 
 	template <class Value = OBJECT
-	> void insert(size_t i, Value && v) const { (**m_ref).insert(begin() + i, object_or_cast(FWD(v))); }
+	> void insert(size_t i, Value && v) const { (**m_ref).insert(begin() + i, FWD_OBJ(v)); }
 
 	template <class Value = OBJECT
-	> void insert(OBJECT const & i, Value && v) { (**m_ref).insert(begin() + i.cast<size_t>(), object_or_cast(FWD(v))); }
+	> void insert(OBJECT const & i, Value && v) { (**m_ref).insert(begin() + i.cast<size_t>(), FWD_OBJ(v)); }
 
 	template <class Index = OBJECT
-	> auto get(Index && i) const -> OBJECT
+	> auto operator[](Index && i) const -> OBJECT & { return this->get(FWD(i)); }
+
+	template <class Index = OBJECT
+	> auto get(Index && i) const -> OBJECT &
 	{
 		if constexpr (std::is_integral_v<Index>)
 		{
@@ -97,7 +100,7 @@ public:
 		}
 		else
 		{
-			return (**m_ref)[object_or_cast(FWD(i)).cast<size_t>()];
+			return (**m_ref)[FWD_OBJ(i).cast<size_t>()];
 		}
 	}
 
@@ -106,11 +109,11 @@ public:
 	{
 		if constexpr (std::is_integral_v<Index>)
 		{
-			return ((**m_ref)[static_cast<size_t>(i)] = object_or_cast(FWD(v))), Error_None;
+			return ((**m_ref)[static_cast<size_t>(i)] = FWD_OBJ(v)), Error_None;
 		}
 		else
 		{
-			return ((**m_ref)[object_or_cast(FWD(i)).cast<size_t>()] = object_or_cast(FWD(v))), Error_None;
+			return ((**m_ref)[FWD_OBJ(i).cast<size_t>()] = FWD_OBJ(v)), Error_None;
 		}
 	}
 

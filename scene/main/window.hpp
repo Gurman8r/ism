@@ -9,14 +9,20 @@ namespace ism
 
 	class ISM_API Window : public Viewport
 	{
-		ISM_SUPER_CLASS(Window, Viewport);
-
-	private:
-
+		ISM_SUPER(Window, Viewport);
+		
 	public:
-		virtual ~Window() override = default;
+		virtual ~Window() override;
 
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(Window);
+		explicit Window(Node * parent, SceneTree * tree) : Viewport{ parent, tree } {}
+
+		explicit Window(SceneTree * tree) : Viewport{ tree } {}
+
+		explicit Window(Node * parent) : Viewport{ parent } {}
+
+		NON_COPYABLE(Window);
+
+		MOVABLE(Window);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

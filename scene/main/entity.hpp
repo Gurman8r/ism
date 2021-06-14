@@ -7,109 +7,61 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Entity final
+	class ISM_API Entity : public Node
 	{
+		ISM_SUPER(Entity, Node);
+
 	public:
-		Entity() noexcept
-			: m_tree	{}
-			, m_handle	{}
+		virtual ~Entity() override;
+
+		explicit Entity(Node * parent, SceneTree * tree) noexcept : Node{ parent, tree }, m_ent{ get_registry()->create() } {}
+
+		explicit Entity(SceneTree * tree) noexcept : Node{ tree }, m_ent{ get_registry()->create() } {}
+
+		explicit Entity(Node * parent) noexcept : Node{ parent }, m_ent{ get_registry()->create() } {}
+
+		NON_COPYABLE(Entity);
+
+		MOVABLE(Entity);
+
+	public:
+		template <class Component, class ... Args
+		> Component & add_component(Args && ... args) noexcept
 		{
+			Component & cpt{ get_registry()->emplace<Component>(m_ent, FWD(args)...) };
+			m_tree->on_component_added<Component>(*this, c);
+			return cpt;
 		}
 
-		Entity(SceneTree const * tree, entt::entity handle) noexcept
-			: m_tree	{ const_cast<SceneTree *>(tree) }
-			, m_handle	{ handle }
+		template <class ... Component
+		> NODISCARD decltype(auto) get_component()
 		{
+			return get_registry()->get<Component...>(m_ent);
 		}
 
-		Entity(SceneTree const * tree) noexcept
-			: m_tree	{ const_cast<SceneTree *>(tree) }
-			, m_handle	{ m_tree ? m_tree->m_reg.create() : entt::null }
+		template <class ... Component
+		> NODISCARD bool has_component() const
 		{
+			return get_registry()->has<Component...>(m_ent);
 		}
 
-		Entity(Entity const & other) noexcept
-			: m_tree	{ other.m_tree }
-			, m_handle	{ other.m_handle }
+		template <class ... Component
+		> void remove_component()
 		{
-		}
-
-		Entity(Entity && other) noexcept
-			: m_tree	{}
-			, m_handle	{}
-		{
-			this->swap(std::move(other));
-		}
-
-		Entity & operator=(Entity const & other)
-		{
-			Entity temp{ other };
-			this->swap(temp);
-			return (*this);
-		}
-
-		Entity & operator=(Entity && other) noexcept
-		{
-			this->swap(std::move(other));
-			return (*this);
-		}
-
-		void swap(Entity & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
-				std::swap(m_tree, other.m_tree);
-				std::swap(m_handle, other.m_handle);
-			}
+			get_registry()->remove<Component...>(m_ent);
 		}
 
 	public:
-		template <class T, class ... Args
-		> auto add(Args && ... args) noexcept -> T &
-		{
-			T & c{ m_tree->m_reg.emplace<T>(m_handle, FWD(args)...) };
-			m_tree->on_component_added<T>(*this, c);
-			return c;
-		}
+		NODISCARD operator entt::entity() const noexcept { return m_ent; }
 
-		template <class ... T
-		> NODISCARD decltype(auto) get() noexcept
-		{
-			VERIFY(valid());
-			return m_tree->m_reg.get<T...>(m_handle);
-		}
+		NODISCARD auto get_entity_id() const noexcept -> entt::entity { return m_ent; }
 
-		template <class ... T
-		> NODISCARD bool has() const noexcept
-		{
-			VERIFY(valid());
-			return m_tree->m_reg.has<T...>(m_handle);
-		}
+		NODISCARD auto get_registry() const noexcept -> entt::registry * { return CHECK(get_tree())->get_registry(); }
 
-		template <class ... T
-		> void remove() noexcept
-		{
-			VERIFY(valid());
-			m_tree->m_reg.remove<T...>(m_handle);
-		}
+		NODISCARD bool is_entity_valid() const noexcept { return get_registry()->valid(m_ent); }
 
-	public:
-		NODISCARD operator bool() const noexcept { return this->valid(); }
-
-		NODISCARD operator entt::entity() const noexcept { return m_handle; }
-
-		NODISCARD auto get_handle() const noexcept -> entt::entity { return m_handle; }
-
-		NODISCARD auto get_tree() const noexcept -> SceneTree * { return m_tree; }
-
-		NODISCARD bool valid() const noexcept { return m_tree && m_tree->m_reg.valid(m_handle); }
-
-	private:
-		friend SceneTree;
-
-		SceneTree * m_tree; // tree
-
-		entt::entity m_handle; // handle
+	protected:
+		entt::entity m_ent{ entt::null }; // entity
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,3 +1,4 @@
+#include <core/api/object/generic_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,7 +6,7 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(GenericObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(GenericObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "generic_type";
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_Type_Subclass;
@@ -22,7 +23,7 @@ DECLEXPR(GenericObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void GenericObject::_bind_methods(TypeObject & t)
+void GenericObject::_bind_class(TypeObject & t)
 {
 }
 

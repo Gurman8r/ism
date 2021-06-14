@@ -1,3 +1,4 @@
+#include <core/api/object/string_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,7 +6,7 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(StringObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(StringObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "str";
 	t.tp_basicsize = sizeof(StringObject);
@@ -39,7 +40,7 @@ DECLEXPR(StringObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void StringObject::_bind_methods(TypeObject & t)
+void StringObject::_bind_class(TypeObject & t)
 {
 }
 

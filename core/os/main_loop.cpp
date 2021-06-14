@@ -4,6 +4,10 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	MainLoop::~MainLoop() {}
+
+	MainLoop::MainLoop() {}
+
 	void MainLoop::initialize()
 	{
 	}
@@ -17,7 +21,7 @@ namespace ism
 	{
 	}
 
-	void MainLoop::set_startup_script(Any const & value)
+	void MainLoop::set_startup_script(api::OBJECT value)
 	{
 	}
 

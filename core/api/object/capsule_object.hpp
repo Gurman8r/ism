@@ -11,12 +11,11 @@ class NODISCARD ISM_API ism::api::CapsuleObject : public BaseObject
 protected:
 	static void _bind_class(TypeObject & t);
 
-public:
 	void * m_pointer{}, * m_context{};
-
+	
 	destructor m_closure{};
 
-	String m_name{}, m_doc{};
+	String m_name{ "New Capsule" }, m_doc{};
 
 public:
 	virtual ~CapsuleObject() override

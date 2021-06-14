@@ -1,3 +1,4 @@
+#include <core/api/object/property_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,12 +6,17 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(PropertyObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(PropertyObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "property";
 	t.tp_basicsize = sizeof(PropertyObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_base = typeof<OBJECT>();
+
+	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
+	t.tp_free = (freefunc)[](void * ptr) { memdelete((PropertyObject *)ptr); };
+
+	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
 	t.tp_descr_get = (descrgetfunc)[](OBJECT descr, OBJECT obj, OBJECT type) -> OBJECT
 	{
@@ -21,16 +27,11 @@ DECLEXPR(PropertyObject::ob_type_static) = COMPOSE(TypeObject, t)
 	{
 		return PROPERTY(descr).set(obj, value);
 	};
-
-	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((PropertyObject *)ptr); };
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void PropertyObject::_bind_methods(TypeObject & t)
+void PropertyObject::_bind_class(TypeObject & t)
 {
 }
 

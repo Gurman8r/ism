@@ -9,14 +9,20 @@ namespace ism
 
 	class ISM_API Viewport : public Node
 	{
-		ISM_SUPER_CLASS(Viewport, Node);
-
-	private:
+		ISM_SUPER(Viewport, Node);
 
 	public:
-		virtual ~Viewport() override = default;
-		
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(Viewport);
+		virtual ~Viewport() override;
+
+		explicit Viewport(Node * parent, SceneTree * tree) : Node{ parent, tree } {}
+
+		explicit Viewport(SceneTree * tree) : Node{ tree } {}
+
+		explicit Viewport(Node * parent) : Node{ parent } {}
+
+		NON_COPYABLE(Viewport);
+
+		MOVABLE(Viewport);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

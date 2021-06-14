@@ -9,11 +9,11 @@ class NODISCARD ISM_API ism::api::CppFunctionObject : public FunctionObject
 	ISM_OBJECT(CppFunctionObject, FunctionObject);
 
 protected:
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
+
+	function_record m_cppfunction{};
 
 public:
-	api::function_record m_cppfunction{};
-
 	using storage_type = decltype(m_cppfunction);
 
 	explicit CppFunctionObject(storage_type && value) noexcept : base_type{ &ob_type_static, dispatcher }, m_cppfunction{ std::move(value) } {}
@@ -29,9 +29,9 @@ protected:
 	{
 		if (!callable) { return nullptr; }
 
-		api::function_record const & func{ **super_cast<CppFunctionObject>(*callable) };
+		function_record const & func{ **super_cast<CppFunctionObject>(*callable) };
 			
-		api::function_call call{ func, (0 < argc ? argv[0] : nullptr) };
+		function_call call{ func, (0 < argc ? argv[0] : nullptr) };
 			
 		return func.impl(call(argv, argc));
 	}

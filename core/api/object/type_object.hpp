@@ -9,7 +9,7 @@ class NODISCARD ISM_API ism::api::TypeObject : public BaseObject
 	ISM_OBJECT(TypeObject, BaseObject);
 
 protected:
-	static void _bind_methods(ism::api::TypeObject & t);
+	static void _bind_class(ism::api::TypeObject & t);
 
 public:
 	StringName			tp_name{};
@@ -66,8 +66,6 @@ public:
 	void enable_feature(int32_t feature) noexcept { flag_set(tp_flags, feature); }
 
 	void disable_feature(int32_t feature) noexcept { flag_clear(tp_flags, feature); }
-
-	OBJECT lookup(OBJECT name) const;
 
 protected:
 	bool ready();
@@ -208,9 +206,9 @@ namespace ism::api
 
 	NODISCARD inline auto get_dict_ptr(TYPE const & t, OBJECT const & o)
 	{
-		if (t && 0 < t->tp_dict_offset)
+		if (o && t && 0 < t->tp_dict_offset)
 		{
-			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(o.ptr()) + t->tp_dict_offset);
+			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + t->tp_dict_offset);
 		}
 		else
 		{
@@ -227,9 +225,9 @@ namespace ism::api
 
 	NODISCARD inline auto get_weaklist_ptr(TYPE const & t, OBJECT const & o)
 	{
-		if (t && 0 < t->tp_weaklist_offset)
+		if (o && t && 0 < t->tp_weaklist_offset)
 		{
-			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(o.ptr()) + t->tp_weaklist_offset);
+			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + t->tp_weaklist_offset);
 		}
 		else
 		{
@@ -246,9 +244,9 @@ namespace ism::api
 
 	NODISCARD inline auto get_vectorcall_func(TYPE const & t, OBJECT const & o)
 	{
-		if (t && 0 < t->tp_vectorcall_offset)
+		if (o && t && 0 < t->tp_vectorcall_offset)
 		{
-			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(o.ptr()) + t->tp_vectorcall_offset);
+			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(*o) + t->tp_vectorcall_offset);
 		}
 		else
 		{

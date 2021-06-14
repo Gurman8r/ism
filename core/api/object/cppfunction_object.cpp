@@ -1,3 +1,4 @@
+#include <core/api/object/cppfunction_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -20,7 +21,7 @@ static GetSetDef cppfunction_getsets[] =
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CppFunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(CppFunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "cpp_function";
 	t.tp_basicsize = sizeof(CppFunctionObject);
@@ -29,10 +30,10 @@ DECLEXPR(CppFunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 	t.tp_vectorcall_offset = offsetof(CppFunctionObject, m_vectorcall);
 
-	t.tp_getattr = (getattrfunc)api::impl_getattr_string;
-	t.tp_setattr = (setattrfunc)api::impl_setattr_string;
-	t.tp_getattro = (getattrofunc)api::impl_getattr_object;
-	t.tp_setattro = (setattrofunc)api::impl_setattr_object;
+	t.tp_getattr = (getattrfunc)impl_getattr_string;
+	t.tp_setattr = (setattrfunc)impl_setattr_string;
+	t.tp_getattro = (getattrofunc)impl_getattr_object;
+	t.tp_setattro = (setattrofunc)impl_setattr_object;
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CppFunctionObject *)ptr); };
@@ -42,7 +43,7 @@ DECLEXPR(CppFunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
 	t.tp_getsets = cppfunction_getsets;
 };
 
-void CppFunctionObject::_bind_methods(TypeObject & t)
+void CppFunctionObject::_bind_class(TypeObject & t)
 {
 	//t.attr("__name__") = PROPERTY({
 	//	CPP_FUNCTION([](CPP_FUNCTION self) { return self->m_cppfunction.name; }),

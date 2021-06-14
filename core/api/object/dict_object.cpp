@@ -1,3 +1,4 @@
+#include <core/api/object/dict_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,7 +6,7 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(DictObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(DictObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "dict";
 	t.tp_basicsize = sizeof(DictObject);
@@ -22,7 +23,7 @@ DECLEXPR(DictObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void DictObject::_bind_methods(TypeObject & t)
+void DictObject::_bind_class(TypeObject & t)
 {
 	t.attr("__contains__") = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(DICT(self)->contains(value));

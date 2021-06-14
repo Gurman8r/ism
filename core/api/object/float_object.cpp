@@ -1,3 +1,4 @@
+#include <core/api/object/float_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,7 +6,7 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(FloatObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(FloatObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "float";
 	t.tp_basicsize = sizeof(FloatObject);
@@ -34,7 +35,7 @@ DECLEXPR(FloatObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void FloatObject::_bind_methods(TypeObject & t)
+void FloatObject::_bind_class(TypeObject & t)
 {
 }
 

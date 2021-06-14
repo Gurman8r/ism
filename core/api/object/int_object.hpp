@@ -14,11 +14,11 @@ class NODISCARD ISM_API ism::api::IntObject : public BaseObject
 	ISM_OBJECT(IntObject, BaseObject);
 
 protected:
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
 
-public:
 	int64_t m_int{};
 
+public:
 	using storage_type = decltype(m_int);
 
 	template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>

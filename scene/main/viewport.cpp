@@ -2,4 +2,5 @@
 
 namespace ism
 {
+	Viewport::~Viewport() {}
 }

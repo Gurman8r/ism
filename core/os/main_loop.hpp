@@ -1,7 +1,7 @@
 #ifndef _ISM_MAIN_LOOP_HPP_
 #define _ISM_MAIN_LOOP_HPP_
 
-#include <core/api/super.hpp>
+#include <core/api/modsupport.hpp>
 
 namespace ism
 {
@@ -9,15 +9,19 @@ namespace ism
 
 	class ISM_API MainLoop : public Super
 	{
-		ISM_SUPER_CLASS(MainLoop, Super);
+		ISM_SUPER(MainLoop, Super);
 
 	private:
-		Any m_startup_script;
+		api::OBJECT m_startup_script{};
 
 	public:
-		MainLoop() {}
+		virtual ~MainLoop() override;
 
-		virtual ~MainLoop() override = default;
+		MainLoop();
+
+		NON_COPYABLE(MainLoop);
+
+		MOVABLE(MainLoop);
 
 		virtual void initialize();
 
@@ -25,7 +29,7 @@ namespace ism
 
 		virtual void finalize();
 
-		void set_startup_script(Any const & value);
+		void set_startup_script(api::OBJECT value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

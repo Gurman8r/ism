@@ -3,6 +3,8 @@
 
 #include <core/api/detail/common.hpp>
 
+#define FWD_OBJ(expr) (ism::api::object_or_cast(FWD(expr)))
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object_api
@@ -134,12 +136,6 @@ public:																								\
 																									\
 	Handle & operator=(m_class && value) noexcept { revalue(std::move(value)); return (*this); }	\
 																									\
-	template <class ... Args																		\
-	> NODISCARD static Handle<m_class> create(Args && ... args) noexcept							\
-	{																								\
-		return { memnew(m_class{ FWD(args)... }) };													\
-	}																								\
-																									\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -200,9 +196,9 @@ template <class T> struct ism::GreaterEqual<ism::api::Handle<T>>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object class
-#define ISM_OBJECT_CLASS(m_class, m_inherits)											\
-	ISM_SUPER_CLASS(m_class, m_inherits)												\
+// object common
+#define ISM_OBJECT_COMMON(m_class, m_inherits)											\
+	ISM_SUPER(m_class, m_inherits)														\
 																						\
 private:																				\
 	friend class ism::api::ClassDB;														\
@@ -219,10 +215,10 @@ protected:																				\
 																						\
 	FORCE_INLINE static constexpr void (*_get_bind_methods())(ism::api::TypeObject & t)	\
 	{																					\
-		return &m_class::_bind_methods;													\
+		return &m_class::_bind_class;													\
 	}																					\
 																						\
-	NODISCARD FORCE_INLINE virtual ism::api::TypeObject * _get_typev() const override	\
+	FORCE_INLINE virtual ism::api::TypeObject * _get_typev() const override				\
 	{																					\
 		return m_class::get_type_static();												\
 	}																					\
@@ -230,18 +226,18 @@ protected:																				\
 public:																					\
 	static void initialize_class()														\
 	{																					\
-		static SCOPE_ENTER(&)															\
+		if (static bool once{}; !once && (once = true))									\
 		{																				\
 			ism::api::ClassDB::add_class<m_class>();									\
 																						\
 			if (m_class::_get_bind_methods() != m_inherits::_get_bind_methods())		\
 			{																			\
-				m_class::_bind_methods(m_class::ob_type_static);						\
+				m_class::_bind_class(m_class::ob_type_static);							\
 			}																			\
 		};																				\
 	}																					\
 																						\
-	NODISCARD FORCE_INLINE static ism::api::TypeObject * get_type_static()				\
+	FORCE_INLINE static ism::api::TypeObject * get_type_static()						\
 	{																					\
 		return &m_class::ob_type_static;												\
 	}																					\
@@ -255,14 +251,14 @@ private:
 
 // object cvt
 #define ISM_OBJECT_CVT(m_class, m_inherits)					\
-	ISM_OBJECT_CLASS(m_class, m_inherits)					\
+	ISM_OBJECT_COMMON(m_class, m_inherits)					\
 public:														\
-	COPY_AND_MOVE_CONSTRUCTABLE(m_class)					\
+	COPYABLE_MOVABLE(m_class)								\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object common
+// object default
 #define ISM_OBJECT(m_class, m_inherits)						\
 	ISM_OBJECT_CVT(m_class, m_inherits);					\
 public:														\
@@ -272,9 +268,9 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // base object
-class NODISCARD ISM_API ism::api::BaseObject : public Reference, public ObjectAPI<ism::api::BaseObject>
+class NODISCARD ISM_API ism::api::BaseObject : public Reference, public ObjectAPI<BaseObject>
 {
-	ISM_SUPER_CLASS(BaseObject, Reference);
+	ISM_SUPER(BaseObject, Reference);
 
 private:
 	friend class ClassDB;
@@ -288,11 +284,11 @@ protected:
 
 	virtual void _initialize_classv() { initialize_class(); }
 
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
 
-	NODISCARD FORCE_INLINE static constexpr void (*_get_bind_methods())(TypeObject &) { return &BaseObject::_bind_methods; }
+	FORCE_INLINE static constexpr void (*_get_bind_methods())(TypeObject &) { return &BaseObject::_bind_class; }
 
-	NODISCARD FORCE_INLINE virtual TypeObject * _get_typev() const { return get_type_static(); }
+	FORCE_INLINE virtual TypeObject * _get_typev() const { return get_type_static(); }
 
 	explicit BaseObject(TypeObject const * t) noexcept : ob_type{ const_cast<TypeObject *>(t) } {}
 
@@ -364,15 +360,15 @@ public:
 	void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT(a)); }
 	void operator=(Accessor const & a) & { operator=(OBJECT(a)); }
 
-	template <class T> decltype(auto) operator=(T && v) &&
+	template <class Value> decltype(auto) operator=(Value && value) &&
 	{
-		Policy::set(m_obj, m_key, object_or_cast(FWD(v)));
+		Policy::set(m_obj, m_key, FWD_OBJ(value));
 		return (*this);
 	}
 
-	template <class T> decltype(auto) operator=(T && v) &
+	template <class Value> decltype(auto) operator=(Value && value) &
 	{
-		get_cache() = object_or_cast(FWD(v));
+		get_cache() = FWD_OBJ(value);
 		return (*this);
 	}
 
@@ -394,9 +390,7 @@ private:
 	mutable OBJECT m_cache;
 };
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// attr accessor
+// attribute accessor
 template <class T> struct ism::api::accessor_policies::Attr
 {
 	using key_type = T;
@@ -461,7 +455,7 @@ namespace ism::api
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof() noexcept
 	{
-		return api::typeof_generic(typeid(T));
+		return typeof_generic(typeid(T));
 	}
 
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
@@ -473,7 +467,7 @@ namespace ism::api
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept
 	{
-		return typeof(object_or_cast(FWD(o)));
+		return typeof(FWD_OBJ(o));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -481,19 +475,19 @@ namespace ism::api
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD bool isinstance(OBJECT const & o) noexcept
 	{
-		return typeof(o) == typeof<T>();
+		return o && (typeof(o) == typeof<T>());
 	}
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
 	> NODISCARD bool isinstance(OBJECT const & o) noexcept
 	{
-		return api::isinstance_generic(o, typeid(T));
+		return isinstance_generic(o, typeid(T));
 	}
 
 	template <class A, class B = A
 	> NODISCARD bool isinstance(A const & a, B const & b)
 	{
-		return typeof(a) == (isinstance<TYPE>(b) ? b : typeof(b));
+		return (a && b) && (typeof(a) == (isinstance<TYPE>(b) ? b : typeof(b)));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -513,7 +507,7 @@ namespace ism::api
 			}
 			else if (t->tp_getattro)
 			{
-				return t->tp_getattro(o, object_or_cast(FWD(i)));
+				return t->tp_getattro(o, FWD_OBJ(i));
 			}
 			else
 			{
@@ -524,7 +518,7 @@ namespace ism::api
 		{
 			if (t->tp_getattro)
 			{
-				return t->tp_getattro(o, object_or_cast(FWD(i)));
+				return t->tp_getattro(o, FWD_OBJ(i));
 			}
 			else if (t->tp_getattr)
 			{
@@ -541,7 +535,7 @@ namespace ism::api
 	> NODISCARD OBJECT getattr(OBJECT o, Index && i, Defval && defval) noexcept
 	{
 		OBJECT result{ getattr(o, FWD(i)) };
-		return result ? result : object_or_cast(FWD(defval));
+		return result ? result : FWD_OBJ(defval);
 	}
 
 	template <class Index = OBJECT, class Value = OBJECT
@@ -555,11 +549,11 @@ namespace ism::api
 		{
 			if (t->tp_setattr)
 			{
-				return t->tp_setattr(o, FWD(i), object_or_cast(FWD(v)));
+				return t->tp_setattr(o, FWD(i), FWD_OBJ(v));
 			}
 			else if (t->tp_getattro)
 			{
-				return t->tp_setattro(o, object_or_cast(i), object_or_cast(FWD(v)));
+				return t->tp_setattro(o, object_or_cast(i), FWD_OBJ(v));
 			}
 			else
 			{
@@ -570,11 +564,11 @@ namespace ism::api
 		{
 			if (t->tp_getattro)
 			{
-				return t->tp_setattro(o, object_or_cast(FWD(i)), object_or_cast(FWD(v)));
+				return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v));
 			}
 			else if (t->tp_setattr)
 			{
-				return t->tp_setattr(o, STR(FWD(i)).c_str(), object_or_cast(FWD(v)));
+				return t->tp_setattr(o, STR(FWD(i)).c_str(), FWD_OBJ(v));
 			}
 			else
 			{
@@ -663,20 +657,22 @@ namespace ism::api
 	public:
 		static void add_class(StringName const & name, TypeObject * type);
 
-		template <class T> static void add_class()
-		{
-			add_class(T::get_class_static(), T::get_type_static());
-		}
+		template <class T
+		> static void add_class() { add_class(T::get_class_static(), T::get_type_static()); }
 
-		template <class T> static void register_class()
+		template <class T
+		> static void register_class()
 		{
 			T::initialize_class();
 
-			TYPE * type{ classes.map<hash_t, TYPE>(hash(T::get_class_static())) };
+			TYPE t{ *classes.map<hash_t, TYPE>(hash(T::get_class_static())) };
 
-			VERIFY(type && *type);
-
-			(*type)->m_class_ptr = (StringName *)T::get_class_ptr_static();
+			if (t.is_null())
+			{
+				FATAL("failed to register class");
+			}
+			
+			(*t)->m_class_ptr = (StringName *)T::get_class_ptr_static();
 
 			T::register_custom_data();
 		}

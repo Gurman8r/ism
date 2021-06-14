@@ -45,10 +45,10 @@ InterpreterState::InterpreterState(RuntimeState * runtime) : runtime{ runtime }
 	if (!runtime->interpreters.main) { runtime->interpreters.main = this; }
 	tstate_head = memnew(ThreadState(this));
 
-	dict = DICT::create();
-	builtins = DICT::create();
-	modules = DICT::create();
-	importlib = DICT::create();
+	dict = DICT(DictObject{});
+	builtins = DICT(DictObject{});
+	modules = DICT(DictObject{});
+	importlib = DICT(DictObject{});
 }
 
 InterpreterState::~InterpreterState()

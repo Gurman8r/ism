@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Input : public Super
 	{
-		ISM_SUPER_CLASS(Input, Super);
+		ISM_SUPER(Input, Super);
 
 	private:
 		static Input * singleton;
@@ -17,7 +17,7 @@ namespace ism
 	public:
 		virtual ~Input() override;
 
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(Input);
+		DEFAULT_COPYABLE_MOVABLE(Input);
 
 	public:
 		FORCE_INLINE static Input * get_singleton() { return singleton; }

@@ -7,85 +7,175 @@ namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline OBJECT impl_getattr_string(OBJECT o, cstring i)
+	inline OBJECT impl_getattr_string(OBJECT obj, cstring name)
 	{
-		if (TYPE t{ typeof(o) }; !t || !t->tp_dict)
+		if (TYPE type; !obj || !name || !(type = typeof(obj)))
 		{
 			return nullptr;
 		}
-		else if (GetSetDef * def{ get_property_def(o, i) }; def && def->get)
+		else if (GetSetDef * def{ get_property_def(obj, name) }; def && def->get)
 		{
-			return def->get(o, def);
-		}
-		else if (DICT d{ *get_dict_ptr(t, o) })
-		{
-			return d.get(i);
+			return def->get(obj, def);
 		}
 		else
 		{
+			if (isinstance<DICT>(type->tp_dict))
+			{
+				if (OBJECT & elem{ DICT(type->tp_dict).get(name) }; isinstance<PROPERTY>(elem))
+				{
+					return PROPERTY(elem).get(obj);
+				}
+				else if (elem)
+				{
+					return elem;
+				}
+			}
+
+			if (OBJECT * dp{ get_dict_ptr(type, obj) }; dp && isinstance<DICT>(*dp))
+			{
+				if (OBJECT & elem{ DICT(*dp).get(name) }; isinstance<PROPERTY>(elem))
+				{
+					return PROPERTY(elem).get(obj);
+				}
+				else
+				{
+					return elem;
+				}
+			}
+
 			return nullptr;
 		}
 	}
 
-	inline Error impl_setattr_string(OBJECT o, cstring i, OBJECT v)
+	inline Error impl_setattr_string(OBJECT obj, cstring name, OBJECT value)
 	{
-		if (TYPE t{ typeof(o) }; !t || !t->tp_dict)
+		if (TYPE type; !obj || !name || !(type = typeof(obj)))
 		{
 			return Error_Unknown;
 		}
-		else if (GetSetDef * def{ get_property_def(o, i) }; def && def->set)
+		else if (GetSetDef * def{ get_property_def(obj, name) }; def && def->set)
 		{
-			return def->set(o, v, def);
+			return def->set(obj, value, def);
 		}
-		else if (DICT d{ *get_dict_ptr(t, o) })
+		else if (OBJECT * dp{ get_dict_ptr(type, obj) }; !dp)
 		{
-			return d.set(i, v);
+			if (OBJECT & elem{ DICT(type->tp_dict).get(name) }; isinstance<PROPERTY>(elem))
+			{
+				return PROPERTY(elem).set(obj, value);
+			}
+			else
+			{
+				return (elem = value), Error_None;
+			}
+		}
+		else if (dp && isinstance<DICT>(*dp))
+		{
+			if (OBJECT & elem{ DICT(*dp).get(name) }; isinstance<PROPERTY>(elem))
+			{
+				return PROPERTY(elem).set(obj, value);
+			}
+			else
+			{
+				return (elem = value), Error_None;
+			}
 		}
 		else
 		{
-			return Error_Unknown;
+			if (OBJECT & elem{ DICT(type->tp_dict).get(name) }; isinstance<PROPERTY>(elem))
+			{
+				return PROPERTY(elem).set(obj, value);
+			}
+			else
+			{
+				return (elem = value), Error_None;
+			}
 		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline OBJECT impl_getattr_object(OBJECT o, OBJECT i)
+	inline OBJECT impl_getattr_object(OBJECT obj, OBJECT name)
 	{
-		if (TYPE t{ typeof(o) }; !t || !t->tp_dict)
+		if (TYPE type; !obj || !name || !(type = typeof(obj)))
 		{
 			return nullptr;
 		}
-		else if (isinstance<STR>(i))
+		else if (isinstance<STR>(name))
 		{
-			return impl_getattr_string(o, STR(i).c_str());
-		}
-		else if (DICT d{ *get_dict_ptr(t, o) })
-		{
-			return d.get(i);
+			return impl_getattr_string(obj, STR(name).c_str());
 		}
 		else
 		{
+			if (isinstance<DICT>(type->tp_dict))
+			{
+				if (OBJECT & elem{ DICT(type->tp_dict).get(name) }; isinstance<PROPERTY>(elem))
+				{
+					return PROPERTY(elem).get(obj);
+				}
+				else if (elem)
+				{
+					return elem;
+				}
+			}
+
+			if (OBJECT * dp{ get_dict_ptr(type, obj) }; dp && isinstance<DICT>(*dp))
+			{
+				if (OBJECT & elem{ DICT(*dp).get(name) }; isinstance<PROPERTY>(elem))
+				{
+					return PROPERTY(elem).get(obj);
+				}
+				else
+				{
+					return elem;
+				}
+			}
+
 			return nullptr;
 		}
 	}
 
-	inline Error impl_setattr_object(OBJECT o, OBJECT i, OBJECT v)
+	inline Error impl_setattr_object(OBJECT obj, OBJECT name, OBJECT value)
 	{
-		if (TYPE t{ typeof(o) }; !t || !t->tp_dict)
+		if (TYPE type; !obj || !name || !(type = typeof(obj)))
 		{
 			return Error_Unknown;
 		}
-		else if (isinstance<STR>(i))
+		else if (isinstance<STR>(name))
 		{
-			return impl_setattr_string(o, STR(i).c_str(), v);
+			return impl_setattr_string(obj, STR(name).c_str(), value);
 		}
-		else if (DICT d{ *get_dict_ptr(t, o) })
+		else if (OBJECT * dp{ get_dict_ptr(type, obj) }; !dp)
 		{
-			return d.set(i, v);
+			if (OBJECT & elem{ DICT(type->tp_dict).get(name) }; isinstance<PROPERTY>(elem))
+			{
+				return PROPERTY(elem).set(obj, value);
+			}
+			else
+			{
+				return (elem = value), Error_None;
+			}
+		}
+		else if (dp && isinstance<DICT>(*dp))
+		{
+			if (OBJECT & elem{ DICT(*dp).get(name) }; isinstance<PROPERTY>(elem))
+			{
+				return PROPERTY(elem).set(obj, value);
+			}
+			else
+			{
+				return (elem = value), Error_None;
+			}
 		}
 		else
 		{
-			return Error_Unknown;
+			if (OBJECT & elem{ DICT(type->tp_dict).get(name) }; isinstance<PROPERTY>(elem))
+			{
+				return PROPERTY(elem).set(obj, value);
+			}
+			else
+			{
+				return (elem = value), Error_None;
+			}
 		}
 	}
 

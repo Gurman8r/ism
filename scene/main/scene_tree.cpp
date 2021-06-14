@@ -1,43 +1,61 @@
 #include <scene/main/scene_tree.hpp>
+#include <scene/components/components.hpp>
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	SceneTree::~SceneTree()
+	{
+		if (m_root)
+		{
+			memdelete(m_root);
+
+			m_root = nullptr;
+		}
+	}
+
+	SceneTree::SceneTree(String const & name)
+	{
+		m_name = name.empty() ? "New Scene" : name;
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	void SceneTree::on_runtime_update(Duration dt)
 	{
 		if (!m_root) { return; }
 
-		//m_reg.view<BehaviorComponent>().each([&](auto e, BehaviorComponent & scr)
+		//m_reg.view<ScriptComponent>().each([&](auto e, ScriptComponent & scr)
 		//{
 		//	if (!scr.instance)
 		//	{
 		//		scr.instance = scr.create_instance();
-		//
+		//	
 		//		scr.instance->on_create();
 		//	}
-		//
+		//	
 		//	scr.instance->on_update(dt);
 		//});
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	template <> void SceneTree::on_component_added<CameraComponent>(Entity & e, CameraComponent & c)
+	{
+	}
+	
+	template <> void SceneTree::on_component_added<ScriptComponent>(Entity & e, ScriptComponent & c)
+	{
+	}
 
-	//template <> void SceneTree::on_component_added<tag_component>(Entity & e, TagComponent & c)
-	//{
-	//}
-	//
-	//template <> void SceneTree::on_component_added<transform_component>(Entity & e, TransformComponent & c)
-	//{
-	//}
-	//
-	//template <> void SceneTree::on_component_added<camera_component>(Entity & e, CameraComponent & c)
-	//{
-	//}
-	//
-	//template <> void SceneTree::on_component_added<behavior_component>(Entity & e, BehaviorComponent & c)
-	//{
-	//}
+	template <> void SceneTree::on_component_added<TagComponent>(Entity & e, TagComponent & c)
+	{
+	}
+
+	template <> void SceneTree::on_component_added<TransformComponent>(Entity & e, TransformComponent & c)
+	{
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

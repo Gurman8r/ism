@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Resource : public Reference
 	{
-		ISM_SUPER_CLASS(Resource, Reference);
+		ISM_SUPER(Resource, Reference);
 
 	protected:
 		Resource() noexcept = default;

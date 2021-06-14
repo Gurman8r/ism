@@ -38,7 +38,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define ISM_SUPER_CLASS(m_class, m_inherits)														\
+#define ISM_SUPER(m_class, m_inherits)																\
 protected:																							\
 	using self_type = m_class;																		\
 	using base_type = m_inherits;																	\

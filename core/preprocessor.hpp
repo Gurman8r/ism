@@ -47,7 +47,7 @@
 #define STRVAR(name, str)	static char const name[] = { str }
 
 // decltype variable
-#define DECLEXPR(expr)		decltype(expr) expr
+#define STATIC_MEMBER(expr)	decltype(expr) expr
 
 // automatic forward
 #define FWD(expr)			(std::forward<decltype(expr)>(expr))
@@ -169,47 +169,57 @@ namespace ism::impl
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define DEFAULT_CONSTRUCTABLE(T)							\
-	T() noexcept = default;									\
+#define NON_COPYABLE(T)									\
+	T(T const &) = delete;								\
+	T & operator=(T const &) = delete;					\
 
-#define COPY_CONSTRUCTABLE(T)								\
-	T(T const &) = default;									\
-	T & operator=(T const &) = default;						\
-
-#define MOVE_CONSTRUCTABLE(T)								\
-	T(T &&) noexcept = default;								\
-	T & operator=(T &&) noexcept = default;					\
-
-#define COPY_AND_MOVE_CONSTRUCTABLE(T)						\
-	COPY_CONSTRUCTABLE(T)									\
-	MOVE_CONSTRUCTABLE(T)									\
-
-#define DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(T)				\
-	DEFAULT_CONSTRUCTABLE(T)								\
-	COPY_CONSTRUCTABLE(T)									\
-	MOVE_CONSTRUCTABLE(T)									\
+#define NON_MOVABLE(T)									\
+	T(T &&) noexcept = delete;							\
+	T & operator=(T &&) noexcept = delete;				\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define CONSTEXPR_DEFAULT_CONSTRUCTABLE(T)					\
-	constexpr T() noexcept = default;						\
+#define DEFAULT(T)										\
+	T() noexcept = default;								\
 
-#define CONSTEXPR_COPY_CONSTRUCTABLE(T)						\
-	constexpr T(T const &) = default;						\
-	constexpr T & operator=(T const &) = default;			\
+#define COPYABLE(T)										\
+	T(T const &) = default;								\
+	T & operator=(T const &) = default;					\
 
-#define CONSTEXPR_MOVE_CONSTRUCTABLE(T)						\
-	constexpr T(T &&) noexcept = default;					\
-	constexpr T & operator=(T &&) noexcept = default;		\
+#define MOVABLE(T)										\
+	T(T &&) noexcept = default;							\
+	T & operator=(T &&) noexcept = default;				\
 
-#define CONSTEXPR_COPY_AND_MOVE_CONSTRUCTABLE(T)			\
-	CONSTEXPR_COPY_CONSTRUCTABLE(T)							\
-	CONSTEXPR_MOVE_CONSTRUCTABLE(T)							\
+#define COPYABLE_MOVABLE(T)								\
+	COPYABLE(T)											\
+	MOVABLE(T)											\
 
-#define CONSTEXPR_DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(T)	\
-	CONSTEXPR_DEFAULT_CONSTRUCTABLE(T)						\
-	CONSTEXPR_COPY_CONSTRUCTABLE(T)							\
-	CONSTEXPR_MOVE_CONSTRUCTABLE(T)							\
+#define DEFAULT_COPYABLE_MOVABLE(T)						\
+	DEFAULT(T)											\
+	COPYABLE(T)											\
+	MOVABLE(T)											\
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define CONSTEXPR_DEFAULT(T)							\
+	constexpr T() noexcept = default;					\
+
+#define CONSTEXPR_COPYABLE(T)							\
+	constexpr T(T const &) = default;					\
+	constexpr T & operator=(T const &) = default;		\
+
+#define CONSTEXPR_MOVABLE(T)							\
+	constexpr T(T &&) noexcept = default;				\
+	constexpr T & operator=(T &&) noexcept = default;	\
+
+#define CONSTEXPR_COPYABLE_MOVABLE(T)					\
+	CONSTEXPR_COPYABLE(T)								\
+	CONSTEXPR_MOVABLE(T)								\
+
+#define CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(T)			\
+	CONSTEXPR_DEFAULT(T)								\
+	CONSTEXPR_COPYABLE(T)								\
+	CONSTEXPR_MOVABLE(T)								\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

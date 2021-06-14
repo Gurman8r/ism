@@ -1,29 +1,26 @@
 #ifndef _ISM_PROPERTY_OBJECT_HPP_
 #define _ISM_PROPERTY_OBJECT_HPP_
 
-#include <core/api/object/type_object.hpp>
+#include <core/api/object/base_object.hpp>
 
 // property object
-class NODISCARD ISM_API ism::api::PropertyObject : public BaseObject
+class ISM_API ism::api::PropertyObject : public BaseObject
 {
 	ISM_OBJECT(PropertyObject, BaseObject);
 
 protected:
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
+
+	OBJECT m_get{}, m_set{};
 
 public:
-	OBJECT m_get{};
-	OBJECT m_set{};
-	void * m_closure{};
-	String m_name{}, m_doc{};
+	PropertyObject(OBJECT fget, OBJECT fset) : self_type{} { m_get = fget; m_set = fset; }
 
-public:
-	PropertyObject(OBJECT fget, OBJECT fset, void * closure = nullptr) : base_type{ &ob_type_static }
-	{
-		m_get = fget;
-		m_set = fset;
-		m_closure = closure;
-	}
+	PropertyObject(OBJECT fget) : self_type{} { m_get = fget; m_set = nullptr; }
+
+	NODISCARD OBJECT get(OBJECT obj) const { return m_get(obj); }
+
+	Error set(OBJECT obj, OBJECT value) const { return m_set(obj, value), Error_None; }
 };
 
 // property deleter
@@ -39,9 +36,10 @@ public:
 
 	~Handle() = default;
 
-	NODISCARD OBJECT get(OBJECT o) const { return (*m_ref).m_get(o); }
+	NODISCARD OBJECT get(OBJECT obj) const { return m_ref->get(obj); }
 
-	Error set(OBJECT o, OBJECT v) const { return (*m_ref).m_set(o, v), Error_None; }
+	template <class Value = OBJECT
+	> Error set(OBJECT obj, Value && value) const { return m_ref->set(obj, FWD_OBJ(value)); }
 };
 
 #endif // !_ISM_PROPERTY_OBJECT_HPP_

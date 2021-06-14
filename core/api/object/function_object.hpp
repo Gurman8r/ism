@@ -9,9 +9,8 @@ class ISM_API ism::api::FunctionObject : public BaseObject
 	ISM_OBJECT(FunctionObject, BaseObject);
 
 protected:
-	static void _bind_methods(TypeObject & t);
+	static void _bind_class(TypeObject & t);
 
-public:
 	vectorcallfunc m_vectorcall{};
 
 public:

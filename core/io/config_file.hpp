@@ -9,12 +9,12 @@ namespace ism
 
 	class ISM_API ConfigFile : public Resource
 	{
-		ISM_SUPER_CLASS(ConfigFile, Resource);
+		ISM_SUPER(ConfigFile, Resource);
 
 	public:
 		virtual ~ConfigFile() override;
 
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(ConfigFile);
+		DEFAULT_COPYABLE_MOVABLE(ConfigFile);
 
 	public:
 	};

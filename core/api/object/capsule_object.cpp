@@ -1,3 +1,4 @@
+#include <core/api/object/capsule_object.hpp>
 #include <core/api/modsupport.hpp>
 
 using namespace ism;
@@ -5,7 +6,7 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(CapsuleObject::ob_type_static) = COMPOSE(TypeObject, t)
+STATIC_MEMBER(CapsuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "capsule";
 	t.tp_basicsize = sizeof(CapsuleObject);
@@ -22,15 +23,15 @@ DECLEXPR(CapsuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 void CapsuleObject::_bind_class(TypeObject & t)
 {
-	t.attr("__name__") = PROPERTY({
+	setitem(t.tp_dict, "__name__", PROPERTY({
 		CPP_FUNCTION([](CAPSULE self) { return self->m_name; }),
 		CPP_FUNCTION([](CAPSULE self, STR value) { self->m_name = value; })
-	});
-
-	t.attr("__doc__") = PROPERTY({
+		}));
+	
+	setitem(t.tp_dict, "__doc__", PROPERTY({
 		CPP_FUNCTION([](CAPSULE self) { return self->m_doc; }),
 		CPP_FUNCTION([](CAPSULE self, STR value) { self->m_doc = value; })
-	});
+		}));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

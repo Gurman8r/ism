@@ -1,18 +1,18 @@
 #ifndef _ISM_DISPLAY_SERVER_HPP_
 #define _ISM_DISPLAY_SERVER_HPP_
 
-#include <core/api/super.hpp>
+#include <core/api/modsupport.hpp>
 
 namespace ism
 {
 	class ISM_API DisplayServer : public Super
 	{
-		ISM_SUPER_CLASS(DisplayServer, Super);
+		ISM_SUPER(DisplayServer, Super);
 
 	public:
 		virtual ~DisplayServer() override;
 
-		DEFAULT_COPY_AND_MOVE_CONSTRUCTABLE(DisplayServer);
+		DEFAULT_COPYABLE_MOVABLE(DisplayServer);
 	};
 }
 

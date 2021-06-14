@@ -8,15 +8,16 @@ void ism::register_core_types()
 {
 	ClassDB::register_class<BaseObject>();
 	ClassDB::register_class<TypeObject>();
+	ClassDB::register_class<PropertyObject>();
+	ClassDB::register_class<FunctionObject>();
+	ClassDB::register_class<CppFunctionObject>();
+
 	ClassDB::register_class<IntObject>();
 	ClassDB::register_class<FloatObject>();
 	ClassDB::register_class<StringObject>();
 	ClassDB::register_class<ListObject>();
 	ClassDB::register_class<DictObject>();
 	ClassDB::register_class<CapsuleObject>();
-	ClassDB::register_class<FunctionObject>();
-	ClassDB::register_class<PropertyObject>();
-	ClassDB::register_class<CppFunctionObject>();
 	ClassDB::register_class<ModuleObject>();
 	ClassDB::register_class<GenericObject>();
 }
