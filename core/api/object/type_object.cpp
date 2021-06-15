@@ -6,59 +6,6 @@ using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static GetSetDef type_getsets[] =
-{
-	{ "__basicsize__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return INT(TYPE(self)->tp_basicsize); },
-	},
-	{ "__itemsize__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return INT(TYPE(self)->tp_itemsize); },
-	},
-	{ "__flags__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return INT(TYPE(self)->tp_flags); },
-	},
-	{ "__base__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return TYPE(self)->tp_base; },
-	},
-	{ "__mro__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return TYPE(self)->tp_mro; },
-	},
-	{ "__dict__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return TYPE(self)->tp_dict; }
-	},
-	{ "__weaklist__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return TYPE(self)->tp_weaklist; },
-	},
-	{ "__text_signature__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return nullptr; },
-	},
-	{ "__name__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return STR(TYPE(self)->tp_name); },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_name = (String)STR(value)), Error_None; },
-	},
-	{ "__qualname__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return nullptr; },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return Error_None; },
-	},
-	{ "__bases__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return TYPE(self)->tp_bases; },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_bases = value), Error_None; },
-	},
-	{ "__module__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return TYPE(self)->tp_dict["__module__"]; },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_dict["__module__"] = value), Error_None; },
-	},
-	{ "__abstractmethods__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return TYPE(self)->tp_dict["__abstractmethods__"]; },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_dict["__abstractmethods__"] = value), Error_None; },
-	},
-	{ "__doc__",
-		(getter)[](OBJECT self, void *) -> OBJECT { return STR(TYPE(self)->tp_doc); },
-		(setter)[](OBJECT self, OBJECT value, void *) -> Error { return (TYPE(self)->tp_doc = (String)STR(value)), Error_None; },
-	},
-	{ /* sentinal */ },
-};
-
 static NumberMethods type_as_number = COMPOSE(NumberMethods, m)
 {
 };
@@ -76,7 +23,7 @@ static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m)
 STATIC_MEMBER(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "type";
-	t.tp_basicsize = sizeof(TypeObject);
+	t.tp_size = sizeof(TypeObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
@@ -84,14 +31,12 @@ STATIC_MEMBER(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
 	t.tp_weaklist_offset = offsetof(TypeObject, tp_weaklist);
 	t.tp_vectorcall_offset = offsetof(TypeObject, tp_vectorcall);
 
-	t.tp_hash = (hashfunc)[](OBJECT o) { return hash(TYPE(o)->tp_name); };
+	t.tp_hash = (hashfunc)[](OBJECT o) { return ism::hash(TYPE(o)->tp_name); };
 	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 
-	t.tp_getattr = (getattrfunc)impl_getattr_string;
-	t.tp_setattr = (setattrfunc)impl_setattr_string;
-	t.tp_getattro = (getattrofunc)impl_getattr_object;
-	t.tp_setattro = (setattrofunc)impl_setattr_object;
+	t.tp_getattro = (getattrofunc)type_getattro;
+	t.tp_setattro = (setattrofunc)type_setattro;
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((TypeObject *)ptr); };
@@ -110,8 +55,6 @@ STATIC_MEMBER(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
 		}
 	};
 
-	t.tp_getsets = type_getsets;
-
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
 		if (isinstance<TYPE>(v))
@@ -129,76 +72,100 @@ STATIC_MEMBER(TypeObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 void TypeObject::_bind_class(TypeObject & t)
 {
-	t.attr("test") = CPP_FUNCTION([]()
-	{
-		printf("%s\n", PRETTY_FUNCTION);
-	});
-
-	t.attr("mro") = CPP_FUNCTION([](TYPE self)
+	t.tp_dict["mro"] = CPP_FUNCTION([](TYPE self)
 	{
 	});
 
-	t.attr("__contains__") = CPP_FUNCTION([](TYPE self, OBJECT value)
+	t.tp_dict["__contains__"] = CPP_FUNCTION([](TYPE self, OBJECT value)
 	{
-		return DICT(self->tp_dict)->contains(value);
+		return DICT(self->tp_dict).contains(value);
 	});
 
-	t.attr("__instancecheck__") = CPP_FUNCTION([](TYPE self, OBJECT value)
-	{
-	});
-
-	t.attr("__subclasscheck__") = CPP_FUNCTION([](TYPE self, OBJECT value)
+	t.tp_dict["__instancecheck__"] = CPP_FUNCTION([](TYPE self, OBJECT value)
 	{
 	});
 
-	t.attr("__dir__") = CPP_FUNCTION([](TYPE self)
+	t.tp_dict["__subclasscheck__"] = CPP_FUNCTION([](TYPE self, OBJECT value)
 	{
 	});
 
-	t.attr("__sizeof__") = CPP_FUNCTION([](TYPE self)
+	t.tp_dict["__dir__"] = CPP_FUNCTION([](TYPE self)
 	{
 	});
 
-	t.attr("__subclasses__") = CPP_FUNCTION([](TYPE self)
+	t.tp_dict["__sizeof__"] = CPP_FUNCTION([](TYPE self)
 	{
 	});
+
+	t.tp_dict["__subclasses__"] = CPP_FUNCTION([](TYPE self)
+	{
+	});
+
+	t.tp_dict["__basicsize__"] = PROPERTY({ CPP_FUNCTION([](TYPE self) { return self->tp_size; }) });
+	
+	t.tp_dict["__flags__"] = PROPERTY({ CPP_FUNCTION([](TYPE self) { return self->tp_flags; }) });
+	
+	t.tp_dict["__base__"] = PROPERTY({ CPP_FUNCTION([](TYPE self) { return TYPE(self->tp_base); }) });
+	
+	t.tp_dict["__mro__"] = PROPERTY({ CPP_FUNCTION([](TYPE self) { return self->tp_mro; }) });
+	
+	t.tp_dict["__dict__"] = PROPERTY({ CPP_FUNCTION([](TYPE self) { return self->tp_dict; }) });
+	
+	t.tp_dict["__weaklist__"] = PROPERTY({ CPP_FUNCTION([](TYPE self) { return self->tp_weaklist; }) });
+	
+	t.tp_dict["__text_signature__"] = PROPERTY({ CPP_FUNCTION([](TYPE self) { return String{}; }) });
+	
+	t.tp_dict["__qualname__"] = PROPERTY({ CPP_FUNCTION([](TYPE self) { return String{}; }) });
+
+	t.tp_dict["__bases__"] = PROPERTY({
+		CPP_FUNCTION([](TYPE self) { return self->tp_bases; }),
+		CPP_FUNCTION([](TYPE self, OBJECT value) { self->tp_bases = value; }),
+		});
+
+	t.tp_dict["__module__"] = PROPERTY({
+		CPP_FUNCTION([](TYPE self) { return self->tp_dict["__module__"]; }),
+		CPP_FUNCTION([](TYPE self, OBJECT value) { self->tp_dict["__module__"] = value;  })
+		});
+
+	t.tp_dict["__abstractmethods__"] = PROPERTY({
+		CPP_FUNCTION([](TYPE self) { return self->tp_dict["__abstractmethods__"]; }),
+		CPP_FUNCTION([](TYPE self, OBJECT value) { self->tp_dict["__abstractmethods__"] = value;  })
+		});
+
+	t.tp_dict["__name__"] = PROPERTY({
+		CPP_FUNCTION([](TYPE self) { return self->tp_name; }),
+		CPP_FUNCTION([](TYPE self, STR value) { self->tp_name = value; })
+		});
+
+	t.tp_dict["__doc__"] = PROPERTY({
+		CPP_FUNCTION([](TYPE self) { return self->tp_doc; }),
+		CPP_FUNCTION([](TYPE self, STR value) { self->tp_doc = value; })
+		});
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 bool TypeObject::ready()
 {
-	if (has_feature(TypeFlags_Ready)) { return true; }
+	if (has_feature(TypeFlags_Ready)) { VERIFY(check_consistency()); return false; }
+	VERIFY(!has_feature(TypeFlags_Readying));
+	enable_feature(TypeFlags_Readying);
 
 	if (!tp_base && this != *typeof<OBJECT>()) { tp_base = typeof<OBJECT>(); }
-
+	
 	if (tp_base && !tp_base->tp_dict) { VERIFY(tp_base->ready()); }
-
+	
 	if (!ob_type && tp_base) { ob_type = tp_base->ob_type; }
-
+	
 	tp_bases = LIST(tp_base ? ListObject{ tp_base } : ListObject{});
-
+	
 	if (!tp_dict) { tp_dict = DICT(DictObject{}); }
-
+	
 	VERIFY(mro_internal(nullptr));
-
+	
 	if (tp_base) { inherit_special(*tp_base); }
 
-	if (LIST mro{ LIST(tp_mro) }; mro && !mro.empty())
-	{
-		for (TYPE b : ***mro)
-		{
-			inherit_slots(*b);
-		}
-		
-		if (!has_feature(TypeFlags_HeapType))
-		{
-			for (TYPE b : ***mro)
-			{
-				VERIFY("static type has dynamically allocated base type" && !b->has_feature(TypeFlags_HeapType));
-			}
-		}
-	}
+	for (TYPE base : LIST(tp_mro)) { inherit_slots(*base); }
 
 	if (has_feature(TypeFlags_HaveGc | TypeFlags_BaseType) && (!tp_free || tp_free == memfree))
 	{
@@ -209,31 +176,50 @@ bool TypeObject::ready()
 	copy_val(*tp_base, &TypeObject::tp_as_sequence);
 	copy_val(*tp_base, &TypeObject::tp_as_mapping);
 
-	for (TYPE b : ***LIST(tp_bases))
-	{
-		b->add_subclass(this);
-	}
+	for (TYPE base : LIST(tp_bases)) { base->add_subclass(this); }
 
-	return enable_feature(TypeFlags_Ready), true;
+	disable_feature(TypeFlags_Readying);
+	enable_feature(TypeFlags_Ready);
+	return true;
 }
 
-bool TypeObject::add_subclass(TypeObject const * type)
+bool TypeObject::add_subclass(TypeObject * type)
 {
 	if (!tp_subclasses) { tp_subclasses = DICT(DictObject{}); }
 
-	//return (***DICT(tp_subclasses)).insert_or_assign(type, type).second;
+	(DICT(tp_subclasses))[type] = OBJECT(type);
 
-	return false;
+	return true;
 }
 
-bool TypeObject::mro_internal(OBJECT * old_mro)
+bool TypeObject::mro_internal(OBJECT * in_old_mro)
 {
-	if (tp_base) { tp_mro = LIST(ListObject{ tp_base }); }
+	OBJECT old_mro{ tp_mro };
+
+	OBJECT new_mro{ std::invoke([&, &bases = LIST(tp_bases)]()->OBJECT
+	{
+		// mro_implementation
+		LIST result(ListObject{ OBJECT(this) });
+		result.reserve(bases.size() + 1);
+		result.append(TYPE(this));
+		for (TYPE base : bases) { result.append(base); }
+		return result;
+	}) };
+	
+	bool const reent{ tp_mro != old_mro };
+	
+	if (!new_mro) { return false; }
+	
+	if (reent) { return true; }
+	
+	tp_mro = new_mro;
+	
+	if (in_old_mro) { *in_old_mro = old_mro; }
 	
 	return true;
 }
 
-void TypeObject::inherit_special(TypeObject const * base)
+void TypeObject::inherit_special(TypeObject * base)
 {
 	if (!has_feature(TypeFlags_HaveGc) && tp_base->has_feature(TypeFlags_HaveGc) && (!tp_traverse && !tp_clear))
 	{
@@ -247,21 +233,20 @@ void TypeObject::inherit_special(TypeObject const * base)
 		tp_new = tp_base->tp_new;
 	}
 
-	copy_val(*tp_base, &TypeObject::tp_basicsize);
-	copy_val(*tp_base, &TypeObject::tp_itemsize);
+	copy_val(*tp_base, &TypeObject::tp_size);
 	copy_val(*tp_base, &TypeObject::tp_weaklist_offset);
 	copy_val(*tp_base, &TypeObject::tp_dict_offset);
 
-	if (LIST mro{ tp_base->tp_mro }; !mro) { return; }
-	else if (mro->contains(typeof<TYPE>())) { enable_feature(TypeFlags_Type_Subclass); }
-	else if (mro->contains(typeof<INT>())) { enable_feature(TypeFlags_Int_Subclass); }
-	else if (mro->contains(typeof<FLT>())) { enable_feature(TypeFlags_Float_Subclass); }
-	else if (mro->contains(typeof<STR>())) { enable_feature(TypeFlags_Str_Subclass); }
-	else if (mro->contains(typeof<LIST>())) { enable_feature(TypeFlags_List_Subclass); }
-	else if (mro->contains(typeof<DICT>())) { enable_feature(TypeFlags_Dict_Subclass); }
+	//if (LIST mro{ tp_base->tp_mro }; !mro) { return; }
+	//else if (mro->contains(typeof<TYPE>())) { enable_feature(TypeFlags_Type_Subclass); }
+	//else if (mro->contains(typeof<INT>())) { enable_feature(TypeFlags_Int_Subclass); }
+	//else if (mro->contains(typeof<FLT>())) { enable_feature(TypeFlags_Float_Subclass); }
+	//else if (mro->contains(typeof<STR>())) { enable_feature(TypeFlags_Str_Subclass); }
+	//else if (mro->contains(typeof<LIST>())) { enable_feature(TypeFlags_List_Subclass); }
+	//else if (mro->contains(typeof<DICT>())) { enable_feature(TypeFlags_Dict_Subclass); }
 }
 
-void TypeObject::inherit_slots(TypeObject const * base)
+void TypeObject::inherit_slots(TypeObject * base)
 {
 	TypeObject const * basebase{};
 
@@ -352,6 +337,182 @@ void TypeObject::inherit_slots(TypeObject const * base)
 	copy_slot(base, basebase, &TypeObject::tp_is_gc);
 	copy_slot(base, basebase, &TypeObject::tp_finalize);
 	copy_slot(base, basebase, &TypeObject::tp_free);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void TypeObject::modified()
+{
+}
+
+Error TypeObject::update_slot(OBJECT name)
+{
+	return Error_None;
+}
+
+bool TypeObject::check_consistency() const
+{
+	return true;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+OBJECT ism::api::find_name_in_mro(TYPE type, OBJECT name, Error * err)
+{
+	if (LIST mro{ type->tp_mro }; !mro)
+	{
+		return (*err = Error_Unknown), nullptr;
+	}
+	else
+	{
+		for (TYPE base : mro)
+		{
+			if (OBJECT * item{ DICT(base->tp_dict).lookup(name) })
+			{
+				return (*err = Error_None), (*item);
+			}
+		}
+
+		return (*err = Error_Unknown), nullptr;
+	}
+}
+
+OBJECT ism::api::type_lookup(TYPE type, OBJECT name)
+{
+	Error err{};
+
+	OBJECT result{ find_name_in_mro(type, name, &err) };
+
+	if (err != Error_None) { return nullptr; }
+
+	// TODO: method cache...
+
+	return result;
+}
+
+OBJECT ism::api::type_getattro(TYPE type, OBJECT name)
+{
+	if (!type->tp_dict && !type->ready()) { return nullptr; }
+
+	TYPE metatype{ typeof(type) };
+
+	OBJECT meta_attribute{ type_lookup(metatype, name) };
+
+	descrgetfunc meta_get{};
+
+	if (TYPE atype; meta_attribute && (atype = typeof(meta_attribute)))
+	{
+		if ((meta_get = atype->tp_descr_get) && atype->tp_descr_set)
+		{
+			return meta_get(meta_attribute, type, metatype);
+		}
+	}
+	
+	if (OBJECT attribute{ type_lookup(type, name) })
+	{
+		if (descrgetfunc local_get{ typeof(attribute)->tp_descr_get })
+		{
+			return local_get(attribute, nullptr, type);
+		}
+	}
+	
+	if (meta_get) { return meta_get(meta_attribute, type, metatype); }
+	
+	if (meta_attribute) { return meta_attribute; }
+	
+	return nullptr;
+}
+
+Error ism::api::type_setattro(TYPE type, OBJECT name, OBJECT value)
+{
+	Error err{ generic_setattr(type, name, value) };
+
+	if (err == Error_None)
+	{
+		type->modified();
+
+		err = type->update_slot(name);
+
+		VERIFY(type->check_consistency());
+	}
+	
+	return err;
+}
+
+OBJECT ism::api::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
+{
+	TYPE type{ typeof(obj) };
+
+	if (!type->tp_dict && !type->ready()) { return nullptr; }
+
+	OBJECT descr{ type_lookup(type, name) };
+
+	descrgetfunc func{};
+
+	if (TYPE dtype; descr && (dtype = typeof(descr)))
+	{
+		if ((func = dtype->tp_descr_get) && dtype->tp_descr_set)
+		{
+			return func(descr, obj, type);
+		}
+	}
+
+	if (OBJECT * dictptr; !dict && (dictptr = get_dict_ptr(type, obj)))
+	{
+		dict = *dictptr;
+	}
+
+	if (dict)
+	{
+		if (OBJECT * result{ DICT(dict).lookup(name) })
+		{
+			return *result;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
+	if (func) { return func(descr, obj, type); }
+
+	if (descr) { return descr; }
+
+	return nullptr;
+}
+
+Error ism::api::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJECT dict)
+{
+	TYPE type{ typeof(obj) };
+
+	if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
+
+	OBJECT descr{ type_lookup(type, name) };
+
+	descrsetfunc func{};
+
+	if (descr && (func = typeof(descr)->tp_descr_set))
+	{
+		return func(descr, obj, value);
+	}
+
+	if (!dict)
+	{
+		if (OBJECT * dictptr{ get_dict_ptr(type, obj) })
+		{
+			if (!(dict = *dictptr)) { dict = DICT(DictObject{}); }
+
+			return DICT(dict).set(name, value);
+		}
+		else
+		{
+			return Error_Unknown;
+		}
+	}
+	else
+	{
+		return DICT(dict).set(name, value);
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

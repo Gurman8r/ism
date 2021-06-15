@@ -37,10 +37,10 @@ public:
 };
 
 // dict deleter
-template <> struct ism::DefaultDelete<ism::api::DictObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::DictObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // dict handle
-template <> class ism::api::Handle<ism::api::DictObject> : public BaseHandle<DictObject>
+template <> class ism::api::Handle<ism::api::DictObject> : public ism::api::BaseHandle<ism::api::DictObject>
 {
 	ISM_HANDLE(DictObject);
 
@@ -55,17 +55,9 @@ public:
 
 	using const_iterator = DictObject::const_iterator;
 
-	NODISCARD bool empty() const { return (**m_ref).empty(); }
-
-	NODISCARD auto size() const { return (**m_ref).size(); }
+	void clear() const { (**m_ref).clear(); }
 
 	void reserve(size_t count) const { (**m_ref).reserve(count); }
-
-	template <class Index = OBJECT
-	> void erase(Index && i) const { (**m_ref).erase(FWD_OBJ(i)); }
-
-	template <class Index = OBJECT
-	> bool contains(Index && i) const { return end() != (**m_ref).find(FWD_OBJ(i)); }
 
 	template <class Index = OBJECT
 	> auto find(Index && i) -> iterator { return (**m_ref).find(FWD_OBJ(i)); }
@@ -73,17 +65,43 @@ public:
 	template <class Index = OBJECT
 	> auto find(Index && i) const -> const_iterator { return (**m_ref).find(FWD_OBJ(i)); }
 
-	template <class Index = OBJECT, class Value = OBJECT
-	> void insert(Index && i, Value && v) const { (**m_ref).try_emplace(FWD_OBJ(i), FWD_OBJ(v)); }
+	template <class Index = OBJECT
+	> bool contains(Index && i) const { return find(FWD(i)) != end(); }
 
 	template <class Index = OBJECT
-	> auto operator[](Index && i) const -> OBJECT & { return this->get(FWD(i)); }
-
-	template <class Index = OBJECT
-	> auto get(Index && i) const -> OBJECT & { return (**m_ref)[FWD_OBJ(i)]; }
+	> auto lookup(Index && i) const -> OBJECT *
+	{
+		auto const it{ find(FWD(i)) };
+		return (it != end()) ? const_cast<OBJECT *>(&(it->second)) : nullptr;
+	}
 
 	template <class Index = OBJECT, class Value = OBJECT
-	> auto set(Index && i, Value && v) const -> Error { return ((**m_ref)[FWD_OBJ(i)] = FWD_OBJ(v)), Error_None; }
+	> bool insert(Index && i, Value && v) const
+	{
+		return (**m_ref).try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second;
+	}
+
+	template <class Index = OBJECT
+	> auto operator[](Index && i) const -> OBJECT &
+	{
+		return (**m_ref)[FWD_OBJ(i)];
+	}
+
+	template <class Index = OBJECT, class Value = OBJECT
+	> auto set(Index && i, Value && v) const -> Error
+	{
+		return ((**m_ref)[FWD_OBJ(i)] = FWD_OBJ(v)), Error_None;
+	}
+
+	template <class Index = OBJECT
+	> auto del(Index && i) const -> Error
+	{
+		return (**m_ref).erase(FWD_OBJ(i)), Error_None;
+	}
+
+	NODISCARD bool empty() const { return (**m_ref).empty(); }
+
+	NODISCARD auto size() const { return (**m_ref).size(); }
 
 public:
 	NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }

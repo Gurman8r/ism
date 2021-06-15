@@ -9,7 +9,7 @@ using namespace ism::api;
 STATIC_MEMBER(ListObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "list";
-	t.tp_basicsize = sizeof(ListObject);
+	t.tp_size = sizeof(ListObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_List_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
@@ -35,7 +35,7 @@ STATIC_MEMBER(ListObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 void ListObject::_bind_class(TypeObject & t)
 {
-	t.attr("__contains__") = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
+	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(LIST(self)->contains(value));
 	});
 }

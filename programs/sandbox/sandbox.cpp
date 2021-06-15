@@ -64,11 +64,12 @@ namespace ism
 		m.attr("hello")();
 		m.attr("say")(m.attr("get_string")());
 		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
-
-		LIST list = m.attr("a") = LIST(ListObject{});
+		
+		LIST list = LIST(ListObject{});
 		list.append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0]).c_str());
-
+		MAIN_PRINT("%s\n", STR(typeof(list).attr("__name__")).c_str());
+		
 		OBJECT d{ DICT(DictObject{}) };
 		d["ABC"] = 42;
 		d["DEF"] = "Hello, World!";
@@ -77,16 +78,11 @@ namespace ism
 		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<std::string>().c_str());
 		typeof(d).attr("__name__") = "changed";
 		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__")).c_str());
-
-		PROPERTY prop{ DICT(typeof<CAPSULE>()->tp_dict).get("__name__") };
-
+		
 		CAPSULE cap{ CapsuleObject{} };
-
+		MAIN_PRINT("%s\n", STR(cap.attr("__name__")).c_str());
 		cap.attr("__name__") = "CHANGED!!!";
-
-		OBJECT name{ cap.attr("__name__") };
-
-		MAIN_PRINT("%s\n", STR(name).c_str());
+		MAIN_PRINT("%s\n", STR(cap.attr("__name__")).c_str());
 
 		MAIN_PRINT("\n");
 	}
@@ -96,10 +92,10 @@ namespace ism
 
 extern ism::OS & __ism_init(void * instance = nullptr);
 
+static auto & ANONYMOUS{ __ism_init() };
+
 int main(int argc, char * argv[])
 {
-	auto & ANONYMOUS{ __ism_init() };
-
 	switch (Main::setup(argv[0], argc, argv))
 	{
 	case Error_None: break;

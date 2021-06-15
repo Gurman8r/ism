@@ -21,14 +21,12 @@ void BaseObject::initialize_class()
 STATIC_MEMBER(BaseObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "object";
-	t.tp_basicsize = sizeof(BaseObject);
+	t.tp_size = sizeof(BaseObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_base = nullptr;
 
-	t.tp_getattr = (getattrfunc)impl_getattr_string;
-	t.tp_setattr = (setattrfunc)impl_setattr_string;
-	t.tp_getattro = (getattrofunc)impl_getattr_object;
-	t.tp_setattro = (setattrofunc)impl_setattr_object;
+	t.tp_getattro = (getattrofunc)generic_getattr;
+	t.tp_setattro = (setattrofunc)generic_setattr;
 
 	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((BaseObject *)ptr); };

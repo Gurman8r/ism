@@ -56,10 +56,10 @@ public:
 };
 
 // string deleter
-template <> struct ism::DefaultDelete<ism::api::StringObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::StringObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // string handle
-template <> class ism::api::Handle<ism::api::StringObject> : public BaseHandle<StringObject>
+template <> class ism::api::Handle<ism::api::StringObject> : public ism::api::BaseHandle<ism::api::StringObject>
 {
 	ISM_HANDLE(StringObject);
 
@@ -74,6 +74,12 @@ public:
 
 	using const_iterator = StringObject::const_iterator;
 
+	void reserve(size_t count) { (**m_ref).reserve(count); }
+
+	void resize(size_t count) { (**m_ref).resize(count); }
+
+	NODISCARD operator storage_type () const { return m_ref ? (**m_ref) : String{}; }
+
 	NODISCARD auto c_str() const { return (**m_ref).c_str(); }
 
 	NODISCARD auto data() const { return (**m_ref).data(); }
@@ -82,19 +88,9 @@ public:
 
 	NODISCARD auto size() const { return (**m_ref).size(); }
 
-	NODISCARD auto front() const { return (**m_ref).front(); }
+	NODISCARD auto front() const -> char & { return (**m_ref).front(); }
 
-	NODISCARD auto back() const { return (**m_ref).back(); }
-
-	void reserve(size_t count) { (**m_ref).reserve(count); }
-
-	void resize(size_t count) { (**m_ref).resize(count); }
-
-	void erase(size_t i) { (**m_ref).erase(begin() + i); }
-
-	void erase(OBJECT const & i) { (**m_ref).erase(begin() + i.cast<size_t>()); }
-
-	NODISCARD operator storage_type () const { return m_ref ? (**m_ref) : String{}; }
+	NODISCARD auto back() const -> char & { return (**m_ref).back(); }
 
 public:
 	NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }

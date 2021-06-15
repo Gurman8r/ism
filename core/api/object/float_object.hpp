@@ -32,10 +32,10 @@ public:
 };
 
 // float deleter
-template <> struct ism::DefaultDelete<ism::api::FloatObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::FloatObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // float handle
-template <> class ism::api::Handle<ism::api::FloatObject> : public BaseHandle<FloatObject>
+template <> class ism::api::Handle<ism::api::FloatObject> : public ism::api::BaseHandle<ism::api::FloatObject>
 {
 	ISM_HANDLE(FloatObject);
 

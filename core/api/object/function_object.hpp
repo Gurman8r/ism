@@ -24,10 +24,10 @@ public:
 };
 
 // function deleter
-template <> struct ism::DefaultDelete<ism::api::FunctionObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::FunctionObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // function handle
-template <> class ism::api::Handle<ism::api::FunctionObject> : public BaseHandle<FunctionObject>
+template <> class ism::api::Handle<ism::api::FunctionObject> : public ism::api::BaseHandle<ism::api::FunctionObject>
 {
 	ISM_HANDLE(FunctionObject);
 

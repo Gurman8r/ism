@@ -141,7 +141,7 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // handle
-template <class T> class ism::api::Handle : public BaseHandle<T>
+template <class T> class ism::api::Handle : public ism::api::BaseHandle<T>
 {
 	ISM_HANDLE(T);
 
@@ -333,7 +333,7 @@ template <> struct ism::DefaultDelete<ism::api::BaseObject>
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object handle
-template <> class ism::api::Handle<ism::api::BaseObject> : public BaseHandle<BaseObject>
+template <> class ism::api::Handle<ism::api::BaseObject> : public ism::api::BaseHandle<ism::api::BaseObject>
 {
 	ISM_HANDLE(BaseObject);
 
@@ -531,13 +531,6 @@ namespace ism::api
 		}
 	}
 
-	template <class Index = OBJECT, class Defval = OBJECT
-	> NODISCARD OBJECT getattr(OBJECT o, Index && i, Defval && defval) noexcept
-	{
-		OBJECT result{ getattr(o, FWD(i)) };
-		return result ? result : FWD_OBJ(defval);
-	}
-
 	template <class Index = OBJECT, class Value = OBJECT
 	> Error setattr(OBJECT o, Index && i, Value && v)
 	{
@@ -553,7 +546,7 @@ namespace ism::api
 			}
 			else if (t->tp_getattro)
 			{
-				return t->tp_setattro(o, object_or_cast(i), FWD_OBJ(v));
+				return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v));
 			}
 			else
 			{
@@ -588,19 +581,19 @@ namespace ism::api
 		}
 		else if constexpr (mpl::is_string_v<Index>)
 		{
-			return DICT(o).get(FWD(i));
+			return DICT(o)[FWD(i)];
 		}
 		else if constexpr (std::is_integral_v<Index>)
 		{
-			return LIST(o).get(FWD(i));
+			return LIST(o)[FWD(i)];
 		}
 		else if (isinstance<DICT>(o))
 		{
-			return DICT(o).get(FWD(i));
+			return DICT(o)[FWD(i)];
 		}
 		else if (isinstance<LIST>(o))
 		{
-			return LIST(o).get(FWD(i));
+			return LIST(o)[FWD(i)];
 		}
 		else
 		{

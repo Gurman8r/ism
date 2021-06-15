@@ -9,7 +9,7 @@ using namespace ism::api;
 STATIC_MEMBER(PropertyObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "property";
-	t.tp_basicsize = sizeof(PropertyObject);
+	t.tp_size = sizeof(PropertyObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_base = typeof<OBJECT>();
 

@@ -26,10 +26,10 @@ public:
 };
 
 // module deleter
-template <> struct ism::DefaultDelete<ism::api::ModuleObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::ModuleObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // module handle
-template <> class ism::api::Handle<ism::api::ModuleObject> : public BaseHandle<ModuleObject>
+template <> class ism::api::Handle<ism::api::ModuleObject> : public ism::api::BaseHandle<ism::api::ModuleObject>
 {
 	ISM_HANDLE(ModuleObject);
 	
@@ -51,17 +51,12 @@ public:
 		return (*this);
 	}
 
-	template <class T, class Name = cstring, class Value = OBJECT
-	> auto new_object(Name && name, Value && value, bool overwrite = false) -> Handle<T>
-	{
-	}
-
 	template <class Name = cstring, class Value = OBJECT
 	> void add_object(Name && name, Value && value, bool overwrite = false)
 	{
-		if (auto i{ object_or_cast(FWD(name)) }; overwrite || !m_ref->m_dict->contains(i))
+		if (auto i{ FWD_OBJ(name) }; overwrite || !m_ref->m_dict->contains(i))
 		{
-			m_ref->m_dict[i] = object_or_cast(FWD(value));
+			m_ref->m_dict[i] = FWD_OBJ(value);
 		}
 	}
 
@@ -77,6 +72,8 @@ public:
 
 namespace ism::api
 {
+	ISM_API_FUNC(OBJECT) module_getattr(MODULE m, OBJECT name);
+
 	inline MODULE create_extension_module(cstring name)
 	{
 		DICT d{ get_default_interpreter()->modules };

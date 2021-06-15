@@ -17,17 +17,13 @@ public:
 	PropertyObject(OBJECT fget, OBJECT fset) : self_type{} { m_get = fget; m_set = fset; }
 
 	PropertyObject(OBJECT fget) : self_type{} { m_get = fget; m_set = nullptr; }
-
-	NODISCARD OBJECT get(OBJECT obj) const { return m_get(obj); }
-
-	Error set(OBJECT obj, OBJECT value) const { return m_set(obj, value), Error_None; }
 };
 
 // property deleter
-template <> struct ism::DefaultDelete<ism::api::PropertyObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::PropertyObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // property handle
-template <> class ism::api::Handle<ism::api::PropertyObject> : public BaseHandle<PropertyObject>
+template <> class ism::api::Handle<ism::api::PropertyObject> : public ism::api::BaseHandle<ism::api::PropertyObject>
 {
 	ISM_HANDLE(PropertyObject);
 
@@ -36,10 +32,9 @@ public:
 
 	~Handle() = default;
 
-	NODISCARD OBJECT get(OBJECT obj) const { return m_ref->get(obj); }
+	OBJECT get(OBJECT obj) const { return m_ref->m_get(obj); }
 
-	template <class Value = OBJECT
-	> Error set(OBJECT obj, Value && value) const { return m_ref->set(obj, FWD_OBJ(value)); }
+	Error set(OBJECT obj, OBJECT value) const { return m_ref->m_set(obj, value), Error_None; }
 };
 
 #endif // !_ISM_PROPERTY_OBJECT_HPP_

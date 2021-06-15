@@ -12,9 +12,8 @@ protected:
 	static void _bind_class(ism::api::TypeObject & t);
 
 public:
-	StringName			tp_name{};
-	ssize_t				tp_basicsize{};
-	ssize_t				tp_itemsize{};
+	String				tp_name{};
+	ssize_t				tp_size{};
 	int32_t				tp_flags{};
 	String				tp_doc{};
 
@@ -47,7 +46,6 @@ public:
 	inquiry				tp_is_gc{};
 	destructor			tp_finalize{};
 
-	GetSetDef *			tp_getsets{};
 	NumberMethods *		tp_as_number{};
 	SequenceMethods *	tp_as_sequence{};
 	MappingMethods  *	tp_as_mapping{};
@@ -67,18 +65,25 @@ public:
 
 	void disable_feature(int32_t feature) noexcept { flag_clear(tp_flags, feature); }
 
-protected:
+public:
 	bool ready();
 
-	bool add_subclass(TypeObject const * type);
+	bool add_subclass(TypeObject * type);
 
 	bool mro_internal(OBJECT * old_mro);
 
-	void inherit_special(TypeObject const * base);
+	void inherit_special(TypeObject * base);
 
-	void inherit_slots(TypeObject const * base);
+	void inherit_slots(TypeObject * base);
 
-protected:
+public:
+	void modified();
+
+	Error update_slot(OBJECT name);
+
+	bool check_consistency() const;
+
+public:
 	template <class Slot> bool slot_defined(TypeObject const * base, Slot TypeObject::*slot) const
 	{
 		return (this->*slot) && (!base || (this->*slot) != (base->*slot));
@@ -151,7 +156,7 @@ template <> struct ism::DefaultDelete<ism::api::TypeObject>
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // type handle
-template <> class ism::api::Handle<ism::api::TypeObject> : public BaseHandle<TypeObject>
+template <> class ism::api::Handle<ism::api::TypeObject> : public ism::api::BaseHandle<ism::api::TypeObject>
 {
 	ISM_HANDLE(TypeObject);
 
@@ -178,28 +183,6 @@ namespace ism::api
 	{
 		TYPE t{ typeof(o) };
 		return t && t->tp_len ? t->tp_len(o) : -1;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	NODISCARD inline GetSetDef * get_property_def(TYPE const & t, OBJECT o, cstring name)
-	{
-		if (hash_t id{ ism::hash(name, strlen(name)) })
-		{
-			for (GetSetDef * def{ t->tp_getsets }; def && *def; ++def)
-			{
-				if (id == ism::hash(def->name, strlen(def->name)))
-				{
-					return def;
-				}
-			}
-		}
-		return nullptr;
-	}
-
-	NODISCARD inline GetSetDef * get_property_def(OBJECT o, cstring name) noexcept
-	{
-		return get_property_def(typeof(o), o, name);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -258,6 +241,24 @@ namespace ism::api
 	{
 		return get_vectorcall_func(typeof(o), o);
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_FUNC(OBJECT) find_name_in_mro(TYPE type, OBJECT name, Error * err);
+
+	ISM_API_FUNC(OBJECT) type_lookup(TYPE type, OBJECT name);
+
+	ISM_API_FUNC(OBJECT) type_getattro(TYPE type, OBJECT name);
+
+	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJECT name, OBJECT value);
+
+	ISM_API_FUNC(OBJECT) generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict);
+
+	ISM_API_FUNC(Error) generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJECT dict);
+	
+	inline OBJECT generic_getattr(OBJECT obj, OBJECT name) noexcept { return generic_getattr_with_dict(obj, name, nullptr); }
+
+	inline Error generic_setattr(OBJECT obj, OBJECT name, OBJECT value) noexcept { return generic_setattr_with_dict(obj, name, value, nullptr); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

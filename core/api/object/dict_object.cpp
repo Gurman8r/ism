@@ -9,7 +9,7 @@ using namespace ism::api;
 STATIC_MEMBER(DictObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "dict";
-	t.tp_basicsize = sizeof(DictObject);
+	t.tp_size = sizeof(DictObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Dict_Subclass;
 	t.tp_base = typeof<OBJECT>();
 
@@ -25,7 +25,7 @@ STATIC_MEMBER(DictObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 void DictObject::_bind_class(TypeObject & t)
 {
-	t.attr("__contains__") = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
+	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(DICT(self)->contains(value));
 	});
 }

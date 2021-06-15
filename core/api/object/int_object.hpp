@@ -42,10 +42,10 @@ public:
 };
 
 // int deleter
-template <> struct ism::DefaultDelete<ism::api::IntObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::IntObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // int handle
-template <> class ism::api::Handle<ism::api::IntObject> : public BaseHandle<IntObject>
+template <> class ism::api::Handle<ism::api::IntObject> : public ism::api::BaseHandle<ism::api::IntObject>
 {
 	ISM_HANDLE(IntObject);
 

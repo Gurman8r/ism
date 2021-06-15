@@ -9,16 +9,14 @@ using namespace ism::api;
 STATIC_MEMBER(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "module";
-	t.tp_basicsize = sizeof(ModuleObject);
+	t.tp_size = sizeof(ModuleObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 	t.tp_base = typeof<OBJECT>();
 
 	t.tp_dict_offset = offsetof(ModuleObject, m_dict);
-
-	t.tp_getattr = (getattrfunc)impl_getattr_string;
-	t.tp_setattr = (setattrfunc)impl_setattr_string;
-	t.tp_getattro = (getattrofunc)impl_getattr_object;
-	t.tp_setattro = (setattrofunc)impl_setattr_object;
+	
+	t.tp_getattro = (getattrofunc)module_getattr;
+	t.tp_setattro = (setattrofunc)generic_setattr;
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -40,19 +38,26 @@ STATIC_MEMBER(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 void ModuleObject::_bind_class(TypeObject & t)
 {
-	t.attr("__contains__") = CPP_FUNCTION([](MODULE self, OBJECT value) {
+	t.tp_dict["__contains__"] = CPP_FUNCTION([](MODULE self, OBJECT value) {
 		return MODULE(self->m_dict)->contains(value);
 	});
 
-	//t.attr("__name__") = PROPERTY({
-	//	CPP_FUNCTION([](MODULE self) { return self->m_name; }),
-	//	CPP_FUNCTION([](MODULE self, STR value) { self->m_name = value; })
-	//});
-	//
-	//t.attr("__doc__") = PROPERTY({
-	//	CPP_FUNCTION([](MODULE self) { return self->m_doc; }),
-	//	CPP_FUNCTION([](MODULE self, STR value) { self->m_doc = value; })
-	//});
+	t.tp_dict["__name__"] = PROPERTY({
+		CPP_FUNCTION([](MODULE self) { return self->m_name; }),
+		CPP_FUNCTION([](MODULE self, STR value) { self->m_name = value; })
+	});
+	
+	t.tp_dict["__doc__"] = PROPERTY({
+		CPP_FUNCTION([](MODULE self) { return self->m_doc; }),
+		CPP_FUNCTION([](MODULE self, STR value) { self->m_doc = value; })
+	});
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+OBJECT ism::api::module_getattr(MODULE m, OBJECT name)
+{
+	return generic_getattr(m, name);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

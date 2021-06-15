@@ -9,20 +9,26 @@ namespace ism
 {
 	ALIAS(nullopt_t) std::nullopt_t;
 
-	constexpr auto nullopt{ std::nullopt };
+	constexpr nullopt_t nullopt{ std::nullopt };
 
 	template <class T> ALIAS(Optional) typename std::optional<T>;
 
 	template <class T
-	> NODISCARD Optional<T> make_optional(T && value) noexcept
+	> NODISCARD constexpr auto make_optional(T && value)
 	{
-		return Optional<T>{ FWD(value) };
+		return Optional<std::decay_t<T>>{ FWD(value) };
 	}
 
 	template <class T, class ... Args
-	> NODISCARD Optional<T> make_optional(Args && ... args) noexcept
+	> NODISCARD constexpr auto make_optional(Args && ... args)
 	{
-		return Optional<T>{ FWD(args)... };
+		return Optional<T>{ std::in_place, FWD(args)... };
+	}
+
+	template <class T, class Elem, class ... Args
+	> NODISCARD constexpr auto make_optional(std::initializer_list<Elem> init, Args&&... args)
+	{
+		return Optional<T>{ std::in_place, init, FWD(args)... };
 	}
 }
 

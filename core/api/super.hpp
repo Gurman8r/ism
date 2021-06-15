@@ -28,7 +28,7 @@ namespace ism
 	class Reference;
 	class Resource;
 
-	template <class T> class Ref;
+	template <class T> struct Ref;
 	ALIAS(REF) Ref<Reference>;
 	ALIAS(RES) Ref<Resource>;
 

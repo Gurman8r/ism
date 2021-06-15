@@ -156,7 +156,7 @@ namespace ism::api
 		template <class ... Extra
 		> Class_ & def_property_static(cstring name, CPP_FUNCTION const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			attr::function_record * rec_fget{ &(***fget) }, * rec_fset{ &(***fset) }, * rec_active{ rec_fget };
+			function_record * rec_fget{ &(***fget) }, * rec_fset{ &(***fset) }, * rec_active{ rec_fget };
 	
 			if (rec_fget)
 			{

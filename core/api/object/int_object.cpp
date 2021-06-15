@@ -9,7 +9,7 @@ using namespace ism::api;
 STATIC_MEMBER(IntObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "int";
-	t.tp_basicsize = sizeof(IntObject);
+	t.tp_size = sizeof(IntObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
 	t.tp_base = typeof<OBJECT>();
 

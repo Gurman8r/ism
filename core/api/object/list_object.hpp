@@ -37,10 +37,10 @@ public:
 };
 
 // list deleter
-template <> struct ism::DefaultDelete<ism::api::ListObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::ListObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // list handle
-template <> class ism::api::Handle<ism::api::ListObject> : public BaseHandle<ListObject>
+template <> class ism::api::Handle<ism::api::ListObject> : public ism::api::BaseHandle<ism::api::ListObject>
 {
 	ISM_HANDLE(ListObject);
 
@@ -55,23 +55,11 @@ public:
 
 	using const_iterator = ListObject::const_iterator;
 
-	NODISCARD auto data() const { return (**m_ref).data(); }
-
-	NODISCARD bool empty() const { return (**m_ref).empty(); }
-
-	NODISCARD auto size() const { return (**m_ref).size(); }
-
-	NODISCARD auto front() const { return (**m_ref).front(); }
-
-	NODISCARD auto back() const { return (**m_ref).back(); }
+	void clear() const { (**m_ref).clear(); }
 
 	void reserve(size_t count) const { (**m_ref).reserve(count); }
 
 	void resize(size_t count) const { (**m_ref).resize(count); }
-
-	void erase(size_t i) const { (**m_ref).erase(begin() + i); }
-
-	void erase(OBJECT const & i) const { (**m_ref).erase(begin() + i.cast<size_t>()); }
 
 	template <class Value = OBJECT
 	> void append(Value && v) const { (**m_ref).emplace_back(FWD_OBJ(v)); }
@@ -80,7 +68,10 @@ public:
 	> bool contains(Value && v) const { return end() != std::find(begin(), end(), FWD_OBJ(v)); }
 
 	template <class Value = OBJECT
-	> auto find(Value && v) const { return std::find(begin(), end(), FWD_OBJ(v)); }
+	> auto find(Value && v) -> iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
+
+	template <class Value = OBJECT
+	> auto find(Value && v) const -> const_iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
 
 	template <class Value = OBJECT
 	> void insert(size_t i, Value && v) const { (**m_ref).insert(begin() + i, FWD_OBJ(v)); }
@@ -89,10 +80,7 @@ public:
 	> void insert(OBJECT const & i, Value && v) { (**m_ref).insert(begin() + i.cast<size_t>(), FWD_OBJ(v)); }
 
 	template <class Index = OBJECT
-	> auto operator[](Index && i) const -> OBJECT & { return this->get(FWD(i)); }
-
-	template <class Index = OBJECT
-	> auto get(Index && i) const -> OBJECT &
+	> auto operator[](Index && i) const -> OBJECT &
 	{
 		if constexpr (std::is_integral_v<Index>)
 		{
@@ -116,6 +104,29 @@ public:
 			return ((**m_ref)[FWD_OBJ(i).cast<size_t>()] = FWD_OBJ(v)), Error_None;
 		}
 	}
+
+	template <class Index = OBJECT
+	> auto del(Index && i) const -> Error
+	{
+		if constexpr (std::is_integral_v<Index>)
+		{
+			return (**m_ref).erase(begin() + static_cast<size_t>(i)), Error_None;
+		}
+		else
+		{
+			return (**m_ref).erase(begin() + FWD_OBJ(i).cast<size_t>()), Error_None;
+		}
+	}
+
+	NODISCARD auto data() const { return (**m_ref).data(); }
+
+	NODISCARD bool empty() const { return (**m_ref).empty(); }
+
+	NODISCARD auto size() const { return (**m_ref).size(); }
+
+	NODISCARD auto front() const -> OBJECT & { return (**m_ref).front(); }
+
+	NODISCARD auto back() const -> OBJECT & { return (**m_ref).back(); }
 
 public:
 	NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }

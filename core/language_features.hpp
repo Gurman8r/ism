@@ -202,18 +202,11 @@
 #	define NODISCARD
 #endif
 
-// likely
-#if __has_cpp_attribute(likely) >= 201907L
-#	define LIKELY(expr) ((expr)) [[likely]]
+// novtable
+#ifdef ISM_CC_MSVC
+#define NOVTABLE __declspec(novtable)
 #else
-#	define LIKELY(expr) ((expr))
-#endif
-
-// unlikely
-#if __has_cpp_attribute(unlikely) >= 201907L
-#	define UNLIKELY(expr) ((expr)) [[unlikely]]
-#else
-#	define UNLIKELY(expr) ((expr))
+#define NOVTABLE
 #endif
 
 // inlining
@@ -230,11 +223,18 @@
 #	define NEVER_INLINE
 #endif
 
-// novtable
-#ifdef ISM_CC_MSVC
-#define NOVTABLE __declspec(novtable)
+// likely
+#if __has_cpp_attribute(likely) >= 201907L
+#	define LIKELY(expr) ((expr)) [[likely]]
 #else
-#define NOVTABLE
+#	define LIKELY(expr) ((expr))
+#endif
+
+// unlikely
+#if __has_cpp_attribute(unlikely) >= 201907L
+#	define UNLIKELY(expr) ((expr)) [[unlikely]]
+#else
+#	define UNLIKELY(expr) ((expr))
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

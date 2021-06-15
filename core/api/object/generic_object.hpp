@@ -27,10 +27,10 @@ public:
 };
 
 // generic deleter
-template <> struct ism::DefaultDelete<ism::api::GenericObject> : DefaultDelete<ism::api::BaseObject> {};
+template <> struct ism::DefaultDelete<ism::api::GenericObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // generic handle
-template <> class ism::api::Handle<ism::api::GenericObject> : public BaseHandle<GenericObject>
+template <> class ism::api::Handle<ism::api::GenericObject> : public ism::api::BaseHandle<ism::api::GenericObject>
 {
 	ISM_HANDLE(GenericObject);
 

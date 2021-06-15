@@ -9,7 +9,7 @@ using namespace ism::api;
 STATIC_MEMBER(StringObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "str";
-	t.tp_basicsize = sizeof(StringObject);
+	t.tp_size = sizeof(StringObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Str_Subclass;
 	t.tp_base = typeof<OBJECT>();
 

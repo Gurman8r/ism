@@ -9,7 +9,7 @@ using namespace ism::api;
 STATIC_MEMBER(FloatObject::ob_type_static) = COMPOSE(TypeObject, t)
 {
 	t.tp_name = "float";
-	t.tp_basicsize = sizeof(FloatObject);
+	t.tp_size = sizeof(FloatObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Float_Subclass;
 	t.tp_base = typeof<OBJECT>();
 

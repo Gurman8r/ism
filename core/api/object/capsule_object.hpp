@@ -72,7 +72,7 @@ public:
 template <> struct ism::DefaultDelete<ism::api::CapsuleObject> : ism::DefaultDelete<ism::api::BaseObject> {};
 
 // capsule handle
-template <> class ism::api::Handle<ism::api::CapsuleObject> : public BaseHandle<CapsuleObject>
+template <> class ism::api::Handle<ism::api::CapsuleObject> : public ism::api::BaseHandle<ism::api::CapsuleObject>
 {
 	ISM_HANDLE(CapsuleObject);
 
@@ -85,6 +85,8 @@ public:
 	> NODISCARD auto get_pointer() const { return static_cast<T *>((*m_ref).m_pointer); }
 
 	void set_pointer(void const * value) { (*m_ref).m_pointer = (void *)value; }
+
+	NODISCARD OBJECT name() const { return attr("__name__"); }
 };
 
 #endif // !_ISM_CAPSULE_OBJECT_HPP_

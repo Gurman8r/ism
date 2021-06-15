@@ -8,15 +8,17 @@ namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ClassDB;
-
 	template <class T
 	> ALIAS(TypeMap) HashMap<std::type_index, T>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	class ClassDB;
+
 	struct _API_Tag {};
+	
 	template <class Derived> class ObjectAPI;
+	
 	template <class T> constexpr bool is_object_api_v{ std::is_base_of_v<_API_Tag, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -157,12 +159,12 @@ namespace ism::api
 	ALIAS(visitproc)		void(*)(OBJECT, void *);
 	ALIAS(traverseproc)		void(*)(OBJECT, visitproc, void *);
 
-	ALIAS(getattrfunc)		OBJECT(*)(OBJECT self, cstring name);
-	ALIAS(setattrfunc)		Error(*)(OBJECT self, cstring name, OBJECT value);
-	ALIAS(getattrofunc)		OBJECT(*)(OBJECT self, OBJECT name);
-	ALIAS(setattrofunc)		Error(*)(OBJECT self, OBJECT name, OBJECT value);
-	ALIAS(descrgetfunc)		OBJECT(*)(OBJECT self, OBJECT obj, OBJECT type);
-	ALIAS(descrsetfunc)		Error(*)(OBJECT self, OBJECT obj, OBJECT value);
+	ALIAS(getattrfunc)		OBJECT(*)(OBJECT obj, cstring name);
+	ALIAS(setattrfunc)		Error(*)(OBJECT obj, cstring name, OBJECT value);
+	ALIAS(getattrofunc)		OBJECT(*)(OBJECT obj, OBJECT name);
+	ALIAS(setattrofunc)		Error(*)(OBJECT obj, OBJECT name, OBJECT value);
+	ALIAS(descrgetfunc)		OBJECT(*)(OBJECT descr, OBJECT obj, OBJECT type);
+	ALIAS(descrsetfunc)		Error(*)(OBJECT descr, OBJECT obj, OBJECT value);
 
 	ALIAS(cmpfunc)			int32_t(*)(OBJECT a, OBJECT b);
 	ALIAS(hashfunc)			hash_t(*)(OBJECT o);
@@ -232,19 +234,6 @@ namespace ism::api
 	{
 		lenfunc		mapping_length{};
 		binaryfunc	mapping_subscript{};
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct NODISCARD GetSetDef
-	{
-		cstring		name{};
-		getter		get{};
-		setter		set{};
-		void *		closure{};
-		cstring		doc{};
-
-		NODISCARD constexpr operator bool() const noexcept { return name && *name; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
