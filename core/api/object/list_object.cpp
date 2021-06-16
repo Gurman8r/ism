@@ -1,12 +1,12 @@
 #include <core/api/object/list_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(ListObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(ListObject, t)
 {
 	t.tp_name = "list";
 	t.tp_size = sizeof(ListObject);
@@ -33,7 +33,7 @@ STATIC_MEMBER(ListObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ListObject::_bind_class(TypeObject & t)
+void ListObject::_bind_methods(TypeObject & t)
 {
 	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(LIST(self)->contains(value));

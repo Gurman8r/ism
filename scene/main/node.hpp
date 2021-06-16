@@ -1,7 +1,7 @@
 #ifndef _ISM_NODE_HPP_
 #define _ISM_NODE_HPP_
 
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 #include <entt/entt.hpp>
 
@@ -11,9 +11,9 @@ namespace ism
 
 	class SceneTree;
 
-	class ISM_API Node : public Super
+	class ISM_API Node// : public Super
 	{
-		ISM_SUPER(Node, Super);
+		//ISM_SUPER(Node, Super);
 
 	public:
 		using iterator					= typename Vector<Node *>::iterator;
@@ -22,10 +22,9 @@ namespace ism
 		using const_reverse_iterator	= typename Vector<Node *>::const_reverse_iterator;
 
 	public:
-		virtual ~Node() override;
+		virtual ~Node();
 
-	protected:
-		explicit Node(Node * parent, SceneTree * tree) noexcept : m_parent{ parent }, m_tree{ CHECK(tree) } {}
+		explicit Node(Node * parent, SceneTree * tree);
 
 		explicit Node(SceneTree * tree) noexcept : Node{ nullptr, tree } {}
 
@@ -34,6 +33,36 @@ namespace ism
 		NON_COPYABLE(Node);
 
 		MOVABLE(Node);
+
+	public:
+		template <class Component, class ... Args
+		> Component & add_component(Args && ... args) noexcept
+		{
+			Component & c{ m_tree->m_reg.emplace<Component>(m_entity, FWD(args)...) };
+			m_tree->on_component_added<Component>(*this, c);
+			return c;
+		}
+
+		template <class ... Component
+		> NODISCARD decltype(auto) get_component()
+		{
+			return m_tree->m_reg.get<Component...>(m_entity);
+		}
+
+		template <class ... Component
+		> NODISCARD bool has_component() const
+		{
+			return m_tree->m_reg.has<Component...>(m_entity);
+		}
+
+		template <class ... Component
+		> void remove_component() {
+			m_tree->m_reg.remove<Component...>(m_entity);
+		}
+
+		NODISCARD operator entt::entity() const noexcept { return m_entity; }
+
+		NODISCARD auto get_entity() const noexcept -> entt::entity { return m_entity; }
 
 	public:
 		NODISCARD auto get_child(size_t i) const noexcept -> Node * { return (i < get_child_count()) ? m_children[i] : nullptr; }
@@ -208,6 +237,7 @@ namespace ism
 
 	private:
 		SceneTree *		m_tree		{}; // tree
+		entt::entity	m_entity	{}; // entity
 		Node *			m_parent	{}; // parent
 		Vector<Node *>	m_children	{}; // children
 	};

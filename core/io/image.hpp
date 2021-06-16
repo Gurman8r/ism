@@ -11,9 +11,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Image : public Resource
+	class ISM_API Image : public Reference
 	{
-		ISM_SUPER(Image, Resource);
+		//ISM_SUPER(Image, Resource);
 
 	private:
 		friend class ImageLoader;
@@ -23,7 +23,7 @@ namespace ism
 		Vector<byte> m_pixels{};
 
 	public:
-		virtual ~Image() override;
+		virtual ~Image();
 
 		DEFAULT_COPYABLE_MOVABLE(Image);
 

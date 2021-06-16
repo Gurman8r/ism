@@ -4,10 +4,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Reference::~Reference() {}
-
-	Reference::Reference() : Super{ true } { m_refcount.init(); m_refcount_init.init(); }
-
 	bool Reference::init_ref()
 	{
 		if (inc_ref())
@@ -27,7 +23,7 @@ namespace ism
 		bool success{ rc_val != 0 };
 		if (success && rc_val <= 2 /* higher is not relevant */)
 		{
-			// TODO...
+			on_inc_ref();
 		}
 		return success;
 	}
@@ -38,7 +34,7 @@ namespace ism
 		bool die{ rc_val == 0 };
 		if (rc_val <= 1 /* higher is not relevant */)
 		{
-			// TODO...
+			on_dec_ref();
 		}
 		return die;
 	}

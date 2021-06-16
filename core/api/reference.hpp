@@ -3,24 +3,24 @@
 
 #include <core/api/super.hpp>
 
-// reference
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class ISM_API Reference : public Super
+	class ISM_API Reference
 	{
-		ISM_SUPER(Reference, Super);
-
 	private:
 		RefCount m_refcount, m_refcount_init;
 
+	protected:
+		Reference() noexcept { m_refcount.init(); m_refcount_init.init(); }
+
+		virtual void on_inc_ref() {}
+
+		virtual void on_dec_ref() {}
+
 	public:
-		virtual ~Reference() override;
+		virtual ~Reference() noexcept = default;
 
-		Reference();
-
-		NODISCARD int32_t ref_count() const { return m_refcount.get(); }
+		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
 
 		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
 
@@ -30,39 +30,18 @@ namespace ism
 
 		bool dec_ref();
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, class =  std::enable_if_t<std::is_base_of_v<Reference, T>>
-	> void unref(T * value)
-	{
-		if (value && value->dec_ref())
-		{
-			memdelete(value);
-		}
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// ref<T>
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	struct _Ref_Tag {};
 
 	template <class T> constexpr bool is_ref_v{ std::is_base_of_v<_Ref_Tag, T> };
 
-	template <class T> struct Ref : _Ref_Tag
+	template <class T> class Ref : public _Ref_Tag
 	{
 	protected:
 		T * m_ref{};
-
-		NODISCARD bool dec_ref() noexcept // return true if the object should be destroyed
-		{
-			return m_ref && m_ref->dec_ref();
-		}
 
 		void ref(Ref const & value)
 		{
@@ -81,7 +60,7 @@ namespace ism
 		}
 
 	public:
-		using value_type = typename T;
+		using value_type = T;
 
 		~Ref() { unref(); }
 
@@ -104,16 +83,28 @@ namespace ism
 		> Ref & operator=(Ref<U> const & value) { reset(value); return (*this); }
 
 	public:
+		template <class ... Args
+		> void instance(Args && ... args)
+		{
+			ref(construct_or_initialize<T>(FWD(args)...));
+		}
+
 		void unref()
 		{
-			if (dec_ref()) { DefaultDelete<T>{}(m_ref); }
+			if (m_ref && m_ref->dec_ref()) { DefaultDelete<T>{}(m_ref); }
 			m_ref = nullptr;
 		}
 
-		template <class ... Args
-		> void revalue(Args && ... args)
+		T * release()
 		{
-			ref(construct_or_initialize<T>(FWD(args)...));
+			T * temp{ m_ref };
+			m_ref = nullptr;
+			return temp;
+		}
+
+		void reset(Ref const & value)
+		{
+			ref(value);
 		}
 
 		template <class U
@@ -125,11 +116,6 @@ namespace ism
 			if (r) { ref_pointer(r) }
 		}
 
-		void reset(Ref const & value)
-		{
-			ref(value);
-		}
-
 		template <class U
 		> void reset(Ref<U> const & value)
 		{
@@ -139,13 +125,6 @@ namespace ism
 			r.m_ref = super_cast<T>(other);
 			ref(r);
 			r.m_ref = nullptr;
-		}
-
-		T * release()
-		{
-			T * temp{ m_ref };
-			m_ref = nullptr;
-			return temp;
 		}
 
 	public:
@@ -167,8 +146,6 @@ namespace ism
 		
 		NODISCARD bool operator!=(Ref const & value) const noexcept { return m_ref != value.m_ref; }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T> struct Hash<Ref<T>>
 	{
@@ -210,8 +187,6 @@ namespace ism
 		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() >= b; }
 		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() >= b.ptr(); }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_REFERENCE_HPP_

@@ -1,7 +1,7 @@
-#ifndef _ISM_INITIMPL_DETAIL_HPP_
-#define _ISM_INITIMPL_DETAIL_HPP_
+#ifndef _ISM_INITIMPL_HPP_
+#define _ISM_INITIMPL_HPP_
 
-#include <core/api/detail/class.hpp>
+#include <core/api/detail/attr.hpp>
 
 namespace ism::api::initimpl
 {
@@ -66,4 +66,4 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_INITIMPL_DETAIL_HPP_
+#endif // !_ISM_INITIMPL_HPP_

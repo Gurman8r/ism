@@ -5,114 +5,118 @@
 
 #define FWD_OBJ(expr) (ism::api::object_or_cast(FWD(expr)))
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define ISM_BUILTIN_TYPE(m_class, m_var) \
+	DECLEXPR(m_class::ob_type_static) = COMPOSE(ism::api::TypeObject, m_var)
 
 // object_api
-template <class Derived
-> class ism::api::ObjectAPI : _API_Tag
+namespace ism::api
 {
-private:
-	NODISCARD auto derived() const & noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-public:
-	NODISCARD auto handle() const & noexcept
+	template <class Derived
+	> class ObjectAPI : _API_Tag
 	{
-		if constexpr (is_core_object_v<Derived>)
+	private:
+		NODISCARD auto derived() const & noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
+
+	public:
+		NODISCARD auto handle() const & noexcept
 		{
-			return Handle<Derived>{ derived().ptr() };
+			if constexpr (is_base_object_v<Derived>)
+			{
+				return Handle<Derived>{ derived().ptr() };
+			}
+			else
+			{
+				return derived();
+			}
 		}
-		else
+
+		template <class Index = cstring
+		> NODISCARD auto attr(Index && i) const { return AttrAccessor<Index>{ handle(), FWD(i) }; }
+
+		template <class Index = cstring
+		> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ handle(), FWD(i) }; }
+
+		template <class Value = OBJECT
+		> NODISCARD bool contains(Value && v) const { return attr("__contains__")(handle(), FWD(v)); }
+
+		template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
+		> OBJECT operator()(Args && ... args) const; // call.hpp
+
+		NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
+		NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
+		NODISCARD bool is(ObjectAPI const & o) const noexcept { return derived().ptr() == o.derived().ptr(); }
+
+		NODISCARD bool equal_to(ObjectAPI const & o) const noexcept { return compare(o) == 0; }
+		NODISCARD bool not_equal_to(ObjectAPI const & o) const noexcept { return compare(o) != 0; }
+		NODISCARD bool less(ObjectAPI const & o) const noexcept { return compare(o) < 0; }
+		NODISCARD bool less_equal(ObjectAPI const & o) const noexcept { return compare(o) <= 0; }
+		NODISCARD bool greater(ObjectAPI const & o) const noexcept { return compare(o) > 0; }
+		NODISCARD bool greater_equal(ObjectAPI const & o) const noexcept { return compare(o) >= 0; }
+
+		NODISCARD auto doc() const { return attr("__doc__"); }
+
+	private:
+		NODISCARD auto compare(ObjectAPI const & o) const
 		{
-			return derived();
+			if (TYPE t{ typeof(derived().ptr()) }; t && t->tp_compare)
+			{
+				return t->tp_compare(handle(), o.handle());
+			}
+			else
+			{
+				return util::compare((void *)derived().ptr(), (void *)o.derived().ptr());
+			}
 		}
-	}
+	};
 
-	template <class Index = cstring
-	> NODISCARD auto attr(Index && i) const { return AttrAccessor<Index>{ handle(), FWD(i) }; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Index = cstring
-	> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ handle(), FWD(i) }; }
+	template <class T
+	> NODISCARD bool operator==(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.equal_to(b); }
 
-	template <class Value = OBJECT
-	> NODISCARD bool contains(Value && v) const { return attr("__contains__")(handle(), FWD(v)); }
+	template <class T
+	> NODISCARD bool operator!=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.not_equal_to(b); }
 
-	template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
-	> OBJECT operator()(Args && ... args) const; // call.hpp
+	template <class T
+	> NODISCARD bool operator<(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less(b); }
 
-	NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
+	template <class T
+	> NODISCARD bool operator<=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less_equal(b); }
 
-	NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
+	template <class T
+	> NODISCARD bool operator>(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater(b); }
 
-	NODISCARD bool is(ObjectAPI const & o) const noexcept { return derived().ptr() == o.derived().ptr(); }
+	template <class T
+	> NODISCARD bool operator>=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater_equal(b); }
 
-	NODISCARD bool equal_to(ObjectAPI const & o) const noexcept { return compare(o) == 0; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
-	NODISCARD bool not_equal_to(ObjectAPI const & o) const noexcept { return compare(o) != 0; }
-
-	NODISCARD bool less(ObjectAPI const & o) const noexcept { return compare(o) < 0; }
-
-	NODISCARD bool less_equal(ObjectAPI const & o) const noexcept { return compare(o) <= 0; }
-
-	NODISCARD bool greater(ObjectAPI const & o) const noexcept { return compare(o) > 0; }
-
-	NODISCARD bool greater_equal(ObjectAPI const & o) const noexcept { return compare(o) >= 0; }
-
-	NODISCARD auto doc() const { return attr("__doc__"); }
-
-private:
-	NODISCARD auto compare(ObjectAPI const & o) const
-	{
-		if (TYPE t{ typeof(derived().ptr()) }; t && t->tp_compare)
-		{
-			return t->tp_compare(handle(), o.handle());
-		}
-		else
-		{
-			return util::compare((void *)derived().ptr(), (void *)o.derived().ptr());
-		}
-	}
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-template <class T
-> NODISCARD bool operator==(ism::api::ObjectAPI<T> const & a, ism::api::ObjectAPI<T> const & b) { return a.equal_to(b); }
-
-template <class T
-> NODISCARD bool operator!=(ism::api::ObjectAPI<T> const & a, ism::api::ObjectAPI<T> const & b) { return a.not_equal_to(b); }
-
-template <class T
-> NODISCARD bool operator<(ism::api::ObjectAPI<T> const & a, ism::api::ObjectAPI<T> const & b) { return a.less(b); }
-
-template <class T
-> NODISCARD bool operator<=(ism::api::ObjectAPI<T> const & a, ism::api::ObjectAPI<T> const & b) { return a.less_equal(b); }
-
-template <class T
-> NODISCARD bool operator>(ism::api::ObjectAPI<T> const & a, ism::api::ObjectAPI<T> const & b) { return a.greater(b); }
-
-template <class T
-> NODISCARD bool operator>=(ism::api::ObjectAPI<T> const & a, ism::api::ObjectAPI<T> const & b) { return a.greater_equal(b); }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// base handle
-template <class T> class ism::api::BaseHandle : public ObjectAPI<Handle<T>>, public Ref<T>
+// handle
+namespace ism::api
 {
-protected:
-	BaseHandle() = default;
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-public:
-	~BaseHandle() = default;
+	// base handle
+	template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<Handle<T>>
+	{
+	protected:
+		BaseHandle() = default;
 
-	template <class T> NODISCARD T cast() const &;
+	public:
+		~BaseHandle() = default;
 
-	template <class T> NODISCARD T cast() &&;
-};
+		template <class T> NODISCARD T cast() const &;
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		template <class T> NODISCARD T cast() &&;
+	};
 
-// handle common
-#define ISM_HANDLE(m_class)																			\
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// handle default
+#define ISM_HANDLE_DEFAULT(m_class)																	\
 public:																								\
 	Handle(nullptr_t) {}																			\
 																									\
@@ -122,9 +126,9 @@ public:																								\
 																									\
 	template <class U> Handle(Ref<U> const & value) { reset(value); }								\
 																									\
-	Handle(m_class const & value) { revalue(value); }												\
+	Handle(m_class const & value) { instance(value); }												\
 																									\
-	Handle(m_class && value) noexcept { revalue(std::move(value)); }								\
+	Handle(m_class && value) noexcept { instance(std::move(value)); }								\
 																									\
 	Handle & operator=(nullptr_t) { unref(); return (*this); }										\
 																									\
@@ -132,122 +136,150 @@ public:																								\
 																									\
 	template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
 																									\
-	Handle & operator=(m_class const & value) { revalue(value); return (*this); }					\
+	Handle & operator=(m_class const & value) { instance(value); return (*this); }					\
 																									\
-	Handle & operator=(m_class && value) noexcept { revalue(std::move(value)); return (*this); }	\
+	Handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }	\
 																									\
 private:
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// handle
-template <class T> class ism::api::Handle : public ism::api::BaseHandle<T>
-{
-	ISM_HANDLE(T);
+	// handle
+	template <class T> class Handle : public BaseHandle<T>
+	{
+		ISM_HANDLE_DEFAULT(T);
 
-public:
-	Handle() = default;
+	public:
+		Handle() = default;
 
-	~Handle() = default;
-};
+		~Handle() = default;
+	};
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
 template <class T> struct ism::Hash<ism::api::Handle<T>>
 {
-	NODISCARD hash_t operator()(ism::api::Handle<T> const & o) const { return hash(o); }
+	hash_t operator()(ism::api::Handle<T> const & o) const { return hash(o); }
 };
 
 template <class T> struct ism::EqualTo<ism::api::Handle<T>>
 {
-	template <class U
-	> NODISCARD bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.equal_to(b); }
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.equal_to(b); }
 };
 
 template <class T> struct ism::NotEqualTo<ism::api::Handle<T>>
 {
-	template <class U
-	> NODISCARD bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.not_equal_to(b); }
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.not_equal_to(b); }
 };
 
 template <class T> struct ism::Less<ism::api::Handle<T>>
 {
-	template <class U
-	> NODISCARD bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.less(b); }
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.less(b); }
 };
 
 template <class T> struct ism::Greater<ism::api::Handle<T>>
 {
-	template <class U
-	> NODISCARD bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.greater(b); }
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.greater(b); }
 };
 
 template <class T> struct ism::LessEqual<ism::api::Handle<T>>
 {
-	template <class U
-	> NODISCARD bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.less_equal(b); }
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.less_equal(b); }
 };
 
 template <class T> struct ism::GreaterEqual<ism::api::Handle<T>>
 {
-	template <class U
-	> NODISCARD bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.greater_equal(b); }
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.greater_equal(b); }
 };
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 // object common
-#define ISM_OBJECT_COMMON(m_class, m_inherits)											\
-	ISM_SUPER(m_class, m_inherits)														\
-																						\
-private:																				\
-	friend class ism::api::ClassDB;														\
-																						\
-	friend class ism::api::Handle<m_class>;												\
-																						\
-	static ism::api::TypeObject ob_type_static;											\
-																						\
-protected:																				\
-	virtual void _initialize_classv() override											\
-	{																					\
-		m_class::initialize_class();													\
-	}																					\
-																						\
-	FORCE_INLINE static constexpr void (*_get_bind_methods())(ism::api::TypeObject & t)	\
-	{																					\
-		return &m_class::_bind_class;													\
-	}																					\
-																						\
-	FORCE_INLINE virtual ism::api::TypeObject * _get_typev() const override				\
-	{																					\
-		return m_class::get_type_static();												\
-	}																					\
-																						\
-public:																					\
-	static void initialize_class()														\
-	{																					\
-		if (static bool once{}; !once && (once = true))									\
-		{																				\
-			ism::api::ClassDB::add_class<m_class>();									\
-																						\
-			if (m_class::_get_bind_methods() != m_inherits::_get_bind_methods())		\
-			{																			\
-				m_class::_bind_class(m_class::ob_type_static);							\
-			}																			\
-		};																				\
-	}																					\
-																						\
-	FORCE_INLINE static ism::api::TypeObject * get_type_static()						\
-	{																					\
-		return &m_class::ob_type_static;												\
-	}																					\
-																						\
-public:																					\
-	explicit m_class(ism::api::TypeObject const * t) noexcept : m_inherits{ t } {}		\
-																						\
+#define ISM_OBJECT_COMMON(m_class, m_inherits)														\
+private:																							\
+	using self_type = m_class;																		\
+																									\
+	using base_type = m_inherits;																	\
+																									\
+	friend class ism::api::ClassDB;																	\
+																									\
+	friend class ism::api::Handle<m_class>;															\
+																									\
+	static ism::api::TypeObject ob_type_static;														\
+																									\
+protected:																							\
+	static void initialize_class()																	\
+	{																								\
+		if (static bool once{}; !once && (once = true))												\
+		{																							\
+			ism::api::ClassDB::add_class<m_class>();												\
+																									\
+			if (m_class::_get_bind_methods() != m_inherits::_get_bind_methods())					\
+			{																						\
+				m_class::_bind_methods(m_class::ob_type_static);									\
+			}																						\
+		};																							\
+	}																								\
+																									\
+	virtual void _initialize_classv() override														\
+	{																								\
+		m_class::initialize_class();																\
+	}																								\
+																									\
+	FORCE_INLINE static constexpr void (*_get_bind_methods())(ism::api::TypeObject & t)				\
+	{																								\
+		return &m_class::_bind_methods;																\
+	}																								\
+																									\
+	FORCE_INLINE virtual ism::api::TypeObject * _get_typev() const override							\
+	{																								\
+		return m_class::get_type_static();															\
+	}																								\
+																									\
+public:																								\
+	explicit m_class(ism::api::TypeObject const * t) noexcept : m_inherits{ t } {}					\
+																									\
+	FORCE_INLINE static ism::api::TypeObject * get_type_static()									\
+	{																								\
+		return &m_class::ob_type_static;															\
+	}																								\
+																									\
+public:																								\
+	NODISCARD virtual String get_class() const override												\
+	{																								\
+		return String{ TOSTR(m_class) };															\
+	}																								\
+																									\
+	NODISCARD FORCE_INLINE static void * get_class_ptr_static()										\
+	{																								\
+		static int32_t ptr; return &ptr;															\
+	}																								\
+																									\
+	NODISCARD FORCE_INLINE static constexpr StringView get_class_static()							\
+	{																								\
+		return TOSTR(m_class);																		\
+	}																								\
+																									\
+	NODISCARD FORCE_INLINE static constexpr StringView get_parent_class_static()					\
+	{																								\
+		return m_inherits::get_class_static();														\
+	}																								\
+																									\
+	NODISCARD static constexpr StringView inherits_static()											\
+	{																								\
+		return TOSTR(m_inherits);																	\
+	}																								\
+																									\
+	NODISCARD virtual bool is_class(String const & value) const override							\
+	{																								\
+		return (value == TOSTR(m_class)) ? true : m_inherits::is_class(value);						\
+	}																								\
+																									\
+	NODISCARD virtual bool is_class_ptr(void * value) const override								\
+	{																								\
+		return (value == m_class::get_class_ptr_static()) ? true : m_inherits::is_class_ptr(value);	\
+	}																								\
+																									\
 private:
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object cvt
 #define ISM_OBJECT_CVT(m_class, m_inherits)					\
@@ -256,174 +288,190 @@ public:														\
 	COPYABLE_MOVABLE(m_class)								\
 private:
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 // object default
-#define ISM_OBJECT(m_class, m_inherits)						\
+#define ISM_OBJECT_DEFAULT(m_class, m_inherits)				\
 	ISM_OBJECT_CVT(m_class, m_inherits);					\
 public:														\
 	m_class() : m_inherits{ &m_class::ob_type_static } {}	\
 private:
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// base object
-class NODISCARD ISM_API ism::api::BaseObject : public Reference, public ObjectAPI<BaseObject>
+// object
+namespace ism::api
 {
-	ISM_SUPER(BaseObject, Reference);
+	class ISM_API BaseObject : public ObjectAPI<BaseObject>, public Reference
+	{
+	private:
+		friend class ClassDB;
 
-private:
-	friend class ClassDB;
+		friend class Handle<BaseObject>;
 
-	friend class Handle<BaseObject>;
+		static TypeObject ob_type_static; // class type
 
-	static TypeObject ob_type_static; // static class type
+	protected:
+		mutable Ref<TypeObject> ob_type; // instance type
 
-protected:
-	mutable Ref<TypeObject> ob_type; // instance class type
+		static void initialize_class();
 
-	virtual void _initialize_classv() { initialize_class(); }
+		virtual void _initialize_classv() { initialize_class(); }
 
-	static void _bind_class(TypeObject & t);
+		static void _bind_methods(TypeObject & t);
 
-	FORCE_INLINE static constexpr void (*_get_bind_methods())(TypeObject &) { return &BaseObject::_bind_class; }
+		FORCE_INLINE static constexpr void (*_get_bind_methods())(TypeObject &) { return &BaseObject::_bind_methods; }
 
-	FORCE_INLINE virtual TypeObject * _get_typev() const { return get_type_static(); }
+		FORCE_INLINE virtual TypeObject * _get_typev() const { return get_type_static(); }
 
-	explicit BaseObject(TypeObject const * t) noexcept : ob_type{ const_cast<TypeObject *>(t) } {}
+		explicit BaseObject(TypeObject const * t);
 
-public:
-	virtual ~BaseObject() override { ob_type = nullptr; }
+	public:
+		virtual ~BaseObject() override { ob_type = nullptr; }
 
-	static void initialize_class();
+		NODISCARD static TypeObject * get_type_static() { return &ob_type_static; }
 
-	FORCE_INLINE static void register_custom_data() {}
+		NODISCARD TypeObject * get_type() const { if (!ob_type) { ob_type = _get_typev(); } return *ob_type; }
 
-	NODISCARD static TypeObject * get_type_static() { return &ob_type_static; }
+		NODISCARD BaseObject * ptr() const { return const_cast<BaseObject *>(this); }
 
-	NODISCARD TypeObject * get_type() const { if (!ob_type) { ob_type = _get_typev(); } return *ob_type; }
+		template <class T> NODISCARD T cast() const &; // cast.hpp
 
-	NODISCARD BaseObject * ptr() const { return const_cast<BaseObject *>(this); }
+		template <class T> NODISCARD T cast() &&; // cast.hpp
 
-	template <class T> NODISCARD T cast() const &;
+	public:
+		NODISCARD virtual String get_class() const { return "BaseObject"; }
 
-	template <class T> NODISCARD T cast() &&;
-};
+		NODISCARD static void * get_class_ptr_static() { static int32_t ptr; return &ptr; }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		NODISCARD static constexpr StringView get_class_static() { return "BaseObject"; }
+
+		NODISCARD static constexpr StringView get_parent_class_static() { return ""; }
+
+		NODISCARD virtual bool is_class(String const & value) const { return value == "BaseObject"; }
+
+		NODISCARD virtual bool is_class_ptr(void * value) const { return value == get_class_ptr_static(); }
+	};
+}
 
 // object deleter
-template <> struct ism::DefaultDelete<ism::api::BaseObject>
+namespace ism
 {
-	template <class U> void operator()(U * ptr) const
+	template <> struct DefaultDelete<api::BaseObject>
 	{
-		using namespace api;
-
-		if (TYPE t{ typeof(ptr) }; t && t->tp_free)
+		template <class U> void operator()(U * ptr) const
 		{
-			t->tp_free(ptr);
+			if (auto t{ api::typeof(ptr) }; t && t->tp_free)
+			{
+				t->tp_free(ptr);
+			}
+			else
+			{
+				memdelete(ptr);
+			}
 		}
-		else
-		{
-			memdelete(ptr);
-		}
-	}
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	};
+}
 
 // object handle
-template <> class ism::api::Handle<ism::api::BaseObject> : public ism::api::BaseHandle<ism::api::BaseObject>
+namespace ism::api
 {
-	ISM_HANDLE(BaseObject);
-
-public:
-	Handle() = default;
-
-	~Handle() = default;
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// accessor
-template <class Policy
-> class ism::api::Accessor : public ObjectAPI<ism::api::Accessor<Policy>>
-{
-public:
-	using key_type = typename Policy::key_type;
-
-	Accessor(OBJECT obj, key_type key) : m_obj{ obj }, m_key{ key } {}
-		
-	Accessor(Accessor const &) = default;
-	Accessor(Accessor &&) noexcept = default;
-
-	void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT(a)); }
-	void operator=(Accessor const & a) & { operator=(OBJECT(a)); }
-
-	template <class Value> decltype(auto) operator=(Value && value) &&
+	template <> class Handle<BaseObject> : public BaseHandle<BaseObject>
 	{
-		Policy::set(m_obj, m_key, FWD_OBJ(value));
-		return (*this);
-	}
+		ISM_HANDLE_DEFAULT(BaseObject);
 
-	template <class Value> decltype(auto) operator=(Value && value) &
+	public:
+		Handle() = default;
+
+		~Handle() = default;
+	};
+}
+
+// accessors
+namespace ism::api
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// accessor
+	template <class Policy
+	> class Accessor : public ObjectAPI<Accessor<Policy>>
 	{
-		get_cache() = FWD_OBJ(value);
-		return (*this);
-	}
+	public:
+		using key_type = typename Policy::key_type;
 
-	NODISCARD auto ptr() const { return const_cast<BaseObject *>(get_cache().ptr()); }
+		Accessor(OBJECT obj, key_type key) : m_obj{ obj }, m_key{ key } {}
+		Accessor(Accessor const &) = default;
+		Accessor(Accessor &&) noexcept = default;
+		void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT(a)); }
+		void operator=(Accessor const & a) & { operator=(OBJECT(a)); }
 
-	template <class T> NODISCARD operator Handle<T>() const { return get_cache(); }
+		template <class Value> decltype(auto) operator=(Value && value) &&
+		{
+			Policy::set(m_obj, m_key, FWD_OBJ(value));
+			return (*this);
+		}
 
-	template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
+		template <class Value> decltype(auto) operator=(Value && value) &
+		{
+			get_cache() = FWD_OBJ(value);
+			return (*this);
+		}
 
-protected:
-	OBJECT & get_cache() const {
-		if (!m_cache) { m_cache = Policy::get(m_obj, m_key); }
-		return m_cache;
-	}
+		NODISCARD auto ptr() const { return const_cast<BaseObject *>(get_cache().ptr()); }
 
-private:
-	OBJECT m_obj;
-	key_type m_key;
-	mutable OBJECT m_cache;
-};
+		template <class T> NODISCARD operator Handle<T>() const { return get_cache(); }
 
-// attribute accessor
-template <class T> struct ism::api::accessor_policies::Attr
-{
-	using key_type = T;
+		template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
 
-	template <class O = OBJECT, class Index = T
-	> static OBJECT get(O && o, Index && i) { return getattr(FWD(o), FWD(i)); }
+	protected:
+		OBJECT & get_cache() const {
+			if (!m_cache) { m_cache = Policy::get(m_obj, m_key); }
+			return m_cache;
+		}
 
-	template <class O = OBJECT, class Index = T, class Value = OBJECT
-	> static void set(O && o, Index && i, Value && v) { setattr(FWD(o), FWD(i), FWD(v)); }
-};
+	private:
+		OBJECT m_obj;
+		key_type m_key;
+		mutable OBJECT m_cache;
+	};
 
-// item accessor
-template <class T> struct ism::api::accessor_policies::Item
-{
-	using key_type = T;
+	// attribute accessor
+	template <class T> struct accessor_policies::Attr
+	{
+		using key_type = T;
 
-	template <class O = OBJECT, class Index = T
-	> static OBJECT get(O && o, Index && i) { return getitem(FWD(o), FWD(i)); }
+		template <class O = OBJECT, class Index = T
+		> static OBJECT get(O && o, Index && i) { return getattr(FWD(o), FWD(i)); }
 
-	template <class O = OBJECT, class Index = T, class Value = OBJECT
-	> static void set(O && o, Index && i, Value && v) { setitem(FWD(o), FWD(i), FWD(v)); }
-};
+		template <class O = OBJECT, class Index = T, class Value = OBJECT
+		> static void set(O && o, Index && i, Value && v) { setattr(FWD(o), FWD(i), FWD(v)); }
+	};
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// item accessor
+	template <class T> struct accessor_policies::Item
+	{
+		using key_type = T;
+
+		template <class O = OBJECT, class Index = T
+		> static OBJECT get(O && o, Index && i) { return getitem(FWD(o), FWD(i)); }
+
+		template <class O = OBJECT, class Index = T, class Value = OBJECT
+		> static void set(O && o, Index && i, Value && v) { setitem(FWD(o), FWD(i), FWD(v)); }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
 // functions
 namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline TYPE typeof_generic(std::type_info const & t);
+	ISM_API_FUNC(OBJECT) generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict);
 
-	NODISCARD inline bool isinstance_generic(OBJECT const & o, std::type_info const & t);
+	ISM_API_FUNC(Error) generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJECT dict);
+
+	inline OBJECT generic_getattr(OBJECT obj, OBJECT name) noexcept { return generic_getattr_with_dict(obj, name, nullptr); }
+
+	inline Error generic_setattr(OBJECT obj, OBJECT name, OBJECT value) noexcept { return generic_setattr_with_dict(obj, name, value, nullptr); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -438,6 +486,8 @@ namespace ism::api
 	NODISCARD inline OBJECT object_or_cast(cstring s) { return object_or_cast(String{ s }); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD inline TYPE typeof_generic(std::type_info const & t); // cast.hpp
 
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof() noexcept
@@ -472,10 +522,12 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	NODISCARD inline bool isinstance_generic(OBJECT const & o, std::type_info const & t); // cast.hpp
+
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
 	> NODISCARD bool isinstance(OBJECT const & o) noexcept
 	{
-		return o && (typeof(o) == typeof<T>());
+		return typeof(o).is(typeof<T>());
 	}
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
@@ -501,33 +553,15 @@ namespace ism::api
 		}
 		else if constexpr (mpl::is_string_v<Index>)
 		{
-			if (t->tp_getattr)
-			{
-				return t->tp_getattr(o, FWD(i));
-			}
-			else if (t->tp_getattro)
-			{
-				return t->tp_getattro(o, FWD_OBJ(i));
-			}
-			else
-			{
-				return nullptr;
-			}
+			if (t->tp_getattr) { return t->tp_getattr(o, FWD(i)); }
+			else if (t->tp_getattro) { return t->tp_getattro(o, FWD_OBJ(i)); }
+			else { return nullptr; }
 		}
 		else
 		{
-			if (t->tp_getattro)
-			{
-				return t->tp_getattro(o, FWD_OBJ(i));
-			}
-			else if (t->tp_getattr)
-			{
-				return t->tp_getattr(o, STR(FWD(i)).c_str());
-			}
-			else
-			{
-				return nullptr;
-			}
+			if (t->tp_getattro) { return t->tp_getattro(o, FWD_OBJ(i)); }
+			else if (t->tp_getattr) { return t->tp_getattr(o, STR(FWD(i)).c_str()); }
+			else { return nullptr; }
 		}
 	}
 
@@ -540,33 +574,15 @@ namespace ism::api
 		}
 		else if constexpr (mpl::is_string_v<Index>)
 		{
-			if (t->tp_setattr)
-			{
-				return t->tp_setattr(o, FWD(i), FWD_OBJ(v));
-			}
-			else if (t->tp_getattro)
-			{
-				return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v));
-			}
-			else
-			{
-				return Error_Unknown;
-			}
+			if (t->tp_setattr) { return t->tp_setattr(o, FWD(i), FWD_OBJ(v)); }
+			else if (t->tp_getattro) { return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v)); }
+			else { return Error_Unknown; }
 		}
 		else
 		{
-			if (t->tp_getattro)
-			{
-				return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v));
-			}
-			else if (t->tp_setattr)
-			{
-				return t->tp_setattr(o, STR(FWD(i)).c_str(), FWD_OBJ(v));
-			}
-			else
-			{
-				return Error_Unknown;
-			}
+			if (t->tp_getattro) { return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v)); }
+			else if (t->tp_setattr) { return t->tp_setattr(o, STR(FWD(i)).c_str(), FWD_OBJ(v)); }
+			else { return Error_Unknown; }
 		}
 	}
 
@@ -575,107 +591,24 @@ namespace ism::api
 	template <class Index = OBJECT
 	> NODISCARD OBJECT getitem(OBJECT o, Index && i)
 	{
-		if (!o.is_valid())
-		{
-			return nullptr;
-		}
-		else if constexpr (mpl::is_string_v<Index>)
-		{
-			return DICT(o)[FWD(i)];
-		}
-		else if constexpr (std::is_integral_v<Index>)
-		{
-			return LIST(o)[FWD(i)];
-		}
-		else if (isinstance<DICT>(o))
-		{
-			return DICT(o)[FWD(i)];
-		}
-		else if (isinstance<LIST>(o))
-		{
-			return LIST(o)[FWD(i)];
-		}
-		else
-		{
-			return nullptr;
-		}
+		if (!o.is_valid()) { return nullptr; }
+		else if constexpr (mpl::is_string_v<Index>) { return DICT(o)[FWD(i)]; }
+		else if constexpr (std::is_integral_v<Index>) { return LIST(o)[FWD(i)]; }
+		else if (isinstance<DICT>(o)) { return DICT(o)[FWD(i)]; }
+		else if (isinstance<LIST>(o)) { return LIST(o)[FWD(i)]; }
+		else { return nullptr; }
 	}
 
 	template <class Index = OBJECT, class Value = OBJECT
 	> Error setitem(OBJECT o, Index && i, Value && v)
 	{
-		if (!o.is_valid())
-		{
-			return Error_Unknown;
-		}
-		else if constexpr (mpl::is_string_v<Index>)
-		{
-			return DICT(o).set(FWD(i), FWD(v));
-		}
-		else if constexpr (std::is_integral_v<Index>)
-		{
-			return LIST(o).set(FWD(i), FWD(v));
-		}
-		else if (isinstance<DICT>(o))
-		{
-			return DICT(o).set(FWD(i), FWD(v));
-		}
-		else if (isinstance<LIST>(o))
-		{
-			return LIST(o).set(FWD(i), FWD(v));
-		}
-		else
-		{
-			return Error_Unknown;
-		}
+		if (!o.is_valid()) { return Error_Unknown; }
+		else if constexpr (mpl::is_string_v<Index>) { return DICT(o).set(FWD(i), FWD(v)); }
+		else if constexpr (std::is_integral_v<Index>) { return LIST(o).set(FWD(i), FWD(v)); }
+		else if (isinstance<DICT>(o)) { return DICT(o).set(FWD(i), FWD(v)); }
+		else if (isinstance<LIST>(o)) { return LIST(o).set(FWD(i), FWD(v)); }
+		else { return Error_Unknown; }
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// class_db
-namespace ism::api
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class ISM_API ClassDB final
-	{
-	public:
-		static Batch<
-			hash_t,
-			StringName,
-			TYPE
-		> classes;
-
-	public:
-		static void add_class(StringName const & name, TypeObject * type);
-
-		template <class T
-		> static void add_class() { add_class(T::get_class_static(), T::get_type_static()); }
-
-		template <class T
-		> static void register_class()
-		{
-			T::initialize_class();
-
-			TYPE t{ *classes.map<hash_t, TYPE>(hash(T::get_class_static())) };
-
-			if (t.is_null())
-			{
-				FATAL("failed to register class");
-			}
-			
-			(*t)->m_class_ptr = (StringName *)T::get_class_ptr_static();
-
-			T::register_custom_data();
-		}
-
-		NODISCARD static bool class_exists(StringName const & class_name);
-
-		NODISCARD static TYPE class_type(StringName const & class_name);
-
-		template <class T> NODISCARD static TYPE class_type() { return class_type(T::get_class_static()); }
-	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

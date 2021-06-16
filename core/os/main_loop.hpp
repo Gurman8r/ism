@@ -1,27 +1,21 @@
 #ifndef _ISM_MAIN_LOOP_HPP_
 #define _ISM_MAIN_LOOP_HPP_
 
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API MainLoop : public Super
+	class ISM_API MainLoop// : public Super
 	{
-		ISM_SUPER(MainLoop, Super);
+		//ISM_SUPER(MainLoop, Super);
 
 	private:
 		api::OBJECT m_startup_script{};
 
 	public:
-		virtual ~MainLoop() override;
-
-		MainLoop();
-
-		NON_COPYABLE(MainLoop);
-
-		MOVABLE(MainLoop);
+		virtual ~MainLoop();
 
 		virtual void initialize();
 

@@ -7,12 +7,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API InputEvent : public Resource
+	class ISM_API InputEvent// : public Resource
 	{
-		ISM_SUPER(InputEvent, Resource);
+		//ISM_SUPER(InputEvent, Resource);
 
 	public:
-		virtual ~InputEvent() override;
+		virtual ~InputEvent();
 
 		DEFAULT_COPYABLE_MOVABLE(InputEvent);
 

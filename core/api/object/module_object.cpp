@@ -1,12 +1,12 @@
 #include <core/api/object/module_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(ModuleObject, t)
 {
 	t.tp_name = "module";
 	t.tp_size = sizeof(ModuleObject);
@@ -36,7 +36,7 @@ STATIC_MEMBER(ModuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ModuleObject::_bind_class(TypeObject & t)
+void ModuleObject::_bind_methods(TypeObject & t)
 {
 	t.tp_dict["__contains__"] = CPP_FUNCTION([](MODULE self, OBJECT value) {
 		return MODULE(self->m_dict)->contains(value);

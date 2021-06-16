@@ -1,7 +1,7 @@
 #ifndef _ISM_TRANSFORM_COMPONENT_HPP_
 #define _ISM_TRANSFORM_COMPONENT_HPP_
 
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 namespace ism
 {

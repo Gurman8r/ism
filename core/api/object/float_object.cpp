@@ -1,12 +1,12 @@
 #include <core/api/object/float_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(FloatObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(FloatObject, t)
 {
 	t.tp_name = "float";
 	t.tp_size = sizeof(FloatObject);
@@ -35,7 +35,7 @@ STATIC_MEMBER(FloatObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void FloatObject::_bind_class(TypeObject & t)
+void FloatObject::_bind_methods(TypeObject & t)
 {
 }
 

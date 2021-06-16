@@ -1,19 +1,19 @@
 #include <core/api/object/function_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(FunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(FunctionObject, t)
 {
 	t.tp_name = "function";
 	t.tp_size = sizeof(FunctionObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall;
 	t.tp_base = typeof<OBJECT>();
 
-	t.tp_vectorcall_offset = offsetof(FunctionObject, m_vectorcall);
+	t.tp_vectorcall_offset = offsetof(CppFunctionObject, m_vectorcall);
 
 	t.tp_getattro = (getattrofunc)generic_getattr;
 	t.tp_setattro = (setattrofunc)generic_setattr;
@@ -26,7 +26,7 @@ STATIC_MEMBER(FunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void FunctionObject::_bind_class(TypeObject & t)
+void FunctionObject::_bind_methods(TypeObject & t)
 {
 }
 

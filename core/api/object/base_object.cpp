@@ -1,24 +1,12 @@
 #include <core/api/object/base_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void BaseObject::initialize_class()
-{
-	if (static bool once{}; !once && (once = true))
-	{
-		ClassDB::add_class<BaseObject>();
-
-		_bind_class(BaseObject::ob_type_static);
-	}
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-STATIC_MEMBER(BaseObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(BaseObject, t)
 {
 	t.tp_name = "object";
 	t.tp_size = sizeof(BaseObject);
@@ -36,35 +24,102 @@ STATIC_MEMBER(BaseObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void BaseObject::_bind_class(TypeObject & t)
+void BaseObject::_bind_methods(TypeObject & t)
 {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(ClassDB::classes) {};
-
-void ClassDB::add_class(StringName const & name, TypeObject * type)
+BaseObject::BaseObject(TypeObject const * t) : ob_type{ (TypeObject *)t }
 {
-	VERIFY(name);
-	VERIFY(type);
-	VERIFY(type->ready());
-
-	hash_t const id{ name.hash_code() };
-
-	VERIFY(!classes.contains<hash_t>(id));
-
-	classes.push_back(id, name, TYPE(type));
 }
 
-bool ClassDB::class_exists(StringName const & class_name)
+void BaseObject::initialize_class()
 {
-	return classes.contains<hash_t>(hash(class_name));
+	if (static bool once{}; !once && (once = true))
+	{
+		ClassDB::add_class<BaseObject>();
+
+		_bind_methods(BaseObject::ob_type_static);
+	}
 }
 
-TYPE ClassDB::class_type(StringName const & class_name)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+OBJECT ism::api::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
 {
-	return classes.map_unchecked<hash_t, TYPE>(hash(class_name));
+	TYPE type{ typeof(obj) };
+
+	if (!type->tp_dict && !type->ready()) { return nullptr; }
+
+	OBJECT descr{ type->lookup(name) };
+
+	descrgetfunc fn{};
+
+	if (TYPE dtype; descr && (dtype = typeof(descr)))
+	{
+		if ((fn = dtype->tp_descr_get) && dtype->tp_descr_set)
+		{
+			return fn(descr, obj, type);
+		}
+	}
+
+	if (OBJECT * dictptr; !dict && (dictptr = get_dict_ptr(type, obj)))
+	{
+		dict = *dictptr;
+	}
+
+	if (dict)
+	{
+		if (OBJECT * result{ DICT(dict).lookup(name) })
+		{
+			return *result;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
+	if (fn) { return fn(descr, obj, type); }
+
+	if (descr) { return descr; }
+
+	return nullptr;
+}
+
+Error ism::api::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJECT dict)
+{
+	TYPE type{ typeof(obj) };
+
+	if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
+
+	OBJECT descr{ type->lookup(name) };
+
+	descrsetfunc fn{};
+
+	if (descr && (fn = typeof(descr)->tp_descr_set))
+	{
+		return fn(descr, obj, value);
+	}
+
+	if (!dict)
+	{
+		if (OBJECT * dictptr{ get_dict_ptr(type, obj) })
+		{
+			if (!(dict = *dictptr)) { dict = DICT(DictObject{}); }
+
+			return DICT(dict).set(name, value);
+		}
+		else
+		{
+			return Error_Unknown;
+		}
+	}
+	else
+	{
+		return DICT(dict).set(name, value);
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

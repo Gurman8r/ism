@@ -1,16 +1,16 @@
 #ifndef _ISM_EDITOR_SETTINGS_HPP_
 #define _ISM_EDITOR_SETTINGS_HPP_
 
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 namespace ism
 {
-	class ISM_API EditorSettings : public Super
+	class ISM_API EditorSettings //: public Super
 	{
-		ISM_SUPER(EditorSettings, Super);
+		//ISM_SUPER(EditorSettings, Super);
 
 	public:
-		virtual ~EditorSettings() override;
+		virtual ~EditorSettings();
 
 		DEFAULT_COPYABLE_MOVABLE(EditorSettings);
 	};

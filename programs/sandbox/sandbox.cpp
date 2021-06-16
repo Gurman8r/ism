@@ -1,5 +1,5 @@
 #include <main/main.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
@@ -54,18 +54,18 @@ namespace ism
 			.def("pass_ptr", [](void * ptr) { return ptr; })
 			;
 
+		m.attr("hello")();
+		m.attr("say")(m.attr("get_string")());
+		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
+
 		Class_<Test>(m, "test")
 			.def(init<>())
 			.def(init<int>())
 			.def(init<int, String const &>())
 			.def_static("test_static", &Test::test_static)
 			;
-
-		m.attr("hello")();
-		m.attr("say")(m.attr("get_string")());
-		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
 		
-		LIST list = LIST(ListObject{});
+		LIST list = m.attr("list") = LIST(ListObject{});
 		list.append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0]).c_str());
 		MAIN_PRINT("%s\n", STR(typeof(list).attr("__name__")).c_str());

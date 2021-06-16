@@ -47,7 +47,7 @@
 #define STRVAR(name, str)	static char const name[] = { str }
 
 // decltype variable
-#define STATIC_MEMBER(expr)	decltype(expr) expr
+#define DECLEXPR(expr)		decltype(expr) expr
 
 // automatic forward
 #define FWD(expr)			(std::forward<decltype(expr)>(expr))

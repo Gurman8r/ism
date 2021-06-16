@@ -1,12 +1,12 @@
 #include <core/api/object/capsule_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(CapsuleObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(CapsuleObject, t)
 {
 	t.tp_name = "capsule";
 	t.tp_size = sizeof(CapsuleObject);
@@ -21,7 +21,7 @@ STATIC_MEMBER(CapsuleObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CapsuleObject::_bind_class(TypeObject & t)
+void CapsuleObject::_bind_methods(TypeObject & t)
 {
 	t.tp_dict["__name__"] = PROPERTY({
 		CPP_FUNCTION([](CAPSULE self) { return self->m_name; }),

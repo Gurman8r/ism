@@ -1,176 +1,177 @@
 #ifndef _ISM_TYPE_OBJECT_HPP_
 #define _ISM_TYPE_OBJECT_HPP_
 
-#include <core/api/object/base_object.hpp>
+#include <core/api/class_db.hpp>
 
 // type object
-class NODISCARD ISM_API ism::api::TypeObject : public BaseObject
+namespace ism::api
 {
-	ISM_OBJECT(TypeObject, BaseObject);
-
-protected:
-	static void _bind_class(ism::api::TypeObject & t);
-
-public:
-	String				tp_name{};
-	ssize_t				tp_size{};
-	int32_t				tp_flags{};
-	String				tp_doc{};
-
-	ssize_t				tp_dict_offset{};
-	ssize_t				tp_weaklist_offset{};
-	ssize_t				tp_vectorcall_offset{};
-
-	binaryfunc			tp_call{};
-	inquiry				tp_clear{};
-	cmpfunc				tp_compare{};
-	hashfunc			tp_hash{};
-	lenfunc				tp_len{};
-	reprfunc			tp_repr{};
-	reprfunc			tp_str{};
-	traverseproc		tp_traverse{};
-	vectorcallfunc		tp_vectorcall{};
-
-	getattrfunc			tp_getattr{};
-	setattrfunc			tp_setattr{};
-	getattrofunc		tp_getattro{};
-	setattrofunc		tp_setattro{};
-	descrgetfunc		tp_descr_get{};
-	descrsetfunc		tp_descr_set{};
-
-	destructor			tp_delete{};
-	initproc			tp_init{};
-	allocfunc			tp_alloc{};
-	newfunc				tp_new{};
-	freefunc			tp_free{};
-	inquiry				tp_is_gc{};
-	destructor			tp_finalize{};
-
-	NumberMethods *		tp_as_number{};
-	SequenceMethods *	tp_as_sequence{};
-	MappingMethods  *	tp_as_mapping{};
-
-	Ref<TypeObject>		tp_base{ /* Handle<TypeObject> doesn't exist yet */ };
-	OBJECT				tp_bases{};
-	OBJECT				tp_cache{};
-	OBJECT				tp_dict{};
-	OBJECT				tp_mro{};
-	OBJECT				tp_subclasses{};
-	OBJECT				tp_weaklist{};
-
-public:
-	NODISCARD bool has_feature(int32_t feature) const noexcept { return flag_read(tp_flags, feature); }
-
-	void enable_feature(int32_t feature) noexcept { flag_set(tp_flags, feature); }
-
-	void disable_feature(int32_t feature) noexcept { flag_clear(tp_flags, feature); }
-
-public:
-	bool ready();
-
-	bool add_subclass(TypeObject * type);
-
-	bool mro_internal(OBJECT * old_mro);
-
-	void inherit_special(TypeObject * base);
-
-	void inherit_slots(TypeObject * base);
-
-public:
-	void modified();
-
-	Error update_slot(OBJECT name);
-
-	bool check_consistency() const;
-
-public:
-	template <class Slot> bool slot_defined(TypeObject const * base, Slot TypeObject::*slot) const
+	class ISM_API TypeObject : public BaseObject
 	{
-		return (this->*slot) && (!base || (this->*slot) != (base->*slot));
-	}
+		ISM_OBJECT_DEFAULT(TypeObject, BaseObject);
 
-	template <class Slot> bool slot_defined(TypeObject const * base, Slot NumberMethods::*slot) const
-	{
-		return ((*this->tp_as_number).*slot) && (!base || ((*this->tp_as_number).*slot) != ((*base->tp_as_number).*slot));
-	}
+	protected:
+		static void _bind_methods(TypeObject & t);
 
-	template <class Slot> bool slot_defined(TypeObject const * base, Slot SequenceMethods::*slot) const
-	{
-		return ((*this->tp_as_sequence).*slot) && (!base || ((*this->tp_as_sequence).*slot) != ((*base->tp_as_sequence).*slot));
-	}
+	public:
+		String				tp_name{};
+		ssize_t				tp_size{};
+		int32_t				tp_flags{};
+		String				tp_doc{};
 
-	template <class Slot> bool slot_defined(TypeObject const * base, Slot MappingMethods::*slot) const
-	{
-		return ((*this->tp_as_mapping).*slot) && (!base || ((*this->tp_as_mapping).*slot) != ((*base->tp_as_mapping).*slot));
-	}
+		ssize_t				tp_dict_offset{};
+		ssize_t				tp_weaklist_offset{};
+		ssize_t				tp_vectorcall_offset{};
 
-	template <class Slot> void copy_val(TypeObject const * base, Slot TypeObject::*slot)
-	{
-		if (!(this->*slot) && base)
+		binaryfunc			tp_call{};
+		inquiry				tp_clear{};
+		cmpfunc				tp_compare{};
+		hashfunc			tp_hash{};
+		lenfunc				tp_len{};
+		reprfunc			tp_repr{};
+		reprfunc			tp_str{};
+		traverseproc		tp_traverse{};
+		vectorcallfunc		tp_vectorcall{};
+
+		getattrfunc			tp_getattr{};
+		setattrfunc			tp_setattr{};
+		getattrofunc		tp_getattro{};
+		setattrofunc		tp_setattro{};
+		descrgetfunc		tp_descr_get{};
+		descrsetfunc		tp_descr_set{};
+
+		destructor			tp_delete{};
+		initproc			tp_init{};
+		allocfunc			tp_alloc{};
+		newfunc				tp_new{};
+		freefunc			tp_free{};
+		inquiry				tp_is_gc{};
+		destructor			tp_finalize{};
+
+		NumberMethods *		tp_as_number{};
+		SequenceMethods *	tp_as_sequence{};
+		MappingMethods *	tp_as_mapping{};
+
+		Ref<TypeObject>		tp_base{ /* Handle<TypeObject> doesn't exist yet */ };
+		OBJECT				tp_bases{};
+		OBJECT				tp_cache{};
+		OBJECT				tp_dict{};
+		OBJECT				tp_mro{};
+		OBJECT				tp_subclasses{};
+		OBJECT				tp_weaklist{};
+
+	public:
+		bool ready();
+
+		bool add_subclass(TypeObject * type);
+
+		bool mro_internal(OBJECT * old_mro);
+
+		void inherit_special(TypeObject * base);
+
+		void inherit_slots(TypeObject * base);
+
+		Error update_slot(OBJECT name);
+
+		bool check_consistency() const;
+
+		OBJECT lookup(OBJECT name) const;
+
+	public:
+		template <class Slot> bool slot_defined(TypeObject * base, Slot TypeObject:: * slot) const
 		{
-			(this->*slot) = (base->*slot);
+			return (this->*slot) && (!base || (this->*slot) != (base->*slot));
 		}
-	}
 
-	template <class Slot> auto copy_slot(TypeObject const * base, TypeObject const * basebase, Slot TypeObject::*slot)
-	{
-		if (!(this->*slot) && base && base->slot_defined(basebase, slot))
+		template <class Slot> bool slot_defined(TypeObject * base, Slot NumberMethods:: * slot) const
 		{
-			(this->*slot) = (base->*slot);
+			return ((*this->tp_as_number).*slot) && (!base || ((*this->tp_as_number).*slot) != ((*base->tp_as_number).*slot));
 		}
-	}
 
-	template <class Slot> auto copy_slot(TypeObject const * base, TypeObject const * basebase, Slot NumberMethods::*slot)
-	{
-		if (!((*this->tp_as_number).*slot) && base && base->slot_defined(basebase, slot))
+		template <class Slot> bool slot_defined(TypeObject * base, Slot SequenceMethods:: * slot) const
 		{
-			((*this->tp_as_number).*slot) = ((*base->tp_as_number).*slot);
+			return ((*this->tp_as_sequence).*slot) && (!base || ((*this->tp_as_sequence).*slot) != ((*base->tp_as_sequence).*slot));
 		}
-	}
 
-	template <class Slot> auto copy_slot(TypeObject const * base, TypeObject const * basebase, Slot SequenceMethods::*slot)
-	{
-		if (!((*this->tp_as_sequence).*slot) && base && base->slot_defined(basebase, slot))
+		template <class Slot> bool slot_defined(TypeObject * base, Slot MappingMethods:: * slot) const
 		{
-			((*this->tp_as_sequence).*slot) = ((*base->tp_as_sequence).*slot);
+			return ((*this->tp_as_mapping).*slot) && (!base || ((*this->tp_as_mapping).*slot) != ((*base->tp_as_mapping).*slot));
 		}
-	}
 
-	template <class Slot> auto copy_slot(TypeObject const * base, TypeObject const * basebase, Slot MappingMethods::*slot)
-	{
-		if (!((*this->tp_as_mapping).*slot) && base && base->slot_defined(basebase, slot))
+		template <class Slot> void copy_val(TypeObject * base, Slot TypeObject:: * slot)
 		{
-			((*this->tp_as_mapping).*slot) = ((*base->tp_as_mapping).*slot);
+			if (!(this->*slot) && base)
+			{
+				(this->*slot) = (base->*slot);
+			}
 		}
-	}
-};
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot TypeObject:: * slot)
+		{
+			if (!(this->*slot) && base && base->slot_defined(basebase, slot))
+			{
+				(this->*slot) = (base->*slot);
+			}
+		}
+
+		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot NumberMethods:: * slot)
+		{
+			if (!((*this->tp_as_number).*slot) && base && base->slot_defined(basebase, slot))
+			{
+				((*this->tp_as_number).*slot) = ((*base->tp_as_number).*slot);
+			}
+		}
+
+		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot SequenceMethods:: * slot)
+		{
+			if (!((*this->tp_as_sequence).*slot) && base && base->slot_defined(basebase, slot))
+			{
+				((*this->tp_as_sequence).*slot) = ((*base->tp_as_sequence).*slot);
+			}
+		}
+
+		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot MappingMethods:: * slot)
+		{
+			if (!((*this->tp_as_mapping).*slot) && base && base->slot_defined(basebase, slot))
+			{
+				((*this->tp_as_mapping).*slot) = ((*base->tp_as_mapping).*slot);
+			}
+		}
+	};
+}
 
 // type deleter
-template <> struct ism::DefaultDelete<ism::api::TypeObject>
+namespace ism
 {
-	void operator()(api::TypeObject * ptr) const { memdelete(ptr); }
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	template <> struct DefaultDelete<api::TypeObject>
+	{
+		void operator()(api::TypeObject * ptr) const { memdelete(ptr); }
+	};
+}
 
 // type handle
-template <> class ism::api::Handle<ism::api::TypeObject> : public ism::api::BaseHandle<ism::api::TypeObject>
+namespace ism::api
 {
-	ISM_HANDLE(TypeObject);
+	template <> class Handle<TypeObject> : public BaseHandle<TypeObject>
+	{
+		ISM_HANDLE_DEFAULT(TypeObject);
 
-public:
-	Handle() = default;
+	public:
+		Handle() = default;
 
-	~Handle() = default;
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		~Handle() = default;
+	};
+}
 
 // functions
 namespace ism::api
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_FUNC(OBJECT) type_getattro(TYPE type, OBJECT name);
+
+	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJECT name, OBJECT value);
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T> NODISCARD hash_t hash(Handle<T> const & o) noexcept
@@ -189,9 +190,9 @@ namespace ism::api
 
 	NODISCARD inline auto get_dict_ptr(TYPE const & t, OBJECT const & o)
 	{
-		if (o && t && 0 < t->tp_dict_offset)
+		if (ssize_t const offset{ (o && t) ? t->tp_dict_offset : 0 }; 0 < offset)
 		{
-			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + t->tp_dict_offset);
+			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + offset);
 		}
 		else
 		{
@@ -199,18 +200,15 @@ namespace ism::api
 		}
 	}
 
-	NODISCARD inline auto get_dict_ptr(OBJECT const & o) noexcept
-	{
-		return get_dict_ptr(typeof(o), o);
-	}
+	NODISCARD inline auto get_dict_ptr(OBJECT const & o) noexcept { return get_dict_ptr(typeof(o), o); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	NODISCARD inline auto get_weaklist_ptr(TYPE const & t, OBJECT const & o)
 	{
-		if (o && t && 0 < t->tp_weaklist_offset)
+		if (ssize_t const offset{ (o && t) ? t->tp_weaklist_offset : 0 }; 0 < offset)
 		{
-			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + t->tp_weaklist_offset);
+			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + offset);
 		}
 		else
 		{
@@ -218,18 +216,15 @@ namespace ism::api
 		}
 	}
 
-	NODISCARD inline auto get_weaklist_ptr(OBJECT const & o) noexcept
-	{
-		return get_weaklist_ptr(typeof(o), o);
-	}
+	NODISCARD inline auto get_weaklist_ptr(OBJECT const & o) noexcept { return get_weaklist_ptr(typeof(o), o); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	NODISCARD inline auto get_vectorcall_func(TYPE const & t, OBJECT const & o)
 	{
-		if (o && t && 0 < t->tp_vectorcall_offset)
+		if (ssize_t const offset{ (o && t) ? t->tp_vectorcall_offset : 0 }; 0 < offset)
 		{
-			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(*o) + t->tp_vectorcall_offset);
+			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(*o) + offset);
 		}
 		else
 		{
@@ -237,28 +232,7 @@ namespace ism::api
 		}
 	}
 
-	NODISCARD inline auto get_vectorcall_func(OBJECT const & o) noexcept
-	{
-		return get_vectorcall_func(typeof(o), o);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_FUNC(OBJECT) find_name_in_mro(TYPE type, OBJECT name, Error * err);
-
-	ISM_API_FUNC(OBJECT) type_lookup(TYPE type, OBJECT name);
-
-	ISM_API_FUNC(OBJECT) type_getattro(TYPE type, OBJECT name);
-
-	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJECT name, OBJECT value);
-
-	ISM_API_FUNC(OBJECT) generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict);
-
-	ISM_API_FUNC(Error) generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJECT dict);
-	
-	inline OBJECT generic_getattr(OBJECT obj, OBJECT name) noexcept { return generic_getattr_with_dict(obj, name, nullptr); }
-
-	inline Error generic_setattr(OBJECT obj, OBJECT name, OBJECT value) noexcept { return generic_setattr_with_dict(obj, name, value, nullptr); }
+	NODISCARD inline auto get_vectorcall_func(OBJECT const & o) noexcept { return get_vectorcall_func(typeof(o), o); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -1,5 +1,5 @@
-#ifndef _ISM_ATTR_DETAIL_HPP_
-#define _ISM_ATTR_DETAIL_HPP_
+#ifndef _ISM_ATTR_HPP_
+#define _ISM_ATTR_HPP_
 
 #include <core/api/detail/call.hpp>
 
@@ -238,4 +238,4 @@ namespace ism::api::attr
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_ATTR_DETAIL_HPP_
+#endif // !_ISM_ATTR_HPP_

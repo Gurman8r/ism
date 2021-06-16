@@ -1,12 +1,12 @@
 #include <core/api/object/string_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(StringObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(StringObject, t)
 {
 	t.tp_name = "str";
 	t.tp_size = sizeof(StringObject);
@@ -40,7 +40,7 @@ STATIC_MEMBER(StringObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void StringObject::_bind_class(TypeObject & t)
+void StringObject::_bind_methods(TypeObject & t)
 {
 }
 

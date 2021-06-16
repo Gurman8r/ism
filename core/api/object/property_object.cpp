@@ -1,12 +1,12 @@
 #include <core/api/object/property_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(PropertyObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(PropertyObject, t)
 {
 	t.tp_name = "property";
 	t.tp_size = sizeof(PropertyObject);
@@ -31,7 +31,7 @@ STATIC_MEMBER(PropertyObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void PropertyObject::_bind_class(TypeObject & t)
+void PropertyObject::_bind_methods(TypeObject & t)
 {
 }
 

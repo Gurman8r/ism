@@ -1,5 +1,5 @@
-#ifndef _ISM_CAST_DETAIL_HPP_
-#define _ISM_CAST_DETAIL_HPP_
+#ifndef _ISM_CAST_HPP_
+#define _ISM_CAST_HPP_
 
 #include <core/api/internals.hpp>
 
@@ -443,7 +443,7 @@ namespace ism::api
 	template <class T
 	> auto move(OBJECT && o) -> std::enable_if_t<!move_never_v<T>, T>
 	{
-		if (o && o->ref_count() > 1) {
+		if (o && o->get_ref_count() > 1) {
 			VERIFY(!"Unable to cast Core instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
 		}
 		T ret{ std::move(api::load_type<T>(o).operator T & ()) };
@@ -459,7 +459,7 @@ namespace ism::api
 	template <class T
 	> auto cast(OBJECT && o) -> std::enable_if_t<move_if_unreferenced_v<T>, T>
 	{
-		if (o && o->ref_count() > 1)
+		if (o && o->get_ref_count() > 1)
 		{
 			return api::cast<T>(o);
 		}
@@ -505,4 +505,4 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_CAST_DETAIL_HPP_
+#endif // !_ISM_CAST_HPP_

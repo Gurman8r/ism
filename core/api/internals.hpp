@@ -1,13 +1,22 @@
 #ifndef _ISM_INTERNALS_HPP_
 #define _ISM_INTERNALS_HPP_
 
-#include <core/api/types.hpp>
+#include <core/api/object/base_object.hpp>
+#include <core/api/object/type_object.hpp>
+#include <core/api/object/int_object.hpp>
+#include <core/api/object/float_object.hpp>
+#include <core/api/object/string_object.hpp>
+#include <core/api/object/list_object.hpp>
+#include <core/api/object/dict_object.hpp>
+#include <core/api/object/capsule_object.hpp>
+#include <core/api/object/function_object.hpp>
+#include <core/api/object/property_object.hpp>
 
 namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class NODISCARD ISM_API StackFrame
+	class ISM_API StackFrame
 	{
 	public:
 		StackFrame();
@@ -20,7 +29,7 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class NODISCARD ISM_API ThreadState
+	class ISM_API ThreadState
 	{
 	public:
 		ThreadState(InterpreterState * interp);
@@ -39,7 +48,7 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class NODISCARD ISM_API InterpreterState
+	class ISM_API InterpreterState
 	{
 	public:
 		InterpreterState(RuntimeState * runtime);
@@ -68,7 +77,7 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class NODISCARD ISM_API RuntimeState
+	class ISM_API RuntimeState
 	{
 	private:
 		static RuntimeState * singleton;
@@ -122,11 +131,6 @@ namespace ism::api
 		return nullptr;
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism::api
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class K = String

@@ -49,7 +49,7 @@ namespace ism
 
 		void add_logger(Logger * value);
 
-		virtual ~CompositeLogger() override;
+		virtual ~CompositeLogger();
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

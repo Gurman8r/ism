@@ -6,8 +6,6 @@ namespace ism
 
 	MainLoop::~MainLoop() {}
 
-	MainLoop::MainLoop() {}
-
 	void MainLoop::initialize()
 	{
 	}

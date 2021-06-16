@@ -1,19 +1,18 @@
-#ifndef _ISM_COMMON_DETAIL_HPP_
-#define _ISM_COMMON_DETAIL_HPP_
+#ifndef _ISM_COMMON_HPP_
+#define _ISM_COMMON_HPP_
 
 #include <core/api/reference.hpp>
 
-// types
 namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ClassDB;
 
 	template <class T
 	> ALIAS(TypeMap) HashMap<std::type_index, T>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class ClassDB;
 
 	struct _API_Tag {};
 	
@@ -37,7 +36,7 @@ namespace ism::api
 	class ModuleObject;
 	class GenericObject;
 
-	template <class T> constexpr bool is_core_object_v{ std::is_base_of_v<BaseObject, mpl::intrinsic_t<T>> };
+	template <class T> constexpr bool is_base_object_v{ std::is_base_of_v<BaseObject, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -140,12 +139,6 @@ namespace ism::api
 	TypeFlags;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// method suites
-namespace ism::api
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(unaryfunc)		OBJECT(*)(OBJECT a);
 	ALIAS(binaryfunc)		OBJECT(*)(OBJECT a, OBJECT b);
@@ -239,4 +232,4 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_COMMON_DETAIL_HPP_
+#endif // !_ISM_COMMON_HPP_

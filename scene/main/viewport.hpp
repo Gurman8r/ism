@@ -9,10 +9,10 @@ namespace ism
 
 	class ISM_API Viewport : public Node
 	{
-		ISM_SUPER(Viewport, Node);
+		//ISM_SUPER(Viewport, Node);
 
 	public:
-		virtual ~Viewport() override;
+		virtual ~Viewport();
 
 		explicit Viewport(Node * parent, SceneTree * tree) : Node{ parent, tree } {}
 

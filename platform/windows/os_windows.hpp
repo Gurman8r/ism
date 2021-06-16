@@ -110,7 +110,7 @@ namespace ism
 		
 		OS_Windows(HINSTANCE instance);
 		
-		virtual ~OS_Windows() override;
+		virtual ~OS_Windows();
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

@@ -1,12 +1,12 @@
 #include <core/api/object/int_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(IntObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(IntObject, t)
 {
 	t.tp_name = "int";
 	t.tp_size = sizeof(IntObject);
@@ -35,14 +35,14 @@ STATIC_MEMBER(IntObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void IntObject::_bind_class(TypeObject & t)
+void IntObject::_bind_methods(TypeObject & t)
 {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(IntObject::g_true) { true };
+DECLEXPR(IntObject::g_true) { true };
 
-STATIC_MEMBER(IntObject::g_false) { false };
+DECLEXPR(IntObject::g_false) { false };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

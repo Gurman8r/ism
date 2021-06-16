@@ -4,107 +4,113 @@
 #include <core/api/object/type_object.hpp>
 
 // string object
-class NODISCARD ISM_API ism::api::StringObject : public BaseObject
+namespace ism::api
 {
-	ISM_OBJECT(StringObject, BaseObject);
-
-protected:
-	static void _bind_class(TypeObject & t);
-
-	String m_string{};
-
-public:
-	using storage_type = decltype(m_string);
-		
-	using iterator = storage_type::iterator;
-		
-	using const_iterator = storage_type::const_iterator;
-
-	StringObject(storage_type const & v) : base_type{ &ob_type_static }, m_string{ v } {}
-
-	StringObject(storage_type && v) noexcept : base_type{ &ob_type_static }, m_string{ std::move(v) } {}
-
-	StringObject(cstring v) : base_type{ &ob_type_static }, m_string{ v } {}
-
-	StringObject(cstring v, size_t n) : base_type{ &ob_type_static }, m_string{ v, n } {}
-
-	StringObject(StringName const & v) : self_type{ v.string() } {}
-
-	StringObject(StringName && v) noexcept : self_type{ std::move(v).string() } {}
-
-	StringObject(std::initializer_list<char> init) : self_type{ storage_type{ init.begin(), init.end() } } {}
-
-	template <class T> StringObject(Handle<T> const & o) : self_type{}
+	class ISM_API StringObject : public BaseObject
 	{
-		if constexpr (std::is_same_v<T, self_type>)
-		{
-			m_string = (String)o;
-		}
-		else if (isinstance<STR>(o))
-		{
-			m_string = (String)STR(o);
-		}
-		else if (TYPE t{ typeof(o) }; t && t->tp_str)
-		{
-			m_string = (String)t->tp_str(o);
-		}
-	}
+		ISM_OBJECT_DEFAULT(StringObject, BaseObject);
 
-	NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
+	protected:
+		static void _bind_methods(TypeObject & t);
 
-	NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
-};
+	public:
+		String m_string{};
+
+		using storage_type = decltype(m_string);
+
+		using iterator = storage_type::iterator;
+
+		using const_iterator = storage_type::const_iterator;
+
+		StringObject(storage_type const & v) : base_type{ get_type_static() }, m_string{ v } {}
+
+		StringObject(storage_type && v) noexcept : base_type{ get_type_static() }, m_string{ std::move(v) } {}
+
+		StringObject(cstring v) : base_type{ get_type_static() }, m_string{ v } {}
+
+		StringObject(cstring v, size_t n) : base_type{ get_type_static() }, m_string{ v, n } {}
+
+		StringObject(StringName const & v) : self_type{ v.string() } {}
+
+		StringObject(StringName && v) noexcept : self_type{ std::move(v).string() } {}
+
+		StringObject(std::initializer_list<char> init) : self_type{ storage_type{ init.begin(), init.end() } } {}
+
+		template <class T> StringObject(Handle<T> const & o) : self_type{}
+		{
+			if constexpr (std::is_same_v<T, self_type>)
+			{
+				m_string = (String)o;
+			}
+			else if (isinstance<STR>(o))
+			{
+				m_string = (String)STR(o);
+			}
+			else if (TYPE t{ typeof(o) }; t && t->tp_str)
+			{
+				m_string = (String)t->tp_str(o);
+			}
+		}
+
+		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
+
+		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
+	};
+}
 
 // string deleter
-template <> struct ism::DefaultDelete<ism::api::StringObject> : ism::DefaultDelete<ism::api::BaseObject> {};
+namespace ism { template <> struct DefaultDelete<api::StringObject> : DefaultDelete<api::BaseObject> {}; }
 
 // string handle
-template <> class ism::api::Handle<ism::api::StringObject> : public ism::api::BaseHandle<ism::api::StringObject>
+namespace ism::api
 {
-	ISM_HANDLE(StringObject);
+	template <> class Handle<StringObject> : public BaseHandle<StringObject>
+	{
+		ISM_HANDLE_DEFAULT(StringObject);
 
-public:
-	Handle() = default;
+	public:
+		Handle() = default;
 
-	~Handle() = default;
+		~Handle() = default;
 
-	using storage_type = StringObject::storage_type;
+		using storage_type = StringObject::storage_type;
 
-	using iterator = StringObject::iterator;
+		using iterator = StringObject::iterator;
 
-	using const_iterator = StringObject::const_iterator;
+		using const_iterator = StringObject::const_iterator;
 
-	void reserve(size_t count) { (**m_ref).reserve(count); }
+		void reserve(size_t count) { (**m_ref).reserve(count); }
 
-	void resize(size_t count) { (**m_ref).resize(count); }
+		void resize(size_t count) { (**m_ref).resize(count); }
 
-	NODISCARD operator storage_type () const { return m_ref ? (**m_ref) : String{}; }
+		NODISCARD operator storage_type () const { return m_ref ? (**m_ref) : String{}; }
 
-	NODISCARD auto c_str() const { return (**m_ref).c_str(); }
+		NODISCARD auto c_str() const { return (**m_ref).c_str(); }
 
-	NODISCARD auto data() const { return (**m_ref).data(); }
+		NODISCARD auto data() const { return (**m_ref).data(); }
 
-	NODISCARD bool empty() const { return (**m_ref).empty(); }
+		NODISCARD bool empty() const { return (**m_ref).empty(); }
 
-	NODISCARD auto size() const { return (**m_ref).size(); }
+		NODISCARD auto size() const { return (**m_ref).size(); }
 
-	NODISCARD auto front() const -> char & { return (**m_ref).front(); }
+		NODISCARD auto front() const -> char & { return (**m_ref).front(); }
 
-	NODISCARD auto back() const -> char & { return (**m_ref).back(); }
+		NODISCARD auto back() const -> char & { return (**m_ref).back(); }
 
-public:
-	NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }
+	public:
+		NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }
 
-	NODISCARD auto begin() const -> const_iterator { return (**m_ref).begin(); }
+		NODISCARD auto begin() const -> const_iterator { return (**m_ref).begin(); }
 
-	NODISCARD auto cbegin() const -> const_iterator { return (**m_ref).cbegin(); }
+		NODISCARD auto cbegin() const -> const_iterator { return (**m_ref).cbegin(); }
 
-	NODISCARD auto end() -> iterator { return (**m_ref).end(); }
+		NODISCARD auto end() -> iterator { return (**m_ref).end(); }
 
-	NODISCARD auto end() const -> const_iterator { return (**m_ref).end(); }
+		NODISCARD auto end() const -> const_iterator { return (**m_ref).end(); }
 
-	NODISCARD auto cend() const -> const_iterator { return (**m_ref).cend(); }
-};
+		NODISCARD auto cend() const -> const_iterator { return (**m_ref).cend(); }
+	};
+}
 
 namespace ism::api
 {

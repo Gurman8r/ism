@@ -1,20 +1,19 @@
 #ifndef _ISM_INPUT_MAP_HPP_
 #define _ISM_INPUT_MAP_HPP_
 
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 namespace ism
 {
-	class ISM_API InputMap : public Super
+	class ISM_API InputMap : public api::BaseObject
 	{
-		ISM_SUPER(InputMap, Super);
+		ISM_OBJECT_DEFAULT(InputMap, api::BaseObject);
+
+	protected:
+		static void _bind_methods(api::TypeObject & t);
 
 	public:
-		virtual ~InputMap() override;
-
-		DEFAULT_COPYABLE_MOVABLE(InputMap);
-
-	public:
+		virtual ~InputMap();
 	};
 }
 

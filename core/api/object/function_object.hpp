@@ -4,37 +4,45 @@
 #include <core/api/object/type_object.hpp>
 
 // function object
-class ISM_API ism::api::FunctionObject : public BaseObject
+namespace ism::api
 {
-	ISM_OBJECT(FunctionObject, BaseObject);
+	class ISM_API api::FunctionObject : public BaseObject
+	{
+		ISM_OBJECT_DEFAULT(FunctionObject, BaseObject);
 
-protected:
-	static void _bind_class(TypeObject & t);
+	protected:
+		static void _bind_methods(TypeObject & t);
 
-	vectorcallfunc m_vectorcall{};
+	public:
+		vectorcallfunc m_vectorcall{};
 
-public:
-	explicit FunctionObject(TypeObject const * t, vectorcallfunc vectorcall) : base_type{ t }, m_vectorcall{ vectorcall } {}
+		explicit FunctionObject(vectorcallfunc vectorcall) : base_type{ get_type_static() }, m_vectorcall{ vectorcall } {}
 
-	explicit FunctionObject(vectorcallfunc vectorcall) : self_type{ &ob_type_static, vectorcall } {}
+		NODISCARD vectorcallfunc get_dispatcher() const noexcept { return m_vectorcall; }
 
-	NODISCARD vectorcallfunc get_vectorcall() const { return m_vectorcall; }
-
-	void set_vectorcall(vectorcallfunc vectorcall) { m_vectorcall = vectorcall; }
-};
+		void set_dispatcher(vectorcallfunc value) noexcept { m_vectorcall = value; }
+	};
+}
 
 // function deleter
-template <> struct ism::DefaultDelete<ism::api::FunctionObject> : ism::DefaultDelete<ism::api::BaseObject> {};
+namespace ism { template <> struct DefaultDelete<api::FunctionObject> : DefaultDelete<api::BaseObject> {}; }
 
 // function handle
-template <> class ism::api::Handle<ism::api::FunctionObject> : public ism::api::BaseHandle<ism::api::FunctionObject>
+namespace ism::api
 {
-	ISM_HANDLE(FunctionObject);
+	template <> class Handle<FunctionObject> : public BaseHandle<FunctionObject>
+	{
+		ISM_HANDLE_DEFAULT(FunctionObject);
 
-public:
-	Handle() = default;
+	public:
+		Handle() = default;
 
-	~Handle() = default;
-};
+		~Handle() = default;
+
+		NODISCARD OBJECT cpp_function() const noexcept; // cppfunction_object.hpp
+
+		NODISCARD bool is_cpp_function() const noexcept { return (bool)cpp_function(); }
+	};
+}
 
 #endif // !_ISM_FUNCTION_OBJECT_HPP_

@@ -1,12 +1,12 @@
 #include <core/api/object/dict_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(DictObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(DictObject, t)
 {
 	t.tp_name = "dict";
 	t.tp_size = sizeof(DictObject);
@@ -23,7 +23,7 @@ STATIC_MEMBER(DictObject::ob_type_static) = COMPOSE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void DictObject::_bind_class(TypeObject & t)
+void DictObject::_bind_methods(TypeObject & t)
 {
 	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
 		return Core_Bool(DICT(self)->contains(value));

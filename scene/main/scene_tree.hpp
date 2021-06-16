@@ -10,14 +10,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class Entity;
-
 	class ISM_API SceneTree : public MainLoop
 	{
-		ISM_SUPER(SceneTree, MainLoop);
+		//ISM_SUPER(SceneTree, MainLoop);
 
 	public:
-		virtual ~SceneTree() override;
+		virtual ~SceneTree();
 
 		explicit SceneTree(String const & name = "New Scene");
 
@@ -29,7 +27,7 @@ namespace ism
 		void on_runtime_update(Duration dt);
 
 	protected:
-		template <class T> void on_component_added(Entity &, T &) {}
+		template <class T> void on_component_added(Node &, T &) {}
 
 	public:
 		NODISCARD auto get_registry() const noexcept { return const_cast<entt::registry *>(&m_reg); }

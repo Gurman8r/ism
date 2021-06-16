@@ -1,16 +1,16 @@
 #ifndef _ISM_CAMERA_SERVER_HPP_
 #define _ISM_CAMERA_SERVER_HPP_
 
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 namespace ism
 {
-	class ISM_API CameraServer : public Super
+	class ISM_API CameraServer// : public Super
 	{
-		ISM_SUPER(CameraServer, Super);
+		//ISM_SUPER(CameraServer, Super);
 
 	public:
-		virtual ~CameraServer() override;
+		virtual ~CameraServer();
 
 		DEFAULT_COPYABLE_MOVABLE(CameraServer);
 	};

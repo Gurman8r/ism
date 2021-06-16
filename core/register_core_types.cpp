@@ -1,5 +1,5 @@
 #include <core/register_core_types.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
@@ -9,7 +9,6 @@ void ism::register_core_types()
 	ClassDB::register_class<BaseObject>();
 	ClassDB::register_class<TypeObject>();
 	ClassDB::register_class<PropertyObject>();
-	ClassDB::register_class<FunctionObject>();
 	ClassDB::register_class<CppFunctionObject>();
 
 	ClassDB::register_class<IntObject>();

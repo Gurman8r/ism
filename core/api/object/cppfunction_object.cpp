@@ -1,12 +1,12 @@
 #include <core/api/object/cppfunction_object.hpp>
-#include <core/api/modsupport.hpp>
+#include <core/api/object/generic_object.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-STATIC_MEMBER(CppFunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
+ISM_BUILTIN_TYPE(CppFunctionObject, t)
 {
 	t.tp_name = "cpp_function";
 	t.tp_size = sizeof(CppFunctionObject);
@@ -24,16 +24,16 @@ STATIC_MEMBER(CppFunctionObject::ob_type_static) = COMPOSE(TypeObject, t)
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 };
 
-void CppFunctionObject::_bind_class(TypeObject & t)
+void CppFunctionObject::_bind_methods(TypeObject & t)
 {
 	t.tp_dict["__name__"] = PROPERTY({
-		CPP_FUNCTION([](CPP_FUNCTION self) { return self->m_cppfunction.name; }),
-		CPP_FUNCTION([](CPP_FUNCTION self, STR value) { self->m_cppfunction.name = value; })
+		CPP_FUNCTION([](CPP_FUNCTION self) { return self->m_func.name; }),
+		CPP_FUNCTION([](CPP_FUNCTION self, STR value) { self->m_func.name = value; })
 	});
 	
 	t.tp_dict["__doc__"] = PROPERTY({
-		CPP_FUNCTION([](CPP_FUNCTION self) { return self->m_cppfunction.doc; }),
-		CPP_FUNCTION([](CPP_FUNCTION self, STR value) { self->m_cppfunction.doc = value; })
+		CPP_FUNCTION([](CPP_FUNCTION self) { return self->m_func.doc; }),
+		CPP_FUNCTION([](CPP_FUNCTION self, STR value) { self->m_func.doc = value; })
 	});
 }
 

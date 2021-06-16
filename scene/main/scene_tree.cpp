@@ -41,19 +41,19 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
-	template <> void SceneTree::on_component_added<CameraComponent>(Entity & e, CameraComponent & c)
+	template <> void SceneTree::on_component_added<CameraComponent>(Node & e, CameraComponent & c)
 	{
 	}
 	
-	template <> void SceneTree::on_component_added<ScriptComponent>(Entity & e, ScriptComponent & c)
+	template <> void SceneTree::on_component_added<ScriptComponent>(Node & e, ScriptComponent & c)
 	{
 	}
 
-	template <> void SceneTree::on_component_added<TagComponent>(Entity & e, TagComponent & c)
+	template <> void SceneTree::on_component_added<TagComponent>(Node & e, TagComponent & c)
 	{
 	}
 
-	template <> void SceneTree::on_component_added<TransformComponent>(Entity & e, TransformComponent & c)
+	template <> void SceneTree::on_component_added<TransformComponent>(Node & e, TransformComponent & c)
 	{
 	}
 

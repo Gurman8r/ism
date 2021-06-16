@@ -1,5 +1,5 @@
-#ifndef _ISM_CALL_DETAIL_HPP_
-#define _ISM_CALL_DETAIL_HPP_
+#ifndef _ISM_CALL_HPP_
+#define _ISM_CALL_HPP_
 
 #include <core/api/detail/cast.hpp>
 
@@ -27,21 +27,19 @@ namespace ism::api
 
 		NODISCARD LIST args() && { return std::move(m_args); }
 
-		NODISCARD OBJECT call(OBJECT o)
+		NODISCARD OBJECT call(OBJECT callable)
 		{
-			if (TYPE t; !m_args || !o || !(t = typeof(o)))
+			if (TYPE type; !m_args || !callable || !(type = typeof(callable)))
 			{
 				return nullptr;
 			}
-			else if ((0 < t->tp_vectorcall_offset))
+			else if (vectorcallfunc vcall{ get_vectorcall_func(callable) })
 			{
-				vectorcallfunc vc{ *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(o.ptr()) + t->tp_vectorcall_offset) };
-
-				return CHECK(vc)(o, m_args.data(), m_args.size());
+				return vcall(callable, m_args.data(), m_args.size());
 			}
-			else if (binaryfunc tc{ t->tp_call })
+			else if (binaryfunc tcall{ type->tp_call })
 			{
-				return tc(o, m_args);
+				return tcall(callable, m_args);
 			}
 			else
 			{
@@ -368,4 +366,4 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_CALL_DETAIL_HPP_
+#endif // !_ISM_CALL_HPP_

@@ -7,15 +7,15 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Input : public Super
+	class ISM_API Input// : public Super
 	{
-		ISM_SUPER(Input, Super);
+		//ISM_SUPER(Input, Super);
 
 	private:
 		static Input * singleton;
 
 	public:
-		virtual ~Input() override;
+		virtual ~Input();
 
 		DEFAULT_COPYABLE_MOVABLE(Input);
 
