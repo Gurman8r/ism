@@ -1,5 +1,5 @@
 #include <core/register_core_types.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
@@ -8,15 +8,16 @@ void ism::register_core_types()
 {
 	TypeDB::register_class<BaseObject>();
 	TypeDB::register_class<TypeObject>();
-	TypeDB::register_class<PropertyObject>();
-	TypeDB::register_class<CppFunctionObject>();
-
 	TypeDB::register_class<IntObject>();
 	TypeDB::register_class<FloatObject>();
 	TypeDB::register_class<StringObject>();
 	TypeDB::register_class<ListObject>();
 	TypeDB::register_class<DictObject>();
 	TypeDB::register_class<CapsuleObject>();
+	TypeDB::register_class<FunctionObject>();
+	TypeDB::register_class<MethodObject>();
+	TypeDB::register_class<PropertyObject>();
+	TypeDB::register_class<CppFunctionObject>();
 	TypeDB::register_class<ModuleObject>();
 	TypeDB::register_class<GenericObject>();
 }

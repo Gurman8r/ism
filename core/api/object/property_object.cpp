@@ -31,8 +31,10 @@ ISM_STATIC_CLASS_TYPE(PropertyObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void PropertyObject::_bind_methods(TypeObject & t)
+void PropertyObject::_bind_class(TypeObject & t)
 {
+	CLASS_<PROPERTY>(&t, "property")
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

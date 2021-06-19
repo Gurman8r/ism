@@ -126,7 +126,6 @@ namespace ism::api
 	// function record
 	struct NODISCARD function_record final
 	{
-	public:
 		String name{}, doc{}, signature{};
 
 		OBJECT(*impl)(struct function_call & call) {};
@@ -144,6 +143,8 @@ namespace ism::api
 		bool is_stateless{}, is_constructor{}, is_operator{}, is_method{}, prepend{};
 
 		BaseObject * scope{}, * sibling{};
+
+		DEFAULT_COPYABLE_MOVABLE(function_record);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -151,7 +152,6 @@ namespace ism::api
 	// function call
 	struct NODISCARD function_call final
 	{
-	public:
 		function_record const & func;
 		
 		OBJECT parent{};
@@ -162,7 +162,7 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class /*Derived*/, class Func
-	> auto method_adaptor(Func && func) -> decltype(std::forward<Func>(func)) { return std::forward<Func>(func); }
+	> auto method_adaptor(Func && func) -> decltype(FWD(func)) { return FWD(func); }
 
 	template <class Derived, class Return, class Class, class ... Args
 	> auto method_adaptor(Return(Class:: * pmf)(Args...))->Return(Derived:: *)(Args...)

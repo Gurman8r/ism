@@ -54,13 +54,13 @@ namespace ism
 			.def("pass_ptr", [](void * ptr) { return ptr; })
 			;
 
-		CLASS_<Test>(m, "Test")
-			.def(init<>())
-			.def(init<int>())
-			.def(init<int, String const &>())
-			.def_static("test_static", &Test::test_static)
-			//.def("test_const", &Test::test_const)
-			;
+		//CLASS_<Test>(m, "Test")
+		//	.def(init<>())
+		//	.def(init<int>())
+		//	.def(init<int, String const &>())
+		//	.def_static("test_static", &Test::test_static)
+		//	//.def("test_const", &Test::test_const)
+		//	;
 
 		m.attr("hello")();
 		m.attr("say")(m.attr("get_string")());

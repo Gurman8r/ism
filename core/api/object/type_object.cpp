@@ -86,59 +86,60 @@ ISM_STATIC_CLASS_TYPE(TypeObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void TypeObject::_bind_methods(TypeObject & t)
+void TypeObject::_bind_class(TypeObject & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION({ [](TYPE self, OBJECT value)
-	{
-		return DICT(self->tp_dict)->contains(value);
-	} });
+	CLASS_<TYPE>(&t, "type")
 
-	t.tp_dict["__size__"] = PROPERTY({ [](TYPE self) { return self->tp_size; } });
-	
-	t.tp_dict["__flags__"] = PROPERTY({ [](TYPE self) { return self->tp_flags; } });
-	
-	t.tp_dict["__base__"] = PROPERTY({ [](TYPE self) { return TYPE(self->tp_base); } });
-	
-	t.tp_dict["__mro__"] = PROPERTY({ [](TYPE self) { return self->tp_mro; } });
-	
-	t.tp_dict["__dict__"] = PROPERTY({ [](TYPE self) { return self->tp_dict; } });
-	
-	t.tp_dict["__weaklist__"] = PROPERTY({ [](TYPE self) { return self->tp_weaklist; } });
-	
-	t.tp_dict["__text_signature__"] = PROPERTY({ [](TYPE self) { return String{}; } });
-	
-	t.tp_dict["__qualname__"] = PROPERTY({ [](TYPE self) { return String{}; } });
+		.def("__contains__", [](TYPE self, OBJECT value)
+		{
+			return DICT(self->tp_dict).contains(value);
+		})
 
-	t.tp_dict["__bases__"] = PROPERTY({
-		[](TYPE self) { return self->tp_bases; },
-		[](TYPE self, OBJECT value) { self->tp_bases = value; }, });
+		.def("__instancecheck__", [](OBJECT inst, OBJECT cls)
+		{
+			return isinstance(inst, cls);
+		})
 
-	t.tp_dict["__module__"] = PROPERTY({
-		[](TYPE self) { return self->tp_dict["__module__"]; },
-		[](TYPE self, OBJECT value) { self->tp_dict["__module__"] = value;  } });
+		.def("__subclasscheck__", [](OBJECT derived, OBJECT cls)
+		{
+			if (TYPE::check_(cls) && TYPE::check_(derived)) {
+				return TYPE(derived).is_subtype(TYPE(cls));
+			}
+			return false;
+		})
 
-	t.tp_dict["__abstractmethods__"] = PROPERTY({
-		[](TYPE self) { return self->tp_dict["__abstractmethods__"]; },
-		[](TYPE self, OBJECT value) { self->tp_dict["__abstractmethods__"] = value; } });
+		.def_property_readonly("__size__", [](TYPE self) { return self->tp_size; })
+	
+		.def_property_readonly("__flags__", [](TYPE self) { return self->tp_flags; })
+	
+		.def_property_readonly("__base__", [](TYPE self) { return TYPE(self->tp_base); })
+	
+		.def_property_readonly("__mro__", [](TYPE self) { return self->tp_mro; })
+	
+		.def_property_readonly("__dict__", [](TYPE self) { return self->tp_dict; })
+	
+		.def_property_readonly("__weaklist__", [](TYPE self) { return self->tp_weaklist; })
+	
+		.def_property_readonly("__text_signature__", [](TYPE self) { return STR{}; })
+	
+		.def_property_readonly("__qualname__", [](TYPE self) { return STR{}; })
+	
+		.def_property("__name__", [](TYPE self) { return self->tp_name; }, [](TYPE self, STR value) { self->tp_name = value; })
+	
+		.def_property("__doc__", [](TYPE self) { return self->tp_doc; }, [](TYPE self, STR value) { self->tp_doc = value; })
 
-	t.tp_dict["__name__"] = PROPERTY({
-		[](TYPE self) { return self->tp_name; },
-		[](TYPE self, STR value) { self->tp_name = value; } });
-
-	t.tp_dict["__doc__"] = PROPERTY({
-		[](TYPE self) { return self->tp_doc; },
-		[](TYPE self, STR value) { self->tp_doc = value; } });
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 bool TypeObject::ready()
 {
-	if (flag_read(tp_flags, TypeFlags_Ready)) { VERIFY(check_consistency()); return false; }
+	if (has_feature(TypeFlags_Ready)) { VERIFY(check_consistency()); return true; }
 	
-	VERIFY(!flag_read(tp_flags, TypeFlags_Readying));
+	VERIFY(!has_feature(TypeFlags_Readying));
 
-	flag_set(tp_flags, TypeFlags_Readying);
+	tp_flags |= TypeFlags_Readying;
 
 	if (!tp_base && this != *typeof<OBJECT>()) { tp_base = typeof<OBJECT>(); }
 	
@@ -156,7 +157,7 @@ bool TypeObject::ready()
 
 	for (TYPE const & base : LIST(tp_mro)) { inherit_slots(*base); }
 
-	if (flag_read(tp_flags, TypeFlags_HaveGc | TypeFlags_BaseType) && (!tp_free || tp_free == memfree))
+	if (has_feature(TypeFlags_HaveGc | TypeFlags_BaseType) && (!tp_free || tp_free == memfree))
 	{
 		VERIFY(!"type participates in gc and is a base type but has inappropriate tp_free slot");
 	}
@@ -175,11 +176,11 @@ bool TypeObject::ready()
 bool TypeObject::check_consistency() const
 {
 	// don't check static types before ready()
-	if (!flag_read(tp_flags, TypeFlags_Ready)) { return true; }
+	if (!has_feature(TypeFlags_Ready)) { return true; }
 
-	VERIFY(isinstance<TYPE>(this));
+	VERIFY(TYPE::check_(handle()));
 
-	VERIFY(!flag_read(tp_flags, TypeFlags_Readying));
+	VERIFY(!has_feature(TypeFlags_Readying));
 
 	VERIFY(tp_dict);
 
@@ -271,29 +272,31 @@ bool TypeObject::mro_internal(OBJECT * in_old_mro)
 
 void TypeObject::inherit_special(TypeObject * base)
 {
-	if (!flag_read(tp_flags, TypeFlags_HaveGc) && flag_read(tp_base->tp_flags, TypeFlags_HaveGc) && (!tp_traverse && !tp_clear))
+	if (!has_feature(TypeFlags_HaveGc) && flag_read(base->tp_flags, TypeFlags_HaveGc) && (!tp_traverse && !tp_clear))
 	{
 		flag_set(tp_flags, TypeFlags_HaveGc);
-		tp_traverse = tp_base->tp_traverse;
-		tp_clear = tp_base->tp_clear;
+		tp_traverse = base->tp_traverse;
+		tp_clear = base->tp_clear;
 	}
 
-	if (tp_base != *typeof<OBJECT>() || flag_read(tp_flags, TypeFlags_HeapType) && !tp_new)
+	if (base != *typeof<OBJECT>() || has_feature(TypeFlags_HeapType) && !tp_new)
 	{
-		tp_new = tp_base->tp_new;
+		tp_new = base->tp_new;
 	}
 
-	copy_val(*tp_base, &TypeObject::tp_size);
-	copy_val(*tp_base, &TypeObject::tp_weaklist_offset);
-	copy_val(*tp_base, &TypeObject::tp_dict_offset);
+	copy_val(base, &TypeObject::tp_size);
+	copy_val(base, &TypeObject::tp_weaklist_offset);
+	copy_val(base, &TypeObject::tp_dict_offset);
 
-	//if (LIST mro{ tp_base->tp_mro }; !mro) { return; }
-	//else if (mro->contains(typeof<TYPE>())) { flag_set(tp_flags, TypeFlags_Type_Subclass); }
-	//else if (mro->contains(typeof<INT>())) { flag_set(tp_flags, TypeFlags_Int_Subclass); }
-	//else if (mro->contains(typeof<FLT>())) { flag_set(tp_flags, TypeFlags_Float_Subclass); }
-	//else if (mro->contains(typeof<STR>())) { flag_set(tp_flags, TypeFlags_Str_Subclass); }
-	//else if (mro->contains(typeof<LIST>())) { flag_set(tp_flags, TypeFlags_List_Subclass); }
-	//else if (mro->contains(typeof<DICT>())) { flag_set(tp_flags, TypeFlags_Dict_Subclass); }
+	//if (LIST mro{ base->tp_mro })
+	//{
+	//	if (mro.contains(typeof<TYPE>())) { flag_set(tp_flags, TypeFlags_Type_Subclass); }
+	//	else if (mro.contains(typeof<INT>())) { flag_set(tp_flags, TypeFlags_Int_Subclass); }
+	//	else if (mro.contains(typeof<FLT>())) { flag_set(tp_flags, TypeFlags_Float_Subclass); }
+	//	else if (mro.contains(typeof<STR>())) { flag_set(tp_flags, TypeFlags_Str_Subclass); }
+	//	else if (mro.contains(typeof<LIST>())) { flag_set(tp_flags, TypeFlags_List_Subclass); }
+	//	else if (mro.contains(typeof<DICT>())) { flag_set(tp_flags, TypeFlags_Dict_Subclass); }
+	//}
 }
 
 void TypeObject::inherit_slots(TypeObject * base)
@@ -362,7 +365,7 @@ void TypeObject::inherit_slots(TypeObject * base)
 	copy_slot(base, basebase, &TypeObject::tp_str);
 
 	copy_slot(base, basebase, &TypeObject::tp_vectorcall_offset);
-	if (!tp_call && flag_read(base->tp_flags, TypeFlags_HaveVectorCall) && !flag_read(tp_flags, TypeFlags_HeapType))
+	if (!tp_call && flag_read(base->tp_flags, TypeFlags_HaveVectorCall) && !has_feature(TypeFlags_HeapType))
 	{
 		flag_set(tp_flags, TypeFlags_HaveVectorCall);
 	}
@@ -375,7 +378,7 @@ void TypeObject::inherit_slots(TypeObject * base)
 	}
 
 	copy_slot(base, basebase, &TypeObject::tp_descr_get);
-	if (base->tp_descr_get && tp_descr_get == base->tp_descr_get && !flag_read(tp_flags, TypeFlags_HeapType) && flag_read(base->tp_flags, TypeFlags_MethodDescriptor))
+	if (base->tp_descr_get && tp_descr_get == base->tp_descr_get && !has_feature(TypeFlags_HeapType) && flag_read(base->tp_flags, TypeFlags_MethodDescriptor))
 	{
 		flag_set(tp_flags, TypeFlags_MethodDescriptor);
 	}
@@ -393,7 +396,7 @@ void TypeObject::inherit_slots(TypeObject * base)
 
 OBJECT ism::api::type_getattr(TYPE type, OBJECT name)
 {
-	if (!type->tp_dict && !type->ready()) { return nullptr; }
+	if (!type->tp_dict) { if (!type->ready()) { return nullptr; } }
 
 	TYPE metatype{ typeof(type) };
 

@@ -11,7 +11,7 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(StringObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		String m_string{};
@@ -46,7 +46,7 @@ namespace ism::api
 			{
 				m_string = (String)o;
 			}
-			else if (isinstance<STR>(o))
+			else if (STR::check_(o))
 			{
 				m_string = (String)STR(o);
 			}
@@ -61,18 +61,17 @@ namespace ism::api
 // string delete
 namespace ism { template <> struct DefaultDelete<api::StringObject> : DefaultDelete<api::BaseObject> {}; }
 
+// string check
+#define ISM_STR_CHECK(o) (typeof(o).has_feature(TypeFlags_Str_Subclass))
+
 // string handle
 namespace ism::api
 {
 	template <> class Handle<StringObject> : public BaseHandle<StringObject>
 	{
-		ISM_HANDLE(StringObject);
+		ISM_HANDLE_DEFAULT(StringObject, ISM_STR_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
-
 		using storage_type = StringObject::storage_type;
 
 		using iterator = StringObject::iterator;

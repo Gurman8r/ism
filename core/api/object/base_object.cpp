@@ -12,7 +12,7 @@ void BaseObject::initialize_class()
 	{
 		TypeDB::add_class<BaseObject>();
 
-		_bind_methods(BaseObject::ob_type_static);
+		_bind_class(BaseObject::ob_type_static);
 	}
 }
 
@@ -36,8 +36,10 @@ ISM_STATIC_CLASS_TYPE(BaseObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void BaseObject::_bind_methods(TypeObject & t)
+void BaseObject::_bind_class(TypeObject & t)
 {
+	CLASS_<OBJECT>(&t, "object")
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -61,13 +63,37 @@ OBJECT ism::api::object_new(TYPE type, OBJECT args)
 	return type->tp_new(type, args);
 }
 
+bool ism::api::object_hasattr(OBJECT obj, OBJECT name)
+{
+	if (TYPE type{ typeof(obj) }; !type)
+	{
+		return false;
+	}
+	else if (type->tp_getattro == generic_getattr)
+	{
+		return generic_getattr_with_dict(obj, name, nullptr).is_valid();
+	}
+	else if (type->tp_getattro)
+	{
+		return (type->tp_getattro)(obj, name).is_valid();
+	}
+	else if (type->tp_getattr)
+	{
+		return (type->tp_getattr)(obj, STR(name).c_str()).is_valid();
+	}
+	else
+	{
+		return false;
+	}
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 OBJECT ism::api::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
 {
 	TYPE type{ typeof(obj) };
 
-	if (!type->tp_dict && !type->ready()) { return nullptr; }
+	if (!type->tp_dict) { if (!type->ready()) { return nullptr; } }
 
 	OBJECT descr{ type->lookup(name) };
 
@@ -109,7 +135,7 @@ Error ism::api::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value,
 {
 	TYPE type{ typeof(obj) };
 
-	if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
+	if (!type->tp_dict) { if (!type->ready()) { return Error_Unknown; } }
 
 	OBJECT descr{ type->lookup(name) };
 

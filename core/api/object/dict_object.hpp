@@ -11,7 +11,7 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(DictObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		HashMap<OBJECT, OBJECT> m_dict{};
@@ -42,18 +42,17 @@ namespace ism::api
 // dict delete
 namespace ism { template <> struct DefaultDelete<api::DictObject> : DefaultDelete<api::BaseObject> {}; }
 
+// dict check
+#define ISM_DICT_CHECK(o) (typeof(o).has_feature(TypeFlags_Dict_Subclass))
+
 // dict handle
 namespace ism::api
 {
 	template <> class Handle<DictObject> : public BaseHandle<DictObject>
 	{
-		ISM_HANDLE(DictObject);
+		ISM_HANDLE_DEFAULT(DictObject, ISM_DICT_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
-
 		using storage_type = DictObject::storage_type;
 
 		using iterator = DictObject::iterator;

@@ -1,7 +1,7 @@
 #ifndef _ISM_RENDERING_DEVICE_HPP_
 #define _ISM_RENDERING_DEVICE_HPP_
 
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 namespace ism
 {

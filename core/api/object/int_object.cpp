@@ -22,7 +22,7 @@ ISM_STATIC_CLASS_TYPE(IntObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<INT>(v))
+		if (INT::check_(v))
 		{
 			return util::compare(***INT(o), ***INT(v));
 		}
@@ -35,8 +35,10 @@ ISM_STATIC_CLASS_TYPE(IntObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void IntObject::_bind_methods(TypeObject & t)
+void IntObject::_bind_class(TypeObject & t)
 {
+	CLASS_<INT>(&t, "int")
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

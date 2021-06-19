@@ -11,7 +11,7 @@ namespace ism::api
 		ISM_OBJECT_CVT(CppFunctionObject, FunctionObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		function_record m_func{};
@@ -198,27 +198,27 @@ namespace ism::api
 // cppfunction delete
 namespace ism { template <> struct DefaultDelete<api::CppFunctionObject> : DefaultDelete<api::BaseObject> {}; }
 
+// cppfunction check
+#define ISM_CPPFUNCTION_CHECK(o) (isinstance<CPP_FUNCTION>(o))
+
 // cppfunction handle
 namespace ism::api
 {
 	template <> class Handle<CppFunctionObject> : public BaseHandle<CppFunctionObject>
 	{
-		ISM_HANDLE(CppFunctionObject);
+		ISM_HANDLE_DEFAULT(CppFunctionObject, ISM_CPPFUNCTION_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
-
 		NODISCARD OBJECT name() const { return attr("__name__"); }
 	};
 }
 
+// functions
 namespace ism::api
 {
 	NODISCARD inline OBJECT Handle<FunctionObject>::cpp_function() const noexcept
 	{
-		return isinstance<CPP_FUNCTION>(*this) ? CPP_FUNCTION(*this) : nullptr;
+		return CPP_FUNCTION::check_(*this) ? CPP_FUNCTION(*this) : nullptr;
 	}
 }
 

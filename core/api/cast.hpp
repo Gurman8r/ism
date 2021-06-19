@@ -1,7 +1,17 @@
 #ifndef _ISM_CAST_HPP_
 #define _ISM_CAST_HPP_
 
-#include <core/api/types.hpp>
+#include <core/api/object/base_object.hpp>
+#include <core/api/object/type_object.hpp>
+#include <core/api/object/int_object.hpp>
+#include <core/api/object/float_object.hpp>
+#include <core/api/object/string_object.hpp>
+#include <core/api/object/list_object.hpp>
+#include <core/api/object/dict_object.hpp>
+#include <core/api/object/capsule_object.hpp>
+#include <core/api/object/function_object.hpp>
+#include <core/api/object/method_object.hpp>
+#include <core/api/object/property_object.hpp>
 
 // info
 namespace ism::api
@@ -293,6 +303,28 @@ public:																								\
 	template <class T, class Deleter
 	> struct is_holder_type<T, std::unique_ptr<T, Deleter>> : std::true_type {};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> struct object_caster
+	{
+		template <class U = T
+		> NODISCARD bool load(Handle<U> const & src, bool)
+		{
+			if (!isinstance<T>(src)) { return false; }
+			value = src;
+			return true;
+		}
+
+		NODISCARD static OBJECT cast(OBJECT src, ReturnPolicy, OBJECT) { return src; }
+
+		ISM_TYPE_CASTER(T, "object");
+	};
+
+	template <class T> struct type_caster<T, std::enable_if_t<is_object_api_v<T>>>
+		: object_caster<T> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// move_is_plain_type
 	template <class T> using move_is_plain_type = mpl::satisfies_none_of<T,
 		std::is_void,
@@ -326,29 +358,6 @@ public:																								\
 	template <class T> constexpr bool move_never_v{ move_never<T>::value };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T> struct object_caster
-	{
-		template <class U = T
-		> NODISCARD bool load(Handle<U> const & src, bool)
-		{
-			if (!isinstance<T>(src)) { return false; }
-			value = src;
-			return true;
-		}
-
-		NODISCARD static OBJECT cast(OBJECT src, ReturnPolicy, OBJECT)
-		{
-			return src;
-		}
-
-		ISM_TYPE_CASTER(T, "object");
-	};
-
-	template <class T> struct type_caster<T, std::enable_if_t<is_object_api_v<T>>>
-		: object_caster<T> {};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // cast
@@ -370,7 +379,7 @@ namespace ism::api
 	> auto load_type(api::type_caster<T, SFINAE> & convt, OBJECT const & o) -> api::type_caster<T, SFINAE> &
 	{
 		if (!convt.load(o, true)) {
-			VERIFY(!"TYPE CONVERSION FAILED");
+			FATAL("TYPE CONVERSION FAILED");
 		}
 		return convt;
 	}

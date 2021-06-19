@@ -20,7 +20,7 @@ ISM_STATIC_CLASS_TYPE(ListObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<LIST>(v))
+		if (LIST::check_(v))
 		{
 			return util::compare(***LIST(o), ***LIST(v));
 		}
@@ -33,12 +33,11 @@ ISM_STATIC_CLASS_TYPE(ListObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ListObject::_bind_methods(TypeObject & t)
+void ListObject::_bind_class(TypeObject & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION({ [](OBJECT self, OBJECT value) -> OBJECT
-	{
-		return Core_Bool(LIST(self).contains(value));
-	} });
+	CLASS_<LIST>(&t, "list")
+		.def("__contains__", [](LIST self, OBJECT value) { return LIST(self).contains(value); })
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

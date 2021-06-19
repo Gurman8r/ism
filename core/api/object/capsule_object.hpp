@@ -11,7 +11,7 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(CapsuleObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		void * m_pointer{}, * m_context{};
@@ -74,18 +74,17 @@ namespace ism::api
 // capsule delete
 namespace ism { template <> struct DefaultDelete<api::CapsuleObject> : DefaultDelete<api::BaseObject> {}; }
 
+// capsule check
+#define ISM_CAPSULE_CHECK(o) (isinstance<CAPSULE>(o))
+
 // capsule handle
 namespace ism::api
 {
 	template <> class Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
 	{
-		ISM_HANDLE(CapsuleObject);
+		ISM_HANDLE_DEFAULT(CapsuleObject, ISM_CAPSULE_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
-
 		template <class T
 		> NODISCARD operator T * () const { return this->get_pointer<T>(); }
 

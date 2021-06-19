@@ -16,7 +16,7 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(IntObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		int64_t m_int{};
@@ -47,18 +47,17 @@ namespace ism::api
 // int delete
 namespace ism { template <> struct DefaultDelete<api::IntObject> : DefaultDelete<api::BaseObject> {}; }
 
+// int check
+#define ISM_INT_CHECK(o) (typeof(o).has_feature(TypeFlags_Int_Subclass))
+
 // int handle
 namespace ism::api
 {
 	template <> class Handle<IntObject> : public BaseHandle<IntObject>
 	{
-		ISM_HANDLE(IntObject);
+		ISM_HANDLE_DEFAULT(IntObject, ISM_INT_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
-
 		using storage_type = IntObject::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>

@@ -24,9 +24,9 @@ protected:																				\
 		{																				\
 			ism::api::TypeDB::add_class<m_class>();										\
 																						\
-			if (m_class::_get_bind_methods() != m_inherits::_get_bind_methods())		\
+			if (m_class::_get_bind_class() != m_inherits::_get_bind_class())			\
 			{																			\
-				m_class::_bind_methods(m_class::ob_type_static);						\
+				m_class::_bind_class(m_class::ob_type_static);							\
 			}																			\
 		};																				\
 	}																					\
@@ -36,9 +36,9 @@ protected:																				\
 		m_class::initialize_class();													\
 	}																					\
 																						\
-	FORCE_INLINE static constexpr void (*_get_bind_methods())(ism::api::TypeObject & t)	\
+	FORCE_INLINE static constexpr void (*_get_bind_class())(ism::api::TypeObject & t)	\
 	{																					\
-		return &m_class::_bind_methods;													\
+		return &m_class::_bind_class;													\
 	}																					\
 																						\
 	FORCE_INLINE virtual ism::api::TypeObject * _get_typev() const override				\
@@ -81,22 +81,22 @@ namespace ism::api
 
 		friend class Handle<BaseObject>;
 
-		static TypeObject ob_type_static;
+		static TypeObject ob_type_static; // static class type
 
 	protected:
-		mutable Ref<TypeObject> ob_type; // instance type
-
 		static void initialize_class();
 
 		virtual void _initialize_classv() { initialize_class(); }
 
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
-		FORCE_INLINE static constexpr void (*_get_bind_methods())(TypeObject &) { return &BaseObject::_bind_methods; }
+		FORCE_INLINE static constexpr void (*_get_bind_class())(TypeObject &) { return &BaseObject::_bind_class; }
 
 		FORCE_INLINE virtual TypeObject * _get_typev() const { return get_type_static(); }
 
 		explicit BaseObject(TypeObject const * t) noexcept : ob_type{ (TypeObject *)t } {}
+
+		mutable Ref<TypeObject> ob_type; // instance type
 
 	public:
 		virtual ~BaseObject() override { ob_type = nullptr; }
@@ -107,7 +107,7 @@ namespace ism::api
 
 		NODISCARD TypeObject * get_type() const { if (!ob_type) { ob_type = _get_typev(); } return *ob_type; }
 
-		void set_type(TypeObject * value) { ob_type = value; }
+		bool set_type(TypeObject * value) { return (ob_type = value); }
 
 		template <class T> NODISCARD T cast() const &; // cast.hpp
 
@@ -134,101 +134,18 @@ namespace ism
 	};
 }
 
+// object check
+#define ISM_OBJECT_CHECK(o) (true)
+
 // object handle
 namespace ism::api
 {
 	template <> class Handle<BaseObject> : public BaseHandle<BaseObject>
 	{
-		ISM_HANDLE(BaseObject);
+		ISM_HANDLE_DEFAULT(BaseObject, ISM_OBJECT_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
 	};
-}
-
-// accessors
-namespace ism::api
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// accessor
-	template <class Policy
-	> class Accessor : public ObjectAPI<Accessor<Policy>>
-	{
-	public:
-		using key_type = typename Policy::key_type;
-
-		Accessor(OBJECT obj, key_type key) : m_obj{ obj }, m_key{ key } {}
-
-		Accessor(Accessor const &) = default;
-
-		Accessor(Accessor &&) noexcept = default;
-
-		void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT(a)); }
-
-		void operator=(Accessor const & a) & { operator=(OBJECT(a)); }
-
-		template <class Value> decltype(auto) operator=(Value && value) &&
-		{
-			Policy::set(m_obj, m_key, FWD_OBJ(value));
-			return (*this);
-		}
-
-		template <class Value> decltype(auto) operator=(Value && value) &
-		{
-			get_cache() = FWD_OBJ(value);
-			return (*this);
-		}
-
-		NODISCARD auto ptr() const { return const_cast<BaseObject *>(get_cache().ptr()); }
-
-		template <class T> NODISCARD operator Handle<T>() const { return get_cache(); }
-
-		template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
-
-	protected:
-		OBJECT & get_cache() const {
-			if (!m_cache) { m_cache = Policy::get(m_obj, m_key); }
-			return m_cache;
-		}
-
-	private:
-		OBJECT m_obj;
-		key_type m_key;
-		mutable OBJECT m_cache;
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// attribute accessor
-	template <class T> struct accessor_policies::Attr
-	{
-		using key_type = T;
-
-		template <class O = OBJECT, class Index = T
-		> static OBJECT get(O && o, Index && i) { return getattr(FWD(o), FWD(i)); }
-
-		template <class O = OBJECT, class Index = T, class Value = OBJECT
-		> static void set(O && o, Index && i, Value && v) { setattr(FWD(o), FWD(i), FWD(v)); }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// item accessor
-	template <class T> struct accessor_policies::Item
-	{
-		using key_type = T;
-
-		template <class O = OBJECT, class Index = T
-		> static OBJECT get(O && o, Index && i) { return getitem(FWD(o), FWD(i)); }
-
-		template <class O = OBJECT, class Index = T, class Value = OBJECT
-		> static void set(O && o, Index && i, Value && v) { setitem(FWD(o), FWD(i), FWD(v)); }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions
@@ -302,7 +219,7 @@ namespace ism::api
 	template <class A = OBJECT, class B = OBJECT
 	> NODISCARD bool isinstance(A const & lhs, B const & rhs)
 	{
-		TYPE const a{ typeof(lhs) }, b{ isinstance<TYPE>(rhs) ? rhs : typeof(rhs) };
+		TYPE const a{ typeof(lhs) }, b{ TYPE::check_(rhs) ? rhs : typeof(rhs) };
 
 		return a && b && (a.is(b) || a.is_subtype(b));
 	}
@@ -312,7 +229,7 @@ namespace ism::api
 	template <class Index = OBJECT
 	> NODISCARD OBJECT getattr(OBJECT o, Index && i)
 	{
-		if (TYPE t{ typeof(o) }; !t)
+		if (TYPE t; !o || !(t = typeof(o)))
 		{
 			return nullptr;
 		}
@@ -330,10 +247,17 @@ namespace ism::api
 		}
 	}
 
+	template <class Index = OBJECT
+	> NODISCARD OBJECT getattr(OBJECT o, Index && i, OBJECT defval)
+	{
+		OBJECT str_name{ FWD_OBJ(i) };
+		return hasattr(o, str_name) ? getattr(o, str_name) : nullptr;
+	}
+
 	template <class Index = OBJECT, class Value = OBJECT
 	> Error setattr(OBJECT o, Index && i, Value && v)
 	{
-		if (TYPE t{ typeof(o) }; !t)
+		if (TYPE t; !o || !(t = typeof(o)))
 		{
 			return Error_Unknown;
 		}
@@ -351,6 +275,12 @@ namespace ism::api
 		}
 	}
 
+	template <class Index = OBJECT
+	> NODISCARD bool hasattr(OBJECT o, Index && i)
+	{
+		return object_hasattr(o, FWD_OBJ(i));
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Index = OBJECT
@@ -359,8 +289,8 @@ namespace ism::api
 		if (!o.is_valid()) { return nullptr; }
 		else if constexpr (mpl::is_string_v<Index>) { return DICT(o)[FWD(i)]; }
 		else if constexpr (std::is_integral_v<Index>) { return LIST(o)[FWD(i)]; }
-		else if (isinstance<DICT>(o)) { return DICT(o)[FWD(i)]; }
-		else if (isinstance<LIST>(o)) { return LIST(o)[FWD(i)]; }
+		else if (DICT::check_(o)) { return DICT(o)[FWD(i)]; }
+		else if (LIST::check_(o)) { return LIST(o)[FWD(i)]; }
 		else { return nullptr; }
 	}
 
@@ -370,8 +300,8 @@ namespace ism::api
 		if (!o.is_valid()) { return Error_Unknown; }
 		else if constexpr (mpl::is_string_v<Index>) { return DICT(o).set(FWD(i), FWD(v)); }
 		else if constexpr (std::is_integral_v<Index>) { return LIST(o).set(FWD(i), FWD(v)); }
-		else if (isinstance<DICT>(o)) { return DICT(o).set(FWD(i), FWD(v)); }
-		else if (isinstance<LIST>(o)) { return LIST(o).set(FWD(i), FWD(v)); }
+		else if (DICT::check_(o)) { return DICT(o).set(FWD(i), FWD(v)); }
+		else if (LIST::check_(o)) { return LIST(o).set(FWD(i), FWD(v)); }
 		else { return Error_Unknown; }
 	}
 
@@ -382,6 +312,8 @@ namespace ism::api
 	ISM_API_FUNC(Error) object_init(OBJECT self, OBJECT args);
 
 	ISM_API_FUNC(OBJECT) object_new(TYPE type, OBJECT args);
+
+	ISM_API_FUNC(bool) object_hasattr(OBJECT obj, OBJECT name);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -8,7 +8,7 @@ using namespace ism::api;
 
 ISM_STATIC_CLASS_TYPE(StringObject, t)
 {
-	t.tp_name = "str";
+	t.tp_name = "string";
 	t.tp_size = sizeof(StringObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Str_Subclass;
 	t.tp_base = typeof<OBJECT>();
@@ -23,7 +23,7 @@ ISM_STATIC_CLASS_TYPE(StringObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<STR>(v))
+		if (STR::check_(v))
 		{
 			return util::compare((String)STR(o), (String)STR(v));
 		}
@@ -40,8 +40,10 @@ ISM_STATIC_CLASS_TYPE(StringObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void StringObject::_bind_methods(TypeObject & t)
+void StringObject::_bind_class(TypeObject & t)
 {
+	CLASS_<STR>(&t, "string")
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

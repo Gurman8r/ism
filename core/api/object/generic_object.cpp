@@ -21,9 +21,8 @@ ISM_STATIC_CLASS_TYPE(GenericObject, t)
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 };
 
-void GenericObject::_bind_methods(TypeObject & t)
+void GenericObject::_bind_class(TypeObject & t)
 {
-
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

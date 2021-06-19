@@ -11,7 +11,7 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(GenericObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 	};
@@ -20,17 +20,17 @@ namespace ism::api
 // generic delete
 namespace ism { template <> struct DefaultDelete<api::GenericObject> : DefaultDelete<api::BaseObject> {}; }
 
+// generic check
+#define ISM_GENERIC_CHECK(o) (isinstance<GENERIC>(o))
+
 // generic handle
 namespace ism::api
 {
 	template <> class Handle<GenericObject> : public BaseHandle<GenericObject>
 	{
-		ISM_HANDLE(GenericObject);
+		ISM_HANDLE_DEFAULT(GenericObject, ISM_GENERIC_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
 	};
 }
 

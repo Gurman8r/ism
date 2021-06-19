@@ -15,20 +15,22 @@ ISM_STATIC_CLASS_TYPE(DictObject, t)
 
 	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)DICT(o).size(); };
 
-	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
+	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((DictObject *)ptr); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void DictObject::_bind_methods(TypeObject & t)
+void DictObject::_bind_class(TypeObject & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION({ [](OBJECT self, OBJECT value)
-	{
-		return Core_Bool(DICT(self).contains(value));
-	} });
+	CLASS_<DICT>(&t, "dict")
+
+		.def("__contains__", [](DICT self, OBJECT value) { return DICT(self).contains(value); })
+
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

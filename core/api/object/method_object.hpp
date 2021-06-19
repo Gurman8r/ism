@@ -11,14 +11,14 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(MethodObject, FunctionObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		OBJECT m_func{}, m_self{};
 
 		vectorcallfunc m_vectorcall{};
 
-		MethodObject(OBJECT func, OBJECT self, vectorcallfunc vectorcall) : base_type{ get_type_static() }
+		MethodObject(OBJECT func, OBJECT self, vectorcallfunc vectorcall) : self_type{}
 		{
 			m_func = func;
 			m_self = self;
@@ -30,17 +30,17 @@ namespace ism::api
 // method delete
 namespace ism { template <> struct DefaultDelete<api::MethodObject> : DefaultDelete<api::BaseObject> {}; }
 
+// module check
+#define ISM_METHOD_CHECK(o) (isinstance<METHOD>(o))
+
 // method handle
 namespace ism::api
 {
 	template <> class Handle<MethodObject> : public BaseHandle<MethodObject>
 	{
-		ISM_HANDLE(MethodObject);
+		ISM_HANDLE_DEFAULT(MethodObject, ISM_METHOD_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
 	};
 }
 

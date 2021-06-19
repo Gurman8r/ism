@@ -23,23 +23,22 @@ ISM_STATIC_CLASS_TYPE(MethodObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
-	t.tp_descr_get = (descrgetfunc)[](OBJECT descr, OBJECT obj, OBJECT type)->OBJECT
-	{
-		return descr;
-	};
+	t.tp_descr_get = (descrgetfunc)[](OBJECT descr, OBJECT obj, OBJECT type) { return descr; };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void MethodObject::_bind_methods(TypeObject & t)
+void MethodObject::_bind_class(TypeObject & t)
 {
+	CLASS_<METHOD>(&t, "method")
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 OBJECT ism::api::method_vectorcall(OBJECT callable, OBJECT const * argv, size_t argc)
 {
-	VERIFY(isinstance<METHOD>(callable));
+	VERIFY(METHOD::check_(callable));
 	METHOD method{ callable };
 	OBJECT self{ method->m_self };
 	OBJECT func{ method->m_func };

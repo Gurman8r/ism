@@ -71,7 +71,7 @@ RuntimeState * RuntimeState::singleton{};
 
 RuntimeState::RuntimeState()
 {
-	if (!get_default_runtime()) { set_default_runtime(this); }
+	if (!get_runtime_state()) { set_runtime_state(this); }
 
 	main_thread = std::this_thread::get_id();
 
@@ -88,7 +88,7 @@ RuntimeState::~RuntimeState()
 		interpreters.head = next;
 	}
 
-	if (this == get_default_runtime()) { set_default_runtime(nullptr); }
+	if (this == get_runtime_state()) { set_runtime_state(nullptr); }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

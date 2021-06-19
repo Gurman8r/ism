@@ -29,15 +29,15 @@ ISM_STATIC_CLASS_TYPE(CppFunctionObject, t)
 	};
 };
 
-void CppFunctionObject::_bind_methods(TypeObject & t)
+void CppFunctionObject::_bind_class(TypeObject & t)
 {
-	t.tp_dict["__name__"] = PROPERTY({
-		[](CPP_FUNCTION self) { return self->m_func.name; },
-		[](CPP_FUNCTION self, STR value) { self->m_func.name = value; } });
-	
-	t.tp_dict["__doc__"] = PROPERTY({
-		[](CPP_FUNCTION self) { return self->m_func.doc; },
-		[](CPP_FUNCTION self, STR value) { self->m_func.doc = value; } });
+	CLASS_<CPP_FUNCTION>(&t, "cpp_function")
+
+		.def_property("__name__", [](CPP_FUNCTION self) { return self->m_func.name; }, [](CPP_FUNCTION self, STR value) { self->m_func.name = value; })
+
+		.def_property("__doc__", [](CPP_FUNCTION self) { return self->m_func.doc; }, [](CPP_FUNCTION self, STR value) { self->m_func.doc = value; })
+
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -87,9 +87,9 @@ namespace ism
 	public:
 		using value_type = T;
 
-		~Ref() { unref(); }
+		~Ref() noexcept { unref(); }
 
-		Ref() {}
+		Ref() noexcept {}
 
 		Ref(nullptr_t) {}
 

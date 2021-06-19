@@ -1,7 +1,7 @@
 #ifndef _ISM_RUNTIME_HPP_
 #define _ISM_RUNTIME_HPP_
 
-#include <core/api/types.hpp>
+#include <core/api/object/dict_object.hpp>
 
 namespace ism::api
 {
@@ -72,8 +72,8 @@ namespace ism::api
 	{
 	private:
 		static RuntimeState * singleton;
-		friend RuntimeState * get_default_runtime();
-		friend void set_default_runtime(RuntimeState *);
+		friend RuntimeState * get_runtime_state();
+		friend void set_runtime_state(RuntimeState *);
 
 	public:
 		RuntimeState();
@@ -102,23 +102,21 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_default_runtime() -> RuntimeState * { return RuntimeState::singleton; }
+	NODISCARD inline auto get_runtime_state() -> RuntimeState * { return RuntimeState::singleton; }
 	
-	NODISCARD inline void set_default_runtime(RuntimeState * value) { RuntimeState::singleton = value; }
+	inline void set_runtime_state(RuntimeState * value) { RuntimeState::singleton = value; }
+
+	NODISCARD inline auto get_thread_state() -> ThreadState * { return get_runtime_state()->tstate_current; }
 	
-	NODISCARD inline auto get_default_registry() -> auto & { return get_default_runtime()->registry; }
+	NODISCARD inline auto get_interpreter_state() -> InterpreterState * { return get_thread_state()->interp; }
 	
-	NODISCARD inline auto get_default_thread() { return get_default_runtime()->tstate_current; }
+	NODISCARD inline auto get_current_frame() -> StackFrame * { return get_thread_state()->frame; }
 	
-	NODISCARD inline auto get_default_interpreter() { return get_default_thread()->interp; }
+	NODISCARD inline auto get_head_interpreter() -> InterpreterState * { return get_runtime_state()->interpreters.head; }
 	
-	NODISCARD inline auto get_default_frame() { return get_default_thread()->frame; }
+	NODISCARD inline auto get_main_interpreter() -> InterpreterState * { return get_runtime_state()->interpreters.main; }
 	
-	NODISCARD inline auto get_head_interpreter() { return get_default_runtime()->interpreters.head; }
-	
-	NODISCARD inline auto get_main_interpreter() { return get_default_runtime()->interpreters.main; }
-	
-	inline void set_main_interpreter(InterpreterState * value) { get_default_runtime()->interpreters.main = value; }
+	inline void set_main_interpreter(InterpreterState * value) { get_runtime_state()->interpreters.main = value; }
 
 	NODISCARD inline auto lookup_interpreter(int64_t id) -> InterpreterState *
 	{

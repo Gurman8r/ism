@@ -24,8 +24,10 @@ ISM_STATIC_CLASS_TYPE(FunctionObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void FunctionObject::_bind_methods(TypeObject & t)
+void FunctionObject::_bind_class(TypeObject & t)
 {
+	CLASS_<FUNCTION>(&t, "function")
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

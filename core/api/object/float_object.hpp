@@ -11,7 +11,7 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(FloatObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		double_t m_float{};
@@ -37,18 +37,17 @@ namespace ism::api
 // float delete
 namespace ism { template <> struct DefaultDelete<api::FloatObject> : DefaultDelete<api::BaseObject> {}; }
 
+// float check
+#define ISM_FLOAT_CHECK(o) (typeof(o).has_feature(TypeFlags_Float_Subclass))
+
 // float handle
 namespace ism::api
 {
 	template <> class Handle<FloatObject> : public BaseHandle<FloatObject>
 	{
-		ISM_HANDLE(FloatObject);
+		ISM_HANDLE_DEFAULT(FloatObject, ISM_FLOAT_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
-
 		using storage_type = FloatObject::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>

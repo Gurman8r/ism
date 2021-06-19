@@ -11,25 +11,24 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(FunctionObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 	};
 }
 
 // function delete
 namespace ism { template <> struct DefaultDelete<api::FunctionObject> : DefaultDelete<api::BaseObject> {}; }
 
+// function check
+#define ISM_FUNCTION_CHECK(o) (isinstance<FUNCTION>(o))
+
 // function handle
 namespace ism::api
 {
 	template <> class Handle<FunctionObject> : public BaseHandle<FunctionObject>
 	{
-		ISM_HANDLE(FunctionObject);
+		ISM_HANDLE_DEFAULT(FunctionObject, ISM_FUNCTION_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
-
 		NODISCARD OBJECT cpp_function() const noexcept; // cppfunction_object.hpp
 
 		NODISCARD bool is_cpp_function() const noexcept { return (bool)cpp_function(); }

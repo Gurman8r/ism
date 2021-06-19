@@ -11,7 +11,7 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(ListObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		Vector<OBJECT> m_list{};
@@ -42,18 +42,17 @@ namespace ism::api
 // list delete
 namespace ism { template <> struct DefaultDelete<api::ListObject> : DefaultDelete<api::BaseObject> {}; }
 
+// list check
+#define ISM_LIST_CHECK(o) (typeof(o).has_feature(TypeFlags_List_Subclass))
+
 // list handle
 namespace ism::api
 {
 	template <> class Handle<ListObject> : public BaseHandle<ListObject>
 	{
-		ISM_HANDLE(ListObject);
+		ISM_HANDLE_DEFAULT(ListObject, ISM_LIST_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
-
 		using storage_type = ListObject::storage_type;
 
 		using iterator = ListObject::iterator;

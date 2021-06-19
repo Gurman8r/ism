@@ -44,7 +44,7 @@ namespace ism::api
 		ISM_OBJECT_DEFAULT(TypeObject, BaseObject);
 
 	protected:
-		static void _bind_methods(TypeObject & t);
+		static void _bind_class(TypeObject & t);
 
 	public:
 		String				tp_name{};
@@ -94,7 +94,7 @@ namespace ism::api
 		vectorcallfunc		tp_vectorcall{};
 
 	public:
-		bool ready();
+		NODISCARD bool ready();
 
 		NODISCARD bool check_consistency() const;
 
@@ -102,7 +102,9 @@ namespace ism::api
 
 		NODISCARD bool is_subtype(TYPE const & value) const;
 
-		Error update_slot(OBJECT name);
+		NODISCARD Error update_slot(OBJECT name);
+
+		NODISCARD bool has_feature(int32_t flag) const { return flag_read(tp_flags, flag); }
 
 	protected:
 		bool add_subclass(TypeObject * type);
@@ -113,7 +115,7 @@ namespace ism::api
 
 		void inherit_slots(TypeObject * base);
 
-	protected:
+	public:
 		template <class Slot> bool slot_defined(TypeObject * base, Slot TypeObject:: * slot) const
 		{
 			return (this->*slot) && (!base || (this->*slot) != (base->*slot));
@@ -185,17 +187,18 @@ namespace ism
 	};
 }
 
+// type check
+#define ISM_TYPE_CHECK(o) (typeof(o).has_feature(TypeFlags_Type_Subclass))
+
 // type handle
 namespace ism::api
 {
 	template <> class Handle<TypeObject> : public BaseHandle<TypeObject>
 	{
-		ISM_HANDLE(TypeObject);
+		ISM_HANDLE_DEFAULT(TypeObject, ISM_TYPE_CHECK);
 
 	public:
-		Handle() = default;
-
-		~Handle() = default;
+		NODISCARD bool has_feature(int32_t flag) const { return m_ref->has_feature(flag); }
 
 		NODISCARD OBJECT lookup(OBJECT const & name) const { return m_ref->lookup(name); }
 

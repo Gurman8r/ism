@@ -21,15 +21,15 @@ ISM_STATIC_CLASS_TYPE(CapsuleObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CapsuleObject::_bind_methods(TypeObject & t)
+void CapsuleObject::_bind_class(TypeObject & t)
 {
-	t.tp_dict["__name__"] = PROPERTY({
-		[](CAPSULE self) { return self->m_name; },
-		[](CAPSULE self, STR value) { self->m_name = value; } });
+	CLASS_<CAPSULE>(&t, "capsule")
 
-	t.tp_dict["__doc__"] = PROPERTY({
-		[](CAPSULE self) { return self->m_doc; },
-		[](CAPSULE self, STR value) { self->m_doc = value; } });
+		.def_property("__name__", [](CAPSULE self) { return self->m_name; }, [](CAPSULE self, STR value) { self->m_name = value; })
+		
+		.def_property("__doc__", [](CAPSULE self) { return self->m_doc; }, [](CAPSULE self, STR value) { self->m_doc = value; })
+		
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

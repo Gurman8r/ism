@@ -22,7 +22,7 @@ ISM_STATIC_CLASS_TYPE(FloatObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<FLT>(v))
+		if (FLT::check_(v))
 		{
 			return util::compare(***FLT(o), ***FLT(v));
 		}
@@ -35,8 +35,10 @@ ISM_STATIC_CLASS_TYPE(FloatObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void FloatObject::_bind_methods(TypeObject & t)
+void FloatObject::_bind_class(TypeObject & t)
 {
+	CLASS_<FLT>(&t, "float")
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

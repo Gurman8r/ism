@@ -66,6 +66,8 @@ namespace ism::api
 	ALIAS(MODULE)			Handle<ModuleObject>;
 	ALIAS(GENERIC)			Handle<GenericObject>;
 
+	template <class T> constexpr bool is_handle_v{ is_ref_v<T> && is_object_api_v<T> };
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Policy> class Accessor;
@@ -340,27 +342,38 @@ namespace ism::api
 }
 
 // handle
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
+	namespace api
 	{
-	protected:
-		BaseHandle() = default;
+		template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
+		{
+		protected:
+			BaseHandle() noexcept = default;
 
-	public:
-		~BaseHandle() = default;
+		public:
+			~BaseHandle() noexcept = default;
 
-		template <class T> NODISCARD T cast() const &;
+			template <class T> NODISCARD T cast() const &;
 
-		template <class T> NODISCARD T cast() &&;
-	};
+			template <class T> NODISCARD T cast() &&;
+		};
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define ISM_HANDLE(m_class)																			\
+#define ISM_HANDLE_DEFAULT(m_class, m_check)														\
 public:																								\
+	NODISCARD static bool check_(OBJECT const & o) { return o && (bool)(m_check(o)); }				\
+																									\
+	NODISCARD bool check() const { return m_ref && (bool)(m_check(m_ref)); }						\
+																									\
+	~Handle() noexcept = default;																	\
+																									\
+	Handle() noexcept = default;																	\
+																									\
 	Handle(nullptr_t) {}																			\
 																									\
 	Handle(m_class * value) { if (value) { ref_pointer(value); } }									\
@@ -387,52 +400,125 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> class Handle : public BaseHandle<T>
+	template <class T> struct Hash<api::Handle<T>>
 	{
-		ISM_HANDLE(T);
+		hash_t operator()(api::Handle<T> const & o) const { return hash(o); }
+	};
 
-	public:
-		Handle() = default;
+	template <class T> struct EqualTo<api::Handle<T>>
+	{
+		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.equal_to(b); }
+	};
 
-		~Handle() = default;
+	template <class T> struct NotEqualTo<api::Handle<T>>
+	{
+		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.not_equal_to(b); }
+	};
+
+	template <class T> struct Less<api::Handle<T>>
+	{
+		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.less(b); }
+	};
+
+	template <class T> struct Greater<api::Handle<T>>
+	{
+		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.greater(b); }
+	};
+
+	template <class T> struct LessEqual<api::Handle<T>>
+	{
+		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.less_equal(b); }
+	};
+
+	template <class T> struct GreaterEqual<api::Handle<T>>
+	{
+		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.greater_equal(b); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-template <class T> struct ism::Hash<ism::api::Handle<T>>
+// accessors
+namespace ism::api
 {
-	hash_t operator()(ism::api::Handle<T> const & o) const { return hash(o); }
-};
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-template <class T> struct ism::EqualTo<ism::api::Handle<T>>
-{
-	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.equal_to(b); }
-};
+	// accessor
+	template <class Policy
+	> class Accessor : public ObjectAPI<Accessor<Policy>>
+	{
+	public:
+		using key_type = typename Policy::key_type;
 
-template <class T> struct ism::NotEqualTo<ism::api::Handle<T>>
-{
-	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.not_equal_to(b); }
-};
+		Accessor(OBJECT obj, key_type key) : m_obj{ obj }, m_key{ key } {}
 
-template <class T> struct ism::Less<ism::api::Handle<T>>
-{
-	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.less(b); }
-};
+		Accessor(Accessor const &) = default;
 
-template <class T> struct ism::Greater<ism::api::Handle<T>>
-{
-	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.greater(b); }
-};
+		Accessor(Accessor &&) noexcept = default;
 
-template <class T> struct ism::LessEqual<ism::api::Handle<T>>
-{
-	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.less_equal(b); }
-};
+		void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT(a)); }
 
-template <class T> struct ism::GreaterEqual<ism::api::Handle<T>>
-{
-	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.greater_equal(b); }
-};
+		void operator=(Accessor const & a) & { operator=(OBJECT(a)); }
+
+		template <class Value> decltype(auto) operator=(Value && value) &&
+		{
+			Policy::set(m_obj, m_key, FWD_OBJ(value));
+			return (*this);
+		}
+
+		template <class Value> decltype(auto) operator=(Value && value) &
+		{
+			get_cache() = FWD_OBJ(value);
+			return (*this);
+		}
+
+		NODISCARD auto ptr() const { return const_cast<BaseObject *>(get_cache().ptr()); }
+
+		template <class T> NODISCARD operator Handle<T>() const { return get_cache(); }
+
+		template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
+
+	protected:
+		OBJECT & get_cache() const {
+			if (!m_cache) { m_cache = Policy::get(m_obj, m_key); }
+			return m_cache;
+		}
+
+	private:
+		OBJECT m_obj;
+		key_type m_key;
+		mutable OBJECT m_cache;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// attribute accessor
+	template <class T> struct accessor_policies::Attr
+	{
+		using key_type = T;
+
+		template <class O = OBJECT, class Index = T
+		> static OBJECT get(O && o, Index && i) { return getattr(FWD(o), FWD(i)); }
+
+		template <class O = OBJECT, class Index = T, class Value = OBJECT
+		> static void set(O && o, Index && i, Value && v) { setattr(FWD(o), FWD(i), FWD(v)); }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// item accessor
+	template <class T> struct accessor_policies::Item
+	{
+		using key_type = T;
+
+		template <class O = OBJECT, class Index = T
+		> static OBJECT get(O && o, Index && i) { return getitem(FWD(o), FWD(i)); }
+
+		template <class O = OBJECT, class Index = T, class Value = OBJECT
+		> static void set(O && o, Index && i, Value && v) { setitem(FWD(o), FWD(i), FWD(v)); }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
 #endif // !_ISM_COMMON_HPP_

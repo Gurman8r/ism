@@ -20,7 +20,7 @@ ISM_STATIC_CLASS_TYPE(ModuleObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
-		if (isinstance<MODULE>(v))
+		if (MODULE::check_(v))
 		{
 			return (*o == *v) ? 0 : util::compare(MODULE(o)->m_name, MODULE(v)->m_name);
 		}
@@ -36,20 +36,16 @@ ISM_STATIC_CLASS_TYPE(ModuleObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ModuleObject::_bind_methods(TypeObject & t)
+void ModuleObject::_bind_class(TypeObject & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION([](MODULE self, OBJECT value)
-	{
-		return DICT(self->m_dict).contains(value);
-	});
+	CLASS_<MODULE>(&t, "module")
 
-	t.tp_dict["__name__"] = PROPERTY({
-		[](MODULE self) { return self->m_name; },
-		[](MODULE self, STR value) { self->m_name = value; } });
-	
-	t.tp_dict["__doc__"] = PROPERTY({
-		[](MODULE self) { return self->m_doc; },
-		[](MODULE self, STR value) { self->m_doc = value; } });
+		.def("__contains__", [](MODULE self, OBJECT value) { return DICT(self->m_dict).contains(value); })
+
+		.def_property("__name__", [](MODULE self) { return self->m_name; }, [](MODULE self, STR value) { self->m_name = value; })
+
+		.def_property("__doc__", [](MODULE self) { return self->m_doc; }, [](MODULE self, STR value) { self->m_doc = value; })
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
