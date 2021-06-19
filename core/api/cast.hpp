@@ -1,7 +1,7 @@
 #ifndef _ISM_CAST_HPP_
 #define _ISM_CAST_HPP_
 
-#include <core/api/internals.hpp>
+#include <core/api/types.hpp>
 
 // info
 namespace ism::api
@@ -29,6 +29,9 @@ namespace ism::api
 	// type_caster_generic
 	struct type_caster_generic
 	{
+		type_caster_generic(std::type_info const & type_info)
+		{
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -56,6 +59,13 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+}
+
+// type casters
+namespace ism::api
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class T, class SFINAE = void> struct type_caster : type_caster_base<T> {};
 
 	template <class T> ALIAS(make_caster) typename type_caster<mpl::intrinsic_t<T>>;
@@ -72,37 +82,30 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-}
-
-// type casters
-namespace ism::api
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#define ISM_TYPE_CASTER(m_type, m_name) \
-	protected: \
-		m_type value; \
-	public: \
-		static constexpr auto name{ m_name }; \
-		template <class T, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T>>, int> = 0 \
-		> static OBJECT cast(T * src, ReturnPolicy policy, OBJECT parent) \
-		{ \
-			if (!src) { return nullptr; } \
-			if (policy == ReturnPolicy_TakeOwnership) \
-			{ \
-				auto h{ cast(std::move(*src), policy, parent) }; \
-				delete src; \
-				return h; \
-			} \
-			else \
-			{ \
-				return cast(*src, policy, parent); \
-			} \
-		} \
-		operator m_type * () { return &value; } \
-		operator m_type & () { return value; } \
-		operator m_type && () { return std::move(value); } \
-		template <class T> using cast_op_type = api::movable_cast_op_type<T>; \
+#define ISM_TYPE_CASTER(m_type, m_name)																\
+protected:																							\
+	m_type value;																					\
+public:																								\
+	static constexpr auto name{ m_name };															\
+	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0		\
+	> static OBJECT cast(T_ * src, ReturnPolicy policy, OBJECT parent)								\
+	{																								\
+		if (!src) { return nullptr; }																\
+		else if (policy == ReturnPolicy_TakeOwnership)												\
+		{																							\
+			OBJECT h{ cast(std::move(*src), policy, parent) };										\
+			memdelete(src);																			\
+			return h;																				\
+		}																							\
+		else																						\
+		{																							\
+			return cast(*src, policy, parent);														\
+		}																							\
+	}																								\
+	operator m_type * () { return &value; }															\
+	operator m_type & () { return value; }															\
+	operator m_type && () { return std::move(value); }												\
+	template <class T_> using cast_op_type = api::movable_cast_op_type<T_>;							\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -112,7 +115,7 @@ namespace ism::api
 
 		caster_t subcaster;
 
-		NODISCARD bool load(OBJECT const & src, bool convert) { return subcaster.load(src, convert); }
+		NODISCARD bool load(OBJECT src, bool convert) { return subcaster.load(src, convert); }
 
 		static OBJECT cast(std::reference_wrapper<T> const & src) { return caster_t::cast(src.get()); }
 	};
@@ -127,39 +130,34 @@ namespace ism::api
 		using _type1 = std::conditional_t<std::is_signed_v<T>, _type0, std::make_unsigned_t<_type0>>;
 		using _convt = std::conditional_t<std::is_floating_point_v<T>, double_t, _type1>;
 
-		NODISCARD bool load(OBJECT const & src, bool convert)
+		NODISCARD bool load(OBJECT src, bool convert)
 		{
 			if (!src) { return false; }
-
-			if (isinstance<FLT>(src)) { value = (_convt)(_ftype)FLT(src); return true; }
-
-			if (isinstance<INT>(src)) { value = (_convt)(_itype)INT(src); return true; }
-
-			return false;
+			else if (isinstance<FLT>(src)) { return (value = (_convt)(_ftype)FLT(src)), true; }
+			else if (isinstance<INT>(src)) { return (value = (_convt)(_itype)INT(src)), true; }
+			else { return false; }
 		}
 
 		NODISCARD static OBJECT cast(T src, ReturnPolicy, OBJECT)
 		{
-			if constexpr (std::is_floating_point_v<T>)
-			{
+			if constexpr (std::is_floating_point_v<T>) {
 				return FLT(static_cast<_ftype>(src));
 			}
-			else
-			{
+			else {
 				return INT(static_cast<_itype>(src));
 			}
 		}
 
-		ISM_TYPE_CASTER(T, std::is_integral_v<T> ? "int" : "float");
+		ISM_TYPE_CASTER(T, std::is_floating_point_v<T> ? "float" : "int");
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T> struct void_caster
 	{
-		NODISCARD bool load(OBJECT const & src, bool) { return (src.is_valid() && src.is_null()); }
+		NODISCARD bool load(OBJECT src, bool) { return src.is_valid(); }
 
-		NODISCARD static OBJECT cast(T, ReturnPolicy, OBJECT) { return nullptr; }
+		NODISCARD static OBJECT cast(T, ReturnPolicy, OBJECT) { return OBJECT{}; }
 
 		ISM_TYPE_CASTER(T, "none");
 	};
@@ -170,25 +168,16 @@ namespace ism::api
 
 	template <> struct type_caster<void> : type_caster<void_type>
 	{
-		NODISCARD bool load(OBJECT const & src, bool)
+		using type_caster<void_type>::cast;
+
+		NODISCARD bool load(OBJECT src, bool)
 		{
-			if (src.is_null())
-			{
-				value = nullptr;
-				return true;
-			}
-			else if (isinstance<CAPSULE>(src))
-			{
-				value = CAPSULE(src).get_pointer();
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			if (src.is_null()) { return (value = nullptr), true; }
+			else if (isinstance<CAPSULE>(src)) { return (value = CAPSULE(src)), true; }
+			else { return false; }
 		}
 
-		template <class U> NODISCARD static OBJECT cast(U src, ReturnPolicy, OBJECT)
+		NODISCARD static OBJECT cast(void const * src, ReturnPolicy, OBJECT)
 		{
 			return src ? CAPSULE({ static_cast<void const *>(src) }) : nullptr;
 		}
@@ -207,12 +196,12 @@ namespace ism::api
 
 	template <> struct type_caster<bool>
 	{
-		NODISCARD bool load(OBJECT const & src, bool convert)
+		NODISCARD bool load(OBJECT src, bool convert)
 		{
 			if (!src) { return false; }
-			else if (src == Core_True) { value = true; return true; }
-			else if (src == Core_False) { value = false; return true; }
-			else return false;
+			else if (src == Core_True) { return (value = true), true; }
+			else if (src == Core_False) { return (value = false), true; }
+			else { return false; }
 		}
 
 		NODISCARD static OBJECT cast(bool src, ReturnPolicy, OBJECT) { return Core_Bool(src); }
@@ -224,17 +213,13 @@ namespace ism::api
 
 	template <class T> struct string_caster
 	{
-		NODISCARD bool load(OBJECT const & src, bool convert)
+		NODISCARD bool load(OBJECT src, bool convert)
 		{
 			if (!src) { return false; }
-			value = (String)STR(src);
-			return true;
+			else { return (value = (String)STR(src)), true; }
 		}
 
-		NODISCARD static OBJECT cast(T const & src, ReturnPolicy, OBJECT)
-		{
-			return STR(src);
-		}
+		NODISCARD static OBJECT cast(T const & src, ReturnPolicy, OBJECT) { return STR(src); }
 
 		ISM_TYPE_CASTER(T, "string");
 	};
@@ -243,25 +228,19 @@ namespace ism::api
 	> struct type_caster<std::basic_string<Ch, Tr, Al>, std::enable_if_t<mpl::is_char_v<Ch>>>
 		: string_caster<std::basic_string<Ch, Tr, Al>> {};
 
-	template <class T> struct type_caster<T, std::enable_if_t<mpl::is_char_v<T>>> : type_caster<std::basic_string<T>>
+	template <class T> struct type_caster<T, std::enable_if_t<mpl::is_char_v<T>>> : type_caster<BasicString<T>>
 	{
 		type_caster<BasicString<T>> str_caster;
 
-		NODISCARD bool load(OBJECT const & src, bool convert)
+		NODISCARD bool load(OBJECT src, bool convert)
 		{
 			if (!src) { return false; }
-			return str_caster.load(src, convert);
+			else { return str_caster.load(src, convert); }
 		}
 
-		NODISCARD static OBJECT cast(T const * src, ReturnPolicy, OBJECT)
-		{
-			return STR(src);
-		}
+		NODISCARD static OBJECT cast(T const * src, ReturnPolicy, OBJECT) { return STR(src); }
 
-		NODISCARD static OBJECT cast(T const src, ReturnPolicy, OBJECT)
-		{
-			return INT(src);
-		}
+		NODISCARD static OBJECT cast(T const src, ReturnPolicy, OBJECT) { return INT(src); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -277,10 +256,7 @@ namespace ism::api
 		// for types like shared_ptr, unique_ptr, etc...
 	};
 
-	template <class T> struct type_caster<std::shared_ptr<T>> : copyable_holder_caster<T, std::shared_ptr<T>>
-	{
-		// specialize for the common shared_ptr, so users don't need to
-	};
+	template <class T> struct type_caster<std::shared_ptr<T>> : copyable_holder_caster<T, std::shared_ptr<T>> {};
 
 	template <class T, class Holder
 	> struct move_only_holder_caster
@@ -361,7 +337,7 @@ namespace ism::api
 			return true;
 		}
 
-		NODISCARD static OBJECT cast(OBJECT const & src, ReturnPolicy, OBJECT)
+		NODISCARD static OBJECT cast(OBJECT src, ReturnPolicy, OBJECT)
 		{
 			return src;
 		}

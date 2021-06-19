@@ -5,12 +5,9 @@
 
 namespace ism
 {
-	class ISM_API InputMap : public api::BaseObject
+	class ISM_API InputMap : public Super
 	{
-		ISM_OBJECT_DEFAULT(InputMap, api::BaseObject);
-
-	protected:
-		static void _bind_methods(api::TypeObject & t);
+		ISM_SUPER(InputMap, Super);
 
 	public:
 		virtual ~InputMap();

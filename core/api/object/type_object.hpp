@@ -1,7 +1,40 @@
 #ifndef _ISM_TYPE_OBJECT_HPP_
 #define _ISM_TYPE_OBJECT_HPP_
 
-#include <core/api/class_db.hpp>
+#include <core/api/object/base_object.hpp>
+
+// type database
+namespace ism::api
+{
+	class ISM_API TypeDB
+	{
+	public:
+		static Batch<
+			hash_t,
+			StringName,
+			TYPE
+		> classes;
+
+	public:
+		static void add_class(StringName const & name, TypeObject * type);
+
+		template <class T
+		> static void add_class() { add_class(T::get_class_static(), T::get_type_static()); }
+
+		template <class T
+		> static void register_class()
+		{
+			T::initialize_class();
+
+			TYPE t{ *classes.map<hash_t, TYPE>(hash(T::get_class_static())) };
+
+			if (t.is_null())
+			{
+				FATAL("failed to register class");
+			}
+		}
+	};
+}
 
 // type object
 namespace ism::api
@@ -31,7 +64,6 @@ namespace ism::api
 		reprfunc			tp_repr{};
 		reprfunc			tp_str{};
 		traverseproc		tp_traverse{};
-		vectorcallfunc		tp_vectorcall{};
 
 		getattrfunc			tp_getattr{};
 		setattrfunc			tp_setattr{};
@@ -40,7 +72,7 @@ namespace ism::api
 		descrgetfunc		tp_descr_get{};
 		descrsetfunc		tp_descr_set{};
 
-		destructor			tp_delete{};
+		destructor			tp_dealloc{};
 		initproc			tp_init{};
 		allocfunc			tp_alloc{};
 		newfunc				tp_new{};
@@ -59,10 +91,20 @@ namespace ism::api
 		OBJECT				tp_mro{};
 		OBJECT				tp_subclasses{};
 		OBJECT				tp_weaklist{};
+		vectorcallfunc		tp_vectorcall{};
 
 	public:
 		bool ready();
 
+		NODISCARD bool check_consistency() const;
+
+		NODISCARD OBJECT lookup(OBJECT const & name) const;
+
+		NODISCARD bool is_subtype(TYPE const & value) const;
+
+		Error update_slot(OBJECT name);
+
+	protected:
 		bool add_subclass(TypeObject * type);
 
 		bool mro_internal(OBJECT * old_mro);
@@ -71,13 +113,7 @@ namespace ism::api
 
 		void inherit_slots(TypeObject * base);
 
-		Error update_slot(OBJECT name);
-
-		bool check_consistency() const;
-
-		OBJECT lookup(OBJECT name) const;
-
-	public:
+	protected:
 		template <class Slot> bool slot_defined(TypeObject * base, Slot TypeObject:: * slot) const
 		{
 			return (this->*slot) && (!base || (this->*slot) != (base->*slot));
@@ -140,7 +176,7 @@ namespace ism::api
 	};
 }
 
-// type deleter
+// type delete
 namespace ism
 {
 	template <> struct DefaultDelete<api::TypeObject>
@@ -154,24 +190,22 @@ namespace ism::api
 {
 	template <> class Handle<TypeObject> : public BaseHandle<TypeObject>
 	{
-		ISM_HANDLE_DEFAULT(TypeObject);
+		ISM_HANDLE(TypeObject);
 
 	public:
 		Handle() = default;
 
 		~Handle() = default;
+
+		NODISCARD OBJECT lookup(OBJECT const & name) const { return m_ref->lookup(name); }
+
+		NODISCARD bool is_subtype(TYPE const & value) const { return m_ref->is_subtype(value); }
 	};
 }
 
 // functions
 namespace ism::api
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_FUNC(OBJECT) type_getattro(TYPE type, OBJECT name);
-
-	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJECT name, OBJECT value);
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T> NODISCARD hash_t hash(Handle<T> const & o) noexcept
@@ -233,6 +267,18 @@ namespace ism::api
 	}
 
 	NODISCARD inline auto get_vectorcall_func(OBJECT const & o) noexcept { return get_vectorcall_func(typeof(o), o); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_FUNC(OBJECT) type_getattr(TYPE type, OBJECT name);
+
+	ISM_API_FUNC(Error) type_setattr(TYPE type, OBJECT name, OBJECT value);
+
+	ISM_API_FUNC(OBJECT) type_call(OBJECT self, OBJECT args);
+
+	ISM_API_FUNC(Error) type_init(OBJECT self, OBJECT args);
+	
+	ISM_API_FUNC(OBJECT) type_new(TYPE type, OBJECT args);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

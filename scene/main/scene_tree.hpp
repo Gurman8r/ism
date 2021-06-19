@@ -12,7 +12,7 @@ namespace ism
 
 	class ISM_API SceneTree : public MainLoop
 	{
-		//ISM_SUPER(SceneTree, MainLoop);
+		ISM_SUPER(SceneTree, MainLoop);
 
 	public:
 		virtual ~SceneTree();

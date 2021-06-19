@@ -1,7 +1,7 @@
 #ifndef _ISM_ATTR_HPP_
 #define _ISM_ATTR_HPP_
 
-#include <core/api/detail/call.hpp>
+#include <core/api/call.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

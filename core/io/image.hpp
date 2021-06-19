@@ -11,9 +11,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Image : public Reference
+	class ISM_API Image : public Resource
 	{
-		//ISM_SUPER(Image, Resource);
+		ISM_SUPER(Image, Resource);
 
 	private:
 		friend class ImageLoader;

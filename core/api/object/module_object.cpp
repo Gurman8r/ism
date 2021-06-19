@@ -1,12 +1,12 @@
 #include <core/api/object/module_object.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_BUILTIN_TYPE(ModuleObject, t)
+ISM_STATIC_CLASS_TYPE(ModuleObject, t)
 {
 	t.tp_name = "module";
 	t.tp_size = sizeof(ModuleObject);
@@ -15,7 +15,7 @@ ISM_BUILTIN_TYPE(ModuleObject, t)
 
 	t.tp_dict_offset = offsetof(ModuleObject, m_dict);
 	
-	t.tp_getattro = (getattrofunc)module_getattr;
+	t.tp_getattro = (getattrofunc)module_getattro;
 	t.tp_setattro = (setattrofunc)generic_setattr;
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
@@ -38,24 +38,23 @@ ISM_BUILTIN_TYPE(ModuleObject, t)
 
 void ModuleObject::_bind_methods(TypeObject & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION([](MODULE self, OBJECT value) {
-		return MODULE(self->m_dict)->contains(value);
+	t.tp_dict["__contains__"] = CPP_FUNCTION([](MODULE self, OBJECT value)
+	{
+		return DICT(self->m_dict).contains(value);
 	});
 
 	t.tp_dict["__name__"] = PROPERTY({
-		CPP_FUNCTION([](MODULE self) { return self->m_name; }),
-		CPP_FUNCTION([](MODULE self, STR value) { self->m_name = value; })
-	});
+		[](MODULE self) { return self->m_name; },
+		[](MODULE self, STR value) { self->m_name = value; } });
 	
 	t.tp_dict["__doc__"] = PROPERTY({
-		CPP_FUNCTION([](MODULE self) { return self->m_doc; }),
-		CPP_FUNCTION([](MODULE self, STR value) { self->m_doc = value; })
-	});
+		[](MODULE self) { return self->m_doc; },
+		[](MODULE self, STR value) { self->m_doc = value; } });
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::api::module_getattr(MODULE m, OBJECT name)
+OBJECT ism::api::module_getattro(MODULE m, OBJECT name)
 {
 	return generic_getattr(m, name);
 }

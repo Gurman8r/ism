@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API EditorData//// : public Super
+	class ISM_API EditorData : public Super
 	{
-		//ISM_SUPER(EditorData, Super);
+		ISM_SUPER(EditorData, Super);
 
 	public:
 		virtual ~EditorData();

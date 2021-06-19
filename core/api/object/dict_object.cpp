@@ -1,12 +1,12 @@
 #include <core/api/object/dict_object.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_BUILTIN_TYPE(DictObject, t)
+ISM_STATIC_CLASS_TYPE(DictObject, t)
 {
 	t.tp_name = "dict";
 	t.tp_size = sizeof(DictObject);
@@ -25,9 +25,10 @@ ISM_BUILTIN_TYPE(DictObject, t)
 
 void DictObject::_bind_methods(TypeObject & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
-		return Core_Bool(DICT(self)->contains(value));
-	});
+	t.tp_dict["__contains__"] = CPP_FUNCTION({ [](OBJECT self, OBJECT value)
+	{
+		return Core_Bool(DICT(self).contains(value));
+	} });
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -16,13 +16,25 @@ namespace ism::api
 	public:
 		OBJECT m_get{}, m_set{};
 
-		PropertyObject(OBJECT fget, OBJECT fset) : self_type{} { m_get = fget; m_set = fset; }
+		PropertyObject(OBJECT const & fget, OBJECT const & fset) : self_type{} { m_get = fget; m_set = fset; }
 
-		PropertyObject(OBJECT fget) : self_type{} { m_get = fget; m_set = nullptr; }
+		PropertyObject(OBJECT const & fget) : self_type{} { m_get = fget; m_set = nullptr; }
+
+		template <class Getter, class Setter
+		> PropertyObject(Getter const & fget, Setter const & fset) : self_type{} { m_get = CPP_FUNCTION(fget); m_set = CPP_FUNCTION(fset); }
+
+		template <class Getter
+		> PropertyObject(Getter const & fget, OBJECT const & fset) : self_type{} { m_get = CPP_FUNCTION(fget); m_set = fset; }
+
+		template <class Setter
+		> PropertyObject(OBJECT const & fget, Setter const & fset) : self_type{} { m_get = fget; m_set = CPP_FUNCTION(fset); }
+
+		template <class Getter
+		> PropertyObject(Getter const & fget) : self_type{} { m_get = CPP_FUNCTION(fget); m_set = nullptr; }
 	};
 }
 
-// property deleter
+// property delete
 namespace ism { template <> struct DefaultDelete<api::PropertyObject> : DefaultDelete<api::BaseObject> {}; }
 
 // property handle
@@ -30,16 +42,12 @@ namespace ism::api
 {
 	template <> class Handle<PropertyObject> : public BaseHandle<PropertyObject>
 	{
-		ISM_HANDLE_DEFAULT(PropertyObject);
+		ISM_HANDLE(PropertyObject);
 
 	public:
 		Handle() = default;
 
 		~Handle() = default;
-
-		OBJECT get(OBJECT obj) const { return m_ref->m_get(obj); }
-
-		Error set(OBJECT obj, OBJECT value) const { return m_ref->m_set(obj, value), Error_None; }
 	};
 }
 

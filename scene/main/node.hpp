@@ -11,9 +11,9 @@ namespace ism
 
 	class SceneTree;
 
-	class ISM_API Node// : public Super
+	class ISM_API Node : public Super
 	{
-		//ISM_SUPER(Node, Super);
+		ISM_SUPER(Node, Super);
 
 	public:
 		using iterator					= typename Vector<Node *>::iterator;

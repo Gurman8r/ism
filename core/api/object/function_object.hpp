@@ -12,19 +12,10 @@ namespace ism::api
 
 	protected:
 		static void _bind_methods(TypeObject & t);
-
-	public:
-		vectorcallfunc m_vectorcall{};
-
-		explicit FunctionObject(vectorcallfunc vectorcall) : base_type{ get_type_static() }, m_vectorcall{ vectorcall } {}
-
-		NODISCARD vectorcallfunc get_dispatcher() const noexcept { return m_vectorcall; }
-
-		void set_dispatcher(vectorcallfunc value) noexcept { m_vectorcall = value; }
 	};
 }
 
-// function deleter
+// function delete
 namespace ism { template <> struct DefaultDelete<api::FunctionObject> : DefaultDelete<api::BaseObject> {}; }
 
 // function handle
@@ -32,7 +23,7 @@ namespace ism::api
 {
 	template <> class Handle<FunctionObject> : public BaseHandle<FunctionObject>
 	{
-		ISM_HANDLE_DEFAULT(FunctionObject);
+		ISM_HANDLE(FunctionObject);
 
 	public:
 		Handle() = default;

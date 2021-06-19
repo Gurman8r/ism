@@ -1,6 +1,7 @@
 #ifndef _ISM_MODULE_OBJECT_HPP_
 #define _ISM_MODULE_OBJECT_HPP_
 
+#include <core/api/runtime.hpp>
 #include <core/api/object/cppfunction_object.hpp>
 
 // module object
@@ -28,7 +29,7 @@ namespace ism::api
 	};
 }
 
-// module deleter
+// module delete
 namespace ism { template <> struct DefaultDelete<api::ModuleObject> : DefaultDelete<api::BaseObject> {}; }
 
 // module handle
@@ -36,7 +37,7 @@ namespace ism::api
 {
 	template <> class Handle<ModuleObject> : public BaseHandle<ModuleObject>
 	{
-		ISM_HANDLE_DEFAULT(ModuleObject);
+		ISM_HANDLE(ModuleObject);
 
 	public:
 		Handle() = default;
@@ -49,7 +50,7 @@ namespace ism::api
 			CPP_FUNCTION cf({
 				FWD(func),
 				attr::name(name),
-				attr::scope(ptr()),
+				attr::scope(*this),
 				attr::sibling(attr(name)),
 				FWD(extra)... });
 			attr(cf.name()) = cf;
@@ -59,7 +60,7 @@ namespace ism::api
 		template <class Name = cstring, class Value = OBJECT
 		> void add_object(Name && name, Value && value, bool overwrite = false)
 		{
-			if (auto i{ FWD_OBJ(name) }; overwrite || !m_ref->m_dict->contains(i))
+			if (OBJECT i{ FWD_OBJ(name) }; overwrite || !m_ref->m_dict->contains(i))
 			{
 				m_ref->m_dict[i] = FWD_OBJ(value);
 			}
@@ -67,7 +68,7 @@ namespace ism::api
 
 		MODULE def_submodule(cstring name, cstring doc = "")
 		{
-			return MODULE{};
+			return nullptr;
 		}
 
 		void reload()
@@ -78,7 +79,7 @@ namespace ism::api
 
 namespace ism::api
 {
-	ISM_API_FUNC(OBJECT) module_getattr(MODULE m, OBJECT name);
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	inline MODULE create_extension_module(cstring name)
 	{
@@ -105,6 +106,12 @@ namespace ism::api
 			return import_module("__main__").attr("__dict__");
 		}
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_FUNC(OBJECT) module_getattro(MODULE m, OBJECT name);
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_MODULE_OBJECT_HPP_

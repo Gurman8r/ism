@@ -18,31 +18,31 @@ namespace ism::api
 
 		using storage_type = decltype(m_float);
 
+		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
+
 		template <class T = storage_type, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> explicit FloatObject(TypeObject const * t, T v) : base_type{ t }, m_float{ static_cast<storage_type>(v) } {}
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> FloatObject(T v) : base_type{ get_type_static() }, m_float{ static_cast<storage_type>(v) } {}
+		> FloatObject(T const v) : base_type{ get_type_static() }, m_float{ static_cast<storage_type>(v) } {}
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> FloatObject & operator=(T const v) { m_float = static_cast<storage_type>(v); return (*this); }
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> NODISCARD operator T() const & { return static_cast<T>(m_float); }
-
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
 	};
 }
 
-// float deleter
-template <> struct ism::DefaultDelete<ism::api::FloatObject>: ism::DefaultDelete<ism::api::BaseObject>{};
+// float delete
+namespace ism { template <> struct DefaultDelete<api::FloatObject> : DefaultDelete<api::BaseObject> {}; }
 
 // float handle
 namespace ism::api
 {
 	template <> class Handle<FloatObject> : public BaseHandle<FloatObject>
 	{
-		ISM_HANDLE_DEFAULT(FloatObject);
+		ISM_HANDLE(FloatObject);
 
 	public:
 		Handle() = default;
@@ -52,7 +52,7 @@ namespace ism::api
 		using storage_type = FloatObject::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> Handle(T v) { instance(v); }
+		> Handle(T const v) { instance(v); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> operator T () const { return (T)(**m_ref); }

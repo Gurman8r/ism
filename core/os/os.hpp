@@ -4,7 +4,6 @@
 #include <core/io/logger.hpp>
 #include <core/os/filesystem.hpp>
 #include <core/os/main_loop.hpp>
-#include <core/math/rect.hpp>
 
 #include <iostream>
 

@@ -39,7 +39,7 @@ namespace ism::api
 	};
 }
 
-// list deleter
+// list delete
 namespace ism { template <> struct DefaultDelete<api::ListObject> : DefaultDelete<api::BaseObject> {}; }
 
 // list handle
@@ -47,7 +47,7 @@ namespace ism::api
 {
 	template <> class Handle<ListObject> : public BaseHandle<ListObject>
 	{
-		ISM_HANDLE_DEFAULT(ListObject);
+		ISM_HANDLE(ListObject);
 
 	public:
 		Handle() = default;
@@ -65,6 +65,9 @@ namespace ism::api
 		void reserve(size_t count) const { (**m_ref).reserve(count); }
 
 		void resize(size_t count) const { (**m_ref).resize(count); }
+
+		template <class Value = OBJECT
+		> void resize(size_t count, Value && value) const { (**m_ref).resize(count, FWD_OBJ(value)); }
 
 		template <class Value = OBJECT
 		> void append(Value && v) const { (**m_ref).emplace_back(FWD_OBJ(v)); }

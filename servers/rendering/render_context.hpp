@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API RenderContext// : public Super
+	class ISM_API RenderContext : public Super
 	{
-		//ISM_SUPER(RenderContext, Super);
+		ISM_SUPER(RenderContext, Super);
 
 	public:
 		virtual ~RenderContext();

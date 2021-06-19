@@ -1,12 +1,12 @@
 #include <core/api/object/cppfunction_object.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_BUILTIN_TYPE(CppFunctionObject, t)
+ISM_STATIC_CLASS_TYPE(CppFunctionObject, t)
 {
 	t.tp_name = "cpp_function";
 	t.tp_size = sizeof(CppFunctionObject);
@@ -22,19 +22,22 @@ ISM_BUILTIN_TYPE(CppFunctionObject, t)
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((CppFunctionObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+
+	t.tp_descr_get = (descrgetfunc)[](OBJECT descr, OBJECT obj, OBJECT type)->OBJECT
+	{
+		return !obj ? descr : METHOD({ descr, obj, method_vectorcall });
+	};
 };
 
 void CppFunctionObject::_bind_methods(TypeObject & t)
 {
 	t.tp_dict["__name__"] = PROPERTY({
-		CPP_FUNCTION([](CPP_FUNCTION self) { return self->m_func.name; }),
-		CPP_FUNCTION([](CPP_FUNCTION self, STR value) { self->m_func.name = value; })
-	});
+		[](CPP_FUNCTION self) { return self->m_func.name; },
+		[](CPP_FUNCTION self, STR value) { self->m_func.name = value; } });
 	
 	t.tp_dict["__doc__"] = PROPERTY({
-		CPP_FUNCTION([](CPP_FUNCTION self) { return self->m_func.doc; }),
-		CPP_FUNCTION([](CPP_FUNCTION self, STR value) { self->m_func.doc = value; })
-	});
+		[](CPP_FUNCTION self) { return self->m_func.doc; },
+		[](CPP_FUNCTION self, STR value) { self->m_func.doc = value; } });
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

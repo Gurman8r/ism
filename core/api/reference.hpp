@@ -5,35 +5,60 @@
 
 namespace ism
 {
-	class ISM_API Reference
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API Reference : public Super
 	{
-	private:
+		ISM_SUPER(Reference, Super);
+
 		RefCount m_refcount, m_refcount_init;
 
 	protected:
-		Reference() noexcept { m_refcount.init(); m_refcount_init.init(); }
+		Reference() noexcept : Super{ true } { m_refcount.init(); m_refcount_init.init(); }
 
 		virtual void on_inc_ref() {}
 
 		virtual void on_dec_ref() {}
 
 	public:
-		virtual ~Reference() noexcept = default;
+		virtual ~Reference() noexcept override = default;
 
 		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
 
 		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
 
-		bool init_ref();
+		bool init_ref() noexcept
+		{
+			if (inc_ref())
+			{
+				if (!has_references() && m_refcount_init.unref())
+				{
+					dec_ref(); // first referencing is already 1, so compensate for the ref above
+				}
+				return true;
+			}
+			return false;
+		}
 
-		bool inc_ref(); // returns false if refcount is at zero and didn't get increased
+		bool inc_ref() noexcept // returns false if refcount is at zero and didn't get increased
+		{
+			uint32_t rc_val{ m_refcount.refval() };
+			bool success{ rc_val != 0 };
+			if (success && rc_val <= 2 /* higher is not relevant */) { on_inc_ref(); }
+			return success;
+		}
 
-		bool dec_ref();
+		bool dec_ref() noexcept
+		{
+			uint32_t rc_val{ m_refcount.unrefval() };
+			bool die{ rc_val == 0 };
+			if (rc_val <= 1 /* higher is not relevant */) { on_dec_ref(); }
+			return die;
+		}
 	};
-}
 
-namespace ism
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct _Ref_Tag {};
 
 	template <class T> constexpr bool is_ref_v{ std::is_base_of_v<_Ref_Tag, T> };
@@ -147,6 +172,8 @@ namespace ism
 		NODISCARD bool operator!=(Ref const & value) const noexcept { return m_ref != value.m_ref; }
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class T> struct Hash<Ref<T>>
 	{
 		NODISCARD hash_t operator()(Ref<T> const & v) const { return Hash<void const *>()(v.ptr()); }
@@ -187,6 +214,8 @@ namespace ism
 		NODISCARD bool operator()(Ref<T> const & a, T const * b) const { return a.ptr() >= b; }
 		NODISCARD bool operator()(Ref<T> const & a, Ref<T> const & b) const { return a.ptr() >= b.ptr(); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_REFERENCE_HPP_

@@ -1,12 +1,24 @@
 #include <core/api/object/base_object.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_BUILTIN_TYPE(BaseObject, t)
+void BaseObject::initialize_class()
+{
+	if (static bool once{}; !once && (once = true))
+	{
+		TypeDB::add_class<BaseObject>();
+
+		_bind_methods(BaseObject::ob_type_static);
+	}
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ISM_STATIC_CLASS_TYPE(BaseObject, t)
 {
 	t.tp_name = "object";
 	t.tp_size = sizeof(BaseObject);
@@ -30,18 +42,23 @@ void BaseObject::_bind_methods(TypeObject & t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-BaseObject::BaseObject(TypeObject const * t) : ob_type{ (TypeObject *)t }
+OBJECT ism::api::object_alloc(TYPE type)
 {
+	auto const size{ (size_t)type->tp_size };
+
+	auto const obj{ (BaseObject *)memalloc(size) };
+
+	return OBJECT(obj);
 }
 
-void BaseObject::initialize_class()
+Error ism::api::object_init(OBJECT self, OBJECT args)
 {
-	if (static bool once{}; !once && (once = true))
-	{
-		ClassDB::add_class<BaseObject>();
+	return Error_None;
+}
 
-		_bind_methods(BaseObject::ob_type_static);
-	}
+OBJECT ism::api::object_new(TYPE type, OBJECT args)
+{
+	return type->tp_new(type, args);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -6,19 +6,19 @@ using namespace ism::api;
 
 void ism::register_core_types()
 {
-	ClassDB::register_class<BaseObject>();
-	ClassDB::register_class<TypeObject>();
-	ClassDB::register_class<PropertyObject>();
-	ClassDB::register_class<CppFunctionObject>();
+	TypeDB::register_class<BaseObject>();
+	TypeDB::register_class<TypeObject>();
+	TypeDB::register_class<PropertyObject>();
+	TypeDB::register_class<CppFunctionObject>();
 
-	ClassDB::register_class<IntObject>();
-	ClassDB::register_class<FloatObject>();
-	ClassDB::register_class<StringObject>();
-	ClassDB::register_class<ListObject>();
-	ClassDB::register_class<DictObject>();
-	ClassDB::register_class<CapsuleObject>();
-	ClassDB::register_class<ModuleObject>();
-	ClassDB::register_class<GenericObject>();
+	TypeDB::register_class<IntObject>();
+	TypeDB::register_class<FloatObject>();
+	TypeDB::register_class<StringObject>();
+	TypeDB::register_class<ListObject>();
+	TypeDB::register_class<DictObject>();
+	TypeDB::register_class<CapsuleObject>();
+	TypeDB::register_class<ModuleObject>();
+	TypeDB::register_class<GenericObject>();
 }
 
 void ism::register_core_driver_types()
@@ -39,7 +39,7 @@ void ism::unregister_core_driver_types()
 
 void ism::unregister_core_types()
 {
-	auto & db{ ClassDB::classes };
+	auto & db{ TypeDB::classes };
 
 	for (size_t i = 0; i < db.size(); ++i)
 	{

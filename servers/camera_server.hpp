@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API CameraServer// : public Super
+	class ISM_API CameraServer : public Super
 	{
-		//ISM_SUPER(CameraServer, Super);
+		ISM_SUPER(CameraServer, Super);
 
 	public:
 		virtual ~CameraServer();

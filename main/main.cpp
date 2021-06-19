@@ -1,6 +1,6 @@
 #include <main/main.hpp>
 #include <core/os/main_loop.hpp>
-#include <core/api/internals.hpp>
+#include <core/api/runtime.hpp>
 #include <core/register_core_types.hpp>
 
 namespace ism

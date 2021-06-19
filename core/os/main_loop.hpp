@@ -7,9 +7,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API MainLoop// : public Super
+	class ISM_API MainLoop : public Super
 	{
-		//ISM_SUPER(MainLoop, Super);
+		ISM_SUPER(MainLoop, Super);
 
 	private:
 		api::OBJECT m_startup_script{};

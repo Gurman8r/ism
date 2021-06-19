@@ -18,9 +18,8 @@ namespace ism::api
 
 		destructor m_closure{};
 
-		String m_name{ "New Capsule" }, m_doc{};
+		String m_name{}, m_doc{};
 
-	public:
 		virtual ~CapsuleObject() override
 		{
 			if (m_closure) { m_closure((BaseObject *)m_pointer); }
@@ -72,7 +71,7 @@ namespace ism::api
 	};
 }
 
-// capsule deleter
+// capsule delete
 namespace ism { template <> struct DefaultDelete<api::CapsuleObject> : DefaultDelete<api::BaseObject> {}; }
 
 // capsule handle
@@ -80,19 +79,22 @@ namespace ism::api
 {
 	template <> class Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
 	{
-		ISM_HANDLE_DEFAULT(CapsuleObject);
+		ISM_HANDLE(CapsuleObject);
 
 	public:
 		Handle() = default;
 
 		~Handle() = default;
 
+		template <class T
+		> NODISCARD operator T * () const { return this->get_pointer<T>(); }
+
 		template <class T = void
 		> NODISCARD auto get_pointer() const { return static_cast<T *>(m_ref->m_pointer); }
 
 		void set_pointer(void const * value) { m_ref->m_pointer = (void *)value; }
 
-		NODISCARD OBJECT name() const { return attr("__name__"); }
+		NODISCARD OBJECT name() const { return this->attr("__name__"); }
 	};
 }
 

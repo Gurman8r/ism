@@ -1,12 +1,12 @@
 #include <core/api/object/list_object.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_BUILTIN_TYPE(ListObject, t)
+ISM_STATIC_CLASS_TYPE(ListObject, t)
 {
 	t.tp_name = "list";
 	t.tp_size = sizeof(ListObject);
@@ -35,9 +35,10 @@ ISM_BUILTIN_TYPE(ListObject, t)
 
 void ListObject::_bind_methods(TypeObject & t)
 {
-	t.tp_dict["__contains__"] = CPP_FUNCTION([](OBJECT self, OBJECT value) -> OBJECT {
-		return Core_Bool(LIST(self)->contains(value));
-	});
+	t.tp_dict["__contains__"] = CPP_FUNCTION({ [](OBJECT self, OBJECT value) -> OBJECT
+	{
+		return Core_Bool(LIST(self).contains(value));
+	} });
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

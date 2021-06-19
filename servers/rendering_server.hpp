@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API RenderingServer// : public Super
+	class ISM_API RenderingServer : public Super
 	{
-		//ISM_SUPER(RenderingServer, Super);
+		ISM_SUPER(RenderingServer, Super);
 
 	public:
 		virtual ~RenderingServer();

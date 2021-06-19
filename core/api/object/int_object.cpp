@@ -1,12 +1,12 @@
 #include <core/api/object/int_object.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_BUILTIN_TYPE(IntObject, t)
+ISM_STATIC_CLASS_TYPE(IntObject, t)
 {
 	t.tp_name = "int";
 	t.tp_size = sizeof(IntObject);

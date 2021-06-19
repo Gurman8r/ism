@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API RenderDevice// : public Super
+	class ISM_API RenderDevice : public Super
 	{
-		//ISM_SUPER(RenderDevice, Super);
+		ISM_SUPER(RenderDevice, Super);
 
 	public:
 		virtual ~RenderDevice();

@@ -1,5 +1,5 @@
 #include <main/main.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
@@ -32,7 +32,7 @@ namespace ism
 
 		static void test_static() { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
 
-		auto test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
+		int test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); return 0; }
 	};
 
 	void hello() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); }
@@ -54,16 +54,17 @@ namespace ism
 			.def("pass_ptr", [](void * ptr) { return ptr; })
 			;
 
-		m.attr("hello")();
-		m.attr("say")(m.attr("get_string")());
-		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
-
-		Class_<Test>(m, "test")
+		CLASS_<Test>(m, "Test")
 			.def(init<>())
 			.def(init<int>())
 			.def(init<int, String const &>())
 			.def_static("test_static", &Test::test_static)
+			//.def("test_const", &Test::test_const)
 			;
+
+		m.attr("hello")();
+		m.attr("say")(m.attr("get_string")());
+		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
 		
 		LIST list = m.attr("list") = LIST(ListObject{});
 		list.append("IT WORKS");
@@ -73,6 +74,7 @@ namespace ism
 		OBJECT d{ DICT(DictObject{}) };
 		d["ABC"] = 42;
 		d["DEF"] = "Hello, World!";
+		VERIFY(d.contains("ABC"));
 		MAIN_PRINT("%d\n", d["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
 		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<std::string>().c_str());
@@ -80,8 +82,7 @@ namespace ism
 		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__")).c_str());
 		
 		CAPSULE cap{ CapsuleObject{} };
-		MAIN_PRINT("%s\n", STR(cap.attr("__name__")).c_str());
-		cap.attr("__name__") = "CHANGED!!!";
+		cap.attr("__name__") = "MyCapsule";
 		MAIN_PRINT("%s\n", STR(cap.attr("__name__")).c_str());
 
 		MAIN_PRINT("\n");

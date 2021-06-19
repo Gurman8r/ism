@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Viewport : public Node
 	{
-		//ISM_SUPER(Viewport, Node);
+		ISM_SUPER(Viewport, Node);
 
 	public:
 		virtual ~Viewport();

@@ -3,11 +3,18 @@
 
 #include <core/api/reference.hpp>
 
+#define FWD_OBJ(expr) \
+	(ism::api::object_or_cast(FWD(expr)))
+
+#define ISM_STATIC_CLASS_TYPE(m_class, m_var) \
+	DECLEXPR(m_class::ob_type_static) = COMPOSE(ism::api::TypeObject, m_var)
+
+// types
 namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ClassDB;
+	class TypeDB;
 
 	template <class T
 	> ALIAS(TypeMap) HashMap<std::type_index, T>;
@@ -31,6 +38,7 @@ namespace ism::api
 	class DictObject;
 	class CapsuleObject;
 	class FunctionObject;
+	class MethodObject;
 	class PropertyObject;
 	class CppFunctionObject;
 	class ModuleObject;
@@ -52,6 +60,7 @@ namespace ism::api
 	ALIAS(DICT)				Handle<DictObject>;
 	ALIAS(CAPSULE)			Handle<CapsuleObject>;
 	ALIAS(FUNCTION)			Handle<FunctionObject>;
+	ALIAS(METHOD)			Handle<MethodObject>;
 	ALIAS(PROPERTY)			Handle<PropertyObject>;
 	ALIAS(CPP_FUNCTION)		Handle<CppFunctionObject>;
 	ALIAS(MODULE)			Handle<ModuleObject>;
@@ -70,7 +79,6 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct TypeInfo;
 	class StackFrame;
 	class InterpreterState;
 	class RuntimeState;
@@ -231,5 +239,200 @@ namespace ism::api
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
+
+// object_api
+namespace ism::api
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class Derived
+	> class ObjectAPI : _API_Tag
+	{
+	private:
+		NODISCARD auto derived() const & noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
+
+	public:
+		NODISCARD auto handle() const & noexcept
+		{
+			if constexpr (is_base_object_v<Derived>)
+			{
+				return Handle<Derived>{ derived().ptr() };
+			}
+			else
+			{
+				return derived();
+			}
+		}
+
+		template <class Index = cstring
+		> NODISCARD auto attr(Index && i) const { return AttrAccessor<Index>{ handle(), FWD(i) }; }
+
+		template <class Index = cstring
+		> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ handle(), FWD(i) }; }
+
+		template <class Value = OBJECT
+		> NODISCARD bool contains(Value && v) const { return attr("__contains__")(FWD(v)).cast<bool>(); }
+
+		template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
+		> OBJECT operator()(Args && ... args) const; // call.hpp
+
+		NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
+		
+		NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
+
+		NODISCARD bool is(ObjectAPI const & o) const noexcept { return derived().ptr() == o.derived().ptr(); }
+
+		template <class O, class = std::enable_if_t<is_base_object_v<O>>
+		> NODISCARD bool is(O const * o) const noexcept { return derived().ptr() == o; }
+
+		template <class O, class = std::enable_if_t<is_object_api_v<O>>
+		> NODISCARD bool is(O const & o) const noexcept { return derived().ptr() == o.ptr(); }
+		
+		NODISCARD bool equal_to(ObjectAPI const & o) const noexcept { return compare(o) == 0; }
+		
+		NODISCARD bool not_equal_to(ObjectAPI const & o) const noexcept { return compare(o) != 0; }
+		
+		NODISCARD bool less(ObjectAPI const & o) const noexcept { return compare(o) < 0; }
+		
+		NODISCARD bool less_equal(ObjectAPI const & o) const noexcept { return compare(o) <= 0; }
+		
+		NODISCARD bool greater(ObjectAPI const & o) const noexcept { return compare(o) > 0; }
+		
+		NODISCARD bool greater_equal(ObjectAPI const & o) const noexcept { return compare(o) >= 0; }
+
+		NODISCARD auto doc() const { return attr("__doc__"); }
+
+	private:
+		NODISCARD auto compare(ObjectAPI const & o) const
+		{
+			if (TYPE t{ typeof(derived().ptr()) }; t && t->tp_compare)
+			{
+				return t->tp_compare(handle(), o.handle());
+			}
+			else
+			{
+				return util::compare((void *)derived().ptr(), (void *)o.derived().ptr());
+			}
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T
+	> NODISCARD bool operator==(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.equal_to(b); }
+
+	template <class T
+	> NODISCARD bool operator!=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.not_equal_to(b); }
+
+	template <class T
+	> NODISCARD bool operator<(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less(b); }
+
+	template <class T
+	> NODISCARD bool operator<=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less_equal(b); }
+
+	template <class T
+	> NODISCARD bool operator>(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater(b); }
+
+	template <class T
+	> NODISCARD bool operator>=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater_equal(b); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// handle
+namespace ism::api
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
+	{
+	protected:
+		BaseHandle() = default;
+
+	public:
+		~BaseHandle() = default;
+
+		template <class T> NODISCARD T cast() const &;
+
+		template <class T> NODISCARD T cast() &&;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define ISM_HANDLE(m_class)																			\
+public:																								\
+	Handle(nullptr_t) {}																			\
+																									\
+	Handle(m_class * value) { if (value) { ref_pointer(value); } }									\
+																									\
+	Handle(Ref<m_class> const & value) { ref(value); }												\
+																									\
+	template <class U> Handle(Ref<U> const & value) { reset(value); }								\
+																									\
+	Handle(m_class const & value) { instance(value); }												\
+																									\
+	Handle(m_class && value) noexcept { instance(std::move(value)); }								\
+																									\
+	Handle & operator=(nullptr_t) { unref(); return (*this); }										\
+																									\
+	Handle & operator=(Ref<m_class> const & value) { reset(value); return (*this); }				\
+																									\
+	template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
+																									\
+	Handle & operator=(m_class const & value) { instance(value); return (*this); }					\
+																									\
+	Handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }	\
+																									\
+private:
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> class Handle : public BaseHandle<T>
+	{
+		ISM_HANDLE(T);
+
+	public:
+		Handle() = default;
+
+		~Handle() = default;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+template <class T> struct ism::Hash<ism::api::Handle<T>>
+{
+	hash_t operator()(ism::api::Handle<T> const & o) const { return hash(o); }
+};
+
+template <class T> struct ism::EqualTo<ism::api::Handle<T>>
+{
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.equal_to(b); }
+};
+
+template <class T> struct ism::NotEqualTo<ism::api::Handle<T>>
+{
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.not_equal_to(b); }
+};
+
+template <class T> struct ism::Less<ism::api::Handle<T>>
+{
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.less(b); }
+};
+
+template <class T> struct ism::Greater<ism::api::Handle<T>>
+{
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.greater(b); }
+};
+
+template <class T> struct ism::LessEqual<ism::api::Handle<T>>
+{
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.less_equal(b); }
+};
+
+template <class T> struct ism::GreaterEqual<ism::api::Handle<T>>
+{
+	template <class U> bool operator()(ism::api::Handle<T> const & a, ism::api::Handle<U> const & b) const { return a.greater_equal(b); }
+};
 
 #endif // !_ISM_COMMON_HPP_

@@ -22,6 +22,10 @@ namespace ism::api
 
 		using const_iterator = storage_type::const_iterator;
 
+		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
+
+		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
+
 		StringObject(storage_type const & v) : base_type{ get_type_static() }, m_string{ v } {}
 
 		StringObject(storage_type && v) noexcept : base_type{ get_type_static() }, m_string{ std::move(v) } {}
@@ -51,14 +55,10 @@ namespace ism::api
 				m_string = (String)t->tp_str(o);
 			}
 		}
-
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
-
-		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 	};
 }
 
-// string deleter
+// string delete
 namespace ism { template <> struct DefaultDelete<api::StringObject> : DefaultDelete<api::BaseObject> {}; }
 
 // string handle
@@ -66,7 +66,7 @@ namespace ism::api
 {
 	template <> class Handle<StringObject> : public BaseHandle<StringObject>
 	{
-		ISM_HANDLE_DEFAULT(StringObject);
+		ISM_HANDLE(StringObject);
 
 	public:
 		Handle() = default;

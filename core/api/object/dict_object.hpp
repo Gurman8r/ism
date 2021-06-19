@@ -22,6 +22,10 @@ namespace ism::api
 
 		using const_iterator = storage_type::const_iterator;
 
+		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_dict); }
+
+		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_dict); }
+
 		DictObject(storage_type const & v) : base_type{ get_type_static() }, m_dict{ v } {}
 
 		DictObject(storage_type && v) noexcept : base_type{ get_type_static() }, m_dict{ std::move(v) } {}
@@ -32,14 +36,10 @@ namespace ism::api
 
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
-
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_dict); }
-
-		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_dict); }
 	};
 }
 
-// dict deleter
+// dict delete
 namespace ism { template <> struct DefaultDelete<api::DictObject> : DefaultDelete<api::BaseObject> {}; }
 
 // dict handle
@@ -47,7 +47,7 @@ namespace ism::api
 {
 	template <> class Handle<DictObject> : public BaseHandle<DictObject>
 	{
-		ISM_HANDLE_DEFAULT(DictObject);
+		ISM_HANDLE(DictObject);
 
 	public:
 		Handle() = default;

@@ -1,5 +1,5 @@
-#include <core/api/internals.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/runtime.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;

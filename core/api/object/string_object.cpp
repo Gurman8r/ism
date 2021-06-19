@@ -1,12 +1,12 @@
 #include <core/api/object/string_object.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_BUILTIN_TYPE(StringObject, t)
+ISM_STATIC_CLASS_TYPE(StringObject, t)
 {
 	t.tp_name = "str";
 	t.tp_size = sizeof(StringObject);

@@ -1,12 +1,12 @@
 #include <core/api/object/float_object.hpp>
-#include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_BUILTIN_TYPE(FloatObject, t)
+ISM_STATIC_CLASS_TYPE(FloatObject, t)
 {
 	t.tp_name = "float";
 	t.tp_size = sizeof(FloatObject);

@@ -1,16 +1,7 @@
-#ifndef _ISM_INTERNALS_HPP_
-#define _ISM_INTERNALS_HPP_
+#ifndef _ISM_RUNTIME_HPP_
+#define _ISM_RUNTIME_HPP_
 
-#include <core/api/object/base_object.hpp>
-#include <core/api/object/type_object.hpp>
-#include <core/api/object/int_object.hpp>
-#include <core/api/object/float_object.hpp>
-#include <core/api/object/string_object.hpp>
-#include <core/api/object/list_object.hpp>
-#include <core/api/object/dict_object.hpp>
-#include <core/api/object/capsule_object.hpp>
-#include <core/api/object/function_object.hpp>
-#include <core/api/object/property_object.hpp>
+#include <core/api/types.hpp>
 
 namespace ism::api
 {
@@ -88,7 +79,7 @@ namespace ism::api
 		RuntimeState();
 		~RuntimeState();
 
-		bool preinitializing{}, preinitialized{},  initialized{};
+		bool preinitializing{}, preinitialized{}, initialized{};
 		void * finalizing{};
 
 		std::thread::id main_thread{};
@@ -105,8 +96,6 @@ namespace ism::api
 		struct _registry
 		{
 			TypeMap<Vector<bool(*)(OBJECT, void *&)>> direct_conversions{};
-
-			HashMap<String, void *> shared_data{};
 		}
 		registry;
 	};
@@ -114,13 +103,21 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	NODISCARD inline auto get_default_runtime() -> RuntimeState * { return RuntimeState::singleton; }
+	
 	NODISCARD inline void set_default_runtime(RuntimeState * value) { RuntimeState::singleton = value; }
+	
 	NODISCARD inline auto get_default_registry() -> auto & { return get_default_runtime()->registry; }
+	
 	NODISCARD inline auto get_default_thread() { return get_default_runtime()->tstate_current; }
+	
 	NODISCARD inline auto get_default_interpreter() { return get_default_thread()->interp; }
+	
 	NODISCARD inline auto get_default_frame() { return get_default_thread()->frame; }
+	
 	NODISCARD inline auto get_head_interpreter() { return get_default_runtime()->interpreters.head; }
+	
 	NODISCARD inline auto get_main_interpreter() { return get_default_runtime()->interpreters.main; }
+	
 	inline void set_main_interpreter(InterpreterState * value) { get_default_runtime()->interpreters.main = value; }
 
 	NODISCARD inline auto lookup_interpreter(int64_t id) -> InterpreterState *
@@ -132,43 +129,6 @@ namespace ism::api
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class K = String
-	> NODISCARD void * get_shared_data(K && key) noexcept
-	{
-		auto & shared_data{ get_default_registry().shared_data };
-		auto it{ shared_data.find(FWD(key)) };
-		return (it != shared_data.end()) ? it->second : nullptr;
-	}
-
-	template <class K = String
-	> void * set_shared_data(K && key, void * value) noexcept
-	{
-		auto & shared_data{ get_default_registry().shared_data };
-		return shared_data.insert_or_assign(FWD(key), value).first->second;
-	}
-
-	template <class T, class K, class Fn
-	> NODISCARD T & get_or_create_shared_data(K && key, Fn && fn) noexcept
-	{
-		auto & shared_data{ get_default_registry().shared_data };
-		if (auto it{ shared_data.find(FWD(key)) }; it != shared_data.end())
-		{
-			return *static_cast<T *>(it->second);
-		}
-		else
-		{
-			return *static_cast<T *>(shared_data.insert({ FWD(key), std::invoke(FWD(fn)) }).first->second);
-		}
-	}
-
-	template <class T, class K = String
-	> NODISCARD T & get_or_create_shared_data(K && key) noexcept
-	{
-		return get_or_create_shared_data<T>(FWD(key), []() { return memnew(T); });
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_INTERNALS_HPP_
+#endif // !_ISM_RUNTIME_HPP_
