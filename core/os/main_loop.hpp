@@ -12,7 +12,7 @@ namespace ism
 		ISM_SUPER(MainLoop, Super);
 
 	private:
-		api::OBJECT m_startup_script{};
+		OBJECT m_startup_script{};
 
 	public:
 		virtual ~MainLoop();
@@ -23,7 +23,7 @@ namespace ism
 
 		virtual void finalize();
 
-		void set_startup_script(api::OBJECT value);
+		void set_startup_script(OBJECT value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

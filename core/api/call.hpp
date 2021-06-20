@@ -3,7 +3,7 @@
 
 #include <core/api/cast.hpp>
 
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -188,7 +188,7 @@ namespace ism::api
 	> template <ReturnPolicy policy, class ...Args
 	> inline OBJECT ObjectAPI<Derived>::operator()(Args && ... args) const
 	{
-		return api::collect_arguments<policy>(FWD(args)...).call(handle());
+		return ism::collect_arguments<policy>(FWD(args)...).call(handle());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

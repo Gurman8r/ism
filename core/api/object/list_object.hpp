@@ -3,9 +3,12 @@
 
 #include <core/api/object/type_object.hpp>
 
-// list object
-namespace ism::api
+// list
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// list object
 	class ISM_API ListObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(ListObject, BaseObject);
@@ -37,17 +40,20 @@ namespace ism::api
 			for (auto const & e : init) { m_list.push_back(e); }
 		}
 	};
-}
 
-// list delete
-namespace ism { template <> struct DefaultDelete<api::ListObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// list check
+	// list delete
+	template <> struct DefaultDelete<ListObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// list check
 #define ISM_LIST_CHECK(o) (typeof(o).has_feature(TypeFlags_List_Subclass))
 
-// list handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// list handle
 	template <> class Handle<ListObject> : public BaseHandle<ListObject>
 	{
 		ISM_HANDLE_DEFAULT(ListObject, ISM_LIST_CHECK);
@@ -59,17 +65,17 @@ namespace ism::api
 
 		using const_iterator = ListObject::const_iterator;
 
-		void clear() const { (**m_ref).clear(); }
+		void clear() const { (**m_ptr).clear(); }
 
-		void reserve(size_t count) const { (**m_ref).reserve(count); }
+		void reserve(size_t count) const { (**m_ptr).reserve(count); }
 
-		void resize(size_t count) const { (**m_ref).resize(count); }
-
-		template <class Value = OBJECT
-		> void resize(size_t count, Value && value) const { (**m_ref).resize(count, FWD_OBJ(value)); }
+		void resize(size_t count) const { (**m_ptr).resize(count); }
 
 		template <class Value = OBJECT
-		> void append(Value && v) const { (**m_ref).emplace_back(FWD_OBJ(v)); }
+		> void resize(size_t count, Value && value) const { (**m_ptr).resize(count, FWD_OBJ(value)); }
+
+		template <class Value = OBJECT
+		> void append(Value && v) const { (**m_ptr).emplace_back(FWD_OBJ(v)); }
 
 		template <class Value = OBJECT
 		> bool contains(Value && v) const { return end() != std::find(begin(), end(), FWD_OBJ(v)); }
@@ -81,21 +87,21 @@ namespace ism::api
 		> auto find(Value && v) const -> const_iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
 
 		template <class Value = OBJECT
-		> void insert(size_t i, Value && v) const { (**m_ref).insert(begin() + i, FWD_OBJ(v)); }
+		> void insert(size_t i, Value && v) const { (**m_ptr).insert(begin() + i, FWD_OBJ(v)); }
 
 		template <class Value = OBJECT
-		> void insert(OBJECT const & i, Value && v) { (**m_ref).insert(begin() + i.cast<size_t>(), FWD_OBJ(v)); }
+		> void insert(OBJECT const & i, Value && v) { (**m_ptr).insert(begin() + i.cast<size_t>(), FWD_OBJ(v)); }
 
 		template <class Index = OBJECT
 		> auto operator[](Index && i) const -> OBJECT &
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
-				return (**m_ref)[static_cast<size_t>(i)];
+				return (**m_ptr)[static_cast<size_t>(i)];
 			}
 			else
 			{
-				return (**m_ref)[FWD_OBJ(i).cast<size_t>()];
+				return (**m_ptr)[FWD_OBJ(i).cast<size_t>()];
 			}
 		}
 
@@ -104,11 +110,11 @@ namespace ism::api
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
-				return ((**m_ref)[static_cast<size_t>(i)] = FWD_OBJ(v)), Error_None;
+				return ((**m_ptr)[static_cast<size_t>(i)] = FWD_OBJ(v)), Error_None;
 			}
 			else
 			{
-				return ((**m_ref)[FWD_OBJ(i).cast<size_t>()] = FWD_OBJ(v)), Error_None;
+				return ((**m_ptr)[FWD_OBJ(i).cast<size_t>()] = FWD_OBJ(v)), Error_None;
 			}
 		}
 
@@ -117,37 +123,39 @@ namespace ism::api
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
-				return (**m_ref).erase(begin() + static_cast<size_t>(i)), Error_None;
+				return (**m_ptr).erase(begin() + static_cast<size_t>(i)), Error_None;
 			}
 			else
 			{
-				return (**m_ref).erase(begin() + FWD_OBJ(i).cast<size_t>()), Error_None;
+				return (**m_ptr).erase(begin() + FWD_OBJ(i).cast<size_t>()), Error_None;
 			}
 		}
 
-		NODISCARD auto data() const { return (**m_ref).data(); }
+		NODISCARD auto data() const { return (**m_ptr).data(); }
 
-		NODISCARD bool empty() const { return (**m_ref).empty(); }
+		NODISCARD bool empty() const { return (**m_ptr).empty(); }
 
-		NODISCARD auto size() const { return (**m_ref).size(); }
+		NODISCARD auto size() const { return (**m_ptr).size(); }
 
-		NODISCARD auto front() const -> OBJECT & { return (**m_ref).front(); }
+		NODISCARD auto front() const -> OBJECT & { return (**m_ptr).front(); }
 
-		NODISCARD auto back() const -> OBJECT & { return (**m_ref).back(); }
+		NODISCARD auto back() const -> OBJECT & { return (**m_ptr).back(); }
 
 	public:
-		NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }
+		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return (**m_ref).begin(); }
+		NODISCARD auto begin() const -> const_iterator { return (**m_ptr).begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return (**m_ref).cbegin(); }
+		NODISCARD auto cbegin() const -> const_iterator { return (**m_ptr).cbegin(); }
 
-		NODISCARD auto end() -> iterator { return (**m_ref).end(); }
+		NODISCARD auto end() -> iterator { return (**m_ptr).end(); }
 
-		NODISCARD auto end() const -> const_iterator { return (**m_ref).end(); }
+		NODISCARD auto end() const -> const_iterator { return (**m_ptr).end(); }
 
-		NODISCARD auto cend() const -> const_iterator { return (**m_ref).cend(); }
+		NODISCARD auto cend() const -> const_iterator { return (**m_ptr).cend(); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_LIST_OBJECT_HPP_

@@ -3,9 +3,12 @@
 
 #include <core/api/object/module_object.hpp>
 
-// generic object
-namespace ism::api
+// generic
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// generic object
 	class ISM_API GenericObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(GenericObject, BaseObject);
@@ -15,23 +18,28 @@ namespace ism::api
 
 	public:
 	};
-}
 
-// generic delete
-namespace ism { template <> struct DefaultDelete<api::GenericObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// generic check
+	// generic delete
+	template <> struct DefaultDelete<GenericObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// generic check
 #define ISM_GENERIC_CHECK(o) (isinstance<GENERIC>(o))
 
-// generic handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// generic handle
 	template <> class Handle<GenericObject> : public BaseHandle<GenericObject>
 	{
 		ISM_HANDLE_DEFAULT(GenericObject, ISM_GENERIC_CHECK);
 
 	public:
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_GENERIC_OBJECT_HPP_

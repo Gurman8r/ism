@@ -3,8 +3,8 @@
 
 #include <core/api/object/base_object.hpp>
 
-// type database
-namespace ism::api
+// typedb
+namespace ism
 {
 	class ISM_API TypeDB
 	{
@@ -36,9 +36,12 @@ namespace ism::api
 	};
 }
 
-// type object
-namespace ism::api
+// type
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// type object
 	class ISM_API TypeObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(TypeObject, BaseObject);
@@ -176,38 +179,42 @@ namespace ism::api
 			}
 		}
 	};
-}
 
-// type delete
-namespace ism
-{
-	template <> struct DefaultDelete<api::TypeObject>
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// type delete
+	template <> struct DefaultDelete<TypeObject>
 	{
-		void operator()(api::TypeObject * ptr) const { memdelete(ptr); }
+		void operator()(ism::TypeObject * ptr) const { memdelete(ptr); }
 	};
-}
 
-// type check
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// type check
 #define ISM_TYPE_CHECK(o) (typeof(o).has_feature(TypeFlags_Type_Subclass))
 
-// type handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// type handle
 	template <> class Handle<TypeObject> : public BaseHandle<TypeObject>
 	{
 		ISM_HANDLE_DEFAULT(TypeObject, ISM_TYPE_CHECK);
 
 	public:
-		NODISCARD bool has_feature(int32_t flag) const { return m_ref->has_feature(flag); }
+		NODISCARD bool has_feature(int32_t flag) const { return m_ptr->has_feature(flag); }
 
-		NODISCARD OBJECT lookup(OBJECT const & name) const { return m_ref->lookup(name); }
+		NODISCARD OBJECT lookup(OBJECT const & name) const { return m_ptr->lookup(name); }
 
-		NODISCARD bool is_subtype(TYPE const & value) const { return m_ref->is_subtype(value); }
+		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
+
+		NODISCARD auto name() const { return attr("__name__"); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

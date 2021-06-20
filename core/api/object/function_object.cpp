@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(FunctionObject, t)
+ISM_OBJECT_TYPE_STATIC(FunctionObject, t)
 {
 	t.tp_name = "function";
 	t.tp_size = sizeof(FunctionObject);
@@ -27,6 +26,7 @@ ISM_STATIC_CLASS_TYPE(FunctionObject, t)
 void FunctionObject::_bind_class(TypeObject & t)
 {
 	CLASS_<FUNCTION>(&t, "function")
+		//.def(init<>())
 		;
 }
 

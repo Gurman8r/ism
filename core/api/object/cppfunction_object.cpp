@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(CppFunctionObject, t)
+ISM_OBJECT_TYPE_STATIC(CppFunctionObject, t)
 {
 	t.tp_name = "cpp_function";
 	t.tp_size = sizeof(CppFunctionObject);
@@ -23,15 +22,17 @@ ISM_STATIC_CLASS_TYPE(CppFunctionObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
-	t.tp_descr_get = (descrgetfunc)[](OBJECT descr, OBJECT obj, OBJECT type)->OBJECT
+	t.tp_descr_get = (descrgetfunc)[](OBJECT self, OBJECT obj, OBJECT type)->OBJECT
 	{
-		return !obj ? descr : METHOD({ descr, obj, method_vectorcall });
+		return !obj ? self : METHOD({ self, obj, method_vectorcall });
 	};
 };
 
 void CppFunctionObject::_bind_class(TypeObject & t)
 {
 	CLASS_<CPP_FUNCTION>(&t, "cpp_function")
+
+		//.def(init<>())
 
 		.def_property("__name__", [](CPP_FUNCTION self) { return self->m_func.name; }, [](CPP_FUNCTION self, STR value) { self->m_func.name = value; })
 

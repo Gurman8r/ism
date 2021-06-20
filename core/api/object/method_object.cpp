@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(MethodObject, t)
+ISM_OBJECT_TYPE_STATIC(MethodObject, t)
 {
 	t.tp_name = "method";
 	t.tp_size = sizeof(MethodObject);
@@ -31,12 +30,13 @@ ISM_STATIC_CLASS_TYPE(MethodObject, t)
 void MethodObject::_bind_class(TypeObject & t)
 {
 	CLASS_<METHOD>(&t, "method")
+		//.def(init<>())
 		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::api::method_vectorcall(OBJECT callable, OBJECT const * argv, size_t argc)
+OBJECT ism::method_vectorcall(OBJECT callable, OBJECT const * argv, size_t argc)
 {
 	VERIFY(METHOD::check_(callable));
 	METHOD method{ callable };

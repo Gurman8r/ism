@@ -3,19 +3,40 @@
 
 #include <core/api/object/generic_object.hpp>
 
-namespace ism::api
+namespace ism
 {
 	// class interface
 	template <class type_, class ... options_
 	> class CLASS_ : public TYPE
 	{
 	public:
-		using value_type = typename type_;
+		static constexpr bool is_holder{ is_handle_v<type_> };
+		using holder_type = typename std::conditional_t<is_holder, type_, Handle<type_>>;
+		using value_type = typename std::conditional_t<is_holder, typename type_::value_type, type_>;
+		using type = type_;
 	
+	public:
 		template <class ... Extra
-		> CLASS_(OBJECT scope, cstring name, Extra && ... extra) : TYPE{ TYPE::check_(scope) ? scope : memnew(TypeObject) }
+		> CLASS_(OBJECT scope, cstring name, Extra && ... extra) : TYPE{ scope }
 		{
-			attr::process_attributes<Extra...>::init(*m_ref, FWD(extra)...);
+			VERIFY(is_valid());
+			m_ptr->tp_name = name;
+			m_ptr->tp_size = sizeof(value_type);
+			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
+		}
+
+		template <class Func, class ... Extra
+		> CLASS_ & def(cstring name, Func && func, Extra && ... extra)
+		{
+			CPP_FUNCTION cf({
+				method_adaptor<type>(FWD(func)),
+				attr::name(name),
+				attr::is_method(*this),
+				attr::sibling(getattr(*this, name, nullptr))
+				FWD(extra)... });
+			m_ptr->tp_dict[name] = cf;
+			//attr(cf.name()) = cf;
+			return (*this);
 		}
 
 		template <class ... Args, class ... Extra
@@ -31,45 +52,33 @@ namespace ism::api
 		}
 	
 		template <class Func, class ... Extra
-		> CLASS_ & def(cstring name, Func && func, Extra && ... extra)
-		{
-			CPP_FUNCTION cf({
-				method_adaptor<value_type>(FWD(func)),
-				attr::name(name),
-				attr::is_method(*this),
-				attr::sibling(attr(name))
-				FWD(extra)... });
-			attr(name) = cf;
-			return (*this);
-		}
-	
-		template <class Func, class ... Extra
 		> CLASS_ & def_static(cstring name, Func && func, Extra && ... extra)
 		{
 			CPP_FUNCTION cf({
 				FWD(func),
 				attr::name(name),
 				attr::scope(*this),
-				attr::sibling(attr(name)),
+				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			attr(name) = cf;
+			m_ptr->tp_dict[name] = cf;
+			//attr(cf.name()) = cf;
 			return (*this);
 		}
 
 		template <class C, class D, class ... Extra
 		> CLASS_ & def_readwrite(cstring name, D C:: * pm, Extra &&... extra)
 		{
-			static_assert(std::is_same_v<C, value_type> || std::is_base_of_v<C, value_type>, "def_readwrite() requires a class member (or base class member)");
-			CPP_FUNCTION fget({ [pm](value_type const & c) -> D const & { return c.*pm; }, attr::is_method(*this) });
-			CPP_FUNCTION fset({ [pm](value_type & c, D const & value) { c.*pm = value; }, attr::is_method(*this) });
+			static_assert(std::is_same_v<C, type> || std::is_base_of_v<C, type>, "def_readwrite() requires a class member (or base class member)");
+			CPP_FUNCTION fget({ [pm](type const & c) -> D const & { return c.*pm; }, attr::is_method(*this) });
+			CPP_FUNCTION fset({ [pm](type & c, D const & value) { c.*pm = value; }, attr::is_method(*this) });
 			return def_property(name, fget, fset, ReturnPolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class C, class D, class ... Extra
-		> CLASS_ & def_readonly(cstring name, const D C:: * pm, Extra && ... extra)
+		> CLASS_ & def_readonly(cstring name, D const C:: * pm, Extra && ... extra)
 		{
-			static_assert(std::is_same_v<C, value_type> || std::is_base_of_v<C, value_type>, "def_readonly() requires a class member (or base class member)");
-			CPP_FUNCTION fget({ [pm](value_type const & c) -> D const & { return c.*pm; }, attr::is_method(*this) });
+			static_assert(std::is_same_v<C, type> || std::is_base_of_v<C, type>, "def_readonly() requires a class member (or base class member)");
+			CPP_FUNCTION fget({ [pm](type const & c) -> D const & { return c.*pm; }, attr::is_method(*this) });
 			return def_property_readonly(name, fget, ReturnPolicy_ReferenceInternal, FWD(extra)...);
 		}
 
@@ -82,7 +91,7 @@ namespace ism::api
 		}
 
 		template <class D, class ... Extra
-		> CLASS_ & def_readonly_static(cstring name, const D * pm, Extra && ... extra)
+		> CLASS_ & def_readonly_static(cstring name, D const * pm, Extra && ... extra)
 		{
 			CPP_FUNCTION fget({ [pm](OBJECT) -> D const & { return *pm; }, attr::scope(*this) });
 			return def_property_readonly_static(name, fget, ReturnPolicy_Reference, FWD(extra)...);
@@ -91,7 +100,7 @@ namespace ism::api
 		template <class Getter, class ... Extra
 		> CLASS_ & def_property_readonly(cstring name, Getter const & fget, Extra && ... extra)
 		{
-			return def_property_readonly(name, CPP_FUNCTION({ method_adaptor<value_type>(fget) }), ReturnPolicy_ReferenceInternal, FWD(extra)...);
+			return def_property_readonly(name, CPP_FUNCTION({ method_adaptor<type>(fget) }), ReturnPolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class ... Extra
@@ -115,13 +124,13 @@ namespace ism::api
 		template <class Getter, class Setter, class ... Extra
 		> CLASS_ & def_property(cstring name, Getter const & fget, Setter const & fset, Extra && ... extra)
 		{
-			return def_property(name, fget, CPP_FUNCTION({ method_adaptor<value_type>(fset) }), FWD(extra)...);
+			return def_property(name, fget, CPP_FUNCTION({ method_adaptor<type>(fset) }), FWD(extra)...);
 		}
 
 		template <class Getter, class ... Extra
 		> CLASS_ & def_property(cstring name, Getter const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			return def_property(name, CPP_FUNCTION({ method_adaptor<value_type>(fget) }), fset, ReturnPolicy_ReferenceInternal, FWD(extra)...);
+			return def_property(name, CPP_FUNCTION({ method_adaptor<type>(fget) }), fset, ReturnPolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class ... Extra
@@ -139,16 +148,16 @@ namespace ism::api
 		template <class ... Extra
 		> CLASS_ & def_property_static(cstring name, CPP_FUNCTION const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			function_record * rec_fget{ fget ? &fget->m_func : nullptr }, * rec_fset{ fset ? &fset->m_func : nullptr };
+			if (function_record * rec_fget{ fget ? &fget->m_func : nullptr }) {
+				attr::process_attributes<Extra...>::init(*rec_fget, FWD(extra)...);
+			}
+	
+			if (function_record * rec_fset{ fset ? &fset->m_func : nullptr }) {
+				attr::process_attributes<Extra...>::init(*rec_fset, FWD(extra)...);
+			}
 
-			if (rec_fget) { attr::process_attributes<Extra...>::init(*rec_fget, FWD(extra)...); }
-	
-			if (rec_fset) { attr::process_attributes<Extra...>::init(*rec_fset, FWD(extra)...); }
-	
-			m_ref->tp_dict[name] = PROPERTY({ fget, fset });
-			//type_setattr(*this, STR(name), PROPERTY({ fget, fset }));
+			m_ptr->tp_dict[name] = PROPERTY({ fget, fset });
 			//attr(name) = PROPERTY({ fget, fset });
-			
 			return (*this);
 		}
 	};

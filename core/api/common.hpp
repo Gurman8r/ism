@@ -4,13 +4,13 @@
 #include <core/api/reference.hpp>
 
 #define FWD_OBJ(expr) \
-	(ism::api::object_or_cast(FWD(expr)))
+	(ism::object_or_cast(FWD(expr)))
 
-#define ISM_STATIC_CLASS_TYPE(m_class, m_var) \
-	DECLEXPR(m_class::ob_type_static) = COMPOSE(ism::api::TypeObject, m_var)
+#define ISM_OBJECT_TYPE_STATIC(m_class, m_var) \
+	DECLEXPR(m_class::ob_type_static) = COMPOSE(ism::TypeObject, m_var)
 
 // types
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -243,7 +243,7 @@ namespace ism::api
 }
 
 // object_api
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -346,21 +346,18 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace api
+	template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
 	{
-		template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
-		{
-		protected:
-			BaseHandle() noexcept = default;
+	protected:
+		BaseHandle() noexcept = default;
 
-		public:
-			~BaseHandle() noexcept = default;
+	public:
+		~BaseHandle() noexcept = default;
 
-			template <class T> NODISCARD T cast() const &;
+		template <class T> NODISCARD T cast() const &;
 
-			template <class T> NODISCARD T cast() &&;
-		};
-	}
+		template <class T> NODISCARD T cast() &&;
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -368,7 +365,7 @@ namespace ism
 public:																								\
 	NODISCARD static bool check_(OBJECT const & o) { return o && (bool)(m_check(o)); }				\
 																									\
-	NODISCARD bool check() const { return m_ref && (bool)(m_check(m_ref)); }						\
+	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }						\
 																									\
 	~Handle() noexcept = default;																	\
 																									\
@@ -400,46 +397,46 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct Hash<api::Handle<T>>
+	template <class T> struct Hash<Handle<T>>
 	{
-		hash_t operator()(api::Handle<T> const & o) const { return hash(o); }
+		hash_t operator()(Handle<T> const & o) const { return hash(o); }
 	};
 
-	template <class T> struct EqualTo<api::Handle<T>>
+	template <class T> struct EqualTo<Handle<T>>
 	{
-		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.equal_to(b); }
+		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.equal_to(b); }
 	};
 
-	template <class T> struct NotEqualTo<api::Handle<T>>
+	template <class T> struct NotEqualTo<Handle<T>>
 	{
-		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.not_equal_to(b); }
+		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.not_equal_to(b); }
 	};
 
-	template <class T> struct Less<api::Handle<T>>
+	template <class T> struct Less<Handle<T>>
 	{
-		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.less(b); }
+		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.less(b); }
 	};
 
-	template <class T> struct Greater<api::Handle<T>>
+	template <class T> struct Greater<Handle<T>>
 	{
-		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.greater(b); }
+		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.greater(b); }
 	};
 
-	template <class T> struct LessEqual<api::Handle<T>>
+	template <class T> struct LessEqual<Handle<T>>
 	{
-		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.less_equal(b); }
+		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.less_equal(b); }
 	};
 
-	template <class T> struct GreaterEqual<api::Handle<T>>
+	template <class T> struct GreaterEqual<Handle<T>>
 	{
-		template <class U> bool operator()(api::Handle<T> const & a, api::Handle<U> const & b) const { return a.greater_equal(b); }
+		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.greater_equal(b); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // accessors
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

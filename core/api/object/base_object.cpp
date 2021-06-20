@@ -2,7 +2,6 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -18,7 +17,7 @@ void BaseObject::initialize_class()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(BaseObject, t)
+ISM_OBJECT_TYPE_STATIC(BaseObject, t)
 {
 	t.tp_name = "object";
 	t.tp_size = sizeof(BaseObject);
@@ -39,12 +38,13 @@ ISM_STATIC_CLASS_TYPE(BaseObject, t)
 void BaseObject::_bind_class(TypeObject & t)
 {
 	CLASS_<OBJECT>(&t, "object")
+		//.def(init<>())
 		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::api::object_alloc(TYPE type)
+OBJECT ism::object_alloc(TYPE type)
 {
 	auto const size{ (size_t)type->tp_size };
 
@@ -53,49 +53,25 @@ OBJECT ism::api::object_alloc(TYPE type)
 	return OBJECT(obj);
 }
 
-Error ism::api::object_init(OBJECT self, OBJECT args)
+Error ism::object_init(OBJECT self, OBJECT args)
 {
 	return Error_None;
 }
 
-OBJECT ism::api::object_new(TYPE type, OBJECT args)
+OBJECT ism::object_new(TYPE type, OBJECT args)
 {
 	return type->tp_new(type, args);
 }
 
-bool ism::api::object_hasattr(OBJECT obj, OBJECT name)
-{
-	if (TYPE type{ typeof(obj) }; !type)
-	{
-		return false;
-	}
-	else if (type->tp_getattro == generic_getattr)
-	{
-		return generic_getattr_with_dict(obj, name, nullptr).is_valid();
-	}
-	else if (type->tp_getattro)
-	{
-		return (type->tp_getattro)(obj, name).is_valid();
-	}
-	else if (type->tp_getattr)
-	{
-		return (type->tp_getattr)(obj, STR(name).c_str()).is_valid();
-	}
-	else
-	{
-		return false;
-	}
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::api::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
+OBJECT ism::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
 {
 	TYPE type{ typeof(obj) };
 
-	if (!type->tp_dict) { if (!type->ready()) { return nullptr; } }
+	if (!type->tp_dict && !type->ready()) { return nullptr; }
 
-	OBJECT descr{ type->lookup(name) };
+	OBJECT descr{ type.lookup(name) };
 
 	descrgetfunc fn{};
 
@@ -131,13 +107,13 @@ OBJECT ism::api::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
 	return nullptr;
 }
 
-Error ism::api::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJECT dict)
+Error ism::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJECT dict)
 {
 	TYPE type{ typeof(obj) };
 
-	if (!type->tp_dict) { if (!type->ready()) { return Error_Unknown; } }
+	if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
 
-	OBJECT descr{ type->lookup(name) };
+	OBJECT descr{ type.lookup(name) };
 
 	descrsetfunc fn{};
 

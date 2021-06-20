@@ -14,7 +14,7 @@
 #include <core/api/object/property_object.hpp>
 
 // info
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -32,7 +32,7 @@ namespace ism::api
 }
 
 // base casters
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -72,7 +72,7 @@ namespace ism::api
 }
 
 // type casters
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -115,7 +115,7 @@ public:																								\
 	operator m_type * () { return &value; }															\
 	operator m_type & () { return value; }															\
 	operator m_type && () { return std::move(value); }												\
-	template <class T_> using cast_op_type = api::movable_cast_op_type<T_>;							\
+	template <class T_> using cast_op_type = ism::movable_cast_op_type<T_>;							\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -208,10 +208,9 @@ public:																								\
 	{
 		NODISCARD bool load(OBJECT src, bool convert)
 		{
-			if (!src) { return false; }
-			else if (src == Core_True) { return (value = true), true; }
+			if (src == Core_True) { return (value = true), true; }
 			else if (src == Core_False) { return (value = false), true; }
-			else { return false; }
+			else { return (value = src.is_valid()), true; }
 		}
 
 		NODISCARD static OBJECT cast(bool src, ReturnPolicy, OBJECT) { return Core_Bool(src); }
@@ -361,14 +360,14 @@ public:																								\
 }
 
 // cast
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class T, class SFINAE = void
 	> struct return_policy_override { static ReturnPolicy policy(ReturnPolicy p) { return p; } };
 
-	template <class T> struct return_policy_override<T, std::enable_if_t<std::is_base_of_v<api::type_caster_generic, api::make_caster<T>>, void>>
+	template <class T> struct return_policy_override<T, std::enable_if_t<std::is_base_of_v<ism::type_caster_generic, ism::make_caster<T>>, void>>
 	{
 		static ReturnPolicy policy(ReturnPolicy p) { return !std::is_lvalue_reference_v<T> && !std::is_pointer_v<T> ? ReturnPolicy_Move : p; }
 	};
@@ -376,7 +375,7 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class SFINAE
-	> auto load_type(api::type_caster<T, SFINAE> & convt, OBJECT const & o) -> api::type_caster<T, SFINAE> &
+	> auto load_type(ism::type_caster<T, SFINAE> & convt, OBJECT const & o) -> ism::type_caster<T, SFINAE> &
 	{
 		if (!convt.load(o, true)) {
 			FATAL("TYPE CONVERSION FAILED");
@@ -387,7 +386,7 @@ namespace ism::api
 	template <class T
 	> auto load_type(OBJECT const & o) -> make_caster<T>
 	{
-		api::make_caster<T> convt;
+		ism::make_caster<T> convt;
 		load_type(convt, o);
 		return convt;
 	}
@@ -431,14 +430,14 @@ namespace ism::api
 		if (o && o->get_ref_count() > 1) {
 			VERIFY(!"Unable to cast Core instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
 		}
-		T ret{ std::move(api::load_type<T>(o).operator T & ()) };
+		T ret{ std::move(ism::load_type<T>(o).operator T & ()) };
 		return ret;
 	}
 
 	template <class T
 	> auto cast(OBJECT && o) -> std::enable_if_t<move_always_v<T>, T>
 	{
-		return api::move<T>(std::move(o));
+		return ism::move<T>(std::move(o));
 	}
 
 	template <class T
@@ -446,45 +445,45 @@ namespace ism::api
 	{
 		if (o && o->get_ref_count() > 1)
 		{
-			return api::cast<T>(o);
+			return ism::cast<T>(o);
 		}
 		else
 		{
-			return api::move<T>(std::move(o));
+			return ism::move<T>(std::move(o));
 		}
 	}
 
 	template <class T
 	> auto cast(OBJECT && o) -> std::enable_if_t<move_never_v<T>, T>
 	{
-		return api::cast<T>(o);
+		return ism::cast<T>(o);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
-	> NODISCARD OBJECT object_or_cast(T && o) { return api::cast(FWD(o)); }
+	> NODISCARD OBJECT object_or_cast(T && o) { return ism::cast(FWD(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class O> template <class T> inline T BaseHandle<O>::cast() const &
 	{
-		if constexpr (!std::is_void_v<T>) { return api::cast<T>(*this); }
+		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(*this); }
 	}
 
 	template <class O> template <class T> inline T BaseHandle<O>::cast() &&
 	{
-		if constexpr (!std::is_void_v<T>) { return api::cast<T>(std::move(*this)); }
+		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(std::move(*this)); }
 	}
 
 	template <class T> inline T BaseObject::cast() const &
 	{
-		if constexpr (!std::is_void_v<T>) { return api::cast<T>(*this); }
+		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(*this); }
 	}
 
 	template <class T> inline T BaseObject::cast() &&
 	{
-		if constexpr (!std::is_void_v<T>) { return api::cast<T>(std::move(*this)); }
+		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(std::move(*this)); }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

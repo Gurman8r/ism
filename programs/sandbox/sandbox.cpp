@@ -2,7 +2,6 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -65,6 +64,8 @@ namespace ism
 		m.attr("hello")();
 		m.attr("say")(m.attr("get_string")());
 		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
+
+		MAIN_PRINT("%s\n", typeof<METHOD>().attr("__subclasscheck__")(typeof<FUNCTION>()) ? "true" : "false");
 		
 		LIST list = m.attr("list") = LIST(ListObject{});
 		list.append("IT WORKS");
@@ -77,14 +78,10 @@ namespace ism
 		VERIFY(d.contains("ABC"));
 		MAIN_PRINT("%d\n", d["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
-		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<std::string>().c_str());
-		typeof(d).attr("__name__") = "changed";
-		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__")).c_str());
+		MAIN_PRINT("%s\n", typeof(d).name().cast<std::string>().c_str());
+		typeof(d).name() = "changed";
+		MAIN_PRINT("%s\n", STR(typeof(d).name()).c_str());
 		
-		CAPSULE cap{ CapsuleObject{} };
-		cap.attr("__name__") = "MyCapsule";
-		MAIN_PRINT("%s\n", STR(cap.attr("__name__")).c_str());
-
 		MAIN_PRINT("\n");
 	}
 }

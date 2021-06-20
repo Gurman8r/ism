@@ -3,9 +3,12 @@
 
 #include <core/api/object/type_object.hpp>
 
-// dict object
-namespace ism::api
+// dict
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// dict object
 	class ISM_API DictObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(DictObject, BaseObject);
@@ -37,17 +40,20 @@ namespace ism::api
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
 	};
-}
 
-// dict delete
-namespace ism { template <> struct DefaultDelete<api::DictObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// dict check
+	// dict delete
+	template <> struct DefaultDelete<DictObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// dict check
 #define ISM_DICT_CHECK(o) (typeof(o).has_feature(TypeFlags_Dict_Subclass))
 
-// dict handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// dict handle
 	template <> class Handle<DictObject> : public BaseHandle<DictObject>
 	{
 		ISM_HANDLE_DEFAULT(DictObject, ISM_DICT_CHECK);
@@ -59,15 +65,15 @@ namespace ism::api
 
 		using const_iterator = DictObject::const_iterator;
 
-		void clear() const { (**m_ref).clear(); }
+		void clear() const { (**m_ptr).clear(); }
 
-		void reserve(size_t count) const { (**m_ref).reserve(count); }
-
-		template <class Index = OBJECT
-		> auto find(Index && i) -> iterator { return (**m_ref).find(FWD_OBJ(i)); }
+		void reserve(size_t count) const { (**m_ptr).reserve(count); }
 
 		template <class Index = OBJECT
-		> auto find(Index && i) const -> const_iterator { return (**m_ref).find(FWD_OBJ(i)); }
+		> auto find(Index && i) -> iterator { return (**m_ptr).find(FWD_OBJ(i)); }
+
+		template <class Index = OBJECT
+		> auto find(Index && i) const -> const_iterator { return (**m_ptr).find(FWD_OBJ(i)); }
 
 		template <class Index = OBJECT
 		> bool contains(Index && i) const { return find(FWD(i)) != end(); }
@@ -82,44 +88,46 @@ namespace ism::api
 		template <class Index = OBJECT, class Value = OBJECT
 		> bool insert(Index && i, Value && v) const
 		{
-			return (**m_ref).try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second;
+			return (**m_ptr).try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second;
 		}
 
 		template <class Index = OBJECT
 		> auto operator[](Index && i) const -> OBJECT &
 		{
-			return (**m_ref)[FWD_OBJ(i)];
+			return (**m_ptr)[FWD_OBJ(i)];
 		}
 
 		template <class Index = OBJECT, class Value = OBJECT
 		> auto set(Index && i, Value && v) const -> Error
 		{
-			return ((**m_ref)[FWD_OBJ(i)] = FWD_OBJ(v)), Error_None;
+			return ((**m_ptr)[FWD_OBJ(i)] = FWD_OBJ(v)), Error_None;
 		}
 
 		template <class Index = OBJECT
 		> auto del(Index && i) const -> Error
 		{
-			return (**m_ref).erase(FWD_OBJ(i)), Error_None;
+			return (**m_ptr).erase(FWD_OBJ(i)), Error_None;
 		}
 
-		NODISCARD bool empty() const { return (**m_ref).empty(); }
+		NODISCARD bool empty() const { return (**m_ptr).empty(); }
 
-		NODISCARD auto size() const { return (**m_ref).size(); }
+		NODISCARD auto size() const { return (**m_ptr).size(); }
 
 	public:
-		NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }
+		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return (**m_ref).begin(); }
+		NODISCARD auto begin() const -> const_iterator { return (**m_ptr).begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return (**m_ref).cbegin(); }
+		NODISCARD auto cbegin() const -> const_iterator { return (**m_ptr).cbegin(); }
 
-		NODISCARD auto end() -> iterator { return (**m_ref).end(); }
+		NODISCARD auto end() -> iterator { return (**m_ptr).end(); }
 
-		NODISCARD auto end() const -> const_iterator { return (**m_ref).end(); }
+		NODISCARD auto end() const -> const_iterator { return (**m_ptr).end(); }
 
-		NODISCARD auto cend() const -> const_iterator { return (**m_ref).cend(); }
+		NODISCARD auto cend() const -> const_iterator { return (**m_ptr).cend(); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_DICT_OBJECT_HPP_

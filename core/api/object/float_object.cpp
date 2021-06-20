@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(FloatObject, t)
+ISM_OBJECT_TYPE_STATIC(FloatObject, t)
 {
 	t.tp_name = "float";
 	t.tp_size = sizeof(FloatObject);
@@ -38,6 +37,7 @@ ISM_STATIC_CLASS_TYPE(FloatObject, t)
 void FloatObject::_bind_class(TypeObject & t)
 {
 	CLASS_<FLT>(&t, "float")
+		//.def(init<>())
 		;
 }
 

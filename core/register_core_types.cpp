@@ -2,10 +2,25 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
+using namespace ism;
 
 void ism::register_core_types()
 {
+	VERIFY(typeof<OBJECT>()->ready());
+	VERIFY(typeof<TYPE>()->ready());
+	VERIFY(typeof<INT>()->ready());
+	VERIFY(typeof<FLT>()->ready());
+	VERIFY(typeof<STR>()->ready());
+	VERIFY(typeof<LIST>()->ready());
+	VERIFY(typeof<DICT>()->ready());
+	VERIFY(typeof<CAPSULE>()->ready());
+	VERIFY(typeof<FUNCTION>()->ready());
+	VERIFY(typeof<METHOD>()->ready());
+	VERIFY(typeof<PROPERTY>()->ready());
+	VERIFY(typeof<CPP_FUNCTION>()->ready());
+	VERIFY(typeof<MODULE>()->ready());
+	VERIFY(typeof<GENERIC>()->ready());
+
 	TypeDB::register_class<BaseObject>();
 	TypeDB::register_class<TypeObject>();
 	TypeDB::register_class<IntObject>();

@@ -3,7 +3,7 @@
 
 #include <core/api/object/dict_object.hpp>
 
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

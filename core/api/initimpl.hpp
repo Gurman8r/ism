@@ -3,7 +3,7 @@
 
 #include <core/api/attr.hpp>
 
-namespace ism::api::initimpl
+namespace ism::initimpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -53,7 +53,7 @@ namespace ism::api::initimpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

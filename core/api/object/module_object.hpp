@@ -4,9 +4,12 @@
 #include <core/api/object/cppfunction_object.hpp>
 #include <core/api/runtime.hpp>
 
-// module object
-namespace ism::api
+// module
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// module object
 	class ISM_API ModuleObject : public BaseObject
 	{
 		ISM_OBJECT_CVT(ModuleObject, BaseObject);
@@ -26,17 +29,20 @@ namespace ism::api
 			m_name = STR(name);
 		}
 	};
-}
 
-// module delete
-namespace ism { template <> struct DefaultDelete<api::ModuleObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// module check
+	// module delete
+	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// module check
 #define ISM_MODULE_CHECK(o) (isinstance<MODULE>(o))
 
-// module handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// module handle
 	template <> class Handle<ModuleObject> : public BaseHandle<ModuleObject>
 	{
 		ISM_HANDLE_DEFAULT(ModuleObject, ISM_MODULE_CHECK);
@@ -49,7 +55,7 @@ namespace ism::api
 				FWD(func),
 				attr::name(name),
 				attr::scope(*this),
-				attr::sibling(getattr(*this, name)),
+				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
 			return add_object(name, cf, true);
 		}
@@ -58,7 +64,7 @@ namespace ism::api
 		> MODULE & add_object(Name && name, Value && value, bool overwrite = false)
 		{
 			VERIFY(overwrite || !hasattr(*this, name));
-			m_ref->m_dict[name] = value;
+			m_ptr->m_dict[name] = value;
 			return (*this);
 		}
 
@@ -71,10 +77,12 @@ namespace ism::api
 		{
 		}
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -89,7 +97,7 @@ namespace ism::api
 		return d.contains(i) ? MODULE{} : d[i] = MODULE({ name });
 	}
 
-	inline MODULE import(cstring name)
+	inline MODULE import_module(cstring name)
 	{
 		DICT d{ get_interpreter_state()->modules };
 		auto i{ object_or_cast(name) };
@@ -104,7 +112,7 @@ namespace ism::api
 		}
 		else
 		{
-			return import("__main__").attr("__dict__");
+			return import_module("__main__").attr("__dict__");
 		}
 	}
 

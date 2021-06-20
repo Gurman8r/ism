@@ -4,13 +4,16 @@
 #include <core/api/object/type_object.hpp>
 
 // bool
-#define Core_True		(ism::api::INT(&ism::api::IntObject::g_true))
-#define Core_False		(ism::api::INT(&ism::api::IntObject::g_false))
+#define Core_True		(ism::INT(&ism::IntObject::g_true))
+#define Core_False		(ism::INT(&ism::IntObject::g_false))
 #define Core_Bool(b)	((b) ? Core_True : Core_False)
 
-// int object
-namespace ism::api
+// int
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// int object
 	class ISM_API IntObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(IntObject, BaseObject);
@@ -42,17 +45,20 @@ namespace ism::api
 
 		static IntObject g_false; // global false
 	};
-}
 
-// int delete
-namespace ism { template <> struct DefaultDelete<api::IntObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// int check
+	// int delete
+	template <> struct DefaultDelete<IntObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// int check
 #define ISM_INT_CHECK(o) (typeof(o).has_feature(TypeFlags_Int_Subclass))
 
-// int handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// int handle
 	template <> class Handle<IntObject> : public BaseHandle<IntObject>
 	{
 		ISM_HANDLE_DEFAULT(IntObject, ISM_INT_CHECK);
@@ -64,8 +70,10 @@ namespace ism::api
 		> Handle(T const v) { instance(v); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> operator T () const { return (T)(**m_ref); }
+		> operator T () const { return (T)(**m_ptr); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_INT_OBJECT_HPP_

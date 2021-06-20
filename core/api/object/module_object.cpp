@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(ModuleObject, t)
+ISM_OBJECT_TYPE_STATIC(ModuleObject, t)
 {
 	t.tp_name = "module";
 	t.tp_size = sizeof(ModuleObject);
@@ -40,6 +39,8 @@ void ModuleObject::_bind_class(TypeObject & t)
 {
 	CLASS_<MODULE>(&t, "module")
 
+		//.def(init<>())
+
 		.def("__contains__", [](MODULE self, OBJECT value) { return DICT(self->m_dict).contains(value); })
 
 		.def_property("__name__", [](MODULE self) { return self->m_name; }, [](MODULE self, STR value) { self->m_name = value; })
@@ -50,7 +51,7 @@ void ModuleObject::_bind_class(TypeObject & t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::api::module_getattro(MODULE m, OBJECT name)
+OBJECT ism::module_getattro(MODULE m, OBJECT name)
 {
 	return generic_getattr(m, name);
 }

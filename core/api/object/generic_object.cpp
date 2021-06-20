@@ -1,11 +1,11 @@
 #include <core/api/object/generic_object.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(GenericObject, t)
+ISM_OBJECT_TYPE_STATIC(GenericObject, t)
 {
 	t.tp_name = "generic";
 	t.tp_size = sizeof(GenericObject);
@@ -23,6 +23,9 @@ ISM_STATIC_CLASS_TYPE(GenericObject, t)
 
 void GenericObject::_bind_class(TypeObject & t)
 {
+	CLASS_<GENERIC>(&t, "generic")
+		//.def(init<>())
+		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

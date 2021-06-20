@@ -4,56 +4,56 @@
 #include <core/api/common.hpp>
 
 // object common
-#define ISM_OBJECT_COMMON(m_class, m_inherits)											\
-ISM_SUPER(m_class, m_inherits)															\
-private:																				\
-	using self_type = m_class;															\
-																						\
-	using base_type = m_inherits;														\
-																						\
-	friend class ism::api::TypeDB;														\
-																						\
-	friend class ism::api::Handle<m_class>;												\
-																						\
-	static ism::api::TypeObject ob_type_static;											\
-																						\
-protected:																				\
-	static void initialize_class()														\
-	{																					\
-		if (static bool once{}; !once && (once = true))									\
-		{																				\
-			ism::api::TypeDB::add_class<m_class>();										\
-																						\
-			if (m_class::_get_bind_class() != m_inherits::_get_bind_class())			\
-			{																			\
-				m_class::_bind_class(m_class::ob_type_static);							\
-			}																			\
-		};																				\
-	}																					\
-																						\
-	virtual void _initialize_classv() override											\
-	{																					\
-		m_class::initialize_class();													\
-	}																					\
-																						\
-	FORCE_INLINE static constexpr void (*_get_bind_class())(ism::api::TypeObject & t)	\
-	{																					\
-		return &m_class::_bind_class;													\
-	}																					\
-																						\
-	FORCE_INLINE virtual ism::api::TypeObject * _get_typev() const override				\
-	{																					\
-		return m_class::get_type_static();												\
-	}																					\
-																						\
-public:																					\
-	explicit m_class(ism::api::TypeObject const * t) noexcept : m_inherits{ t } {}		\
-																						\
-	FORCE_INLINE static ism::api::TypeObject * get_type_static()						\
-	{																					\
-		return &m_class::ob_type_static;												\
-	}																					\
-																						\
+#define ISM_OBJECT_COMMON(m_class, m_inherits)										\
+ISM_SUPER(m_class, m_inherits)														\
+private:																			\
+	using self_type = m_class;														\
+																					\
+	using base_type = m_inherits;													\
+																					\
+	friend class ism::TypeDB;														\
+																					\
+	friend class ism::Handle<m_class>;												\
+																					\
+	static ism::TypeObject ob_type_static;											\
+																					\
+protected:																			\
+	static void initialize_class()													\
+	{																				\
+		if (static bool once{}; !once && (once = true))								\
+		{																			\
+			ism::TypeDB::add_class<m_class>();										\
+																					\
+			if (m_class::_get_bind_class() != m_inherits::_get_bind_class())		\
+			{																		\
+				m_class::_bind_class(m_class::ob_type_static);						\
+			}																		\
+		};																			\
+	}																				\
+																					\
+	virtual void _initialize_classv() override										\
+	{																				\
+		m_class::initialize_class();												\
+	}																				\
+																					\
+	FORCE_INLINE static constexpr void (*_get_bind_class())(ism::TypeObject & t)	\
+	{																				\
+		return &m_class::_bind_class;												\
+	}																				\
+																					\
+	FORCE_INLINE virtual ism::TypeObject * _get_typev() const override				\
+	{																				\
+		return m_class::get_type_static();											\
+	}																				\
+																					\
+public:																				\
+	explicit m_class(ism::TypeObject const * t) noexcept : m_inherits{ t } {}		\
+																					\
+	FORCE_INLINE static ism::TypeObject * get_type_static()							\
+	{																				\
+		return &m_class::ob_type_static;											\
+	}																				\
+																					\
 private:
 
 // object cvt
@@ -71,8 +71,11 @@ public:														\
 private:
 
 // object
-namespace ism::api
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// object object
 	class ISM_API BaseObject : public Reference, public ObjectAPI<BaseObject>
 	{
 		ISM_SUPER(BaseObject, Reference);
@@ -113,16 +116,15 @@ namespace ism::api
 
 		template <class T> NODISCARD T cast() &&; // cast.hpp
 	};
-}
 
-// object delete
-namespace ism
-{
-	template <> struct DefaultDelete<api::BaseObject>
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// object delete
+	template <> struct DefaultDelete<BaseObject>
 	{
 		template <class U> void operator()(U * ptr) const
 		{
-			if (auto t{ api::typeof(ptr) }; t && t->tp_free)
+			if (auto t{ ism::typeof(ptr) }; t && t->tp_free)
 			{
 				t->tp_free(ptr);
 			}
@@ -132,24 +134,27 @@ namespace ism
 			}
 		}
 	};
-}
 
-// object check
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// object check
 #define ISM_OBJECT_CHECK(o) (true)
 
-// object handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// object handle
 	template <> class Handle<BaseObject> : public BaseHandle<BaseObject>
 	{
 		ISM_HANDLE_DEFAULT(BaseObject, ISM_OBJECT_CHECK);
 
 	public:
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions
-namespace ism::api
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -247,11 +252,11 @@ namespace ism::api
 		}
 	}
 
-	template <class Index = OBJECT
-	> NODISCARD OBJECT getattr(OBJECT o, Index && i, OBJECT defval)
+	template <class Index = OBJECT, class Value = OBJECT
+	> NODISCARD OBJECT getattr(OBJECT o, Index && i, Value && defval)
 	{
 		OBJECT str_name{ FWD_OBJ(i) };
-		return hasattr(o, str_name) ? getattr(o, str_name) : nullptr;
+		return hasattr(o, str_name) ? getattr(o, str_name) : FWD_OBJ(defval);
 	}
 
 	template <class Index = OBJECT, class Value = OBJECT
@@ -278,7 +283,28 @@ namespace ism::api
 	template <class Index = OBJECT
 	> NODISCARD bool hasattr(OBJECT o, Index && i)
 	{
-		return object_hasattr(o, FWD_OBJ(i));
+		OBJECT name{ FWD_OBJ(i) };
+
+		if (TYPE type; !name || !o || !(type = typeof(o)))
+		{
+			return false;
+		}
+		else if (type->tp_getattro == generic_getattr)
+		{
+			return generic_getattr_with_dict(o, name, nullptr).is_valid();
+		}
+		else if (type->tp_getattro)
+		{
+			return (type->tp_getattro)(o, name).is_valid();
+		}
+		else if (type->tp_getattr)
+		{
+			return (type->tp_getattr)(o, STR(name).c_str()).is_valid();
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -287,8 +313,8 @@ namespace ism::api
 	> NODISCARD OBJECT getitem(OBJECT o, Index && i)
 	{
 		if (!o.is_valid()) { return nullptr; }
-		else if constexpr (mpl::is_string_v<Index>) { return DICT(o)[FWD(i)]; }
-		else if constexpr (std::is_integral_v<Index>) { return LIST(o)[FWD(i)]; }
+		else if constexpr (mpl::is_string_v<Index>) { return CHECK(DICT(o))[FWD(i)]; }
+		else if constexpr (std::is_integral_v<Index>) { return CHECK(LIST(o))[FWD(i)]; }
 		else if (DICT::check_(o)) { return DICT(o)[FWD(i)]; }
 		else if (LIST::check_(o)) { return LIST(o)[FWD(i)]; }
 		else { return nullptr; }
@@ -298,8 +324,8 @@ namespace ism::api
 	> Error setitem(OBJECT o, Index && i, Value && v)
 	{
 		if (!o.is_valid()) { return Error_Unknown; }
-		else if constexpr (mpl::is_string_v<Index>) { return DICT(o).set(FWD(i), FWD(v)); }
-		else if constexpr (std::is_integral_v<Index>) { return LIST(o).set(FWD(i), FWD(v)); }
+		else if constexpr (mpl::is_string_v<Index>) { return CHECK(DICT(o)).set(FWD(i), FWD(v)); }
+		else if constexpr (std::is_integral_v<Index>) { return CHECK(LIST(o)).set(FWD(i), FWD(v)); }
 		else if (DICT::check_(o)) { return DICT(o).set(FWD(i), FWD(v)); }
 		else if (LIST::check_(o)) { return LIST(o).set(FWD(i), FWD(v)); }
 		else { return Error_Unknown; }
@@ -312,8 +338,6 @@ namespace ism::api
 	ISM_API_FUNC(Error) object_init(OBJECT self, OBJECT args);
 
 	ISM_API_FUNC(OBJECT) object_new(TYPE type, OBJECT args);
-
-	ISM_API_FUNC(bool) object_hasattr(OBJECT obj, OBJECT name);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

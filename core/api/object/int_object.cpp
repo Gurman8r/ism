@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(IntObject, t)
+ISM_OBJECT_TYPE_STATIC(IntObject, t)
 {
 	t.tp_name = "int";
 	t.tp_size = sizeof(IntObject);
@@ -38,6 +37,7 @@ ISM_STATIC_CLASS_TYPE(IntObject, t)
 void IntObject::_bind_class(TypeObject & t)
 {
 	CLASS_<INT>(&t, "int")
+		//.def(init<>())
 		;
 }
 

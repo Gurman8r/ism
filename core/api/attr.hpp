@@ -5,7 +5,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism::api::attr
+namespace ism::attr
 {
 	template <class T, class SFINAE = void> struct process_attribute;
 
@@ -22,16 +22,16 @@ namespace ism::api::attr
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ISM_PROCESS_ATTRIBUTE(m_class) \
-	struct ism::api::attr::process_attribute<m_class> : ism::api::attr::process_attribute_default<m_class>
+	struct ism::attr::process_attribute<m_class> : ism::attr::process_attribute_default<m_class>
 
 #define ISM_PROCESS_ATTRIBUTE_BASE(m_class, m_inherits) \
-	struct ism::api::attr::process_attribute<m_class> : ism::api::attr::process_attribute_default<m_inherits>
+	struct ism::attr::process_attribute<m_class> : ism::attr::process_attribute_default<m_inherits>
 
 #define ISM_PROCESS_ATTRIBUTE_SFINAE(m_class, m_sfinae) \
-	struct ism::api::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::api::attr::process_attribute_default<m_class>
+	struct ism::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::attr::process_attribute_default<m_class>
 
 #define ISM_PROCESS_ATTRIBUTE_SFINAE_BASE(m_class, m_sfinae, m_inherits) \
-	struct ism::api::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::api::attr::process_attribute_default<m_inherits>
+	struct ism::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::attr::process_attribute_default<m_inherits>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -44,9 +44,9 @@ namespace ism::api::attr
 // object attribute
 #define ISM_BASIC_ATTRIBUTE_O(m_class, m_value) \
 	struct m_class final { \
-		ism::api::BaseObject * const m_value; \
-		explicit m_class(ism::api::BaseObject * value) : m_value{ value } {} \
-		explicit m_class(ism::api::OBJECT value) : m_value{ *value } {} \
+		ism::BaseObject * const m_value; \
+		explicit m_class(ism::BaseObject * value) : m_value{ value } {} \
+		explicit m_class(ism::OBJECT value) : m_value{ *value } {} \
 	}
 
 // string attribute
@@ -66,7 +66,7 @@ namespace ism::api::attr
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism::api::attr
+namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -136,7 +136,7 @@ namespace ism::api::attr
 
 	// parent class
 	template <class T> ISM_PROCESS_ATTRIBUTE_SFINAE(T, is_object_api_v<T>) {
-		static void init(TypeObject & r, T && a) { r.bases->append(typeof(FWD(a))); }
+		static void init(TypeObject & r, T && a) { LIST(r.tp_bases).append(typeof(FWD(a))); }
 	};
 
 	// multiple inheritance
@@ -204,7 +204,7 @@ namespace ism::api::attr
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism::api::attr
+namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

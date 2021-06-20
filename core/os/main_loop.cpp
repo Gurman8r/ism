@@ -19,7 +19,7 @@ namespace ism
 	{
 	}
 
-	void MainLoop::set_startup_script(api::OBJECT value)
+	void MainLoop::set_startup_script(OBJECT value)
 	{
 	}
 

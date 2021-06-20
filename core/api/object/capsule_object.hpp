@@ -3,9 +3,12 @@
 
 #include <core/api/object/type_object.hpp>
 
-// capsule object
-namespace ism::api
+// capsule
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// capsule object
 	class ISM_API CapsuleObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(CapsuleObject, BaseObject);
@@ -69,32 +72,37 @@ namespace ism::api
 			};
 		}
 	};
-}
 
-// capsule delete
-namespace ism { template <> struct DefaultDelete<api::CapsuleObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// capsule check
+	// capsule delete
+	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// capsule check
 #define ISM_CAPSULE_CHECK(o) (isinstance<CAPSULE>(o))
 
-// capsule handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// capsule handle
 	template <> class Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
 	{
 		ISM_HANDLE_DEFAULT(CapsuleObject, ISM_CAPSULE_CHECK);
 
 	public:
 		template <class T
-		> NODISCARD operator T * () const { return this->get_pointer<T>(); }
+		> NODISCARD operator T * () const { return get_pointer<T>(); }
 
 		template <class T = void
-		> NODISCARD auto get_pointer() const { return static_cast<T *>(m_ref->m_pointer); }
+		> NODISCARD auto get_pointer() const { return static_cast<T *>(m_ptr->m_pointer); }
 
-		void set_pointer(void const * value) { m_ref->m_pointer = (void *)value; }
+		void set_pointer(void const * value) { m_ptr->m_pointer = (void *)value; }
 
-		NODISCARD OBJECT name() const { return this->attr("__name__"); }
+		NODISCARD auto name() const { return attr("__name__"); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_CAPSULE_OBJECT_HPP_

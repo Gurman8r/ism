@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(CapsuleObject, t)
+ISM_OBJECT_TYPE_STATIC(CapsuleObject, t)
 {
 	t.tp_name = "capsule";
 	t.tp_size = sizeof(CapsuleObject);
@@ -25,10 +24,12 @@ void CapsuleObject::_bind_class(TypeObject & t)
 {
 	CLASS_<CAPSULE>(&t, "capsule")
 
+		//.def(init<>())
+
 		.def_property("__name__", [](CAPSULE self) { return self->m_name; }, [](CAPSULE self, STR value) { self->m_name = value; })
-		
+
 		.def_property("__doc__", [](CAPSULE self) { return self->m_doc; }, [](CAPSULE self, STR value) { self->m_doc = value; })
-		
+
 		;
 }
 

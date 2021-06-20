@@ -11,7 +11,7 @@ namespace ism
 	uint32_t	Main::g_frame_index	{};
 	int32_t		Main::g_iterating	{};
 
-	api::RuntimeState * g_runtime{};
+	ism::RuntimeState * g_runtime{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -22,7 +22,7 @@ namespace ism
 		register_core_types();
 		register_core_driver_types();
 
-		g_runtime = memnew(api::RuntimeState);
+		g_runtime = memnew(ism::RuntimeState);
 
 		register_core_settings();
 

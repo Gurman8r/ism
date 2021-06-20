@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(PropertyObject, t)
+ISM_OBJECT_TYPE_STATIC(PropertyObject, t)
 {
 	t.tp_name = "property";
 	t.tp_size = sizeof(PropertyObject);
@@ -18,14 +17,14 @@ ISM_STATIC_CLASS_TYPE(PropertyObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
-	t.tp_descr_get = (descrgetfunc)[](OBJECT descr, OBJECT obj, OBJECT type) -> OBJECT
+	t.tp_descr_get = (descrgetfunc)[](OBJECT self, OBJECT obj, OBJECT type) -> OBJECT
 	{
-		return PROPERTY(descr)->m_get(obj);
+		return PROPERTY(self)->m_get(obj);
 	};
 
-	t.tp_descr_set = (descrsetfunc)[](OBJECT descr, OBJECT obj, OBJECT value) -> Error
+	t.tp_descr_set = (descrsetfunc)[](OBJECT self, OBJECT obj, OBJECT value) -> Error
 	{
-		return PROPERTY(descr)->m_set(obj, value), Error_None;
+		return PROPERTY(self)->m_set(obj, value), Error_None;
 	};
 };
 
@@ -34,6 +33,7 @@ ISM_STATIC_CLASS_TYPE(PropertyObject, t)
 void PropertyObject::_bind_class(TypeObject & t)
 {
 	CLASS_<PROPERTY>(&t, "property")
+		//.def(init<>())
 		;
 }
 

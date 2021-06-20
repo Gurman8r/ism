@@ -3,9 +3,12 @@
 
 #include <core/api/object/type_object.hpp>
 
-// property object
-namespace ism::api
+// property
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// property object
 	class ISM_API PropertyObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(PropertyObject, BaseObject);
@@ -32,23 +35,28 @@ namespace ism::api
 		template <class Getter
 		> PropertyObject(Getter const & fget) : self_type{} { m_get = CPP_FUNCTION({ fget }); m_set = nullptr; }
 	};
-}
 
-// property delete
-namespace ism { template <> struct DefaultDelete<api::PropertyObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// property check
+	// property delete
+	template <> struct DefaultDelete<PropertyObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// property check
 #define ISM_PROPERTY_CHECK(o) (isinstance<PROPERTY>(o))
 
-// property handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// property handle
 	template <> class Handle<PropertyObject> : public BaseHandle<PropertyObject>
 	{
 		ISM_HANDLE_DEFAULT(PropertyObject, ISM_PROPERTY_CHECK);
 
 	public:
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_PROPERTY_OBJECT_HPP_

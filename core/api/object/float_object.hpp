@@ -3,9 +3,12 @@
 
 #include <core/api/object/type_object.hpp>
 
-// float object
-namespace ism::api
+// float
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// float object
 	class ISM_API FloatObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(FloatObject, BaseObject);
@@ -32,17 +35,20 @@ namespace ism::api
 		template <class T = storage_type, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> NODISCARD operator T() const & { return static_cast<T>(m_float); }
 	};
-}
 
-// float delete
-namespace ism { template <> struct DefaultDelete<api::FloatObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// float check
+	// float delete
+	template <> struct DefaultDelete<FloatObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// dict check
 #define ISM_FLOAT_CHECK(o) (typeof(o).has_feature(TypeFlags_Float_Subclass))
 
-// float handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// float handle
 	template <> class Handle<FloatObject> : public BaseHandle<FloatObject>
 	{
 		ISM_HANDLE_DEFAULT(FloatObject, ISM_FLOAT_CHECK);
@@ -54,8 +60,10 @@ namespace ism::api
 		> Handle(T const v) { instance(v); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> operator T () const { return (T)(**m_ref); }
+		> operator T () const { return (T)(**m_ptr); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_FLOAT_OBJECT_HPP_

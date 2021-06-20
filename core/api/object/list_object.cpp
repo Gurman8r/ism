@@ -2,11 +2,10 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_STATIC_CLASS_TYPE(ListObject, t)
+ISM_OBJECT_TYPE_STATIC(ListObject, t)
 {
 	t.tp_name = "list";
 	t.tp_size = sizeof(ListObject);
@@ -36,7 +35,11 @@ ISM_STATIC_CLASS_TYPE(ListObject, t)
 void ListObject::_bind_class(TypeObject & t)
 {
 	CLASS_<LIST>(&t, "list")
+
+		//.def(init<>())
+
 		.def("__contains__", [](LIST self, OBJECT value) { return LIST(self).contains(value); })
+
 		;
 }
 

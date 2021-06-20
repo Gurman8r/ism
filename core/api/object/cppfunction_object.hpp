@@ -3,9 +3,12 @@
 
 #include <core/api/initimpl.hpp>
 
-// cppfunction object
-namespace ism::api
+// cppfunction
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
 		ISM_OBJECT_CVT(CppFunctionObject, FunctionObject);
@@ -156,7 +159,7 @@ namespace ism::api
 				num_to_copy	{ MIN(num_args, argc) },
 				num_copied	{};
 
-			// copy passed arguments
+			// copy positional arguments
 			for (; num_copied < num_to_copy; ++num_copied)
 			{
 				argument_record const * arg_rec{ num_copied < func.args.size() ? &func.args[num_copied] : nullptr };
@@ -193,30 +196,35 @@ namespace ism::api
 			return result;
 		}
 	};
-}
 
-// cppfunction delete
-namespace ism { template <> struct DefaultDelete<api::CppFunctionObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// cppfunction check
+	// cppfunction delete
+	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// cppfunction check
 #define ISM_CPPFUNCTION_CHECK(o) (isinstance<CPP_FUNCTION>(o))
 
-// cppfunction handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// cppfunction handle
 	template <> class Handle<CppFunctionObject> : public BaseHandle<CppFunctionObject>
 	{
 		ISM_HANDLE_DEFAULT(CppFunctionObject, ISM_CPPFUNCTION_CHECK);
 
 	public:
-		NODISCARD OBJECT name() const { return attr("__name__"); }
+		NODISCARD auto name() const { return attr("__name__"); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions
-namespace ism::api
+namespace ism
 {
-	NODISCARD inline OBJECT Handle<FunctionObject>::cpp_function() const noexcept
+	NODISCARD inline OBJECT Handle<FunctionObject>::cpp_function() const
 	{
 		return CPP_FUNCTION::check_(*this) ? CPP_FUNCTION(*this) : nullptr;
 	}

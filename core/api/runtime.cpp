@@ -2,7 +2,6 @@
 #include <core/api/class.hpp>
 
 using namespace ism;
-using namespace ism::api;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -20,6 +19,7 @@ ThreadState::ThreadState(InterpreterState * interp) : interp{ interp }
 {
 	thread_id = std::this_thread::get_id();
 	VERIFY(-1 < (id = ++interp->tstate_next_id));
+
 	prev = interp->tstate_head;
 	if (prev) { prev->next = this; }
 	interp->tstate_head = this;
@@ -39,10 +39,12 @@ InterpreterState::InterpreterState(RuntimeState * runtime) : runtime{ runtime }
 {
 	thread_id = std::this_thread::get_id();
 	VERIFY(-1 < (id = ++runtime->interpreters.next_id));
+
 	prev = runtime->interpreters.head;
 	if (prev) { prev->next = this; }
 	runtime->interpreters.head = this;
 	if (!runtime->interpreters.main) { runtime->interpreters.main = this; }
+
 	tstate_head = memnew(ThreadState(this));
 
 	dict = DICT(DictObject{});

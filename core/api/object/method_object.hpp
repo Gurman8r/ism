@@ -3,9 +3,12 @@
 
 #include <core/api/object/function_object.hpp>
 
-// method object
-namespace ism::api
+// method
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// method object
 	class ISM_API MethodObject : public FunctionObject
 	{
 		ISM_OBJECT_DEFAULT(MethodObject, FunctionObject);
@@ -25,27 +28,32 @@ namespace ism::api
 			m_vectorcall = vectorcall;
 		}
 	};
-}
 
-// method delete
-namespace ism { template <> struct DefaultDelete<api::MethodObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// module check
+	// method delete
+	template <> struct DefaultDelete<MethodObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// method check
 #define ISM_METHOD_CHECK(o) (isinstance<METHOD>(o))
 
-// method handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// method handle
 	template <> class Handle<MethodObject> : public BaseHandle<MethodObject>
 	{
 		ISM_HANDLE_DEFAULT(MethodObject, ISM_METHOD_CHECK);
 
 	public:
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions
-namespace ism::api
+namespace ism
 {
 	ISM_API_FUNC(OBJECT) method_vectorcall(OBJECT callable, OBJECT const * argv, size_t argc);
 }

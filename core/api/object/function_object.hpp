@@ -3,36 +3,44 @@
 
 #include <core/api/object/type_object.hpp>
 
-// function object
-namespace ism::api
+// function
+namespace ism
 {
-	class ISM_API api::FunctionObject : public BaseObject
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// function object
+	class ISM_API ism::FunctionObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(FunctionObject, BaseObject);
 
 	protected:
 		static void _bind_class(TypeObject & t);
 	};
-}
 
-// function delete
-namespace ism { template <> struct DefaultDelete<api::FunctionObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// function check
+	// function delete
+	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// function check
 #define ISM_FUNCTION_CHECK(o) (isinstance<FUNCTION>(o))
 
-// function handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// function handle
 	template <> class Handle<FunctionObject> : public BaseHandle<FunctionObject>
 	{
 		ISM_HANDLE_DEFAULT(FunctionObject, ISM_FUNCTION_CHECK);
 
 	public:
-		NODISCARD OBJECT cpp_function() const noexcept; // cppfunction_object.hpp
+		NODISCARD OBJECT cpp_function() const; // cppfunction_object.hpp
 
-		NODISCARD bool is_cpp_function() const noexcept { return (bool)cpp_function(); }
+		NODISCARD bool is_cpp_function() const noexcept { return cpp_function().is_valid(); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_FUNCTION_OBJECT_HPP_

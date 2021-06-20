@@ -66,21 +66,21 @@ namespace ism
 	template <class T> class Ref : public _Ref_Tag
 	{
 	protected:
-		T * m_ref{};
+		T * m_ptr{};
 
 		void ref(Ref const & value)
 		{
-			if (value.m_ref == m_ref) { return; }
+			if (value.m_ptr == m_ptr) { return; }
 			unref();
-			m_ref = value.m_ref;
-			if (m_ref) { m_ref->inc_ref(); }
+			m_ptr = value.m_ptr;
+			if (m_ptr) { m_ptr->inc_ref(); }
 		}
 
 		void ref_pointer(T * value)
 		{
 			if (CHECK(value)->init_ref())
 			{
-				m_ref = value;
+				m_ptr = value;
 			}
 		}
 
@@ -116,14 +116,14 @@ namespace ism
 
 		void unref()
 		{
-			if (m_ref && m_ref->dec_ref()) { DefaultDelete<T>{}(m_ref); }
-			m_ref = nullptr;
+			if (m_ptr && m_ptr->dec_ref()) { DefaultDelete<T>{}(m_ptr); }
+			m_ptr = nullptr;
 		}
 
 		T * release()
 		{
-			T * temp{ m_ref };
-			m_ref = nullptr;
+			T * temp{ m_ptr };
+			m_ptr = nullptr;
 			return temp;
 		}
 
@@ -135,7 +135,7 @@ namespace ism
 		template <class U
 		> void reset(U * value)
 		{
-			if (m_ref == value) { return; }
+			if (m_ptr == value) { return; }
 			unref();
 			T * r{ super_cast<T>(value) };
 			if (r) { ref_pointer(r) }
@@ -147,29 +147,29 @@ namespace ism
 			Reference * other{ const_cast<Reference *>(static_cast<Reference const *>(value.ptr())) };
 			if (!other) { unref(); return; }
 			Ref r;
-			r.m_ref = super_cast<T>(other);
+			r.m_ptr = super_cast<T>(other);
 			ref(r);
-			r.m_ref = nullptr;
+			r.m_ptr = nullptr;
 		}
 
 	public:
-		NODISCARD operator bool() const noexcept { return m_ref != nullptr; }
+		NODISCARD operator bool() const noexcept { return m_ptr != nullptr; }
 
-		NODISCARD auto ptr() const noexcept { return const_cast<T *>(m_ref); }
+		NODISCARD auto ptr() const noexcept { return const_cast<T *>(m_ptr); }
 
-		NODISCARD auto operator*() const noexcept { return const_cast<T *>(m_ref); }
+		NODISCARD auto operator*() const noexcept { return const_cast<T *>(m_ptr); }
 
-		NODISCARD auto operator->() const noexcept { return const_cast<T *>(m_ref); }
+		NODISCARD auto operator->() const noexcept { return const_cast<T *>(m_ptr); }
 
-		NODISCARD bool operator==(T const * value) const noexcept { return m_ref == value; }
+		NODISCARD bool operator==(T const * value) const noexcept { return m_ptr == value; }
 		
-		NODISCARD bool operator!=(T const * value) const noexcept { return m_ref != value; }
+		NODISCARD bool operator!=(T const * value) const noexcept { return m_ptr != value; }
 		
-		NODISCARD bool operator<(Ref const & value) const noexcept { return m_ref < value.m_ref; }
+		NODISCARD bool operator<(Ref const & value) const noexcept { return m_ptr < value.m_ptr; }
 		
-		NODISCARD bool operator==(Ref const & value) const noexcept { return m_ref == value.m_ref; }
+		NODISCARD bool operator==(Ref const & value) const noexcept { return m_ptr == value.m_ptr; }
 		
-		NODISCARD bool operator!=(Ref const & value) const noexcept { return m_ref != value.m_ref; }
+		NODISCARD bool operator!=(Ref const & value) const noexcept { return m_ptr != value.m_ptr; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

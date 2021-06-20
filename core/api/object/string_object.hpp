@@ -3,9 +3,12 @@
 
 #include <core/api/object/type_object.hpp>
 
-// string object
-namespace ism::api
+// string
+namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// string object
 	class ISM_API StringObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(StringObject, BaseObject);
@@ -56,17 +59,20 @@ namespace ism::api
 			}
 		}
 	};
-}
 
-// string delete
-namespace ism { template <> struct DefaultDelete<api::StringObject> : DefaultDelete<api::BaseObject> {}; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// string check
+	// string delete
+	template <> struct DefaultDelete<StringObject> : DefaultDelete<BaseObject> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// string check
 #define ISM_STR_CHECK(o) (typeof(o).has_feature(TypeFlags_Str_Subclass))
 
-// string handle
-namespace ism::api
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// string handle
 	template <> class Handle<StringObject> : public BaseHandle<StringObject>
 	{
 		ISM_HANDLE_DEFAULT(StringObject, ISM_STR_CHECK);
@@ -78,40 +84,42 @@ namespace ism::api
 
 		using const_iterator = StringObject::const_iterator;
 
-		void reserve(size_t count) { (**m_ref).reserve(count); }
+		void reserve(size_t count) { (**m_ptr).reserve(count); }
 
-		void resize(size_t count) { (**m_ref).resize(count); }
+		void resize(size_t count) { (**m_ptr).resize(count); }
 
-		NODISCARD operator storage_type () const { return m_ref ? (**m_ref) : String{}; }
+		NODISCARD operator storage_type () const { return m_ptr ? (**m_ptr) : String{}; }
 
-		NODISCARD auto c_str() const { return (**m_ref).c_str(); }
+		NODISCARD auto c_str() const { return (**m_ptr).c_str(); }
 
-		NODISCARD auto data() const { return (**m_ref).data(); }
+		NODISCARD auto data() const { return (**m_ptr).data(); }
 
-		NODISCARD bool empty() const { return (**m_ref).empty(); }
+		NODISCARD bool empty() const { return (**m_ptr).empty(); }
 
-		NODISCARD auto size() const { return (**m_ref).size(); }
+		NODISCARD auto size() const { return (**m_ptr).size(); }
 
-		NODISCARD auto front() const -> char & { return (**m_ref).front(); }
+		NODISCARD auto front() const -> char & { return (**m_ptr).front(); }
 
-		NODISCARD auto back() const -> char & { return (**m_ref).back(); }
+		NODISCARD auto back() const -> char & { return (**m_ptr).back(); }
 
 	public:
-		NODISCARD auto begin() -> iterator { return (**m_ref).begin(); }
+		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return (**m_ref).begin(); }
+		NODISCARD auto begin() const -> const_iterator { return (**m_ptr).begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return (**m_ref).cbegin(); }
+		NODISCARD auto cbegin() const -> const_iterator { return (**m_ptr).cbegin(); }
 
-		NODISCARD auto end() -> iterator { return (**m_ref).end(); }
+		NODISCARD auto end() -> iterator { return (**m_ptr).end(); }
 
-		NODISCARD auto end() const -> const_iterator { return (**m_ref).end(); }
+		NODISCARD auto end() const -> const_iterator { return (**m_ptr).end(); }
 
-		NODISCARD auto cend() const -> const_iterator { return (**m_ref).cend(); }
+		NODISCARD auto cend() const -> const_iterator { return (**m_ptr).cend(); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism::api
+namespace ism
 {
 	template <class T> NODISCARD STR repr(Handle<T> const & o) noexcept
 	{
