@@ -7,15 +7,13 @@
 // module
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// module object
 	class ISM_API ModuleObject : public BaseObject
 	{
-		ISM_OBJECT_CVT(ModuleObject, BaseObject);
+		ISM_OBJECT_TYPED(ModuleObject, BaseObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
 	public:
 		DICT		m_dict	{ DictObject{} };
@@ -24,23 +22,14 @@ namespace ism
 		inquiry		m_clear	{};
 		freefunc	m_free	{};
 
-		ModuleObject(cstring name) : base_type{ get_type_static() }
-		{
-			m_name = STR(name);
-		}
+		ModuleObject(String const & name) : base_type{ get_type_static() } { m_name = name; }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// module delete
 	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<BaseObject> {};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// module check
-#define ISM_MODULE_CHECK(o) (isinstance<MODULE>(o))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define ISM_MODULE_CHECK(o) (ism::isinstance<MODULE>(o))
 
 	// module handle
 	template <> class Handle<ModuleObject> : public BaseHandle<ModuleObject>
@@ -77,8 +66,6 @@ namespace ism
 		{
 		}
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions

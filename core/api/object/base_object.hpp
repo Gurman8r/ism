@@ -6,6 +6,7 @@
 // object common
 #define ISM_OBJECT_COMMON(m_class, m_inherits)										\
 ISM_SUPER(m_class, m_inherits)														\
+																					\
 private:																			\
 	using self_type = m_class;														\
 																					\
@@ -18,7 +19,7 @@ private:																			\
 	static ism::TypeObject ob_type_static;											\
 																					\
 protected:																			\
-	static void initialize_class()													\
+	static void initialize_class(OBJECT scope)										\
 	{																				\
 		if (static bool once{}; !once && (once = true))								\
 		{																			\
@@ -26,48 +27,51 @@ protected:																			\
 																					\
 			if (m_class::_get_bind_class() != m_inherits::_get_bind_class())		\
 			{																		\
-				m_class::_bind_class(m_class::ob_type_static);						\
+				m_class::_bind_class(scope);										\
 			}																		\
 		};																			\
 	}																				\
 																					\
-	virtual void _initialize_classv() override										\
+	virtual void _initialize_classv(OBJECT scope) override							\
 	{																				\
-		m_class::initialize_class();												\
+		m_class::initialize_class(scope);											\
 	}																				\
 																					\
-	FORCE_INLINE static constexpr void (*_get_bind_class())(ism::TypeObject & t)	\
+	FORCE_INLINE static constexpr void (*_get_bind_class())(ism::OBJECT)			\
 	{																				\
 		return &m_class::_bind_class;												\
 	}																				\
+private:
+
+// object with type
+#define ISM_OBJECT_TYPED(m_class, m_inherits)										\
+ISM_OBJECT_COMMON(m_class, m_inherits)												\
 																					\
-	FORCE_INLINE virtual ism::TypeObject * _get_typev() const override				\
+protected:																			\
+	FORCE_INLINE virtual TYPE _get_typev() const override							\
 	{																				\
 		return m_class::get_type_static();											\
 	}																				\
 																					\
 public:																				\
-	explicit m_class(ism::TypeObject const * t) noexcept : m_inherits{ t } {}		\
+	explicit m_class(TYPE const & t) noexcept : m_inherits{ t } {}					\
 																					\
-	FORCE_INLINE static ism::TypeObject * get_type_static()							\
+	COPYABLE_MOVABLE(m_class)														\
+																					\
+	FORCE_INLINE static TYPE get_type_static()										\
 	{																				\
 		return &m_class::ob_type_static;											\
 	}																				\
 																					\
 private:
 
-// object cvt
-#define ISM_OBJECT_CVT(m_class, m_inherits)					\
-	ISM_OBJECT_COMMON(m_class, m_inherits)					\
-public:														\
-	COPYABLE_MOVABLE(m_class)								\
-private:
-
 // object default
-#define ISM_OBJECT_DEFAULT(m_class, m_inherits)				\
-	ISM_OBJECT_CVT(m_class, m_inherits);					\
-public:														\
-	m_class() : m_inherits{ &m_class::ob_type_static } {}	\
+#define ISM_OBJECT_DEFAULT(m_class, m_inherits)										\
+	ISM_OBJECT_TYPED(m_class, m_inherits);											\
+																					\
+public:																				\
+	m_class() noexcept : m_inherits{ m_class::get_type_static() } {}				\
+																					\
 private:
 
 // object
@@ -87,34 +91,34 @@ namespace ism
 		static TypeObject ob_type_static; // static class type
 
 	protected:
-		static void initialize_class();
+		static void initialize_class(OBJECT scope);
 
-		virtual void _initialize_classv() { initialize_class(); }
+		virtual void _initialize_classv(OBJECT scope);
 
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
-		FORCE_INLINE static constexpr void (*_get_bind_class())(TypeObject &) { return &BaseObject::_bind_class; }
+		FORCE_INLINE static constexpr void (*_get_bind_class())(OBJECT) { return &BaseObject::_bind_class; }
 
-		FORCE_INLINE virtual TypeObject * _get_typev() const { return get_type_static(); }
+		FORCE_INLINE virtual TYPE _get_typev() const;
 
-		explicit BaseObject(TypeObject const * t) noexcept : ob_type{ (TypeObject *)t } {}
+		explicit BaseObject(TYPE const & t) noexcept;
 
 		mutable Ref<TypeObject> ob_type; // instance type
 
 	public:
-		virtual ~BaseObject() override { ob_type = nullptr; }
+		virtual ~BaseObject() override;
 
-		NODISCARD BaseObject * ptr() const { return const_cast<BaseObject *>(this); }
+		NODISCARD static TYPE get_type_static();
 
-		NODISCARD static TypeObject * get_type_static() { return &ob_type_static; }
+		NODISCARD TYPE get_type() const;
 
-		NODISCARD TypeObject * get_type() const { if (!ob_type) { ob_type = _get_typev(); } return *ob_type; }
-
-		bool set_type(TypeObject * value) { return (ob_type = value); }
+		bool set_type(TYPE const & value);
 
 		template <class T> NODISCARD T cast() const &; // cast.hpp
 
 		template <class T> NODISCARD T cast() &&; // cast.hpp
+
+		NODISCARD BaseObject * ptr() const noexcept { return const_cast<BaseObject *>(this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -313,10 +317,15 @@ namespace ism
 	> NODISCARD OBJECT getitem(OBJECT o, Index && i)
 	{
 		if (!o.is_valid()) { return nullptr; }
+		
 		else if constexpr (mpl::is_string_v<Index>) { return CHECK(DICT(o))[FWD(i)]; }
+		
 		else if constexpr (std::is_integral_v<Index>) { return CHECK(LIST(o))[FWD(i)]; }
+		
 		else if (DICT::check_(o)) { return DICT(o)[FWD(i)]; }
+		
 		else if (LIST::check_(o)) { return LIST(o)[FWD(i)]; }
+		
 		else { return nullptr; }
 	}
 
@@ -324,10 +333,15 @@ namespace ism
 	> Error setitem(OBJECT o, Index && i, Value && v)
 	{
 		if (!o.is_valid()) { return Error_Unknown; }
-		else if constexpr (mpl::is_string_v<Index>) { return CHECK(DICT(o)).set(FWD(i), FWD(v)); }
-		else if constexpr (std::is_integral_v<Index>) { return CHECK(LIST(o)).set(FWD(i), FWD(v)); }
-		else if (DICT::check_(o)) { return DICT(o).set(FWD(i), FWD(v)); }
-		else if (LIST::check_(o)) { return LIST(o).set(FWD(i), FWD(v)); }
+		
+		else if constexpr (mpl::is_string_v<Index>) { return (CHECK(DICT(o))[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		
+		else if constexpr (std::is_integral_v<Index>) { return (CHECK(LIST(o))[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		
+		else if (DICT::check_(o)) { return (DICT(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		
+		else if (LIST::check_(o)) { return (LIST(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		
 		else { return Error_Unknown; }
 	}
 

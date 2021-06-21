@@ -7,7 +7,7 @@ using namespace ism;
 
 DECLEXPR(TypeDB::classes) {};
 
-void TypeDB::add_class(StringName const & name, TypeObject * type)
+void TypeDB::add_class(StringName const & name, TYPE type)
 {
 	VERIFY(!name.empty());
 	VERIFY(type);
@@ -15,8 +15,18 @@ void TypeDB::add_class(StringName const & name, TypeObject * type)
 
 	hash_t const id{ ism::hash(name) };
 	VERIFY(!classes.contains<hash_t>(id));
-	classes.push_back(id, name, TYPE(type));
+	classes.push_back(id, name, type);
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+TYPE TypeObject::_get_typev() const noexcept { return get_type_static(); }
+
+TypeObject::TypeObject(TYPE const & t) noexcept : base_type{ t } {}
+
+TypeObject::TypeObject() noexcept : self_type{ get_type_static() } {}
+
+TYPE TypeObject::get_type_static() noexcept { return &ob_type_static; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -36,25 +46,33 @@ static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m)
 
 ISM_OBJECT_TYPE_STATIC(TypeObject, t)
 {
-	t.tp_name = "type";
-	t.tp_size = sizeof(TypeObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass;
-	t.tp_base = typeof<OBJECT>();
 
-	t.tp_dict_offset = offsetof(TypeObject, tp_dict);
-	t.tp_weaklist_offset = offsetof(TypeObject, tp_weaklist);
-	t.tp_vectorcall_offset = offsetof(TypeObject, tp_vectorcall);
+	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
+	
+	t.tp_weaklistoffset = offsetof(TypeObject, tp_weaklist);
+	
+	t.tp_vectorcalloffset = offsetof(TypeObject, tp_vectorcall);
 
 	t.tp_hash = (hashfunc)[](OBJECT o) { return ism::hash(TYPE(o)->tp_name); };
+	
 	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
+	
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 
 	t.tp_as_number = &type_as_number;
+	
 	t.tp_as_sequence = &type_as_sequence;
+	
 	t.tp_as_mapping = &type_as_mapping;
 
-	t.tp_getattro = (getattrofunc)type_getattr;
-	t.tp_setattro = (setattrofunc)type_setattr;
+	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+
+	t.tp_init = (initproc)type_init;
+
+	t.tp_new = (newfunc)type_new;
+
+	t.tp_call = (binaryfunc)type_call;
 
 	t.tp_finalize = (destructor)[](BaseObject * ptr)
 	{
@@ -69,25 +87,13 @@ ISM_OBJECT_TYPE_STATIC(TypeObject, t)
 			t->tp_weaklist = nullptr;
 		}
 	};
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
-
-	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((TypeObject *)ptr); };
-
-	t.tp_init = (initproc)type_init;
-
-	t.tp_new = (newfunc)type_new;
-
-	t.tp_call = (binaryfunc)type_call;
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void TypeObject::_bind_class(TypeObject & t)
+void TypeObject::_bind_class(OBJECT scope)
 {
-	CLASS_<TYPE>(&t, "type")
+	CLASS_<TYPE>(scope, "type", get_type_static())
 
 		//.def(init<>())
 
@@ -97,7 +103,7 @@ void TypeObject::_bind_class(TypeObject & t)
 
 		.def("__subclasscheck__", &TYPE::is_subtype)
 
-		.def_property_readonly("__dictoffset__", [](TYPE self) { return self->tp_dict_offset; })
+		.def_property_readonly("__dictoffset__", [](TYPE self) { return self->tp_dictoffset; })
 
 		.def_property_readonly("__size__", [](TYPE self) { return self->tp_size; })
 	
@@ -276,8 +282,8 @@ void TypeObject::inherit_special(TypeObject * base)
 	}
 
 	copy_val(base, &TypeObject::tp_size);
-	copy_val(base, &TypeObject::tp_weaklist_offset);
-	copy_val(base, &TypeObject::tp_dict_offset);
+	copy_val(base, &TypeObject::tp_weaklistoffset);
+	copy_val(base, &TypeObject::tp_dictoffset);
 
 	//if (LIST mro{ base->tp_mro })
 	//{
@@ -355,7 +361,7 @@ void TypeObject::inherit_slots(TypeObject * base)
 	copy_slot(base, basebase, &TypeObject::tp_repr);
 	copy_slot(base, basebase, &TypeObject::tp_str);
 
-	copy_slot(base, basebase, &TypeObject::tp_vectorcall_offset);
+	copy_slot(base, basebase, &TypeObject::tp_vectorcalloffset);
 	if (!tp_call && base->has_feature(TypeFlags_HaveVectorCall) && !has_feature(TypeFlags_HeapType))
 	{
 		flag_set(tp_flags, TypeFlags_HaveVectorCall);
@@ -375,7 +381,7 @@ void TypeObject::inherit_slots(TypeObject * base)
 	}
 	copy_slot(base, basebase, &TypeObject::tp_descr_set);
 
-	copy_slot(base, basebase, &TypeObject::tp_dict_offset);
+	copy_slot(base, basebase, &TypeObject::tp_dictoffset);
 	copy_slot(base, basebase, &TypeObject::tp_init);
 	copy_slot(base, basebase, &TypeObject::tp_alloc);
 	copy_slot(base, basebase, &TypeObject::tp_is_gc);

@@ -6,15 +6,13 @@
 // property
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// property object
 	class ISM_API PropertyObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(PropertyObject, BaseObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
 	public:
 		OBJECT m_get{}, m_set{};
@@ -36,17 +34,11 @@ namespace ism
 		> PropertyObject(Getter const & fget) : self_type{} { m_get = CPP_FUNCTION({ fget }); m_set = nullptr; }
 	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// property delete
 	template <> struct DefaultDelete<PropertyObject> : DefaultDelete<BaseObject> {};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// property check
-#define ISM_PROPERTY_CHECK(o) (isinstance<PROPERTY>(o))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define ISM_PROPERTY_CHECK(o) (ism::isinstance<PROPERTY>(o))
 
 	// property handle
 	template <> class Handle<PropertyObject> : public BaseHandle<PropertyObject>
@@ -54,9 +46,12 @@ namespace ism
 		ISM_HANDLE_DEFAULT(PropertyObject, ISM_PROPERTY_CHECK);
 
 	public:
-	};
+		template <class ... Args
+		> OBJECT get(Args && ... args) const { return m_ptr->m_get(FWD(args)...); }
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		template <class ... Args
+		> OBJECT set(Args && ... args) const { return m_ptr->m_set(FWD(args)...); }
+	};
 }
 
 #endif // !_ISM_PROPERTY_OBJECT_HPP_

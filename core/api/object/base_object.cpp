@@ -5,15 +5,29 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void BaseObject::initialize_class()
+void BaseObject::initialize_class(OBJECT scope)
 {
 	if (static bool once{}; !once && (once = true))
 	{
 		TypeDB::add_class<BaseObject>();
 
-		_bind_class(BaseObject::ob_type_static);
+		_bind_class(scope);
 	}
 }
+
+void BaseObject::_initialize_classv(OBJECT scope) { initialize_class(scope); }
+
+TYPE BaseObject::_get_typev() const { return get_type_static(); }
+
+BaseObject::BaseObject(TYPE const & t) noexcept : ob_type{ *t } {}
+
+BaseObject::~BaseObject() { ob_type = nullptr; }
+
+TYPE BaseObject::get_type_static() { return &ob_type_static; }
+
+TYPE BaseObject::get_type() const { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
+
+bool BaseObject::set_type(TYPE const & value) { return (bool)(ob_type = value); }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -35,9 +49,9 @@ ISM_OBJECT_TYPE_STATIC(BaseObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void BaseObject::_bind_class(TypeObject & t)
+void BaseObject::_bind_class(OBJECT scope)
 {
-	CLASS_<OBJECT>(&t, "object")
+	CLASS_<OBJECT>(scope, "object", get_type_static())
 		//.def(init<>())
 		;
 }
@@ -128,7 +142,7 @@ Error ism::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJE
 		{
 			if (!(dict = *dictptr)) { dict = DICT(DictObject{}); }
 
-			return DICT(dict).set(name, value);
+			return (DICT(dict)[name] = value), Error_None;
 		}
 		else
 		{
@@ -137,7 +151,7 @@ Error ism::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJE
 	}
 	else
 	{
-		return DICT(dict).set(name, value);
+		return (DICT(dict)[name] = value), Error_None;
 	}
 }
 

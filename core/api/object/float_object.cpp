@@ -7,17 +7,13 @@ using namespace ism;
 
 ISM_OBJECT_TYPE_STATIC(FloatObject, t)
 {
-	t.tp_name = "float";
-	t.tp_size = sizeof(FloatObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_Float_Subclass;
-	t.tp_base = typeof<OBJECT>();
 
 	t.tp_hash = (hashfunc)[](OBJECT o) { return Hash<double_t>()(***FLT(o)); };
+	
 	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(util::to_string(***FLT(o))); };
+	
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(util::to_string(***FLT(o))); };
-
-	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((FloatObject *)ptr); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -34,10 +30,10 @@ ISM_OBJECT_TYPE_STATIC(FloatObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void FloatObject::_bind_class(TypeObject & t)
+void FloatObject::_bind_class(OBJECT scope)
 {
-	CLASS_<FLT>(&t, "float")
-		//.def(init<>())
+	CLASS_<FLT>(scope, "float", get_type_static())
+		.def(init<>())
 		;
 }
 

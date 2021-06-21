@@ -6,20 +6,16 @@
 // method
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// method object
 	class ISM_API MethodObject : public FunctionObject
 	{
 		ISM_OBJECT_DEFAULT(MethodObject, FunctionObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
 	public:
 		OBJECT m_func{}, m_self{};
-
-		vectorcallfunc m_vectorcall{};
 
 		MethodObject(OBJECT func, OBJECT self, vectorcallfunc vectorcall) : self_type{}
 		{
@@ -29,17 +25,11 @@ namespace ism
 		}
 	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// method delete
 	template <> struct DefaultDelete<MethodObject> : DefaultDelete<BaseObject> {};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// method check
 #define ISM_METHOD_CHECK(o) (isinstance<METHOD>(o))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// method handle
 	template <> class Handle<MethodObject> : public BaseHandle<MethodObject>
@@ -48,8 +38,6 @@ namespace ism
 
 	public:
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions

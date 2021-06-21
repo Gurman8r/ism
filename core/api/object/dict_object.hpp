@@ -6,15 +6,13 @@
 // dict
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// dict object
 	class ISM_API DictObject : public BaseObject
 	{
-		ISM_OBJECT_DEFAULT(DictObject, BaseObject);
+		ISM_OBJECT_TYPED(DictObject, BaseObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
 	public:
 		HashMap<OBJECT, OBJECT> m_dict{};
@@ -25,33 +23,29 @@ namespace ism
 
 		using const_iterator = storage_type::const_iterator;
 
+		using allocator_type = storage_type::allocator_type;
+
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_dict); }
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_dict); }
 
-		DictObject(storage_type const & v) : base_type{ get_type_static() }, m_dict{ v } {}
-
-		DictObject(storage_type && v) noexcept : base_type{ get_type_static() }, m_dict{ std::move(v) } {}
-
-		DictObject(std::initializer_list<std::pair<OBJECT, OBJECT>> init) : self_type{}
+		DictObject(std::initializer_list<std::pair<OBJECT, OBJECT>> init, allocator_type al = {}) : self_type{ al }
 		{
-			m_dict.reserve(init.size());
-
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
-	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		DictObject(allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_dict{ al } {}
+
+		DictObject(storage_type const & v, allocator_type al = {}) : base_type{ get_type_static() }, m_dict{ v, al } {}
+
+		DictObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_dict{ std::move(v), al } {}
+	};
 
 	// dict delete
 	template <> struct DefaultDelete<DictObject> : DefaultDelete<BaseObject> {};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// dict check
-#define ISM_DICT_CHECK(o) (typeof(o).has_feature(TypeFlags_Dict_Subclass))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define ISM_DICT_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Dict_Subclass))
 
 	// dict handle
 	template <> class Handle<DictObject> : public BaseHandle<DictObject>
@@ -59,11 +53,13 @@ namespace ism
 		ISM_HANDLE_DEFAULT(DictObject, ISM_DICT_CHECK);
 
 	public:
-		using storage_type = DictObject::storage_type;
+		using storage_type = value_type::storage_type;
 
-		using iterator = DictObject::iterator;
+		using iterator = value_type::iterator;
 
-		using const_iterator = DictObject::const_iterator;
+		using const_iterator = value_type::const_iterator;
+
+		using allocator_type = value_type::allocator_type;
 
 		void clear() const { (**m_ptr).clear(); }
 
@@ -79,41 +75,21 @@ namespace ism
 		> bool contains(Index && i) const { return find(FWD(i)) != end(); }
 
 		template <class Index = OBJECT
-		> auto lookup(Index && i) const -> OBJECT *
-		{
-			auto const it{ find(FWD(i)) };
-			return (it != end()) ? const_cast<OBJECT *>(&(it->second)) : nullptr;
-		}
+		> auto lookup(Index && i) const -> OBJECT * { return ism::getptr((**m_ptr), FWD_OBJ(i)); }
 
 		template <class Index = OBJECT, class Value = OBJECT
-		> bool insert(Index && i, Value && v) const
-		{
-			return (**m_ptr).try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second;
-		}
+		> bool insert(Index && i, Value && v) const { return (**m_ptr).try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
 		template <class Index = OBJECT
-		> auto operator[](Index && i) const -> OBJECT &
-		{
-			return (**m_ptr)[FWD_OBJ(i)];
-		}
-
-		template <class Index = OBJECT, class Value = OBJECT
-		> auto set(Index && i, Value && v) const -> Error
-		{
-			return ((**m_ptr)[FWD_OBJ(i)] = FWD_OBJ(v)), Error_None;
-		}
+		> auto operator[](Index && i) const -> OBJECT & { return (**m_ptr)[FWD_OBJ(i)]; }
 
 		template <class Index = OBJECT
-		> auto del(Index && i) const -> Error
-		{
-			return (**m_ptr).erase(FWD_OBJ(i)), Error_None;
-		}
+		> auto del(Index && i) const -> Error { return (**m_ptr).erase(FWD_OBJ(i)), Error_None; }
 
 		NODISCARD bool empty() const { return (**m_ptr).empty(); }
 
 		NODISCARD auto size() const { return (**m_ptr).size(); }
 
-	public:
 		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
 
 		NODISCARD auto begin() const -> const_iterator { return (**m_ptr).begin(); }
@@ -126,8 +102,6 @@ namespace ism
 
 		NODISCARD auto cend() const -> const_iterator { return (**m_ptr).cend(); }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_DICT_OBJECT_HPP_

@@ -6,22 +6,18 @@
 // cppfunction
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		ISM_OBJECT_CVT(CppFunctionObject, FunctionObject);
+		ISM_OBJECT_TYPED(CppFunctionObject, FunctionObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
 	public:
-		function_record m_func{};
+		function_record m_rec{};
 
-		vectorcallfunc m_vectorcall{};
-
-		virtual ~CppFunctionObject() override { if (m_func.free_data) { m_func.free_data(&m_func); } }
+		virtual ~CppFunctionObject() override { if (m_rec.free_data) { m_rec.free_data(&m_rec); } }
 
 		CppFunctionObject() noexcept : base_type{ get_type_static() } { m_vectorcall = dispatcher; }
 
@@ -67,24 +63,24 @@ namespace ism
 		{
 			struct Capture { std::remove_reference_t<Func> value; };
 
-			if (sizeof(Capture) <= sizeof(m_func.data))
+			if (sizeof(Capture) <= sizeof(m_rec.data))
 			{
-				::new((Capture *)&m_func.data) Capture{ FWD(func) };
+				::new((Capture *)&m_rec.data) Capture{ FWD(func) };
 
 				if constexpr (!std::is_trivially_destructible_v<Func>)
 				{
-					m_func.free_data = [](function_record * f) { ((Capture *)&f->data)->~Capture(); };
+					m_rec.free_data = [](function_record * f) { ((Capture *)&f->data)->~Capture(); };
 				}
 			}
 			else
 			{
-				m_func.data[0] = memnew(Capture{ FWD(func) });
+				m_rec.data[0] = memnew(Capture{ FWD(func) });
 
-				m_func.free_data = [](function_record * f) { memdelete((Capture *)f->data[0]); };
+				m_rec.free_data = [](function_record * f) { memdelete((Capture *)f->data[0]); };
 			}
 
 			// convert function arguments and perform the actual function call
-			m_func.impl = [](function_call & call) -> OBJECT
+			m_rec.impl = [](function_call & call) -> OBJECT
 			{
 				argument_loader<Args...> args{};
 				if (!args.load_args(call.args)) { return nullptr; }
@@ -109,7 +105,7 @@ namespace ism
 			};
 
 			// process function attributes
-			attr::process_attributes<Extra...>::init(m_func, FWD(extra)...);
+			attr::process_attributes<Extra...>::init(m_rec, FWD(extra)...);
 
 			// generate type info
 			constexpr size_t argc{ sizeof...(Args) };
@@ -125,16 +121,16 @@ namespace ism
 			// stash some additional information used by an important optimization in 'functional.h'
 			if constexpr (std::is_convertible_v<Func, Return(*)(Args...)> && sizeof(Capture) == sizeof(void *))
 			{
-				m_func.is_stateless = true;
-				m_func.data[1] = const_cast<void *>(reinterpret_cast<void const *>(&typeid(Return(*)(Args...))));
+				m_rec.is_stateless = true;
+				m_rec.data[1] = const_cast<void *>(reinterpret_cast<void const *>(&typeid(Return(*)(Args...))));
 			}
 		}
 
 		void initialize_generic(std::type_info const * const * info_in, size_t argc_in)
 		{
-			m_func.argument_count = argc_in;
+			m_rec.argument_count = argc_in;
 
-			m_func.args.reserve(argc_in);
+			m_rec.args.reserve(argc_in);
 
 			for (size_t i = 0; i < argc_in; ++i)
 			{
@@ -142,7 +138,7 @@ namespace ism
 
 				String const arg_str{ "arg" + util::to_string(i) };
 
-				m_func.args.push_back({ arg_str, nullptr, false, false });
+				m_rec.args.push_back({ arg_str, nullptr, false, false });
 			}
 		}
 
@@ -150,7 +146,7 @@ namespace ism
 		{
 			if (!callable) { return nullptr; }
 
-			function_record const & func{ super_cast<self_type>(*callable)->m_func };
+			function_record const & func{ super_cast<self_type>(*callable)->m_rec };
 
 			function_call call{ func, (0 < argc ? argv[0] : nullptr) };
 
@@ -197,17 +193,11 @@ namespace ism
 		}
 	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// cppfunction delete
 	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<BaseObject> {};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// cppfunction check
 #define ISM_CPPFUNCTION_CHECK(o) (isinstance<CPP_FUNCTION>(o))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// cppfunction handle
 	template <> class Handle<CppFunctionObject> : public BaseHandle<CppFunctionObject>
@@ -217,8 +207,6 @@ namespace ism
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // functions

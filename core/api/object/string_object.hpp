@@ -6,15 +6,13 @@
 // string
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// string object
 	class ISM_API StringObject : public BaseObject
 	{
-		ISM_OBJECT_DEFAULT(StringObject, BaseObject);
+		ISM_OBJECT_TYPED(StringObject, BaseObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
 	public:
 		String m_string{};
@@ -25,25 +23,29 @@ namespace ism
 
 		using const_iterator = storage_type::const_iterator;
 
+		using allocator_type = storage_type::allocator_type;
+
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 
-		StringObject(storage_type const & v) : base_type{ get_type_static() }, m_string{ v } {}
+		StringObject(allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_string{ al } {}
 
-		StringObject(storage_type && v) noexcept : base_type{ get_type_static() }, m_string{ std::move(v) } {}
+		StringObject(storage_type const & v, allocator_type al = {}) : base_type{ get_type_static() }, m_string{ v, al } {}
 
-		StringObject(cstring v) : base_type{ get_type_static() }, m_string{ v } {}
+		StringObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_string{ std::move(v), al } {}
 
-		StringObject(cstring v, size_t n) : base_type{ get_type_static() }, m_string{ v, n } {}
+		StringObject(cstring v, allocator_type al = {}) : base_type{ get_type_static() }, m_string{ v, al } {}
 
-		StringObject(StringName const & v) : self_type{ v.string() } {}
+		StringObject(cstring v, size_t n, allocator_type al = {}) : base_type{ get_type_static() }, m_string{ v, n, al } {}
 
-		StringObject(StringName && v) noexcept : self_type{ std::move(v).string() } {}
+		StringObject(StringName const & v, allocator_type al = {}) : self_type{ v.string(), al } {}
 
-		StringObject(std::initializer_list<char> init) : self_type{ storage_type{ init.begin(), init.end() } } {}
+		StringObject(StringName && v, allocator_type al = {}) noexcept : self_type{ std::move(v).string(), al } {}
 
-		template <class T> StringObject(Handle<T> const & o) : self_type{}
+		StringObject(std::initializer_list<char> init, allocator_type al = {}) : self_type{ storage_type{ init.begin(), init.end() }, al } {}
+
+		template <class T> StringObject(Handle<T> const & o, allocator_type al = {}) : self_type{ al }
 		{
 			if constexpr (std::is_same_v<T, self_type>)
 			{
@@ -60,17 +62,11 @@ namespace ism
 		}
 	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// string delete
 	template <> struct DefaultDelete<StringObject> : DefaultDelete<BaseObject> {};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// string check
-#define ISM_STR_CHECK(o) (typeof(o).has_feature(TypeFlags_Str_Subclass))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define ISM_STR_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Str_Subclass))
 
 	// string handle
 	template <> class Handle<StringObject> : public BaseHandle<StringObject>
@@ -78,11 +74,13 @@ namespace ism
 		ISM_HANDLE_DEFAULT(StringObject, ISM_STR_CHECK);
 
 	public:
-		using storage_type = StringObject::storage_type;
+		using storage_type = value_type::storage_type;
 
-		using iterator = StringObject::iterator;
+		using iterator = value_type::iterator;
 
-		using const_iterator = StringObject::const_iterator;
+		using const_iterator = value_type::const_iterator;
+
+		using allocator_type = value_type::allocator_type;
 
 		void reserve(size_t count) { (**m_ptr).reserve(count); }
 
@@ -102,7 +100,6 @@ namespace ism
 
 		NODISCARD auto back() const -> char & { return (**m_ptr).back(); }
 
-	public:
 		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
 
 		NODISCARD auto begin() const -> const_iterator { return (**m_ptr).begin(); }
@@ -115,10 +112,9 @@ namespace ism
 
 		NODISCARD auto cend() const -> const_iterator { return (**m_ptr).cend(); }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
+// functions
 namespace ism
 {
 	template <class T> NODISCARD STR repr(Handle<T> const & o) noexcept

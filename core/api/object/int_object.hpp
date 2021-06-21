@@ -11,15 +11,13 @@
 // int
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// int object
 	class ISM_API IntObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(IntObject, BaseObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
 	public:
 		int64_t m_int{};
@@ -29,7 +27,7 @@ namespace ism
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
-		> explicit IntObject(TypeObject const * t, T v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
+		> explicit IntObject(TYPE const & t, T v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
 		> IntObject(T const v) : base_type{ get_type_static() }, m_int{ static_cast<storage_type>(v) } {}
@@ -46,17 +44,11 @@ namespace ism
 		static IntObject g_false; // global false
 	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// int delete
 	template <> struct DefaultDelete<IntObject> : DefaultDelete<BaseObject> {};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// int check
-#define ISM_INT_CHECK(o) (typeof(o).has_feature(TypeFlags_Int_Subclass))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define ISM_INT_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Int_Subclass))
 
 	// int handle
 	template <> class Handle<IntObject> : public BaseHandle<IntObject>
@@ -64,7 +56,7 @@ namespace ism
 		ISM_HANDLE_DEFAULT(IntObject, ISM_INT_CHECK);
 
 	public:
-		using storage_type = IntObject::storage_type;
+		using storage_type = value_type::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> Handle(T const v) { instance(v); }
@@ -72,8 +64,6 @@ namespace ism
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> operator T () const { return (T)(**m_ptr); }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_INT_OBJECT_HPP_

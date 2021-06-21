@@ -17,7 +17,7 @@ namespace ism
 	
 	public:
 		template <class ... Extra
-		> CLASS_(OBJECT scope, cstring name, Extra && ... extra) : TYPE{ scope }
+		> CLASS_(OBJECT scope, cstring name, TYPE target, Extra && ... extra) : TYPE{ target }
 		{
 			VERIFY(is_valid());
 			m_ptr->tp_name = name;
@@ -25,20 +25,7 @@ namespace ism
 			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
 		}
 
-		template <class Func, class ... Extra
-		> CLASS_ & def(cstring name, Func && func, Extra && ... extra)
-		{
-			CPP_FUNCTION cf({
-				method_adaptor<type>(FWD(func)),
-				attr::name(name),
-				attr::is_method(*this),
-				attr::sibling(getattr(*this, name, nullptr))
-				FWD(extra)... });
-			m_ptr->tp_dict[name] = cf;
-			//attr(cf.name()) = cf;
-			return (*this);
-		}
-
+	public:
 		template <class ... Args, class ... Extra
 		> CLASS_ & def(initimpl::constructor<Args...> && init, Extra && ... extra)
 		{
@@ -50,7 +37,21 @@ namespace ism
 		{
 			return FWD(init).execute(*this, FWD(extra)...);
 		}
-	
+
+		template <class Func, class ... Extra
+		> CLASS_ & def(cstring name, Func && func, Extra && ... extra)
+		{
+			CPP_FUNCTION cf({
+				method_adaptor<type>(FWD(func)),
+				attr::name(name),
+				attr::is_method(*this),
+				attr::sibling(getattr(*this, name, nullptr)),
+				FWD(extra)... });
+			m_ptr->tp_dict[name] = cf;
+			//attr(cf.name()) = cf;
+			return (*this);
+		}
+
 		template <class Func, class ... Extra
 		> CLASS_ & def_static(cstring name, Func && func, Extra && ... extra)
 		{
@@ -148,11 +149,11 @@ namespace ism
 		template <class ... Extra
 		> CLASS_ & def_property_static(cstring name, CPP_FUNCTION const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			if (function_record * rec_fget{ fget ? &fget->m_func : nullptr }) {
+			if (function_record * rec_fget{ fget ? &fget->m_rec : nullptr }) {
 				attr::process_attributes<Extra...>::init(*rec_fget, FWD(extra)...);
 			}
 	
-			if (function_record * rec_fset{ fset ? &fset->m_func : nullptr }) {
+			if (function_record * rec_fset{ fset ? &fset->m_rec : nullptr }) {
 				attr::process_attributes<Extra...>::init(*rec_fset, FWD(extra)...);
 			}
 

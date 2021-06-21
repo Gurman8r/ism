@@ -16,37 +16,54 @@ namespace ism::initimpl
 	template <class ... Args
 	> struct constructor
 	{
-		template <class Class, class ... Extra
+		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__init__", [](GENERIC v_h, Args ... args)
+			return c.def("__init__", [](Holder<Class> v_h, Args ... args)
 			{
-				//v_h->holder().reset(memnew(Cpp<Class>{ FWD(args)... }));
+				v_h.instance(args...);
 			}
-			, attr::is_constructor{}, FWD(extra)...);
+			, attr::is_constructor(), FWD(extra)...);
+		}
+
+		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
+		> static Class & execute(Class & c, Extra && ... extra)
+		{
+			return c.def("__init__", [](Holder<Class> v_h, Args ... args)
+			{
+				// TODO...
+			}
+			, attr::is_constructor(), FWD(extra)...);
 		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Func, class = mpl::function_signature_t<Func>
-	> struct factory;
-
-	template <class Func, class R, class ... Args
-	> struct factory<Func, R(Args...)>
+	template <class Fn, class R = mpl::function_signature_t<Fn>, class ... Args
+	> struct factory
 	{
-		std::remove_reference_t<Func> class_factory;
+		std::remove_reference_t<Fn> class_factory;
 
-		factory(Func && func) noexcept : class_factory{ FWD(func) } {}
+		factory(Fn && fn) noexcept : class_factory{ FWD(fn) } {}
 
-		template <class Class, class ... Extra
+		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__init__", [func = std::move(class_factory)](GENERIC v_h, Args ... args)
+			return c.def("__init__", [fn = std::move(class_factory)](Holder<Class> v_h, Args ... args)
 			{
-				//v_h->holder().reset(func(FWD(args)...));
+				v_h.instance(fn(args...));
 			}
-			, attr::is_constructor{}, FWD(extra)...);
+			, attr::is_constructor(), FWD(extra)...);
+		}
+
+		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
+		> Class & execute(Class & c, Extra && ... extra)
+		{
+			return c.def("__init__", [fn = std::move(class_factory)](Holder<Class> v_h, Args ... args)
+			{
+				// TODO...
+			}
+			, attr::is_constructor(), FWD(extra)...);
 		}
 	};
 

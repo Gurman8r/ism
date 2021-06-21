@@ -7,18 +7,13 @@ using namespace ism;
 
 ISM_OBJECT_TYPE_STATIC(CppFunctionObject, t)
 {
-	t.tp_name = "cpp_function";
-	t.tp_size = sizeof(CppFunctionObject);
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall;
+	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
+
 	t.tp_base = typeof<FUNCTION>();
 
-	t.tp_vectorcall_offset = offsetof(CppFunctionObject, m_vectorcall);
+	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
-	t.tp_getattro = (getattrofunc)generic_getattr;
-	t.tp_setattro = (setattrofunc)generic_setattr;
-
-	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((CppFunctionObject *)ptr); };
+	t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
@@ -28,15 +23,15 @@ ISM_OBJECT_TYPE_STATIC(CppFunctionObject, t)
 	};
 };
 
-void CppFunctionObject::_bind_class(TypeObject & t)
+void CppFunctionObject::_bind_class(OBJECT scope)
 {
-	CLASS_<CPP_FUNCTION>(&t, "cpp_function")
+	CLASS_<CPP_FUNCTION>(scope, "cpp_function", get_type_static())
 
 		//.def(init<>())
 
-		.def_property("__name__", [](CPP_FUNCTION self) { return self->m_func.name; }, [](CPP_FUNCTION self, STR value) { self->m_func.name = value; })
+		.def_property("__name__", [](CPP_FUNCTION self) { return self->m_rec.name; }, [](CPP_FUNCTION self, STR value) { self->m_rec.name = value; })
 
-		.def_property("__doc__", [](CPP_FUNCTION self) { return self->m_func.doc; }, [](CPP_FUNCTION self, STR value) { self->m_func.doc = value; })
+		.def_property("__doc__", [](CPP_FUNCTION self) { return self->m_rec.doc; }, [](CPP_FUNCTION self, STR value) { self->m_rec.doc = value; })
 
 		;
 }

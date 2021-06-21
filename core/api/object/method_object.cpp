@@ -7,18 +7,11 @@ using namespace ism;
 
 ISM_OBJECT_TYPE_STATIC(MethodObject, t)
 {
-	t.tp_name = "method";
-	t.tp_size = sizeof(MethodObject);
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall;
-	t.tp_base = typeof<FUNCTION>();
+	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
-	t.tp_vectorcall_offset = offsetof(MethodObject, m_vectorcall);
+	t.tp_dictoffset = offsetof(MethodObject, m_dict);
 
-	t.tp_getattro = (getattrofunc)generic_getattr;
-	t.tp_setattro = (setattrofunc)generic_setattr;
-
-	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((MethodObject *)ptr); };
+	t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
@@ -27,10 +20,12 @@ ISM_OBJECT_TYPE_STATIC(MethodObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void MethodObject::_bind_class(TypeObject & t)
+void MethodObject::_bind_class(OBJECT scope)
 {
-	CLASS_<METHOD>(&t, "method")
+	CLASS_<METHOD>(scope, "method", get_type_static())
+
 		//.def(init<>())
+
 		;
 }
 

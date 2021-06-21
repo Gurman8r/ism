@@ -6,15 +6,13 @@
 // capsule
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// capsule object
 	class ISM_API CapsuleObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(CapsuleObject, BaseObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
 
 	public:
 		void * m_pointer{}, * m_context{};
@@ -73,17 +71,11 @@ namespace ism
 		}
 	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// capsule delete
 	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<BaseObject> {};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// capsule check
-#define ISM_CAPSULE_CHECK(o) (isinstance<CAPSULE>(o))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#define ISM_CAPSULE_CHECK(o) (ism::isinstance<CAPSULE>(o))
 
 	// capsule handle
 	template <> class Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
@@ -101,8 +93,6 @@ namespace ism
 
 		NODISCARD auto name() const { return attr("__name__"); }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_CAPSULE_OBJECT_HPP_

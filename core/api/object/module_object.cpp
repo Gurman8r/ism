@@ -7,15 +7,11 @@ using namespace ism;
 
 ISM_OBJECT_TYPE_STATIC(ModuleObject, t)
 {
-	t.tp_name = "module";
-	t.tp_size = sizeof(ModuleObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
-	t.tp_base = typeof<OBJECT>();
 
-	t.tp_dict_offset = offsetof(ModuleObject, m_dict);
+	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 	
 	t.tp_getattro = (getattrofunc)module_getattro;
-	t.tp_setattro = (setattrofunc)generic_setattr;
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
 	{
@@ -29,17 +25,16 @@ ISM_OBJECT_TYPE_STATIC(ModuleObject, t)
 		}
 	};
 
-	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
 	t.tp_free = (freefunc)[](void * ptr) { memdelete((ModuleObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ModuleObject::_bind_class(TypeObject & t)
+void ModuleObject::_bind_class(OBJECT scope)
 {
-	CLASS_<MODULE>(&t, "module")
+	CLASS_<MODULE>(scope, "module", get_type_static())
 
-		//.def(init<>())
+		.def(init<String const &>())
 
 		.def("__contains__", [](MODULE self, OBJECT value) { return DICT(self->m_dict).contains(value); })
 

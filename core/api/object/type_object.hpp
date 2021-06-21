@@ -16,15 +16,15 @@ namespace ism
 		> classes;
 
 	public:
-		static void add_class(StringName const & name, TypeObject * type);
+		static void add_class(StringName const & name, TYPE type);
 
 		template <class T
 		> static void add_class() { add_class(T::get_class_static(), T::get_type_static()); }
 
 		template <class T
-		> static void register_class()
+		> static void register_class(OBJECT scope)
 		{
-			T::initialize_class();
+			T::initialize_class(scope);
 
 			TYPE t{ *classes.map<hash_t, TYPE>(hash(T::get_class_static())) };
 
@@ -44,10 +44,19 @@ namespace ism
 	// type object
 	class ISM_API TypeObject : public BaseObject
 	{
-		ISM_OBJECT_DEFAULT(TypeObject, BaseObject);
+		ISM_OBJECT_COMMON(TypeObject, BaseObject);
 
 	protected:
-		static void _bind_class(TypeObject & t);
+		static void _bind_class(OBJECT scope);
+
+		virtual TYPE _get_typev() const noexcept override;
+
+	public:
+		explicit TypeObject(TYPE const & t) noexcept;
+
+		TypeObject() noexcept;
+
+		NODISCARD static TYPE get_type_static() noexcept;
 
 	public:
 		String				tp_name{};
@@ -55,9 +64,9 @@ namespace ism
 		int32_t				tp_flags{};
 		String				tp_doc{};
 
-		ssize_t				tp_dict_offset{};
-		ssize_t				tp_weaklist_offset{};
-		ssize_t				tp_vectorcall_offset{};
+		ssize_t				tp_dictoffset{};
+		ssize_t				tp_weaklistoffset{};
+		ssize_t				tp_vectorcalloffset{};
 
 		binaryfunc			tp_call{};
 		inquiry				tp_clear{};
@@ -234,7 +243,7 @@ namespace ism
 
 	NODISCARD inline auto get_dict_ptr(TYPE const & t, OBJECT const & o)
 	{
-		if (ssize_t const offset{ (o && t) ? t->tp_dict_offset : 0 }; 0 < offset)
+		if (ssize_t const offset{ (o && t) ? t->tp_dictoffset : 0 }; 0 < offset)
 		{
 			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + offset);
 		}
@@ -250,7 +259,7 @@ namespace ism
 
 	NODISCARD inline auto get_weaklist_ptr(TYPE const & t, OBJECT const & o)
 	{
-		if (ssize_t const offset{ (o && t) ? t->tp_weaklist_offset : 0 }; 0 < offset)
+		if (ssize_t const offset{ (o && t) ? t->tp_weaklistoffset : 0 }; 0 < offset)
 		{
 			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + offset);
 		}
@@ -266,7 +275,7 @@ namespace ism
 
 	NODISCARD inline auto get_vectorcall_func(TYPE const & t, OBJECT const & o)
 	{
-		if (ssize_t const offset{ (o && t) ? t->tp_vectorcall_offset : 0 }; 0 < offset)
+		if (ssize_t const offset{ (o && t) ? t->tp_vectorcalloffset : 0 }; 0 < offset)
 		{
 			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(*o) + offset);
 		}

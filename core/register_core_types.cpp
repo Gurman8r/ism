@@ -21,20 +21,20 @@ void ism::register_core_types()
 	VERIFY(typeof<MODULE>()->ready());
 	VERIFY(typeof<GENERIC>()->ready());
 
-	TypeDB::register_class<BaseObject>();
-	TypeDB::register_class<TypeObject>();
-	TypeDB::register_class<IntObject>();
-	TypeDB::register_class<FloatObject>();
-	TypeDB::register_class<StringObject>();
-	TypeDB::register_class<ListObject>();
-	TypeDB::register_class<DictObject>();
-	TypeDB::register_class<CapsuleObject>();
-	TypeDB::register_class<FunctionObject>();
-	TypeDB::register_class<MethodObject>();
-	TypeDB::register_class<PropertyObject>();
-	TypeDB::register_class<CppFunctionObject>();
-	TypeDB::register_class<ModuleObject>();
-	TypeDB::register_class<GenericObject>();
+	TypeDB::register_class<BaseObject>(nullptr);
+	TypeDB::register_class<TypeObject>(nullptr);
+	TypeDB::register_class<IntObject>(nullptr);
+	TypeDB::register_class<FloatObject>(nullptr);
+	TypeDB::register_class<StringObject>(nullptr);
+	TypeDB::register_class<ListObject>(nullptr);
+	TypeDB::register_class<DictObject>(nullptr);
+	TypeDB::register_class<CapsuleObject>(nullptr);
+	TypeDB::register_class<FunctionObject>(nullptr);
+	TypeDB::register_class<MethodObject>(nullptr);
+	TypeDB::register_class<PropertyObject>(nullptr);
+	TypeDB::register_class<CppFunctionObject>(nullptr);
+	TypeDB::register_class<ModuleObject>(nullptr);
+	TypeDB::register_class<GenericObject>(nullptr);
 }
 
 void ism::register_core_driver_types()
