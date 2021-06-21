@@ -15,7 +15,7 @@ ISM_OBJECT_TYPE_STATIC(MethodObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
-	t.tp_descr_get = (descrgetfunc)[](OBJECT descr, OBJECT obj, OBJECT type) { return descr; };
+	t.tp_descr_get = (descrgetfunc)[](OBJECT self, OBJECT obj, OBJECT type) { return self; };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -27,7 +27,7 @@ namespace ism
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
-		> explicit IntObject(TYPE const & t, T v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
+		> explicit IntObject(TYPE const & t, T const v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
 		> IntObject(T const v) : base_type{ get_type_static() }, m_int{ static_cast<storage_type>(v) } {}

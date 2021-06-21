@@ -21,6 +21,7 @@ void ism::register_core_types()
 	VERIFY(typeof<MODULE>()->ready());
 	VERIFY(typeof<GENERIC>()->ready());
 
+	TypeDB::register_class<CppFunctionObject>(nullptr);
 	TypeDB::register_class<BaseObject>(nullptr);
 	TypeDB::register_class<TypeObject>(nullptr);
 	TypeDB::register_class<IntObject>(nullptr);
@@ -32,7 +33,6 @@ void ism::register_core_types()
 	TypeDB::register_class<FunctionObject>(nullptr);
 	TypeDB::register_class<MethodObject>(nullptr);
 	TypeDB::register_class<PropertyObject>(nullptr);
-	TypeDB::register_class<CppFunctionObject>(nullptr);
 	TypeDB::register_class<ModuleObject>(nullptr);
 	TypeDB::register_class<GenericObject>(nullptr);
 }

@@ -50,8 +50,6 @@ ISM_OBJECT_TYPE_STATIC(TypeObject, t)
 
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 	
-	t.tp_weaklistoffset = offsetof(TypeObject, tp_weaklist);
-	
 	t.tp_vectorcalloffset = offsetof(TypeObject, tp_vectorcall);
 
 	t.tp_hash = (hashfunc)[](OBJECT o) { return ism::hash(TYPE(o)->tp_name); };
@@ -60,13 +58,13 @@ ISM_OBJECT_TYPE_STATIC(TypeObject, t)
 	
 	t.tp_str = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
 
+	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+
 	t.tp_as_number = &type_as_number;
 	
 	t.tp_as_sequence = &type_as_sequence;
 	
 	t.tp_as_mapping = &type_as_mapping;
-
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 
 	t.tp_init = (initproc)type_init;
 
@@ -84,7 +82,6 @@ ISM_OBJECT_TYPE_STATIC(TypeObject, t)
 			t->tp_mro = nullptr;
 			t->tp_subclasses = nullptr;
 			t->tp_dict = nullptr;
-			t->tp_weaklist = nullptr;
 		}
 	};
 };
@@ -114,8 +111,6 @@ void TypeObject::_bind_class(OBJECT scope)
 		.def_property_readonly("__mro__", [](TYPE self) { return self->tp_mro; })
 	
 		.def_property_readonly("__dict__", [](TYPE self) { return self->tp_dict; })
-	
-		.def_property_readonly("__weaklist__", [](TYPE self) { return self->tp_weaklist; })
 	
 		.def_property_readonly("__text_signature__", [](TYPE self) { return STR{ /*TODO*/ }; })
 	
@@ -156,7 +151,7 @@ bool TypeObject::ready()
 
 	if (has_feature(TypeFlags_HaveGc | TypeFlags_BaseType) && (!tp_free || tp_free == memfree))
 	{
-		VERIFY(!"type participates in gc and is a base type but has inappropriate tp_free slot");
+		FATAL("type participates in gc and is a base type but has inappropriate tp_free slot");
 	}
 
 	copy_val(*tp_base, &TypeObject::tp_as_number);
@@ -384,7 +379,6 @@ void TypeObject::inherit_slots(TypeObject * base)
 	copy_slot(base, basebase, &TypeObject::tp_dictoffset);
 	copy_slot(base, basebase, &TypeObject::tp_init);
 	copy_slot(base, basebase, &TypeObject::tp_alloc);
-	copy_slot(base, basebase, &TypeObject::tp_is_gc);
 	copy_slot(base, basebase, &TypeObject::tp_finalize);
 	copy_slot(base, basebase, &TypeObject::tp_free);
 }

@@ -22,7 +22,7 @@ namespace ism
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> explicit FloatObject(TYPE const & t, T v) : base_type{ t }, m_float{ static_cast<storage_type>(v) } {}
+		> explicit FloatObject(TYPE const & t, T const v) : base_type{ t }, m_float{ static_cast<storage_type>(v) } {}
 
 		template <class T = storage_type, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> FloatObject(T const v) : base_type{ get_type_static() }, m_float{ static_cast<storage_type>(v) } {}
@@ -37,7 +37,7 @@ namespace ism
 	// float delete
 	template <> struct DefaultDelete<FloatObject> : DefaultDelete<BaseObject> {};
 
-	// dict check
+	// float check
 #define ISM_FLOAT_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Float_Subclass))
 
 	// float handle

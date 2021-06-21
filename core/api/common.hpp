@@ -375,6 +375,8 @@ public:																								\
 																									\
 	Handle(m_class * value) { if (value) { ref_pointer(value); } }									\
 																									\
+	Handle(Reference * value) { if (value) { reset(value); } }										\
+																									\
 	Handle(Ref<m_class> const & value) { ref(value); }												\
 																									\
 	template <class U> Handle(Ref<U> const & value) { reset(value); }								\

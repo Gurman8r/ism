@@ -95,6 +95,8 @@ namespace ism
 
 		Ref(T * value) { if (value) { ref_pointer(value); } }
 
+		Ref(Reference * value) { if (value) { reset(value); } }
+
 		Ref(Ref const & value) { ref(value); }
 
 		template <class U
@@ -120,13 +122,6 @@ namespace ism
 			m_ptr = nullptr;
 		}
 
-		T * release()
-		{
-			T * temp{ m_ptr };
-			m_ptr = nullptr;
-			return temp;
-		}
-
 		void reset(Ref const & value)
 		{
 			ref(value);
@@ -138,7 +133,7 @@ namespace ism
 			if (m_ptr == value) { return; }
 			unref();
 			T * r{ super_cast<T>(value) };
-			if (r) { ref_pointer(r) }
+			if (r) { ref_pointer(r); }
 		}
 
 		template <class U
@@ -150,6 +145,13 @@ namespace ism
 			r.m_ptr = super_cast<T>(other);
 			ref(r);
 			r.m_ptr = nullptr;
+		}
+
+		T * release()
+		{
+			T * temp{ m_ptr };
+			m_ptr = nullptr;
+			return temp;
 		}
 
 	public:

@@ -33,7 +33,9 @@ ISM_OBJECT_TYPE_STATIC(FloatObject, t)
 void FloatObject::_bind_class(OBJECT scope)
 {
 	CLASS_<FLT>(scope, "float", get_type_static())
+
 		.def(init<>())
+
 		;
 }
 

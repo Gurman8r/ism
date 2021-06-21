@@ -19,7 +19,7 @@ private:																			\
 	static ism::TypeObject ob_type_static;											\
 																					\
 protected:																			\
-	static void initialize_class(OBJECT scope)										\
+	static void initialize_class(ism::OBJECT scope)									\
 	{																				\
 		if (static bool once{}; !once && (once = true))								\
 		{																			\
@@ -32,7 +32,7 @@ protected:																			\
 		};																			\
 	}																				\
 																					\
-	virtual void _initialize_classv(OBJECT scope) override							\
+	virtual void _initialize_classv(ism::OBJECT scope) override						\
 	{																				\
 		m_class::initialize_class(scope);											\
 	}																				\
@@ -41,6 +41,7 @@ protected:																			\
 	{																				\
 		return &m_class::_bind_class;												\
 	}																				\
+																					\
 private:
 
 // object with type
@@ -48,17 +49,17 @@ private:
 ISM_OBJECT_COMMON(m_class, m_inherits)												\
 																					\
 protected:																			\
-	FORCE_INLINE virtual TYPE _get_typev() const override							\
+	FORCE_INLINE virtual ism::TYPE _get_typev() const override						\
 	{																				\
 		return m_class::get_type_static();											\
 	}																				\
 																					\
 public:																				\
-	explicit m_class(TYPE const & t) noexcept : m_inherits{ t } {}					\
+	explicit m_class(ism::TYPE const & t) noexcept : m_inherits{ t } {}				\
 																					\
 	COPYABLE_MOVABLE(m_class)														\
 																					\
-	FORCE_INLINE static TYPE get_type_static()										\
+	FORCE_INLINE static ism::TYPE get_type_static()									\
 	{																				\
 		return &m_class::ob_type_static;											\
 	}																				\
@@ -150,8 +151,6 @@ namespace ism
 	template <> class Handle<BaseObject> : public BaseHandle<BaseObject>
 	{
 		ISM_HANDLE_DEFAULT(BaseObject, ISM_OBJECT_CHECK);
-
-	public:
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

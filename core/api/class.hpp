@@ -47,8 +47,7 @@ namespace ism
 				attr::is_method(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			m_ptr->tp_dict[name] = cf;
-			//attr(cf.name()) = cf;
+			m_ptr->tp_dict[cf.name()] = cf;
 			return (*this);
 		}
 
@@ -61,8 +60,7 @@ namespace ism
 				attr::scope(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			m_ptr->tp_dict[name] = cf;
-			//attr(cf.name()) = cf;
+			m_ptr->tp_dict[cf.name()] = cf;
 			return (*this);
 		}
 
@@ -149,16 +147,12 @@ namespace ism
 		template <class ... Extra
 		> CLASS_ & def_property_static(cstring name, CPP_FUNCTION const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			if (function_record * rec_fget{ fget ? &fget->m_rec : nullptr }) {
-				attr::process_attributes<Extra...>::init(*rec_fget, FWD(extra)...);
-			}
+			if (fget) { attr::process_attributes<Extra...>::init(***fget, FWD(extra)...); }
 	
-			if (function_record * rec_fset{ fset ? &fset->m_rec : nullptr }) {
-				attr::process_attributes<Extra...>::init(*rec_fset, FWD(extra)...);
-			}
+			if (fset) { attr::process_attributes<Extra...>::init(***fset, FWD(extra)...); }
 
 			m_ptr->tp_dict[name] = PROPERTY({ fget, fset });
-			//attr(name) = PROPERTY({ fget, fset });
+			
 			return (*this);
 		}
 	};

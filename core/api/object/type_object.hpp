@@ -89,7 +89,6 @@ namespace ism
 		allocfunc			tp_alloc{};
 		newfunc				tp_new{};
 		freefunc			tp_free{};
-		inquiry				tp_is_gc{};
 		destructor			tp_finalize{};
 
 		NumberMethods *		tp_as_number{};
@@ -102,7 +101,6 @@ namespace ism
 		OBJECT				tp_dict{};
 		OBJECT				tp_mro{};
 		OBJECT				tp_subclasses{};
-		OBJECT				tp_weaklist{};
 		vectorcallfunc		tp_vectorcall{};
 
 	public:

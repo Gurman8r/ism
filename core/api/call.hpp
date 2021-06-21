@@ -128,11 +128,11 @@ namespace ism
 	{
 		String name{}, doc{}, signature{};
 
-		OBJECT(*impl)(struct function_call & call) {};
+		OBJECT(*impl)(struct function_call &) {};
 
 		void * data[3]{};
 
-		void(*free_data)(function_record * record) {};
+		void(*free_data)(function_record *) {};
 
 		uint16_t argument_count{};
 
@@ -144,7 +144,16 @@ namespace ism
 
 		BaseObject * scope{}, * sibling{};
 
+		function_record * next{};
+
 		DEFAULT_COPYABLE_MOVABLE(function_record);
+
+		~function_record()
+		{
+			if (free_data) { free_data(this); }
+
+			if (next) { memdelete(next); next = nullptr; }
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -152,11 +161,13 @@ namespace ism
 	// function call
 	struct NODISCARD function_call final
 	{
-		function_record const & func;
+		function_record const & record;
 		
 		OBJECT parent{};
 
-		Batch<OBJECT, bool> args{ func.argument_count };
+		Batch<OBJECT, bool> args{ record.argument_count };
+
+		bool try_next_overload{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
