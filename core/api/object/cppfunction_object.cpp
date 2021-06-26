@@ -121,7 +121,8 @@ OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_
 
 			OBJECT arg{ argv[num_copied] };
 
-			if (arg_rec && !arg_rec->none && arg.is_null()) {
+			if (arg_rec && !arg_rec->none && arg.is_null())
+			{
 				FATAL("BAD ARGUMENT");
 			}
 
@@ -140,8 +141,13 @@ OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_
 				else { call.args.push_back(arg_rec.value, arg_rec.convert); }
 			}
 
-			if (num_copied < num_args) {
-				FATAL("NOT ENOUGH ARGUMENTS");
+			if (num_copied < num_args)
+			{
+				if (it->next) { continue; }
+				else
+				{
+					FATAL("NOT ENOUGH ARGUMENTS");
+				}
 			}
 		}
 

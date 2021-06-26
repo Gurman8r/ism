@@ -51,6 +51,7 @@ namespace ism
 			.def("get_float", get_float)
 			.def("get_string", get_string)
 			.def("pass_ptr", [](void * a) { return a; })
+			.def("pass_ptr", [](void * a, void * b) { return b; })
 			;
 
 		//CLASS_<Test>(m, "Test")
@@ -64,6 +65,7 @@ namespace ism
 		m.attr("hello")();
 		m.attr("say")(m.attr("get_string")());
 		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
+		VERIFY(m.attr("pass_ptr")((void *)123, (void *)321).cast<void const *>() == (void *)321);
 
 		MAIN_PRINT("%s\n", typeof<METHOD>().attr("__subclasscheck__")(typeof<FUNCTION>()) ? "true" : "false");
 		
