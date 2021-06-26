@@ -32,7 +32,7 @@ namespace ism
 #define ISM_MODULE_CHECK(o) (ism::isinstance<MODULE>(o))
 
 	// module handle
-	template <> class Handle<ModuleObject> : public BaseHandle<ModuleObject>
+	template <> class NOVTABLE Handle<ModuleObject> : public BaseHandle<ModuleObject>
 	{
 		ISM_HANDLE_DEFAULT(ModuleObject, ISM_MODULE_CHECK);
 

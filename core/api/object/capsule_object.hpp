@@ -78,7 +78,7 @@ namespace ism
 #define ISM_CAPSULE_CHECK(o) (ism::isinstance<CAPSULE>(o))
 
 	// capsule handle
-	template <> class Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
+	template <> class NOVTABLE Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
 	{
 		ISM_HANDLE_DEFAULT(CapsuleObject, ISM_CAPSULE_CHECK);
 

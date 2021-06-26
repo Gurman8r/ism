@@ -42,7 +42,7 @@ namespace ism::attr
 	}
 
 // object attribute
-#define ISM_BASIC_ATTRIBUTE_O(m_class, m_value) \
+#define ISM_ATTR_OBJECT(m_class, m_value) \
 	struct m_class final { \
 		ism::BaseObject * const m_value; \
 		explicit m_class(ism::BaseObject * value) : m_value{ value } {} \
@@ -50,7 +50,7 @@ namespace ism::attr
 	}
 
 // string attribute
-#define ISM_BASIC_ATTRIBUTE_S(m_class, m_value) \
+#define ISM_ATTR_STRING(m_class, m_value) \
 	struct m_class final { \
 		char const * const m_value; \
 		explicit m_class(char const * value) : m_value{ value } {} \
@@ -58,7 +58,7 @@ namespace ism::attr
 	}
 
 // bool attribute
-#define ISM_BASIC_ATTRIBUTE_B(m_class, m_value) \
+#define ISM_ATTR_BOOL(m_class, m_value) \
 	struct m_class final { \
 		bool const m_value; \
 		explicit m_class(bool value) : m_value{ value } {} \
@@ -71,14 +71,14 @@ namespace ism::attr
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// name
-	ISM_BASIC_ATTRIBUTE_S(name, value);
+	ISM_ATTR_STRING(name, value);
 	template <> ISM_PROCESS_ATTRIBUTE(name) {
 		static void init(function_record & r, name && a) { r.name = a.value; }
 		static void init(TypeObject & r, name && a) { r.tp_name = a.value; }
 	};
 
 	// doc
-	ISM_BASIC_ATTRIBUTE_S(doc, value);
+	ISM_ATTR_STRING(doc, value);
 	template <> ISM_PROCESS_ATTRIBUTE(doc) {
 		static void init(function_record & r, doc && a) { r.doc = a.value; }
 		static void init(TypeObject & r, doc && a) { r.tp_doc = a.value; }
@@ -97,19 +97,19 @@ namespace ism::attr
 	};
 
 	// sibling
-	ISM_BASIC_ATTRIBUTE_O(sibling, value);
+	ISM_ATTR_OBJECT(sibling, value);
 	template <> ISM_PROCESS_ATTRIBUTE(sibling) {
 		static void init(function_record & r, sibling && a) { r.sibling = a.value; }
 	};
 
 	// is_method
-	ISM_BASIC_ATTRIBUTE_O(is_method, value);
+	ISM_ATTR_OBJECT(is_method, value);
 	template <> ISM_PROCESS_ATTRIBUTE(is_method) {
 		static void init(function_record & r, is_method && a) { r.is_method = true; r.scope = a.value; }
 	};
 
 	// scope
-	ISM_BASIC_ATTRIBUTE_O(scope, value);
+	ISM_ATTR_OBJECT(scope, value);
 	template <> ISM_PROCESS_ATTRIBUTE(scope) {
 		static void init(function_record & r, scope && a) { r.scope = a.value; }
 	};
@@ -158,13 +158,13 @@ namespace ism::attr
 	};
 
 	// metaclass
-	ISM_BASIC_ATTRIBUTE_O(metaclass, value);
+	ISM_ATTR_OBJECT(metaclass, value);
 	template <> ISM_PROCESS_ATTRIBUTE(metaclass) {
 		static void init(TypeObject & r, type && a) { /*r.set_type(super_cast<TypeObject>(a.value));*/ }
 	};
 
 	// module_local
-	ISM_BASIC_ATTRIBUTE_B(module_local, value);
+	ISM_ATTR_BOOL(module_local, value);
 	template <> ISM_PROCESS_ATTRIBUTE(module_local) {
 		static void init(TypeObject & r, module_local && a) { /*r.tp_module_local = a.value;*/ }
 	};
@@ -193,7 +193,7 @@ namespace ism::attr
 	{
 		struct type
 		{
-			T guard{}; // Compose multiple guard types with left-to-right default-constructor order
+			T guard{}; // compose multiple guard types with left-to-right default-constructor order
 
 			typename call_guard<Ts...>::type next{};
 		};

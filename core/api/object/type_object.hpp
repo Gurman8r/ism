@@ -203,11 +203,13 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type handle
-	template <> class Handle<TypeObject> : public BaseHandle<TypeObject>
+	template <> class NOVTABLE Handle<TypeObject> : public BaseHandle<TypeObject>
 	{
 		ISM_HANDLE_DEFAULT(TypeObject, ISM_TYPE_CHECK);
 
 	public:
+		NODISCARD bool ready() const { return m_ptr->ready(); }
+
 		NODISCARD bool has_feature(int32_t flag) const { return m_ptr->has_feature(flag); }
 
 		NODISCARD OBJECT lookup(OBJECT const & name) const { return m_ptr->lookup(name); }

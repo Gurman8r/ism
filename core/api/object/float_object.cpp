@@ -35,6 +35,8 @@ void FloatObject::_bind_class(OBJECT scope)
 	CLASS_<FLT>(scope, "float", get_type_static())
 
 		.def(init<>())
+		
+		.def(init<storage_type>())
 
 		;
 }

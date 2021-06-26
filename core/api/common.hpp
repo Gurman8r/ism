@@ -150,6 +150,23 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	typedef enum MethodFlags_ : int32_t
+	{
+		MethodFlags_None		= 1 << 0,
+		MethodFlags_VarArgs		= 1 << 1,
+		MethodFlags_KeyArgs		= 1 << 2,
+		MethodFlags_NoArgs		= 1 << 3,
+		MethodFlags_O			= 1 << 4,
+		MethodFlags_Class		= 1 << 5,
+		MethodFlags_Static		= 1 << 6,
+		MethodFlags_Coexist		= 1 << 7,
+		MethodFlags_FastCall	= 1 << 8,
+		MethodFlags_Method		= 1 << 9,
+	}
+	MethodFlags;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ALIAS(unaryfunc)		OBJECT(*)(OBJECT a);
 	ALIAS(binaryfunc)		OBJECT(*)(OBJECT a, OBJECT b);
 	ALIAS(ternaryfunc)		OBJECT(*)(OBJECT a, OBJECT b, OBJECT c);
@@ -346,7 +363,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
+	template <class T> class NOVTABLE BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
 	{
 	protected:
 		BaseHandle() noexcept = default;

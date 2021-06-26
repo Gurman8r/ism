@@ -84,6 +84,11 @@ ISM_OBJECT_TYPE_STATIC(TypeObject, t)
 			t->tp_dict = nullptr;
 		}
 	};
+
+	//t.tp_vectorcall = (vectorcallfunc)[](OBJECT callable, OBJECT const * argv, size_t argc) -> OBJECT
+	//{
+	//	return nullptr;
+	//};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -387,7 +392,7 @@ void TypeObject::inherit_slots(TypeObject * base)
 
 OBJECT ism::type_getattr(TYPE type, OBJECT name)
 {
-	if (!type->tp_dict && !type->ready()) { return nullptr; }
+	if (!type->tp_dict && !type.ready()) { return nullptr; }
 
 	TYPE metatype{ typeof(type) };
 
@@ -448,24 +453,24 @@ OBJECT ism::type_call(OBJECT self, OBJECT args)
 			return nullptr;
 		}
 	}
-
+	
 	if (!type->tp_new) { return nullptr; }
-
+	
 	OBJECT obj{ type->tp_new(type, args) };
-
+	
 	if (!obj) { return nullptr; }
-
+	
 	if (!typeof(obj).is_subtype(type)) { return obj; }
-
+	
 	type = typeof(obj);
-
+	
 	if (type->tp_init)
 	{
 		Error const err{ type->tp_init(obj, args) };
-
+	
 		VERIFY(err == Error_None);
 	}
-
+	
 	return obj;
 }
 

@@ -7,7 +7,7 @@
 namespace ism
 {
 	// function object
-	class ISM_API ism::FunctionObject : public BaseObject
+	class ISM_API FunctionObject : public BaseObject
 	{
 		ISM_OBJECT_DEFAULT(FunctionObject, BaseObject);
 
@@ -15,9 +15,15 @@ namespace ism
 		static void _bind_class(OBJECT scope);
 
 	public:
-		OBJECT m_dict;
+		OBJECT m_name{}, m_doc{}, m_qualname{};
 
-		vectorcallfunc m_vectorcall;
+		OBJECT m_dict{}, m_module{};
+
+		int32_t m_flags{};
+
+		vectorcallfunc m_vectorcall{};
+
+		virtual ~FunctionObject() noexcept override = default;
 	};
 
 	// function delete
@@ -27,7 +33,7 @@ namespace ism
 #define ISM_FUNCTION_CHECK(o) (isinstance<FUNCTION>(o))
 
 	// function handle
-	template <> class Handle<FunctionObject> : public BaseHandle<FunctionObject>
+	template <> class NOVTABLE Handle<FunctionObject> : public BaseHandle<FunctionObject>
 	{
 		ISM_HANDLE_DEFAULT(FunctionObject, ISM_FUNCTION_CHECK);
 

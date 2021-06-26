@@ -32,7 +32,7 @@ namespace ism
 #define ISM_METHOD_CHECK(o) (isinstance<METHOD>(o))
 
 	// method handle
-	template <> class Handle<MethodObject> : public BaseHandle<MethodObject>
+	template <> class NOVTABLE Handle<MethodObject> : public BaseHandle<MethodObject>
 	{
 		ISM_HANDLE_DEFAULT(MethodObject, ISM_METHOD_CHECK);
 

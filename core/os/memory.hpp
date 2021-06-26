@@ -25,9 +25,9 @@ namespace ism
 
 #define memalloc (ism::Memory::alloc_static)
 
-#define memrealloc(ptr, size) ism::Memory::realloc_static(ptr, size, size)
+#define memrealloc(ptr, size) (ism::Memory::realloc_static(ptr, size, size))
 
-#define memrealloc_sized(ptr, oldsz, newsz) ism::Memory::realloc_static(ptr, oldsz, newsz)
+#define memrealloc_sized(ptr, oldsz, newsz) (ism::Memory::realloc_static(ptr, oldsz, newsz))
 
 #define memfree (ism::Memory::free_static)
 

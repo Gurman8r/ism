@@ -50,7 +50,7 @@ namespace ism
 			.def("get_uint", get_uint)
 			.def("get_float", get_float)
 			.def("get_string", get_string)
-			.def("pass_ptr", [](void * ptr) { return ptr; })
+			.def("pass_ptr", [](void * a) { return a; })
 			;
 
 		//CLASS_<Test>(m, "Test")
@@ -78,7 +78,7 @@ namespace ism
 		VERIFY(d.contains("ABC"));
 		MAIN_PRINT("%d\n", d["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
-		MAIN_PRINT("%s\n", typeof(d).name().cast<std::string>().c_str());
+		MAIN_PRINT("%s\n", typeof(d).name().cast<String>().c_str());
 		typeof(d).name() = "changed";
 		MAIN_PRINT("%s\n", STR(typeof(d).name()).c_str());
 		

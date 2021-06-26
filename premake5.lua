@@ -32,6 +32,7 @@ solution_items{
 	".ism",
 	"premake5.lua",
 	"README.md",
+	"TODO.txt",
 }
 
 group ""

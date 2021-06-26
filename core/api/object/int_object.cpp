@@ -33,7 +33,11 @@ ISM_OBJECT_TYPE_STATIC(IntObject, t)
 void IntObject::_bind_class(OBJECT scope)
 {
 	CLASS_<INT>(scope, "int", get_type_static())
+
 		.def(init<>())
+
+		.def(init<storage_type>())
+
 		;
 }
 

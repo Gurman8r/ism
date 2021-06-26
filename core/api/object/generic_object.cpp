@@ -18,8 +18,10 @@ ISM_OBJECT_TYPE_STATIC(GenericObject, t)
 
 void GenericObject::_bind_class(OBJECT scope)
 {
-	CLASS_<GENERIC>(scope, "generic", get_type_static())
+	CLASS_<GENERIC>(scope, "generic_type", get_type_static())
+
 		.def(init<>())
+
 		;
 }
 

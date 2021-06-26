@@ -117,8 +117,6 @@ namespace ism
 		OBJECT value{};
 
 		bool convert{}, none{};
-
-		DEFAULT_COPYABLE_MOVABLE(argument_record);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -126,34 +124,27 @@ namespace ism
 	// function record
 	struct NODISCARD function_record final
 	{
-		String name{}, doc{}, signature{};
+		String name, doc, signature;
 
-		OBJECT(*impl)(struct function_call &) {};
+		OBJECT(*impl)(struct function_call &);
 
-		void * data[3]{};
+		void * data[3];
 
-		void(*free_data)(function_record *) {};
+		void(*free_data)(function_record *);
 
-		uint16_t argument_count{};
+		uint16_t argument_count;
 
-		Vector<argument_record> args{};
+		Vector<argument_record> args;
 
 		ReturnPolicy policy{ ReturnPolicy_AutomaticReference };
 
-		bool is_stateless{}, is_constructor{}, is_operator{}, is_method{}, prepend{};
+		bool is_stateless, is_constructor, is_operator, is_method, prepend;
 
-		BaseObject * scope{}, * sibling{};
+		BaseObject * scope, * sibling;
 
-		function_record * next{};
+		function_record * next;
 
-		DEFAULT_COPYABLE_MOVABLE(function_record);
-
-		~function_record()
-		{
-			if (free_data) { free_data(this); }
-
-			if (next) { memdelete(next); next = nullptr; }
-		}
+		~function_record() { if (free_data) { free_data(this); } }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

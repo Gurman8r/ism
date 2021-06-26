@@ -33,16 +33,13 @@ bool BaseObject::set_type(TYPE const & value) { return (bool)(ob_type = value); 
 
 ISM_OBJECT_TYPE_STATIC(BaseObject, t)
 {
-	t.tp_name = "object";
-	t.tp_size = sizeof(BaseObject);
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
-	t.tp_base = nullptr;
 
 	t.tp_getattro = (getattrofunc)generic_getattr;
+
 	t.tp_setattro = (setattrofunc)generic_setattr;
 
-	t.tp_alloc = (allocfunc)[](size_t size) { return memalloc(size); };
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((BaseObject *)ptr); };
+	t.tp_hash = (hashfunc)[](OBJECT o) { return Hash<void *>{}(*o); };
 
 	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
 };
@@ -52,7 +49,9 @@ ISM_OBJECT_TYPE_STATIC(BaseObject, t)
 void BaseObject::_bind_class(OBJECT scope)
 {
 	CLASS_<OBJECT>(scope, "object", get_type_static())
+
 		//.def(init<>())
+
 		;
 }
 
@@ -60,11 +59,7 @@ void BaseObject::_bind_class(OBJECT scope)
 
 OBJECT ism::object_alloc(TYPE type)
 {
-	auto const size{ (size_t)type->tp_size };
-
-	auto const obj{ (BaseObject *)memalloc(size) };
-
-	return OBJECT(obj);
+	return nullptr;
 }
 
 Error ism::object_init(OBJECT self, OBJECT args)

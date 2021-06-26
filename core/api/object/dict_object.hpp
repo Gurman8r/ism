@@ -48,7 +48,7 @@ namespace ism
 #define ISM_DICT_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Dict_Subclass))
 
 	// dict handle
-	template <> class Handle<DictObject> : public BaseHandle<DictObject>
+	template <> class NOVTABLE Handle<DictObject> : public BaseHandle<DictObject>
 	{
 		ISM_HANDLE_DEFAULT(DictObject, ISM_DICT_CHECK);
 

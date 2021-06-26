@@ -23,75 +23,72 @@ ISM_OBJECT_TYPE_STATIC(CppFunctionObject, t)
 	};
 };
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 void CppFunctionObject::_bind_class(OBJECT scope)
 {
 	CLASS_<CPP_FUNCTION>(scope, "cpp_function", get_type_static())
 
 		//.def(init<>())
 
-		.def_property("__name__", [](CPP_FUNCTION self) { return self->m_record.name; }, [](CPP_FUNCTION self, STR value) { self->m_record.name = value; })
+		.def_property("__name__", [](CPP_FUNCTION self) { return (***self).name; }, [](CPP_FUNCTION self, STR value) { (***self).name = value; })
 
-		.def_property("__doc__", [](CPP_FUNCTION self) { return self->m_record.doc; }, [](CPP_FUNCTION self, STR value) { self->m_record.doc = value; })
+		.def_property("__doc__", [](CPP_FUNCTION self) { return (***self).doc; }, [](CPP_FUNCTION self, STR value) { (***self).doc = value; })
 
+		.def_property("__text_signature__", [](CPP_FUNCTION self) { return (***self).signature; }, [](CPP_FUNCTION self, STR value) { (***self).signature = value; })
+		
 		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CppFunctionObject::initialize_generic(std::type_info const * const * info_in, size_t argc_in)
+CppFunctionObject::~CppFunctionObject()
 {
-	m_record.argument_count = argc_in;
+	while (m_record)
+	{
+		auto next{ m_record->next };
 
-	m_record.args.reserve(argc_in);
+		memdelete(m_record);
+
+		m_record = next;
+	}
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CppFunctionObject::initialize_generic(function_record * rec, std::type_info const * const * info_in, size_t argc_in)
+{
+	VERIFY(m_record = rec);
+
+	VERIFY(!rec->next);
+
+	rec->argument_count = argc_in;
+
+	rec->args.reserve(argc_in);
 
 	for (size_t i = 0; i < argc_in; ++i)
 	{
-		// generate argument info
-
 		String const arg_str{ "arg" + util::to_string(i) };
 
-		m_record.args.push_back({ arg_str, nullptr, false, false });
+		rec->args.push_back(argument_record{ arg_str, nullptr, false, false });
 	}
 
-	function_record * chain{}, * chain_start{ &m_record };
-
-	if (CPP_FUNCTION::check_(m_record.sibling))
+	if (CPP_FUNCTION::check_(rec->sibling))
 	{
-		chain = &((self_type *)m_record.sibling)->m_record;
-
-		if (chain->scope != m_record.scope) { chain = nullptr; }
-	}
-
-	if (!chain)
-	{
-		OBJECT scope_module{};
-		if (m_record.scope) {
-			if (hasattr(m_record.scope, "__module__")) { scope_module = m_record.scope->attr("__module__"); }
-			else if (hasattr(m_record.scope, "__name__")) { scope_module = m_record.scope->attr("__name__"); }
-		}
-
-		//m_ptr = PyCFunction_NewEx(m_record.def, rec_capsule.ptr(), scope_module.ptr());
-	}
-	else
-	{
-		//m_ptr = m_record.sibling.ptr();
-
-		VERIFY(chain->is_method == m_record.is_method);
-
-		if (m_record.prepend)
+		if (CPP_FUNCTION sib{ rec->sibling }; rec->scope == sib->m_record->scope)
 		{
-			chain_start = &m_record;
-			m_record.next = chain;
-		}
-		else
-		{
-			chain_start = chain;
-			while (chain->next) { chain = chain->next; }
-			chain->next = &m_record;
+			rec->next = sib->m_record;
+
+			sib->m_record = nullptr;
 		}
 	}
 
-	//if (m_record.is_method) { m_ptr = PYBIND11_INSTANCE_METHOD_NEW(m_ptr, m_record.scope.ptr()); }
+	if (!rec->next && rec->scope)
+	{
+		if (hasattr(rec->scope, "__module__")) { m_module = rec->scope->attr("__module__"); }
+
+		else if (hasattr(rec->scope, "__name__")) { m_module = rec->scope->attr("__name__"); }
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -102,7 +99,7 @@ OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_
 
 	OBJECT parent{ 0 < argc ? argv[0] : nullptr };
 
-	function_record const * overloads{ &CPP_FUNCTION(callable)->m_record }, * it{ overloads };
+	function_record const * overloads{ &***CPP_FUNCTION(callable) }, * it{ overloads };
 
 	bool const overloaded{ it && it->next };
 
@@ -124,7 +121,9 @@ OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_
 
 			OBJECT arg{ argv[num_copied] };
 
-			VERIFY("BAD ARGUMENT" && !(arg_rec && !arg_rec->none && arg.is_null()));
+			if (arg_rec && !arg_rec->none && arg.is_null()) {
+				FATAL("BAD ARGUMENT");
+			}
 
 			call.args.push_back(arg, arg_rec ? arg_rec->convert : false);
 		}
@@ -134,12 +133,16 @@ OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_
 		{
 			for (; num_copied < num_args; ++num_copied)
 			{
-				if (argument_record const & arg_rec{ func.args[num_copied] }; !arg_rec.value) { break; }
+				argument_record const & arg_rec{ func.args[num_copied] };
+
+				if (!arg_rec.value) { break; }
 
 				else { call.args.push_back(arg_rec.value, arg_rec.convert); }
 			}
 
-			VERIFY("NOT ENOUGH ARGUMENTS" && (num_args <= num_copied));
+			if (num_copied < num_args) {
+				FATAL("NOT ENOUGH ARGUMENTS");
+			}
 		}
 
 		// execute call

@@ -57,8 +57,6 @@ protected:																			\
 public:																				\
 	explicit m_class(ism::TYPE const & t) noexcept : m_inherits{ t } {}				\
 																					\
-	COPYABLE_MOVABLE(m_class)														\
-																					\
 	FORCE_INLINE static ism::TYPE get_type_static()									\
 	{																				\
 		return &m_class::ob_type_static;											\
@@ -143,14 +141,14 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// object check
-#define ISM_OBJECT_CHECK(o) (true)
+#define ISM_OBJECT_NO_CHECK(o) (true)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// object handle
-	template <> class Handle<BaseObject> : public BaseHandle<BaseObject>
+	template <> class NOVTABLE Handle<BaseObject> : public BaseHandle<BaseObject>
 	{
-		ISM_HANDLE_DEFAULT(BaseObject, ISM_OBJECT_CHECK);
+		ISM_HANDLE_DEFAULT(BaseObject, ISM_OBJECT_NO_CHECK);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -244,13 +242,17 @@ namespace ism
 		else if constexpr (mpl::is_string_v<Index>)
 		{
 			if (t->tp_getattr) { return t->tp_getattr(o, FWD(i)); }
+
 			else if (t->tp_getattro) { return t->tp_getattro(o, FWD_OBJ(i)); }
+
 			else { return nullptr; }
 		}
 		else
 		{
 			if (t->tp_getattro) { return t->tp_getattro(o, FWD_OBJ(i)); }
+
 			else if (t->tp_getattr) { return t->tp_getattr(o, STR(FWD(i)).c_str()); }
+
 			else { return nullptr; }
 		}
 	}
@@ -272,13 +274,17 @@ namespace ism
 		else if constexpr (mpl::is_string_v<Index>)
 		{
 			if (t->tp_setattr) { return t->tp_setattr(o, FWD(i), FWD_OBJ(v)); }
+
 			else if (t->tp_getattro) { return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v)); }
+
 			else { return Error_Unknown; }
 		}
 		else
 		{
 			if (t->tp_getattro) { return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v)); }
+
 			else if (t->tp_setattr) { return t->tp_setattr(o, STR(FWD(i)).c_str(), FWD_OBJ(v)); }
+
 			else { return Error_Unknown; }
 		}
 	}

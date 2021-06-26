@@ -19,9 +19,13 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__init__", [](Holder<Class> v_h, Args ... args)
+			return c.def("__init__", [](Holder<Class> h, Args ... args)
 			{
-				v_h.instance(args...);
+				//::new (h.ptr()) Cpp<Class>{ args... };
+
+				h.instance(args...);
+
+				return h;
 			}
 			, attr::is_constructor(), FWD(extra)...);
 		}
@@ -29,9 +33,11 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__init__", [](Holder<Class> v_h, Args ... args)
+			return c.def("__init__", [](Holder<Class> h, Args ... args)
 			{
 				// TODO...
+
+				return h;
 			}
 			, attr::is_constructor(), FWD(extra)...);
 		}
@@ -49,9 +55,13 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__init__", [fn = std::move(class_factory)](Holder<Class> v_h, Args ... args)
+			return c.def("__init__", [fn = std::move(class_factory)](Holder<Class> h, Args ... args)
 			{
-				v_h.instance(fn(args...));
+				//::new (h.ptr()) Cpp<Class> { fn(args...) };
+
+				h.instance(fn(args...));
+
+				return h;
 			}
 			, attr::is_constructor(), FWD(extra)...);
 		}
@@ -59,9 +69,11 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__init__", [fn = std::move(class_factory)](Holder<Class> v_h, Args ... args)
+			return c.def("__init__", [fn = std::move(class_factory)](Holder<Class> h, Args ... args)
 			{
 				// TODO...
+
+				return h;
 			}
 			, attr::is_constructor(), FWD(extra)...);
 		}

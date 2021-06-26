@@ -53,7 +53,7 @@ namespace ism
 #define ISM_LIST_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_List_Subclass))
 
 	// list handle
-	template <> class Handle<ListObject> : public BaseHandle<ListObject>
+	template <> class NOVTABLE Handle<ListObject> : public BaseHandle<ListObject>
 	{
 		ISM_HANDLE_DEFAULT(ListObject, ISM_LIST_CHECK);
 

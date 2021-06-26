@@ -24,6 +24,10 @@ void FunctionObject::_bind_class(OBJECT scope)
 
 		//.def(init<>())
 
+		//.def_property("__name__", [](FUNCTION self) { return self->m_name; }, [](FUNCTION self, STR value) { self->m_name = value; })
+
+		//.def_property("__doc__", [](FUNCTION self) { return self->m_doc; }, [](FUNCTION self, STR value) { self->m_doc = value; })
+
 		;
 }
 

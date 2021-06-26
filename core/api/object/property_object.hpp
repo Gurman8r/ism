@@ -41,7 +41,7 @@ namespace ism
 #define ISM_PROPERTY_CHECK(o) (ism::isinstance<PROPERTY>(o))
 
 	// property handle
-	template <> class Handle<PropertyObject> : public BaseHandle<PropertyObject>
+	template <> class NOVTABLE Handle<PropertyObject> : public BaseHandle<PropertyObject>
 	{
 		ISM_HANDLE_DEFAULT(PropertyObject, ISM_PROPERTY_CHECK);
 

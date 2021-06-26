@@ -1,1 +1,3 @@
-Handle/Object to operate on Instance
+function overloading
+global type database (map cpptype to typeobject)
+generic types

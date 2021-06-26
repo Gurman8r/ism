@@ -24,7 +24,7 @@ namespace ism
 #define ISM_GENERIC_CHECK(o) (ism::isinstance<GENERIC>(o))
 
 	// generic handle
-	template <> class Handle<GenericObject> : public BaseHandle<GenericObject>
+	template <> class NOVTABLE Handle<GenericObject> : public BaseHandle<GenericObject>
 	{
 		ISM_HANDLE_DEFAULT(GenericObject, ISM_GENERIC_CHECK);
 

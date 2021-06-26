@@ -26,16 +26,16 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
-		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
+		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> explicit IntObject(TYPE const & t, T const v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
 
-		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
+		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> IntObject(T const v) : base_type{ get_type_static() }, m_int{ static_cast<storage_type>(v) } {}
 
-		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
+		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> IntObject & operator=(T const v) { m_int = static_cast<storage_type>(v); return (*this); }
 
-		template <class T = storage_type, class = std::enable_if_t<std::is_integral_v<T>>
+		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> NODISCARD operator T() const & { return static_cast<T>(m_int); }
 
 	public:
@@ -51,7 +51,7 @@ namespace ism
 #define ISM_INT_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Int_Subclass))
 
 	// int handle
-	template <> class Handle<IntObject> : public BaseHandle<IntObject>
+	template <> class NOVTABLE Handle<IntObject> : public BaseHandle<IntObject>
 	{
 		ISM_HANDLE_DEFAULT(IntObject, ISM_INT_CHECK);
 
