@@ -66,10 +66,10 @@ namespace ism
 	template <> struct DefaultDelete<StringObject> : DefaultDelete<BaseObject> {};
 
 	// string check
-#define ISM_STR_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Str_Subclass))
+#define ISM_STR_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))
 
 	// string handle
-	template <> class NOVTABLE Handle<StringObject> : public BaseHandle<StringObject>
+	template <> class Handle<StringObject> : public BaseHandle<StringObject>
 	{
 		ISM_HANDLE_DEFAULT(StringObject, ISM_STR_CHECK);
 

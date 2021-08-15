@@ -3,8 +3,12 @@
 #include <core/templates/batch.hpp>
 #include <core/error/error_macros.hpp>
 
-#ifndef IMPL_NOCLEANUP
-#define IMPL_NOCLEANUP 1
+#ifndef ISM_MEMORY_LEAK_DISPLAY
+#define ISM_MEMORY_LEAK_DISPLAY 1
+#endif
+
+#ifndef ISM_MEMORY_LEAK_CLEANUP
+#define ISM_MEMORY_LEAK_CLEANUP 0
 #endif
 
 namespace ism
@@ -21,21 +25,27 @@ namespace ism
 
 		~MemoryTracker()
 		{
+#if ISM_MEMORY_LEAK_DISPLAY
 			if (!records.empty())
 			{
+				get_os().print("\n\nMEMORY LEAKS DETECTED:");
+
 				for (size_t i = 0; i < records.size(); ++i)
 				{
 					records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
 					{
-						std::printf("\nindex:%zu, size:%zu, addr:%p, desc: %s", index, size, addr, desc);
+						get_os().print("\nindex:%zu, size:%zu, addr:%p, desc: %s", index, size, addr, desc);
 					});
 				}
-			}
 
-#if IMPL_NOCLEANUP
-			VERIFY("MEMORY LEAKS DETECTED" && g_memory.records.empty());
-#else
+				get_os().pause();
+			}
+#endif
+
+#if ISM_MEMORY_LEAK_CLEANUP
 			while (!records.empty()) { memfree(records.back<ID_addr>()); }
+#else
+			VERIFY("MEMORY LEAKS DETECTED" && g_memory.records.empty());
 #endif
 		}
 	}
@@ -45,11 +55,11 @@ namespace ism
 
 	void * Memory::alloc_static(size_t size, cstring desc)
 	{
-		auto const res{ std::pmr::get_default_resource() };
+		std::pmr::memory_resource * const mres{ std::pmr::get_default_resource() };
 
 		return std::get<ID_addr>(g_memory.records.push_back
 		(
-			++g_memory.index, size, res->allocate(size), desc
+			++g_memory.index, size, mres->allocate(size), desc
 		));
 	}
 
@@ -84,12 +94,12 @@ namespace ism
 
 	void Memory::free_static(void * ptr)
 	{
-		auto const res{ std::pmr::get_default_resource() };
+		std::pmr::memory_resource * const mres{ std::pmr::get_default_resource() };
 
 		if (size_t const i{ g_memory.records.index_of<ID_addr>(ptr) }
 		; i != g_memory.records.npos)
 		{
-			res->deallocate(ptr, g_memory.records.get<ID_size>(i));
+			mres->deallocate(ptr, g_memory.records.get<ID_size>(i));
 
 			g_memory.records.erase(i);
 		}

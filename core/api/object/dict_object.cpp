@@ -5,13 +5,18 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(DictObject, t)
+ISM_COMPOSE_TYPE_OBJECT(DictObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Dict_Subclass;
 
-	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)DICT(o).size(); };
+	t.tp_len = (lenfunc)[](OBJECT self) { return (ssize_t)DICT(self).size(); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+
+	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	{
+		return holder_type::new_();
+	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

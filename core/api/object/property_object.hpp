@@ -38,10 +38,10 @@ namespace ism
 	template <> struct DefaultDelete<PropertyObject> : DefaultDelete<BaseObject> {};
 
 	// property check
-#define ISM_PROPERTY_CHECK(o) (ism::isinstance<PROPERTY>(o))
+#define ISM_PROPERTY_CHECK(o) (ism::isinstance<ism::PROPERTY>(o))
 
 	// property handle
-	template <> class NOVTABLE Handle<PropertyObject> : public BaseHandle<PropertyObject>
+	template <> class Handle<PropertyObject> : public BaseHandle<PropertyObject>
 	{
 		ISM_HANDLE_DEFAULT(PropertyObject, ISM_PROPERTY_CHECK);
 

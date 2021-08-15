@@ -22,7 +22,7 @@ namespace ism
 		> static void add_class() { add_class(T::get_class_static(), T::get_type_static()); }
 
 		template <class T
-		> static void register_class(OBJECT scope)
+		> static void bind_class(OBJECT scope)
 		{
 			T::initialize_class(scope);
 
@@ -44,7 +44,7 @@ namespace ism
 	// type object
 	class ISM_API TypeObject : public BaseObject
 	{
-		ISM_OBJECT_COMMON(TypeObject, BaseObject);
+		ISM_OBJECT_MINIMAL(TypeObject, BaseObject);
 
 	protected:
 		static void _bind_class(OBJECT scope);
@@ -198,12 +198,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type check
-#define ISM_TYPE_CHECK(o) (typeof(o).has_feature(TypeFlags_Type_Subclass))
+#define ISM_TYPE_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type handle
-	template <> class NOVTABLE Handle<TypeObject> : public BaseHandle<TypeObject>
+	template <> class Handle<TypeObject> : public BaseHandle<TypeObject>
 	{
 		ISM_HANDLE_DEFAULT(TypeObject, ISM_TYPE_CHECK);
 

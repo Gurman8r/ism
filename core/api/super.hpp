@@ -24,10 +24,22 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ISM_SUPER(m_class, m_inherits)																\
+private:																							\
+	mutable StringName m_class_name;																\
+																									\
 public:																								\
 	NODISCARD virtual String get_class() const override												\
 	{																								\
 		return String{ TOSTR(m_class) };															\
+	}																								\
+																									\
+	NODISCARD virtual StringName const * _get_class_namev() const override							\
+	{																								\
+		if (!m_class_name)																			\
+		{																							\
+			m_class_name = m_class::get_class_static();												\
+		}																							\
+		return &m_class_name;																		\
 	}																								\
 																									\
 	NODISCARD FORCE_INLINE static void * get_class_ptr_static()										\
@@ -71,15 +83,21 @@ private:
 	private:
 		friend class Reference;
 
-		InstanceID m_instance_id;
-		bool const m_is_reference;
+		InstanceID					m_instance_id;
+		mutable StringName			m_class_name;
+		mutable StringName const *	m_class_ptr;
+		bool const					m_is_reference;
 
-		static InstanceID next_id() { static InstanceID id{}; return ++id; }
-
-		Super(bool is_ref) noexcept : m_instance_id{ next_id() }, m_is_reference{ is_ref } {}
+		explicit Super(bool is_ref) noexcept;
 
 	protected:
 		Super() noexcept : Super{ true } {}
+
+		virtual StringName const * _get_class_namev() const
+		{
+			if (!m_class_name) { m_class_name = get_class_static(); }
+			return &m_class_name;
+		}
 
 	public:
 		virtual ~Super() noexcept = default;
@@ -99,6 +117,12 @@ private:
 		NODISCARD virtual bool is_class(String const & value) const { return value == "Super"; }
 
 		NODISCARD virtual bool is_class_ptr(void * value) const { return value == get_class_ptr_static(); }
+
+		NODISCARD StringName const & get_class_name() const
+		{
+			if (!m_class_ptr) { return *_get_class_namev(); }
+			else { return *m_class_ptr; }
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -31,7 +31,7 @@ bool BaseObject::set_type(TYPE const & value) { return (bool)(ob_type = value); 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(BaseObject, t)
+ISM_COMPOSE_TYPE_OBJECT(BaseObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
@@ -39,9 +39,9 @@ ISM_OBJECT_TYPE_STATIC(BaseObject, t)
 
 	t.tp_setattro = (setattrofunc)generic_setattr;
 
-	t.tp_hash = (hashfunc)[](OBJECT o) { return Hash<void *>{}(*o); };
+	t.tp_hash = (hashfunc)[](OBJECT self) { return Hash<void *>{}(*self); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -99,14 +99,7 @@ OBJECT ism::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
 
 	if (dict)
 	{
-		if (OBJECT * result{ DICT(dict).lookup(name) })
-		{
-			return *result;
-		}
-		else
-		{
-			return nullptr;
-		}
+		return DICT(dict).lookup(name);
 	}
 
 	if (fn) { return fn(descr, obj, type); }
@@ -135,7 +128,7 @@ Error ism::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJE
 	{
 		if (OBJECT * dictptr{ get_dict_ptr(type, obj) })
 		{
-			if (!(dict = *dictptr)) { dict = DICT(DictObject{}); }
+			if (!(dict = *dictptr)) { dict = DICT::new_(); }
 
 			return (DICT(dict)[name] = value), Error_None;
 		}

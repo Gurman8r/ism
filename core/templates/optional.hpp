@@ -7,11 +7,15 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ALIAS(nullopt_t) std::nullopt_t;
 
 	constexpr nullopt_t nullopt{ std::nullopt };
 
 	template <class T> ALIAS(Optional) typename std::optional<T>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
 	> NODISCARD constexpr auto make_optional(T && value)
@@ -30,6 +34,8 @@ namespace ism
 	{
 		return Optional<T>{ std::in_place, init, FWD(args)... };
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_OPTIONAL_HPP_

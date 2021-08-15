@@ -208,12 +208,12 @@ public:																								\
 	{
 		NODISCARD bool load(OBJECT src, bool convert)
 		{
-			if (src == Core_True) { return (value = true), true; }
-			else if (src == Core_False) { return (value = false), true; }
+			if (src == ISM_True) { return (value = true), true; }
+			else if (src == ISM_False) { return (value = false), true; }
 			else { return (value = src.is_valid()), true; }
 		}
 
-		NODISCARD static OBJECT cast(bool src, ReturnPolicy, OBJECT) { return Core_Bool(src); }
+		NODISCARD static OBJECT cast(bool src, ReturnPolicy, OBJECT) { return ISM_Bool(src); }
 
 		ISM_TYPE_CASTER(bool, "bool");
 	};
@@ -379,6 +379,7 @@ namespace ism
 	{
 		if (!convt.load(o, true)) {
 			FATAL("TYPE CONVERSION FAILED");
+			GENERATE_TRAP();
 		}
 		return convt;
 	}
@@ -387,7 +388,7 @@ namespace ism
 	> auto load_type(OBJECT const & o) -> make_caster<T>
 	{
 		ism::make_caster<T> convt;
-		load_type(convt, o);
+		ism::load_type(convt, o);
 		return convt;
 	}
 
@@ -443,7 +444,7 @@ namespace ism
 	template <class T
 	> auto cast(OBJECT && o) -> std::enable_if_t<move_if_unreferenced_v<T>, T>
 	{
-		if (o && o->get_ref_count() > 1)
+		if (o && o->has_references())
 		{
 			return ism::cast<T>(o);
 		}

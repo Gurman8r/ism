@@ -75,10 +75,10 @@ namespace ism
 	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<BaseObject> {};
 
 	// capsule check
-#define ISM_CAPSULE_CHECK(o) (ism::isinstance<CAPSULE>(o))
+#define ISM_CAPSULE_CHECK(o) (ism::isinstance<ism::CAPSULE>(o))
 
 	// capsule handle
-	template <> class NOVTABLE Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
+	template <> class Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
 	{
 		ISM_HANDLE_DEFAULT(CapsuleObject, ISM_CAPSULE_CHECK);
 

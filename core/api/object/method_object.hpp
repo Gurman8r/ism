@@ -29,10 +29,10 @@ namespace ism
 	template <> struct DefaultDelete<MethodObject> : DefaultDelete<BaseObject> {};
 
 	// method check
-#define ISM_METHOD_CHECK(o) (isinstance<METHOD>(o))
+#define ISM_METHOD_CHECK(o) (ism::isinstance<ism::METHOD>(o))
 
 	// method handle
-	template <> class NOVTABLE Handle<MethodObject> : public BaseHandle<MethodObject>
+	template <> class Handle<MethodObject> : public BaseHandle<MethodObject>
 	{
 		ISM_HANDLE_DEFAULT(MethodObject, ISM_METHOD_CHECK);
 

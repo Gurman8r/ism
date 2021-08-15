@@ -44,7 +44,7 @@ static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(TypeObject, t)
+ISM_COMPOSE_TYPE_OBJECT(TypeObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass;
 
@@ -52,13 +52,13 @@ ISM_OBJECT_TYPE_STATIC(TypeObject, t)
 	
 	t.tp_vectorcalloffset = offsetof(TypeObject, tp_vectorcall);
 
-	t.tp_hash = (hashfunc)[](OBJECT o) { return ism::hash(TYPE(o)->tp_name); };
+	t.tp_hash = (hashfunc)[](OBJECT self) { return ism::hash(TYPE(self)->tp_name); };
 	
-	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
+	t.tp_repr = (reprfunc)[](OBJECT self) { return STR(TYPE(self)->tp_name); };
 	
-	t.tp_str = (reprfunc)[](OBJECT o) { return STR(TYPE(o)->tp_name); };
+	t.tp_str = (reprfunc)[](OBJECT self) { return STR(TYPE(self)->tp_name); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
 
 	t.tp_as_number = &type_as_number;
 	
@@ -144,9 +144,9 @@ bool TypeObject::ready()
 	
 	if (!ob_type && tp_base) { ob_type = tp_base->ob_type; }
 	
-	tp_bases = LIST(tp_base ? ListObject{ tp_base } : ListObject{});
-	
-	if (!tp_dict) { tp_dict = DICT(DictObject{}); }
+	tp_bases = tp_base ? LIST::new_(tp_base) : LIST::new_();
+
+	if (!tp_dict) { tp_dict = DICT::new_(); }
 	
 	VERIFY(mro_internal(nullptr));
 	
@@ -191,9 +191,9 @@ OBJECT TypeObject::lookup(OBJECT const & name) const
 	{
 		for (TYPE const & base : mro)
 		{
-			if (OBJECT * item{ DICT(base->tp_dict).lookup(name) })
+			if (OBJECT item{ DICT(base->tp_dict).lookup(name) })
 			{
-				return (*item);
+				return item;
 			}
 		}
 		return nullptr;
@@ -233,7 +233,7 @@ Error TypeObject::update_slot(OBJECT name)
 
 bool TypeObject::add_subclass(TypeObject * type)
 {
-	if (!tp_subclasses) { tp_subclasses = DICT(DictObject{}); }
+	if (!tp_subclasses) { tp_subclasses = DICT::new_(); }
 
 	(DICT(tp_subclasses))[type] = OBJECT(type);
 
@@ -247,7 +247,7 @@ bool TypeObject::mro_internal(OBJECT * in_old_mro)
 	OBJECT new_mro{ std::invoke([&, &bases = LIST(tp_bases)]()->OBJECT
 	{
 		// mro_implementation
-		LIST result{ ListObject{} };
+		LIST result{ LIST::new_() };
 		result.reserve(bases.size() + 1);
 		result.append(handle());
 		for (TYPE const & base : bases) { result.append(base); }

@@ -45,10 +45,10 @@ namespace ism
 	template <> struct DefaultDelete<DictObject> : DefaultDelete<BaseObject> {};
 
 	// dict check
-#define ISM_DICT_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Dict_Subclass))
+#define ISM_DICT_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
 
 	// dict handle
-	template <> class NOVTABLE Handle<DictObject> : public BaseHandle<DictObject>
+	template <> class Handle<DictObject> : public BaseHandle<DictObject>
 	{
 		ISM_HANDLE_DEFAULT(DictObject, ISM_DICT_CHECK);
 
@@ -66,25 +66,35 @@ namespace ism
 		void reserve(size_t count) const { (**m_ptr).reserve(count); }
 
 		template <class Index = OBJECT
-		> auto find(Index && i) -> iterator { return (**m_ptr).find(FWD_OBJ(i)); }
-
-		template <class Index = OBJECT
-		> auto find(Index && i) const -> const_iterator { return (**m_ptr).find(FWD_OBJ(i)); }
-
-		template <class Index = OBJECT
-		> bool contains(Index && i) const { return find(FWD(i)) != end(); }
-
-		template <class Index = OBJECT
-		> auto lookup(Index && i) const -> OBJECT * { return ism::getptr((**m_ptr), FWD_OBJ(i)); }
+		> auto del(Index && i) const -> Error { return (**m_ptr).erase(FWD_OBJ(i)), Error_None; }
 
 		template <class Index = OBJECT, class Value = OBJECT
 		> bool insert(Index && i, Value && v) const { return (**m_ptr).try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
-		template <class Index = OBJECT
-		> auto operator[](Index && i) const -> OBJECT & { return (**m_ptr)[FWD_OBJ(i)]; }
+		template <class Index = OBJECT, class Value = OBJECT
+		> bool insert_or_assign(Index && i, Value && v) const { return (**m_ptr).insert_or_assign(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
 		template <class Index = OBJECT
-		> auto del(Index && i) const -> Error { return (**m_ptr).erase(FWD_OBJ(i)), Error_None; }
+		> NODISCARD bool contains(Index && i) const { return find(FWD(i)) != end(); }
+
+		template <class Index = OBJECT
+		> NODISCARD auto find(Index && i) -> iterator { return (**m_ptr).find(FWD_OBJ(i)); }
+
+		template <class Index = OBJECT
+		> NODISCARD auto find(Index && i) const -> const_iterator { return (**m_ptr).find(FWD_OBJ(i)); }
+
+		template <class Index = OBJECT
+		> NODISCARD auto lookup(Index && i) const -> OBJECT { return lookup(FWD_OBJ(i), OBJECT{}); }
+
+		template <class Index = OBJECT, class Defval = OBJECT
+		> NODISCARD auto lookup(Index && i, Defval && dv) const -> OBJECT
+		{
+			if (auto const ptr{ ism::getptr(**m_ptr, FWD_OBJ(i)) }) { return *ptr; }
+			else { return FWD_OBJ(dv); }
+		}
+
+		template <class Index = OBJECT
+		> NODISCARD auto operator[](Index && i) const -> OBJECT & { return (**m_ptr)[FWD_OBJ(i)]; }
 
 		NODISCARD bool empty() const { return (**m_ptr).empty(); }
 

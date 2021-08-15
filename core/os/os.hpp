@@ -43,6 +43,7 @@ namespace ism
 	public:
 		FORCE_INLINE static OS * get_singleton() { return singleton; }
 
+		void pause();
 		void print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Logger::Error type = Logger::ERR_ERROR);
 		void print(cstring fmt, ...);
 		void printerr(cstring fmt, ...);

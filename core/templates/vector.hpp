@@ -14,6 +14,12 @@ namespace ism
 	template <class _Ty
 	> ALIAS(Vector) typename std::vector<_Ty, PolymorphicAllocator<_Ty>>;
 
+	// forward_list
+	template <class _Ty
+	> ALIAS(ForwardList) typename std::forward_list<_Ty, PolymorphicAllocator<_Ty>>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class _Ty, class T
 	> NODISCARD bool has(Vector<_Ty> const & l, T && value)
 	{
@@ -21,38 +27,34 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// forward_list
-	template <class _Ty
-	> ALIAS(ForwardList) typename std::forward_list<_Ty, PolymorphicAllocator<_Ty>>;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	// any container
-	template <class T> class any_container
+	template <class T> class AnyContainer
 	{
 		Vector<T> v{};
 
 	public:
-		any_container() = default;
+		AnyContainer() = default;
 
 		template <class It, class = std::enable_if_t<mpl::is_input_iterator_v<It>>
-		> any_container(It first, It last) : v{ first, last } {}
+		> AnyContainer(It first, It last) : v{ first, last } {}
 
 		template <class Container, class = std::enable_if_t<std::is_convertible_v<decltype(*std::begin(std::declval<Container const &>())), T>>
-		> any_container(Container const & c) : any_container{ std::begin(c), std::end(c) } {}
+		> AnyContainer(Container const & c) : AnyContainer{ std::begin(c), std::end(c) } {}
 
 		template <class U, class = std::enable_if_t<std::is_convertible_v<U, T>>
-		> any_container(std::initializer_list<U> const & c) : any_container{ c.begin(), c.end() } {}
+		> AnyContainer(std::initializer_list<U> const & c) : AnyContainer{ c.begin(), c.end() } {}
 
-		any_container(Vector<T> && v) : v{ std::move(v) } {}
+		AnyContainer(Vector<T> && v) : v{ std::move(v) } {}
 
 		operator Vector<T> && () && { return std::move(v); }
 
 		Vector<T> & operator*() { return v; }
+		
 		Vector<T> * operator->() { return &v; }
 
 		Vector<T> const & operator*() const { return v; }
+		
 		Vector<T> const * operator->() const { return &v; }
 	};
 

@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(CppFunctionObject, t)
+ISM_COMPOSE_TYPE_OBJECT(CppFunctionObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
@@ -15,11 +15,16 @@ ISM_OBJECT_TYPE_STATIC(CppFunctionObject, t)
 
 	t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
 
 	t.tp_descr_get = (descrgetfunc)[](OBJECT self, OBJECT obj, OBJECT type)->OBJECT
 	{
 		return !obj ? self : METHOD({ self, obj, method_vectorcall });
+	};
+
+	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	{
+		return holder_type::new_();
 	};
 };
 
@@ -56,9 +61,79 @@ CppFunctionObject::~CppFunctionObject()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CppFunctionObject::initialize_generic(function_record * rec, std::type_info const * const * info_in, size_t argc_in)
+OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_t argc)
 {
-	VERIFY(m_record = rec);
+	if (!CPP_FUNCTION::check_(callable)) { return nullptr; }
+
+	OBJECT parent{ 0 < argc ? argv[0] : nullptr };
+
+	FunctionRecord const * overloads{ &***CPP_FUNCTION(callable) }, * it{ overloads };
+
+	for (; it; it = it->next)
+	{
+		bool const overloaded{ it && it->next };
+
+		FunctionRecord const & func{ *it };
+
+		FunctionCall call{ func, parent };
+
+		size_t
+			num_args	{ func.argument_count },
+			num_to_copy	{ MIN(num_args, argc) },
+			num_copied	{};
+
+		// copy positional arguments
+		for (; num_copied < num_to_copy; ++num_copied)
+		{
+			ArgumentRecord const * arg_rec{ num_copied < func.args.size() ? &func.args[num_copied] : nullptr };
+
+			OBJECT arg{ argv[num_copied] };
+
+			if (arg_rec && !arg_rec->none && arg.is_null())
+			{
+				FATAL("BAD ARGUMENT");
+			}
+
+			call.args.push_back(arg, arg_rec ? arg_rec->convert : false);
+		}
+
+		// fill in missing arguments
+		if (num_copied < num_args)
+		{
+			for (; num_copied < num_args; ++num_copied)
+			{
+				ArgumentRecord const & arg_rec{ func.args[num_copied] };
+
+				if (!arg_rec.value) { break; }
+
+				else { call.args.push_back(arg_rec.value, arg_rec.convert); }
+			}
+
+			if (num_copied < num_args)
+			{
+				if (overloaded) { continue; }
+				else
+				{
+					FATAL("NOT ENOUGH ARGUMENTS");
+				}
+			}
+		}
+
+		// execute call
+		if (OBJECT result{ func.impl(call) }; !call.try_next_overload)
+		{
+			return result;
+		}
+	}
+
+	return nullptr;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in)
+{
+	m_record = CHECK(rec);
 
 	VERIFY(!rec->next);
 
@@ -70,7 +145,7 @@ void CppFunctionObject::initialize_generic(function_record * rec, std::type_info
 	{
 		String const arg_str{ "arg" + util::to_string(i) };
 
-		rec->args.push_back(argument_record{ arg_str, nullptr, false, false });
+		rec->args.push_back(ArgumentRecord{ arg_str, nullptr, false, false });
 	}
 
 	if (CPP_FUNCTION::check_(rec->sibling))
@@ -89,76 +164,6 @@ void CppFunctionObject::initialize_generic(function_record * rec, std::type_info
 
 		else if (hasattr(rec->scope, "__name__")) { m_module = rec->scope->attr("__name__"); }
 	}
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_t argc)
-{
-	if (!CPP_FUNCTION::check_(callable)) { return nullptr; }
-
-	OBJECT parent{ 0 < argc ? argv[0] : nullptr };
-
-	function_record const * overloads{ &***CPP_FUNCTION(callable) }, * it{ overloads };
-
-	bool const overloaded{ it && it->next };
-
-	for (; it; it = it->next)
-	{
-		function_record const & func{ *it };
-
-		function_call call{ func, parent };
-
-		size_t
-			num_args	{ func.argument_count },
-			num_to_copy	{ MIN(num_args, argc) },
-			num_copied	{};
-
-		// copy positional arguments
-		for (; num_copied < num_to_copy; ++num_copied)
-		{
-			argument_record const * arg_rec{ num_copied < func.args.size() ? &func.args[num_copied] : nullptr };
-
-			OBJECT arg{ argv[num_copied] };
-
-			if (arg_rec && !arg_rec->none && arg.is_null())
-			{
-				FATAL("BAD ARGUMENT");
-			}
-
-			call.args.push_back(arg, arg_rec ? arg_rec->convert : false);
-		}
-
-		// fill in missing arguments
-		if (num_copied < num_args)
-		{
-			for (; num_copied < num_args; ++num_copied)
-			{
-				argument_record const & arg_rec{ func.args[num_copied] };
-
-				if (!arg_rec.value) { break; }
-
-				else { call.args.push_back(arg_rec.value, arg_rec.convert); }
-			}
-
-			if (num_copied < num_args)
-			{
-				if (it->next) { continue; }
-				else
-				{
-					FATAL("NOT ENOUGH ARGUMENTS");
-				}
-			}
-		}
-
-		// execute call
-		if (OBJECT result{ func.impl(call) }; !call.try_next_overload)
-		{
-			return result;
-		}
-	}
-
-	return nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

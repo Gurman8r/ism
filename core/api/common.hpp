@@ -6,7 +6,7 @@
 #define FWD_OBJ(expr) \
 	(ism::object_or_cast(FWD(expr)))
 
-#define ISM_OBJECT_TYPE_STATIC(m_class, m_var) \
+#define ISM_COMPOSE_TYPE_OBJECT(m_class, m_var) \
 	DECLEXPR(m_class::ob_type_static) = COMPOSE(ism::TypeObject, m_var)
 
 // types
@@ -363,7 +363,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> class NOVTABLE BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
+	template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
 	{
 	protected:
 		BaseHandle() noexcept = default;
@@ -371,13 +371,17 @@ namespace ism
 	public:
 		~BaseHandle() noexcept = default;
 
-		template <class T> NODISCARD T cast() const &;
+		template <class T> NODISCARD T cast() const &; // cast.hpp
 
-		template <class T> NODISCARD T cast() &&;
+		template <class T> NODISCARD T cast() &&; // cast.hpp
+
+		template <class ... Args
+		> static auto new_(Args && ... args) { return Handle<T>{ T{ FWD(args)... } }; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// default handle
 #define ISM_HANDLE_DEFAULT(m_class, m_check)														\
 public:																								\
 	NODISCARD static bool check_(OBJECT const & o) { return o && (bool)(m_check(o)); }				\

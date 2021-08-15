@@ -60,11 +60,10 @@ namespace ism::util
 	template <class Ch = char
 	> NODISCARD constexpr Ch const * single_str(Ch const * items_separated_by_zeroes, size_t index)
 	{
-		Ch const *	items	{ (Ch const *)items_separated_by_zeroes };
-		Ch const *	ptr		{ items };
-		size_t		count	{};
-		while (*ptr)
-		{
+		Ch const * items{ (Ch const *)items_separated_by_zeroes };
+		Ch const * ptr{ items };
+		size_t count{};
+		while (*ptr) {
 			if (index == count) { break; }
 			ptr += ism::strlen(ptr) + 1;
 			count++;

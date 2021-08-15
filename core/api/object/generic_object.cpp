@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(GenericObject, t)
+ISM_COMPOSE_TYPE_OBJECT(GenericObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_Type_Subclass;
 
@@ -13,7 +13,12 @@ ISM_OBJECT_TYPE_STATIC(GenericObject, t)
 
 	t.tp_setattro = (setattrofunc)type_setattr;
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+
+	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	{
+		return holder_type::new_();
+	};
 };
 
 void GenericObject::_bind_class(OBJECT scope)

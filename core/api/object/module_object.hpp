@@ -16,7 +16,7 @@ namespace ism
 		static void _bind_class(OBJECT scope);
 
 	public:
-		DICT		m_dict	{ DictObject{} };
+		DICT		m_dict	{ DICT::new_() };
 		STR			m_name	{};
 		STR			m_doc	{};
 		inquiry		m_clear	{};
@@ -29,10 +29,10 @@ namespace ism
 	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<BaseObject> {};
 
 	// module check
-#define ISM_MODULE_CHECK(o) (ism::isinstance<MODULE>(o))
+#define ISM_MODULE_CHECK(o) (ism::isinstance<ism::MODULE>(o))
 
 	// module handle
-	template <> class NOVTABLE Handle<ModuleObject> : public BaseHandle<ModuleObject>
+	template <> class Handle<ModuleObject> : public BaseHandle<ModuleObject>
 	{
 		ISM_HANDLE_DEFAULT(ModuleObject, ISM_MODULE_CHECK);
 
@@ -79,21 +79,19 @@ namespace ism
 
 	inline MODULE create_extension_module(cstring name)
 	{
-		DICT d{ get_interpreter_state()->modules };
-		auto i{ object_or_cast(name) };
-		return d.contains(i) ? MODULE{} : d[i] = MODULE({ name });
+		DICT modules{ get_current_interpreter()->modules };
+		STR str_name{ name };
+		return !modules.contains(str_name) ? modules[str_name] = MODULE({ name }) : MODULE{};
 	}
 
 	inline MODULE import_module(cstring name)
 	{
-		DICT d{ get_interpreter_state()->modules };
-		auto i{ object_or_cast(name) };
-		return !d.contains(i) ? MODULE{} : d[i];
+		return get_current_interpreter()->modules.lookup(STR{ name }, MODULE{});
 	}
 
 	inline DICT globals()
 	{
-		if (StackFrame * frame{ get_current_frame() })
+		if (StackFrame const * frame{ get_current_frame() })
 		{
 			return CHECK(frame->globals);
 		}

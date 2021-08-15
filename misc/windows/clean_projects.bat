@@ -10,4 +10,4 @@ if exist ..\..\workspace rd /s /q ..\..\workspace
 if exist "..\..\Visual Studio 2019" rd /s /q "..\..\Visual Studio 2019"
 if exist "..\..\Visual Studio 2019Templates" rd /s /q "..\..\Visual Studio 2019Templates"
 
-if %ERRORLEVEL% NEQ 0 ( pause ) else ( echo projects OK )
+if %ERRORLEVEL% NEQ 0 ( pause ) else ( echo clean projects OK )

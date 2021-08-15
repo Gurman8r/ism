@@ -11,8 +11,6 @@ namespace ism
 
 	public:
 		virtual ~RenderContext();
-
-		DEFAULT_COPYABLE_MOVABLE(RenderContext);
 	};
 }
 

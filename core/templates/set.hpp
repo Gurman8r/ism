@@ -7,6 +7,8 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #if 1
 	// set
 	template <class _Ty, class _Pr = Less<_Ty>
@@ -24,6 +26,8 @@ namespace ism
 		NODISCARD operator _Mybase && () && noexcept { return static_cast<_Mybase &&>(std::move(*this)); }
 	};
 #endif
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_SET_HPP_

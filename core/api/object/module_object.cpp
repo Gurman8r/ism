@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(ModuleObject, t)
+ISM_COMPOSE_TYPE_OBJECT(ModuleObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
@@ -13,19 +13,24 @@ ISM_OBJECT_TYPE_STATIC(ModuleObject, t)
 	
 	t.tp_getattro = (getattrofunc)module_getattro;
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other)
 	{
-		if (MODULE::check_(v))
+		if (MODULE::check_(other))
 		{
-			return (*o == *v) ? 0 : util::compare(MODULE(o)->m_name, MODULE(v)->m_name);
+			return (*self == *other) ? 0 : util::compare(MODULE(self)->m_name, MODULE(other)->m_name);
 		}
 		else
 		{
-			return util::compare(*o, *v);
+			return util::compare(*self, *other);
 		}
 	};
 
-	t.tp_free = (freefunc)[](void * ptr) { memdelete((ModuleObject *)ptr); };
+	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	{
+		VERIFY(LIST::check_(args));
+		VERIFY(STR::check_(args[0]));
+		return holder_type(self_type{ STR(args[0]).c_str() });
+	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

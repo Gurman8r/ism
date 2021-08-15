@@ -35,6 +35,10 @@ namespace ism
 		MOVABLE(Node);
 
 	public:
+		NODISCARD operator entt::entity() const noexcept { return m_entity; }
+
+		NODISCARD auto get_entity() const noexcept -> entt::entity { return m_entity; }
+
 		template <class Component, class ... Args
 		> Component & add_component(Args && ... args) noexcept
 		{
@@ -56,13 +60,10 @@ namespace ism
 		}
 
 		template <class ... Component
-		> void remove_component() {
+		> void remove_component()
+		{
 			m_tree->m_reg.remove<Component...>(m_entity);
 		}
-
-		NODISCARD operator entt::entity() const noexcept { return m_entity; }
-
-		NODISCARD auto get_entity() const noexcept -> entt::entity { return m_entity; }
 
 	public:
 		NODISCARD auto get_child(size_t i) const noexcept -> Node * { return (i < get_child_count()) ? m_children[i] : nullptr; }

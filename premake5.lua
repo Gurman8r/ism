@@ -40,7 +40,6 @@ group ""
 
 group "Modules"
 	include "modules/assimp/assimp.premake5.lua"
-	include "modules/python/python.premake5.lua"
 	include "modules/glew/glew.premake5.lua"
 	include "modules/glfw/glfw.premake5.lua"
 	include "modules/imgui/imgui.premake5.lua"

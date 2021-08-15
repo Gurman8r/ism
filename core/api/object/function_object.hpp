@@ -30,10 +30,10 @@ namespace ism
 	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<BaseObject> {};
 
 	// function check
-#define ISM_FUNCTION_CHECK(o) (isinstance<FUNCTION>(o))
+#define ISM_FUNCTION_CHECK(o) (ism::isinstance<ism::FUNCTION>(o))
 
 	// function handle
-	template <> class NOVTABLE Handle<FunctionObject> : public BaseHandle<FunctionObject>
+	template <> class Handle<FunctionObject> : public BaseHandle<FunctionObject>
 	{
 		ISM_HANDLE_DEFAULT(FunctionObject, ISM_FUNCTION_CHECK);
 

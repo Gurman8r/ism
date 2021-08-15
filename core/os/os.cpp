@@ -37,6 +37,16 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	void OS::pause()
+	{
+#ifdef ISM_OS_WINDOWS
+		std::system("pause");
+#else
+		this->print("\nPress enter to continue . . .");
+		this->get_stdin_string(true);
+#endif
+	}
+
 	void OS::print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Logger::Error type)
 	{
 		m_logger->log_error(func, file, line, desc, message, type);

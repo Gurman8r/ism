@@ -59,11 +59,11 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NOVTABLE _Ref_Tag {};
+	struct _Ref_Tag {};
 
 	template <class T> constexpr bool is_ref_v{ std::is_base_of_v<_Ref_Tag, T> };
 
-	template <class T> class NOVTABLE Ref : public _Ref_Tag
+	template <class T> class Ref : public _Ref_Tag
 	{
 	protected:
 		T * m_ptr{};

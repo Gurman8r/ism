@@ -4,9 +4,9 @@
 #include <core/api/object/type_object.hpp>
 
 // bool
-#define Core_True		(ism::INT(&ism::IntObject::g_true))
-#define Core_False		(ism::INT(&ism::IntObject::g_false))
-#define Core_Bool(b)	((b) ? Core_True : Core_False)
+#define ISM_True		(ism::INT(&ism::IntObject::g_true))
+#define ISM_False		(ism::INT(&ism::IntObject::g_false))
+#define ISM_Bool(b)		((b) ? ISM_True : ISM_False)
 
 // int
 namespace ism
@@ -29,8 +29,23 @@ namespace ism
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> explicit IntObject(TYPE const & t, T const v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
 
-		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> IntObject(T const v) : base_type{ get_type_static() }, m_int{ static_cast<storage_type>(v) } {}
+		explicit IntObject(bool value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(char value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(wchar_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(char16_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(char32_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(int8_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(int16_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(int32_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(int64_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(uint8_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(uint16_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(uint32_t value) : self_type{ get_type_static(), value } {}
+		explicit IntObject(uint64_t value) : self_type{ get_type_static(), value } {}
+
+		IntObject(float32_t) = delete;
+		IntObject(float64_t) = delete;
+		IntObject(float80_t) = delete;
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> IntObject & operator=(T const v) { m_int = static_cast<storage_type>(v); return (*this); }
@@ -48,10 +63,10 @@ namespace ism
 	template <> struct DefaultDelete<IntObject> : DefaultDelete<BaseObject> {};
 
 	// int check
-#define ISM_INT_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Int_Subclass))
+#define ISM_INT_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
 
 	// int handle
-	template <> class NOVTABLE Handle<IntObject> : public BaseHandle<IntObject>
+	template <> class Handle<IntObject> : public BaseHandle<IntObject>
 	{
 		ISM_HANDLE_DEFAULT(IntObject, ISM_INT_CHECK);
 

@@ -1,0 +1,19 @@
+#ifndef _ISM_SKY_HPP_
+#define _ISM_SKY_HPP_
+
+#include <core/io/resource.hpp>
+
+namespace ism
+{
+	class ISM_API Sky : public Resource
+	{
+	public:
+		~Sky();
+		Sky();
+
+	private:
+
+	};
+}
+
+#endif // !_ISM_SKY_HPP_

@@ -47,10 +47,10 @@ InterpreterState::InterpreterState(RuntimeState * runtime) : runtime{ runtime }
 
 	tstate_head = memnew(ThreadState(this));
 
-	dict = DICT(DictObject{});
-	builtins = DICT(DictObject{});
-	modules = DICT(DictObject{});
-	importlib = DICT(DictObject{});
+	dict = DICT::new_();
+	builtins = DICT::new_();
+	modules = DICT::new_();
+	importlib = DICT::new_();
 }
 
 InterpreterState::~InterpreterState()
@@ -73,7 +73,7 @@ RuntimeState * RuntimeState::singleton{};
 
 RuntimeState::RuntimeState()
 {
-	if (!get_runtime_state()) { set_runtime_state(this); }
+	if (!get_current_runtime()) { set_current_runtime(this); }
 
 	main_thread = std::this_thread::get_id();
 
@@ -90,7 +90,7 @@ RuntimeState::~RuntimeState()
 		interpreters.head = next;
 	}
 
-	if (this == get_runtime_state()) { set_runtime_state(nullptr); }
+	if (this == get_current_runtime()) { set_current_runtime(nullptr); }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

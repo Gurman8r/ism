@@ -194,7 +194,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> ALIAS(Scary) typename std::unique_ptr<T, NoDelete>; // non-deleting pointer
+	> ALIAS(Scary) typename std::unique_ptr<T, NoDelete>; // non-deleting unique-pointer
 
 	template <class T, class ... Args
 	> NODISCARD auto make_scary(Args && ... args) -> Scary<T>

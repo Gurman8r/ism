@@ -14,16 +14,14 @@ namespace ism::initimpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class ... Args
-	> struct constructor
+	> struct Constructor
 	{
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
 			return c.def("__init__", [](Holder<Class> h, Args ... args)
 			{
-				//::new (h.ptr()) Cpp<Class>{ args... };
-
-				h.instance(args...);
+				// TODO...
 
 				return h;
 			}
@@ -46,20 +44,18 @@ namespace ism::initimpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Fn, class R = mpl::function_signature_t<Fn>, class ... Args
-	> struct factory
+	> struct Factory
 	{
 		std::remove_reference_t<Fn> class_factory;
 
-		factory(Fn && fn) noexcept : class_factory{ FWD(fn) } {}
+		Factory(Fn && fn) noexcept : class_factory{ FWD(fn) } {}
 
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
 			return c.def("__init__", [fn = std::move(class_factory)](Holder<Class> h, Args ... args)
 			{
-				//::new (h.ptr()) Cpp<Class> { fn(args...) };
-
-				h.instance(fn(args...));
+				// TODO...
 
 				return h;
 			}
@@ -87,9 +83,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class ... Args
-	> NODISCARD auto init() -> initimpl::constructor<Args...> { return {}; }
+	> NODISCARD auto init() -> initimpl::Constructor<Args...> { return {}; }
 
-	template <class Func, class Ret = initimpl::factory<Func>
+	template <class Func, class Ret = initimpl::Factory<Func>
 	> NODISCARD auto init(Func && fn) -> Ret { return { FWD(fn) }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

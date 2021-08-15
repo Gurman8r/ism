@@ -5,22 +5,27 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(ListObject, t)
+ISM_COMPOSE_TYPE_OBJECT(ListObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_List_Subclass;
 
-	t.tp_len = (lenfunc)[](OBJECT o) { return (ssize_t)LIST(o).size(); };
+	t.tp_len = (lenfunc)[](OBJECT self) { return (ssize_t)LIST(self).size(); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other)
 	{
-		if (LIST::check_(v))
+		if (LIST::check_(other))
 		{
-			return util::compare(***LIST(o), ***LIST(v));
+			return util::compare(***LIST(self), ***LIST(other));
 		}
 		else
 		{
-			return util::compare(*o, *v);
+			return util::compare(*self, *other);
 		}
+	};
+
+	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	{
+		return holder_type::new_();
 	};
 };
 

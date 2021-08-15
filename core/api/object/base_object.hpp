@@ -3,8 +3,8 @@
 
 #include <core/api/common.hpp>
 
-// object common
-#define ISM_OBJECT_COMMON(m_class, m_inherits)										\
+// minimal object
+#define ISM_OBJECT_MINIMAL(m_class, m_inherits)										\
 ISM_SUPER(m_class, m_inherits)														\
 																					\
 private:																			\
@@ -12,9 +12,11 @@ private:																			\
 																					\
 	using base_type = m_inherits;													\
 																					\
+	using holder_type = ism::Handle<self_type>;										\
+																					\
 	friend class ism::TypeDB;														\
 																					\
-	friend class ism::Handle<m_class>;												\
+	friend class holder_type;														\
 																					\
 	static ism::TypeObject ob_type_static;											\
 																					\
@@ -44,9 +46,9 @@ protected:																			\
 																					\
 private:
 
-// object with type
+// typed object
 #define ISM_OBJECT_TYPED(m_class, m_inherits)										\
-ISM_OBJECT_COMMON(m_class, m_inherits)												\
+ISM_OBJECT_MINIMAL(m_class, m_inherits)												\
 																					\
 protected:																			\
 	FORCE_INLINE virtual ism::TYPE _get_typev() const override						\
@@ -64,7 +66,7 @@ public:																				\
 																					\
 private:
 
-// object default
+// default object
 #define ISM_OBJECT_DEFAULT(m_class, m_inherits)										\
 	ISM_OBJECT_TYPED(m_class, m_inherits);											\
 																					\
@@ -83,9 +85,13 @@ namespace ism
 	{
 		ISM_SUPER(BaseObject, Reference);
 
+		using self_type = BaseObject;
+
+		using holder_type = Handle<self_type>;
+
 		friend class TypeDB;
 
-		friend class Handle<BaseObject>;
+		friend class holder_type;
 
 		static TypeObject ob_type_static; // static class type
 
@@ -127,7 +133,7 @@ namespace ism
 	{
 		template <class U> void operator()(U * ptr) const
 		{
-			if (auto t{ ism::typeof(ptr) }; t && t->tp_free)
+			if (TYPE t{ typeof(ptr) }; t && t->tp_free)
 			{
 				t->tp_free(ptr);
 			}
@@ -146,7 +152,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// object handle
-	template <> class NOVTABLE Handle<BaseObject> : public BaseHandle<BaseObject>
+	template <> class Handle<BaseObject> : public BaseHandle<BaseObject>
 	{
 		ISM_HANDLE_DEFAULT(BaseObject, ISM_OBJECT_NO_CHECK);
 	};

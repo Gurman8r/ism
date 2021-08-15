@@ -1,16 +1,21 @@
 #ifndef _ISM_OPENGL_DEVICE_HPP_
 #define _ISM_OPENGL_DEVICE_HPP_
 
-#include <core/typedefs.hpp>
+#include <drivers/opengl/opengl.hpp>
+
+#include <servers/rendering/render_device.hpp>
 
 namespace ism
 {
-	class ISM_API OpenglDevice
+	class ISM_API OpenGL_Device : public RenderDevice
 	{
 	public:
-		OpenglDevice();
+		~OpenGL_Device();
 
-		~OpenglDevice();
+		OpenGL_Device();
+
+	private:
+
 	};
 }
 

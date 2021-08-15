@@ -12,10 +12,14 @@ namespace ism
 	class Any : public std::any
 	{
 		using _Mybase = std::any;
+
 	public:
 		using _Mybase::any;
+		
 		NODISCARD operator _Mybase & () & noexcept { return static_cast<_Mybase &>(*this); }
+		
 		NODISCARD operator _Mybase const & () const & noexcept { return static_cast<_Mybase const &>(*this); }
+		
 		NODISCARD operator _Mybase && () && noexcept { return static_cast<_Mybase &&>(std::move(*this)); }
 		
 		void swap(Any & other) noexcept { std::swap(static_cast<_Mybase &>(*this), static_cast<_Mybase &>(other)); }

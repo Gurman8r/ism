@@ -1,48 +1,7 @@
-#ifndef _ISM_OS_WINDOWS_HPP_
-#define _ISM_OS_WINDOWS_HPP_
+#ifndef _ISM_WINDOWS_OS_HPP_
+#define _ISM_WINDOWS_OS_HPP_
 
-// target Windows 7 or later
-#define _WIN32_WINNT 0x0601
-#include <sdkddkver.h>
-
-// features
-#define WIN32_LEAN_AND_MEAN
-#define NOGDICAPMASKS
-#define NOSYSMETRICS
-#define NOMENUS
-#define NOICONS
-#define NOSYSCOMMANDS
-#define NORASTEROPS
-#define OEMRESOURCE
-#define NOATOM
-#define NOCLIPBOARD
-#define NOCOLOR
-#define NOCTLMGR
-#define NODRAWTEXT
-#define NOKERNEL
-#define NONLS
-#define NOMEMMGR
-#define NOMETAFILE
-#define NOMINMAX
-#define NOOPENFILE
-#define NOSCROLL
-#define NOSERVICE
-#define NOSOUND
-#define NOTEXTMETRIC
-#define NOWH
-#define NOCOMM
-#define NOKANJI
-#define NOHELP
-#define NOPROFILER
-#define NODEFERWINDOWPOS
-#define NOMCX
-#define NORPC
-#define NOPROXYSTUB
-#define NOIMAGE
-#define NOTAPE
-#define STRICT
-
-#include <windows.h>
+#include <platform/windows/windows.hpp>
 
 #include <core/os/os.hpp>
 
@@ -50,7 +9,7 @@ static_assert(ISM_OS_WINDOWS);
 
 namespace ism
 {
-	class ISM_API OS_Windows : public OS
+	class ISM_API Windows_OS : public OS
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -59,25 +18,14 @@ namespace ism
 		HWND		m_main_window{};
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	protected:
-		virtual void initialize() override;
 		
-		virtual void finalize() override;
-		
-		virtual void finalize_core() override;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		virtual MainLoop * get_main_loop() const override;
-		
-		virtual void set_main_loop(MainLoop * value) override;
-		
-		virtual void delete_main_loop() override;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	public:
+		virtual ~Windows_OS();
+
+		Windows_OS(HINSTANCE instance);
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		virtual Error open_dynamic_library(String const & path, void *& instance) override;
 		
 		virtual Error close_dynamic_library(void * instance) override;
@@ -107,13 +55,24 @@ namespace ism
 		HINSTANCE get_instance() { return m_instance; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
-		OS_Windows(HINSTANCE instance);
-		
-		virtual ~OS_Windows();
+
+	protected:
+		virtual void initialize() override;
+
+		virtual void finalize() override;
+
+		virtual void finalize_core() override;
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		virtual MainLoop * get_main_loop() const override;
+
+		virtual void set_main_loop(MainLoop * value) override;
+
+		virtual void delete_main_loop() override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 }
 
-#endif // !_ISM_OS_WINDOWS_HPP_
+#endif // !_ISM_WINDOWS_OS_HPP_

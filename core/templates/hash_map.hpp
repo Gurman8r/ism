@@ -8,6 +8,8 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// hash_map
 	template <class _Kt, class _Vt, class _Hash = Hash<_Kt>, class _KeyEq = EqualTo<_Kt>
 	> ALIAS(HashMap) typename std::unordered_map<_Kt, _Vt, _Hash, _KeyEq, PolymorphicAllocator<std::pair<_Kt const, _Vt>>>;
@@ -15,6 +17,8 @@ namespace ism
 	// hash_multimap
 	template <class _Kt, class _Vt, class _Hash = Hash<_Kt>, class _KeyEq = EqualTo<_Kt>
 	> ALIAS(HashMultimap) typename std::unordered_multimap<_Kt, _Vt, _Hash, _KeyEq, PolymorphicAllocator<std::pair<_Kt const, _Vt>>>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class _Kt, class _Vt, class _Hash = Hash<_Kt>, class _KeyEq = EqualTo<_Kt>, class T
 	> NODISCARD bool has(HashMap<_Kt, _Vt, _Hash, _KeyEq> const & m, T && value)
@@ -35,6 +39,8 @@ namespace ism
 		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
 		else { return nullptr; }
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_HASH_MAP_HPP_

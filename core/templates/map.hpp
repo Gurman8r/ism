@@ -7,6 +7,8 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #if 1
 	// map
 	template <class _Kt, class _Vt, class _Pr = Less<_Kt>
@@ -24,6 +26,8 @@ namespace ism
 		NODISCARD operator _Mybase && () && noexcept { return static_cast<_Mybase &&>(std::move(*this)); }
 	};
 #endif
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class _Kt, class _Vt, class _Pr = Less<_Kt>, class T
 	> NODISCARD bool contains(Map<_Kt, _Vt, _Pr> const & m, T && value)
@@ -44,6 +48,8 @@ namespace ism
 		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
 		else { return nullptr; }
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_MAP_HPP_

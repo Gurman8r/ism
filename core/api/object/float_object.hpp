@@ -24,8 +24,23 @@ namespace ism
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> explicit FloatObject(TYPE const & t, T const v) : base_type{ t }, m_float{ static_cast<storage_type>(v) } {}
 
-		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> FloatObject(T const v) : base_type{ get_type_static() }, m_float{ static_cast<storage_type>(v) } {}
+		FloatObject(bool) = delete;
+		FloatObject(char) = delete;
+		FloatObject(wchar_t) = delete;
+		FloatObject(char16_t) = delete;
+		FloatObject(char32_t) = delete;
+		FloatObject(int8_t) = delete;
+		FloatObject(int16_t) = delete;
+		FloatObject(int32_t) = delete;
+		FloatObject(int64_t) = delete;
+		FloatObject(uint8_t ) = delete;
+		FloatObject(uint16_t) = delete;
+		FloatObject(uint32_t) = delete;
+		FloatObject(uint64_t) = delete;
+
+		explicit FloatObject(float32_t value) : self_type{ get_type_static(), value } {}
+		explicit FloatObject(float64_t value) : self_type{ get_type_static(), value } {}
+		explicit FloatObject(float80_t value) : self_type{ get_type_static(), value } {}
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> FloatObject & operator=(T const v) { m_float = static_cast<storage_type>(v); return (*this); }
@@ -38,10 +53,10 @@ namespace ism
 	template <> struct DefaultDelete<FloatObject> : DefaultDelete<BaseObject> {};
 
 	// float check
-#define ISM_FLOAT_CHECK(o) (ism::typeof(o).has_feature(TypeFlags_Float_Subclass))
+#define ISM_FLOAT_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
 
 	// float handle
-	template <> class NOVTABLE Handle<FloatObject> : public BaseHandle<FloatObject>
+	template <> class Handle<FloatObject> : public BaseHandle<FloatObject>
 	{
 		ISM_HANDLE_DEFAULT(FloatObject, ISM_FLOAT_CHECK);
 

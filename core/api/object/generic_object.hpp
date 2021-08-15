@@ -21,10 +21,10 @@ namespace ism
 	template <> struct DefaultDelete<GenericObject> : DefaultDelete<BaseObject> {};
 
 	// generic check
-#define ISM_GENERIC_CHECK(o) (ism::isinstance<GENERIC>(o))
+#define ISM_GENERIC_CHECK(o) (ism::isinstance<ism::GENERIC>(o))
 
 	// generic handle
-	template <> class NOVTABLE Handle<GenericObject> : public BaseHandle<GenericObject>
+	template <> class Handle<GenericObject> : public BaseHandle<GenericObject>
 	{
 		ISM_HANDLE_DEFAULT(GenericObject, ISM_GENERIC_CHECK);
 

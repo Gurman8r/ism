@@ -9,10 +9,10 @@ namespace ism
 
 	// argument collector
 	template <ReturnPolicy policy = ReturnPolicy_AutomaticReference
-	> struct NODISCARD argument_collector final
+	> struct NODISCARD ArgumentCollector final
 	{
 		template <class ... Args
-		> explicit argument_collector(Args && ... values)
+		> explicit ArgumentCollector(Args && ... values) noexcept
 		{
 			m_args.reserve(sizeof...(Args));
 
@@ -48,23 +48,23 @@ namespace ism
 		}
 
 	private:
-		LIST m_args{ ListObject{} };
+		LIST m_args{ LIST::new_() };
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// collect arguments
 	template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
-	> NODISCARD auto collect_arguments(Args && ... args)
+	> NODISCARD auto collect_arguments(Args && ... args) noexcept
 	{
-		return argument_collector<policy>{ FWD(args)... };
+		return ArgumentCollector<policy>{ FWD(args)... };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// argument loader
 	template <class ... Args
-	> struct NODISCARD argument_loader final
+	> struct NODISCARD ArgumentLoader final
 	{
 		template <class Return, class Guard, class Func
 		> using return_type = std::conditional_t<std::is_void_v<Return>, void_type, Return>;
@@ -110,7 +110,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// argument record
-	struct NODISCARD argument_record final
+	struct NODISCARD ArgumentRecord final
 	{
 		String name{};
 
@@ -122,43 +122,48 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// function record
-	struct NODISCARD function_record final
+	struct NODISCARD FunctionRecord final
 	{
+		~FunctionRecord() { if (free_data) { free_data(this); } }
+
 		String name, doc, signature;
 
-		OBJECT(*impl)(struct function_call &);
+		OBJECT(*impl)(struct FunctionCall &);
 
 		void * data[3];
 
-		void(*free_data)(function_record *);
+		void(*free_data)(FunctionRecord *);
 
 		uint16_t argument_count;
 
-		Vector<argument_record> args;
+		Vector<ArgumentRecord> args;
 
 		ReturnPolicy policy{ ReturnPolicy_AutomaticReference };
 
-		bool is_stateless, is_constructor, is_operator, is_method, prepend;
-
 		BaseObject * scope, * sibling;
 
-		function_record * next;
+		FunctionRecord * next;
 
-		~function_record() { if (free_data) { free_data(this); } }
+		bool
+			is_stateless	: 1,
+			is_constructor	: 1,
+			is_operator		: 1,
+			is_method		: 1,
+			prepend			: 1;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// function call
-	struct NODISCARD function_call final
+	struct NODISCARD FunctionCall final
 	{
-		function_record const & record;
+		FunctionRecord const & record;
 		
 		OBJECT parent{};
 
 		Batch<OBJECT, bool> args{ record.argument_count };
 
-		bool try_next_overload{};
+		bool try_next_overload : 1;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

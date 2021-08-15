@@ -69,12 +69,12 @@ namespace ism
 
 		MAIN_PRINT("%s\n", typeof<METHOD>().attr("__subclasscheck__")(typeof<FUNCTION>()) ? "true" : "false");
 		
-		LIST list = m.attr("list") = LIST(ListObject{});
+		LIST list = m.attr("list") = LIST::new_();
 		list.append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0]).c_str());
 		MAIN_PRINT("%s\n", STR(typeof(list).attr("__name__")).c_str());
 		
-		OBJECT d{ DICT(DictObject{}) };
+		OBJECT d{ DICT::new_() };
 		d["ABC"] = 42;
 		d["DEF"] = "Hello, World!";
 		VERIFY(d.contains("ABC"));
@@ -90,12 +90,12 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-extern ism::OS & __ism_init(void * instance = nullptr);
-
-static auto & ANONYMOUS{ __ism_init() };
-
 int main(int argc, char * argv[])
 {
+	extern ISM_IMPLEMENTATION(void *);
+	
+	IMPLEMENT_ISM(nullptr);
+
 	switch (Main::setup(argv[0], argc, argv))
 	{
 	case Error_None: break;

@@ -2,11 +2,11 @@
 
 namespace ism
 {
-	OpenglContext::OpenglContext()
+	OpenGL_Context::~OpenGL_Context()
 	{
 	}
 
-	OpenglContext::~OpenglContext()
+	OpenGL_Context::OpenGL_Context() : RenderContext{}
 	{
 	}
 }

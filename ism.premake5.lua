@@ -12,15 +12,15 @@ targetdir		"%{wks.location}/bin-lib/%{cfg.platform}/%{cfg.buildcfg}/"
 objdir			"%{wks.location}/bin-obj/%{cfg.platform}/%{cfg.buildcfg}/"
 location		"%{wks.location}/workspace/%{_ACTION}/%{prj.name}"
 
-dependson{ "python", "assimp", "glew", "glfw", "imgui", }
+dependson{ "assimp", "glew", "glfw", "imgui", }
 
 links{ "glfw", "imgui", }
 
 defines{
 	"ISM_API=ISM_API_EXPORT",
-	"ISM_IMPL_WINDOW_GLFW",
-	"ISM_IMPL_RENDERER_OPENGL",
-	"ISM_IMPL_OPENGL_LOADER_GLEW",
+	"ISM_WINDOW_GLFW",
+	"ISM_RENDERER_OPENGL",
+	"ISM_OPENGL_LOADER_GLEW",
 	"IMGUI_API=ISM_API_IMPORT",
 }
 

@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(MethodObject, t)
+ISM_COMPOSE_TYPE_OBJECT(MethodObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
@@ -13,9 +13,14 @@ ISM_OBJECT_TYPE_STATIC(MethodObject, t)
 
 	t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v) { return util::compare(*o, *v); };
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
 
 	t.tp_descr_get = (descrgetfunc)[](OBJECT self, OBJECT obj, OBJECT type) { return self; };
+
+	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	{
+		return holder_type::new_();
+	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -45,7 +50,7 @@ OBJECT ism::method_vectorcall(OBJECT callable, OBJECT const * argv, size_t argc)
 	}
 	else
 	{
-		LIST args{ ListObject{} };
+		LIST args{ LIST::new_() };
 		args.reserve(1 + argc);
 		args.append(self);
 		for (size_t i = 0; i < argc; ++i) { args.append(argv[i]); }

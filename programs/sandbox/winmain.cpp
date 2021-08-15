@@ -1,19 +1,19 @@
-#include <core/language_features.hpp>
+#include <core/version.hpp>
 
 #ifdef ISM_OS_WINDOWS
 
-#include <platform/windows/os_windows.hpp>
+#include <platform/windows/windows_os.hpp>
 
-extern INT main(INT, CHAR * []);
+extern int main(int, char * []);
 
-ism::OS & __ism_init(void * instance)
+ISM_IMPLEMENTATION(void * hInstance)
 {
-	RETURN_STATIC(ism::OS_Windows(instance ? (HINSTANCE)instance : GetModuleHandle(NULL)));
+	RETURN_STATIC(ism::Windows_OS{ hInstance ? (HINSTANCE)hInstance : GetModuleHandle(NULL) });
 }
 
 INT CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, INT nCmdShow)
 {
-	__ism_init(hInstance);
+	IMPLEMENT_ISM(hInstance);
 
 	return main(__argc, __argv);
 }

@@ -11,8 +11,6 @@ namespace ism
 
 	public:
 		virtual ~RenderDevice();
-
-		DEFAULT_COPYABLE_MOVABLE(RenderDevice);
 	};
 }
 

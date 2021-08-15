@@ -6,14 +6,14 @@
 namespace ism
 {
 	// class interface
-	template <class type_, class ... options_
+	template <class _type, class ... _options
 	> class CLASS_ : public TYPE
 	{
 	public:
-		static constexpr bool is_holder{ is_handle_v<type_> };
-		using holder_type = typename std::conditional_t<is_holder, type_, Handle<type_>>;
-		using value_type = typename std::conditional_t<is_holder, typename type_::value_type, type_>;
-		using type = type_;
+		static constexpr bool is_holder{ is_handle_v<_type> };
+		using holder_type = typename std::conditional_t<is_holder, _type, Handle<_type>>;
+		using value_type = typename std::conditional_t<is_holder, typename _type::value_type, _type>;
+		using type = _type;
 	
 	public:
 		template <class ... Extra
@@ -28,13 +28,13 @@ namespace ism
 
 	public:
 		template <class ... Args, class ... Extra
-		> CLASS_ & def(initimpl::constructor<Args...> && init, Extra && ... extra)
+		> CLASS_ & def(initimpl::Constructor<Args...> && init, Extra && ... extra)
 		{
 			return FWD(init).execute(*this, FWD(extra)...);
 		}
 
 		template <class ... Args, class ... Extra
-		> CLASS_ & def(initimpl::factory<Args...> && init, Extra && ... extra)
+		> CLASS_ & def(initimpl::Factory<Args...> && init, Extra && ... extra)
 		{
 			return FWD(init).execute(*this, FWD(extra)...);
 		}

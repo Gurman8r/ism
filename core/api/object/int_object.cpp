@@ -5,26 +5,31 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_TYPE_STATIC(IntObject, t)
+ISM_COMPOSE_TYPE_OBJECT(IntObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
 
-	t.tp_hash = (hashfunc)[](OBJECT o) { return Hash<int64_t>()(***INT(o)); };
+	t.tp_hash = (hashfunc)[](OBJECT self) { return Hash<int64_t>()(***INT(self)); };
 	
-	t.tp_repr = (reprfunc)[](OBJECT o) { return STR(util::to_string(***INT(o))); };
+	t.tp_repr = (reprfunc)[](OBJECT self) { return STR(util::to_string(***INT(self))); };
 	
-	t.tp_str = (reprfunc)[](OBJECT o) { return STR(util::to_string(***INT(o))); };
+	t.tp_str = (reprfunc)[](OBJECT self) { return STR(util::to_string(***INT(self))); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT o, OBJECT v)
+	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other)
 	{
-		if (INT::check_(v))
+		if (INT::check_(other))
 		{
-			return util::compare(***INT(o), ***INT(v));
+			return util::compare(***INT(self), ***INT(other));
 		}
 		else
 		{
-			return util::compare(*o, *v);
+			return util::compare(*self, *other);
 		}
+	};
+
+	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	{
+		return holder_type::new_();
 	};
 };
 
