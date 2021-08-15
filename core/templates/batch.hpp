@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	// tuple<vector<Ts>...>
+	// tuple<vector<T>...>
 	template <class ... _Ts
 	> class Batch
 	{

@@ -22,7 +22,10 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr Vec2(float_t x = 0.f, float_t y = 0.f) noexcept : m_data{ x, y } {}
+		constexpr Vec2() noexcept : m_data{} {}
+
+		template <class X = float_t, class Y = float_t
+		> constexpr Vec2(X x, Y y) noexcept : m_data{ (float_t)x, (float_t)y } {}
 
 		constexpr Vec2(storage_type const & value) : m_data{ value } {}
 		
@@ -34,25 +37,17 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr Vec2 & operator=(Vec2 const & other)
-		{
-			Vec2 temp{ other };
-			this->swap(temp);
-			return (*this);
-		}
+		constexpr Vec2 & operator=(Vec2 const & other) { Vec2 temp{ other }; return this->swap(temp); }
 
-		constexpr Vec2 & operator=(Vec2 && other) noexcept
-		{
-			this->swap(std::move(other));
-			return (*this);
-		}
+		constexpr Vec2 & operator=(Vec2 && other) noexcept { return this->swap(std::move(other)); }
 
-		constexpr void swap(Vec2 & other) noexcept
+		constexpr Vec2 & swap(Vec2 & other) noexcept
 		{
 			if (this != std::addressof(other))
 			{
 				m_data.swap(other.m_data);
 			}
+			return (*this);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -127,6 +122,43 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
+}
+
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	inline Vec2 operator+(Vec2 const & a, Vec2 const & b) noexcept { return Vec2{ a[0] + b[0], a[1] + b[1] }; }
+	
+	inline Vec2 operator-(Vec2 const & a, Vec2 const & b) noexcept { return Vec2{ a[0] - b[0], a[1] - b[1] }; }
+
+	inline Vec2 operator*(Vec2 const & a, Vec2 const & b) noexcept { return Vec2{ a[0] + b[0], a[1] + b[1] }; }
+	
+	inline Vec2 operator/(Vec2 const & a, Vec2 const & b) noexcept { return Vec2{ a[0] - b[0], a[1] - b[1] }; }
+
+	template <class T = float_t
+	> Vec2 operator*(Vec2 const & a, T const b) noexcept { return Vec2{ a[0] * (float_t)b, a[1] * (float_t)b }; }
+
+	template <class T = float_t
+	> Vec2 operator/(Vec2 const & a, T const b) noexcept { return Vec2{ a[0] / (float_t)b, a[1] / (float_t)b }; }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	inline Vec2 & operator+(Vec2 & a, Vec2 const & b) noexcept { return a = a + b; }
+	
+	inline Vec2 & operator-(Vec2 & a, Vec2 const & b) noexcept { return a = a - b; }
+
+	inline Vec2 & operator*(Vec2 & a, Vec2 const & b) noexcept { return a = a * b; }
+	
+	inline Vec2 & operator/(Vec2 & a, Vec2 const & b) noexcept { return a = a / b; }
+
+	template <class T = float_t
+	> Vec2 & operator*(Vec2 & a, T const b) noexcept { return a = a * b; }
+
+	template <class T = float_t
+	> Vec2 & operator/(Vec2 & a, T const b) noexcept { return a = a / b; }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_VECTOR2_HPP_

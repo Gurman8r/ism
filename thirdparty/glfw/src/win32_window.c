@@ -2178,7 +2178,7 @@ void _glfwPlatformSetClipboardString(const char* string)
     if (!object)
     {
         _glfwInputErrorWin32(GLFW_PLATFORM_ERROR,
-                             "Win32: Failed to allocate global Handle for clipboard");
+                             "Win32: Failed to allocate global handle for clipboard");
         return;
     }
 
@@ -2186,7 +2186,7 @@ void _glfwPlatformSetClipboardString(const char* string)
     if (!buffer)
     {
         _glfwInputErrorWin32(GLFW_PLATFORM_ERROR,
-                             "Win32: Failed to lock global Handle");
+                             "Win32: Failed to lock global handle");
         GlobalFree(object);
         return;
     }
@@ -2232,7 +2232,7 @@ const char* _glfwPlatformGetClipboardString(void)
     if (!buffer)
     {
         _glfwInputErrorWin32(GLFW_PLATFORM_ERROR,
-                             "Win32: Failed to lock global Handle");
+                             "Win32: Failed to lock global handle");
         CloseClipboard();
         return NULL;
     }

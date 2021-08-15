@@ -12,6 +12,10 @@ namespace ism
 	public:
 		virtual ~RenderDevice();
 	};
+
+	ISM_API_FUNC(RenderDevice *) get_render_device();
+
+	ISM_API_FUNC(RenderDevice *) set_render_device(RenderDevice * value);
 }
 
 #endif // !_ISM_RENDERING_DEVICE_HPP_

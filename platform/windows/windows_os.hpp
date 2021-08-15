@@ -20,9 +20,9 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
 	public:
-		virtual ~Windows_OS();
+		virtual ~Windows_OS() override;
 
-		Windows_OS(HINSTANCE instance);
+		explicit Windows_OS(HINSTANCE hInstance);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

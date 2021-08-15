@@ -8,7 +8,8 @@ namespace ism
 	class ISM_API TextFile : public Resource
 	{
 	public:
-		~TextFile();
+		virtual ~TextFile();
+
 		TextFile();
 
 	private:

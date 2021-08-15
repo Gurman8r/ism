@@ -2,6 +2,8 @@
 
 include "./misc/solution_items.lua"
 
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+
 DLL = ".dll"
 EXE = ".exe"
 function COPYFILE(src, dst)

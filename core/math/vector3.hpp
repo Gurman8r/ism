@@ -22,7 +22,10 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr Vec3(float_t x = 0.f, float_t y = 0.f, float_t z = 0.f) noexcept : m_data{ x, y, z } {}
+		constexpr Vec3() noexcept : m_data{} {}
+
+		template <class X = float_t, class Y = float_t, class Z = float_t
+		> constexpr Vec3(X x, Y y, Z z) noexcept : m_data{ (float_t)x, (float_t)y, (float_t)z } {}
 
 		constexpr Vec3(storage_type const & value) : m_data{ value } {}
 		

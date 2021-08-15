@@ -47,8 +47,6 @@
 
 #include <Windows.h>
 
-#undef ARRAYSIZE
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #endif // !_ISM_WINDOWS_HPP_

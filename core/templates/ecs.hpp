@@ -1,7 +1,7 @@
 #ifndef _ML_ECS_HPP_
 #define _ML_ECS_HPP_
 
-// Data Oriented ecs - Vittorio Romeo
+// Data Oriented ECS - Vittorio Romeo
 // https://github.com/SuperV1234/cppcon2015
 // https://www.youtube.com/watch?v=NTWSeQtHZ9M
 
@@ -398,16 +398,16 @@ namespace ism::ecs
 		using self_type			= typename manager<traits>;
 		using Tags				= typename traits::tags_type;
 		using tag_list			= typename traits::tag_list;
-		using Components		= typename traits::components_type;
+		using components_type	= typename traits::components_type;
 		using component_list	= typename traits::component_list;
 		using component_storage	= typename traits::component_storage;
-		using Signatures		= typename traits::signatures_type;
+		using signatures_type	= typename traits::signatures_type;
 		using signature			= typename traits::signature_type;
 		using signature_list	= typename traits::signature_list;
-		using Systems			= typename traits::systems_type;
+		using systems_type		= typename traits::systems_type;
 		using system_list		= typename traits::system_list;
 		using system_storage	= typename traits::system_storage;
-		using Options			= typename traits::options_type;
+		using options_type		= typename traits::options_type;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -706,7 +706,7 @@ namespace ism::ecs
 					a = false;	// alive
 					e = i;		// index
 					h = i;		// handle
-					b = {};		// Bitset
+					b = {};		// bitset
 				});
 				
 				auto & h{ m_handles[i] };
@@ -743,7 +743,7 @@ namespace ism::ecs
 			// grow if needed
 			if (m_capacity <= m_size_next)
 			{
-				this->grow_to(Options::calc_growth(m_capacity));
+				this->grow_to(options_type::calc_growth(m_capacity));
 			}
 
 			size_t const i{ m_size_next++ };
@@ -1002,11 +1002,11 @@ namespace ism::ecs
 			return (*this);
 		}
 
-		// invoke function on each of an entity's Components
+		// invoke function on each of an entity's components_type
 		template <class Fn
 		> self_type & for_components(size_t const i, Fn && fn) noexcept
 		{
-			mpl::for_type_list<typename Components::type_list>([&](auto c) noexcept
+			mpl::for_type_list<typename components_type::type_list>([&](auto c) noexcept
 			{
 				using C = typename decltype(c)::type;
 				if (this->has_component<C>(i))
@@ -1061,7 +1061,7 @@ namespace ism::ecs
 		template <class S, class Fn
 		> void expand_call(size_t const i, Fn && fn) noexcept
 		{
-			using req_comp = Components::template filter<S>;
+			using req_comp = components_type::template filter<S>;
 
 			using helper = mpl::rename<expand_call_helper, req_comp>;
 

@@ -8,7 +8,8 @@ namespace ism
 	class ISM_API Sky : public Resource
 	{
 	public:
-		~Sky();
+		virtual ~Sky();
+
 		Sky();
 
 	private:

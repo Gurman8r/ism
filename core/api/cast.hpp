@@ -95,8 +95,18 @@ namespace ism
 #define ISM_TYPE_CASTER(m_type, m_name)																\
 protected:																							\
 	m_type value;																					\
+																									\
 public:																								\
 	static constexpr auto name{ m_name };															\
+																									\
+	operator m_type * () { return &value; }															\
+																									\
+	operator m_type & () { return value; }															\
+																									\
+	operator m_type && () { return std::move(value); }												\
+																									\
+	template <class T_> using cast_op_type = ism::movable_cast_op_type<T_>;							\
+																									\
 	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0		\
 	> static OBJECT cast(T_ * src, ReturnPolicy policy, OBJECT parent)								\
 	{																								\
@@ -112,10 +122,6 @@ public:																								\
 			return cast(*src, policy, parent);														\
 		}																							\
 	}																								\
-	operator m_type * () { return &value; }															\
-	operator m_type & () { return value; }															\
-	operator m_type && () { return std::move(value); }												\
-	template <class T_> using cast_op_type = ism::movable_cast_op_type<T_>;							\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -283,7 +289,7 @@ public:																								\
 
 	template <class T, class Deleter
 	> struct type_caster<std::unique_ptr<T, Deleter>>
-		: move_only_holder_caster<T, std::unique_ptr<T, Deleter>> { };
+		: move_only_holder_caster<T, std::unique_ptr<T, Deleter>> {};
 
 	template <class T, class Holder
 	> using type_caster_holder = std::conditional_t<

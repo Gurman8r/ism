@@ -2,5 +2,7 @@
 
 namespace ism
 {
+	DECLEXPR(CameraServer::singleton) {};
+
 	CameraServer::~CameraServer() {}
 }

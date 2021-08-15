@@ -33,19 +33,19 @@ namespace ism::attr
 #define ISM_PROCESS_ATTR_SFINAE(m_class, m_sfinae) \
 	struct ism::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::attr::process_attribute_default<m_class>
 
-// process attribute sfinae-base
-#define ISM_PROCESS_ATTR_SFINAE_BASE(m_class, m_sfinae, m_inherits) \
+// process attribute base/sfinae
+#define ISM_PROCESS_ATTR_BASE_SFINAE(m_class, m_sfinae, m_inherits) \
 	struct ism::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::attr::process_attribute_default<m_inherits>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// declare empty attribute
-#define ISM_BASIC_ATTR_E(m_class) \
+// empty attribute
+#define ISM_ATTR_EMPTY(m_class) \
 	struct m_class final { \
 		explicit m_class() noexcept {} \
 	}
 
-// declare object attribute
+// object attribute
 #define ISM_ATTR_OBJECT(m_class, m_value) \
 	struct m_class final { \
 		ism::BaseObject * const m_value; \
@@ -53,7 +53,7 @@ namespace ism::attr
 		explicit m_class(ism::OBJECT value) : m_value{ *value } {} \
 	}
 
-// declare string attribute
+// string attribute
 #define ISM_ATTR_STRING(m_class, m_value) \
 	struct m_class final { \
 		char const * const m_value; \
@@ -61,7 +61,7 @@ namespace ism::attr
 		explicit m_class(char * value) : m_value{ (char const *)value } {} \
 	}
 
-// declare bool attribute
+// bool attribute
 #define ISM_ATTR_BOOL(m_class, m_value) \
 	struct m_class final { \
 		bool const m_value; \
@@ -119,19 +119,19 @@ namespace ism::attr
 	};
 
 	// is_operator
-	ISM_BASIC_ATTR_E(is_operator);
+	ISM_ATTR_EMPTY(is_operator);
 	template <> ISM_PROCESS_ATTR(is_operator) {
 		static void init(FunctionRecord & r, is_operator && a) { r.is_operator = true; }
 	};
 
 	// is_constructor
-	ISM_BASIC_ATTR_E(is_constructor);
+	ISM_ATTR_EMPTY(is_constructor);
 	template <> ISM_PROCESS_ATTR(is_constructor) {
 		static void init(FunctionRecord & r, is_constructor && a) { r.is_constructor = true; }
 	};
 
 	// prepend
-	ISM_BASIC_ATTR_E(prepend);
+	ISM_ATTR_EMPTY(prepend);
 	template <> ISM_PROCESS_ATTR(prepend) {
 		static void init(FunctionRecord & r, prepend && a) { r.prepend = true; }
 	};
@@ -144,19 +144,19 @@ namespace ism::attr
 	};
 
 	// multiple inheritance
-	ISM_BASIC_ATTR_E(multiple_inheritance);
+	ISM_ATTR_EMPTY(multiple_inheritance);
 	template <> ISM_PROCESS_ATTR(multiple_inheritance) {
 		static void init(TypeObject & r, multiple_inheritance && a) { if (!r.tp_bases) { r.tp_bases = LIST::new_(); } }
 	};
 
 	// dynamic_attr
-	ISM_BASIC_ATTR_E(dynamic_attr);
+	ISM_ATTR_EMPTY(dynamic_attr);
 	template <> ISM_PROCESS_ATTR(dynamic_attr) {
 		static void init(TypeObject & r, dynamic_attr && a) { if (!r.tp_dict) { r.tp_dict = DICT::new_(); } }
 	};
 
 	// is_final
-	ISM_BASIC_ATTR_E(is_final);
+	ISM_ATTR_EMPTY(is_final);
 	template <> ISM_PROCESS_ATTR(is_final) {
 		static void init(TypeObject & r, is_final && a) { /*r.tp_is_final = true;*/ }
 	};
@@ -174,7 +174,7 @@ namespace ism::attr
 	};
 
 	// arithmetic
-	ISM_BASIC_ATTR_E(arithmetic);
+	ISM_ATTR_EMPTY(arithmetic);
 	template <> ISM_PROCESS_ATTR(arithmetic) {
 		static void init(TypeObject & r, arithmetic && a) { /* nothing to do here */ }
 	};
@@ -212,7 +212,7 @@ namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// process_attributes
+	// process attributes
 	template <class ... Args> struct process_attributes
 	{
 		template <class T> static void init(T & r, Args && ... args)

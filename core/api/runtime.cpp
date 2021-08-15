@@ -7,6 +7,9 @@ using namespace ism;
 
 StackFrame::StackFrame()
 {
+	builtins = DICT::new_();
+	locals = DICT::new_();
+	globals = DICT::new_();
 }
 
 StackFrame::~StackFrame()
@@ -69,11 +72,9 @@ InterpreterState::~InterpreterState()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RuntimeState * RuntimeState::singleton{};
-
 RuntimeState::RuntimeState()
 {
-	if (!get_current_runtime()) { set_current_runtime(this); }
+	if (!get_runtime_state()) { set_runtime_state(this); }
 
 	main_thread = std::this_thread::get_id();
 
@@ -90,7 +91,15 @@ RuntimeState::~RuntimeState()
 		interpreters.head = next;
 	}
 
-	if (this == get_current_runtime()) { set_current_runtime(nullptr); }
+	if (this == get_runtime_state()) { set_runtime_state(nullptr); }
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+static RuntimeState * g_runtime_state{};
+
+RuntimeState * ism::get_runtime_state() { return g_runtime_state; }
+
+RuntimeState * ism::set_runtime_state(RuntimeState * value) { return g_runtime_state = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

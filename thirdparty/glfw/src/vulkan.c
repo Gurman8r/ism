@@ -54,7 +54,7 @@ GLFWbool _glfwInitVulkan(int mode)
 #if defined(_GLFW_VULKAN_LIBRARY)
     _glfw.vk.handle = _glfw_dlopen(_GLFW_VULKAN_LIBRARY);
 #elif defined(_GLFW_WIN32)
-    _glfw.vk.handle = _glfw_dlopen("vulkan-1%{DLL}");
+    _glfw.vk.handle = _glfw_dlopen("vulkan-1.dll");
 #elif defined(_GLFW_COCOA)
     _glfw.vk.handle = _glfw_dlopen("libvulkan.1.dylib");
     if (!_glfw.vk.handle)
@@ -183,11 +183,11 @@ const char* _glfwGetVulkanResultString(VkResult result)
         case VK_ERROR_OUT_OF_DEVICE_MEMORY:
             return "A device memory allocation has failed";
         case VK_ERROR_INITIALIZATION_FAILED:
-            return "Initialization of an Object could not be completed for implementation-specific reasons";
+            return "Initialization of an object could not be completed for implementation-specific reasons";
         case VK_ERROR_DEVICE_LOST:
             return "The logical or physical device has been lost";
         case VK_ERROR_MEMORY_MAP_FAILED:
-            return "Mapping of a memory Object has failed";
+            return "Mapping of a memory object has failed";
         case VK_ERROR_LAYER_NOT_PRESENT:
             return "A requested layer is not present or could not be loaded";
         case VK_ERROR_EXTENSION_NOT_PRESENT:
@@ -197,7 +197,7 @@ const char* _glfwGetVulkanResultString(VkResult result)
         case VK_ERROR_INCOMPATIBLE_DRIVER:
             return "The requested version of Vulkan is not supported by the driver or is otherwise incompatible";
         case VK_ERROR_TOO_MANY_OBJECTS:
-            return "Too many objects of the Type have already been created";
+            return "Too many objects of the type have already been created";
         case VK_ERROR_FORMAT_NOT_SUPPORTED:
             return "A requested format is not supported on this device";
         case VK_ERROR_SURFACE_LOST_KHR:

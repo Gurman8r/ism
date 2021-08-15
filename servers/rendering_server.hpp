@@ -9,10 +9,12 @@ namespace ism
 	{
 		ISM_SUPER(RenderingServer, Super);
 
+		static RenderingServer * singleton;
+
 	public:
 		virtual ~RenderingServer();
 
-		DEFAULT_COPYABLE_MOVABLE(RenderingServer);
+		static RenderingServer * get_singleton() { return singleton; }
 	};
 }
 

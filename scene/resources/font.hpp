@@ -8,7 +8,8 @@ namespace ism
 	class ISM_API Font : public Resource
 	{
 	public:
-		~Font();
+		virtual ~Font();
+
 		Font();
 
 	private:

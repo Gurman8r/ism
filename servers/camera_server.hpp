@@ -9,10 +9,12 @@ namespace ism
 	{
 		ISM_SUPER(CameraServer, Super);
 
+		static CameraServer * singleton;
+
 	public:
 		virtual ~CameraServer();
 
-		DEFAULT_COPYABLE_MOVABLE(CameraServer);
+		static CameraServer * get_singleton() { return singleton; }
 	};
 }
 

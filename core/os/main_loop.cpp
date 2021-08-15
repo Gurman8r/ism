@@ -10,9 +10,9 @@ namespace ism
 	{
 	}
 
-	bool MainLoop::iteration(float_t dt)
+	bool MainLoop::iteration(Duration delta_time)
 	{
-		return false;
+		return true;
 	}
 
 	void MainLoop::finalize()

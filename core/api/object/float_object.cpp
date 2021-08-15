@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_COMPOSE_TYPE_OBJECT(FloatObject, t)
+IMPLEMENT_CLASS_TYPE(FloatObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Float_Subclass;
 

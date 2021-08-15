@@ -68,22 +68,22 @@ BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
 //
 static GLFWbool loadLibraries(void)
 {
-    _glfw.win32.winmm.instance = LoadLibraryA("winmm%{DLL}");
+    _glfw.win32.winmm.instance = LoadLibraryA("winmm.dll");
     if (!_glfw.win32.winmm.instance)
     {
         _glfwInputErrorWin32(GLFW_PLATFORM_ERROR,
-                             "Win32: Failed to load winmm%{DLL}");
+                             "Win32: Failed to load winmm.dll");
         return GLFW_FALSE;
     }
 
     _glfw.win32.winmm.GetTime = (PFN_timeGetTime)
         GetProcAddress(_glfw.win32.winmm.instance, "timeGetTime");
 
-    _glfw.win32.user32.instance = LoadLibraryA("user32%{DLL}");
+    _glfw.win32.user32.instance = LoadLibraryA("user32.dll");
     if (!_glfw.win32.user32.instance)
     {
         _glfwInputErrorWin32(GLFW_PLATFORM_ERROR,
-                             "Win32: Failed to load user32%{DLL}");
+                             "Win32: Failed to load user32.dll");
         return GLFW_FALSE;
     }
 
@@ -100,7 +100,7 @@ static GLFWbool loadLibraries(void)
     _glfw.win32.user32.AdjustWindowRectExForDpi_ = (PFN_AdjustWindowRectExForDpi)
         GetProcAddress(_glfw.win32.user32.instance, "AdjustWindowRectExForDpi");
 
-    _glfw.win32.dinput8.instance = LoadLibraryA("dinput8%{DLL}");
+    _glfw.win32.dinput8.instance = LoadLibraryA("dinput8.dll");
     if (_glfw.win32.dinput8.instance)
     {
         _glfw.win32.dinput8.Create = (PFN_DirectInput8Create)
@@ -111,11 +111,11 @@ static GLFWbool loadLibraries(void)
         int i;
         const char* names[] =
         {
-            "xinput1_4%{DLL}",
-            "xinput1_3%{DLL}",
-            "xinput9_1_0%{DLL}",
-            "xinput1_2%{DLL}",
-            "xinput1_1%{DLL}",
+            "xinput1_4.dll",
+            "xinput1_3.dll",
+            "xinput9_1_0.dll",
+            "xinput1_2.dll",
+            "xinput1_1.dll",
             NULL
         };
 
@@ -134,7 +134,7 @@ static GLFWbool loadLibraries(void)
         }
     }
 
-    _glfw.win32.dwmapi.instance = LoadLibraryA("dwmapi%{DLL}");
+    _glfw.win32.dwmapi.instance = LoadLibraryA("dwmapi.dll");
     if (_glfw.win32.dwmapi.instance)
     {
         _glfw.win32.dwmapi.IsCompositionEnabled = (PFN_DwmIsCompositionEnabled)
@@ -147,7 +147,7 @@ static GLFWbool loadLibraries(void)
             GetProcAddress(_glfw.win32.dwmapi.instance, "DwmGetColorizationColor");
     }
 
-    _glfw.win32.shcore.instance = LoadLibraryA("shcore%{DLL}");
+    _glfw.win32.shcore.instance = LoadLibraryA("shcore.dll");
     if (_glfw.win32.shcore.instance)
     {
         _glfw.win32.shcore.SetProcessDpiAwareness_ = (PFN_SetProcessDpiAwareness)
@@ -156,7 +156,7 @@ static GLFWbool loadLibraries(void)
             GetProcAddress(_glfw.win32.shcore.instance, "GetDpiForMonitor");
     }
 
-    _glfw.win32.ntdll.instance = LoadLibraryA("ntdll%{DLL}");
+    _glfw.win32.ntdll.instance = LoadLibraryA("ntdll.dll");
     if (_glfw.win32.ntdll.instance)
     {
         _glfw.win32.ntdll.RtlVerifyVersionInfo_ = (PFN_RtlVerifyVersionInfo)

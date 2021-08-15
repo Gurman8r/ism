@@ -21,7 +21,10 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr Rect(float_t x = 0.f, float_t y = 0.f, float_t w = 0.f, float_t h = 0.f) noexcept : m_data{ x, y, w, h } {}
+		constexpr Rect() noexcept : m_data{} {}
+
+		template <class X = float_t, class Y = float_t, class Z = float_t, class W = float_t
+		> constexpr Rect(X x, Y y, Z z, W w) noexcept : m_data{ (float_t)x, (float_t)y, (float_t)z, (float_t)w } {}
 
 		constexpr Rect(Vec2 const & pos, Vec2 const & size) : m_data{ pos[0], pos[1], size[0], size[1] } {}
 

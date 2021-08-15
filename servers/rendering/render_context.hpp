@@ -12,6 +12,10 @@ namespace ism
 	public:
 		virtual ~RenderContext();
 	};
+
+	ISM_API_FUNC(RenderContext *) get_render_context();
+
+	ISM_API_FUNC(RenderContext *) set_render_context(RenderContext * value);
 }
 
 #endif // !_ISM_RENDERING_CONTEXT_HPP_

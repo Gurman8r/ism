@@ -15,13 +15,16 @@ namespace ism
 		ISM_SUPER(SceneTree, MainLoop);
 
 	public:
-		virtual ~SceneTree();
+		virtual ~SceneTree() override;
 
 		explicit SceneTree(String const & name = "New Scene");
 
-		NON_COPYABLE(SceneTree);
+	public:
+		virtual void initialize() override;
 
-		MOVABLE(SceneTree);
+		virtual bool iteration(Duration delta_time) override;
+
+		virtual void finalize() override;
 
 	public:
 		void on_runtime_update(Duration dt);
@@ -30,7 +33,7 @@ namespace ism
 		template <class T> void on_component_added(Node &, T &) {}
 
 	public:
-		NODISCARD auto get_registry() const noexcept { return const_cast<entt::registry *>(&m_reg); }
+		NODISCARD auto get_reg() const noexcept { return const_cast<entt::registry *>(&m_reg); }
 
 		NODISCARD auto get_root() const noexcept -> Window * { return m_root; }
 

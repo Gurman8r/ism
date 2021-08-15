@@ -6,7 +6,7 @@ namespace ism
 
 	Windows_OS::~Windows_OS() { delete_main_loop(); }
 
-	Windows_OS::Windows_OS(HINSTANCE instance) : OS{}, m_instance{ instance } {}
+	Windows_OS::Windows_OS(HINSTANCE hInstance) : OS{}, m_instance{ hInstance } {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -99,17 +99,12 @@ namespace ism
 
 	void Windows_OS::set_main_loop(MainLoop * value)
 	{
-		if (m_main_loop != value)
-		{
-			m_main_loop = value;
-		}
+		if (m_main_loop != value) { m_main_loop = value; }
 	}
 
 	void Windows_OS::delete_main_loop()
 	{
-		memdelete_nonzero(m_main_loop);
-
-		m_main_loop = nullptr;
+		if (m_main_loop) { memdelete(m_main_loop); m_main_loop = nullptr; }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

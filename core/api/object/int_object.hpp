@@ -27,28 +27,13 @@ namespace ism
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> explicit IntObject(TYPE const & t, T const v) : base_type{ t }, m_int{ static_cast<storage_type>(v) } {}
-
-		explicit IntObject(bool value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(char value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(wchar_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(char16_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(char32_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(int8_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(int16_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(int32_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(int64_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(uint8_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(uint16_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(uint32_t value) : self_type{ get_type_static(), value } {}
-		explicit IntObject(uint64_t value) : self_type{ get_type_static(), value } {}
-
-		IntObject(float32_t) = delete;
-		IntObject(float64_t) = delete;
-		IntObject(float80_t) = delete;
+		> explicit IntObject(TYPE const & type, T const value) : base_type{ type }, m_int{ static_cast<storage_type>(value) } {}
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> IntObject & operator=(T const v) { m_int = static_cast<storage_type>(v); return (*this); }
+		> explicit IntObject(T const value) : self_type{ get_type_static(), value } {}
+
+		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
+		> IntObject & operator=(T const value) { m_int = static_cast<storage_type>(value); return (*this); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> NODISCARD operator T() const & { return static_cast<T>(m_int); }
@@ -74,7 +59,7 @@ namespace ism
 		using storage_type = value_type::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> Handle(T const v) { instance(v); }
+		> Handle(T const value) { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> operator T () const { return (T)(**m_ptr); }

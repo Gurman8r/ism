@@ -17,6 +17,7 @@
 #include <core/templates/hash_set.hpp>
 #include <core/templates/map.hpp>
 #include <core/templates/set.hpp>
+#include <core/templates/timer.hpp>
 #include <core/templates/type_info.hpp>
 
 namespace ism

@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_COMPOSE_TYPE_OBJECT(IntObject, t)
+IMPLEMENT_CLASS_TYPE(IntObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
 

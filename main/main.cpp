@@ -2,6 +2,8 @@
 #include <core/os/main_loop.hpp>
 #include <core/api/runtime.hpp>
 #include <core/register_core_types.hpp>
+#include <scene/main/scene_tree.hpp>
+#include <servers/display_server.hpp>
 
 namespace ism
 {
@@ -11,7 +13,7 @@ namespace ism
 	uint32_t	Main::g_frame_index	{};
 	int32_t		Main::g_iterating	{};
 
-	ism::RuntimeState * g_runtime{};
+	RuntimeState * g_runtime{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -22,7 +24,7 @@ namespace ism
 		register_core_types();
 		register_core_driver_types();
 
-		g_runtime = memnew(ism::RuntimeState);
+		g_runtime = memnew(RuntimeState);
 
 		register_core_settings();
 
@@ -54,7 +56,8 @@ namespace ism
 
 	bool Main::start()
 	{
-		//get_os().set_main_loop(memnew(SceneTree));
+		DisplayServer::initialize();
+		get_os().set_main_loop(memnew(SceneTree()));
 
 		//ResourceLoader::add_custom_loaders();
 		//ResourceSaver::add_custom_savers();
@@ -81,6 +84,7 @@ namespace ism
 		//ResourceSaver::remove_custom_savers();
 
 		get_os().delete_main_loop();
+		DisplayServer::finalize();
 
 		//ScriptServer::finish_languages();
 

@@ -8,11 +8,12 @@ namespace ism::initimpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <typename Class> using Cpp = typename Class::value_type;
-	template <typename Class> using Alias = typename Class::type_alias;
+
 	template <typename Class> using Holder = typename Class::holder_type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// constructor
 	template <class ... Args
 	> struct Constructor
 	{
@@ -43,6 +44,7 @@ namespace ism::initimpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// factory
 	template <class Fn, class R = mpl::function_signature_t<Fn>, class ... Args
 	> struct Factory
 	{

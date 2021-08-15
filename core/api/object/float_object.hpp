@@ -22,28 +22,13 @@ namespace ism
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> explicit FloatObject(TYPE const & t, T const v) : base_type{ t }, m_float{ static_cast<storage_type>(v) } {}
-
-		FloatObject(bool) = delete;
-		FloatObject(char) = delete;
-		FloatObject(wchar_t) = delete;
-		FloatObject(char16_t) = delete;
-		FloatObject(char32_t) = delete;
-		FloatObject(int8_t) = delete;
-		FloatObject(int16_t) = delete;
-		FloatObject(int32_t) = delete;
-		FloatObject(int64_t) = delete;
-		FloatObject(uint8_t ) = delete;
-		FloatObject(uint16_t) = delete;
-		FloatObject(uint32_t) = delete;
-		FloatObject(uint64_t) = delete;
-
-		explicit FloatObject(float32_t value) : self_type{ get_type_static(), value } {}
-		explicit FloatObject(float64_t value) : self_type{ get_type_static(), value } {}
-		explicit FloatObject(float80_t value) : self_type{ get_type_static(), value } {}
+		> explicit FloatObject(TYPE const & type, T const value) : base_type{ type }, m_float{ static_cast<storage_type>(value) } {}
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> FloatObject & operator=(T const v) { m_float = static_cast<storage_type>(v); return (*this); }
+		> explicit FloatObject(T const value) : self_type{ get_type_static(), value } {}
+
+		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
+		> FloatObject & operator=(T const value) { m_float = static_cast<storage_type>(value); return (*this); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> NODISCARD operator T() const & { return static_cast<T>(m_float); }
@@ -64,7 +49,7 @@ namespace ism
 		using storage_type = value_type::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> Handle(T const v) { instance(v); }
+		> Handle(T const value) { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> operator T () const { return (T)(**m_ptr); }

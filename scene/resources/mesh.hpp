@@ -8,7 +8,8 @@ namespace ism
 	class ISM_API Mesh : public Resource
 	{
 	public:
-		~Mesh();
+		virtual ~Mesh();
+
 		Mesh();
 
 	private:

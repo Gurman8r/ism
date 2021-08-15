@@ -414,11 +414,11 @@ GLFWbool _glfwInitWGL(void)
     if (_glfw.wgl.instance)
         return GLFW_TRUE;
 
-    _glfw.wgl.instance = LoadLibraryA("opengl32%{DLL}");
+    _glfw.wgl.instance = LoadLibraryA("opengl32.dll");
     if (!_glfw.wgl.instance)
     {
         _glfwInputErrorWin32(GLFW_PLATFORM_ERROR,
-                             "WGL: Failed to load opengl32%{DLL}");
+                             "WGL: Failed to load opengl32.dll");
         return GLFW_FALSE;
     }
 
@@ -437,7 +437,7 @@ GLFWbool _glfwInitWGL(void)
     _glfw.wgl.ShareLists = (PFN_wglShareLists)
         GetProcAddress(_glfw.wgl.instance, "wglShareLists");
 
-    // NOTE: A dummy context has to be created for opengl32%{DLL} to load the
+    // NOTE: A dummy context has to be created for opengl32.dll to load the
     //       OpenGL ICD, from which we can then query WGL extensions
     // NOTE: This code will accept the Microsoft GDI ICD; accelerated context
     //       creation failure occurs during manual pixel format enumeration

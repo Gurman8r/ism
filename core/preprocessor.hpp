@@ -11,11 +11,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// array size
-#undef ARRAYSIZE
-#define ARRAYSIZE(arr) \
-	(sizeof(arr) / sizeof(*arr))
-
 // concat implementation
 #define _IMPL_CAT(a, b) \
 	a##b
@@ -103,22 +98,22 @@ namespace ism::impl
 	};
 
 	template <class T, class Fn = void(*)(T &)
-	> constexpr decltype(auto) operator+(ComposeHelper<T> && maker, Fn && fn) noexcept
+	> constexpr decltype(auto) operator+(ComposeHelper<T> && helper, Fn && fn) noexcept
 	{
-		fn(static_cast<T &>(maker.value));
+		fn(static_cast<T &>(helper.value));
 
-		return std::move(maker.value);
+		return std::move(helper.value);
 	}
 
-#define COMPOSE(T, v, ...) \
-	(ism::impl::ComposeHelper<T>(T{ ##__VA_ARGS__ })) + [&](T & v) noexcept -> void
+#define COMPOSE(m_type, m_var, ...) \
+	(ism::impl::ComposeHelper<m_type>(m_type{ ##__VA_ARGS__ })) + [&](m_type & m_var) noexcept -> void
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // return static implementation
 #define _IMPL_RETURN_STATIC(var, expr)	\
-	static auto var = expr;			\
+	static auto var = expr;				\
 	return var;							\
 
 // return static

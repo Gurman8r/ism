@@ -7,17 +7,45 @@ namespace ism
 
 	SceneTree::~SceneTree()
 	{
-		if (m_root)
-		{
-			memdelete(m_root);
-
-			m_root = nullptr;
-		}
+		if (m_root) { memdelete(m_root); m_root = nullptr; }
 	}
 
 	SceneTree::SceneTree(String const & name)
 	{
 		m_name = name.empty() ? "New Scene" : name;
+
+		m_root = Window::new_
+		({
+			this, nullptr,
+
+			"New Window",
+
+			VideoMode{ { 1280, 720 }, { 8, 8, 8, 8 }, -1 },
+
+			ContextSettings{ ContextAPI_OpenGL, 4, 6, ContextProfile_Compat, 24, 8, true, false },
+
+			WindowHints_Default_Maximized
+		});
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void SceneTree::initialize()
+	{
+		MainLoop::initialize();
+	}
+
+	bool SceneTree::iteration(Duration delta_time)
+	{
+		if (!MainLoop::iteration(delta_time)) { return false; }
+
+		return m_root && m_root->is_open();
+	}
+
+	void SceneTree::finalize()
+	{
+		
+		MainLoop::finalize();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

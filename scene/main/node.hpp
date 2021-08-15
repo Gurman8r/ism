@@ -21,49 +21,14 @@ namespace ism
 		using reverse_iterator			= typename Vector<Node *>::reverse_iterator;
 		using const_reverse_iterator	= typename Vector<Node *>::const_reverse_iterator;
 
-	public:
-		virtual ~Node();
+		virtual ~Node() override;
 
-		explicit Node(Node * parent, SceneTree * tree);
+	protected:
+		explicit Node(SceneTree * tree, Node * parent);
 
-		explicit Node(SceneTree * tree) noexcept : Node{ nullptr, tree } {}
+		explicit Node(SceneTree * tree) noexcept : Node{ tree, nullptr } {}
 
-		explicit Node(Node * parent) noexcept : Node{ CHECK(parent), parent->m_tree } {}
-
-		NON_COPYABLE(Node);
-
-		MOVABLE(Node);
-
-	public:
-		NODISCARD operator entt::entity() const noexcept { return m_entity; }
-
-		NODISCARD auto get_entity() const noexcept -> entt::entity { return m_entity; }
-
-		template <class Component, class ... Args
-		> Component & add_component(Args && ... args) noexcept
-		{
-			Component & c{ m_tree->m_reg.emplace<Component>(m_entity, FWD(args)...) };
-			m_tree->on_component_added<Component>(*this, c);
-			return c;
-		}
-
-		template <class ... Component
-		> NODISCARD decltype(auto) get_component()
-		{
-			return m_tree->m_reg.get<Component...>(m_entity);
-		}
-
-		template <class ... Component
-		> NODISCARD bool has_component() const
-		{
-			return m_tree->m_reg.has<Component...>(m_entity);
-		}
-
-		template <class ... Component
-		> void remove_component()
-		{
-			m_tree->m_reg.remove<Component...>(m_entity);
-		}
+		explicit Node(Node * parent) noexcept : Node{ CHECK(parent)->m_tree, parent } {}
 
 	public:
 		NODISCARD auto get_child(size_t i) const noexcept -> Node * { return (i < get_child_count()) ? m_children[i] : nullptr; }
@@ -85,7 +50,7 @@ namespace ism
 		NODISCARD auto get_sibling_index() const noexcept -> size_t
 		{
 			return m_parent
-				? std::distance(m_parent->begin(), std::find_if(m_parent->begin(), m_parent->end(), [&
+				? std::distance(m_parent->m_children.begin(), std::find_if(m_parent->m_children.begin(), m_parent->m_children.end(), [&
 				](auto const child) { return this == child; }))
 				: static_cast<size_t>(-1);
 		}
@@ -93,13 +58,13 @@ namespace ism
 		template <class Pr
 		> NODISCARD auto get_node_if(Pr && pr, bool recursive = true) const -> Node *
 		{
-			if (auto const it{ std::find_if(begin(), end(), FWD(pr)) }; it != end())
+			if (auto const it{ std::find_if(m_children.begin(), m_children.end(), FWD(pr)) }; it != m_children.end())
 			{
 				return (*it);
 			}
 			else if (recursive)
 			{
-				for (auto const child : *this)
+				for (auto const child : m_children)
 				{
 					if (auto const found{ child->get_node_if(FWD(pr)) })
 					{
@@ -159,7 +124,7 @@ namespace ism
 			{
 				memdelete(m_children[i]);
 
-				m_children.erase(begin() + (ptrdiff_t)i);
+				m_children.erase(m_children.begin() + (ptrdiff_t)i);
 			}
 		}
 
@@ -167,7 +132,7 @@ namespace ism
 		{
 			if (m_parent)
 			{
-				for (auto const child : *this)
+				for (auto const child : m_children)
 				{
 					child->m_parent = m_parent;
 
@@ -176,7 +141,7 @@ namespace ism
 			}
 			else
 			{
-				for (auto const child : *this)
+				for (auto const child : m_children)
 				{
 					child->m_parent = nullptr;
 				}
@@ -204,41 +169,15 @@ namespace ism
 		{
 			if (m_parent) { return; }
 
-			auto & v{ m_parent->m_children };
+			auto & children{ m_parent->m_children };
 
-			v.erase(v.begin() + get_sibling_index());
+			children.erase(children.begin() + get_sibling_index());
 
-			v.insert(v.begin() + i, this);
+			children.insert(children.begin() + i, this);
 		}
-
-	public:
-		NODISCARD auto begin() -> iterator { return m_children.begin(); }
-
-		NODISCARD auto begin() const -> const_iterator { return m_children.begin(); }
-
-		NODISCARD auto cbegin() const -> const_iterator { return m_children.cbegin(); }
-
-		NODISCARD auto end() -> iterator { return m_children.end(); }
-
-		NODISCARD auto end() const -> const_iterator { return m_children.end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return m_children.cend(); }
-
-		NODISCARD auto rbegin() -> reverse_iterator { return m_children.rbegin(); }
-
-		NODISCARD auto rbegin() const -> const_reverse_iterator { return m_children.rbegin(); }
-
-		NODISCARD auto crbegin() const -> const_reverse_iterator { return m_children.crbegin(); }
-
-		NODISCARD auto rend() -> reverse_iterator { return m_children.rend(); }
-
-		NODISCARD auto rend() const -> const_reverse_iterator { return m_children.rend(); }
-
-		NODISCARD auto crend() const -> const_reverse_iterator { return m_children.crend(); }
 
 	private:
 		SceneTree *		m_tree		{}; // tree
-		entt::entity	m_entity	{}; // entity
 		Node *			m_parent	{}; // parent
 		Vector<Node *>	m_children	{}; // children
 	};

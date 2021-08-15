@@ -31,7 +31,7 @@ bool BaseObject::set_type(TYPE const & value) { return (bool)(ob_type = value); 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_COMPOSE_TYPE_OBJECT(BaseObject, t)
+IMPLEMENT_CLASS_TYPE(BaseObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 

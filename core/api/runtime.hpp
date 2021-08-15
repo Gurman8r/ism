@@ -70,11 +70,6 @@ namespace ism
 
 	class ISM_API RuntimeState
 	{
-	private:
-		static RuntimeState * singleton;
-		friend RuntimeState * get_current_runtime();
-		friend void set_current_runtime(RuntimeState *);
-
 	public:
 		RuntimeState();
 		~RuntimeState();
@@ -104,23 +99,23 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_current_runtime() -> RuntimeState * { return RuntimeState::singleton; }
+	ISM_API_FUNC(RuntimeState *) get_runtime_state();
 	
-	inline void set_current_runtime(RuntimeState * value) { RuntimeState::singleton = value; }
+	ISM_API_FUNC(RuntimeState *) set_runtime_state(RuntimeState * value);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_current_thread() -> ThreadState * { return get_current_runtime()->tstate_current; }
+	NODISCARD inline auto get_current_thread() -> ThreadState * { return get_runtime_state()->tstate_current; }
 	
 	NODISCARD inline auto get_current_interpreter() -> InterpreterState * { return get_current_thread()->interp; }
 	
 	NODISCARD inline auto get_current_frame() -> StackFrame * { return get_current_thread()->frame; }
 	
-	NODISCARD inline auto get_head_interpreter() -> InterpreterState * { return get_current_runtime()->interpreters.head; }
+	NODISCARD inline auto get_head_interpreter() -> InterpreterState * { return get_runtime_state()->interpreters.head; }
 	
-	NODISCARD inline auto get_main_interpreter() -> InterpreterState * { return get_current_runtime()->interpreters.main; }
+	NODISCARD inline auto get_main_interpreter() -> InterpreterState * { return get_runtime_state()->interpreters.main; }
 	
-	inline void set_main_interpreter(InterpreterState * value) { get_current_runtime()->interpreters.main = value; }
+	inline void set_main_interpreter(InterpreterState * value) { get_runtime_state()->interpreters.main = value; }
 
 	NODISCARD inline auto lookup_interpreter(int64_t id) -> InterpreterState *
 	{

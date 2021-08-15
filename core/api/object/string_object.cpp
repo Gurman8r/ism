@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_COMPOSE_TYPE_OBJECT(StringObject, t)
+IMPLEMENT_CLASS_TYPE(StringObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Str_Subclass;
 	

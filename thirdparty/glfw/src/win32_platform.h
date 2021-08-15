@@ -215,21 +215,21 @@ typedef enum
  #define DIDFT_OPTIONAL 0x80000000
 #endif
 
-// winmm%{DLL} function pointer typedefs
+// winmm.dll function pointer typedefs
 typedef DWORD (WINAPI * PFN_timeGetTime)(void);
 #define timeGetTime _glfw.win32.winmm.GetTime
 
-// xinput%{DLL} function pointer typedefs
+// xinput.dll function pointer typedefs
 typedef DWORD (WINAPI * PFN_XInputGetCapabilities)(DWORD,DWORD,XINPUT_CAPABILITIES*);
 typedef DWORD (WINAPI * PFN_XInputGetState)(DWORD,XINPUT_STATE*);
 #define XInputGetCapabilities _glfw.win32.xinput.GetCapabilities
 #define XInputGetState _glfw.win32.xinput.GetState
 
-// dinput8%{DLL} function pointer typedefs
+// dinput8.dll function pointer typedefs
 typedef HRESULT (WINAPI * PFN_DirectInput8Create)(HINSTANCE,DWORD,REFIID,LPVOID*,LPUNKNOWN);
 #define DirectInput8Create _glfw.win32.dinput8.Create
 
-// user32%{DLL} function pointer typedefs
+// user32.dll function pointer typedefs
 typedef BOOL (WINAPI * PFN_SetProcessDPIAware)(void);
 typedef BOOL (WINAPI * PFN_ChangeWindowMessageFilterEx)(HWND,UINT,DWORD,CHANGEFILTERSTRUCT*);
 typedef BOOL (WINAPI * PFN_EnableNonClientDpiScaling)(HWND);
@@ -243,7 +243,7 @@ typedef BOOL (WINAPI * PFN_AdjustWindowRectExForDpi)(LPRECT,DWORD,BOOL,DWORD,UIN
 #define GetDpiForWindow _glfw.win32.user32.GetDpiForWindow_
 #define AdjustWindowRectExForDpi _glfw.win32.user32.AdjustWindowRectExForDpi_
 
-// dwmapi%{DLL} function pointer typedefs
+// dwmapi.dll function pointer typedefs
 typedef HRESULT (WINAPI * PFN_DwmIsCompositionEnabled)(BOOL*);
 typedef HRESULT (WINAPI * PFN_DwmFlush)(VOID);
 typedef HRESULT(WINAPI * PFN_DwmEnableBlurBehindWindow)(HWND,const DWM_BLURBEHIND*);
@@ -253,13 +253,13 @@ typedef HRESULT (WINAPI * PFN_DwmGetColorizationColor)(DWORD*,BOOL*);
 #define DwmEnableBlurBehindWindow _glfw.win32.dwmapi.EnableBlurBehindWindow
 #define DwmGetColorizationColor _glfw.win32.dwmapi.GetColorizationColor
 
-// shcore%{DLL} function pointer typedefs
+// shcore.dll function pointer typedefs
 typedef HRESULT (WINAPI * PFN_SetProcessDpiAwareness)(PROCESS_DPI_AWARENESS);
 typedef HRESULT (WINAPI * PFN_GetDpiForMonitor)(HMONITOR,MONITOR_DPI_TYPE,UINT*,UINT*);
 #define SetProcessDpiAwareness _glfw.win32.shcore.SetProcessDpiAwareness_
 #define GetDpiForMonitor _glfw.win32.shcore.GetDpiForMonitor_
 
-// ntdll%{DLL} function pointer typedefs
+// ntdll.dll function pointer typedefs
 typedef LONG (WINAPI * PFN_RtlVerifyVersionInfo)(OSVERSIONINFOEXW*,ULONG,ULONGLONG);
 #define RtlVerifyVersionInfo _glfw.win32.ntdll.RtlVerifyVersionInfo_
 

@@ -14,7 +14,7 @@ location		"%{wks.location}/workspace/%{_ACTION}/programs/%{prj.name}"
 
 dependson{ "ism", }
 
-links{ "ism", }
+links{ "ism", "glfw", "imgui", }
 
 defines{ "IMGUI_API=ISM_API_IMPORT", }
 

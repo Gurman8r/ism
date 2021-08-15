@@ -49,15 +49,15 @@ namespace ism
 		{
 			if constexpr (std::is_same_v<T, self_type>)
 			{
-				m_string = (String)o;
+				m_string = (storage_type)o;
 			}
 			else if (STR::check_(o))
 			{
-				m_string = (String)STR(o);
+				m_string = (storage_type)STR(o);
 			}
 			else if (TYPE t{ typeof(o) }; t && t->tp_str)
 			{
-				m_string = (String)t->tp_str(o);
+				m_string = (storage_type)t->tp_str(o);
 			}
 		}
 	};

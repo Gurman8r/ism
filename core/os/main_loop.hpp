@@ -15,11 +15,11 @@ namespace ism
 		OBJECT m_startup_script{};
 
 	public:
-		virtual ~MainLoop();
+		virtual ~MainLoop() override;
 
 		virtual void initialize();
 
-		virtual bool iteration(float_t dt);
+		virtual bool iteration(Duration delta_time);
 
 		virtual void finalize();
 

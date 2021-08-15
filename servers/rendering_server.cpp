@@ -2,5 +2,7 @@
 
 namespace ism
 {
+	DECLEXPR(RenderingServer::singleton) {};
+
 	RenderingServer::~RenderingServer() {}
 }

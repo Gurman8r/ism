@@ -88,7 +88,7 @@ typedef HGLRC (WINAPI * PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC,HGLRC,const int*)
 #define wglGetExtensionsStringARB _glfw.wgl.GetExtensionsStringARB
 #define wglCreateContextAttribsARB _glfw.wgl.CreateContextAttribsARB
 
-// opengl32%{DLL} function pointer typedefs
+// opengl32.dll function pointer typedefs
 typedef HGLRC (WINAPI * PFN_wglCreateContext)(HDC);
 typedef BOOL (WINAPI * PFN_wglDeleteContext)(HGLRC);
 typedef PROC (WINAPI * PFN_wglGetProcAddress)(LPCSTR);

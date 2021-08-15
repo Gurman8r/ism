@@ -8,7 +8,8 @@ namespace ism
 	class ISM_API Material : public Resource
 	{
 	public:
-		~Material();
+		virtual ~Material();
+
 		Material();
 
 	private:

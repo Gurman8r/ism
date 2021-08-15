@@ -6,8 +6,8 @@
 #define FWD_OBJ(expr) \
 	(ism::object_or_cast(FWD(expr)))
 
-#define ISM_COMPOSE_TYPE_OBJECT(m_class, m_var) \
-	DECLEXPR(m_class::ob_type_static) = COMPOSE(ism::TypeObject, m_var)
+#define IMPLEMENT_CLASS_TYPE(m_class, m_var, ...) \
+	DECLEXPR(m_class::ob_type_static) = COMPOSE(ism::TypeObject, m_var, ##__VA_ARGS__)
 
 // types
 namespace ism

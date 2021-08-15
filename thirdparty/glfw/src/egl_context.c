@@ -50,13 +50,13 @@ static const char* getEGLErrorString(EGLint error)
         case EGL_BAD_ALLOC:
             return "EGL failed to allocate resources for the requested operation";
         case EGL_BAD_ATTRIBUTE:
-            return "An unrecognized attribute or attribute value was passed in the attribute List";
+            return "An unrecognized attribute or attribute value was passed in the attribute list";
         case EGL_BAD_CONTEXT:
             return "An EGLContext argument does not name a valid EGL rendering context";
         case EGL_BAD_CONFIG:
-            return "An EGLConfig argument does not name a valid EGL frame Buffer configuration";
+            return "An EGLConfig argument does not name a valid EGL frame buffer configuration";
         case EGL_BAD_CURRENT_SURFACE:
-            return "The current surface of the calling thread is a window, pixel Buffer or pixmap that is no longer valid";
+            return "The current surface of the calling thread is a window, pixel buffer or pixmap that is no longer valid";
         case EGL_BAD_DISPLAY:
             return "An EGLDisplay argument does not name a valid EGL display connection";
         case EGL_BAD_SURFACE:
@@ -310,8 +310,8 @@ GLFWbool _glfwInitEGL(void)
 #if defined(_GLFW_EGL_LIBRARY)
         _GLFW_EGL_LIBRARY,
 #elif defined(_GLFW_WIN32)
-        "libEGL%{DLL}",
-        "EGL%{DLL}",
+        "libEGL.dll",
+        "EGL.dll",
 #elif defined(_GLFW_COCOA)
         "libEGL.dylib",
 #elif defined(__CYGWIN__)
@@ -679,8 +679,8 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
 #if defined(_GLFW_GLESV1_LIBRARY)
             _GLFW_GLESV1_LIBRARY,
 #elif defined(_GLFW_WIN32)
-            "GLESv1_CM%{DLL}",
-            "libGLES_CM%{DLL}",
+            "GLESv1_CM.dll",
+            "libGLES_CM.dll",
 #elif defined(_GLFW_COCOA)
             "libGLESv1_CM.dylib",
 #else
@@ -694,8 +694,8 @@ GLFWbool _glfwCreateContextEGL(_GLFWwindow* window,
 #if defined(_GLFW_GLESV2_LIBRARY)
             _GLFW_GLESV2_LIBRARY,
 #elif defined(_GLFW_WIN32)
-            "GLESv2%{DLL}",
-            "libGLESv2%{DLL}",
+            "GLESv2.dll",
+            "libGLESv2.dll",
 #elif defined(_GLFW_COCOA)
             "libGLESv2.dylib",
 #elif defined(__CYGWIN__)

@@ -1,5 +1,7 @@
 #include <main/main.hpp>
 #include <core/api/class.hpp>
+#include <scene/main/scene_tree.hpp>
+#include <servers/display_server.hpp>
 
 using namespace ism;
 
@@ -7,17 +9,7 @@ using namespace ism;
 
 #define MAIN_PRINT (ism::get_os().print)
 
-#if ISM_OS_WINDOWS
-#define MAIN_PAUSE() \
-	std::system("pause")
-#else
-#define MAIN_PAUSE() \
-	([]() noexcept -> int { \
-		ism::MAIN_PRINT("Press enter to continue . . ."); \
-		ism::get_os().get_stdin_string(true); \
-		return 0; \
-	})()
-#endif
+#define MAIN_PAUSE (ism::get_os().pause)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -86,14 +78,40 @@ namespace ism
 		
 		MAIN_PRINT("\n");
 	}
+
+	void test_loop(int32_t argc, char * argv[])
+	{
+		Timer main_timer{ true }, loop_timer{ false };
+		Duration delta_time{};
+
+		SceneTree * scene{ (SceneTree *)get_os().get_main_loop() };
+
+		Window * window{ scene->get_root() };
+
+		while (window->is_open())
+		{
+			loop_timer.restart();
+
+			DisplayServer::poll_events();
+
+			if (!scene->iteration(delta_time)) { break; }
+
+			if (window->has_hints(WindowHints_Doublebuffer))
+			{
+				DisplayServer::swap_buffers(window->get_handle());
+			}
+
+			delta_time = loop_timer.elapsed();
+		}
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+extern ISM_IMPLEMENTATION(void *);
+
 int main(int argc, char * argv[])
 {
-	extern ISM_IMPLEMENTATION(void *);
-	
 	IMPLEMENT_ISM(nullptr);
 
 	switch (Main::setup(argv[0], argc, argv))
@@ -104,11 +122,12 @@ int main(int argc, char * argv[])
 
 	VERIFY(Main::start());
 
-	test_main(argc, argv);
+	//test_main(argc, argv);
+	test_loop(argc, argv);
 
 	Main::cleanup();
 
-	return MAIN_PAUSE();
+	return EXIT_SUCCESS;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

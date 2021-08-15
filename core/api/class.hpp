@@ -66,7 +66,7 @@ namespace ism
 		}
 
 		template <class C, class D, class ... Extra
-		> CLASS_ & def_readwrite(cstring name, D C::*pm, Extra &&... extra)
+		> CLASS_ & def_readwrite(cstring name, D C::*pm, Extra && ... extra)
 		{
 			static_assert(std::is_same_v<C, type> || std::is_base_of_v<C, type>, "def_readwrite() requires a class member (or base class member)");
 			CPP_FUNCTION fget({ [pm](type const & c) -> D const & { return c.*pm; }, attr::is_method(*this) });

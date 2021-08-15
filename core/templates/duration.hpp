@@ -21,6 +21,8 @@ namespace ism
 
 		using std::chrono::duration<float_t>::duration;
 
+		DEFAULT_COPYABLE_MOVABLE(Duration);
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr operator float_t() const noexcept { return count(); }

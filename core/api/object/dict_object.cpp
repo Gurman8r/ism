@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_COMPOSE_TYPE_OBJECT(DictObject, t)
+IMPLEMENT_CLASS_TYPE(DictObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Dict_Subclass;
 

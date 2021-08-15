@@ -118,8 +118,8 @@ GLFWbool _glfwInitOSMesa(void)
 #if defined(_GLFW_OSMESA_LIBRARY)
         _GLFW_OSMESA_LIBRARY,
 #elif defined(_WIN32)
-        "libOSMesa%{DLL}",
-        "OSMesa%{DLL}",
+        "libOSMesa.dll",
+        "OSMesa.dll",
 #elif defined(__APPLE__)
         "libOSMesa.8.dylib",
 #elif defined(__CYGWIN__)
@@ -307,7 +307,7 @@ GLFWAPI int glfwGetOSMesaColorBuffer(GLFWwindow* handle, int* width,
                               &mesaFormat, &mesaBuffer))
     {
         _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "OSMesa: Failed to retrieve color Buffer");
+                        "OSMesa: Failed to retrieve color buffer");
         return GLFW_FALSE;
     }
 
@@ -340,7 +340,7 @@ GLFWAPI int glfwGetOSMesaDepthBuffer(GLFWwindow* handle,
                               &mesaBytes, &mesaBuffer))
     {
         _glfwInputError(GLFW_PLATFORM_ERROR,
-                        "OSMesa: Failed to retrieve depth Buffer");
+                        "OSMesa: Failed to retrieve depth buffer");
         return GLFW_FALSE;
     }
 
