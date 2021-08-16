@@ -4,6 +4,7 @@
 #include <core/register_core_types.hpp>
 #include <scene/main/scene_tree.hpp>
 #include <servers/display_server.hpp>
+#include <platform/windows/windows_display_server.hpp>
 
 namespace ism
 {
@@ -14,6 +15,8 @@ namespace ism
 	int32_t		Main::g_iterating	{};
 
 	RuntimeState * g_runtime{};
+
+	Windows_DisplayServer g_display{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -56,8 +59,8 @@ namespace ism
 
 	bool Main::start()
 	{
-		DisplayServer::initialize();
-		get_os().set_main_loop(memnew(SceneTree()));
+		get_display_server()->initialize();
+		get_os().set_main_loop(memnew(SceneTree));
 
 		//ResourceLoader::add_custom_loaders();
 		//ResourceSaver::add_custom_savers();
@@ -84,7 +87,7 @@ namespace ism
 		//ResourceSaver::remove_custom_savers();
 
 		get_os().delete_main_loop();
-		DisplayServer::finalize();
+		get_display_server()->finalize();
 
 		//ScriptServer::finish_languages();
 

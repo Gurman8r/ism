@@ -6,7 +6,7 @@ namespace ism
 	{
 	}
 
-	OpenGL_Device::OpenGL_Device() : RenderDevice{}
+	OpenGL_Device::OpenGL_Device() : RenderingDevice{}
 	{
 	}
 }

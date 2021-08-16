@@ -1,7 +1,7 @@
 #ifndef _ISM_NODE_HPP_
 #define _ISM_NODE_HPP_
 
-#include <core/api/class.hpp>
+#include <core/input/input.hpp>
 
 #include <entt/entt.hpp>
 

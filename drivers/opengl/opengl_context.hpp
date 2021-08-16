@@ -3,11 +3,11 @@
 
 #include <drivers/opengl/opengl.hpp>
 
-#include <servers/rendering/render_context.hpp>
+#include <servers/rendering/rendering_context.hpp>
 
 namespace ism
 {
-	class ISM_API OpenGL_Context : public RenderContext
+	class ISM_API OpenGL_Context : public RenderingContext
 	{
 	public:
 		~OpenGL_Context();

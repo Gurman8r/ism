@@ -3,11 +3,11 @@
 
 #include <drivers/opengl/opengl.hpp>
 
-#include <servers/rendering/render_device.hpp>
+#include <servers/rendering/rendering_device.hpp>
 
 namespace ism
 {
-	class ISM_API OpenGL_Device : public RenderDevice
+	class ISM_API OpenGL_Device : public RenderingDevice
 	{
 	public:
 		~OpenGL_Device();

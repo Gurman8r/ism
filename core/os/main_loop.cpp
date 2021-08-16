@@ -10,7 +10,7 @@ namespace ism
 	{
 	}
 
-	bool MainLoop::iteration(Duration delta_time)
+	bool MainLoop::process(Duration delta_time)
 	{
 		return true;
 	}

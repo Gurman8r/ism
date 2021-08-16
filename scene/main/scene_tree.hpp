@@ -22,7 +22,7 @@ namespace ism
 	public:
 		virtual void initialize() override;
 
-		virtual bool iteration(Duration delta_time) override;
+		virtual bool process(Duration delta_time) override;
 
 		virtual void finalize() override;
 

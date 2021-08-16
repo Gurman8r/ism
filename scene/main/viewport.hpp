@@ -3,24 +3,10 @@
 
 #include <scene/main/node.hpp>
 
+#include <servers/display_server.hpp>
+
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// video mode
-	struct NODISCARD VideoMode
-	{
-		Vec2	size	{ 1280, 720 }	; // resolution
-		Vec4	bpp		{ 8, 8, 8, 8 }	; // bits-per-pixel
-		int32_t	rate	{ -1 }			; // refresh rate
-
-		DEFAULT_COPYABLE_MOVABLE(VideoMode);
-	};
-
-	ISM_API_FUNC(VideoMode const &) get_desktop_video_mode();
-
-	ISM_API_FUNC(Vector<VideoMode> const &) get_fullscreen_video_modes();
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// viewport

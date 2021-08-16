@@ -13,11 +13,16 @@ namespace ism
 	SceneTree::SceneTree(String const & name)
 	{
 		m_name = name.empty() ? "New Scene" : name;
+	}
 
-		m_root = Window::new_
-		({
-			this, nullptr,
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	void SceneTree::initialize()
+	{
+		MainLoop::initialize();
+
+		m_root = Window::new_(this, nullptr,
+		{
 			"New Window",
 
 			VideoMode{ { 1280, 720 }, { 8, 8, 8, 8 }, -1 },
@@ -26,25 +31,21 @@ namespace ism
 
 			WindowHints_Default_Maximized
 		});
+
+		VERIFY(m_root);
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	void SceneTree::initialize()
+	bool SceneTree::process(Duration delta_time)
 	{
-		MainLoop::initialize();
-	}
+		MainLoop::process(delta_time);
 
-	bool SceneTree::iteration(Duration delta_time)
-	{
-		if (!MainLoop::iteration(delta_time)) { return false; }
-
-		return m_root && m_root->is_open();
+		return true;
 	}
 
 	void SceneTree::finalize()
 	{
-		
+		if (m_root) { memdelete(m_root); m_root = nullptr; }
+
 		MainLoop::finalize();
 	}
 

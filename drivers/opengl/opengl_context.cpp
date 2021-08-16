@@ -6,7 +6,7 @@ namespace ism
 	{
 	}
 
-	OpenGL_Context::OpenGL_Context() : RenderContext{}
+	OpenGL_Context::OpenGL_Context() : RenderingContext{}
 	{
 	}
 }

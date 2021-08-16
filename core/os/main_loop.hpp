@@ -19,7 +19,7 @@ namespace ism
 
 		virtual void initialize();
 
-		virtual bool iteration(Duration delta_time);
+		virtual bool process(Duration delta_time);
 
 		virtual void finalize();
 

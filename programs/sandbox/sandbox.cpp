@@ -1,7 +1,5 @@
 #include <main/main.hpp>
-#include <core/api/class.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <servers/display_server.hpp>
 
 using namespace ism;
 
@@ -33,7 +31,7 @@ namespace ism
 	auto get_float() { return 7.89f; }
 	auto get_string() { return "abc"; }
 
-	void test_main(int32_t argc, char * argv[])
+	void test_main()
 	{
 		MODULE m = create_extension_module("__main__")
 			.def("hello", hello)
@@ -45,14 +43,6 @@ namespace ism
 			.def("pass_ptr", [](void * a) { return a; })
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			;
-
-		//CLASS_<Test>(m, "Test")
-		//	.def(init<>())
-		//	.def(init<int>())
-		//	.def(init<int, String const &>())
-		//	.def_static("test_static", &Test::test_static)
-		//	//.def("test_const", &Test::test_const)
-		//	;
 
 		m.attr("hello")();
 		m.attr("say")(m.attr("get_string")());
@@ -79,30 +69,28 @@ namespace ism
 		MAIN_PRINT("\n");
 	}
 
-	void test_loop(int32_t argc, char * argv[])
+	void test_loop()
 	{
-		Timer main_timer{ true }, loop_timer{ false };
-		Duration delta_time{};
-
 		SceneTree * scene{ (SceneTree *)get_os().get_main_loop() };
 
+		scene->initialize();
+
 		Window * window{ scene->get_root() };
-
-		while (window->is_open())
+		while (window && window->is_open())
 		{
-			loop_timer.restart();
+			static Duration delta_time{};
+			Timer const loop_timer{ true };
+			window->poll_events();
 
-			DisplayServer::poll_events();
+			StringStream title;
+			title << "ism_api @ " << (delta_time.count() * 1000.f) << " ms/frame";
+			window->set_title(title.str());
 
-			if (!scene->iteration(delta_time)) { break; }
-
-			if (window->has_hints(WindowHints_Doublebuffer))
-			{
-				DisplayServer::swap_buffers(window->get_handle());
-			}
-
+			window->swap_buffers();
 			delta_time = loop_timer.elapsed();
 		}
+
+		scene->finalize();
 	}
 }
 
@@ -122,8 +110,8 @@ int main(int argc, char * argv[])
 
 	VERIFY(Main::start());
 
-	//test_main(argc, argv);
-	test_loop(argc, argv);
+	//test_main();
+	test_loop();
 
 	Main::cleanup();
 
