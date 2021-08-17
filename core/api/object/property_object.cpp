@@ -5,23 +5,23 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(PropertyObject, t)
+IMPLEMENT_CLASS(PropertyObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_MethodDescriptor;
 	
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
 
-	t.tp_descr_get = (descrgetfunc)[](OBJECT self, OBJECT obj, OBJECT type) -> OBJECT
+	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) -> OBJ
 	{
 		return PROPERTY(self).get(obj);
 	};
 
-	t.tp_descr_set = (descrsetfunc)[](OBJECT self, OBJECT obj, OBJECT value) -> Error
+	t.tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ value) -> Error
 	{
 		return PROPERTY(self).set(obj, value), Error_None;
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		return holder_type::new_();
 	};
@@ -29,9 +29,9 @@ IMPLEMENT_CLASS_TYPE(PropertyObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void PropertyObject::_bind_class(OBJECT scope)
+void PropertyObject::_bind_class(OBJ scope)
 {
-	CLASS_<PROPERTY>(scope, "property", get_type_static())
+	CLASS_<PROPERTY>(scope, "property", get_class())
 		.def(init<>())
 		;
 }

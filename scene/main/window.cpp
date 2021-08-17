@@ -11,11 +11,7 @@ namespace ism
 
 	Window * Window::new_(SceneTree * tree, Node * parent, WindowSettings const & settings)
 	{
-		Window * window{ memnew(Window(tree, parent)) };
-
-		window->m_window = get_display_server()->make_window(settings);
-
-		window->m_hints = settings.hints;
+		Window * window{ get_display_server()->create_window(tree, parent, settings) };
 
 		window->make_context_current();
 

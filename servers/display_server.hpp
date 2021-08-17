@@ -7,6 +7,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	class SceneTree;
+	class Node;
+	class Viewport;
 	class Window;
 
 	DECL_HANDLE(MonitorID);
@@ -139,20 +142,17 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// display server
-	class ISM_API DisplayServer : public Super
+	class ISM_API DisplayServer
 	{
-		ISM_SUPER(DisplayServer, Super);
-
 	protected:
 		static DisplayServer * singleton;
 
-	public:
-		explicit DisplayServer() noexcept { VERIFY(singleton = this); }
+		explicit DisplayServer() noexcept { singleton = this; }
 		
+	public:
 		static DisplayServer * get_singleton() { return singleton; }
 
-	public:
-		virtual WindowID make_window(WindowSettings const & settings) = 0;
+		virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) = 0;
 
 		virtual bool initialize() = 0;
 

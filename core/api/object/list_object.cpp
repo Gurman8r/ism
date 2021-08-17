@@ -5,13 +5,13 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(ListObject, t)
+IMPLEMENT_CLASS(ListObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_List_Subclass;
 
-	t.tp_len = (lenfunc)[](OBJECT self) { return (ssize_t)LIST(self).size(); };
+	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)LIST(self).size(); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other)
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
 	{
 		if (LIST::check_(other))
 		{
@@ -23,7 +23,7 @@ IMPLEMENT_CLASS_TYPE(ListObject, t)
 		}
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		return holder_type::new_();
 	};
@@ -31,13 +31,17 @@ IMPLEMENT_CLASS_TYPE(ListObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ListObject::_bind_class(OBJECT scope)
+void ListObject::_bind_class(OBJ scope)
 {
-	CLASS_<LIST>(scope, "list", get_type_static())
+	CLASS_<LIST>(scope, "list", get_class())
 
 		.def(init<>())
 
-		.def("__contains__", &LIST::contains<OBJECT const &>)
+		.def("__contains__", &LIST::contains<OBJ const &>)
+
+		.def("__getitem__", [](LIST self, INT index) { return self[index]; })
+
+		.def("__setitem__", [](LIST self, INT index, OBJ value) { self[index] = value; })
 
 		;
 }

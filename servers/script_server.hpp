@@ -5,17 +5,26 @@
 
 namespace ism
 {
-	class ISM_API ScriptServer : public Super
-	{
-		ISM_SUPER(ScriptServer, Super);
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// script server
+	class ISM_API ScriptServer
+	{
 		static ScriptServer * singleton;
 
 	public:
 		virtual ~ScriptServer();
 
 		static ScriptServer * get_singleton() { return singleton; }
+
+	public:
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD inline ScriptServer * get_script_server() { return ScriptServer::get_singleton(); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_SCRIPT_SERVER_HPP_

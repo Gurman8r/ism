@@ -7,12 +7,12 @@
 namespace ism
 {
 	// float object
-	class ISM_API FloatObject : public BaseObject
+	class ISM_API FloatObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(FloatObject, BaseObject);
+		ISM_OBJECT_DEFAULT(FloatObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
 		double_t m_float{};
@@ -21,11 +21,13 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
 
+		FloatObject() : base_type{ get_class() } {}
+
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> explicit FloatObject(TYPE const & type, T const value) : base_type{ type }, m_float{ static_cast<storage_type>(value) } {}
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> explicit FloatObject(T const value) : self_type{ get_type_static(), value } {}
+		> explicit FloatObject(T const value) : self_type{ get_class(), value } {}
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> FloatObject & operator=(T const value) { m_float = static_cast<storage_type>(value); return (*this); }
@@ -35,15 +37,15 @@ namespace ism
 	};
 
 	// float delete
-	template <> struct DefaultDelete<FloatObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<FloatObject> : DefaultDelete<Object> {};
 
 	// float check
-#define ISM_FLOAT_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
+#define ISM_CHECK_FLOAT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
 
 	// float handle
-	template <> class Handle<FloatObject> : public BaseHandle<FloatObject>
+	template <> class Handle<FloatObject> : public Ref<FloatObject>
 	{
-		ISM_HANDLE_DEFAULT(FloatObject, ISM_FLOAT_CHECK);
+		ISM_HANDLE_DEFAULT(FloatObject, ISM_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;

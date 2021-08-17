@@ -25,13 +25,13 @@ namespace ism
 		CursorShape_Arrow			, // arrow
 		CursorShape_IBeam			, // ibeam
 		CursorShape_Crosshair		, // crosshair
-		CursorShape_PointingHand	, // pointing_hand
+		CursorShape_PointingHand	, // pointing hand
 		CursorShape_EW				, // ew
 		CursorShape_NS				, // ns
 		CursorShape_NESW			, // nesw
 		CursorShape_NWSE			, // nwse
-		CursorShape_ResizeAll		, // resize_all
-		CursorShape_NotAllowed		, // not_allowed
+		CursorShape_ResizeAll		, // resize all
+		CursorShape_NotAllowed		, // not allowed
 		CursorShape_HResize			, // hresize
 		CursorShape_VResize			, // vresize
 		CursorShape_Hand			, // hand
@@ -40,10 +40,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Input : public Super
+	class ISM_API Input
 	{
-		ISM_SUPER(Input, Super);
-
 	private:
 		static Input * singleton;
 

@@ -5,10 +5,8 @@
 
 namespace ism
 {
-	class ISM_API CameraServer : public Super
+	class ISM_API CameraServer
 	{
-		ISM_SUPER(CameraServer, Super);
-
 		static CameraServer * singleton;
 
 	public:

@@ -5,15 +5,14 @@
 
 namespace ism
 {
-	class ISM_API RenderingServer : public Super
+	class ISM_API RenderingServer
 	{
-		ISM_SUPER(RenderingServer, Super);
-
+	protected:
 		static RenderingServer * singleton;
 
-	public:
-		virtual ~RenderingServer();
+		explicit RenderingServer() noexcept { singleton = this; }
 
+	public:
 		static RenderingServer * get_singleton() { return singleton; }
 	};
 }

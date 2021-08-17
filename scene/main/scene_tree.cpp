@@ -21,7 +21,7 @@ namespace ism
 	{
 		MainLoop::initialize();
 
-		m_root = Window::new_(this, nullptr,
+		if (!m_root) m_root = Window::new_(this, nullptr,
 		{
 			"New Window",
 

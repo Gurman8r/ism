@@ -7,15 +7,15 @@
 namespace ism
 {
 	// dict object
-	class ISM_API DictObject : public BaseObject
+	class ISM_API DictObject : public Object
 	{
-		ISM_OBJECT_TYPED(DictObject, BaseObject);
+		ISM_OBJECT_DEFAULT(DictObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
-		HashMap<OBJECT, OBJECT> m_dict{};
+		HashMap<OBJ, OBJ> m_dict{};
 
 		using storage_type = decltype(m_dict);
 
@@ -29,28 +29,28 @@ namespace ism
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_dict); }
 
-		DictObject(std::initializer_list<std::pair<OBJECT, OBJECT>> init, allocator_type al = {}) : self_type{ al }
+		DictObject(std::initializer_list<std::pair<OBJ, OBJ>> init, allocator_type al = {}) : self_type{ al }
 		{
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
 
-		DictObject(allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_dict{ al } {}
+		DictObject(allocator_type al = {}) noexcept : base_type{ get_class() }, m_dict{ al } {}
 
-		DictObject(storage_type const & v, allocator_type al = {}) : base_type{ get_type_static() }, m_dict{ v, al } {}
+		DictObject(storage_type const & v, allocator_type al = {}) : base_type{ get_class() }, m_dict{ v, al } {}
 
-		DictObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_dict{ std::move(v), al } {}
+		DictObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_class() }, m_dict{ std::move(v), al } {}
 	};
 
 	// dict delete
-	template <> struct DefaultDelete<DictObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<DictObject> : DefaultDelete<Object> {};
 
 	// dict check
-#define ISM_DICT_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
+#define ISM_CHECK_DICT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
 
 	// dict handle
-	template <> class Handle<DictObject> : public BaseHandle<DictObject>
+	template <> class Handle<DictObject> : public Ref<DictObject>
 	{
-		ISM_HANDLE_DEFAULT(DictObject, ISM_DICT_CHECK);
+		ISM_HANDLE_DEFAULT(DictObject, ISM_CHECK_DICT);
 
 	public:
 		using storage_type = value_type::storage_type;
@@ -65,36 +65,36 @@ namespace ism
 
 		void reserve(size_t count) const { (**m_ptr).reserve(count); }
 
-		template <class Index = OBJECT
+		template <class Index = OBJ
 		> auto del(Index && i) const -> Error { return (**m_ptr).erase(FWD_OBJ(i)), Error_None; }
 
-		template <class Index = OBJECT, class Value = OBJECT
+		template <class Index = OBJ, class Value = OBJ
 		> bool insert(Index && i, Value && v) const { return (**m_ptr).try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
-		template <class Index = OBJECT, class Value = OBJECT
+		template <class Index = OBJ, class Value = OBJ
 		> bool insert_or_assign(Index && i, Value && v) const { return (**m_ptr).insert_or_assign(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
-		template <class Index = OBJECT
+		template <class Index = OBJ
 		> NODISCARD bool contains(Index && i) const { return find(FWD(i)) != end(); }
 
-		template <class Index = OBJECT
+		template <class Index = OBJ
 		> NODISCARD auto find(Index && i) -> iterator { return (**m_ptr).find(FWD_OBJ(i)); }
 
-		template <class Index = OBJECT
+		template <class Index = OBJ
 		> NODISCARD auto find(Index && i) const -> const_iterator { return (**m_ptr).find(FWD_OBJ(i)); }
 
-		template <class Index = OBJECT
-		> NODISCARD auto lookup(Index && i) const -> OBJECT { return lookup(FWD_OBJ(i), OBJECT{}); }
+		template <class Index = OBJ
+		> NODISCARD auto lookup(Index && i) const -> OBJ { return lookup(FWD_OBJ(i), OBJ{}); }
 
-		template <class Index = OBJECT, class Defval = OBJECT
-		> NODISCARD auto lookup(Index && i, Defval && dv) const -> OBJECT
+		template <class Index = OBJ, class Defval = OBJ
+		> NODISCARD auto lookup(Index && i, Defval && dv) const -> OBJ
 		{
 			if (auto const ptr{ ism::getptr(**m_ptr, FWD_OBJ(i)) }) { return *ptr; }
 			else { return FWD_OBJ(dv); }
 		}
 
-		template <class Index = OBJECT
-		> NODISCARD auto operator[](Index && i) const -> OBJECT & { return (**m_ptr)[FWD_OBJ(i)]; }
+		template <class Index = OBJ
+		> NODISCARD auto operator[](Index && i) const -> OBJ & { return (**m_ptr)[FWD_OBJ(i)]; }
 
 		NODISCARD bool empty() const { return (**m_ptr).empty(); }
 

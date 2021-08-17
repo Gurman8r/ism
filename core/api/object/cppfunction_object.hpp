@@ -9,10 +9,10 @@ namespace ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		ISM_OBJECT_TYPED(CppFunctionObject, FunctionObject);
+		ISM_OBJECT_DEFAULT(CppFunctionObject, FunctionObject);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
 		FunctionRecord * m_record{};
@@ -23,7 +23,7 @@ namespace ism
 
 		virtual ~CppFunctionObject() override;
 
-		CppFunctionObject() noexcept : base_type{ get_type_static() } { m_vectorcall = dispatcher; }
+		CppFunctionObject() noexcept : base_type{ get_class() } { m_vectorcall = dispatcher; }
 		
 		CppFunctionObject(self_type const & value) : self_type{} { m_record = value.m_record; }
 		
@@ -77,19 +77,19 @@ namespace ism
 
 		void initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in);
 
-		static OBJECT dispatcher(OBJECT callable, OBJECT const * argv, size_t argc);
+		static OBJ dispatcher(OBJ callable, OBJ const * argv, size_t argc);
 	};
 
 	// cppfunction delete
-	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<Object> {};
 
 	// cppfunction check
-#define ISM_CPPFUNCTION_CHECK(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
+#define ISM_CHECK_CPPFUNCTION(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
 
 	// cppfunction handle
-	template <> class Handle<CppFunctionObject> : public BaseHandle<CppFunctionObject>
+	template <> class Handle<CppFunctionObject> : public Ref<CppFunctionObject>
 	{
-		ISM_HANDLE_DEFAULT(CppFunctionObject, ISM_CPPFUNCTION_CHECK);
+		ISM_HANDLE_DEFAULT(CppFunctionObject, ISM_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }
@@ -101,7 +101,7 @@ namespace ism
 // functions
 namespace ism
 {
-	NODISCARD inline OBJECT Handle<FunctionObject>::cpp_function() const
+	NODISCARD inline OBJ Handle<FunctionObject>::cpp_function() const
 	{
 		return CPP_FUNCTION::check_(*this) ? CPP_FUNCTION(*this) : nullptr;
 	}
@@ -130,7 +130,7 @@ namespace ism
 		}
 
 		// convert function arguments and perform the actual function call
-		rec->impl = [](FunctionCall & call) -> OBJECT
+		rec->impl = [](FunctionCall & call) -> OBJ
 		{
 			ArgumentLoader<Args...> args{};
 
@@ -148,7 +148,7 @@ namespace ism
 
 			using Yield = make_caster<std::conditional_t<std::is_void_v<Return>, void_type, Return>>;
 
-			OBJECT result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
+			OBJ result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
 
 			attr::process_attributes<Extra...>::postcall(call, result);
 

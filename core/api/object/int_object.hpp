@@ -12,12 +12,12 @@
 namespace ism
 {
 	// int object
-	class ISM_API IntObject : public BaseObject
+	class ISM_API IntObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(IntObject, BaseObject);
+		ISM_OBJECT_DEFAULT(IntObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
 		int64_t m_int{};
@@ -26,11 +26,13 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
+		IntObject() : base_type{ get_class() } {}
+
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> explicit IntObject(TYPE const & type, T const value) : base_type{ type }, m_int{ static_cast<storage_type>(value) } {}
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> explicit IntObject(T const value) : self_type{ get_type_static(), value } {}
+		> explicit IntObject(T const value) : self_type{ get_class(), value } {}
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> IntObject & operator=(T const value) { m_int = static_cast<storage_type>(value); return (*this); }
@@ -45,15 +47,15 @@ namespace ism
 	};
 
 	// int delete
-	template <> struct DefaultDelete<IntObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<IntObject> : DefaultDelete<Object> {};
 
 	// int check
-#define ISM_INT_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
+#define ISM_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
 
 	// int handle
-	template <> class Handle<IntObject> : public BaseHandle<IntObject>
+	template <> class Handle<IntObject> : public Ref<IntObject>
 	{
-		ISM_HANDLE_DEFAULT(IntObject, ISM_INT_CHECK);
+		ISM_HANDLE_DEFAULT(IntObject, ISM_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;

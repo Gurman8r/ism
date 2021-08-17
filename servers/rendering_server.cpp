@@ -1,8 +1,6 @@
 #include <servers/rendering_server.hpp>
 
-namespace ism
-{
-	DECLEXPR(RenderingServer::singleton) {};
+using namespace ism;
 
-	RenderingServer::~RenderingServer() {}
-}
+DECLEXPR(ism::RenderingServer::singleton) {};
+

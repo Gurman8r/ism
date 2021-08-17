@@ -7,12 +7,12 @@
 namespace ism
 {
 	// string object
-	class ISM_API StringObject : public BaseObject
+	class ISM_API StringObject : public Object
 	{
-		ISM_OBJECT_TYPED(StringObject, BaseObject);
+		ISM_OBJECT_DEFAULT(StringObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
 		String m_string{};
@@ -29,15 +29,15 @@ namespace ism
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 
-		StringObject(allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_string{ al } {}
+		StringObject(allocator_type al = {}) noexcept : base_type{ get_class() }, m_string{ al } {}
 
-		StringObject(storage_type const & v, allocator_type al = {}) : base_type{ get_type_static() }, m_string{ v, al } {}
+		StringObject(storage_type const & v, allocator_type al = {}) : base_type{ get_class() }, m_string{ v, al } {}
 
-		StringObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_string{ std::move(v), al } {}
+		StringObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_class() }, m_string{ std::move(v), al } {}
 
-		StringObject(cstring v, allocator_type al = {}) : base_type{ get_type_static() }, m_string{ v, al } {}
+		StringObject(cstring v, allocator_type al = {}) : base_type{ get_class() }, m_string{ v, al } {}
 
-		StringObject(cstring v, size_t n, allocator_type al = {}) : base_type{ get_type_static() }, m_string{ v, n, al } {}
+		StringObject(cstring v, size_t n, allocator_type al = {}) : base_type{ get_class() }, m_string{ v, n, al } {}
 
 		StringObject(StringName const & v, allocator_type al = {}) : self_type{ v.string(), al } {}
 
@@ -63,15 +63,15 @@ namespace ism
 	};
 
 	// string delete
-	template <> struct DefaultDelete<StringObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<StringObject> : DefaultDelete<Object> {};
 
 	// string check
-#define ISM_STR_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))
+#define ISM_CHECK_STR(o) (ism::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))
 
 	// string handle
-	template <> class Handle<StringObject> : public BaseHandle<StringObject>
+	template <> class Handle<StringObject> : public Ref<StringObject>
 	{
-		ISM_HANDLE_DEFAULT(StringObject, ISM_STR_CHECK);
+		ISM_HANDLE_DEFAULT(StringObject, ISM_CHECK_STR);
 
 	public:
 		using storage_type = value_type::storage_type;

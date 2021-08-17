@@ -5,10 +5,8 @@
 
 namespace ism
 {
-	class ISM_API EditorSettings : public Super
+	class ISM_API EditorSettings
 	{
-		ISM_SUPER(EditorSettings, Super);
-
 	public:
 		virtual ~EditorSettings();
 

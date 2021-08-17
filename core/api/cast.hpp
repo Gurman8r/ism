@@ -23,7 +23,7 @@ namespace ism
 		return nullptr;
 	}
 
-	NODISCARD inline bool isinstance_generic(OBJECT const & o, std::type_info const & t)
+	NODISCARD inline bool isinstance_generic(OBJ const & o, std::type_info const & t)
 	{
 		return false;
 	}
@@ -108,12 +108,12 @@ public:																								\
 	template <class T_> using cast_op_type = ism::movable_cast_op_type<T_>;							\
 																									\
 	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0		\
-	> static OBJECT cast(T_ * src, ReturnPolicy policy, OBJECT parent)								\
+	> static OBJ cast(T_ * src, ReturnPolicy policy, OBJ parent)								\
 	{																								\
 		if (!src) { return nullptr; }																\
 		else if (policy == ReturnPolicy_TakeOwnership)												\
 		{																							\
-			OBJECT h{ cast(std::move(*src), policy, parent) };										\
+			OBJ h{ cast(std::move(*src), policy, parent) };										\
 			memdelete(src);																			\
 			return h;																				\
 		}																							\
@@ -131,9 +131,9 @@ public:																								\
 
 		caster_t subcaster;
 
-		NODISCARD bool load(OBJECT src, bool convert) { return subcaster.load(src, convert); }
+		NODISCARD bool load(OBJ src, bool convert) { return subcaster.load(src, convert); }
 
-		static OBJECT cast(std::reference_wrapper<T> const & src) { return caster_t::cast(src.get()); }
+		static OBJ cast(std::reference_wrapper<T> const & src) { return caster_t::cast(src.get()); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -146,7 +146,7 @@ public:																								\
 		using _type1 = std::conditional_t<std::is_signed_v<T>, _type0, std::make_unsigned_t<_type0>>;
 		using _convt = std::conditional_t<std::is_floating_point_v<T>, double_t, _type1>;
 
-		NODISCARD bool load(OBJECT src, bool convert)
+		NODISCARD bool load(OBJ src, bool convert)
 		{
 			if (!src) { return false; }
 			else if (isinstance<FLT>(src)) { return (value = (_convt)(_ftype)FLT(src)), true; }
@@ -154,7 +154,7 @@ public:																								\
 			else { return false; }
 		}
 
-		NODISCARD static OBJECT cast(T src, ReturnPolicy, OBJECT)
+		NODISCARD static OBJ cast(T src, ReturnPolicy, OBJ)
 		{
 			if constexpr (std::is_floating_point_v<T>) {
 				return FLT(static_cast<_ftype>(src));
@@ -171,9 +171,9 @@ public:																								\
 
 	template <class T> struct void_caster
 	{
-		NODISCARD bool load(OBJECT src, bool) { return src.is_valid(); }
+		NODISCARD bool load(OBJ src, bool) { return src.is_valid(); }
 
-		NODISCARD static OBJECT cast(T, ReturnPolicy, OBJECT) { return OBJECT{}; }
+		NODISCARD static OBJ cast(T, ReturnPolicy, OBJ) { return OBJ{}; }
 
 		ISM_TYPE_CASTER(T, "none");
 	};
@@ -186,14 +186,14 @@ public:																								\
 	{
 		using type_caster<void_type>::cast;
 
-		NODISCARD bool load(OBJECT src, bool)
+		NODISCARD bool load(OBJ src, bool)
 		{
 			if (src.is_null()) { return (value = nullptr), true; }
 			else if (isinstance<CAPSULE>(src)) { return (value = CAPSULE(src)), true; }
 			else { return false; }
 		}
 
-		NODISCARD static OBJECT cast(void const * src, ReturnPolicy, OBJECT)
+		NODISCARD static OBJ cast(void const * src, ReturnPolicy, OBJ)
 		{
 			return src ? CAPSULE({ static_cast<void const *>(src) }) : nullptr;
 		}
@@ -212,14 +212,14 @@ public:																								\
 
 	template <> struct type_caster<bool>
 	{
-		NODISCARD bool load(OBJECT src, bool convert)
+		NODISCARD bool load(OBJ src, bool convert)
 		{
 			if (src == ISM_True) { return (value = true), true; }
 			else if (src == ISM_False) { return (value = false), true; }
 			else { return (value = src.is_valid()), true; }
 		}
 
-		NODISCARD static OBJECT cast(bool src, ReturnPolicy, OBJECT) { return ISM_Bool(src); }
+		NODISCARD static OBJ cast(bool src, ReturnPolicy, OBJ) { return ISM_Bool(src); }
 
 		ISM_TYPE_CASTER(bool, "bool");
 	};
@@ -228,13 +228,13 @@ public:																								\
 
 	template <class T> struct string_caster
 	{
-		NODISCARD bool load(OBJECT src, bool convert)
+		NODISCARD bool load(OBJ src, bool convert)
 		{
 			if (!src) { return false; }
 			else { return (value = (String)STR(src)), true; }
 		}
 
-		NODISCARD static OBJECT cast(T const & src, ReturnPolicy, OBJECT) { return STR(src); }
+		NODISCARD static OBJ cast(T const & src, ReturnPolicy, OBJ) { return STR(src); }
 
 		ISM_TYPE_CASTER(T, "string");
 	};
@@ -247,15 +247,15 @@ public:																								\
 	{
 		type_caster<BasicString<T>> str_caster;
 
-		NODISCARD bool load(OBJECT src, bool convert)
+		NODISCARD bool load(OBJ src, bool convert)
 		{
 			if (!src) { return false; }
 			else { return str_caster.load(src, convert); }
 		}
 
-		NODISCARD static OBJECT cast(T const * src, ReturnPolicy, OBJECT) { return STR(src); }
+		NODISCARD static OBJ cast(T const * src, ReturnPolicy, OBJ) { return STR(src); }
 
-		NODISCARD static OBJECT cast(T const src, ReturnPolicy, OBJECT) { return INT(src); }
+		NODISCARD static OBJ cast(T const src, ReturnPolicy, OBJ) { return INT(src); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -280,7 +280,7 @@ public:																								\
 			std::is_base_of_v<type_caster_base<T>, type_caster<T>>,
 			"holder classes are only supported for custom types");
 
-		static OBJECT cast(Holder && src, ReturnPolicy, OBJECT)
+		static OBJ cast(Holder && src, ReturnPolicy, OBJ)
 		{
 			auto ptr{ holder_helper<Holder>::get(src) };
 			return type_caster_base<T>::cast_holder(ptr, std::addressof(src));
@@ -320,12 +320,12 @@ public:																								\
 			return true;
 		}
 
-		NODISCARD static OBJECT cast(OBJECT src, ReturnPolicy, OBJECT) { return src; }
+		NODISCARD static OBJ cast(OBJ src, ReturnPolicy, OBJ) { return src; }
 
 		ISM_TYPE_CASTER(T, "object");
 	};
 
-	template <class T> struct type_caster<T, std::enable_if_t<is_object_api_v<T>>>
+	template <class T> struct type_caster<T, std::enable_if_t<is_api_v<T>>>
 		: object_caster<T> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -381,17 +381,16 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class SFINAE
-	> auto load_type(ism::type_caster<T, SFINAE> & convt, OBJECT const & o) -> ism::type_caster<T, SFINAE> &
+	> auto load_type(ism::type_caster<T, SFINAE> & convt, OBJ const & o) -> ism::type_caster<T, SFINAE> &
 	{
 		if (!convt.load(o, true)) {
 			FATAL("TYPE CONVERSION FAILED");
-			GENERATE_TRAP();
 		}
 		return convt;
 	}
 
 	template <class T
-	> auto load_type(OBJECT const & o) -> make_caster<T>
+	> auto load_type(OBJ const & o) -> make_caster<T>
 	{
 		ism::make_caster<T> convt;
 		ism::load_type(convt, o);
@@ -401,16 +400,16 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// api -> c++
-	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-	> NODISCARD T cast(OBJECT const & o) { return cast_op<T>(load_type<T>(o)); }
+	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
+	> NODISCARD T cast(OBJ const & o) { return cast_op<T>(load_type<T>(o)); }
 
 	// api -> api
-	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
-	> NODISCARD T cast(OBJECT const & o) { return T{ o }; }
+	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
+	> NODISCARD T cast(OBJ const & o) { return T{ o }; }
 
 	// c++ -> api
-	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-	> NODISCARD OBJECT cast(T && o, ReturnPolicy policy = ReturnPolicy_AutomaticReference, OBJECT parent = {})
+	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
+	> NODISCARD OBJ cast(T && o, ReturnPolicy policy = ReturnPolicy_AutomaticReference, OBJ parent = {})
 	{
 		if (policy == ReturnPolicy_Automatic) {
 			policy = (std::is_pointer_v<std::remove_reference_t<T>>
@@ -426,13 +425,13 @@ namespace ism
 					? ReturnPolicy_Copy
 					: ReturnPolicy_Move));
 		}
-		return OBJECT{ make_caster<T>::cast(FWD(o), policy, parent) };
+		return OBJ{ make_caster<T>::cast(FWD(o), policy, parent) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> auto move(OBJECT && o) -> std::enable_if_t<!move_never_v<T>, T>
+	> auto move(OBJ && o) -> std::enable_if_t<!move_never_v<T>, T>
 	{
 		if (o && o->get_ref_count() > 1) {
 			VERIFY(!"Unable to cast Core instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
@@ -442,13 +441,13 @@ namespace ism
 	}
 
 	template <class T
-	> auto cast(OBJECT && o) -> std::enable_if_t<move_always_v<T>, T>
+	> auto cast(OBJ && o) -> std::enable_if_t<move_always_v<T>, T>
 	{
 		return ism::move<T>(std::move(o));
 	}
 
 	template <class T
-	> auto cast(OBJECT && o) -> std::enable_if_t<move_if_unreferenced_v<T>, T>
+	> auto cast(OBJ && o) -> std::enable_if_t<move_if_unreferenced_v<T>, T>
 	{
 		if (o && o->has_references())
 		{
@@ -461,34 +460,34 @@ namespace ism
 	}
 
 	template <class T
-	> auto cast(OBJECT && o) -> std::enable_if_t<move_never_v<T>, T>
+	> auto cast(OBJ && o) -> std::enable_if_t<move_never_v<T>, T>
 	{
 		return ism::cast<T>(o);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
-	> NODISCARD OBJECT object_or_cast(T && o) { return ism::cast(FWD(o)); }
+	template <class T, std::enable_if_t<!is_api_v<T>, int>
+	> NODISCARD OBJ object_or_cast(T && o) { return ism::cast(FWD(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class O> template <class T> inline T BaseHandle<O>::cast() const &
+	template <class O> template <class T> inline T Ref<O>::cast() const &
 	{
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(*this); }
 	}
 
-	template <class O> template <class T> inline T BaseHandle<O>::cast() &&
+	template <class O> template <class T> inline T Ref<O>::cast() &&
 	{
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(std::move(*this)); }
 	}
 
-	template <class T> inline T BaseObject::cast() const &
+	template <class T> inline T Object::cast() const &
 	{
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(*this); }
 	}
 
-	template <class T> inline T BaseObject::cast() &&
+	template <class T> inline T Object::cast() &&
 	{
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(std::move(*this)); }
 	}

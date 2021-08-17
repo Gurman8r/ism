@@ -1,16 +1,14 @@
 #ifndef _ISM_RESOURCE_HPP_
 #define _ISM_RESOURCE_HPP_
 
-#include <core/api/reference.hpp>
+#include <core/api/class.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Resource : public Reference
+	class ISM_API Resource
 	{
-		ISM_SUPER(Resource, Reference);
-
 	protected:
 		Resource() noexcept = default;
 		

@@ -7,12 +7,12 @@
 
 namespace ism
 {
-	class ISM_API OpenGL_Device : public RenderingDevice
+	class ISM_API OpenGL_RenderingDevice : public RenderingDevice
 	{
 	public:
-		~OpenGL_Device();
+		~OpenGL_RenderingDevice();
 
-		OpenGL_Device();
+		OpenGL_RenderingDevice();
 
 	private:
 

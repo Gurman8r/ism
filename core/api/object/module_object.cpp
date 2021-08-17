@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(ModuleObject, t)
+IMPLEMENT_CLASS(ModuleObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
@@ -13,7 +13,7 @@ IMPLEMENT_CLASS_TYPE(ModuleObject, t)
 	
 	t.tp_getattro = (getattrofunc)module_getattro;
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other)
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
 	{
 		if (MODULE::check_(other))
 		{
@@ -25,7 +25,7 @@ IMPLEMENT_CLASS_TYPE(ModuleObject, t)
 		}
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		VERIFY(LIST::check_(args));
 		VERIFY(STR::check_(args[0]));
@@ -35,13 +35,13 @@ IMPLEMENT_CLASS_TYPE(ModuleObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ModuleObject::_bind_class(OBJECT scope)
+void ModuleObject::_bind_class(OBJ scope)
 {
-	CLASS_<MODULE>(scope, "module", get_type_static())
+	CLASS_<MODULE>(scope, "module", get_class())
 
 		.def(init<String const &>())
 
-		.def("__contains__", [](MODULE self, OBJECT value) { return DICT(self->m_dict).contains(value); })
+		.def("__contains__", [](MODULE self, OBJ value) { return DICT(self->m_dict).contains(value); })
 
 		.def_property("__name__", [](MODULE self) { return self->m_name; }, [](MODULE self, STR value) { self->m_name = value; })
 
@@ -51,7 +51,7 @@ void ModuleObject::_bind_class(OBJECT scope)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::module_getattro(MODULE m, OBJECT name)
+OBJ ism::module_getattro(MODULE m, OBJ name)
 {
 	return generic_getattr(m, name);
 }

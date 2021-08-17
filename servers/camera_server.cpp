@@ -1,8 +1,7 @@
 #include <servers/camera_server.hpp>
 
-namespace ism
-{
-	DECLEXPR(CameraServer::singleton) {};
+using namespace ism;
 
-	CameraServer::~CameraServer() {}
-}
+DECLEXPR(ism::CameraServer::singleton) {};
+
+CameraServer::~CameraServer() {}

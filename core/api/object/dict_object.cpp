@@ -5,15 +5,15 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(DictObject, t)
+IMPLEMENT_CLASS(DictObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Dict_Subclass;
 
-	t.tp_len = (lenfunc)[](OBJECT self) { return (ssize_t)DICT(self).size(); };
+	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)DICT(self).size(); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		return holder_type::new_();
 	};
@@ -21,13 +21,13 @@ IMPLEMENT_CLASS_TYPE(DictObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void DictObject::_bind_class(OBJECT scope)
+void DictObject::_bind_class(OBJ scope)
 {
-	CLASS_<DICT>(scope, "dict", get_type_static())
+	CLASS_<DICT>(scope, "dict", get_class())
 
 		.def(init<>())
 
-		.def("__contains__", &DICT::contains<OBJECT const &>)
+		.def("__contains__", &DICT::contains<OBJ const &>)
 
 		;
 }

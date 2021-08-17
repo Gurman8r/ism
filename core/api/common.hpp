@@ -1,17 +1,38 @@
 #ifndef _ISM_COMMON_HPP_
 #define _ISM_COMMON_HPP_
 
-#include <core/api/reference.hpp>
+#include <core/typedefs.hpp>
+#include <core/string/path.hpp>
+#include <core/math/color.hpp>
+#include <core/math/quat.hpp>
+#include <core/math/transform.hpp>
+#include <core/math/transform_2d.hpp>
+#include <core/math/vector4.hpp>
+#include <core/math/rect.hpp>
+#include <core/templates/any.hpp>
+#include <core/templates/atomic.hpp>
+#include <core/templates/ecs.hpp>
+#include <core/templates/flat_map.hpp>
+#include <core/templates/hash_map.hpp>
+#include <core/templates/hash_set.hpp>
+#include <core/templates/map.hpp>
+#include <core/templates/set.hpp>
+#include <core/templates/timer.hpp>
+#include <core/templates/type_info.hpp>
 
 #define FWD_OBJ(expr) \
 	(ism::object_or_cast(FWD(expr)))
 
-#define IMPLEMENT_CLASS_TYPE(m_class, m_var, ...) \
-	DECLEXPR(m_class::ob_type_static) = COMPOSE(ism::TypeObject, m_var, ##__VA_ARGS__)
+#define IMPLEMENT_CLASS(m_class, m_var, ...) \
+	DECLEXPR(m_class::_class_type_static) = COMPOSE(ism::TypeObject, m_var, ##__VA_ARGS__)
 
 // types
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	DECL_HANDLE(InstanceID);
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class TypeDB;
@@ -23,13 +44,14 @@ namespace ism
 
 	struct _API_Tag {};
 	
+	template <class T
+	> constexpr bool is_api_v{ std::is_base_of_v<_API_Tag, mpl::intrinsic_t<T>> };
+
 	template <class Derived> class ObjectAPI;
-	
-	template <class T> constexpr bool is_object_api_v{ std::is_base_of_v<_API_Tag, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class BaseObject;
+	class Object;
 	class TypeObject;
 	class IntObject;
 	class FloatObject;
@@ -44,14 +66,20 @@ namespace ism
 	class ModuleObject;
 	class GenericObject;
 
-	template <class T> constexpr bool is_base_object_v{ std::is_base_of_v<BaseObject, mpl::intrinsic_t<T>> };
+	template <class T
+	> constexpr bool is_base_object_v{ std::is_base_of_v<Object, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> class BaseHandle;
+	struct _Ref_Tag {};
+
+	template <class T
+	> constexpr bool is_ref_v{ std::is_base_of_v<_Ref_Tag, mpl::intrinsic_t<T>> };
+
+	template <class T> class Ref;
 	template <class T> class Handle;
 
-	ALIAS(OBJECT)			Handle<BaseObject>;
+	ALIAS(OBJ)				Handle<Object>;
 	ALIAS(TYPE)				Handle<TypeObject>;
 	ALIAS(INT)				Handle<IntObject>;
 	ALIAS(FLT)				Handle<FloatObject>;
@@ -65,8 +93,6 @@ namespace ism
 	ALIAS(CPP_FUNCTION)		Handle<CppFunctionObject>;
 	ALIAS(MODULE)			Handle<ModuleObject>;
 	ALIAS(GENERIC)			Handle<GenericObject>;
-
-	template <class T> constexpr bool is_handle_v{ is_ref_v<T> && is_object_api_v<T> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -167,40 +193,40 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(unaryfunc)		OBJECT(*)(OBJECT a);
-	ALIAS(binaryfunc)		OBJECT(*)(OBJECT a, OBJECT b);
-	ALIAS(ternaryfunc)		OBJECT(*)(OBJECT a, OBJECT b, OBJECT c);
+	ALIAS(unaryfunc)		OBJ(*)(OBJ a);
+	ALIAS(binaryfunc)		OBJ(*)(OBJ a, OBJ b);
+	ALIAS(ternaryfunc)		OBJ(*)(OBJ a, OBJ b, OBJ c);
 	
-	ALIAS(inquiry)			bool(*)(OBJECT o);
-	ALIAS(sizeargfunc)		OBJECT(*)(OBJECT o, ssize_t i);
-	ALIAS(sizesizeargfunc)	OBJECT(*)(OBJECT o, ssize_t i, ssize_t j);
-	ALIAS(objobjproc)		int32_t(*)(OBJECT a, OBJECT b);
+	ALIAS(inquiry)			bool(*)(OBJ o);
+	ALIAS(sizeargfunc)		OBJ(*)(OBJ o, ssize_t i);
+	ALIAS(sizesizeargfunc)	OBJ(*)(OBJ o, ssize_t i, ssize_t j);
+	ALIAS(objobjproc)		int32_t(*)(OBJ a, OBJ b);
 
-	ALIAS(visitproc)		void(*)(OBJECT, void *);
-	ALIAS(traverseproc)		void(*)(OBJECT, visitproc, void *);
+	ALIAS(visitproc)		void(*)(OBJ, void *);
+	ALIAS(traverseproc)		void(*)(OBJ, visitproc, void *);
 
-	ALIAS(getattrfunc)		OBJECT(*)(OBJECT obj, cstring name);
-	ALIAS(setattrfunc)		Error(*)(OBJECT obj, cstring name, OBJECT value);
-	ALIAS(getattrofunc)		OBJECT(*)(OBJECT obj, OBJECT name);
-	ALIAS(setattrofunc)		Error(*)(OBJECT obj, OBJECT name, OBJECT value);
-	ALIAS(descrgetfunc)		OBJECT(*)(OBJECT descr, OBJECT obj, OBJECT type);
-	ALIAS(descrsetfunc)		Error(*)(OBJECT descr, OBJECT obj, OBJECT value);
+	ALIAS(getattrfunc)		OBJ(*)(OBJ obj, cstring name);
+	ALIAS(setattrfunc)		Error(*)(OBJ obj, cstring name, OBJ value);
+	ALIAS(getattrofunc)		OBJ(*)(OBJ obj, OBJ name);
+	ALIAS(setattrofunc)		Error(*)(OBJ obj, OBJ name, OBJ value);
+	ALIAS(descrgetfunc)		OBJ(*)(OBJ descr, OBJ obj, OBJ type);
+	ALIAS(descrsetfunc)		Error(*)(OBJ descr, OBJ obj, OBJ value);
 
-	ALIAS(cmpfunc)			int32_t(*)(OBJECT a, OBJECT b);
-	ALIAS(hashfunc)			hash_t(*)(OBJECT o);
-	ALIAS(lenfunc)			ssize_t(*)(OBJECT o);
-	ALIAS(reprfunc)			STR(*)(OBJECT o);
+	ALIAS(cmpfunc)			int32_t(*)(OBJ a, OBJ b);
+	ALIAS(hashfunc)			hash_t(*)(OBJ o);
+	ALIAS(lenfunc)			ssize_t(*)(OBJ o);
+	ALIAS(reprfunc)			STR(*)(OBJ o);
 
 	ALIAS(allocfunc)		void * (*)(size_t size);
 	ALIAS(freefunc)			void(*)(void * ptr);
-	ALIAS(initproc)			Error(*)(OBJECT self, OBJECT args);
-	ALIAS(newfunc)			OBJECT(*)(TYPE type, OBJECT args);
-	ALIAS(destructor)		void(*)(BaseObject * ptr);
+	ALIAS(initproc)			Error(*)(OBJ self, OBJ args);
+	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
+	ALIAS(destructor)		void(*)(Object * ptr);
 
-	ALIAS(cfunction)		OBJECT(*)(OBJECT self, OBJECT args);
-	ALIAS(vectorcallfunc)	OBJECT(*)(OBJECT self, OBJECT const * argc, size_t argv);
-	ALIAS(getter)			OBJECT(*)(OBJECT self, void * context);
-	ALIAS(setter)			Error(*)(OBJECT self, OBJECT value, void * context);
+	ALIAS(cfunction)		OBJ(*)(OBJ self, OBJ args);
+	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argc, size_t argv);
+	ALIAS(getter)			OBJ(*)(OBJ self, void * context);
+	ALIAS(setter)			Error(*)(OBJ self, OBJ value, void * context);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -289,11 +315,11 @@ namespace ism
 		template <class Index = cstring
 		> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ handle(), FWD(i) }; }
 
-		template <class Value = OBJECT
+		template <class Value = OBJ
 		> NODISCARD bool contains(Value && v) const { return attr("__contains__")(FWD(v)).cast<bool>(); }
 
 		template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
-		> OBJECT operator()(Args && ... args) const; // call.hpp
+		> OBJ operator()(Args && ... args) const; // call.hpp
 
 		NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
 		
@@ -304,7 +330,7 @@ namespace ism
 		template <class O, class = std::enable_if_t<is_base_object_v<O>>
 		> NODISCARD bool is(O const * o) const noexcept { return derived().ptr() == o; }
 
-		template <class O, class = std::enable_if_t<is_object_api_v<O>>
+		template <class O, class = std::enable_if_t<is_api_v<O>>
 		> NODISCARD bool is(O const & o) const noexcept { return derived().ptr() == o.ptr(); }
 		
 		NODISCARD bool equal_to(ObjectAPI const & o) const noexcept { return compare(o) == 0; }
@@ -356,6 +382,202 @@ namespace ism
 	> NODISCARD bool operator>=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater_equal(b); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> struct Hash<ObjectAPI<T>>
+	{
+		template <class U
+		> hash_t operator()(U const & o) const { return hash(o); }
+	};
+
+	template <class T> struct EqualTo<ObjectAPI<T>>
+	{
+		template <class A, class B
+		> bool operator()(A const & a, B const & b) const { return a.equal_to(b); }
+	};
+
+	template <class T> struct NotEqualTo<ObjectAPI<T>>
+	{
+		template <class A, class B
+		> bool operator()(A const & a, B const & b) const { return a.not_equal_to(b); }
+	};
+
+	template <class T> struct Less<ObjectAPI<T>>
+	{
+		template <class A, class B
+		> bool operator()(A const & a, B const & b) const { return a.less(b); }
+	};
+
+	template <class T> struct Greater<ObjectAPI<T>>
+	{
+		template <class A, class B
+		> bool operator()(A const & a, B const & b) const { return a.greater(b); }
+	};
+
+	template <class T> struct LessEqual<ObjectAPI<T>>
+	{
+		template <class A, class B
+		> bool operator()(A const & a, B const & b) const { return a.less_equal(b); }
+	};
+
+	template <class T> struct GreaterEqual<ObjectAPI<T>>
+	{
+		template <class A, class B
+		> bool operator()(A const & a, B const & b) const { return a.greater_equal(b); }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// ref
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class _Type
+	> class Ref : public _Ref_Tag, public ObjectAPI<Ref<_Type>>
+	{
+	public:
+		using value_type = typename _Type;
+
+		using self_type = typename Ref<value_type>;
+
+		~Ref() noexcept { unref(); }
+
+		Ref() noexcept {}
+
+		Ref(nullptr_t) noexcept {}
+
+		Ref(value_type * value) { if (value) { ref_pointer(value); } }
+
+		Ref(self_type const & value) { ref(value); }
+
+		template <class U
+		> Ref(Ref<U> const & value) { reset(value); }
+
+		Ref(value_type const & value) { instance(value); }
+
+		Ref(value_type && value) noexcept { instance(std::move(value)); }
+
+		self_type & operator=(nullptr_t) { unref(); return (*this); }
+
+		self_type & operator=(self_type const & value) { reset(value); return (*this); }
+
+		template <class U
+		> self_type & operator=(Ref<U> const & value) { reset(value); return (*this); }
+
+		self_type & operator=(value_type const & value) { instance(value); return (*this); }
+
+		self_type & operator=(value_type && value) noexcept { instance(std::move(value)); return (*this); }
+
+	public:
+		template <class ... Args
+		> static auto new_(Args && ... args) { return Ref<value_type>{ value_type{ FWD(args)... } }; }
+
+		template <class U> NODISCARD U cast() const &; // cast.hpp
+
+		template <class U> NODISCARD U cast() &&; // cast.hpp
+
+	public:
+		template <class ... Args
+		> void instance(Args && ... args)
+		{
+			ref(ism::construct_or_initialize<value_type>(FWD(args)...));
+		}
+
+		void unref()
+		{
+			if (m_ptr && m_ptr->dec_ref()) { ism::default_delete(m_ptr); }
+			
+			m_ptr = nullptr;
+		}
+
+		void reset(self_type const & value)
+		{
+			ref(value);
+		}
+
+		template <class U
+		> void reset(U * value)
+		{
+			if (m_ptr == value) { return; }
+			unref();
+			value_type * r{ dynamic_cast<value_type *>(value) };
+			if (r) { ref_pointer(r); }
+		}
+
+		template <class U
+		> void reset(Ref<U> const & value)
+		{
+			Object * other{ static_cast<Object *>(value.ptr()) };
+			if (!other) { unref(); return; }
+			Ref r;
+			r.m_ptr = dynamic_cast<value_type *>(other);
+			ref(r);
+			r.m_ptr = nullptr;
+		}
+
+		value_type * release() noexcept
+		{
+			value_type * temp{ m_ptr };
+			m_ptr = nullptr;
+			return temp;
+		}
+
+	public:
+		NODISCARD operator bool() const noexcept { return m_ptr != nullptr; }
+
+		NODISCARD auto ptr() const noexcept { return const_cast<value_type *>(m_ptr); }
+
+		NODISCARD auto operator*() const noexcept { return const_cast<value_type *>(m_ptr); }
+
+		NODISCARD auto operator->() const noexcept { return const_cast<value_type *>(m_ptr); }
+
+		NODISCARD bool operator==(value_type const * value) const noexcept { return m_ptr == value; }
+		
+		NODISCARD bool operator!=(value_type const * value) const noexcept { return m_ptr != value; }
+		
+		NODISCARD bool operator<(self_type const & value) const noexcept { return m_ptr < value.m_ptr; }
+		
+		NODISCARD bool operator==(self_type const & value) const noexcept { return m_ptr == value.m_ptr; }
+		
+		NODISCARD bool operator!=(self_type const & value) const noexcept { return m_ptr != value.m_ptr; }
+
+	protected:
+		value_type * m_ptr{};
+
+		void ref(self_type const & value)
+		{
+			if (value.m_ptr == m_ptr) { return; }
+			unref();
+			m_ptr = value.m_ptr;
+			if (m_ptr) { m_ptr->inc_ref(); }
+		}
+
+		void ref_pointer(value_type * value)
+		{
+			VERIFY("INVALID POINTER" && value);
+
+			if (value->init_ref()) { m_ptr = value; }
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> struct Hash<Ref<T>> : Hash<ObjectAPI<Ref<T>>> {};
+
+	template <class T> struct EqualTo<Ref<T>> : EqualTo<ObjectAPI<Ref<T>>> {};
+
+	template <class T> struct NotEqualTo<Ref<T>> : NotEqualTo<ObjectAPI<Ref<T>>> {};
+
+	template <class T> struct Less<Ref<T>> : Less<ObjectAPI<Ref<T>>> {};
+
+	template <class T> struct Greater<Ref<T>> : Greater<ObjectAPI<Ref<T>>> {};
+
+	template <class T> struct LessEqual<Ref<T>> : LessEqual<ObjectAPI<Ref<T>>> {};
+
+	template <class T> struct GreaterEqual<Ref<T>> : GreaterEqual<ObjectAPI<Ref<T>>> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // handle
@@ -363,97 +585,61 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> class BaseHandle : public Ref<T>, public ObjectAPI<BaseHandle<T>>
-	{
-	protected:
-		BaseHandle() noexcept = default;
-
-	public:
-		~BaseHandle() noexcept = default;
-
-		template <class T> NODISCARD T cast() const &; // cast.hpp
-
-		template <class T> NODISCARD T cast() &&; // cast.hpp
-
-		template <class ... Args
-		> static auto new_(Args && ... args) { return Handle<T>{ T{ FWD(args)... } }; }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// default handle
-#define ISM_HANDLE_DEFAULT(m_class, m_check)														\
-public:																								\
-	NODISCARD static bool check_(OBJECT const & o) { return o && (bool)(m_check(o)); }				\
-																									\
-	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }						\
-																									\
-	~Handle() noexcept = default;																	\
-																									\
-	Handle() noexcept = default;																	\
-																									\
-	Handle(nullptr_t) {}																			\
-																									\
-	Handle(m_class * value) { if (value) { ref_pointer(value); } }									\
-																									\
-	Handle(Reference * value) { if (value) { reset(value); } }										\
-																									\
-	Handle(Ref<m_class> const & value) { ref(value); }												\
-																									\
-	template <class U> Handle(Ref<U> const & value) { reset(value); }								\
-																									\
-	Handle(m_class const & value) { instance(value); }												\
-																									\
-	Handle(m_class && value) noexcept { instance(std::move(value)); }								\
-																									\
-	Handle & operator=(nullptr_t) { unref(); return (*this); }										\
-																									\
-	Handle & operator=(Ref<m_class> const & value) { reset(value); return (*this); }				\
-																									\
-	template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
-																									\
-	Handle & operator=(m_class const & value) { instance(value); return (*this); }					\
-																									\
-	Handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }	\
-																									\
-private:
+	// handle default
+#define ISM_HANDLE_DEFAULT(m_class, m_check)															\
+public:																									\
+	using value_type = typename m_class;																\
+																										\
+	using base_type = typename ism::Ref<value_type>;													\
+																										\
+	using self_type = typename ism::Handle<value_type>;													\
+																										\
+	NODISCARD static bool check_(OBJ const & o) { return o && (bool)(m_check(o)); }						\
+																										\
+	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }							\
+																										\
+	~Handle() noexcept = default;																		\
+																										\
+	Handle() noexcept = default;																		\
+																										\
+	Handle(nullptr_t) noexcept {}																		\
+																										\
+	Handle(value_type * value) { if (value) { ref_pointer(value); } }									\
+																										\
+	Handle(base_type const & value) { ref(value); }														\
+																										\
+	template <class U> Handle(Ref<U> const & value) { reset(value); }									\
+																										\
+	Handle(value_type const & value) { instance(value); }												\
+																										\
+	Handle(value_type && value) noexcept { instance(std::move(value)); }								\
+																										\
+	self_type & operator=(nullptr_t) { unref(); return (*this); }										\
+																										\
+	self_type & operator=(base_type const & value) { reset(value); return (*this); }					\
+																										\
+	template <class U> self_type & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
+																										\
+	self_type & operator=(value_type const & value) { instance(value); return (*this); }				\
+																										\
+	self_type & operator=(value_type && value) noexcept { instance(std::move(value)); return (*this); }	\
+																										\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct Hash<Handle<T>>
-	{
-		hash_t operator()(Handle<T> const & o) const { return hash(o); }
-	};
+	template <class T> struct Hash<Handle<T>> : Hash<Ref<T>> {};
 
-	template <class T> struct EqualTo<Handle<T>>
-	{
-		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.equal_to(b); }
-	};
+	template <class T> struct EqualTo<Handle<T>> : EqualTo<Ref<T>> {};
 
-	template <class T> struct NotEqualTo<Handle<T>>
-	{
-		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.not_equal_to(b); }
-	};
+	template <class T> struct NotEqualTo<Handle<T>> : NotEqualTo<Ref<T>> {};
 
-	template <class T> struct Less<Handle<T>>
-	{
-		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.less(b); }
-	};
+	template <class T> struct Less<Handle<T>> : Less<Ref<T>> {};
 
-	template <class T> struct Greater<Handle<T>>
-	{
-		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.greater(b); }
-	};
+	template <class T> struct Greater<Handle<T>> : Greater<Ref<T>> {};
 
-	template <class T> struct LessEqual<Handle<T>>
-	{
-		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.less_equal(b); }
-	};
+	template <class T> struct LessEqual<Handle<T>> : LessEqual<Ref<T>> {};
 
-	template <class T> struct GreaterEqual<Handle<T>>
-	{
-		template <class U> bool operator()(Handle<T> const & a, Handle<U> const & b) const { return a.greater_equal(b); }
-	};
+	template <class T> struct GreaterEqual<Handle<T>> : GreaterEqual<Ref<T>> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -470,15 +656,15 @@ namespace ism
 	public:
 		using key_type = typename Policy::key_type;
 
-		Accessor(OBJECT obj, key_type key) : m_obj{ obj }, m_key{ key } {}
+		Accessor(OBJ obj, key_type key) : m_obj{ obj }, m_key{ key } {}
 
 		Accessor(Accessor const &) = default;
 
 		Accessor(Accessor &&) noexcept = default;
 
-		void operator=(Accessor const & a) && { std::move(*this).operator=(OBJECT(a)); }
+		void operator=(Accessor const & a) && { std::move(*this).operator=(OBJ(a)); }
 
-		void operator=(Accessor const & a) & { operator=(OBJECT(a)); }
+		void operator=(Accessor const & a) & { operator=(OBJ(a)); }
 
 		template <class Value> decltype(auto) operator=(Value && value) &&
 		{
@@ -492,22 +678,22 @@ namespace ism
 			return (*this);
 		}
 
-		NODISCARD auto ptr() const { return const_cast<BaseObject *>(get_cache().ptr()); }
+		NODISCARD auto ptr() const { return const_cast<Object *>(get_cache().ptr()); }
 
 		template <class T> NODISCARD operator Handle<T>() const { return get_cache(); }
 
 		template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
 
 	protected:
-		OBJECT & get_cache() const {
+		OBJ & get_cache() const {
 			if (!m_cache) { m_cache = Policy::get(m_obj, m_key); }
 			return m_cache;
 		}
 
 	private:
-		OBJECT m_obj;
+		OBJ m_obj;
 		key_type m_key;
-		mutable OBJECT m_cache;
+		mutable OBJ m_cache;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -517,10 +703,10 @@ namespace ism
 	{
 		using key_type = T;
 
-		template <class O = OBJECT, class Index = T
-		> static OBJECT get(O && o, Index && i) { return getattr(FWD(o), FWD(i)); }
+		template <class O = OBJ, class Index = T
+		> static OBJ get(O && o, Index && i) { return getattr(FWD(o), FWD(i)); }
 
-		template <class O = OBJECT, class Index = T, class Value = OBJECT
+		template <class O = OBJ, class Index = T, class Value = OBJ
 		> static void set(O && o, Index && i, Value && v) { setattr(FWD(o), FWD(i), FWD(v)); }
 	};
 
@@ -531,10 +717,10 @@ namespace ism
 	{
 		using key_type = T;
 
-		template <class O = OBJECT, class Index = T
-		> static OBJECT get(O && o, Index && i) { return getitem(FWD(o), FWD(i)); }
+		template <class O = OBJ, class Index = T
+		> static OBJ get(O && o, Index && i) { return getitem(FWD(o), FWD(i)); }
 
-		template <class O = OBJECT, class Index = T, class Value = OBJECT
+		template <class O = OBJ, class Index = T, class Value = OBJ
 		> static void set(O && o, Index && i, Value && v) { setitem(FWD(o), FWD(i), FWD(v)); }
 	};
 

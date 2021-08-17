@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(MethodObject, t)
+IMPLEMENT_CLASS(MethodObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
@@ -13,11 +13,11 @@ IMPLEMENT_CLASS_TYPE(MethodObject, t)
 
 	t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
 
-	t.tp_descr_get = (descrgetfunc)[](OBJECT self, OBJECT obj, OBJECT type) { return self; };
+	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) { return self; };
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		return holder_type::new_();
 	};
@@ -25,9 +25,9 @@ IMPLEMENT_CLASS_TYPE(MethodObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void MethodObject::_bind_class(OBJECT scope)
+void MethodObject::_bind_class(OBJ scope)
 {
-	CLASS_<METHOD>(scope, "method", get_type_static())
+	CLASS_<METHOD>(scope, "method", get_class())
 
 		//.def(init<>())
 
@@ -36,12 +36,12 @@ void MethodObject::_bind_class(OBJECT scope)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::method_vectorcall(OBJECT callable, OBJECT const * argv, size_t argc)
+OBJ ism::method_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 {
 	VERIFY(METHOD::check_(callable));
 	METHOD method{ callable };
-	OBJECT self{ method->m_self };
-	OBJECT func{ method->m_func };
+	OBJ self{ method->m_self };
+	OBJ func{ method->m_func };
 	vectorcallfunc vcall{ get_vectorcall_func(func) };
 
 	if (argc == 0)

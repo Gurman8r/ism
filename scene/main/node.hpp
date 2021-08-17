@@ -11,17 +11,15 @@ namespace ism
 
 	class SceneTree;
 
-	class ISM_API Node : public Super
+	class ISM_API Node
 	{
-		ISM_SUPER(Node, Super);
-
 	public:
 		using iterator					= typename Vector<Node *>::iterator;
 		using const_iterator			= typename Vector<Node *>::const_iterator;
 		using reverse_iterator			= typename Vector<Node *>::reverse_iterator;
 		using const_reverse_iterator	= typename Vector<Node *>::const_reverse_iterator;
 
-		virtual ~Node() override;
+		virtual ~Node();
 
 	protected:
 		explicit Node(SceneTree * tree, Node * parent);

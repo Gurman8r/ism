@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(CppFunctionObject, t)
+IMPLEMENT_CLASS(CppFunctionObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
@@ -15,14 +15,14 @@ IMPLEMENT_CLASS_TYPE(CppFunctionObject, t)
 
 	t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
 
-	t.tp_descr_get = (descrgetfunc)[](OBJECT self, OBJECT obj, OBJECT type)->OBJECT
+	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type)->OBJ
 	{
 		return !obj ? self : METHOD({ self, obj, method_vectorcall });
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		return holder_type::new_();
 	};
@@ -30,9 +30,9 @@ IMPLEMENT_CLASS_TYPE(CppFunctionObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CppFunctionObject::_bind_class(OBJECT scope)
+void CppFunctionObject::_bind_class(OBJ scope)
 {
-	CLASS_<CPP_FUNCTION>(scope, "cpp_function", get_type_static())
+	CLASS_<CPP_FUNCTION>(scope, "cpp_function", get_class())
 
 		//.def(init<>())
 
@@ -61,11 +61,11 @@ CppFunctionObject::~CppFunctionObject()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_t argc)
+OBJ CppFunctionObject::dispatcher(OBJ callable, OBJ const * argv, size_t argc)
 {
 	if (!CPP_FUNCTION::check_(callable)) { return nullptr; }
 
-	OBJECT parent{ 0 < argc ? argv[0] : nullptr };
+	OBJ parent{ 0 < argc ? argv[0] : nullptr };
 
 	FunctionRecord const * overloads{ &***CPP_FUNCTION(callable) }, * it{ overloads };
 
@@ -87,7 +87,7 @@ OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_
 		{
 			ArgumentRecord const * arg_rec{ num_copied < func.args.size() ? &func.args[num_copied] : nullptr };
 
-			OBJECT arg{ argv[num_copied] };
+			OBJ arg{ argv[num_copied] };
 
 			if (arg_rec && !arg_rec->none && arg.is_null())
 			{
@@ -120,7 +120,7 @@ OBJECT CppFunctionObject::dispatcher(OBJECT callable, OBJECT const * argv, size_
 		}
 
 		// execute call
-		if (OBJECT result{ func.impl(call) }; !call.try_next_overload)
+		if (OBJ result{ func.impl(call) }; !call.try_next_overload)
 		{
 			return result;
 		}
@@ -150,7 +150,7 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 
 	if (CPP_FUNCTION::check_(rec->sibling))
 	{
-		if (CPP_FUNCTION sib{ rec->sibling }; rec->scope == sib->m_record->scope)
+		if (CPP_FUNCTION sib{ (CppFunctionObject *)rec->sibling }; rec->scope == sib->m_record->scope)
 		{
 			rec->next = sib->m_record;
 

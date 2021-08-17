@@ -5,10 +5,8 @@
 
 namespace ism
 {
-	class ISM_API InputMap : public Super
+	class ISM_API InputMap
 	{
-		ISM_SUPER(InputMap, Super);
-
 	public:
 		virtual ~InputMap();
 	};

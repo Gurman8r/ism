@@ -56,10 +56,10 @@ namespace ism
 		bool finalizing{};
 
 		DICT dict{}, builtins{}, modules{}, importlib{};
-		OBJECT import_func{};
+		OBJ import_func{};
 
-		void(*exitfunc)(OBJECT) {};
-		OBJECT exitmodule{};
+		void(*exitfunc)(OBJ) {};
+		OBJ exitmodule{};
 
 		int64_t tstate_next_id{ -1 };
 
@@ -91,8 +91,6 @@ namespace ism
 		struct _registry
 		{
 			// TODO...
-
-			TypeMap<Vector<bool(*)(OBJECT, void *&)>> direct_conversions{};
 		}
 		registry;
 	};

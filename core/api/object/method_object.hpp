@@ -12,12 +12,14 @@ namespace ism
 		ISM_OBJECT_DEFAULT(MethodObject, FunctionObject);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
-		OBJECT m_func{}, m_self{};
+		OBJ m_func{}, m_self{};
 
-		MethodObject(OBJECT func, OBJECT self, vectorcallfunc vectorcall) : self_type{}
+		MethodObject() : base_type{ get_class() } {}
+
+		MethodObject(OBJ func, OBJ self, vectorcallfunc vectorcall) : self_type{}
 		{
 			m_func = func;
 			m_self = self;
@@ -26,15 +28,15 @@ namespace ism
 	};
 
 	// method delete
-	template <> struct DefaultDelete<MethodObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<MethodObject> : DefaultDelete<Object> {};
 
 	// method check
-#define ISM_METHOD_CHECK(o) (ism::isinstance<ism::METHOD>(o))
+#define ISM_CHECK_METHOD(o) (ism::isinstance<ism::METHOD>(o))
 
 	// method handle
-	template <> class Handle<MethodObject> : public BaseHandle<MethodObject>
+	template <> class Handle<MethodObject> : public Ref<MethodObject>
 	{
-		ISM_HANDLE_DEFAULT(MethodObject, ISM_METHOD_CHECK);
+		ISM_HANDLE_DEFAULT(MethodObject, ISM_CHECK_METHOD);
 
 	public:
 	};
@@ -43,7 +45,7 @@ namespace ism
 // functions
 namespace ism
 {
-	ISM_API_FUNC(OBJECT) method_vectorcall(OBJECT callable, OBJECT const * argv, size_t argc);
+	ISM_API_FUNC(OBJ) method_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
 }
 
 #endif // !_ISM_METHOD_OBJECT_HPP_

@@ -27,7 +27,7 @@ namespace ism
 
 		NODISCARD LIST args() && { return std::move(m_args); }
 
-		NODISCARD OBJECT call(OBJECT callable)
+		NODISCARD OBJ call(OBJ callable)
 		{
 			if (TYPE type; !m_args || !callable || !(type = typeof(callable)))
 			{
@@ -75,7 +75,7 @@ namespace ism
 
 		std::tuple<make_caster<Args>...> argcasters{};
 
-		NODISCARD bool load_args(Batch<OBJECT, bool> & args) { return impl_load_args(args, indices); }
+		NODISCARD bool load_args(Batch<OBJ, bool> & args) { return impl_load_args(args, indices); }
 
 		template <class Return, class Guard, class Func
 		> NODISCARD auto call(Func && func) && -> return_type<Return, void_type, Return>
@@ -93,17 +93,17 @@ namespace ism
 		}
 
 	private:
-		static bool impl_load_args(Batch<OBJECT, bool> &, std::index_sequence<>) noexcept { return true; }
+		static bool impl_load_args(Batch<OBJ, bool> &, std::index_sequence<>) noexcept { return true; }
 
-		template <size_t ... I> bool impl_load_args(Batch<OBJECT, bool> & args, std::index_sequence<I...>)
+		template <size_t ... I> bool impl_load_args(Batch<OBJ, bool> & args, std::index_sequence<I...>)
 		{
-			return !(... || !std::get<I>(argcasters).load(args.get<OBJECT>(I), args.get<bool>(I)));
+			return !(... || !std::get<I>(argcasters).load(args.get<OBJ>(I), args.get<bool>(I)));
 		}
 
 		template <class Return, class Func, size_t ... I, class Guard
 		> Return impl_call(Func && func, std::index_sequence<I...>, Guard &&) &&
 		{
-			return func(cast_op<Args>(std::move(std::get<I>(argcasters)))...);
+			return func(ism::cast_op<Args>(std::move(std::get<I>(argcasters)))...);
 		}
 	};
 
@@ -114,7 +114,7 @@ namespace ism
 	{
 		String name{};
 
-		OBJECT value{};
+		OBJ value{};
 
 		bool convert{}, none{};
 	};
@@ -128,7 +128,7 @@ namespace ism
 
 		String name, doc, signature;
 
-		OBJECT(*impl)(struct FunctionCall &);
+		OBJ(*impl)(struct FunctionCall &);
 
 		void * data[3];
 
@@ -140,7 +140,7 @@ namespace ism
 
 		ReturnPolicy policy{ ReturnPolicy_AutomaticReference };
 
-		BaseObject * scope, * sibling;
+		Object * scope, * sibling;
 
 		FunctionRecord * next;
 
@@ -159,9 +159,9 @@ namespace ism
 	{
 		FunctionRecord const & record;
 		
-		OBJECT parent{};
+		OBJ parent{};
 
-		Batch<OBJECT, bool> args{ record.argument_count };
+		Batch<OBJ, bool> args{ record.argument_count };
 
 		bool try_next_overload : 1;
 	};
@@ -193,7 +193,7 @@ namespace ism
 
 	template <class Derived
 	> template <ReturnPolicy policy, class ...Args
-	> inline OBJECT ObjectAPI<Derived>::operator()(Args && ... args) const
+	> inline OBJ ObjectAPI<Derived>::operator()(Args && ... args) const
 	{
 		return ism::collect_arguments<policy>(FWD(args)...).call(handle());
 	}

@@ -15,7 +15,7 @@ namespace ism::attr
 		static void init(T &&, FunctionRecord &) {}
 		static void init(T &&, TypeObject &) {}
 		static void precall(FunctionCall &) {}
-		static void postcall(FunctionCall &, OBJECT) {}
+		static void postcall(FunctionCall &, OBJ) {}
 	};
 }
 
@@ -48,9 +48,9 @@ namespace ism::attr
 // object attribute
 #define ISM_ATTR_OBJECT(m_class, m_value) \
 	struct m_class final { \
-		ism::BaseObject * const m_value; \
-		explicit m_class(ism::BaseObject * value) : m_value{ value } {} \
-		explicit m_class(ism::OBJECT value) : m_value{ *value } {} \
+		ism::Object * const m_value; \
+		explicit m_class(ism::Object * value) : m_value{ value } {} \
+		explicit m_class(ism::OBJ value) : m_value{ *value } {} \
 	}
 
 // string attribute
@@ -139,7 +139,7 @@ namespace ism::attr
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// parent class
-	template <class T> ISM_PROCESS_ATTR_SFINAE(T, is_object_api_v<T>) {
+	template <class T> ISM_PROCESS_ATTR_SFINAE(T, is_api_v<T>) {
 		static void init(TypeObject & r, T && a) { LIST(r.tp_bases).append(typeof(FWD(a))); }
 	};
 
@@ -164,7 +164,7 @@ namespace ism::attr
 	// metaclass
 	ISM_ATTR_OBJECT(metaclass, value);
 	template <> ISM_PROCESS_ATTR(metaclass) {
-		static void init(TypeObject & r, type && a) { /*r.set_type(super_cast<TypeObject>(a.value));*/ }
+		static void init(TypeObject & r, type && a) { /*r.set_type(dynamic_cast<TypeObject *>(a.value));*/ }
 	};
 
 	// module_local
@@ -225,7 +225,7 @@ namespace ism::attr
 			SINK(0, (process_attribute<std::decay_t<Args>>::precall(call), 0) ...);
 		}
 
-		static void postcall(FunctionCall & call, OBJECT retv)
+		static void postcall(FunctionCall & call, OBJ retv)
 		{
 			SINK(0, (process_attribute<std::decay_t<Args>>::postcall(call, retv), 0) ...);
 		}

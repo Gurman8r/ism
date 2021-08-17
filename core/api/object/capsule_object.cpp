@@ -5,13 +5,13 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(CapsuleObject, t)
+IMPLEMENT_CLASS(CapsuleObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		return holder_type::new_();
 	};
@@ -19,9 +19,9 @@ IMPLEMENT_CLASS_TYPE(CapsuleObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CapsuleObject::_bind_class(OBJECT scope)
+void CapsuleObject::_bind_class(OBJ scope)
 {
-	CLASS_<CAPSULE>(scope, "capsule", get_type_static())
+	CLASS_<CAPSULE>(scope, "capsule", get_class())
 
 		.def(init<>())
 

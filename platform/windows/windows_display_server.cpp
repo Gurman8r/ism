@@ -1,4 +1,5 @@
 #include <platform/windows/windows_display_server.hpp>
+#include <scene/main/scene_tree.hpp>
 
 #include <glfw/glfw3.h>
 #if defined(ISM_OS_WINDOWS)
@@ -12,9 +13,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	WindowID Windows_DisplayServer::make_window(WindowSettings const & settings)
+	Window * Windows_DisplayServer::create_window(SceneTree * tree, Node * parent, WindowSettings const & settings)
 	{
-		// apply context hints
+		// context hints
 		glfwWindowHint(GLFW_CLIENT_API, std::invoke([&]() noexcept {
 			switch (settings.context.api) {
 			default					: return GLFW_NO_API;
@@ -32,7 +33,7 @@ namespace ism
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.context.major);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.context.minor);
 
-		// apply style hints
+		// style hints
 		glfwWindowHint(GLFW_AUTO_ICONIFY,	settings.hints & WindowHints_AutoIconify);
 		glfwWindowHint(GLFW_CENTER_CURSOR,	settings.hints & WindowHints_CenterCursor);
 		glfwWindowHint(GLFW_DECORATED,		settings.hints & WindowHints_Decorated);
@@ -44,10 +45,10 @@ namespace ism
 		glfwWindowHint(GLFW_RESIZABLE,		settings.hints & WindowHints_Resizable);
 		glfwWindowHint(GLFW_VISIBLE,		settings.hints & WindowHints_Visible);
 
-		// apply monitor hints
+		// monitor hints
 		glfwWindowHint(GLFW_REFRESH_RATE, settings.video.rate);
 
-		// apply framebuffer hints
+		// framebuffer hints
 		glfwWindowHint(GLFW_RED_BITS,		(int32_t)settings.video.bpp[0]);
 		glfwWindowHint(GLFW_GREEN_BITS,		(int32_t)settings.video.bpp[1]);
 		glfwWindowHint(GLFW_BLUE_BITS,		(int32_t)settings.video.bpp[2]);
@@ -56,13 +57,14 @@ namespace ism
 		glfwWindowHint(GLFW_STENCIL_BITS,	settings.context.stencil_bits);
 		glfwWindowHint(GLFW_SRGB_CAPABLE,	settings.context.srgb_capable);
 
-		// create window backend
-		return (WindowID)glfwCreateWindow(
+		// create window
+		return memnew(Window(tree, parent, (WindowID)glfwCreateWindow(
 			(int32_t)settings.video.size[0],
 			(int32_t)settings.video.size[1],
 			(cstring)settings.title.c_str(),
 			(GLFWmonitor *)settings.monitor,
-			(GLFWwindow *)settings.share);
+			(GLFWwindow *)settings.share),
+			settings.hints));
 	}
 
 	bool Windows_DisplayServer::initialize()
@@ -214,7 +216,7 @@ namespace ism
 
 	bool Windows_DisplayServer::window_is_auto_iconify(WindowID id) const
 	{
-		return (GLFWwindow *)id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_AUTO_ICONIFY);
+		return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_AUTO_ICONIFY);
 	}
 
 	bool Windows_DisplayServer::window_is_decorated(WindowID id) const

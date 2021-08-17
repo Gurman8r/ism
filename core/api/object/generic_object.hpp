@@ -7,26 +7,27 @@
 namespace ism
 {
 	// generic object
-	class ISM_API GenericObject : public BaseObject
+	class ISM_API GenericObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(GenericObject, BaseObject);
+		ISM_OBJECT_DEFAULT(GenericObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
+		GenericObject() : base_type{ get_class() } {}
 	};
 
 	// generic delete
-	template <> struct DefaultDelete<GenericObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<GenericObject> : DefaultDelete<Object> {};
 
 	// generic check
-#define ISM_GENERIC_CHECK(o) (ism::isinstance<ism::GENERIC>(o))
+#define ISM_CHECK_GENERIC(o) (ism::isinstance<ism::GENERIC>(o))
 
 	// generic handle
-	template <> class Handle<GenericObject> : public BaseHandle<GenericObject>
+	template <> class Handle<GenericObject> : public Ref<GenericObject>
 	{
-		ISM_HANDLE_DEFAULT(GenericObject, ISM_GENERIC_CHECK);
+		ISM_HANDLE_DEFAULT(GenericObject, ISM_CHECK_GENERIC);
 
 	public:
 	};

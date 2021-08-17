@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(FunctionObject, t)
+IMPLEMENT_CLASS(FunctionObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
@@ -13,9 +13,9 @@ IMPLEMENT_CLASS_TYPE(FunctionObject, t)
 
 	t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		return holder_type::new_();
 	};
@@ -23,9 +23,9 @@ IMPLEMENT_CLASS_TYPE(FunctionObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void FunctionObject::_bind_class(OBJECT scope)
+void FunctionObject::_bind_class(OBJ scope)
 {
-	CLASS_<FUNCTION>(scope, "function", get_type_static())
+	CLASS_<FUNCTION>(scope, "function", get_class())
 
 		//.def(init<>())
 

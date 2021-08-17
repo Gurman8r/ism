@@ -10,22 +10,21 @@ namespace ism
 	// window
 	class ISM_API Window : public Viewport
 	{
-		ISM_SUPER(Window, Viewport);
-
 	protected:
 		WindowID	m_window	{};
 		WindowHints	m_hints		{ WindowHints_Default };
 
-	protected:
-		explicit Window(SceneTree * tree, Node * parent) : Viewport{ tree, parent } {}
-
-		explicit Window(SceneTree * tree) : Viewport{ tree } {}
-
-		explicit Window(Node * parent) : Viewport{ parent } {}
-
 	public:
 		static Window * new_(SceneTree * tree, Node * parent, WindowSettings const & settings);
 
+		Window(SceneTree * tree, Node * parent, WindowID window = nullptr, WindowHints hints = WindowHints_Default)
+			: Viewport	{ tree, parent }
+			, m_window	{ window }
+			, m_hints	{ hints }
+		{
+		}
+
+	public:
 		virtual void poll_events();
 
 		virtual void swap_buffers();

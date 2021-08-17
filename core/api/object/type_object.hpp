@@ -19,14 +19,14 @@ namespace ism
 		static void add_class(StringName const & name, TYPE type);
 
 		template <class T
-		> static void add_class() { add_class(T::get_class_static(), T::get_type_static()); }
+		> static void add_class() { add_class(ctti::type_v<T>, T::get_class()); }
 
 		template <class T
-		> static void bind_class(OBJECT scope)
+		> static void bind_class(OBJ scope)
 		{
 			T::initialize_class(scope);
 
-			TYPE t{ *classes.map<hash_t, TYPE>(hash(T::get_class_static())) };
+			TYPE t{ *classes.map<hash_t, TYPE>(hash(ctti::type_v<T>)) };
 
 			if (t.is_null())
 			{
@@ -42,12 +42,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type object
-	class ISM_API TypeObject : public BaseObject
+	class ISM_API TypeObject : public Object
 	{
-		ISM_OBJECT_MINIMAL(TypeObject, BaseObject);
+		ISM_OBJECT_COMMON(TypeObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 		virtual TYPE _get_typev() const noexcept override;
 
@@ -56,7 +56,7 @@ namespace ism
 
 		TypeObject() noexcept;
 
-		NODISCARD static TYPE get_type_static() noexcept;
+		NODISCARD static TYPE get_class() noexcept;
 
 	public:
 		String				tp_name{};
@@ -96,11 +96,11 @@ namespace ism
 		MappingMethods *	tp_as_mapping{};
 
 		Ref<TypeObject>		tp_base{ /* Handle<TypeObject> doesn't exist yet */ };
-		OBJECT				tp_bases{};
-		OBJECT				tp_cache{};
-		OBJECT				tp_dict{};
-		OBJECT				tp_mro{};
-		OBJECT				tp_subclasses{};
+		OBJ					tp_bases{};
+		OBJ					tp_cache{};
+		OBJ					tp_dict{};
+		OBJ					tp_mro{};
+		OBJ					tp_subclasses{};
 		vectorcallfunc		tp_vectorcall{};
 
 	public:
@@ -108,18 +108,18 @@ namespace ism
 
 		NODISCARD bool check_consistency() const;
 
-		NODISCARD OBJECT lookup(OBJECT const & name) const;
+		NODISCARD OBJ lookup(OBJ const & name) const;
 
 		NODISCARD bool is_subtype(TYPE const & value) const;
 
-		NODISCARD Error update_slot(OBJECT name);
+		NODISCARD Error update_slot(OBJ name);
 
 		NODISCARD bool has_feature(int32_t flag) const { return flag_read(tp_flags, flag); }
 
 	protected:
 		bool add_subclass(TypeObject * type);
 
-		bool mro_internal(OBJECT * old_mro);
+		bool mro_internal(OBJ * old_mro);
 
 		void inherit_special(TypeObject * base);
 
@@ -192,27 +192,27 @@ namespace ism
 	// type delete
 	template <> struct DefaultDelete<TypeObject>
 	{
-		void operator()(ism::TypeObject * ptr) const { memdelete(ptr); }
+		void operator()(TypeObject * ptr) const { memdelete(ptr); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type check
-#define ISM_TYPE_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
+#define ISM_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type handle
-	template <> class Handle<TypeObject> : public BaseHandle<TypeObject>
+	template <> class Handle<TypeObject> : public Ref<TypeObject>
 	{
-		ISM_HANDLE_DEFAULT(TypeObject, ISM_TYPE_CHECK);
+		ISM_HANDLE_DEFAULT(TypeObject, ISM_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
 
 		NODISCARD bool has_feature(int32_t flag) const { return m_ptr->has_feature(flag); }
 
-		NODISCARD OBJECT lookup(OBJECT const & name) const { return m_ptr->lookup(name); }
+		NODISCARD OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
 
 		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
 
@@ -241,39 +241,39 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_dict_ptr(TYPE const & t, OBJECT const & o)
+	NODISCARD inline auto get_dict_ptr(TYPE const & t, OBJ const & o)
 	{
 		if (ssize_t const offset{ (o && t) ? t->tp_dictoffset : 0 }; 0 < offset)
 		{
-			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + offset);
+			return reinterpret_cast<OBJ *>(reinterpret_cast<char *>(*o) + offset);
 		}
 		else
 		{
-			return (OBJECT *)nullptr;
+			return (OBJ *)nullptr;
 		}
 	}
 
-	NODISCARD inline auto get_dict_ptr(OBJECT const & o) noexcept { return get_dict_ptr(typeof(o), o); }
+	NODISCARD inline auto get_dict_ptr(OBJ const & o) noexcept { return get_dict_ptr(typeof(o), o); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_weaklist_ptr(TYPE const & t, OBJECT const & o)
+	NODISCARD inline auto get_weaklist_ptr(TYPE const & t, OBJ const & o)
 	{
 		if (ssize_t const offset{ (o && t) ? t->tp_weaklistoffset : 0 }; 0 < offset)
 		{
-			return reinterpret_cast<OBJECT *>(reinterpret_cast<char *>(*o) + offset);
+			return reinterpret_cast<OBJ *>(reinterpret_cast<char *>(*o) + offset);
 		}
 		else
 		{
-			return (OBJECT *)nullptr;
+			return (OBJ *)nullptr;
 		}
 	}
 
-	NODISCARD inline auto get_weaklist_ptr(OBJECT const & o) noexcept { return get_weaklist_ptr(typeof(o), o); }
+	NODISCARD inline auto get_weaklist_ptr(OBJ const & o) noexcept { return get_weaklist_ptr(typeof(o), o); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_vectorcall_func(TYPE const & t, OBJECT const & o)
+	NODISCARD inline auto get_vectorcall_func(TYPE const & t, OBJ const & o)
 	{
 		if (ssize_t const offset{ (o && t) ? t->tp_vectorcalloffset : 0 }; 0 < offset)
 		{
@@ -285,19 +285,19 @@ namespace ism
 		}
 	}
 
-	NODISCARD inline auto get_vectorcall_func(OBJECT const & o) noexcept { return get_vectorcall_func(typeof(o), o); }
+	NODISCARD inline auto get_vectorcall_func(OBJ const & o) noexcept { return get_vectorcall_func(typeof(o), o); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(OBJECT) type_getattr(TYPE type, OBJECT name);
+	ISM_API_FUNC(OBJ) type_getattr(TYPE type, OBJ name);
 
-	ISM_API_FUNC(Error) type_setattr(TYPE type, OBJECT name, OBJECT value);
+	ISM_API_FUNC(Error) type_setattr(TYPE type, OBJ name, OBJ value);
 
-	ISM_API_FUNC(OBJECT) type_call(OBJECT self, OBJECT args);
+	ISM_API_FUNC(OBJ) type_call(OBJ self, OBJ args);
 
-	ISM_API_FUNC(Error) type_init(OBJECT self, OBJECT args);
+	ISM_API_FUNC(Error) type_init(OBJ self, OBJ args);
 	
-	ISM_API_FUNC(OBJECT) type_new(TYPE type, OBJECT args);
+	ISM_API_FUNC(OBJ) type_new(TYPE type, OBJ args);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

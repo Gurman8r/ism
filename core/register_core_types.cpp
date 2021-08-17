@@ -6,7 +6,7 @@ using namespace ism;
 
 void ism::register_core_types()
 {
-	VERIFY(typeof<OBJECT>().ready());
+	VERIFY(typeof<OBJ>().ready());
 	VERIFY(typeof<TYPE>().ready());
 	VERIFY(typeof<INT>().ready());
 	VERIFY(typeof<FLT>().ready());
@@ -22,7 +22,7 @@ void ism::register_core_types()
 	VERIFY(typeof<GENERIC>().ready());
 
 	TypeDB::bind_class<CppFunctionObject>(nullptr);
-	TypeDB::bind_class<BaseObject>(nullptr);
+	TypeDB::bind_class<Object>(nullptr);
 	TypeDB::bind_class<TypeObject>(nullptr);
 	TypeDB::bind_class<IntObject>(nullptr);
 	TypeDB::bind_class<FloatObject>(nullptr);

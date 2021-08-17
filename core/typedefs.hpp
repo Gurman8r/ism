@@ -8,7 +8,7 @@
 
 // declare handle
 #define DECL_HANDLE(name)					\
-	struct CAT(__, name) { bool unused; };	\
+	struct CAT(__, name) { int unused; };	\
 	ALIAS(name) CAT(__, name) *
 
 // declare tag

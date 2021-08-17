@@ -10,20 +10,27 @@ namespace ism
 	> class CLASS_ : public TYPE
 	{
 	public:
-		static constexpr bool is_holder{ is_handle_v<_type> };
+		static constexpr bool is_holder{ is_ref_v<_type> };
 		using holder_type = typename std::conditional_t<is_holder, _type, Handle<_type>>;
 		using value_type = typename std::conditional_t<is_holder, typename _type::value_type, _type>;
 		using type = _type;
 	
 	public:
 		template <class ... Extra
-		> CLASS_(OBJECT scope, cstring name, TYPE target, Extra && ... extra) : TYPE{ target }
+		> CLASS_(OBJ scope, cstring name, TYPE target, Extra && ... extra) : TYPE{ target }
 		{
 			VERIFY(is_valid());
 			m_ptr->tp_name = name;
 			m_ptr->tp_size = sizeof(value_type);
 			m_ptr->tp_free = (freefunc)[](void * ptr) { memdelete((value_type *)ptr); };
 			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
+		}
+
+		template <class Name = cstring, class Value = OBJ
+		> CLASS_ & add_object(Name && name, Value && value) noexcept
+		{
+			DICT(CHECK(m_ptr)->tp_dict).insert_or_assign(FWD(name), FWD(value));
+			return (*this);
 		}
 
 	public:
@@ -48,8 +55,7 @@ namespace ism
 				attr::is_method(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			m_ptr->tp_dict[cf.name()] = cf;
-			return (*this);
+			return add_object(cf.name(), cf);
 		}
 
 		template <class Func, class ... Extra
@@ -61,8 +67,7 @@ namespace ism
 				attr::scope(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			m_ptr->tp_dict[cf.name()] = cf;
-			return (*this);
+			return add_object(cf.name(), cf);
 		}
 
 		template <class C, class D, class ... Extra
@@ -85,15 +90,15 @@ namespace ism
 		template <class D, class ... Extra
 		> CLASS_ & def_readwrite_static(cstring name, D * pm, Extra && ... extra)
 		{
-			CPP_FUNCTION fget({ [pm](OBJECT) -> D const & { return *pm; }, attr::scope(*this) });
-			CPP_FUNCTION fset({ [pm](OBJECT, D const & value) { *pm = value; }, attr::scope(*this) });
+			CPP_FUNCTION fget({ [pm](OBJ) -> D const & { return *pm; }, attr::scope(*this) });
+			CPP_FUNCTION fset({ [pm](OBJ, D const & value) { *pm = value; }, attr::scope(*this) });
 			return def_property_static(name, fget, fset, ReturnPolicy_Reference, FWD(extra)...);
 		}
 
 		template <class D, class ... Extra
 		> CLASS_ & def_readonly_static(cstring name, D const * pm, Extra && ... extra)
 		{
-			CPP_FUNCTION fget({ [pm](OBJECT) -> D const & { return *pm; }, attr::scope(*this) });
+			CPP_FUNCTION fget({ [pm](OBJ) -> D const & { return *pm; }, attr::scope(*this) });
 			return def_property_readonly_static(name, fget, ReturnPolicy_Reference, FWD(extra)...);
 		}
 
@@ -152,9 +157,7 @@ namespace ism
 	
 			if (fset) { attr::process_attributes<Extra...>::init(***fset, FWD(extra)...); }
 
-			m_ptr->tp_dict[name] = PROPERTY({ fget, fset });
-			
-			return (*this);
+			return add_object(name, PROPERTY({ fget, fset }));
 		}
 	};
 }

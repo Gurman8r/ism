@@ -7,38 +7,40 @@
 namespace ism
 {
 	// function object
-	class ISM_API FunctionObject : public BaseObject
+	class ISM_API FunctionObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(FunctionObject, BaseObject);
+		ISM_OBJECT_DEFAULT(FunctionObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
-		OBJECT m_name{}, m_doc{}, m_qualname{};
+		OBJ m_name{}, m_doc{}, m_qualname{};
 
-		OBJECT m_dict{}, m_module{};
+		OBJ m_dict{}, m_module{};
 
 		int32_t m_flags{};
 
 		vectorcallfunc m_vectorcall{};
 
+		FunctionObject() : base_type{ get_class() } {}
+
 		virtual ~FunctionObject() noexcept override = default;
 	};
 
 	// function delete
-	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<Object> {};
 
 	// function check
-#define ISM_FUNCTION_CHECK(o) (ism::isinstance<ism::FUNCTION>(o))
+#define ISM_CHECK_FUNCTION(o) (ism::isinstance<ism::FUNCTION>(o))
 
 	// function handle
-	template <> class Handle<FunctionObject> : public BaseHandle<FunctionObject>
+	template <> class Handle<FunctionObject> : public Ref<FunctionObject>
 	{
-		ISM_HANDLE_DEFAULT(FunctionObject, ISM_FUNCTION_CHECK);
+		ISM_HANDLE_DEFAULT(FunctionObject, ISM_CHECK_FUNCTION);
 
 	public:
-		NODISCARD OBJECT cpp_function() const; // cppfunction_object.hpp
+		NODISCARD OBJ cpp_function() const; // cppfunction_object.hpp
 
 		NODISCARD bool is_cpp_function() const noexcept { return cpp_function().is_valid(); }
 	};

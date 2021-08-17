@@ -7,15 +7,15 @@
 namespace ism
 {
 	// list object
-	class ISM_API ListObject : public BaseObject
+	class ISM_API ListObject : public Object
 	{
-		ISM_OBJECT_TYPED(ListObject, BaseObject);
+		ISM_OBJECT_DEFAULT(ListObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
-		Vector<OBJECT> m_list{};
+		Vector<OBJ> m_list{};
 
 		using storage_type = decltype(m_list);
 
@@ -30,32 +30,32 @@ namespace ism
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_list); }
 
 		template <class Iter
-		> ListObject(Iter first, Iter last, allocator_type al = {}) : base_type{ get_type_static() }, m_list{ first, last, al } {}
+		> ListObject(Iter first, Iter last, allocator_type al = {}) : base_type{ get_class() }, m_list{ first, last, al } {}
 
-		ListObject(std::initializer_list<OBJECT> init, allocator_type al = {}) : self_type{ al }
+		ListObject(std::initializer_list<OBJ> init, allocator_type al = {}) : self_type{ al }
 		{
 			m_list.reserve(init.size());
 
 			for (auto const & e : init) { m_list.push_back(e); }
 		}
 
-		ListObject(allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_list{ al } {}
+		ListObject(allocator_type al = {}) noexcept : base_type{ get_class() }, m_list{ al } {}
 
-		ListObject(storage_type const & v, allocator_type al = {}) : base_type{ get_type_static() }, m_list{ v, al } {}
+		ListObject(storage_type const & v, allocator_type al = {}) : base_type{ get_class() }, m_list{ v, al } {}
 
-		ListObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_type_static() }, m_list{ std::move(v), al } {}
+		ListObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_class() }, m_list{ std::move(v), al } {}
 	};
 
 	// list delete
-	template <> struct DefaultDelete<ListObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<ListObject> : DefaultDelete<Object> {};
 
 	// list check
-#define ISM_LIST_CHECK(o) (ism::typeof(o).has_feature(ism::TypeFlags_List_Subclass))
+#define ISM_CHECK_LIST(o) (ism::typeof(o).has_feature(ism::TypeFlags_List_Subclass))
 
 	// list handle
-	template <> class Handle<ListObject> : public BaseHandle<ListObject>
+	template <> class Handle<ListObject> : public Ref<ListObject>
 	{
-		ISM_HANDLE_DEFAULT(ListObject, ISM_LIST_CHECK);
+		ISM_HANDLE_DEFAULT(ListObject, ISM_CHECK_LIST);
 
 	public:
 		using storage_type = value_type::storage_type;
@@ -66,7 +66,7 @@ namespace ism
 
 		using allocator_type = value_type::allocator_type;
 
-		template <class Index = OBJECT
+		template <class Index = OBJ
 		> auto del(Index && i) const -> Error
 		{
 			if constexpr (std::is_integral_v<Index>)
@@ -85,13 +85,13 @@ namespace ism
 
 		void resize(size_t count) const { (**m_ptr).resize(count); }
 
-		template <class Value = OBJECT
+		template <class Value = OBJ
 		> void resize(size_t count, Value && value) const { (**m_ptr).resize(count, FWD_OBJ(value)); }
 
-		template <class Value = OBJECT
+		template <class Value = OBJ
 		> void append(Value && v) const { (**m_ptr).emplace_back(FWD_OBJ(v)); }
 
-		template <class Index = OBJECT, class Value = OBJECT
+		template <class Index = OBJ, class Value = OBJ
 		> void insert(Index && i, Value && v)
 		{
 			if constexpr (std::is_integral_v<Index>)
@@ -104,27 +104,27 @@ namespace ism
 			}
 		}
 
-		template <class Value = OBJECT
+		template <class Value = OBJ
 		> NODISCARD bool contains(Value && v) const { return ism::has((**m_ptr), FWD_OBJ(v)); }
 
-		template <class Value = OBJECT
+		template <class Value = OBJ
 		> NODISCARD auto find(Value && v) -> iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
 
-		template <class Value = OBJECT
+		template <class Value = OBJ
 		> NODISCARD auto find(Value && v) const -> const_iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
 
-		template <class Value = OBJECT
-		> NODISCARD auto lookup(Value && v) const -> OBJECT { return lookup(FWD_OBJ(v), OBJECT{}); }
+		template <class Value = OBJ
+		> NODISCARD auto lookup(Value && v) const -> OBJ { return lookup(FWD_OBJ(v), OBJ{}); }
 
-		template <class Value = OBJECT, class Defval = OBJECT
-		> NODISCARD auto lookup(Value && v, Defval && dv) -> OBJECT
+		template <class Value = OBJ, class Defval = OBJ
+		> NODISCARD auto lookup(Value && v, Defval && dv) -> OBJ
 		{
 			if (auto const ptr{ ism::getptr(**m_ptr, FWD_OBJ(v)) };) { return *ptr; }
 			else { return FWD_OBJ(dv); }
 		}
 
-		template <class Index = OBJECT
-		> NODISCARD auto operator[](Index && i) const -> OBJECT &
+		template <class Index = OBJ
+		> NODISCARD auto operator[](Index && i) const -> OBJ &
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
@@ -142,9 +142,9 @@ namespace ism
 
 		NODISCARD auto size() const { return (**m_ptr).size(); }
 
-		NODISCARD auto front() const -> OBJECT & { return (**m_ptr).front(); }
+		NODISCARD auto front() const -> OBJ & { return (**m_ptr).front(); }
 
-		NODISCARD auto back() const -> OBJECT & { return (**m_ptr).back(); }
+		NODISCARD auto back() const -> OBJ & { return (**m_ptr).back(); }
 
 		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
 

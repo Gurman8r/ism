@@ -8,12 +8,12 @@
 namespace ism
 {
 	// module object
-	class ISM_API ModuleObject : public BaseObject
+	class ISM_API ModuleObject : public Object
 	{
-		ISM_OBJECT_TYPED(ModuleObject, BaseObject);
+		ISM_OBJECT_DEFAULT(ModuleObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
 		DICT		m_dict	{ DICT::new_() };
@@ -22,19 +22,19 @@ namespace ism
 		inquiry		m_clear	{};
 		freefunc	m_free	{};
 
-		ModuleObject(String const & name) : base_type{ get_type_static() } { m_name = name; }
+		ModuleObject(String const & name) : base_type{ get_class() } { m_name = name; }
 	};
 
 	// module delete
-	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<Object> {};
 
 	// module check
-#define ISM_MODULE_CHECK(o) (ism::isinstance<ism::MODULE>(o))
+#define ISM_CHECK_MODULE(o) (ism::isinstance<ism::MODULE>(o))
 
 	// module handle
-	template <> class Handle<ModuleObject> : public BaseHandle<ModuleObject>
+	template <> class Handle<ModuleObject> : public Ref<ModuleObject>
 	{
-		ISM_HANDLE_DEFAULT(ModuleObject, ISM_MODULE_CHECK);
+		ISM_HANDLE_DEFAULT(ModuleObject, ISM_CHECK_MODULE);
 
 	public:
 		template <class Func, class ... Extra
@@ -49,11 +49,11 @@ namespace ism
 			return add_object(name, cf, true);
 		}
 
-		template <class Name = cstring, class Value = OBJECT
+		template <class Name = cstring, class Value = OBJ
 		> MODULE & add_object(Name && name, Value && value, bool overwrite = false)
 		{
 			VERIFY(overwrite || !hasattr(*this, name));
-			m_ptr->m_dict[name] = value;
+			m_ptr->m_dict[FWD(name)] = FWD(value);
 			return (*this);
 		}
 
@@ -73,7 +73,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(OBJECT) module_getattro(MODULE m, OBJECT name);
+	ISM_API_FUNC(OBJ) module_getattro(MODULE m, OBJ name);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

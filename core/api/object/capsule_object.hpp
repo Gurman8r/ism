@@ -7,12 +7,12 @@
 namespace ism
 {
 	// capsule object
-	class ISM_API CapsuleObject : public BaseObject
+	class ISM_API CapsuleObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(CapsuleObject, BaseObject);
+		ISM_OBJECT_DEFAULT(CapsuleObject, Object);
 
 	protected:
-		static void _bind_class(OBJECT scope);
+		static void _bind_class(OBJ scope);
 
 	public:
 		void * m_pointer{}, * m_context{};
@@ -23,8 +23,10 @@ namespace ism
 
 		virtual ~CapsuleObject() override
 		{
-			if (m_closure) { m_closure((BaseObject *)m_pointer); }
+			if (m_closure) { m_closure((Object *)m_pointer); }
 		}
+
+		CapsuleObject() : base_type{ get_class() } {}
 
 		CapsuleObject(nullptr_t) : self_type{}
 		{
@@ -44,9 +46,9 @@ namespace ism
 		{
 			m_pointer = (void *)value;
 			m_context = nullptr;
-			m_closure = (destructor)[](BaseObject * o)
+			m_closure = (destructor)[](Object * o)
 			{
-				if (auto self{ super_cast<self_type>(o) })
+				if (auto self{ dynamic_cast<self_type *>(o) })
 				{
 					auto closure{ reinterpret_cast<void(*)(void *)>(self->m_context) };
 
@@ -59,9 +61,9 @@ namespace ism
 		{
 			m_pointer = (void *)closure;
 			m_context = nullptr;
-			m_closure = (destructor)[](BaseObject * o)
+			m_closure = (destructor)[](Object * o)
 			{
-				if (auto self{ super_cast<self_type>(o) })
+				if (auto self{ dynamic_cast<self_type *>(o) })
 				{
 					auto closure{ reinterpret_cast<void(*)()>(self->m_pointer) };
 
@@ -72,15 +74,15 @@ namespace ism
 	};
 
 	// capsule delete
-	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<Object> {};
 
 	// capsule check
-#define ISM_CAPSULE_CHECK(o) (ism::isinstance<ism::CAPSULE>(o))
+#define ISM_CHECK_CAPSULE(o) (ism::isinstance<ism::CAPSULE>(o))
 
 	// capsule handle
-	template <> class Handle<CapsuleObject> : public BaseHandle<CapsuleObject>
+	template <> class Handle<CapsuleObject> : public Ref<CapsuleObject>
 	{
-		ISM_HANDLE_DEFAULT(CapsuleObject, ISM_CAPSULE_CHECK);
+		ISM_HANDLE_DEFAULT(CapsuleObject, ISM_CHECK_CAPSULE);
 
 	public:
 		template <class T

@@ -5,33 +5,39 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void BaseObject::initialize_class(OBJECT scope)
+void Object::initialize_class(OBJ scope)
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		TypeDB::add_class<BaseObject>();
+		TypeDB::add_class<Object>();
 
 		_bind_class(scope);
 	}
 }
 
-void BaseObject::_initialize_classv(OBJECT scope) { initialize_class(scope); }
+void Object::_initialize_classv(OBJ scope) { initialize_class(scope); }
 
-TYPE BaseObject::_get_typev() const { return get_type_static(); }
+TYPE Object::_get_typev() const { return get_class(); }
 
-BaseObject::BaseObject(TYPE const & t) noexcept : ob_type{ *t } {}
+Object::Object(TYPE const & type) noexcept : m_type{ type }
+{
+	static InstanceID id{};
+	m_instance_id = ++id;
+	m_refcount.init();
+	m_refcount_init.init();
+}
 
-BaseObject::~BaseObject() { ob_type = nullptr; }
+Object::~Object() { m_type = nullptr; }
 
-TYPE BaseObject::get_type_static() { return &ob_type_static; }
+TYPE Object::get_class() { return &_class_type_static; }
 
-TYPE BaseObject::get_type() const { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
+TYPE Object::get_type() const { if (!m_type) { m_type = _get_typev(); } return m_type; }
 
-bool BaseObject::set_type(TYPE const & value) { return (bool)(ob_type = value); }
+bool Object::set_type(TYPE const & value) { return (m_type = value).is_valid(); }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(BaseObject, t)
+IMPLEMENT_CLASS(Object, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
@@ -39,16 +45,16 @@ IMPLEMENT_CLASS_TYPE(BaseObject, t)
 
 	t.tp_setattro = (setattrofunc)generic_setattr;
 
-	t.tp_hash = (hashfunc)[](OBJECT self) { return Hash<void *>{}(*self); };
+	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(*self); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other) { return util::compare(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void BaseObject::_bind_class(OBJECT scope)
+void Object::_bind_class(OBJ scope)
 {
-	CLASS_<OBJECT>(scope, "object", get_type_static())
+	CLASS_<OBJ>(scope, "object", get_class())
 
 		//.def(init<>())
 
@@ -57,30 +63,30 @@ void BaseObject::_bind_class(OBJECT scope)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::object_alloc(TYPE type)
+OBJ ism::object_alloc(TYPE type)
 {
 	return nullptr;
 }
 
-Error ism::object_init(OBJECT self, OBJECT args)
+Error ism::object_init(OBJ self, OBJ args)
 {
 	return Error_None;
 }
 
-OBJECT ism::object_new(TYPE type, OBJECT args)
+OBJ ism::object_new(TYPE type, OBJ args)
 {
 	return type->tp_new(type, args);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT ism::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
+OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 {
 	TYPE type{ typeof(obj) };
 
 	if (!type->tp_dict && !type->ready()) { return nullptr; }
 
-	OBJECT descr{ type.lookup(name) };
+	OBJ descr{ type.lookup(name) };
 
 	descrgetfunc fn{};
 
@@ -92,7 +98,7 @@ OBJECT ism::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
 		}
 	}
 
-	if (OBJECT * dictptr; !dict && (dictptr = get_dict_ptr(type, obj)))
+	if (OBJ * dictptr; !dict && (dictptr = get_dict_ptr(type, obj)))
 	{
 		dict = *dictptr;
 	}
@@ -109,13 +115,13 @@ OBJECT ism::generic_getattr_with_dict(OBJECT obj, OBJECT name, OBJECT dict)
 	return nullptr;
 }
 
-Error ism::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJECT dict)
+Error ism::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 {
 	TYPE type{ typeof(obj) };
 
 	if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
 
-	OBJECT descr{ type.lookup(name) };
+	OBJ descr{ type.lookup(name) };
 
 	descrsetfunc fn{};
 
@@ -126,7 +132,7 @@ Error ism::generic_setattr_with_dict(OBJECT obj, OBJECT name, OBJECT value, OBJE
 
 	if (!dict)
 	{
-		if (OBJECT * dictptr{ get_dict_ptr(type, obj) })
+		if (OBJ * dictptr{ get_dict_ptr(type, obj) })
 		{
 			if (!(dict = *dictptr)) { dict = DICT::new_(); }
 

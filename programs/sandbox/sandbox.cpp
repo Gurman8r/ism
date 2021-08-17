@@ -56,7 +56,7 @@ namespace ism
 		MAIN_PRINT("%s\n", STR(list[0]).c_str());
 		MAIN_PRINT("%s\n", STR(typeof(list).attr("__name__")).c_str());
 		
-		OBJECT d{ DICT::new_() };
+		OBJ d{ DICT::new_() };
 		d["ABC"] = 42;
 		d["DEF"] = "Hello, World!";
 		VERIFY(d.contains("ABC"));
@@ -67,13 +67,13 @@ namespace ism
 		MAIN_PRINT("%s\n", STR(typeof(d).name()).c_str());
 		
 		MAIN_PRINT("\n");
+		MAIN_PAUSE();
 	}
 
 	void test_loop()
 	{
 		SceneTree * scene{ (SceneTree *)get_os().get_main_loop() };
-
-		scene->initialize();
+		scene->initialize(); SCOPE_EXIT(&) { scene->finalize(); };
 
 		Window * window{ scene->get_root() };
 		while (window && window->is_open())
@@ -89,8 +89,6 @@ namespace ism
 			window->swap_buffers();
 			delta_time = loop_timer.elapsed();
 		}
-
-		scene->finalize();
 	}
 }
 
@@ -110,8 +108,8 @@ int main(int argc, char * argv[])
 
 	VERIFY(Main::start());
 
-	//test_main();
-	test_loop();
+	test_main();
+	//test_loop();
 
 	Main::cleanup();
 

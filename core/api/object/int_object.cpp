@@ -5,17 +5,17 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS_TYPE(IntObject, t)
+IMPLEMENT_CLASS(IntObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
 
-	t.tp_hash = (hashfunc)[](OBJECT self) { return Hash<int64_t>()(***INT(self)); };
+	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<int64_t>()(***INT(self)); };
 	
-	t.tp_repr = (reprfunc)[](OBJECT self) { return STR(util::to_string(***INT(self))); };
+	t.tp_repr = (reprfunc)[](OBJ self) { return STR(util::to_string(***INT(self))); };
 	
-	t.tp_str = (reprfunc)[](OBJECT self) { return STR(util::to_string(***INT(self))); };
+	t.tp_str = (reprfunc)[](OBJ self) { return STR(util::to_string(***INT(self))); };
 
-	t.tp_compare = (cmpfunc)[](OBJECT self, OBJECT other)
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
 	{
 		if (INT::check_(other))
 		{
@@ -27,7 +27,7 @@ IMPLEMENT_CLASS_TYPE(IntObject, t)
 		}
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJECT args) -> OBJECT
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
 		return holder_type::new_();
 	};
@@ -35,9 +35,9 @@ IMPLEMENT_CLASS_TYPE(IntObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void IntObject::_bind_class(OBJECT scope)
+void IntObject::_bind_class(OBJ scope)
 {
-	CLASS_<INT>(scope, "int", get_type_static())
+	CLASS_<INT>(scope, "int", get_class())
 
 		.def(init<>())
 

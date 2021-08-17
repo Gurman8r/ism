@@ -14,7 +14,7 @@ location		"%{wks.location}/workspace/%{_ACTION}/%{prj.name}"
 
 dependson{ "assimp", "glew", "glfw", "imgui", }
 
-links{ "glfw", "imgui", }
+links{ "assimp", "glew", "glfw", "imgui", }
 
 defines{
 	"ISM_API=ISM_API_EXPORT",

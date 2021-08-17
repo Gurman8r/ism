@@ -7,15 +7,13 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API MainLoop : public Super
+	class ISM_API MainLoop //: public Object
 	{
-		ISM_SUPER(MainLoop, Super);
-
 	private:
-		OBJECT m_startup_script{};
+		OBJ m_startup_script{};
 
 	public:
-		virtual ~MainLoop() override;
+		virtual ~MainLoop();
 
 		virtual void initialize();
 
@@ -23,7 +21,7 @@ namespace ism
 
 		virtual void finalize();
 
-		void set_startup_script(OBJECT value);
+		void set_startup_script(OBJ value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

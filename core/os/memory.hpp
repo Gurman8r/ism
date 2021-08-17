@@ -149,6 +149,11 @@ namespace ism
 		}
 	};
 
+	template <class T> void default_delete(T * value) noexcept
+	{
+		DefaultDelete<T>{}(value);
+	}
+
 	// No Delete
 	struct NoDelete final
 	{

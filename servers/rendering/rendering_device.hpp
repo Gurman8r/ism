@@ -6,10 +6,8 @@
 namespace ism
 {
 	// rendering device
-	class ISM_API RenderingDevice : public Super
+	class ISM_API RenderingDevice
 	{
-		ISM_SUPER(RenderingDevice, Super);
-
 	public:
 		virtual ~RenderingDevice();
 	};

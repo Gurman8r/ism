@@ -9,8 +9,6 @@ namespace ism
 
 	class ISM_API InputEvent : public Resource
 	{
-		ISM_SUPER(InputEvent, Resource);
-
 	public:
 		virtual ~InputEvent();
 

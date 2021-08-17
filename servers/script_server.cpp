@@ -1,8 +1,7 @@
 #include <servers/script_server.hpp>
 
-namespace ism
-{
-	DECLEXPR(ScriptServer::singleton) {};
+using namespace ism;
 
-	ScriptServer::~ScriptServer() {}
-}
+DECLEXPR(ism::ScriptServer::singleton) {};
+
+ScriptServer::~ScriptServer() {}
