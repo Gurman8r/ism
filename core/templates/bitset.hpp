@@ -6,36 +6,36 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // read flag at index
-#define flag_read(val, i)			(((i) & (val)) == (i))
+#define flag_read(value, index)				(((index) & (value)) == (index))
 
 // set flag at index
-#define flag_set(val, i)			((val) |= (i))
+#define flag_set(value, index)				((value) |= (index))
 
 // clear flag at index
-#define flag_clear(val, i)			((val) &= ~(i))
+#define flag_clear(value, index)			((value) &= ~(index))
 
 // conditional set or clear flag
-#define flag_write(val, i, cond)	((cond) ? flag_set(val, i) : flag_clear(val, i))
+#define flag_write(value, index, boolean)	((boolean) ? flag_set(value, index) : flag_clear(value, index))
 
 // map between flag bits
-#define flag_map(dst, d, src, s)	flag_write(dst, d, flag_read(src, s))
+#define flag_map(dst, dindex, src, sindex)	flag_write(dst, dindex, flag_read(src, sindex))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // read bit at index
-#define bit_read(val, i)			flag_read(val >> i, 1)
+#define bit_read(value, index)				flag_read(value >> index, 1)
 
 // set bit at index
-#define bit_set(val, i)				flag_set(val, 1 << i)
+#define bit_set(value, index)				flag_set(value, 1 << index)
 
 // clear bit at index
-#define bit_clear(val, i)			flag_clear(val, 1 << i)
+#define bit_clear(value, index)				flag_clear(value, 1 << index)
 
 // conditional set or clear bit
-#define bit_write(val, i, cond)		flag_write(val, 1 << i, cond)
+#define bit_write(value, index, boolean)	flag_write(value, 1 << index, boolean)
 
 // map between bits
-#define bit_map(dst, d, src, s)		bit_write(dst, d, bit_read(src, s))
+#define bit_map(dst, dindex, src, sindex)	bit_write(dst, dindex, bit_read(src, sindex))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -10,27 +10,45 @@ namespace ism
 	> class CLASS_ : public TYPE
 	{
 	public:
-		static constexpr bool is_holder{ is_ref_v<_type> };
-		using holder_type = typename std::conditional_t<is_holder, _type, Handle<_type>>;
-		using value_type = typename std::conditional_t<is_holder, typename _type::value_type, _type>;
+		using holder_type = typename std::conditional_t<is_ref_v<_type>, _type, Handle<_type>>;
+		
+		using value_type = typename std::conditional_t<is_ref_v<_type>, typename _type::value_type, _type>;
+		
 		using type = _type;
 	
 	public:
-		template <class ... Extra
-		> CLASS_(OBJ scope, cstring name, TYPE target, Extra && ... extra) : TYPE{ target }
+		template <class ... Extra, class = std::enable_if_t<is_ref_v<type>>
+		> CLASS_(OBJ scope, cstring name, Extra && ... extra) : TYPE{ typeof<type>() }
 		{
-			VERIFY(is_valid());
 			m_ptr->tp_name = name;
+			
 			m_ptr->tp_size = sizeof(value_type);
+			
 			m_ptr->tp_free = (freefunc)[](void * ptr) { memdelete((value_type *)ptr); };
+
+			mpl::for_types<Extra...>([&bases = LIST(m_ptr->tp_bases)](auto tag)
+			{
+				using Base = TAG_TYPE(tag);
+
+				if constexpr (std::is_base_of_v<Base, value_type> && !std::is_same_v<Base, value_type>)
+				{
+					bases.append(typeof<Base>());
+				}
+			});
+
 			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
 		}
 
 		template <class Name = cstring, class Value = OBJ
-		> CLASS_ & add_object(Name && name, Value && value) noexcept
+		> void add_object(Name && name, Value && value, bool overwrite = false)
 		{
-			DICT(CHECK(m_ptr)->tp_dict).insert_or_assign(FWD(name), FWD(value));
-			return (*this);
+			VERIFY(is_valid());
+			VERIFY(DICT::check_(m_ptr->tp_dict));
+
+			DICT dict{ m_ptr->tp_dict };
+			OBJ str_name{ FWD_OBJ(name) };
+			VERIFY(overwrite || !dict.contains(str_name));
+			dict.insert_or_assign(str_name, FWD(value));
 		}
 
 	public:
@@ -55,7 +73,8 @@ namespace ism
 				attr::is_method(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			return add_object(cf.name(), cf);
+			add_object(cf.name(), cf, true);
+			return (*this);
 		}
 
 		template <class Func, class ... Extra
@@ -67,7 +86,8 @@ namespace ism
 				attr::scope(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			return add_object(cf.name(), cf);
+			add_object(cf.name(), cf, true);
+			return (*this);
 		}
 
 		template <class C, class D, class ... Extra
@@ -157,7 +177,9 @@ namespace ism
 	
 			if (fset) { attr::process_attributes<Extra...>::init(***fset, FWD(extra)...); }
 
-			return add_object(name, PROPERTY({ fget, fset }));
+			add_object(name, PROPERTY({ fget, fset }), true);
+
+			return (*this);
 		}
 	};
 }

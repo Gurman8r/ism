@@ -3,13 +3,16 @@
 
 #include <core/api/object/type_object.hpp>
 
+#define ISM_IDENTIFIER(m_name) \
+	static StringObject CAT(ID_, m_name){ TOSTR(m_name) }
+
 // string
 namespace ism
 {
 	// string object
 	class ISM_API StringObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(StringObject, Object);
+		ISM_OBJECT(StringObject, Object);
 
 	protected:
 		static void _bind_class(OBJ scope);
@@ -29,25 +32,25 @@ namespace ism
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 
-		StringObject(allocator_type al = {}) noexcept : base_type{ get_class() }, m_string{ al } {}
+		StringObject(allocator_type al = {}) noexcept : Object{ get_class() }, m_string{ al } {}
 
-		StringObject(storage_type const & v, allocator_type al = {}) : base_type{ get_class() }, m_string{ v, al } {}
+		StringObject(storage_type const & v, allocator_type al = {}) : Object{ get_class() }, m_string{ v, al } {}
 
-		StringObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_class() }, m_string{ std::move(v), al } {}
+		StringObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class() }, m_string{ std::move(v), al } {}
 
-		StringObject(cstring v, allocator_type al = {}) : base_type{ get_class() }, m_string{ v, al } {}
+		StringObject(cstring v, allocator_type al = {}) : Object{ get_class() }, m_string{ v, al } {}
 
-		StringObject(cstring v, size_t n, allocator_type al = {}) : base_type{ get_class() }, m_string{ v, n, al } {}
+		StringObject(cstring v, size_t n, allocator_type al = {}) : Object{ get_class() }, m_string{ v, n, al } {}
 
-		StringObject(StringName const & v, allocator_type al = {}) : self_type{ v.string(), al } {}
+		StringObject(StringName const & v, allocator_type al = {}) : StringObject{ v.string(), al } {}
 
-		StringObject(StringName && v, allocator_type al = {}) noexcept : self_type{ std::move(v).string(), al } {}
+		StringObject(StringName && v, allocator_type al = {}) noexcept : StringObject{ std::move(v).string(), al } {}
 
-		StringObject(std::initializer_list<char> init, allocator_type al = {}) : self_type{ storage_type{ init.begin(), init.end() }, al } {}
+		StringObject(std::initializer_list<char> init, allocator_type al = {}) : StringObject{ storage_type{ init.begin(), init.end() }, al } {}
 
-		template <class T> StringObject(Handle<T> const & o, allocator_type al = {}) : self_type{ al }
+		template <class T> StringObject(Handle<T> const & o, allocator_type al = {}) : StringObject{ al }
 		{
-			if constexpr (std::is_same_v<T, self_type>)
+			if constexpr (std::is_same_v<T, StringObject>)
 			{
 				m_string = (storage_type)o;
 			}
@@ -71,7 +74,7 @@ namespace ism
 	// string handle
 	template <> class Handle<StringObject> : public Ref<StringObject>
 	{
-		ISM_HANDLE_DEFAULT(StringObject, ISM_CHECK_STR);
+		ISM_HANDLE(StringObject, ISM_CHECK_STR);
 
 	public:
 		using storage_type = value_type::storage_type;
@@ -86,7 +89,24 @@ namespace ism
 
 		void resize(size_t count) { (**m_ptr).resize(count); }
 
-		NODISCARD operator storage_type () const { return m_ptr ? (**m_ptr) : String{}; }
+		NODISCARD operator storage_type() const { return storage_type(**m_ptr); }
+
+		NODISCARD auto string() const & -> storage_type const & { return **m_ptr; }
+
+		NODISCARD auto string() & -> storage_type & { return **m_ptr; }
+
+		template <class Index = size_t
+		> NODISCARD auto operator[](Index && i) const -> char &
+		{
+			if constexpr (std::is_integral_v<Index>)
+			{
+				return (**m_ptr)[static_cast<size_t>(i)];
+			}
+			else
+			{
+				return (**m_ptr)[FWD_OBJ(i).cast<size_t>()];
+			}
+		}
 
 		NODISCARD auto c_str() const { return (**m_ptr).c_str(); }
 

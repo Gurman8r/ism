@@ -7,12 +7,38 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	inline OBJ call_object(OBJ callable, LIST args)
+	{
+		if (TYPE type; !args || !callable || !(type = typeof(callable)))
+		{
+			return nullptr;
+		}
+		else if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+		{
+			return vcall(callable, args.data(), args.size());
+		}
+		else if (binaryfunc tcall{ type->tp_call })
+		{
+			return tcall(callable, args);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// argument collector
 	template <ReturnPolicy policy = ReturnPolicy_AutomaticReference
 	> struct NODISCARD ArgumentCollector final
 	{
+	private:
+		LIST m_args;
+
+	public:
 		template <class ... Args
-		> explicit ArgumentCollector(Args && ... values) noexcept
+		> explicit ArgumentCollector(Args && ... values) noexcept : m_args{ LIST::new_() }
 		{
 			m_args.reserve(sizeof...(Args));
 
@@ -27,28 +53,7 @@ namespace ism
 
 		NODISCARD LIST args() && { return std::move(m_args); }
 
-		NODISCARD OBJ call(OBJ callable)
-		{
-			if (TYPE type; !m_args || !callable || !(type = typeof(callable)))
-			{
-				return nullptr;
-			}
-			else if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
-			{
-				return vcall(callable, m_args.data(), m_args.size());
-			}
-			else if (binaryfunc tcall{ type->tp_call })
-			{
-				return tcall(callable, m_args);
-			}
-			else
-			{
-				return nullptr;
-			}
-		}
-
-	private:
-		LIST m_args{ LIST::new_() };
+		NODISCARD OBJ call(OBJ callable) { return ism::call_object(callable, m_args); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -66,6 +71,7 @@ namespace ism
 	template <class ... Args
 	> struct NODISCARD ArgumentLoader final
 	{
+	public:
 		template <class Return, class Guard, class Func
 		> using return_type = std::conditional_t<std::is_void_v<Return>, void_type, Return>;
 
@@ -112,6 +118,7 @@ namespace ism
 	// argument record
 	struct NODISCARD ArgumentRecord final
 	{
+	public:
 		String name{};
 
 		OBJ value{};
@@ -124,25 +131,26 @@ namespace ism
 	// function record
 	struct NODISCARD FunctionRecord final
 	{
+	public:
 		~FunctionRecord() { if (free_data) { free_data(this); } }
 
-		String name, doc, signature;
+		String name{}, doc{}, signature{};
 
-		OBJ(*impl)(struct FunctionCall &);
+		OBJ(*impl)(struct FunctionCall &){};
 
-		void * data[3];
+		void * data[3]{};
 
-		void(*free_data)(FunctionRecord *);
+		void(*free_data)(FunctionRecord *){};
 
-		uint16_t argument_count;
+		uint16_t argument_count{};
 
-		Vector<ArgumentRecord> args;
+		Vector<ArgumentRecord> args{};
 
 		ReturnPolicy policy{ ReturnPolicy_AutomaticReference };
 
-		Object * scope, * sibling;
+		Object * scope{}, * sibling{};
 
-		FunctionRecord * next;
+		FunctionRecord * next{};
 
 		bool
 			is_stateless	: 1,
@@ -157,6 +165,7 @@ namespace ism
 	// function call
 	struct NODISCARD FunctionCall final
 	{
+	public:
 		FunctionRecord const & record;
 		
 		OBJ parent{};

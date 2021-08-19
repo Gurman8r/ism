@@ -52,7 +52,7 @@ namespace ism
 		virtual TYPE _get_typev() const noexcept override;
 
 	public:
-		explicit TypeObject(TYPE const & t) noexcept;
+		explicit TypeObject(TYPE type) noexcept;
 
 		TypeObject() noexcept;
 
@@ -65,7 +65,6 @@ namespace ism
 		String				tp_doc{};
 
 		ssize_t				tp_dictoffset{};
-		ssize_t				tp_weaklistoffset{};
 		ssize_t				tp_vectorcalloffset{};
 
 		binaryfunc			tp_call{};
@@ -95,7 +94,7 @@ namespace ism
 		SequenceMethods *	tp_as_sequence{};
 		MappingMethods *	tp_as_mapping{};
 
-		Ref<TypeObject>		tp_base{ /* Handle<TypeObject> doesn't exist yet */ };
+		Ref<TypeObject>		tp_base{ /* TYPE doesn't exist yet */ };
 		OBJ					tp_bases{};
 		OBJ					tp_cache{};
 		OBJ					tp_dict{};
@@ -104,17 +103,21 @@ namespace ism
 		vectorcallfunc		tp_vectorcall{};
 
 	public:
+		NODISCARD bool has_feature(int32_t flag) const { return flag_read(tp_flags, flag); }
+
 		NODISCARD bool ready();
 
-		NODISCARD bool check_consistency() const;
+		NODISCARD OBJ lookup(OBJ name) const;
 
-		NODISCARD OBJ lookup(OBJ const & name) const;
+		NODISCARD bool is_subtype(TYPE value) const;
 
-		NODISCARD bool is_subtype(TYPE const & value) const;
+		bool check_consistency() const;
 
-		NODISCARD Error update_slot(OBJ name);
+		void modified();
 
-		NODISCARD bool has_feature(int32_t flag) const { return flag_read(tp_flags, flag); }
+		Error update_slot(STR name);
+
+		Error update_all_slots();
 
 	protected:
 		bool add_subclass(TypeObject * type);
@@ -125,7 +128,7 @@ namespace ism
 
 		void inherit_slots(TypeObject * base);
 
-	public:
+	protected:
 		template <class Slot> bool slot_defined(TypeObject * base, Slot TypeObject:: * slot) const
 		{
 			return (this->*slot) && (!base || (this->*slot) != (base->*slot));
@@ -205,7 +208,7 @@ namespace ism
 	// type handle
 	template <> class Handle<TypeObject> : public Ref<TypeObject>
 	{
-		ISM_HANDLE_DEFAULT(TypeObject, ISM_CHECK_TYPE);
+		ISM_HANDLE(TypeObject, ISM_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
@@ -241,11 +244,11 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_dict_ptr(TYPE const & t, OBJ const & o)
+	NODISCARD inline auto get_dict_ptr(TYPE const & t, OBJ const & o) -> OBJ *
 	{
-		if (ssize_t const offset{ (o && t) ? t->tp_dictoffset : 0 }; 0 < offset)
+		if (t && o && 0 < t->tp_dictoffset)
 		{
-			return reinterpret_cast<OBJ *>(reinterpret_cast<char *>(*o) + offset);
+			return reinterpret_cast<OBJ *>(reinterpret_cast<char *>(*o) + t->tp_dictoffset);
 		}
 		else
 		{
@@ -253,31 +256,18 @@ namespace ism
 		}
 	}
 
-	NODISCARD inline auto get_dict_ptr(OBJ const & o) noexcept { return get_dict_ptr(typeof(o), o); }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	NODISCARD inline auto get_weaklist_ptr(TYPE const & t, OBJ const & o)
+	NODISCARD inline auto get_dict_ptr(OBJ const & o) noexcept -> OBJ *
 	{
-		if (ssize_t const offset{ (o && t) ? t->tp_weaklistoffset : 0 }; 0 < offset)
-		{
-			return reinterpret_cast<OBJ *>(reinterpret_cast<char *>(*o) + offset);
-		}
-		else
-		{
-			return (OBJ *)nullptr;
-		}
+		return ism::get_dict_ptr(typeof(o), o);
 	}
 
-	NODISCARD inline auto get_weaklist_ptr(OBJ const & o) noexcept { return get_weaklist_ptr(typeof(o), o); }
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_vectorcall_func(TYPE const & t, OBJ const & o)
+	NODISCARD inline auto get_vectorcall_func(TYPE const & t, OBJ const & o) -> vectorcallfunc
 	{
-		if (ssize_t const offset{ (o && t) ? t->tp_vectorcalloffset : 0 }; 0 < offset)
+		if (t && o && 0 < t->tp_vectorcalloffset)
 		{
-			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(*o) + offset);
+			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(*o) + t->tp_vectorcalloffset);
 		}
 		else
 		{
@@ -285,19 +275,22 @@ namespace ism
 		}
 	}
 
-	NODISCARD inline auto get_vectorcall_func(OBJ const & o) noexcept { return get_vectorcall_func(typeof(o), o); }
+	NODISCARD inline auto get_vectorcall_func(OBJ const & o) noexcept -> vectorcallfunc
+	{
+		return ism::get_vectorcall_func(typeof(o), o);
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(OBJ) type_getattr(TYPE type, OBJ name);
+	ISM_API_FUNC(OBJ) type_getattro(TYPE type, OBJ name);
 
-	ISM_API_FUNC(Error) type_setattr(TYPE type, OBJ name, OBJ value);
+	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJ name, OBJ value);
 
-	ISM_API_FUNC(OBJ) type_call(OBJ self, OBJ args);
+	ISM_API_FUNC(OBJ) type_new(TYPE type, OBJ args);
 
 	ISM_API_FUNC(Error) type_init(OBJ self, OBJ args);
-	
-	ISM_API_FUNC(OBJ) type_new(TYPE type, OBJ args);
+
+	ISM_API_FUNC(OBJ) type_call(OBJ self, OBJ args);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

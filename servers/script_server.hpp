@@ -10,7 +10,11 @@ namespace ism
 	// script server
 	class ISM_API ScriptServer
 	{
+		friend class Main;
+
 		static ScriptServer * singleton;
+
+		ScriptServer();
 
 	public:
 		virtual ~ScriptServer();
@@ -18,6 +22,9 @@ namespace ism
 		static ScriptServer * get_singleton() { return singleton; }
 
 	public:
+		DICT dict, builtins, modules, importlib;
+
+		OBJ import_func;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

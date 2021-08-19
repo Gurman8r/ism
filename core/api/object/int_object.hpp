@@ -14,7 +14,7 @@ namespace ism
 	// int object
 	class ISM_API IntObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(IntObject, Object);
+		ISM_OBJECT(IntObject, Object);
 
 	protected:
 		static void _bind_class(OBJ scope);
@@ -26,13 +26,10 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
-		IntObject() : base_type{ get_class() } {}
+		IntObject() noexcept : Object{ get_class() } {}
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> explicit IntObject(TYPE const & type, T const value) : base_type{ type }, m_int{ static_cast<storage_type>(value) } {}
-
-		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> explicit IntObject(T const value) : self_type{ get_class(), value } {}
+		> explicit IntObject(T const value) : IntObject{} { m_int = static_cast<storage_type>(value); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> IntObject & operator=(T const value) { m_int = static_cast<storage_type>(value); return (*this); }
@@ -55,7 +52,7 @@ namespace ism
 	// int handle
 	template <> class Handle<IntObject> : public Ref<IntObject>
 	{
-		ISM_HANDLE_DEFAULT(IntObject, ISM_CHECK_INT);
+		ISM_HANDLE(IntObject, ISM_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;

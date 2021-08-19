@@ -3,18 +3,14 @@
 
 #include <core/api/common.hpp>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // object common
 #define ISM_OBJECT_COMMON(m_class, m_inherits)										\
 private:																			\
-	using self_type = typename m_class;												\
-																					\
-	using base_type = typename m_inherits;											\
-																					\
-	using holder_type = typename ism::Handle<self_type>;							\
-																					\
 	friend class ism::TypeDB;														\
 																					\
-	friend class holder_type;														\
+	friend class ism::Handle<m_class>;												\
 																					\
 	static ism::TypeObject _class_type_static;										\
 																					\
@@ -44,8 +40,10 @@ protected:																			\
 																					\
 private:
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // object default
-#define ISM_OBJECT_DEFAULT(m_class, m_inherits)										\
+#define ISM_OBJECT(m_class, m_inherits)												\
 ISM_OBJECT_COMMON(m_class, m_inherits)												\
 																					\
 protected:																			\
@@ -55,14 +53,22 @@ protected:																			\
 	}																				\
 																					\
 public:																				\
-	explicit m_class(ism::TYPE const & t) noexcept : m_inherits{ t } {}				\
+	explicit m_class(ism::TYPE const & type) noexcept : m_inherits{ type } {}		\
 																					\
-	FORCE_INLINE static ism::TYPE get_class()										\
+	FORCE_INLINE static ism::TYPE get_class() noexcept								\
 	{																				\
 		return &m_class::_class_type_static;										\
 	}																				\
 																					\
 private:
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// implement class type
+#define ISM_CLASS_IMPLEMENTATION(m_class, m_var, ...) \
+	DECLEXPR(m_class::_class_type_static) = COMPOSE(ism::TypeObject, m_var, ##__VA_ARGS__)
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object
 namespace ism
@@ -72,21 +78,17 @@ namespace ism
 	// object object
 	class ISM_API Object : public ObjectAPI<Object>
 	{
-		using self_type = typename Object;
-
-		using holder_type = typename Handle<self_type>;
-
 		friend class TypeDB;
 
-		friend class holder_type;
+		friend class Handle<Object>;
 
-		static TypeObject _class_type_static; // static class type
+		static TypeObject _class_type_static;
 
 		InstanceID m_instance_id{};
 
 		RefCount m_refcount{}, m_refcount_init{};
 
-		mutable Ref<TypeObject> m_type{};
+		mutable Ref<TypeObject> m_type{ /* TYPE doesn't exist yet */ };
 
 	protected:
 		static void initialize_class(OBJ scope);
@@ -99,6 +101,8 @@ namespace ism
 
 		FORCE_INLINE virtual TYPE _get_typev() const;
 
+		void _construct_object();
+
 		explicit Object(TYPE const & type) noexcept;
 
 		virtual void on_inc_ref() {}
@@ -108,53 +112,29 @@ namespace ism
 	public:
 		virtual ~Object();
 
-		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
-
-		template <class T> NODISCARD T cast() const &; // cast.hpp
-
-		template <class T> NODISCARD T cast() &&; // cast.hpp
-
-		NODISCARD static TYPE get_class();
-
-		NODISCARD TYPE get_type() const;
-
-		bool set_type(TYPE const & value);
-
-	public:
 		NODISCARD InstanceID get_instance_id() const noexcept { return m_instance_id; }
 
 		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
 
 		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
 
-		bool init_ref() noexcept
-		{
-			if (inc_ref())
-			{
-				if (!has_references() && m_refcount_init.unref())
-				{
-					dec_ref(); // first referencing is already 1, so compensate for the ref above
-				}
-				return true;
-			}
-			return false;
-		}
+		bool init_ref();
 
-		bool inc_ref() noexcept // returns false if refcount is at zero and didn't get increased
-		{
-			uint32_t rc_val{ m_refcount.refval() };
-			bool success{ rc_val != 0 };
-			if (success && rc_val <= 2 /* higher is not relevant */) { on_inc_ref(); }
-			return success;
-		}
+		bool inc_ref(); // returns false if refcount is at zero and didn't get increased
+		
+		bool dec_ref();
 
-		bool dec_ref() noexcept
-		{
-			uint32_t rc_val{ m_refcount.unrefval() };
-			bool die{ rc_val == 0 };
-			if (rc_val <= 1 /* higher is not relevant */) { on_dec_ref(); }
-			return die;
-		}
+		NODISCARD static TYPE get_class() noexcept;
+
+		NODISCARD TYPE get_type() const noexcept;
+
+		bool set_type(TYPE const & value) noexcept;
+
+		template <class T> NODISCARD T cast() const &; // cast.hpp
+
+		template <class T> NODISCARD T cast() &&; // cast.hpp
+
+		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -175,13 +155,13 @@ namespace ism
 		}
 	};
 
-	// object check
-#define ISM_CHECK_OBJECT(o) (true) // check not required
+	// no check
+#define ISM_NO_CHECK(o) (true)
 
-	// object handle
-	template <> class Handle<Object> : public Ref<Object>
+	// default handle
+	template <class T> class Handle : public Ref<T>
 	{
-		ISM_HANDLE_DEFAULT(Object, ISM_CHECK_OBJECT);
+		ISM_HANDLE(T, ISM_NO_CHECK);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -242,11 +222,9 @@ namespace ism
 	NODISCARD inline bool isinstance_generic(OBJ const & o, std::type_info const & t); // cast.hpp
 
 	template <class T, class O = OBJ, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD bool isinstance(O && o) noexcept
+	> NODISCARD bool isinstance(O && obj) noexcept
 	{
-		TYPE const a{ typeof(FWD(o)) }, b{ typeof<T>() };
-
-		return a && b && (a.is(b) || a.is_subtype(b));
+		return isinstance(FWD_OBJ(obj), typeof<T>());
 	}
 
 	template <class T, class O = OBJ, std::enable_if_t<!is_api_v<T>, int> = 0
@@ -256,11 +234,9 @@ namespace ism
 	}
 
 	template <class A = OBJ, class B = OBJ
-	> NODISCARD bool isinstance(A const & lhs, B const & rhs)
+	> NODISCARD bool isinstance(A const & obj, B const & type)
 	{
-		TYPE const a{ typeof(lhs) }, b{ TYPE::check_(rhs) ? rhs : typeof(rhs) };
-
-		return a && b && (a.is(b) || a.is_subtype(b));
+		return typeof(obj).is_subtype(TYPE::check_(type) ? type : typeof(type));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -362,16 +338,14 @@ namespace ism
 	{
 		if (!o.is_valid()) { return nullptr; }
 		
-		else if constexpr (mpl::is_string_v<Index>) { return CHECK(DICT(o))[FWD(i)]; }
+		else if constexpr (mpl::is_string_v<Index>) { return DICT(o)[FWD(i)]; }
 		
-		else if constexpr (std::is_integral_v<Index>) { return CHECK(LIST(o))[FWD(i)]; }
+		else if constexpr (std::is_integral_v<Index>) { return LIST(o)[FWD(i)]; }
 		
 		else if (DICT::check_(o)) { return DICT(o)[FWD(i)]; }
 		
 		else if (LIST::check_(o)) { return LIST(o)[FWD(i)]; }
 
-		else if (OBJ getter{ getattr(o, "__getitem__") }) { return getter(o, FWD_OBJ(i)); }
-		
 		else { return nullptr; }
 	}
 
@@ -380,16 +354,14 @@ namespace ism
 	{
 		if (!o.is_valid()) { return Error_Unknown; }
 		
-		else if constexpr (mpl::is_string_v<Index>) { return (CHECK(DICT(o))[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		else if constexpr (mpl::is_string_v<Index>) { return (DICT(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
 		
-		else if constexpr (std::is_integral_v<Index>) { return (CHECK(LIST(o))[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		else if constexpr (std::is_integral_v<Index>) { return (LIST(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
 		
 		else if (DICT::check_(o)) { return (DICT(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
 		
 		else if (LIST::check_(o)) { return (LIST(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
 
-		else if (OBJ setter{ getattr(o, "__setitem__") }) { return setter(o, FWD_OBJ(i), FWD_OBJ(v)), Error_None; }
-		
 		else { return Error_Unknown; }
 	}
 
@@ -397,9 +369,9 @@ namespace ism
 
 	ISM_API_FUNC(OBJ) object_alloc(TYPE type);
 
-	ISM_API_FUNC(Error) object_init(OBJ self, OBJ args);
-
 	ISM_API_FUNC(OBJ) object_new(TYPE type, OBJ args);
+
+	ISM_API_FUNC(Error) object_init(OBJ self, OBJ args);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

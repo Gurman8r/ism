@@ -23,9 +23,6 @@
 #define FWD_OBJ(expr) \
 	(ism::object_or_cast(FWD(expr)))
 
-#define IMPLEMENT_CLASS(m_class, m_var, ...) \
-	DECLEXPR(m_class::_class_type_static) = COMPOSE(ism::TypeObject, m_var, ##__VA_ARGS__)
-
 // types
 namespace ism
 {
@@ -154,14 +151,16 @@ namespace ism
 	{
 		TypeFlags_None = 0,
 
-		TypeFlags_HeapType			 = 1 << 0,
-		TypeFlags_BaseType			 = 1 << 1,
-		TypeFlags_HaveVectorCall	 = 1 << 2,
-		TypeFlags_Ready				 = 1 << 3,
-		TypeFlags_Readying			 = 1 << 4,
-		TypeFlags_HaveGc			 = 1 << 5,
-		TypeFlags_MethodDescriptor	 = 1 << 6,
-		TypeFlags_IsAbstract		 = 1 << 7,
+		TypeFlags_HeapType			= 1 << 0,
+		TypeFlags_BaseType			= 1 << 1,
+		TypeFlags_HaveVectorCall	= 1 << 2,
+		TypeFlags_Ready				= 1 << 3,
+		TypeFlags_Readying			= 1 << 4,
+		TypeFlags_HaveGc			= 1 << 5,
+		TypeFlags_MethodDescriptor	= 1 << 6,
+		TypeFlags_IsAbstract		= 1 << 7,
+		TypeFlags_IsFinal			= 1 << 8,
+		TypeFlags_IsLocal			= 1 << 9,
 
 		TypeFlags_Int_Subclass		= 1 << 25,
 		TypeFlags_Float_Subclass	= 1 << 26,
@@ -217,7 +216,7 @@ namespace ism
 	ALIAS(lenfunc)			ssize_t(*)(OBJ o);
 	ALIAS(reprfunc)			STR(*)(OBJ o);
 
-	ALIAS(allocfunc)		void * (*)(size_t size);
+	ALIAS(allocfunc)		OBJ (*)(TYPE type);
 	ALIAS(freefunc)			void(*)(void * ptr);
 	ALIAS(initproc)			Error(*)(OBJ self, OBJ args);
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
@@ -434,7 +433,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class _Type
-	> class Ref : public _Ref_Tag, public ObjectAPI<Ref<_Type>>
+	> class NOVTABLE Ref : public _Ref_Tag, public ObjectAPI<Ref<_Type>>
 	{
 	public:
 		using value_type = typename _Type;
@@ -586,7 +585,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// handle default
-#define ISM_HANDLE_DEFAULT(m_class, m_check)															\
+#define ISM_HANDLE(m_class, m_check)																	\
 public:																									\
 	using value_type = typename m_class;																\
 																										\

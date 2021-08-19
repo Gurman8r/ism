@@ -1,11 +1,11 @@
 #include <core/api/object/list_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(ListObject, t)
+ISM_CLASS_IMPLEMENTATION(ListObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_List_Subclass;
 
@@ -23,9 +23,9 @@ IMPLEMENT_CLASS(ListObject, t)
 		}
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
+	t.tp_vectorcall = (vectorcallfunc)[](OBJ callable, OBJ const * argv, size_t argc) -> OBJ
 	{
-		return holder_type::new_();
+		return nullptr;
 	};
 };
 
@@ -33,7 +33,7 @@ IMPLEMENT_CLASS(ListObject, t)
 
 void ListObject::_bind_class(OBJ scope)
 {
-	CLASS_<LIST>(scope, "list", get_class())
+	CLASS_<LIST>(scope, "list")
 
 		.def(init<>())
 

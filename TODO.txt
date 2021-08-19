@@ -1,3 +1,7 @@
-function overloading
+class constructors / init
+
+function overloading (kind of works)
+
 global type database (map cpptype to typeobject)
+
 generic types

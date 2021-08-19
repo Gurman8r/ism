@@ -9,13 +9,13 @@ namespace ism
 	// generic object
 	class ISM_API GenericObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(GenericObject, Object);
+		ISM_OBJECT(GenericObject, Object);
 
 	protected:
 		static void _bind_class(OBJ scope);
 
 	public:
-		GenericObject() : base_type{ get_class() } {}
+		GenericObject() : Object{ get_class() } {}
 	};
 
 	// generic delete
@@ -27,7 +27,7 @@ namespace ism
 	// generic handle
 	template <> class Handle<GenericObject> : public Ref<GenericObject>
 	{
-		ISM_HANDLE_DEFAULT(GenericObject, ISM_CHECK_GENERIC);
+		ISM_HANDLE(GenericObject, ISM_CHECK_GENERIC);
 
 	public:
 	};

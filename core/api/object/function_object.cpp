@@ -1,11 +1,11 @@
 #include <core/api/object/function_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(FunctionObject, t)
+ISM_CLASS_IMPLEMENTATION(FunctionObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
@@ -13,21 +13,16 @@ IMPLEMENT_CLASS(FunctionObject, t)
 
 	t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
-	{
-		return holder_type::new_();
-	};
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void FunctionObject::_bind_class(OBJ scope)
 {
-	CLASS_<FUNCTION>(scope, "function", get_class())
+	CLASS_<FUNCTION>(scope, "function")
 
-		//.def(init<>())
+		.def(init<>())
 
 		//.def_property("__name__", [](FUNCTION self) { return self->m_name; }, [](FUNCTION self, STR value) { self->m_name = value; })
 

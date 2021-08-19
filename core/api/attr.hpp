@@ -158,19 +158,19 @@ namespace ism::attr
 	// is_final
 	ISM_ATTR_EMPTY(is_final);
 	template <> ISM_PROCESS_ATTR(is_final) {
-		static void init(TypeObject & r, is_final && a) { /*r.tp_is_final = true;*/ }
+		static void init(TypeObject & r, is_final && a) { flag_set(r.tp_flags, TypeFlags_IsFinal); }
 	};
 
 	// metaclass
 	ISM_ATTR_OBJECT(metaclass, value);
 	template <> ISM_PROCESS_ATTR(metaclass) {
-		static void init(TypeObject & r, type && a) { /*r.set_type(dynamic_cast<TypeObject *>(a.value));*/ }
+		static void init(TypeObject & r, type && a) { r.set_type((TypeObject *)a.value); }
 	};
 
 	// module_local
 	ISM_ATTR_BOOL(module_local, value);
 	template <> ISM_PROCESS_ATTR(module_local) {
-		static void init(TypeObject & r, module_local && a) { /*r.tp_module_local = a.value;*/ }
+		static void init(TypeObject & r, module_local && a) { flag_write(r.tp_flags, TypeFlags_IsFinal, a.value); }
 	};
 
 	// arithmetic

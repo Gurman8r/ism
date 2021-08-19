@@ -1,11 +1,11 @@
 #include <core/api/object/float_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(FloatObject, t)
+ISM_CLASS_IMPLEMENTATION(FloatObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Float_Subclass;
 
@@ -26,18 +26,13 @@ IMPLEMENT_CLASS(FloatObject, t)
 			return util::compare(*self, *other);
 		}
 	};
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
-	{
-		return holder_type::new_();
-	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void FloatObject::_bind_class(OBJ scope)
 {
-	CLASS_<FLT>(scope, "float", get_class())
+	CLASS_<FLT>(scope, "float")
 
 		.def(init<>())
 		

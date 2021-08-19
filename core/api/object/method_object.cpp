@@ -1,11 +1,11 @@
 #include <core/api/object/method_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(MethodObject, t)
+ISM_CLASS_IMPLEMENTATION(MethodObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
@@ -13,23 +13,18 @@ IMPLEMENT_CLASS(MethodObject, t)
 
 	t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) { return self; };
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
-	{
-		return holder_type::new_();
-	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void MethodObject::_bind_class(OBJ scope)
 {
-	CLASS_<METHOD>(scope, "method", get_class())
+	CLASS_<METHOD>(scope, "method")
 
-		//.def(init<>())
+		.def(init<>())
 
 		;
 }

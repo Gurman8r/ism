@@ -100,7 +100,7 @@ namespace ism::impl
 	template <class T, class Fn = void(*)(T &)
 	> constexpr decltype(auto) operator+(ComposeHelper<T> && helper, Fn && fn) noexcept
 	{
-		fn(static_cast<T &>(helper.value));
+		fn(helper.value);
 
 		return std::move(helper.value);
 	}

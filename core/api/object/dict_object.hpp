@@ -9,7 +9,7 @@ namespace ism
 	// dict object
 	class ISM_API DictObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(DictObject, Object);
+		ISM_OBJECT(DictObject, Object);
 
 	protected:
 		static void _bind_class(OBJ scope);
@@ -29,16 +29,16 @@ namespace ism
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_dict); }
 
-		DictObject(std::initializer_list<std::pair<OBJ, OBJ>> init, allocator_type al = {}) : self_type{ al }
+		DictObject(std::initializer_list<std::pair<OBJ, OBJ>> init, allocator_type al = {}) : DictObject{ al }
 		{
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
 
-		DictObject(allocator_type al = {}) noexcept : base_type{ get_class() }, m_dict{ al } {}
+		DictObject(allocator_type al = {}) noexcept : Object{ get_class() }, m_dict{ al } {}
 
-		DictObject(storage_type const & v, allocator_type al = {}) : base_type{ get_class() }, m_dict{ v, al } {}
+		DictObject(storage_type const & v, allocator_type al = {}) : Object{ get_class() }, m_dict{ v, al } {}
 
-		DictObject(storage_type && v, allocator_type al = {}) noexcept : base_type{ get_class() }, m_dict{ std::move(v), al } {}
+		DictObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class() }, m_dict{ std::move(v), al } {}
 	};
 
 	// dict delete
@@ -50,7 +50,7 @@ namespace ism
 	// dict handle
 	template <> class Handle<DictObject> : public Ref<DictObject>
 	{
-		ISM_HANDLE_DEFAULT(DictObject, ISM_CHECK_DICT);
+		ISM_HANDLE(DictObject, ISM_CHECK_DICT);
 
 	public:
 		using storage_type = value_type::storage_type;

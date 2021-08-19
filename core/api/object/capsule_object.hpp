@@ -9,7 +9,7 @@ namespace ism
 	// capsule object
 	class ISM_API CapsuleObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(CapsuleObject, Object);
+		ISM_OBJECT(CapsuleObject, Object);
 
 	protected:
 		static void _bind_class(OBJ scope);
@@ -26,29 +26,29 @@ namespace ism
 			if (m_closure) { m_closure((Object *)m_pointer); }
 		}
 
-		CapsuleObject() : base_type{ get_class() } {}
+		CapsuleObject() : Object{ get_class() } {}
 
-		CapsuleObject(nullptr_t) : self_type{}
+		CapsuleObject(nullptr_t) : CapsuleObject{}
 		{
 			m_pointer = nullptr;
 			m_context = nullptr;
 			m_closure = nullptr;
 		}
 
-		CapsuleObject(void const * value, destructor closure = nullptr) : self_type{}
+		CapsuleObject(void const * value, destructor closure = nullptr) : CapsuleObject{}
 		{
 			m_pointer = (void *)value;
 			m_context = nullptr;
 			m_closure = closure;
 		}
 
-		CapsuleObject(void const * value, void(*closure)(void *)) : self_type{}
+		CapsuleObject(void const * value, void(*closure)(void *)) : CapsuleObject{}
 		{
 			m_pointer = (void *)value;
 			m_context = nullptr;
 			m_closure = (destructor)[](Object * o)
 			{
-				if (auto self{ dynamic_cast<self_type *>(o) })
+				if (auto self{ dynamic_cast<CapsuleObject *>(o) })
 				{
 					auto closure{ reinterpret_cast<void(*)(void *)>(self->m_context) };
 
@@ -57,13 +57,13 @@ namespace ism
 			};
 		}
 
-		CapsuleObject(void(*closure)()) : self_type{}
+		CapsuleObject(void(*closure)()) : CapsuleObject{}
 		{
 			m_pointer = (void *)closure;
 			m_context = nullptr;
 			m_closure = (destructor)[](Object * o)
 			{
-				if (auto self{ dynamic_cast<self_type *>(o) })
+				if (auto self{ dynamic_cast<CapsuleObject *>(o) })
 				{
 					auto closure{ reinterpret_cast<void(*)()>(self->m_pointer) };
 
@@ -82,7 +82,7 @@ namespace ism
 	// capsule handle
 	template <> class Handle<CapsuleObject> : public Ref<CapsuleObject>
 	{
-		ISM_HANDLE_DEFAULT(CapsuleObject, ISM_CHECK_CAPSULE);
+		ISM_HANDLE(CapsuleObject, ISM_CHECK_CAPSULE);
 
 	public:
 		template <class T

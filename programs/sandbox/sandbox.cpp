@@ -44,6 +44,9 @@ namespace ism
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			;
 
+		DICT dict{ DICT::new_() };
+		typeof(dict).attr("__init__")(dict);
+
 		m.attr("hello")();
 		m.attr("say")(m.attr("get_string")());
 		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);

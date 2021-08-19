@@ -9,7 +9,7 @@ namespace ism
 	// float object
 	class ISM_API FloatObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(FloatObject, Object);
+		ISM_OBJECT(FloatObject, Object);
 
 	protected:
 		static void _bind_class(OBJ scope);
@@ -21,13 +21,10 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
 
-		FloatObject() : base_type{ get_class() } {}
+		FloatObject() noexcept : Object{ get_class() } {}
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> explicit FloatObject(TYPE const & type, T const value) : base_type{ type }, m_float{ static_cast<storage_type>(value) } {}
-
-		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> explicit FloatObject(T const value) : self_type{ get_class(), value } {}
+		> explicit FloatObject(T const value) : FloatObject{} { m_float = static_cast<storage_type>(value); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> FloatObject & operator=(T const value) { m_float = static_cast<storage_type>(value); return (*this); }
@@ -45,7 +42,7 @@ namespace ism
 	// float handle
 	template <> class Handle<FloatObject> : public Ref<FloatObject>
 	{
-		ISM_HANDLE_DEFAULT(FloatObject, ISM_CHECK_FLOAT);
+		ISM_HANDLE(FloatObject, ISM_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;

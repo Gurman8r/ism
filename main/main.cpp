@@ -1,9 +1,9 @@
 #include <main/main.hpp>
 #include <core/os/main_loop.hpp>
-#include <core/api/runtime.hpp>
 #include <core/register_core_types.hpp>
 #include <scene/main/scene_tree.hpp>
 #include <servers/display_server.hpp>
+#include <servers/script_server.hpp>
 #include <platform/windows/windows_display_server.hpp>
 
 namespace ism
@@ -14,7 +14,7 @@ namespace ism
 	uint32_t	Main::g_frame_index	{};
 	int32_t		Main::g_iterating	{};
 
-	RuntimeState * g_runtime{};
+	ScriptServer * g_runtime{};
 
 	Windows_DisplayServer g_display{};
 
@@ -27,7 +27,7 @@ namespace ism
 		register_core_types();
 		register_core_driver_types();
 
-		g_runtime = memnew(RuntimeState);
+		g_runtime = memnew(ScriptServer);
 
 		register_core_settings();
 

@@ -1,11 +1,11 @@
 #include <core/api/object/string_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(StringObject, t)
+ISM_CLASS_IMPLEMENTATION(StringObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Str_Subclass;
 	
@@ -19,11 +19,11 @@ IMPLEMENT_CLASS(StringObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
 	{
-		if (holder_type::check_(other))
+		if (STR::check_(other))
 		{
 			return util::compare((String)STR(self), (String)STR(other));
 		}
-		else if (holder_type s{ { other } })
+		else if (STR s{ { other } })
 		{
 			return util::compare((String)STR(self), (String)s);
 		}
@@ -32,19 +32,16 @@ IMPLEMENT_CLASS(StringObject, t)
 			return util::compare(*self, *other);
 		}
 	};
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
-	{
-		return holder_type::new_();
-	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void StringObject::_bind_class(OBJ scope)
 {
-	CLASS_<STR>(scope, "string", get_class())
+	CLASS_<STR>(scope, "string")
+
 		.def(init<>())
+
 		;
 }
 

@@ -1,11 +1,11 @@
 #include <core/api/object/module_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(ModuleObject, t)
+ISM_CLASS_IMPLEMENTATION(ModuleObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
@@ -24,20 +24,13 @@ IMPLEMENT_CLASS(ModuleObject, t)
 			return util::compare(*self, *other);
 		}
 	};
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
-	{
-		VERIFY(LIST::check_(args));
-		VERIFY(STR::check_(args[0]));
-		return holder_type(self_type{ STR(args[0]).c_str() });
-	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void ModuleObject::_bind_class(OBJ scope)
 {
-	CLASS_<MODULE>(scope, "module", get_class())
+	CLASS_<MODULE>(scope, "module")
 
 		.def(init<String const &>())
 
@@ -54,6 +47,20 @@ void ModuleObject::_bind_class(OBJ scope)
 OBJ ism::module_getattro(MODULE m, OBJ name)
 {
 	return generic_getattr(m, name);
+}
+
+MODULE ism::create_extension_module(cstring name)
+{
+	DICT modules{ get_script_server()->modules };
+	
+	STR str_name{ name };
+	
+	return !modules.contains(str_name) ? modules[str_name] = MODULE({ name }) : MODULE{};
+}
+
+MODULE ism::import_module(cstring name)
+{
+	return get_script_server()->modules.lookup(STR{ name }, MODULE{});
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

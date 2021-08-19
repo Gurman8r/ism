@@ -1,11 +1,11 @@
 #include <core/api/object/int_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(IntObject, t)
+ISM_CLASS_IMPLEMENTATION(IntObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
 
@@ -26,18 +26,13 @@ IMPLEMENT_CLASS(IntObject, t)
 			return util::compare(*self, *other);
 		}
 	};
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
-	{
-		return holder_type::new_();
-	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void IntObject::_bind_class(OBJ scope)
 {
-	CLASS_<INT>(scope, "int", get_class())
+	CLASS_<INT>(scope, "int")
 
 		.def(init<>())
 

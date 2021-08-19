@@ -54,13 +54,13 @@ namespace ism
 
 // generate trap
 #if defined(ISM_CC_MSVC)
-#	define GENERATE_TRAP		(_CSTD __debugbreak)
+#	define DEBUG_BREAK		(_CSTD __debugbreak)
 
 #elif defined(ISM_CC_CLANG)
-#	define GENERATE_TRAP		(_CSTD __builtin_debugtrap)
+#	define DEBUG_BREAK		(_CSTD __builtin_debugtrap)
 
 #else
-#	define GENERATE_TRAP()		_CSTD raise(SIGTRAP)
+#	define DEBUG_BREAK()		_CSTD raise(SIGTRAP)
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

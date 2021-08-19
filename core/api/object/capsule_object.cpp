@@ -1,27 +1,22 @@
 #include <core/api/object/capsule_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(CapsuleObject, t)
+ISM_CLASS_IMPLEMENTATION(CapsuleObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
-	{
-		return holder_type::new_();
-	};
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void CapsuleObject::_bind_class(OBJ scope)
 {
-	CLASS_<CAPSULE>(scope, "capsule", get_class())
+	CLASS_<CAPSULE>(scope, "capsule")
 
 		.def(init<>())
 

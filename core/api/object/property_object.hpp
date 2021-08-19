@@ -9,7 +9,7 @@ namespace ism
 	// property object
 	class ISM_API PropertyObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(PropertyObject, Object);
+		ISM_OBJECT(PropertyObject, Object);
 
 	protected:
 		static void _bind_class(OBJ scope);
@@ -17,23 +17,23 @@ namespace ism
 	public:
 		OBJ m_get{}, m_set{};
 
-		PropertyObject() : base_type{ get_class() } {}
+		PropertyObject() : Object{ get_class() } {}
 
-		PropertyObject(OBJ const & fget, OBJ const & fset) : self_type{} { m_get = fget; m_set = fset; }
+		PropertyObject(OBJ const & fget, OBJ const & fset) : PropertyObject{} { m_get = fget; m_set = fset; }
 
-		PropertyObject(OBJ const & fget) : self_type{} { m_get = fget; m_set = nullptr; }
+		PropertyObject(OBJ const & fget) : PropertyObject{} { m_get = fget; m_set = nullptr; }
 
 		template <class Getter, class Setter
-		> PropertyObject(Getter const & fget, Setter const & fset) : self_type{} { m_get = CPP_FUNCTION({ fget }); m_set = CPP_FUNCTION({ fset }); }
+		> PropertyObject(Getter const & fget, Setter const & fset) : PropertyObject{} { m_get = CPP_FUNCTION({ fget }); m_set = CPP_FUNCTION({ fset }); }
 
 		template <class Getter
-		> PropertyObject(Getter const & fget, OBJ const & fset) : self_type{} { m_get = CPP_FUNCTION({ fget }); m_set = fset; }
+		> PropertyObject(Getter const & fget, OBJ const & fset) : PropertyObject{} { m_get = CPP_FUNCTION({ fget }); m_set = fset; }
 
 		template <class Setter
-		> PropertyObject(OBJ const & fget, Setter const & fset) : self_type{} { m_get = fget; m_set = CPP_FUNCTION({ fset }); }
+		> PropertyObject(OBJ const & fget, Setter const & fset) : PropertyObject{} { m_get = fget; m_set = CPP_FUNCTION({ fset }); }
 
 		template <class Getter
-		> PropertyObject(Getter const & fget) : self_type{} { m_get = CPP_FUNCTION({ fget }); m_set = nullptr; }
+		> PropertyObject(Getter const & fget) : PropertyObject{} { m_get = CPP_FUNCTION({ fget }); m_set = nullptr; }
 	};
 
 	// property delete
@@ -45,7 +45,7 @@ namespace ism
 	// property handle
 	template <> class Handle<PropertyObject> : public Ref<PropertyObject>
 	{
-		ISM_HANDLE_DEFAULT(PropertyObject, ISM_CHECK_PROPERTY);
+		ISM_HANDLE(PropertyObject, ISM_CHECK_PROPERTY);
 
 	public:
 		template <class ... Args

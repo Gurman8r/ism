@@ -21,20 +21,21 @@ void ism::register_core_types()
 	VERIFY(typeof<MODULE>().ready());
 	VERIFY(typeof<GENERIC>().ready());
 
-	TypeDB::bind_class<CppFunctionObject>(nullptr);
-	TypeDB::bind_class<Object>(nullptr);
-	TypeDB::bind_class<TypeObject>(nullptr);
-	TypeDB::bind_class<IntObject>(nullptr);
-	TypeDB::bind_class<FloatObject>(nullptr);
-	TypeDB::bind_class<StringObject>(nullptr);
-	TypeDB::bind_class<ListObject>(nullptr);
-	TypeDB::bind_class<DictObject>(nullptr);
-	TypeDB::bind_class<CapsuleObject>(nullptr);
-	TypeDB::bind_class<FunctionObject>(nullptr);
-	TypeDB::bind_class<MethodObject>(nullptr);
-	TypeDB::bind_class<PropertyObject>(nullptr);
-	TypeDB::bind_class<ModuleObject>(nullptr);
-	TypeDB::bind_class<GenericObject>(nullptr);
+	OBJ scope{ nullptr };
+	TypeDB::bind_class<CppFunctionObject>(scope);
+	TypeDB::bind_class<Object>(scope);
+	TypeDB::bind_class<TypeObject>(scope);
+	TypeDB::bind_class<IntObject>(scope);
+	TypeDB::bind_class<FloatObject>(scope);
+	TypeDB::bind_class<StringObject>(scope);
+	TypeDB::bind_class<ListObject>(scope);
+	TypeDB::bind_class<DictObject>(scope);
+	TypeDB::bind_class<CapsuleObject>(scope);
+	TypeDB::bind_class<FunctionObject>(scope);
+	TypeDB::bind_class<MethodObject>(scope);
+	TypeDB::bind_class<PropertyObject>(scope);
+	TypeDB::bind_class<ModuleObject>(scope);
+	TypeDB::bind_class<GenericObject>(scope);
 }
 
 void ism::register_core_driver_types()

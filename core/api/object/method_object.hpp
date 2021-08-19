@@ -9,7 +9,7 @@ namespace ism
 	// method object
 	class ISM_API MethodObject : public FunctionObject
 	{
-		ISM_OBJECT_DEFAULT(MethodObject, FunctionObject);
+		ISM_OBJECT(MethodObject, FunctionObject);
 
 	protected:
 		static void _bind_class(OBJ scope);
@@ -17,9 +17,9 @@ namespace ism
 	public:
 		OBJ m_func{}, m_self{};
 
-		MethodObject() : base_type{ get_class() } {}
+		MethodObject() noexcept : FunctionObject{ get_class() } {}
 
-		MethodObject(OBJ func, OBJ self, vectorcallfunc vectorcall) : self_type{}
+		MethodObject(OBJ func, OBJ self, vectorcallfunc vectorcall) : MethodObject{}
 		{
 			m_func = func;
 			m_self = self;
@@ -36,7 +36,7 @@ namespace ism
 	// method handle
 	template <> class Handle<MethodObject> : public Ref<MethodObject>
 	{
-		ISM_HANDLE_DEFAULT(MethodObject, ISM_CHECK_METHOD);
+		ISM_HANDLE(MethodObject, ISM_CHECK_METHOD);
 
 	public:
 	};

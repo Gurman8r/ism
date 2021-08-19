@@ -1,11 +1,11 @@
 #include <core/api/object/cppfunction_object.hpp>
-#include <core/api/class.hpp>
+#include <servers/script_server.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-IMPLEMENT_CLASS(CppFunctionObject, t)
+ISM_CLASS_IMPLEMENTATION(CppFunctionObject, t)
 {
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
@@ -15,16 +15,11 @@ IMPLEMENT_CLASS(CppFunctionObject, t)
 
 	t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return CMP(*self, *other); };
+	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type)->OBJ
 	{
-		return !obj ? self : METHOD({ self, obj, method_vectorcall });
-	};
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
-	{
-		return holder_type::new_();
+		return !obj ? self : METHOD({ self, obj, ism::method_vectorcall });
 	};
 };
 
@@ -32,9 +27,9 @@ IMPLEMENT_CLASS(CppFunctionObject, t)
 
 void CppFunctionObject::_bind_class(OBJ scope)
 {
-	CLASS_<CPP_FUNCTION>(scope, "cpp_function", get_class())
+	CLASS_<CPP_FUNCTION>(scope, "cpp_function")
 
-		//.def(init<>())
+		.def(init<>())
 
 		.def_property("__name__", [](CPP_FUNCTION self) { return (***self).name; }, [](CPP_FUNCTION self, STR value) { (***self).name = value; })
 
@@ -51,7 +46,7 @@ CppFunctionObject::~CppFunctionObject()
 {
 	while (m_record)
 	{
-		auto next{ m_record->next };
+		FunctionRecord * next{ m_record->next };
 
 		memdelete(m_record);
 
@@ -59,9 +54,54 @@ CppFunctionObject::~CppFunctionObject()
 	}
 }
 
+CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ get_class() }
+{
+	m_vectorcall = cppfunction_vectorcall;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ CppFunctionObject::dispatcher(OBJ callable, OBJ const * argv, size_t argc)
+void CppFunctionObject::initialize_generic(FunctionRecord * record_in, std::type_info const * const * info_in, size_t argc_in)
+{
+	VERIFY("invalid function record" && record_in && !record_in->next);
+
+	m_record = record_in;
+
+	m_record->argument_count = argc_in;
+
+	m_record->args.reserve(argc_in);
+
+	for (size_t i = 0; i < argc_in; ++i)
+	{
+		String const arg_str{ "arg" + util::to_string(i) };
+
+		m_record->args.push_back(ArgumentRecord{ arg_str, nullptr, false, false });
+	}
+
+	// overload chaining (this is a hack, needs rethinking)
+	if (CPP_FUNCTION::check_(m_record->sibling))
+	{
+		auto sibling{ (CppFunctionObject *)(m_record->sibling) };
+
+		if (m_record->scope == sibling->m_record->scope)
+		{
+			m_record->next = sibling->m_record;
+
+			sibling->m_record = nullptr;
+		}
+	}
+
+	if (!m_record->next && m_record->scope)
+	{
+		if (hasattr(m_record->scope, "__module__")) { m_module = getattr(m_record->scope, "__module__"); }
+
+		else if (hasattr(m_record->scope, "__name__")) { m_module = getattr(m_record->scope, "__name__"); }
+	}
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+OBJ ism::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 {
 	if (!CPP_FUNCTION::check_(callable)) { return nullptr; }
 
@@ -91,7 +131,7 @@ OBJ CppFunctionObject::dispatcher(OBJ callable, OBJ const * argv, size_t argc)
 
 			if (arg_rec && !arg_rec->none && arg.is_null())
 			{
-				FATAL("BAD ARGUMENT");
+				//FATAL("BAD ARGUMENT");
 			}
 
 			call.args.push_back(arg, arg_rec ? arg_rec->convert : false);
@@ -127,43 +167,6 @@ OBJ CppFunctionObject::dispatcher(OBJ callable, OBJ const * argv, size_t argc)
 	}
 
 	return nullptr;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in)
-{
-	m_record = CHECK(rec);
-
-	VERIFY(!rec->next);
-
-	rec->argument_count = argc_in;
-
-	rec->args.reserve(argc_in);
-
-	for (size_t i = 0; i < argc_in; ++i)
-	{
-		String const arg_str{ "arg" + util::to_string(i) };
-
-		rec->args.push_back(ArgumentRecord{ arg_str, nullptr, false, false });
-	}
-
-	if (CPP_FUNCTION::check_(rec->sibling))
-	{
-		if (CPP_FUNCTION sib{ (CppFunctionObject *)rec->sibling }; rec->scope == sib->m_record->scope)
-		{
-			rec->next = sib->m_record;
-
-			sib->m_record = nullptr;
-		}
-	}
-
-	if (!rec->next && rec->scope)
-	{
-		if (hasattr(rec->scope, "__module__")) { m_module = rec->scope->attr("__module__"); }
-
-		else if (hasattr(rec->scope, "__name__")) { m_module = rec->scope->attr("__name__"); }
-	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

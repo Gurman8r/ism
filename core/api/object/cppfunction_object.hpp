@@ -9,7 +9,7 @@ namespace ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		ISM_OBJECT_DEFAULT(CppFunctionObject, FunctionObject);
+		ISM_OBJECT(CppFunctionObject, FunctionObject);
 
 	protected:
 		static void _bind_class(OBJ scope);
@@ -23,50 +23,50 @@ namespace ism
 
 		virtual ~CppFunctionObject() override;
 
-		CppFunctionObject() noexcept : base_type{ get_class() } { m_vectorcall = dispatcher; }
+		CppFunctionObject() noexcept;
 		
-		CppFunctionObject(self_type const & value) : self_type{} { m_record = value.m_record; }
+		CppFunctionObject(CppFunctionObject const & value) : CppFunctionObject{} { m_record = value.m_record; }
 		
-		CppFunctionObject(self_type && value) noexcept : self_type{} { swap(std::move(value)); }
+		CppFunctionObject(CppFunctionObject && value) noexcept : CppFunctionObject{} { swap(std::move(value)); }
 		
-		self_type & operator=(self_type const & value) { self_type temp{ value }; return swap(temp); }
+		CppFunctionObject & operator=(CppFunctionObject const & value) { CppFunctionObject temp{ value }; return swap(temp); }
 		
-		self_type & operator=(self_type && value) noexcept { return swap(std::move(value)); }
+		CppFunctionObject & operator=(CppFunctionObject && value) noexcept { return swap(std::move(value)); }
 		
-		self_type & swap(self_type & other) noexcept { if (this != std::addressof(other)) { std::swap(m_record, other.m_record); } return (*this); }
+		CppFunctionObject & swap(CppFunctionObject & other) noexcept { if (this != std::addressof(other)) { std::swap(m_record, other.m_record); } return (*this); }
 
 		template <class Return, class ... Args, class ... Extra
-		> CppFunctionObject(Return(*f)(Args...), Extra && ... extra) : self_type{}
+		> CppFunctionObject(Return(*f)(Args...), Extra && ... extra) : CppFunctionObject{}
 		{
 			initialize(f, f, FWD(extra)...);
 		}
 
 		template <class Func, class ... Extra, class = std::enable_if_t<mpl::is_lambda_v<Func>>
-		> CppFunctionObject(Func && f, Extra && ... extra) : self_type{}
+		> CppFunctionObject(Func && f, Extra && ... extra) : CppFunctionObject{}
 		{
 			initialize(FWD(f), (mpl::function_signature_t<Func> *)0, FWD(extra)...);
 		}
 
 		template <class Return, class Class, class ... Args, class ... Extra
-		> CppFunctionObject(Return(Class::*f)(Args...), Extra && ... extra) : self_type{}
+		> CppFunctionObject(Return(Class::*f)(Args...), Extra && ... extra) : CppFunctionObject{}
 		{
 			initialize([f](Class * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class *, Args...))0, FWD(extra)...);
 		}
 
 		template <class Return, class Class, class ... Args, class ... Extra
-		> CppFunctionObject(Return(Class::*f)(Args...) &, Extra && ... extra) : self_type{}
+		> CppFunctionObject(Return(Class::*f)(Args...) &, Extra && ... extra) : CppFunctionObject{}
 		{
 			initialize([f](Class * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class *, Args...))0, FWD(extra)...);
 		}
 
 		template <class Return, class Class, class ... Args, class ... Extra
-		> CppFunctionObject(Return(Class::*f)(Args...) const, Extra && ... extra) : self_type{}
+		> CppFunctionObject(Return(Class::*f)(Args...) const, Extra && ... extra) : CppFunctionObject{}
 		{
 			initialize([f](Class const * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class const *, Args...))0, FWD(extra)...);
 		}
 
 		template <class Return, class Class, class ... Args, class ... Extra
-		> CppFunctionObject(Return(Class::*f)(Args...) const &, Extra && ... extra) : self_type{}
+		> CppFunctionObject(Return(Class::*f)(Args...) const &, Extra && ... extra) : CppFunctionObject{}
 		{
 			initialize([f](Class const * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class const *, Args...))0, FWD(extra)...);
 		}
@@ -75,9 +75,7 @@ namespace ism
 		template <class Func, class Return, class ... Args, class ... Extra
 		> void initialize(Func && func, Return(*)(Args...), Extra && ... extra);
 
-		void initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in);
-
-		static OBJ dispatcher(OBJ callable, OBJ const * argv, size_t argc);
+		void initialize_generic(FunctionRecord * record_in, std::type_info const * const * info_in, size_t argc_in);
 	};
 
 	// cppfunction delete
@@ -89,7 +87,7 @@ namespace ism
 	// cppfunction handle
 	template <> class Handle<CppFunctionObject> : public Ref<CppFunctionObject>
 	{
-		ISM_HANDLE_DEFAULT(CppFunctionObject, ISM_CHECK_CPPFUNCTION);
+		ISM_HANDLE(CppFunctionObject, ISM_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }
@@ -101,10 +99,18 @@ namespace ism
 // functions
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_FUNC(OBJ) cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	NODISCARD inline OBJ Handle<FunctionObject>::cpp_function() const
 	{
 		return CPP_FUNCTION::check_(*this) ? CPP_FUNCTION(*this) : nullptr;
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Func, class Return, class ... Args, class ... Extra
 	> inline void CppFunctionObject::initialize(Func && func, Return(*)(Args...), Extra && ... extra)
@@ -173,6 +179,8 @@ namespace ism
 			rec->data[1] = const_cast<void *>(reinterpret_cast<void const *>(&typeid(Return(*)(Args...))));
 		}
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_CPPFUNCTION_OBJECT_HPP_
