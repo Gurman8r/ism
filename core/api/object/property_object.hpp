@@ -12,12 +12,12 @@ namespace ism
 		ISM_OBJECT(PropertyObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		OBJ m_get{}, m_set{};
 
-		PropertyObject() : Object{ get_class() } {}
+		PropertyObject() : Object{ get_class_static() } {}
 
 		PropertyObject(OBJ const & fget, OBJ const & fset) : PropertyObject{} { m_get = fget; m_set = fset; }
 

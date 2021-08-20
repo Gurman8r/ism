@@ -12,10 +12,10 @@ namespace ism
 		ISM_OBJECT(GenericObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
-		GenericObject() : Object{ get_class() } {}
+		GenericObject() : Object{ get_class_static() } {}
 	};
 
 	// generic delete

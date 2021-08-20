@@ -23,6 +23,9 @@
 #define FWD_OBJ(expr) \
 	(ism::object_or_cast(FWD(expr)))
 
+#define ISM_IDENTIFIER(m_name) \
+	static StringObject CAT(ID_, m_name){ TOSTR(m_name) }
+
 // types
 namespace ism
 {
@@ -175,6 +178,18 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	typedef enum MemberFlags_ : int32_t
+	{
+		MemberFlags_None			= 0,
+		MemberFlags_ReadOnly		= 1 << 0,
+		MemberFlags_ReadRestricted	= 1 << 1,
+		MemberFlags_WriteRestricted	= 1 << 2,
+		MemberFlags_Restricted		= MemberFlags_ReadRestricted | MemberFlags_WriteRestricted,
+	}
+	MemberFlags;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	typedef enum MethodFlags_ : int32_t
 	{
 		MethodFlags_None		= 1 << 0,
@@ -216,69 +231,96 @@ namespace ism
 	ALIAS(lenfunc)			ssize_t(*)(OBJ o);
 	ALIAS(reprfunc)			STR(*)(OBJ o);
 
-	ALIAS(allocfunc)		OBJ (*)(TYPE type);
-	ALIAS(freefunc)			void(*)(void * ptr);
-	ALIAS(initproc)			Error(*)(OBJ self, OBJ args);
-	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
+	ALIAS(constructor)		OBJ(*)(TYPE type, OBJ args);
 	ALIAS(destructor)		void(*)(Object * ptr);
 
 	ALIAS(cfunction)		OBJ(*)(OBJ self, OBJ args);
 	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argc, size_t argv);
 	ALIAS(getter)			OBJ(*)(OBJ self, void * context);
 	ALIAS(setter)			Error(*)(OBJ self, OBJ value, void * context);
+	ALIAS(wrapperfunc)		OBJ(*)(OBJ self, OBJ args, void * wrapped);
+	ALIAS(freefunc)			void(*)(void * ptr);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD NumberMethods
+	struct NODISCARD MemberDef final
 	{
-		binaryfunc	operator_add{};
-		binaryfunc	operator_subtract{};
-		binaryfunc	operator_multiply{};
-		binaryfunc	operator_divide{};
-		binaryfunc	operator_remainder{};
-		ternaryfunc	operator_power{};
-		binaryfunc	operator_lshift{};
-		binaryfunc	operator_rshift{};
-		binaryfunc	operator_and{};
-		binaryfunc	operator_xor{};
-		binaryfunc	operator_or{};
+		cstring		name	{};
+		DataType	type	{};
+		size_t		offset	{};
+		int32_t		flags	{ MemberFlags_None };
+		cstring		doc		{};
+	};
 
-		binaryfunc	operator_inplace_add{};
-		binaryfunc	operator_inplace_subtract{};
-		binaryfunc	operator_inplace_multiply{};
-		binaryfunc	operator_inplace_divide{};
-		binaryfunc	operator_inplace_remainder{};
-		ternaryfunc	operator_inplace_power{};
-		binaryfunc	operator_inplace_lshift{};
-		binaryfunc	operator_inplace_rshift{};
-		binaryfunc	operator_inplace_and{};
-		binaryfunc	operator_inplace_xor{};
-		binaryfunc	operator_inplace_or{};
+	struct NODISCARD MethodDef final
+	{
+		cstring		name	{};
+		cfunction	method	{};
+		int32_t		flags	{ MethodFlags_None };
+		cstring		doc		{};
+	};
 
-		unaryfunc	operator_positive{};
-		unaryfunc	operator_negative{};
-		unaryfunc	operator_absolute{};
-		inquiry		operator_bool{};
-		unaryfunc	operator_invert{};
-		unaryfunc	operator_integer{};
-		unaryfunc	operator_decimal{};
+	struct NODISCARD GetSetDef final
+	{
+		cstring		name	{};
+		getter		get		{};
+		setter		set		{};
+		cstring		doc		{};
+		void *		closure	{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD SequenceMethods
+	struct NODISCARD NumberMethods final
 	{
-		lenfunc		sequence_length{};
-		sizeargfunc	sequence_item{};
-		objobjproc	sequence_contains{};
+		binaryfunc	operator_add				{};
+		binaryfunc	operator_subtract			{};
+		binaryfunc	operator_multiply			{};
+		binaryfunc	operator_divide				{};
+		binaryfunc	operator_remainder			{};
+		ternaryfunc	operator_power				{};
+		binaryfunc	operator_lshift				{};
+		binaryfunc	operator_rshift				{};
+		binaryfunc	operator_and				{};
+		binaryfunc	operator_xor				{};
+		binaryfunc	operator_or					{};
+
+		binaryfunc	operator_inplace_add		{};
+		binaryfunc	operator_inplace_subtract	{};
+		binaryfunc	operator_inplace_multiply	{};
+		binaryfunc	operator_inplace_divide		{};
+		binaryfunc	operator_inplace_remainder	{};
+		ternaryfunc	operator_inplace_power		{};
+		binaryfunc	operator_inplace_lshift		{};
+		binaryfunc	operator_inplace_rshift		{};
+		binaryfunc	operator_inplace_and		{};
+		binaryfunc	operator_inplace_xor		{};
+		binaryfunc	operator_inplace_or			{};
+
+		unaryfunc	operator_positive			{};
+		unaryfunc	operator_negative			{};
+		unaryfunc	operator_absolute			{};
+		inquiry		operator_bool				{};
+		unaryfunc	operator_invert				{};
+		unaryfunc	operator_integer			{};
+		unaryfunc	operator_decimal			{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD MappingMethods
+	struct NODISCARD SequenceMethods final
 	{
-		lenfunc		mapping_length{};
-		binaryfunc	mapping_subscript{};
+		lenfunc		sequence_length		{};
+		sizeargfunc	sequence_item		{};
+		objobjproc	sequence_contains	{};
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct NODISCARD MappingMethods final
+	{
+		lenfunc		mapping_length		{};
+		binaryfunc	mapping_subscript	{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -290,9 +332,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Derived
-	> class ObjectAPI : _API_Tag
+	> class ObjectAPI : public _API_Tag
 	{
-	private:
 		NODISCARD auto derived() const & noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
 
 	public:
@@ -315,7 +356,7 @@ namespace ism
 		> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ handle(), FWD(i) }; }
 
 		template <class Value = OBJ
-		> NODISCARD bool contains(Value && v) const { return attr("__contains__")(FWD(v)).cast<bool>(); }
+		> NODISCARD bool contains(Value && value) const { return attr("__contains__")(FWD(value)).cast<bool>(); }
 
 		template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
 		> OBJ operator()(Args && ... args) const; // call.hpp
@@ -324,25 +365,25 @@ namespace ism
 		
 		NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
 
-		NODISCARD bool is(ObjectAPI const & o) const noexcept { return derived().ptr() == o.derived().ptr(); }
+		NODISCARD bool is(ObjectAPI const & other) const noexcept { return derived().ptr() == other.derived().ptr(); }
 
 		template <class O, class = std::enable_if_t<is_base_object_v<O>>
-		> NODISCARD bool is(O const * o) const noexcept { return derived().ptr() == o; }
+		> NODISCARD bool is(O const * other) const noexcept { return derived().ptr() == other; }
 
 		template <class O, class = std::enable_if_t<is_api_v<O>>
-		> NODISCARD bool is(O const & o) const noexcept { return derived().ptr() == o.ptr(); }
+		> NODISCARD bool is(O const & other) const noexcept { return derived().ptr() == other.ptr(); }
 		
-		NODISCARD bool equal_to(ObjectAPI const & o) const noexcept { return compare(o) == 0; }
+		NODISCARD bool equal_to(ObjectAPI const & other) const noexcept { return compare(other) == 0; }
 		
-		NODISCARD bool not_equal_to(ObjectAPI const & o) const noexcept { return compare(o) != 0; }
+		NODISCARD bool not_equal_to(ObjectAPI const & other) const noexcept { return compare(other) != 0; }
 		
-		NODISCARD bool less(ObjectAPI const & o) const noexcept { return compare(o) < 0; }
+		NODISCARD bool less(ObjectAPI const & other) const noexcept { return compare(other) < 0; }
 		
-		NODISCARD bool less_equal(ObjectAPI const & o) const noexcept { return compare(o) <= 0; }
+		NODISCARD bool less_equal(ObjectAPI const & other) const noexcept { return compare(other) <= 0; }
 		
-		NODISCARD bool greater(ObjectAPI const & o) const noexcept { return compare(o) > 0; }
+		NODISCARD bool greater(ObjectAPI const & other) const noexcept { return compare(other) > 0; }
 		
-		NODISCARD bool greater_equal(ObjectAPI const & o) const noexcept { return compare(o) >= 0; }
+		NODISCARD bool greater_equal(ObjectAPI const & other) const noexcept { return compare(other) >= 0; }
 
 		NODISCARD auto doc() const { return attr("__doc__"); }
 
@@ -351,7 +392,7 @@ namespace ism
 		{
 			if (TYPE t{ typeof(derived().ptr()) }; t && t->tp_compare)
 			{
-				return t->tp_compare(handle(), o.handle());
+				return t->tp_compare(derived().ptr(), o.derived().ptr());
 			}
 			else
 			{
@@ -385,43 +426,43 @@ namespace ism
 	template <class T> struct Hash<ObjectAPI<T>>
 	{
 		template <class U
-		> hash_t operator()(U const & o) const { return hash(o); }
+		> NODISCARD hash_t operator()(U const & o) const { return hash(o); }
 	};
 
 	template <class T> struct EqualTo<ObjectAPI<T>>
 	{
 		template <class A, class B
-		> bool operator()(A const & a, B const & b) const { return a.equal_to(b); }
+		> NODISCARD bool operator()(A const & a, B const & b) const { return a.equal_to(b); }
 	};
 
 	template <class T> struct NotEqualTo<ObjectAPI<T>>
 	{
 		template <class A, class B
-		> bool operator()(A const & a, B const & b) const { return a.not_equal_to(b); }
+		> NODISCARD bool operator()(A const & a, B const & b) const { return a.not_equal_to(b); }
 	};
 
 	template <class T> struct Less<ObjectAPI<T>>
 	{
 		template <class A, class B
-		> bool operator()(A const & a, B const & b) const { return a.less(b); }
+		> NODISCARD bool operator()(A const & a, B const & b) const { return a.less(b); }
 	};
 
 	template <class T> struct Greater<ObjectAPI<T>>
 	{
 		template <class A, class B
-		> bool operator()(A const & a, B const & b) const { return a.greater(b); }
+		> NODISCARD bool operator()(A const & a, B const & b) const { return a.greater(b); }
 	};
 
 	template <class T> struct LessEqual<ObjectAPI<T>>
 	{
 		template <class A, class B
-		> bool operator()(A const & a, B const & b) const { return a.less_equal(b); }
+		> NODISCARD bool operator()(A const & a, B const & b) const { return a.less_equal(b); }
 	};
 
 	template <class T> struct GreaterEqual<ObjectAPI<T>>
 	{
 		template <class A, class B
-		> bool operator()(A const & a, B const & b) const { return a.greater_equal(b); }
+		> NODISCARD bool operator()(A const & a, B const & b) const { return a.greater_equal(b); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -438,8 +479,25 @@ namespace ism
 	public:
 		using value_type = typename _Type;
 
-		using self_type = typename Ref<value_type>;
+	protected:
+		value_type * m_ptr{};
 
+		void ref(Ref const & value)
+		{
+			if (value.m_ptr == m_ptr) { return; }
+			unref();
+			m_ptr = value.m_ptr;
+			if (m_ptr) { m_ptr->inc_ref(); }
+		}
+
+		void ref_pointer(value_type * value)
+		{
+			VERIFY("INVALID POINTER" && value);
+
+			if (value->init_ref()) { m_ptr = value; }
+		}
+
+	public:
 		~Ref() noexcept { unref(); }
 
 		Ref() noexcept {}
@@ -448,7 +506,7 @@ namespace ism
 
 		Ref(value_type * value) { if (value) { ref_pointer(value); } }
 
-		Ref(self_type const & value) { ref(value); }
+		Ref(Ref const & value) { ref(value); }
 
 		template <class U
 		> Ref(Ref<U> const & value) { reset(value); }
@@ -457,16 +515,16 @@ namespace ism
 
 		Ref(value_type && value) noexcept { instance(std::move(value)); }
 
-		self_type & operator=(nullptr_t) { unref(); return (*this); }
+		Ref & operator=(nullptr_t) { unref(); return (*this); }
 
-		self_type & operator=(self_type const & value) { reset(value); return (*this); }
+		Ref & operator=(Ref const & value) { reset(value); return (*this); }
 
 		template <class U
-		> self_type & operator=(Ref<U> const & value) { reset(value); return (*this); }
+		> Ref & operator=(Ref<U> const & value) { reset(value); return (*this); }
 
-		self_type & operator=(value_type const & value) { instance(value); return (*this); }
+		Ref & operator=(value_type const & value) { instance(value); return (*this); }
 
-		self_type & operator=(value_type && value) noexcept { instance(std::move(value)); return (*this); }
+		Ref & operator=(value_type && value) noexcept { instance(std::move(value)); return (*this); }
 
 	public:
 		template <class ... Args
@@ -490,7 +548,7 @@ namespace ism
 			m_ptr = nullptr;
 		}
 
-		void reset(self_type const & value)
+		void reset(Ref const & value)
 		{
 			ref(value);
 		}
@@ -535,29 +593,11 @@ namespace ism
 		
 		NODISCARD bool operator!=(value_type const * value) const noexcept { return m_ptr != value; }
 		
-		NODISCARD bool operator<(self_type const & value) const noexcept { return m_ptr < value.m_ptr; }
+		NODISCARD bool operator<(Ref const & value) const noexcept { return m_ptr < value.m_ptr; }
 		
-		NODISCARD bool operator==(self_type const & value) const noexcept { return m_ptr == value.m_ptr; }
+		NODISCARD bool operator==(Ref const & value) const noexcept { return m_ptr == value.m_ptr; }
 		
-		NODISCARD bool operator!=(self_type const & value) const noexcept { return m_ptr != value.m_ptr; }
-
-	protected:
-		value_type * m_ptr{};
-
-		void ref(self_type const & value)
-		{
-			if (value.m_ptr == m_ptr) { return; }
-			unref();
-			m_ptr = value.m_ptr;
-			if (m_ptr) { m_ptr->inc_ref(); }
-		}
-
-		void ref_pointer(value_type * value)
-		{
-			VERIFY("INVALID POINTER" && value);
-
-			if (value->init_ref()) { m_ptr = value; }
-		}
+		NODISCARD bool operator!=(Ref const & value) const noexcept { return m_ptr != value.m_ptr; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -587,13 +627,11 @@ namespace ism
 	// handle default
 #define ISM_HANDLE(m_class, m_check)																	\
 public:																									\
-	using value_type = typename m_class;																\
+	using typename ism::Ref<m_class>::value_type;														\
 																										\
-	using base_type = typename ism::Ref<value_type>;													\
+	NODISCARD static ism::TYPE get_class_static() noexcept { return m_class::get_class_static(); }		\
 																										\
-	using self_type = typename ism::Handle<value_type>;													\
-																										\
-	NODISCARD static bool check_(OBJ const & o) { return o && (bool)(m_check(o)); }						\
+	NODISCARD static bool check_(ism::OBJ const & o) { return o && (bool)(m_check(o)); }				\
 																										\
 	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }							\
 																										\
@@ -603,25 +641,25 @@ public:																									\
 																										\
 	Handle(nullptr_t) noexcept {}																		\
 																										\
-	Handle(value_type * value) { if (value) { ref_pointer(value); } }									\
+	Handle(m_class * value) { if (value) { ref_pointer(value); } }										\
 																										\
-	Handle(base_type const & value) { ref(value); }														\
+	Handle(ism::Ref<m_class> const & value) { ref(value); }												\
 																										\
-	template <class U> Handle(Ref<U> const & value) { reset(value); }									\
+	template <class U> Handle(ism::Ref<U> const & value) { reset(value); }								\
 																										\
-	Handle(value_type const & value) { instance(value); }												\
+	Handle(m_class const & value) { instance(value); }													\
 																										\
-	Handle(value_type && value) noexcept { instance(std::move(value)); }								\
+	Handle(m_class && value) noexcept { instance(std::move(value)); }									\
 																										\
-	self_type & operator=(nullptr_t) { unref(); return (*this); }										\
+	Handle & operator=(nullptr_t) { unref(); return (*this); }											\
 																										\
-	self_type & operator=(base_type const & value) { reset(value); return (*this); }					\
+	Handle & operator=(ism::Ref<m_class> const & value) { reset(value); return (*this); }				\
 																										\
-	template <class U> self_type & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
+	template <class U> Handle & operator=(ism::Ref<U> const & value) { reset(value); return (*this); }	\
 																										\
-	self_type & operator=(value_type const & value) { instance(value); return (*this); }				\
+	Handle & operator=(m_class const & value) { instance(value); return (*this); }						\
 																										\
-	self_type & operator=(value_type && value) noexcept { instance(std::move(value)); return (*this); }	\
+	Handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }		\
 																										\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

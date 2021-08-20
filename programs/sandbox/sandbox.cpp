@@ -44,8 +44,9 @@ namespace ism
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			;
 
-		DICT dict{ DICT::new_() };
-		typeof(dict).attr("__init__")(dict);
+		DICT test_dict;
+		test_dict = typeof<DICT>()();
+		VERIFY(test_dict);
 
 		m.attr("hello")();
 		m.attr("say")(m.attr("get_string")());
@@ -57,7 +58,8 @@ namespace ism
 		LIST list = m.attr("list") = LIST::new_();
 		list.append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0]).c_str());
-		MAIN_PRINT("%s\n", STR(typeof(list).attr("__name__")).c_str());
+		OBJ nn = typeof<LIST>().attr("__name__");
+		MAIN_PRINT("%s\n", STR(nn).c_str());
 		
 		OBJ d{ DICT::new_() };
 		d["ABC"] = 42;

@@ -1,18 +1,22 @@
 #include <core/api/object/int_object.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_CLASS_IMPLEMENTATION(IntObject, t)
+ISM_IMPLEMENT_CLASS_TYPE(IntObject, t)
 {
+	t.tp_name = "int";
+
+	t.tp_size = sizeof(IntObject);
+
 	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
 
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<int64_t>()(***INT(self)); };
-	
+
 	t.tp_repr = (reprfunc)[](OBJ self) { return STR(util::to_string(***INT(self))); };
-	
+
 	t.tp_str = (reprfunc)[](OBJ self) { return STR(util::to_string(***INT(self))); };
 
 	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
@@ -26,13 +30,17 @@ ISM_CLASS_IMPLEMENTATION(IntObject, t)
 			return util::compare(*self, *other);
 		}
 	};
+
+	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(IntObject); };
+
+	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((IntObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void IntObject::_bind_class(OBJ scope)
+void IntObject::_bind_methods()
 {
-	CLASS_<INT>(scope, "int")
+	CLASS_<INT>()
 
 		.def(init<>())
 

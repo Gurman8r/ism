@@ -3,9 +3,6 @@
 
 #include <core/api/object/type_object.hpp>
 
-#define ISM_IDENTIFIER(m_name) \
-	static StringObject CAT(ID_, m_name){ TOSTR(m_name) }
-
 // string
 namespace ism
 {
@@ -15,7 +12,7 @@ namespace ism
 		ISM_OBJECT(StringObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		String m_string{};
@@ -32,15 +29,15 @@ namespace ism
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 
-		StringObject(allocator_type al = {}) noexcept : Object{ get_class() }, m_string{ al } {}
+		StringObject(allocator_type al = {}) noexcept : Object{ get_class_static() }, m_string{ al } {}
 
-		StringObject(storage_type const & v, allocator_type al = {}) : Object{ get_class() }, m_string{ v, al } {}
+		StringObject(storage_type const & v, allocator_type al = {}) : Object{ get_class_static() }, m_string{ v, al } {}
 
-		StringObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class() }, m_string{ std::move(v), al } {}
+		StringObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class_static() }, m_string{ std::move(v), al } {}
 
-		StringObject(cstring v, allocator_type al = {}) : Object{ get_class() }, m_string{ v, al } {}
+		StringObject(cstring v, allocator_type al = {}) : Object{ get_class_static() }, m_string{ v, al } {}
 
-		StringObject(cstring v, size_t n, allocator_type al = {}) : Object{ get_class() }, m_string{ v, n, al } {}
+		StringObject(cstring v, size_t n, allocator_type al = {}) : Object{ get_class_static() }, m_string{ v, n, al } {}
 
 		StringObject(StringName const & v, allocator_type al = {}) : StringObject{ v.string(), al } {}
 
@@ -58,7 +55,7 @@ namespace ism
 			{
 				m_string = (storage_type)STR(o);
 			}
-			else if (TYPE t{ typeof(o) }; t && t->tp_str)
+			else if (TYPE t{ typeof(o) }; t->tp_str)
 			{
 				m_string = (storage_type)t->tp_str(o);
 			}
@@ -95,19 +92,6 @@ namespace ism
 
 		NODISCARD auto string() & -> storage_type & { return **m_ptr; }
 
-		template <class Index = size_t
-		> NODISCARD auto operator[](Index && i) const -> char &
-		{
-			if constexpr (std::is_integral_v<Index>)
-			{
-				return (**m_ptr)[static_cast<size_t>(i)];
-			}
-			else
-			{
-				return (**m_ptr)[FWD_OBJ(i).cast<size_t>()];
-			}
-		}
-
 		NODISCARD auto c_str() const { return (**m_ptr).c_str(); }
 
 		NODISCARD auto data() const { return (**m_ptr).data(); }
@@ -137,11 +121,32 @@ namespace ism
 // functions
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class T> NODISCARD STR repr(Handle<T> const & o) noexcept
 	{
+		if (!o) { return nullptr; }
+
 		TYPE t{ typeof(o) };
-		return t && t->tp_repr ? t->tp_repr(o) : nullptr;
+
+		return t->tp_repr ? t->tp_repr(o) : nullptr;
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// "__x__"
+	inline bool is_dunder_name(OBJ name)
+	{
+		if (!STR::check_(name)) { return false; }
+
+		String const & s{ STR(name).string() };
+
+		size_t const n{ s.size() };
+
+		return (n >= 5) && (s[0] == '_') && (s[1] == '_') && (s[n - 2] == '_') && (s[n - 1] == '_');
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_STRING_OBJECT_HPP_

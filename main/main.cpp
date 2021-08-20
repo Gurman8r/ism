@@ -3,7 +3,7 @@
 #include <core/register_core_types.hpp>
 #include <scene/main/scene_tree.hpp>
 #include <servers/display_server.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/internals.hpp>
 #include <platform/windows/windows_display_server.hpp>
 
 namespace ism
@@ -14,8 +14,6 @@ namespace ism
 	uint32_t	Main::g_frame_index	{};
 	int32_t		Main::g_iterating	{};
 
-	ScriptServer * g_runtime{};
-
 	Windows_DisplayServer g_display{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -24,10 +22,10 @@ namespace ism
 	{
 		get_os().initialize();
 
+		get_internals().initialize();
+
 		register_core_types();
 		register_core_driver_types();
-
-		g_runtime = memnew(ScriptServer);
 
 		register_core_settings();
 
@@ -102,11 +100,11 @@ namespace ism
 		//unregister_server_types();
 
 		get_os().finalize();
-
-		memdelete_nonzero(g_runtime);
 		
 		unregister_core_driver_types();
 		unregister_core_types();
+
+		get_internals().finalize();
 
 		get_os().finalize_core();
 	}

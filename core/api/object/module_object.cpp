@@ -1,16 +1,20 @@
 #include <core/api/object/module_object.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_CLASS_IMPLEMENTATION(ModuleObject, t)
+ISM_IMPLEMENT_CLASS_TYPE(ModuleObject, t)
 {
+	t.tp_name = "module";
+
+	t.tp_size = sizeof(ModuleObject);
+
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
 	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
-	
+
 	t.tp_getattro = (getattrofunc)module_getattro;
 
 	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
@@ -24,13 +28,17 @@ ISM_CLASS_IMPLEMENTATION(ModuleObject, t)
 			return util::compare(*self, *other);
 		}
 	};
+
+	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(ModuleObject((String)STR(args[0]))); };
+
+	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((ModuleObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ModuleObject::_bind_class(OBJ scope)
+void ModuleObject::_bind_methods()
 {
-	CLASS_<MODULE>(scope, "module")
+	CLASS_<MODULE>()
 
 		.def(init<String const &>())
 
@@ -39,6 +47,7 @@ void ModuleObject::_bind_class(OBJ scope)
 		.def_property("__name__", [](MODULE self) { return self->m_name; }, [](MODULE self, STR value) { self->m_name = value; })
 
 		.def_property("__doc__", [](MODULE self) { return self->m_doc; }, [](MODULE self, STR value) { self->m_doc = value; })
+		
 		;
 }
 
@@ -51,7 +60,7 @@ OBJ ism::module_getattro(MODULE m, OBJ name)
 
 MODULE ism::create_extension_module(cstring name)
 {
-	DICT modules{ get_script_server()->modules };
+	DICT modules{ get_internals().modules };
 	
 	STR str_name{ name };
 	
@@ -60,7 +69,9 @@ MODULE ism::create_extension_module(cstring name)
 
 MODULE ism::import_module(cstring name)
 {
-	return get_script_server()->modules.lookup(STR{ name }, MODULE{});
+	DICT modules{ get_internals().modules };
+
+	return modules.lookup(STR{ name }, MODULE{});
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

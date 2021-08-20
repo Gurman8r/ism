@@ -1,40 +1,7 @@
 #ifndef _ISM_TYPE_OBJECT_HPP_
 #define _ISM_TYPE_OBJECT_HPP_
 
-#include <core/api/object/base_object.hpp>
-
-// typedb
-namespace ism
-{
-	class ISM_API TypeDB
-	{
-	public:
-		static Batch<
-			hash_t,
-			StringName,
-			TYPE
-		> classes;
-
-	public:
-		static void add_class(StringName const & name, TYPE type);
-
-		template <class T
-		> static void add_class() { add_class(ctti::type_v<T>, T::get_class()); }
-
-		template <class T
-		> static void bind_class(OBJ scope)
-		{
-			T::initialize_class(scope);
-
-			TYPE t{ *classes.map<hash_t, TYPE>(hash(ctti::type_v<T>)) };
-
-			if (t.is_null())
-			{
-				FATAL("failed to register class");
-			}
-		}
-	};
-}
+#include <core/api/internals.hpp>
 
 // type
 namespace ism
@@ -47,7 +14,7 @@ namespace ism
 		ISM_OBJECT_COMMON(TypeObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 		virtual TYPE _get_typev() const noexcept override;
 
@@ -56,55 +23,49 @@ namespace ism
 
 		TypeObject() noexcept;
 
-		NODISCARD static TYPE get_class() noexcept;
+		NODISCARD static TYPE get_class_static() noexcept;
 
 	public:
-		String				tp_name{};
-		ssize_t				tp_size{};
-		int32_t				tp_flags{};
-		String				tp_doc{};
+		String				tp_name				{};
+		ssize_t				tp_size				{};
+		int32_t				tp_flags			{};
+		String				tp_doc				{};
 
-		ssize_t				tp_dictoffset{};
-		ssize_t				tp_vectorcalloffset{};
+		ssize_t				tp_dictoffset		{};
+		ssize_t				tp_vectorcalloffset	{};
 
-		binaryfunc			tp_call{};
-		inquiry				tp_clear{};
-		cmpfunc				tp_compare{};
-		hashfunc			tp_hash{};
-		lenfunc				tp_len{};
-		reprfunc			tp_repr{};
-		reprfunc			tp_str{};
-		traverseproc		tp_traverse{};
+		binaryfunc			tp_call				{};
+		inquiry				tp_clear			{};
+		cmpfunc				tp_compare			{};
+		hashfunc			tp_hash				{};
+		lenfunc				tp_len				{};
+		reprfunc			tp_repr				{};
+		reprfunc			tp_str				{};
+		traverseproc		tp_traverse			{};
 
-		getattrfunc			tp_getattr{};
-		setattrfunc			tp_setattr{};
-		getattrofunc		tp_getattro{};
-		setattrofunc		tp_setattro{};
-		descrgetfunc		tp_descr_get{};
-		descrsetfunc		tp_descr_set{};
+		getattrfunc			tp_getattr			{};
+		setattrfunc			tp_setattr			{};
+		getattrofunc		tp_getattro			{};
+		setattrofunc		tp_setattro			{};
+		descrgetfunc		tp_descr_get		{};
+		descrsetfunc		tp_descr_set		{};
 
-		destructor			tp_dealloc{};
-		initproc			tp_init{};
-		allocfunc			tp_alloc{};
-		newfunc				tp_new{};
-		freefunc			tp_free{};
-		destructor			tp_finalize{};
+		NumberMethods *		tp_as_number		{};
+		SequenceMethods *	tp_as_sequence		{};
+		MappingMethods *	tp_as_mapping		{};
 
-		NumberMethods *		tp_as_number{};
-		SequenceMethods *	tp_as_sequence{};
-		MappingMethods *	tp_as_mapping{};
+		constructor			tp_create			{};
+		destructor			tp_destroy			{};
 
-		Ref<TypeObject>		tp_base{ /* TYPE doesn't exist yet */ };
-		OBJ					tp_bases{};
-		OBJ					tp_cache{};
-		OBJ					tp_dict{};
-		OBJ					tp_mro{};
-		OBJ					tp_subclasses{};
-		vectorcallfunc		tp_vectorcall{};
+		Ref<TypeObject>		tp_base				{ /* type handle doesn't exist yet */ };
+		OBJ					tp_bases			{};
+		OBJ					tp_cache			{};
+		OBJ					tp_dict				{};
+		OBJ					tp_mro				{};
+		OBJ					tp_subclasses		{};
+		vectorcallfunc		tp_vectorcall		{};
 
 	public:
-		NODISCARD bool has_feature(int32_t flag) const { return flag_read(tp_flags, flag); }
-
 		NODISCARD bool ready();
 
 		NODISCARD OBJ lookup(OBJ name) const;
@@ -193,10 +154,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type delete
-	template <> struct DefaultDelete<TypeObject>
-	{
-		void operator()(TypeObject * ptr) const { memdelete(ptr); }
-	};
+	template <> struct DefaultDelete<TypeObject> : DefaultDelete<Object> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -211,9 +169,9 @@ namespace ism
 		ISM_HANDLE(TypeObject, ISM_CHECK_TYPE);
 
 	public:
-		NODISCARD bool ready() const { return m_ptr->ready(); }
+		NODISCARD bool has_feature(int32_t flag) const { return flag_read(m_ptr->tp_flags, flag); }
 
-		NODISCARD bool has_feature(int32_t flag) const { return m_ptr->has_feature(flag); }
+		NODISCARD bool ready() const { return m_ptr->ready(); }
 
 		NODISCARD OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
 
@@ -232,14 +190,16 @@ namespace ism
 
 	template <class T> NODISCARD hash_t hash(Handle<T> const & o) noexcept
 	{
+		if (!o) { return 0; }
 		TYPE t{ typeof(o) };
-		return t && t->tp_hash ? t->tp_hash(o) : 0;
+		return t->tp_hash ? t->tp_hash(o) : 0;
 	}
 
 	template <class T> NODISCARD ssize_t len(Handle<T> const & o) noexcept
 	{
+		if (!o) { return -1; }
 		TYPE t{ typeof(o) };
-		return t && t->tp_len ? t->tp_len(o) : -1;
+		return t->tp_len ? t->tp_len(o) : -1;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -285,12 +245,6 @@ namespace ism
 	ISM_API_FUNC(OBJ) type_getattro(TYPE type, OBJ name);
 
 	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJ name, OBJ value);
-
-	ISM_API_FUNC(OBJ) type_new(TYPE type, OBJ args);
-
-	ISM_API_FUNC(Error) type_init(OBJ self, OBJ args);
-
-	ISM_API_FUNC(OBJ) type_call(OBJ self, OBJ args);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

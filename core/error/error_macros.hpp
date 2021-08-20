@@ -102,7 +102,7 @@ namespace ism
 	template <class T
 	> auto _ism_check(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
 	{
-		return ((void)((!!(FWD(expr))) || (WIDE_ASSERT(message, file, line), 0))), FWD(expr);
+		return ((void)((!!(expr)) || (WIDE_ASSERT(message, file, line), 0))), FWD(expr);
 	}
 
 // check message

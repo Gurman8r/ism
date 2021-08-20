@@ -17,7 +17,7 @@ namespace ism
 		ISM_OBJECT(IntObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		int64_t m_int{};
@@ -26,7 +26,7 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
-		IntObject() noexcept : Object{ get_class() } {}
+		IntObject() noexcept : Object{ get_class_static() } {}
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> explicit IntObject(T const value) : IntObject{} { m_int = static_cast<storage_type>(value); }

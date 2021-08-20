@@ -12,7 +12,7 @@ namespace ism
 		ISM_OBJECT(DictObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		HashMap<OBJ, OBJ> m_dict{};
@@ -34,11 +34,11 @@ namespace ism
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
 
-		DictObject(allocator_type al = {}) noexcept : Object{ get_class() }, m_dict{ al } {}
+		DictObject(allocator_type al = {}) noexcept : Object{ get_class_static() }, m_dict{ al } {}
 
-		DictObject(storage_type const & v, allocator_type al = {}) : Object{ get_class() }, m_dict{ v, al } {}
+		DictObject(storage_type const & v, allocator_type al = {}) : Object{ get_class_static() }, m_dict{ v, al } {}
 
-		DictObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class() }, m_dict{ std::move(v), al } {}
+		DictObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class_static() }, m_dict{ std::move(v), al } {}
 	};
 
 	// dict delete

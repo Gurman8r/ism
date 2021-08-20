@@ -1,41 +1,35 @@
 #include <core/api/object/base_object.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void Object::initialize_class(OBJ scope)
+void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		TypeDB::add_class<Object>();
+		Internals::add_class<Object>();
 
-		_bind_class(scope);
+		_bind_methods();
 	}
 }
 
-void Object::_initialize_classv(OBJ scope) { initialize_class(scope); }
+void Object::_initialize_classv() { initialize_class(); }
 
-TYPE Object::_get_typev() const { return get_class(); }
+void Object::_construct_object() { m_refcount.init(); m_refcount_init.init(); }
 
-void Object::_construct_object()
-{
-	static InstanceID id{};
-	m_instance_id = ++id;
-	m_refcount.init();
-	m_refcount_init.init();
-}
+Object::Object(TYPE const & type) noexcept : ob_type{ type } { _construct_object(); }
 
-Object::Object(TYPE const & type) noexcept : m_type{ type } { _construct_object(); }
+Object::~Object() { ob_type = nullptr; }
 
-Object::~Object() { m_type = nullptr; m_instance_id = 0; }
+TYPE Object::get_class_static() noexcept { return &_class_type_static; }
 
-TYPE Object::get_class() noexcept { return &_class_type_static; }
+TYPE Object::_get_typev() const { return get_class_static(); }
 
-TYPE Object::get_type() const noexcept { if (!m_type) { m_type = _get_typev(); } return m_type; }
+TYPE Object::get_type() const noexcept { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
 
-bool Object::set_type(TYPE const & value) noexcept { return (m_type = value).is_valid(); }
+bool Object::set_type(TYPE const & value) noexcept { return (ob_type = value).is_valid(); }
 
 bool Object::init_ref()
 {
@@ -68,58 +62,39 @@ bool Object::dec_ref()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_CLASS_IMPLEMENTATION(Object, t)
+ISM_IMPLEMENT_CLASS_TYPE(Object, t)
 {
+	t.tp_name = "object";
+
+	t.tp_size = sizeof(Object);
+
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
 
 	t.tp_getattro = (getattrofunc)generic_getattr;
 
 	t.tp_setattro = (setattrofunc)generic_setattr;
 
-	t.tp_alloc = (allocfunc)object_alloc;
-
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
 
 	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
+
+	t.tp_destroy = (destructor)[](Object * ptr) { memdelete(ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void Object::_bind_class(OBJ scope)
+void Object::_bind_methods()
 {
-	CLASS_<OBJ>(scope, "object")
+	CLASS_<OBJ>()
 
 		;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ ism::object_alloc(TYPE type)
-{
-	return (Object *)memalloc(type->tp_size);
-}
-
-OBJ ism::object_new(TYPE type, OBJ args)
-{
-	if (type.has_feature(TypeFlags_IsAbstract)) { return nullptr; }
-
-	return type->tp_alloc(type);
-}
-
-Error ism::object_init(OBJ self, OBJ args)
-{
-	TYPE type{ CHECK(typeof(self)) };
-
-	Error err{ Error_None };
-
-	return err;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 {
-	TYPE type{ CHECK(typeof(obj)) };
+	TYPE type{ typeof(CHECK(obj)) };
 
 	if (!type->tp_dict && !type->ready()) { return nullptr; }
 
@@ -156,7 +131,7 @@ OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 
 Error ism::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 {
-	TYPE type{ CHECK(typeof(obj)) };
+	TYPE type{ typeof(CHECK(obj)) };
 
 	if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
 

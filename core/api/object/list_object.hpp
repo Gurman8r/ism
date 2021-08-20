@@ -12,7 +12,7 @@ namespace ism
 		ISM_OBJECT(ListObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		Vector<OBJ> m_list{};
@@ -30,7 +30,7 @@ namespace ism
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_list); }
 
 		template <class Iter
-		> ListObject(Iter first, Iter last, allocator_type al = {}) : Object{ get_class() }, m_list{ first, last, al } {}
+		> ListObject(Iter first, Iter last, allocator_type al = {}) : Object{ get_class_static() }, m_list{ first, last, al } {}
 
 		ListObject(std::initializer_list<OBJ> init, allocator_type al = {}) : ListObject{ al }
 		{
@@ -39,11 +39,11 @@ namespace ism
 			for (auto const & e : init) { m_list.push_back(e); }
 		}
 
-		ListObject(allocator_type al = {}) noexcept : Object{ get_class() }, m_list{ al } {}
+		ListObject(allocator_type al = {}) noexcept : Object{ get_class_static() }, m_list{ al } {}
 
-		ListObject(storage_type const & v, allocator_type al = {}) : Object{ get_class() }, m_list{ v, al } {}
+		ListObject(storage_type const & v, allocator_type al = {}) : Object{ get_class_static() }, m_list{ v, al } {}
 
-		ListObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class() }, m_list{ std::move(v), al } {}
+		ListObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class_static() }, m_list{ std::move(v), al } {}
 	};
 
 	// list delete

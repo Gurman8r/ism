@@ -12,7 +12,7 @@ namespace ism
 		ISM_OBJECT(ModuleObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		DICT		m_dict	{ DICT::new_() };
@@ -21,7 +21,7 @@ namespace ism
 		inquiry		m_clear	{};
 		freefunc	m_free	{};
 
-		ModuleObject(String const & name) : Object{ get_class() }
+		ModuleObject(String const & name) : Object{ get_class_static() }
 		{
 			m_name = name;
 		}

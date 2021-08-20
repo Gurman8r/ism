@@ -12,7 +12,7 @@ namespace ism
 		ISM_OBJECT(CppFunctionObject, FunctionObject);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		FunctionRecord * m_record{};
@@ -140,7 +140,7 @@ namespace ism
 		{
 			ArgumentLoader<Args...> args{};
 
-			if (!args.load_args(call.args)) { call.try_next_overload = true; return {}; }
+			if (!args.load_args(call.args)) { call.try_next_overload = true; return nullptr; }
 
 			attr::process_attributes<Extra...>::precall(call);
 

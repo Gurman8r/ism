@@ -12,7 +12,7 @@ namespace ism
 		ISM_OBJECT(FloatObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		double_t m_float{};
@@ -21,7 +21,7 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
 
-		FloatObject() noexcept : Object{ get_class() } {}
+		FloatObject() noexcept : Object{ get_class_static() } {}
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> explicit FloatObject(T const value) : FloatObject{} { m_float = static_cast<storage_type>(value); }

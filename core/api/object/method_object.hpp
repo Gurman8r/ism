@@ -12,12 +12,12 @@ namespace ism
 		ISM_OBJECT(MethodObject, FunctionObject);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		OBJ m_func{}, m_self{};
 
-		MethodObject() noexcept : FunctionObject{ get_class() } {}
+		MethodObject() noexcept : FunctionObject{ get_class_static() } {}
 
 		MethodObject(OBJ func, OBJ self, vectorcallfunc vectorcall) : MethodObject{}
 		{

@@ -12,7 +12,7 @@ namespace ism
 		ISM_OBJECT(FunctionObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		OBJ m_name{}, m_doc{}, m_qualname{};
@@ -21,9 +21,11 @@ namespace ism
 
 		vectorcallfunc m_vectorcall{};
 
-		FunctionObject() noexcept : Object{ get_class() } {}
-
 		virtual ~FunctionObject() noexcept override = default;
+
+		explicit FunctionObject(TYPE type) noexcept : Object{ type } {}
+
+		FunctionObject() noexcept : FunctionObject{ get_class_static() } {}
 	};
 
 	// function delete

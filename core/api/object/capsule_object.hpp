@@ -12,7 +12,7 @@ namespace ism
 		ISM_OBJECT(CapsuleObject, Object);
 
 	protected:
-		static void _bind_class(OBJ scope);
+		static void _bind_methods();
 
 	public:
 		void * m_pointer{}, * m_context{};
@@ -26,7 +26,7 @@ namespace ism
 			if (m_closure) { m_closure((Object *)m_pointer); }
 		}
 
-		CapsuleObject() : Object{ get_class() } {}
+		CapsuleObject() : Object{ get_class_static() } {}
 
 		CapsuleObject(nullptr_t) : CapsuleObject{}
 		{

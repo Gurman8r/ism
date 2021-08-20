@@ -17,38 +17,19 @@ namespace ism
 		using type = _type;
 	
 	public:
-		template <class ... Extra, class = std::enable_if_t<is_ref_v<type>>
-		> CLASS_(OBJ scope, cstring name, Extra && ... extra) : TYPE{ typeof<type>() }
+		template <class ... Extra
+		> CLASS_(OBJ scope, cstring name, Extra && ... extra) : TYPE{ TYPE::new_() }
 		{
+			VERIFY(is_valid());
 			m_ptr->tp_name = name;
-			
 			m_ptr->tp_size = sizeof(value_type);
-			
-			m_ptr->tp_free = (freefunc)[](void * ptr) { memdelete((value_type *)ptr); };
-
-			mpl::for_types<Extra...>([&bases = LIST(m_ptr->tp_bases)](auto tag)
-			{
-				using Base = TAG_TYPE(tag);
-
-				if constexpr (std::is_base_of_v<Base, value_type> && !std::is_same_v<Base, value_type>)
-				{
-					bases.append(typeof<Base>());
-				}
-			});
-
 			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
 		}
 
-		template <class Name = cstring, class Value = OBJ
-		> void add_object(Name && name, Value && value, bool overwrite = false)
+		template <class ... Extra
+		> CLASS_(Extra && ... extra) : TYPE{ typeof<value_type>() }
 		{
-			VERIFY(is_valid());
-			VERIFY(DICT::check_(m_ptr->tp_dict));
-
-			DICT dict{ m_ptr->tp_dict };
-			OBJ str_name{ FWD_OBJ(name) };
-			VERIFY(overwrite || !dict.contains(str_name));
-			dict.insert_or_assign(str_name, FWD(value));
+			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
 		}
 
 	public:
@@ -73,7 +54,7 @@ namespace ism
 				attr::is_method(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			add_object(cf.name(), cf, true);
+			attr(cf.name()) = cf;
 			return (*this);
 		}
 
@@ -86,7 +67,7 @@ namespace ism
 				attr::scope(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			add_object(cf.name(), cf, true);
+			attr(cf.name()) = cf;
 			return (*this);
 		}
 
@@ -177,8 +158,8 @@ namespace ism
 	
 			if (fset) { attr::process_attributes<Extra...>::init(***fset, FWD(extra)...); }
 
-			add_object(name, PROPERTY({ fget, fset }), true);
-
+			attr(name) = PROPERTY({ fget, fset });
+			
 			return (*this);
 		}
 	};

@@ -1,12 +1,16 @@
 #include <core/api/object/list_object.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_CLASS_IMPLEMENTATION(ListObject, t)
+ISM_IMPLEMENT_CLASS_TYPE(ListObject, t)
 {
+	t.tp_name = "list";
+
+	t.tp_size = sizeof(ListObject);
+
 	t.tp_flags = TypeFlags_Default | TypeFlags_List_Subclass;
 
 	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)LIST(self).size(); };
@@ -27,13 +31,17 @@ ISM_CLASS_IMPLEMENTATION(ListObject, t)
 	{
 		return nullptr;
 	};
+
+	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(ListObject); };
+
+	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((ListObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void ListObject::_bind_class(OBJ scope)
+void ListObject::_bind_methods()
 {
-	CLASS_<LIST>(scope, "list")
+	CLASS_<LIST>()
 
 		.def(init<>())
 

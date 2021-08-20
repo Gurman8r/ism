@@ -1,14 +1,18 @@
 #include <core/api/object/string_object.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_CLASS_IMPLEMENTATION(StringObject, t)
+ISM_IMPLEMENT_CLASS_TYPE(StringObject, t)
 {
+	t.tp_name = "string";
+
+	t.tp_size = sizeof(StringObject);
+
 	t.tp_flags = TypeFlags_Default | TypeFlags_Str_Subclass;
-	
+
 	t.tp_hash = (hashfunc)[](OBJ self) { return ism::hash((String)STR(self)); };
 	
 	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)STR(self).size(); };
@@ -32,13 +36,17 @@ ISM_CLASS_IMPLEMENTATION(StringObject, t)
 			return util::compare(*self, *other);
 		}
 	};
+
+	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(StringObject); };
+
+	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((StringObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void StringObject::_bind_class(OBJ scope)
+void StringObject::_bind_methods()
 {
-	CLASS_<STR>(scope, "string")
+	CLASS_<STR>()
 
 		.def(init<>())
 

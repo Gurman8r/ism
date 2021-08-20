@@ -1,24 +1,30 @@
 #include <core/api/object/generic_object.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_CLASS_IMPLEMENTATION(GenericObject, t)
+ISM_IMPLEMENT_CLASS_TYPE(GenericObject, t)
 {
+	t.tp_name = "generic_type";
+
+	t.tp_size = sizeof(GenericObject);
+
 	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_Type_Subclass;
 
 	t.tp_getattro = (getattrofunc)type_getattro;
 
 	t.tp_setattro = (setattrofunc)type_setattro;
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
+	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(GenericObject); };
+
+	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((GenericObject *)ptr); };
 };
 
-void GenericObject::_bind_class(OBJ scope)
+void GenericObject::_bind_methods()
 {
-	CLASS_<GENERIC>(scope, "generic_type")
+	CLASS_<GENERIC>()
 
 		.def(init<>())
 

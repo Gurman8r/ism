@@ -459,7 +459,7 @@ namespace ism::mpl
 	template <class T
 	> struct type_tag { using type = typename T; };
 
-#define TAG_TYPE(tag) std::decay_t<decltype(tag)::type>
+#define TAG_TYPE(tag) typename std::decay_t<decltype(tag)::type>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

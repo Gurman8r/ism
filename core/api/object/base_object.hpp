@@ -8,34 +8,34 @@
 // object common
 #define ISM_OBJECT_COMMON(m_class, m_inherits)										\
 private:																			\
-	friend class ism::TypeDB;														\
+	friend class ism::Internals;													\
 																					\
 	friend class ism::Handle<m_class>;												\
 																					\
 	static ism::TypeObject _class_type_static;										\
 																					\
 protected:																			\
-	static void initialize_class(ism::OBJ scope)									\
+	static void initialize_class()													\
 	{																				\
 		if (static bool once{}; !once && (once = true))								\
 		{																			\
-			ism::TypeDB::add_class<m_class>();										\
+			ism::Internals::add_class<m_class>();									\
 																					\
-			if (m_class::_get_bind_class() != m_inherits::_get_bind_class())		\
+			if (m_class::_get_bind_methods() != m_inherits::_get_bind_methods())	\
 			{																		\
-				m_class::_bind_class(scope);										\
+				m_class::_bind_methods();											\
 			}																		\
 		};																			\
 	}																				\
 																					\
-	virtual void _initialize_classv(ism::OBJ scope) override						\
+	virtual void _initialize_classv() override										\
 	{																				\
-		m_class::initialize_class(scope);											\
+		m_class::initialize_class();												\
 	}																				\
 																					\
-	FORCE_INLINE static constexpr void (*_get_bind_class())(ism::OBJ)				\
+	FORCE_INLINE static constexpr void (*_get_bind_methods())(void)					\
 	{																				\
-		return &m_class::_bind_class;												\
+		return &m_class::_bind_methods;												\
 	}																				\
 																					\
 private:
@@ -49,13 +49,11 @@ ISM_OBJECT_COMMON(m_class, m_inherits)												\
 protected:																			\
 	FORCE_INLINE virtual ism::TYPE _get_typev() const override						\
 	{																				\
-		return m_class::get_class();												\
+		return m_class::get_class_static();											\
 	}																				\
 																					\
 public:																				\
-	explicit m_class(ism::TYPE const & type) noexcept : m_inherits{ type } {}		\
-																					\
-	FORCE_INLINE static ism::TYPE get_class() noexcept								\
+	FORCE_INLINE static ism::TYPE get_class_static() noexcept						\
 	{																				\
 		return &m_class::_class_type_static;										\
 	}																				\
@@ -65,7 +63,7 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // implement class type
-#define ISM_CLASS_IMPLEMENTATION(m_class, m_var, ...) \
+#define ISM_IMPLEMENT_CLASS_TYPE(m_class, m_var, ...) \
 	DECLEXPR(m_class::_class_type_static) = COMPOSE(ism::TypeObject, m_var, ##__VA_ARGS__)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -78,26 +76,24 @@ namespace ism
 	// object object
 	class ISM_API Object : public ObjectAPI<Object>
 	{
-		friend class TypeDB;
+		friend class Internals;
 
 		friend class Handle<Object>;
 
 		static TypeObject _class_type_static;
 
-		InstanceID m_instance_id{};
-
 		RefCount m_refcount{}, m_refcount_init{};
 
-		mutable Ref<TypeObject> m_type{ /* TYPE doesn't exist yet */ };
-
 	protected:
-		static void initialize_class(OBJ scope);
+		mutable Ref<TypeObject> ob_type{ /* TYPE doesn't exist yet */ };
 
-		virtual void _initialize_classv(OBJ scope);
+		static void initialize_class();
 
-		static void _bind_class(OBJ scope);
+		virtual void _initialize_classv();
 
-		FORCE_INLINE static constexpr void (*_get_bind_class())(OBJ) { return &Object::_bind_class; }
+		static void _bind_methods();
+
+		FORCE_INLINE static constexpr void (*_get_bind_methods())(void) { return &Object::_bind_methods; }
 
 		FORCE_INLINE virtual TYPE _get_typev() const;
 
@@ -112,8 +108,6 @@ namespace ism
 	public:
 		virtual ~Object();
 
-		NODISCARD InstanceID get_instance_id() const noexcept { return m_instance_id; }
-
 		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
 
 		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
@@ -124,7 +118,7 @@ namespace ism
 		
 		bool dec_ref();
 
-		NODISCARD static TYPE get_class() noexcept;
+		NODISCARD static TYPE get_class_static() noexcept;
 
 		NODISCARD TYPE get_type() const noexcept;
 
@@ -144,14 +138,15 @@ namespace ism
 	{
 		template <class U> void operator()(U * ptr) const
 		{
-			if (TYPE t{ typeof(ptr) }; t && t->tp_free)
-			{
-				t->tp_free(ptr);
-			}
-			else
-			{
-				memdelete(ptr);
-			}
+			if (!ptr) { return; }
+
+			Object * obj{ (Object *)ptr };
+
+			TYPE type{ typeof(obj) };
+
+			if (type && type->tp_destroy) { type->tp_destroy(obj); }
+			
+			else { memdelete((Object *)ptr); }
 		}
 	};
 
@@ -186,51 +181,32 @@ namespace ism
 
 	NODISCARD inline TYPE typeof_generic(std::type_info const & t); // cast.hpp
 
-	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof() noexcept
-	{
-		if constexpr (is_ref_v<T>)
-		{
-			return typeof<typename T::value_type>();
-		}
-		else
-		{
-			return T::get_class();
-		}
-	}
-
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof() noexcept
-	{
-		return typeof_generic(typeid(T));
-	}
+	> NODISCARD TYPE typeof() noexcept { return typeof_generic(typeid(T)); }
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o) noexcept
-	{
-		return o ? o->get_type() : nullptr;
-	}
+	> NODISCARD TYPE typeof() noexcept { return T::get_class_static(); }
+
+	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
+	> NODISCARD TYPE typeof(T && o) noexcept { return CHECK(o)->get_type(); }
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o) noexcept
-	{
-		return typeof(FWD_OBJ(o));
-	}
+	> NODISCARD TYPE typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	NODISCARD inline bool isinstance_generic(OBJ const & o, std::type_info const & t); // cast.hpp
 
-	template <class T, class O = OBJ, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD bool isinstance(O && obj) noexcept
-	{
-		return isinstance(FWD_OBJ(obj), typeof<T>());
-	}
-
 	template <class T, class O = OBJ, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD bool isinstance(O && o) noexcept
 	{
 		return isinstance_generic(FWD(o), typeid(T));
+	}
+
+	template <class T, class O = OBJ, std::enable_if_t<is_api_v<T>, int> = 0
+	> NODISCARD bool isinstance(O && obj) noexcept
+	{
+		return isinstance(FWD_OBJ(obj), typeof<T>());
 	}
 
 	template <class A = OBJ, class B = OBJ
@@ -242,36 +218,36 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Index = OBJ
-	> NODISCARD OBJ getattr(OBJ o, Index && i)
+	> NODISCARD OBJ getattr(OBJ obj, Index && index)
 	{
-		if (TYPE t; !o || !(t = typeof(o)))
-		{
-			return nullptr;
-		}
-		else if constexpr (mpl::is_string_v<Index>)
-		{
-			if (t->tp_getattr) { return t->tp_getattr(o, FWD(i)); }
+		if (!obj) { return nullptr; }
 
-			else if (t->tp_getattro) { return t->tp_getattro(o, FWD_OBJ(i)); }
+		TYPE type{ typeof(obj) };
+
+		if constexpr (mpl::is_string_v<Index>)
+		{
+			if (type->tp_getattr) { return type->tp_getattr(obj, FWD(index)); }
+
+			else if (type->tp_getattro) { return type->tp_getattro(obj, FWD_OBJ(index)); }
 
 			else { return nullptr; }
 		}
 		else
 		{
-			if (t->tp_getattro) { return t->tp_getattro(o, FWD_OBJ(i)); }
+			if (type->tp_getattro) { return type->tp_getattro(obj, FWD_OBJ(index)); }
 
-			else if (t->tp_getattr) { return t->tp_getattr(o, STR(FWD(i)).c_str()); }
+			else if (type->tp_getattr) { return type->tp_getattr(obj, STR(FWD(index)).c_str()); }
 
 			else { return nullptr; }
 		}
 	}
 
 	template <class Index = OBJ, class Value = OBJ
-	> NODISCARD OBJ getattr(OBJ o, Index && i, Value && defval)
+	> NODISCARD OBJ getattr(OBJ obj, Index && index, Value && defval)
 	{
-		if (STR str_name{ FWD_OBJ(i) }; str_name && hasattr(o, str_name))
+		if (STR str_name{ FWD_OBJ(index) }; str_name && hasattr(obj, str_name))
 		{
-			return getattr(o, str_name);
+			return getattr(obj, str_name);
 		}
 		else
 		{
@@ -280,50 +256,52 @@ namespace ism
 	}
 
 	template <class Index = OBJ, class Value = OBJ
-	> Error setattr(OBJ o, Index && i, Value && v)
+	> Error setattr(OBJ obj, Index && index, Value && value)
 	{
-		if (TYPE t; !o || !(t = typeof(o)))
-		{
-			return Error_Unknown;
-		}
-		else if constexpr (mpl::is_string_v<Index>)
-		{
-			if (t->tp_setattr) { return t->tp_setattr(o, FWD(i), FWD_OBJ(v)); }
+		if (!obj) { return Error_Unknown; }
 
-			else if (t->tp_getattro) { return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v)); }
+		TYPE type{ typeof(obj) };
+		
+		if constexpr (mpl::is_string_v<Index>)
+		{
+			if (type->tp_setattr) { return type->tp_setattr(obj, FWD(index), FWD_OBJ(value)); }
+
+			else if (type->tp_getattro) { return type->tp_setattro(obj, FWD_OBJ(index), FWD_OBJ(value)); }
 
 			else { return Error_Unknown; }
 		}
 		else
 		{
-			if (t->tp_getattro) { return t->tp_setattro(o, FWD_OBJ(i), FWD_OBJ(v)); }
+			if (type->tp_getattro) { return type->tp_setattro(obj, FWD_OBJ(index), FWD_OBJ(value)); }
 
-			else if (t->tp_setattr) { return t->tp_setattr(o, STR(FWD(i)).c_str(), FWD_OBJ(v)); }
+			else if (type->tp_setattr) { return type->tp_setattr(obj, STR(FWD(index)).c_str(), FWD_OBJ(value)); }
 
 			else { return Error_Unknown; }
 		}
 	}
 
 	template <class Index = OBJ
-	> NODISCARD bool hasattr(OBJ o, Index && i)
+	> NODISCARD bool hasattr(OBJ obj, Index && index)
 	{
-		STR str_name{ FWD_OBJ(i) };
+		if (!obj) { return false; }
 
-		if (TYPE type; !str_name || !o || !(type = typeof(o)))
+		TYPE type{ typeof(obj) };
+
+		if (STR str_name{ FWD_OBJ(index) }; !str_name)
 		{
 			return false;
 		}
 		else if (type->tp_getattro == generic_getattr)
 		{
-			return generic_getattr_with_dict(o, str_name, nullptr).is_valid();
+			return generic_getattr_with_dict(obj, str_name, nullptr).is_valid();
 		}
 		else if (type->tp_getattro)
 		{
-			return (type->tp_getattro)(o, str_name).is_valid();
+			return (type->tp_getattro)(obj, str_name).is_valid();
 		}
 		else if (type->tp_getattr)
 		{
-			return (type->tp_getattr)(o, str_name.c_str()).is_valid();
+			return (type->tp_getattr)(obj, str_name.c_str()).is_valid();
 		}
 		else
 		{
@@ -334,44 +312,36 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Index = OBJ
-	> NODISCARD OBJ getitem(OBJ o, Index && i)
+	> NODISCARD OBJ getitem(OBJ obj, Index && index)
 	{
-		if (!o.is_valid()) { return nullptr; }
+		if (!obj) { return nullptr; }
 		
-		else if constexpr (mpl::is_string_v<Index>) { return DICT(o)[FWD(i)]; }
+		else if constexpr (mpl::is_string_v<Index>) { return DICT(obj)[FWD(index)]; }
 		
-		else if constexpr (std::is_integral_v<Index>) { return LIST(o)[FWD(i)]; }
+		else if constexpr (std::is_integral_v<Index>) { return LIST(obj)[FWD(index)]; }
 		
-		else if (DICT::check_(o)) { return DICT(o)[FWD(i)]; }
+		else if (DICT::check_(obj)) { return DICT(obj)[FWD(index)]; }
 		
-		else if (LIST::check_(o)) { return LIST(o)[FWD(i)]; }
+		else if (LIST::check_(obj)) { return LIST(obj)[FWD(index)]; }
 
 		else { return nullptr; }
 	}
 
 	template <class Index = OBJ, class Value = OBJ
-	> Error setitem(OBJ o, Index && i, Value && v)
+	> Error setitem(OBJ obj, Index && index, Value && value)
 	{
-		if (!o.is_valid()) { return Error_Unknown; }
+		if (!obj) { return Error_Unknown; }
 		
-		else if constexpr (mpl::is_string_v<Index>) { return (DICT(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		else if constexpr (mpl::is_string_v<Index>) { return (DICT(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
 		
-		else if constexpr (std::is_integral_v<Index>) { return (LIST(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		else if constexpr (std::is_integral_v<Index>) { return (LIST(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
 		
-		else if (DICT::check_(o)) { return (DICT(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		else if (DICT::check_(obj)) { return (DICT(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
 		
-		else if (LIST::check_(o)) { return (LIST(o)[FWD(i)] = FWD_OBJ(v)), Error_None; }
+		else if (LIST::check_(obj)) { return (LIST(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
 
 		else { return Error_Unknown; }
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_FUNC(OBJ) object_alloc(TYPE type);
-
-	ISM_API_FUNC(OBJ) object_new(TYPE type, OBJ args);
-
-	ISM_API_FUNC(Error) object_init(OBJ self, OBJ args);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -20,11 +20,6 @@ namespace ism
 		virtual ~ScriptServer();
 
 		static ScriptServer * get_singleton() { return singleton; }
-
-	public:
-		DICT dict, builtins, modules, importlib;
-
-		OBJ import_func;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -33,10 +33,6 @@ namespace ism
 	template <ReturnPolicy policy = ReturnPolicy_AutomaticReference
 	> struct NODISCARD ArgumentCollector final
 	{
-	private:
-		LIST m_args;
-
-	public:
 		template <class ... Args
 		> explicit ArgumentCollector(Args && ... values) noexcept : m_args{ LIST::new_() }
 		{
@@ -54,6 +50,8 @@ namespace ism
 		NODISCARD LIST args() && { return std::move(m_args); }
 
 		NODISCARD OBJ call(OBJ callable) { return ism::call_object(callable, m_args); }
+
+	private: LIST m_args;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -71,7 +69,6 @@ namespace ism
 	template <class ... Args
 	> struct NODISCARD ArgumentLoader final
 	{
-	public:
 		template <class Return, class Guard, class Func
 		> using return_type = std::conditional_t<std::is_void_v<Return>, void_type, Return>;
 
@@ -118,7 +115,6 @@ namespace ism
 	// argument record
 	struct NODISCARD ArgumentRecord final
 	{
-	public:
 		String name{};
 
 		OBJ value{};
@@ -131,7 +127,6 @@ namespace ism
 	// function record
 	struct NODISCARD FunctionRecord final
 	{
-	public:
 		~FunctionRecord() { if (free_data) { free_data(this); } }
 
 		String name{}, doc{}, signature{};
@@ -165,7 +160,6 @@ namespace ism
 	// function call
 	struct NODISCARD FunctionCall final
 	{
-	public:
 		FunctionRecord const & record;
 		
 		OBJ parent{};

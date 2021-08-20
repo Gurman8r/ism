@@ -1,40 +1,50 @@
 #include <core/api/object/cppfunction_object.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_CLASS_IMPLEMENTATION(CppFunctionObject, t)
+ISM_IMPLEMENT_CLASS_TYPE(CppFunctionObject, t)
 {
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
+	t.tp_name = "cpp_function";
 
-	t.tp_base = typeof<FUNCTION>();
+	t.tp_size = sizeof(CppFunctionObject);
+
+	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
 
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
+	t.tp_base = typeof<FUNCTION>();
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type)->OBJ
 	{
 		return !obj ? self : METHOD({ self, obj, ism::method_vectorcall });
 	};
+
+	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(CppFunctionObject); };
+
+	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((CppFunctionObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CppFunctionObject::_bind_class(OBJ scope)
+void CppFunctionObject::_bind_methods()
 {
-	CLASS_<CPP_FUNCTION>(scope, "cpp_function")
+	TYPE type{ get_class_static() };
+	DICT(type->tp_dict)["__name__"] = PROPERTY({
+		CPP_FUNCTION({ [](CPP_FUNCTION self) { return (***self).name; }, attr::is_method(type) }),
+		CPP_FUNCTION({ [](CPP_FUNCTION self, STR value) { (***self).name = value; }, attr::is_method(type) }),
+		});
 
+	CLASS_<CPP_FUNCTION>()
+	
 		.def(init<>())
-
-		.def_property("__name__", [](CPP_FUNCTION self) { return (***self).name; }, [](CPP_FUNCTION self, STR value) { (***self).name = value; })
-
+	
 		.def_property("__doc__", [](CPP_FUNCTION self) { return (***self).doc; }, [](CPP_FUNCTION self, STR value) { (***self).doc = value; })
-
+	
 		.def_property("__text_signature__", [](CPP_FUNCTION self) { return (***self).signature; }, [](CPP_FUNCTION self, STR value) { (***self).signature = value; })
 		
 		;
@@ -54,48 +64,48 @@ CppFunctionObject::~CppFunctionObject()
 	}
 }
 
-CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ get_class() }
+CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ get_class_static() }
 {
 	m_vectorcall = cppfunction_vectorcall;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CppFunctionObject::initialize_generic(FunctionRecord * record_in, std::type_info const * const * info_in, size_t argc_in)
+void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in)
 {
-	VERIFY("invalid function record" && record_in && !record_in->next);
+	VERIFY("invalid function record" && rec && !rec->next);
 
-	m_record = record_in;
+	m_record = rec;
 
-	m_record->argument_count = argc_in;
+	rec->argument_count = argc_in;
 
-	m_record->args.reserve(argc_in);
+	rec->args.reserve(argc_in);
 
 	for (size_t i = 0; i < argc_in; ++i)
 	{
 		String const arg_str{ "arg" + util::to_string(i) };
 
-		m_record->args.push_back(ArgumentRecord{ arg_str, nullptr, false, false });
+		rec->args.push_back(ArgumentRecord{ arg_str, nullptr, false, false });
 	}
 
 	// overload chaining (this is a hack, needs rethinking)
-	if (CPP_FUNCTION::check_(m_record->sibling))
+	if (CPP_FUNCTION::check_(rec->sibling))
 	{
-		auto sibling{ (CppFunctionObject *)(m_record->sibling) };
+		auto sibling{ (CppFunctionObject *)(rec->sibling) };
 
-		if (m_record->scope == sibling->m_record->scope)
+		if (rec->scope == sibling->m_record->scope)
 		{
-			m_record->next = sibling->m_record;
+			rec->next = sibling->m_record;
 
 			sibling->m_record = nullptr;
 		}
 	}
 
-	if (!m_record->next && m_record->scope)
+	if (!rec->next && rec->scope)
 	{
-		if (hasattr(m_record->scope, "__module__")) { m_module = getattr(m_record->scope, "__module__"); }
+		if (hasattr(rec->scope, "__module__")) { m_module = getattr(rec->scope, "__module__"); }
 
-		else if (hasattr(m_record->scope, "__name__")) { m_module = getattr(m_record->scope, "__name__"); }
+		else if (hasattr(rec->scope, "__name__")) { m_module = getattr(rec->scope, "__name__"); }
 	}
 }
 

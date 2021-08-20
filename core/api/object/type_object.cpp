@@ -1,93 +1,87 @@
 #include <core/api/object/type_object.hpp>
-#include <servers/script_server.hpp>
+#include <core/api/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-inline bool is_dunder_name(OBJ name)
-{
-	// "__x__"
-
-	if (!STR::check_(name)) { return false; }
-
-	String const & s{ STR(name).string() };
-
-	size_t const n{ s.size() };
-
-	return (n >= 5) && (s[0] == '_') && (s[1] == '_') && (s[n - 2] == '_') && (s[n - 1] == '_');
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-DECLEXPR(TypeDB::classes) {};
-
-void TypeDB::add_class(StringName const & name, TYPE type)
-{
-	VERIFY(!name.empty());
-	VERIFY(type);
-	VERIFY(type->ready());
-
-	hash_t const id{ ism::hash(name) };
-	VERIFY(!classes.contains<hash_t>(id));
-	classes.push_back(id, name, type);
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-TYPE TypeObject::_get_typev() const noexcept { return get_class(); }
-
 TypeObject::TypeObject(TYPE type) noexcept : Object{ type } {}
 
-TypeObject::TypeObject() noexcept : TypeObject{ get_class() } {}
+TypeObject::TypeObject() noexcept : TypeObject{ get_class_static() } {}
 
-TYPE TypeObject::get_class() noexcept { return &_class_type_static; }
+TYPE TypeObject::get_class_static() noexcept { return &_class_type_static; }
+
+TYPE TypeObject::_get_typev() const noexcept { return get_class_static(); }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_CLASS_IMPLEMENTATION(TypeObject, t)
-{
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass;
+static MemberDef type_members[] = { {/* sentinal */}, };
 
+static MethodDef type_methods[] = { {/* sentinal */}, };
+
+static GetSetDef type_getsets[] = { {/* sentinal */}, };
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+static NumberMethods type_as_number = COMPOSE(NumberMethods, m) {};
+
+static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m) {};
+
+static SequenceMethods type_as_sequence = COMPOSE(SequenceMethods, m) {};
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ISM_IMPLEMENT_CLASS_TYPE(TypeObject, t)
+{
+	t.tp_name = "type";
+	
+	t.tp_size = sizeof(TypeObject);
+	
+	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass;
+	
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 	
 	t.tp_vectorcalloffset = offsetof(TypeObject, tp_vectorcall);
+
+	t.tp_as_number = &type_as_number;
+	
+	t.tp_as_mapping = &type_as_mapping;
+	
+	t.tp_as_sequence = &type_as_sequence;
 
 	t.tp_hash = (hashfunc)[](OBJ self) { return ism::hash(TYPE(self)->tp_name); };
 	
 	t.tp_repr = (reprfunc)[](OBJ self) { return STR(TYPE(self)->tp_name); };
 	
 	t.tp_str = (reprfunc)[](OBJ self) { return STR(TYPE(self)->tp_name); };
-
+	
 	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
 
 	t.tp_getattro = (getattrofunc)type_getattro;
-
+	
 	t.tp_setattro = (setattrofunc)type_setattro;
 
-	t.tp_new = (newfunc)type_new;
+	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(TypeObject); };
+	
+	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((TypeObject *)ptr); };
 
-	t.tp_init = (initproc)type_init;
-
-	t.tp_call = (binaryfunc)type_call;
-
-	t.tp_finalize = (destructor)[](Object * ptr)
+	t.tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ
 	{
-		auto t{ (TypeObject *)ptr };
-		t->tp_base = nullptr;
-		t->tp_bases = nullptr;
-		t->tp_cache = nullptr;
-		t->tp_dict = nullptr;
-		t->tp_mro = nullptr;
-		t->tp_subclasses = nullptr;
+		VERIFY(TYPE::check_(self));
+		
+		constructor create{ TYPE(self)->tp_create };
+		
+		if (!create) { return nullptr; }
+		
+		return create(self, args);
 	};
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void TypeObject::_bind_class(OBJ scope)
+void TypeObject::_bind_methods()
 {
-	CLASS_<TYPE>(scope, "type")
+	CLASS_<TYPE>()
 
 		.def(init<>())
 
@@ -124,9 +118,9 @@ void TypeObject::_bind_class(OBJ scope)
 
 bool TypeObject::ready()
 {
-	if (has_feature(TypeFlags_Ready)) { VERIFY(check_consistency()); return true; }
+	if (tp_flags & TypeFlags_Ready) { VERIFY(check_consistency()); return true; }
 	
-	VERIFY(!has_feature(TypeFlags_Readying));
+	VERIFY(!(tp_flags & TypeFlags_Readying));
 
 	tp_flags |= TypeFlags_Readying;
 
@@ -134,7 +128,7 @@ bool TypeObject::ready()
 	
 	if (tp_base && !tp_base->tp_dict) { VERIFY(tp_base->ready()); }
 	
-	if (!get_type() && tp_base) { set_type(tp_base->get_type()); }
+	if (!ob_type && tp_base) { ob_type = tp_base->ob_type; }
 	
 	tp_bases = tp_base ? LIST::new_(tp_base) : LIST::new_();
 
@@ -203,13 +197,13 @@ bool TypeObject::is_subtype(TYPE value) const
 bool TypeObject::check_consistency() const
 {
 	// don't check static types before ready()
-	if (!has_feature(TypeFlags_Ready)) { return true; }
+	if (!(tp_flags & TypeFlags_Ready)) { return true; }
 
-	if (!TYPE::check_(handle())) {
+	if (!TYPE::check_(ptr())) {
 		FATAL("");
 	}
 
-	if (has_feature(TypeFlags_Readying)) {
+	if (tp_flags & TypeFlags_Readying) {
 		FATAL("");
 	}
 
@@ -226,14 +220,70 @@ void TypeObject::modified()
 
 Error TypeObject::update_slot(STR name)
 {
-	//switch (hash(name))
-	//{
-	//default: return Error_Unknown;
-	//
-	//case hash("__init__"): {
-	//} break;
-	//}
+	if (!name) { return Error_Unknown; }
+	switch (hash((String)name))
+	{
+	default: return Error_None;
 
+	case hash("__create__"): { tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ {
+		ISM_IDENTIFIER(__create__);
+		if (OBJ f{ type.lookup(&ID___create__) }) { return call_object(f, args); }
+		return nullptr;
+	}; } break;
+
+	case hash("__getattr__"): {} break;
+	case hash("__setattr__"): {} break;
+	case hash("__delattr__"): {} break;
+
+	case hash("__get__"): { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ {
+		ISM_IDENTIFIER(__get__);
+		if (OBJ f{ typeof(self).lookup(&ID___get__) }) { return f(self, obj, cls); }
+		return nullptr;
+	}; } break;
+
+	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ cls) -> Error {
+		ISM_IDENTIFIER(__set__);
+		if (OBJ f{ typeof(self).lookup(&ID___set__) }) { return f(self, obj, cls), Error_None; }
+		return Error_None;
+	}; } break;
+
+	case hash("__call__"): { tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
+		ISM_IDENTIFIER(__call__);
+		if (OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
+		return nullptr;
+	}; } break;
+
+	case hash("__clear__"): { tp_clear = (inquiry)[](OBJ self) -> bool {
+		ISM_IDENTIFIER(__clear__);
+		if (OBJ f{ typeof(self).lookup(&ID___clear__) }) { return call_object(f, self).cast<bool>(); }
+		return false;
+	}; } break;
+
+	case hash("__hash__"): { tp_hash = (hashfunc)[](OBJ self) -> hash_t {
+		ISM_IDENTIFIER(__hash__);
+		if (OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
+		return 0;
+	}; } break;
+
+	case hash("__len__"): { tp_len = (lenfunc)[](OBJ self) -> ssize_t {
+		ISM_IDENTIFIER(__len__);
+		if (OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
+		return -1;
+	}; } break;
+
+	case hash("__repr__"): { tp_repr = (reprfunc)[](OBJ self) -> STR {
+		ISM_IDENTIFIER(__repr__);
+		if (OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
+		return nullptr;
+	}; } break;
+
+	case hash("__str__"): { tp_str = (reprfunc)[](OBJ self) -> STR {
+		ISM_IDENTIFIER(__str__);
+		if (OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
+		return nullptr;
+	}; } break;
+
+	}
 	return Error_None;
 }
 
@@ -262,7 +312,7 @@ bool TypeObject::mro_internal(OBJ * in_old_mro)
 		// mro_implementation
 		LIST result{ LIST::new_() };
 		result.reserve(bases.size() + 1);
-		result.append(handle());
+		result.append(ptr());
 		for (TYPE const & base : bases) { result.append(base); }
 		return result;
 	}) };
@@ -282,21 +332,21 @@ bool TypeObject::mro_internal(OBJ * in_old_mro)
 
 void TypeObject::inherit_special(TypeObject * base)
 {
-	if (!has_feature(TypeFlags_HaveGc) && base->has_feature(TypeFlags_HaveGc) && (!tp_traverse && !tp_clear))
+	if (!tp_traverse && !tp_clear)
 	{
-		flag_set(tp_flags, TypeFlags_HaveGc);
 		tp_traverse = base->tp_traverse;
+
 		tp_clear = base->tp_clear;
 	}
 
-	if (base != *typeof<OBJ>() || has_feature(TypeFlags_HeapType) && !tp_new)
+	if (base != *typeof<OBJ>() || (tp_flags & TypeFlags_HeapType) && !tp_create)
 	{
-		tp_new = base->tp_new;
+		tp_create = base->tp_create;
 	}
 
 	copy_val(base, &TypeObject::tp_size);
+
 	copy_val(base, &TypeObject::tp_dictoffset);
-	//copy_val(base, &TypeObject::tp_weaklistoffset);
 
 	//if (LIST mro{ base->tp_mro })
 	//{
@@ -364,41 +414,48 @@ void TypeObject::inherit_slots(TypeObject * base)
 
 	basebase = *(base->tp_base);
 
-	copy_slot(base, basebase, &TypeObject::tp_dealloc);
+	copy_slot(base, basebase, &TypeObject::tp_destroy);
 
 	if (!tp_getattr && !tp_getattro) { tp_getattr = base->tp_getattr; tp_getattro = base->tp_getattro; }
 
 	if (!tp_setattr && !tp_setattro) { tp_setattr = base->tp_setattr; tp_setattro = base->tp_setattro; }
 
 	copy_slot(base, basebase, &TypeObject::tp_len);
+	
 	copy_slot(base, basebase, &TypeObject::tp_repr);
+	
 	copy_slot(base, basebase, &TypeObject::tp_str);
 
 	copy_slot(base, basebase, &TypeObject::tp_vectorcalloffset);
-	if (!tp_call && base->has_feature(TypeFlags_HaveVectorCall) && !has_feature(TypeFlags_HeapType))
+	
+	if (!tp_call && (base->tp_flags & TypeFlags_HaveVectorCall) && !(tp_flags & TypeFlags_HeapType))
 	{
 		flag_set(tp_flags, TypeFlags_HaveVectorCall);
 	}
+
 	copy_slot(base, basebase, &TypeObject::tp_call);
 
-	if (!tp_compare && !tp_hash && !tp_dict->contains("__eq__") && !tp_dict->contains("__hash__"))
+	if (!tp_compare && !tp_hash)
 	{
-		tp_compare = base->tp_compare;
-		tp_hash = base->tp_hash;
+		ISM_IDENTIFIER(__eq__);
+		ISM_IDENTIFIER(__hash__);
+		if (DICT dict{ tp_dict }; dict && !dict.contains(&ID___eq__) && !dict.contains(&ID___hash__))
+		{
+			tp_compare = base->tp_compare;
+			tp_hash = base->tp_hash;
+		}
 	}
 
 	copy_slot(base, basebase, &TypeObject::tp_descr_get);
-	if (base->tp_descr_get && tp_descr_get == base->tp_descr_get && !has_feature(TypeFlags_HeapType) && base->has_feature(TypeFlags_MethodDescriptor))
+
+	if (base->tp_descr_get && tp_descr_get == base->tp_descr_get && !(tp_flags & TypeFlags_HeapType) && (base->tp_flags & TypeFlags_MethodDescriptor))
 	{
 		flag_set(tp_flags, TypeFlags_MethodDescriptor);
 	}
+
 	copy_slot(base, basebase, &TypeObject::tp_descr_set);
 
 	copy_slot(base, basebase, &TypeObject::tp_dictoffset);
-	copy_slot(base, basebase, &TypeObject::tp_init);
-	copy_slot(base, basebase, &TypeObject::tp_alloc);
-	copy_slot(base, basebase, &TypeObject::tp_finalize);
-	copy_slot(base, basebase, &TypeObject::tp_free);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -456,54 +513,15 @@ Error ism::type_setattro(TYPE type, OBJ name, OBJ value)
 	{
 		type->modified();
 
-		if (is_dunder_name(name)) { err = type->update_slot(name); }
+		if (is_dunder_name(name))
+		{
+			err = type->update_slot(name);
+		}
 
 		VERIFY(type->check_consistency());
 	}
 
 	return err;
-}
-
-OBJ ism::type_new(TYPE metatype, OBJ args)
-{
-	TYPE type{ TYPE::new_() };
-
-	return type;
-}
-
-Error ism::type_init(OBJ self, OBJ args)
-{
-	Error err{ object_init(self, args) };
-
-	return err;
-}
-
-OBJ ism::type_call(OBJ self, OBJ args)
-{
-	VERIFY(TYPE::check_(self));
-
-	TYPE type{ self };
-
-	if (!type->tp_new) { return nullptr; }
-	
-	OBJ result{ type->tp_new(type, args) };
-	
-	if (!result) { return nullptr; }
-
-	if (isinstance(result, type)) {}
-	
-	if (!typeof(result).is_subtype(type)) { return result; }
-	
-	type = typeof(result);
-	
-	if (type->tp_init)
-	{
-		Error err{ type->tp_init(result, args) };
-	
-		VERIFY(err == Error_None);
-	}
-	
-	return result;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
