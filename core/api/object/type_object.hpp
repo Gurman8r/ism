@@ -29,19 +29,17 @@ namespace ism
 		String				tp_name				{};
 		ssize_t				tp_size				{};
 		int32_t				tp_flags			{};
-		String				tp_doc				{};
-
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
-
+		
+		newfunc				tp_new				{};
+		delfunc				tp_del				{};
 		binaryfunc			tp_call				{};
-		inquiry				tp_clear			{};
 		cmpfunc				tp_compare			{};
 		hashfunc			tp_hash				{};
 		lenfunc				tp_len				{};
 		reprfunc			tp_repr				{};
 		reprfunc			tp_str				{};
-		traverseproc		tp_traverse			{};
 
 		getattrfunc			tp_getattr			{};
 		setattrfunc			tp_setattr			{};
@@ -54,12 +52,8 @@ namespace ism
 		SequenceMethods *	tp_as_sequence		{};
 		MappingMethods *	tp_as_mapping		{};
 
-		constructor			tp_create			{};
-		destructor			tp_destroy			{};
-
 		Ref<TypeObject>		tp_base				{ /* type handle doesn't exist yet */ };
 		OBJ					tp_bases			{};
-		OBJ					tp_cache			{};
 		OBJ					tp_dict				{};
 		OBJ					tp_mro				{};
 		OBJ					tp_subclasses		{};
@@ -77,8 +71,6 @@ namespace ism
 		void modified();
 
 		Error update_slot(STR name);
-
-		Error update_all_slots();
 
 	protected:
 		bool add_subclass(TypeObject * type);
@@ -169,8 +161,6 @@ namespace ism
 		ISM_HANDLE(TypeObject, ISM_CHECK_TYPE);
 
 	public:
-		NODISCARD bool has_feature(int32_t flag) const { return flag_read(m_ptr->tp_flags, flag); }
-
 		NODISCARD bool ready() const { return m_ptr->ready(); }
 
 		NODISCARD OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
@@ -178,6 +168,15 @@ namespace ism
 		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
 
 		NODISCARD auto name() const { return attr("__name__"); }
+
+	public:
+		NODISCARD bool has_feature(int32_t flag) const { return flag_read(m_ptr->tp_flags, flag); }
+
+		NODISCARD bool is_abstract() const { return has_feature(TypeFlags_IsAbstract); }
+
+		NODISCARD bool is_final() const { return has_feature(TypeFlags_IsFinal); }
+
+		NODISCARD bool is_local() const { return has_feature(TypeFlags_IsLocal); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -31,9 +31,9 @@ ISM_IMPLEMENT_CLASS_TYPE(IntObject, t)
 		}
 	};
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(IntObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(IntObject); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((IntObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((IntObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -41,8 +41,6 @@ ISM_IMPLEMENT_CLASS_TYPE(IntObject, t)
 void IntObject::_bind_methods()
 {
 	CLASS_<INT>()
-
-		.def(init<>())
 
 		.def(init<storage_type>())
 

@@ -15,7 +15,7 @@ namespace ism
 		static void _bind_methods();
 
 	public:
-		OBJ m_name{}, m_doc{}, m_qualname{};
+		OBJ m_name{}, m_qualname{};
 
 		OBJ m_dict{}, m_module{};
 

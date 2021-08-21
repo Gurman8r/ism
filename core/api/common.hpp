@@ -159,11 +159,10 @@ namespace ism
 		TypeFlags_HaveVectorCall	= 1 << 2,
 		TypeFlags_Ready				= 1 << 3,
 		TypeFlags_Readying			= 1 << 4,
-		TypeFlags_HaveGc			= 1 << 5,
-		TypeFlags_MethodDescriptor	= 1 << 6,
-		TypeFlags_IsAbstract		= 1 << 7,
-		TypeFlags_IsFinal			= 1 << 8,
-		TypeFlags_IsLocal			= 1 << 9,
+		TypeFlags_MethodDescriptor	= 1 << 5,
+		TypeFlags_IsAbstract		= 1 << 6,
+		TypeFlags_IsFinal			= 1 << 7,
+		TypeFlags_IsLocal			= 1 << 8,
 
 		TypeFlags_Int_Subclass		= 1 << 25,
 		TypeFlags_Float_Subclass	= 1 << 26,
@@ -216,9 +215,6 @@ namespace ism
 	ALIAS(sizesizeargfunc)	OBJ(*)(OBJ o, ssize_t i, ssize_t j);
 	ALIAS(objobjproc)		int32_t(*)(OBJ a, OBJ b);
 
-	ALIAS(visitproc)		void(*)(OBJ, void *);
-	ALIAS(traverseproc)		void(*)(OBJ, visitproc, void *);
-
 	ALIAS(getattrfunc)		OBJ(*)(OBJ obj, cstring name);
 	ALIAS(setattrfunc)		Error(*)(OBJ obj, cstring name, OBJ value);
 	ALIAS(getattrofunc)		OBJ(*)(OBJ obj, OBJ name);
@@ -231,8 +227,8 @@ namespace ism
 	ALIAS(lenfunc)			ssize_t(*)(OBJ o);
 	ALIAS(reprfunc)			STR(*)(OBJ o);
 
-	ALIAS(constructor)		OBJ(*)(TYPE type, OBJ args);
-	ALIAS(destructor)		void(*)(Object * ptr);
+	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
+	ALIAS(delfunc)			void(*)(Object * ptr);
 
 	ALIAS(cfunction)		OBJ(*)(OBJ self, OBJ args);
 	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argc, size_t argv);
@@ -385,8 +381,6 @@ namespace ism
 		
 		NODISCARD bool greater_equal(ObjectAPI const & other) const noexcept { return compare(other) >= 0; }
 
-		NODISCARD auto doc() const { return attr("__doc__"); }
-
 	private:
 		NODISCARD auto compare(ObjectAPI const & o) const
 		{
@@ -513,8 +507,6 @@ namespace ism
 
 		Ref(value_type const & value) { instance(value); }
 
-		Ref(value_type && value) noexcept { instance(std::move(value)); }
-
 		Ref & operator=(nullptr_t) { unref(); return (*this); }
 
 		Ref & operator=(Ref const & value) { reset(value); return (*this); }
@@ -523,8 +515,6 @@ namespace ism
 		> Ref & operator=(Ref<U> const & value) { reset(value); return (*this); }
 
 		Ref & operator=(value_type const & value) { instance(value); return (*this); }
-
-		Ref & operator=(value_type && value) noexcept { instance(std::move(value)); return (*this); }
 
 	public:
 		template <class ... Args
@@ -539,13 +529,6 @@ namespace ism
 		> void instance(Args && ... args)
 		{
 			ref(ism::construct_or_initialize<value_type>(FWD(args)...));
-		}
-
-		void unref()
-		{
-			if (m_ptr && m_ptr->dec_ref()) { ism::default_delete(m_ptr); }
-			
-			m_ptr = nullptr;
 		}
 
 		void reset(Ref const & value)
@@ -571,6 +554,13 @@ namespace ism
 			r.m_ptr = dynamic_cast<value_type *>(other);
 			ref(r);
 			r.m_ptr = nullptr;
+		}
+
+		void unref()
+		{
+			if (m_ptr && m_ptr->dec_ref()) { ism::default_delete(m_ptr); }
+			
+			m_ptr = nullptr;
 		}
 
 		value_type * release() noexcept
@@ -627,11 +617,11 @@ namespace ism
 	// handle default
 #define ISM_HANDLE(m_class, m_check)																	\
 public:																									\
-	using typename ism::Ref<m_class>::value_type;														\
+	using typename Ref<m_class>::value_type;															\
 																										\
-	NODISCARD static ism::TYPE get_class_static() noexcept { return m_class::get_class_static(); }		\
+	NODISCARD static TYPE get_class_static() noexcept { return m_class::get_class_static(); }			\
 																										\
-	NODISCARD static bool check_(ism::OBJ const & o) { return o && (bool)(m_check(o)); }				\
+	NODISCARD static bool check_(OBJ const & o) { return o && (bool)(m_check(o)); }						\
 																										\
 	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }							\
 																										\
@@ -643,9 +633,9 @@ public:																									\
 																										\
 	Handle(m_class * value) { if (value) { ref_pointer(value); } }										\
 																										\
-	Handle(ism::Ref<m_class> const & value) { ref(value); }												\
+	Handle(Ref<m_class> const & value) { ref(value); }													\
 																										\
-	template <class U> Handle(ism::Ref<U> const & value) { reset(value); }								\
+	template <class U> Handle(Ref<U> const & value) { reset(value); }									\
 																										\
 	Handle(m_class const & value) { instance(value); }													\
 																										\
@@ -653,9 +643,9 @@ public:																									\
 																										\
 	Handle & operator=(nullptr_t) { unref(); return (*this); }											\
 																										\
-	Handle & operator=(ism::Ref<m_class> const & value) { reset(value); return (*this); }				\
+	Handle & operator=(Ref<m_class> const & value) { reset(value); return (*this); }					\
 																										\
-	template <class U> Handle & operator=(ism::Ref<U> const & value) { reset(value); return (*this); }	\
+	template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }		\
 																										\
 	Handle & operator=(m_class const & value) { instance(value); return (*this); }						\
 																										\

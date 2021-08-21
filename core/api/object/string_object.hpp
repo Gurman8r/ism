@@ -92,6 +92,8 @@ namespace ism
 
 		NODISCARD auto string() & -> storage_type & { return **m_ptr; }
 
+		NODISCARD auto string() && -> storage_type && { return std::move(**m_ptr); }
+
 		NODISCARD auto c_str() const { return (**m_ptr).c_str(); }
 
 		NODISCARD auto data() const { return (**m_ptr).data(); }

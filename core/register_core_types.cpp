@@ -63,7 +63,6 @@ void ism::unregister_core_types()
 		if (!t) { continue; }
 		t->tp_base = nullptr;
 		t->tp_bases = nullptr;
-		t->tp_cache = nullptr;
 		t->tp_dict = nullptr;
 		t->tp_mro = nullptr;
 		t->tp_subclasses = nullptr;

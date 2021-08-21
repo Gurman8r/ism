@@ -78,7 +78,7 @@ ISM_IMPLEMENT_CLASS_TYPE(Object, t)
 
 	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete(ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete(ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -94,7 +94,7 @@ void Object::_bind_methods()
 
 OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 {
-	TYPE type{ typeof(CHECK(obj)) };
+	TYPE type{ typeof(obj) };
 
 	if (!type->tp_dict && !type->ready()) { return nullptr; }
 
@@ -102,11 +102,13 @@ OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 
 	descrgetfunc fn{};
 
-	if (TYPE dtype; descr && (dtype = typeof(descr)))
+	if (descr)
 	{
-		fn = dtype->tp_descr_get;
+		TYPE descr_type{ typeof(descr) };
 
-		if (fn && dtype->tp_descr_set)
+		fn = descr_type->tp_descr_get;
+
+		if (fn && descr_type->tp_descr_set)
 		{
 			return fn(descr, obj, type);
 		}
@@ -131,7 +133,7 @@ OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 
 Error ism::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 {
-	TYPE type{ typeof(CHECK(obj)) };
+	TYPE type{ typeof(obj) };
 
 	if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
 

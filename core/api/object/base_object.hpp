@@ -144,7 +144,7 @@ namespace ism
 
 			TYPE type{ typeof(obj) };
 
-			if (type && type->tp_destroy) { type->tp_destroy(obj); }
+			if (type && type->tp_del) { type->tp_del(obj); }
 			
 			else { memdelete((Object *)ptr); }
 		}
@@ -188,7 +188,7 @@ namespace ism
 	> NODISCARD TYPE typeof() noexcept { return T::get_class_static(); }
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o) noexcept { return CHECK(o)->get_type(); }
+	> NODISCARD TYPE typeof(T && o) noexcept { return CHECK(FWD(o))->get_type(); }
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }

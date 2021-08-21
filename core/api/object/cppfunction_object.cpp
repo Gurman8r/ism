@@ -24,9 +24,9 @@ ISM_IMPLEMENT_CLASS_TYPE(CppFunctionObject, t)
 		return !obj ? self : METHOD({ self, obj, ism::method_vectorcall });
 	};
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(CppFunctionObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(CppFunctionObject); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((CppFunctionObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((CppFunctionObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -40,10 +40,6 @@ void CppFunctionObject::_bind_methods()
 		});
 
 	CLASS_<CPP_FUNCTION>()
-	
-		.def(init<>())
-	
-		.def_property("__doc__", [](CPP_FUNCTION self) { return (***self).doc; }, [](CPP_FUNCTION self, STR value) { (***self).doc = value; })
 	
 		.def_property("__text_signature__", [](CPP_FUNCTION self) { return (***self).signature; }, [](CPP_FUNCTION self, STR value) { (***self).signature = value; })
 		

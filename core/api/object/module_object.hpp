@@ -17,7 +17,6 @@ namespace ism
 	public:
 		DICT		m_dict	{ DICT::new_() };
 		STR			m_name	{};
-		STR			m_doc	{};
 		inquiry		m_clear	{};
 		freefunc	m_free	{};
 

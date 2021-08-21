@@ -10,9 +10,9 @@ namespace ism
 	> class CLASS_ : public TYPE
 	{
 	public:
-		using holder_type = typename std::conditional_t<is_ref_v<_type>, _type, Handle<_type>>;
+		using holder_type = typename std::conditional_t<!is_api_v<_type>, GENERIC, std::conditional_t<is_ref_v<_type>, _type, Handle<_type>>>;
 		
-		using value_type = typename std::conditional_t<is_ref_v<_type>, typename _type::value_type, _type>;
+		using value_type = typename std::conditional_t<!is_api_v<_type>, _type, std::conditional_t<is_ref_v<_type>, typename _type::value_type, _type>>;
 		
 		using type = _type;
 	
@@ -23,6 +23,7 @@ namespace ism
 			VERIFY(is_valid());
 			m_ptr->tp_name = name;
 			m_ptr->tp_size = sizeof(value_type);
+			m_ptr->tp_del = (delfunc)[](Object * ptr) {};
 			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
 		}
 

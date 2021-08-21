@@ -20,7 +20,7 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__create__", [](Args ... args)
+			return c.def("__new__", [](Args ... args)
 			{
 				return Holder<Class>{ Cpp<Class>{ args... } };
 			}
@@ -31,7 +31,11 @@ namespace ism::initimpl
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
 			// TODO...
-			return c;
+			return c.def("__new__", [](Args ... args)
+			{
+				return GENERIC();
+			}
+			, attr::is_constructor(), FWD(extra)...);
 		}
 	};
 
@@ -48,7 +52,7 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__create__", [](Args ... args)
+			return c.def("__new__", [func = std::move(class_factory)](Args ... args)
 			{
 				return Holder<Class>{ func(args...) };
 			}
@@ -59,7 +63,11 @@ namespace ism::initimpl
 		> Class & execute(Class & c, Extra && ... extra)
 		{
 			// TODO...
-			return c;
+			return c.def("__new__", [func = std::move(class_factory)](Args ... args)
+			{
+				return GENERIC();
+			}
+			, attr::is_constructor(), FWD(extra)...);
 		}
 	};
 

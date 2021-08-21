@@ -15,7 +15,11 @@ namespace ism
 		static void _bind_methods();
 
 	public:
-		GenericObject() : Object{ get_class_static() } {}
+		virtual ~GenericObject() override {}
+
+		explicit GenericObject(TYPE type) noexcept : Object{ type } {}
+
+		GenericObject() noexcept : GenericObject{ get_class_static() } {}
 	};
 
 	// generic delete

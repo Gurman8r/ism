@@ -31,9 +31,9 @@ ISM_IMPLEMENT_CLASS_TYPE(FloatObject, t)
 		}
 	};
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(FloatObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(FloatObject); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((FloatObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((FloatObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -42,8 +42,6 @@ void FloatObject::_bind_methods()
 {
 	CLASS_<FLT>()
 
-		.def(init<>())
-		
 		.def(init<storage_type>())
 
 		;

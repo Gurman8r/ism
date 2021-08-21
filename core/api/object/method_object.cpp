@@ -19,9 +19,9 @@ ISM_IMPLEMENT_CLASS_TYPE(MethodObject, t)
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) { return self; };
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(MethodObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(MethodObject); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((MethodObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((MethodObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -29,8 +29,6 @@ ISM_IMPLEMENT_CLASS_TYPE(MethodObject, t)
 void MethodObject::_bind_methods()
 {
 	CLASS_<METHOD>()
-
-		.def(init<>())
 
 		;
 }

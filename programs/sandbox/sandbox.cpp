@@ -44,6 +44,10 @@ namespace ism
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			;
 
+		//CAPSULE test_cap({ new Test, [](void * ptr) { delete((Test *)ptr); } });
+
+		//CLASS_<Test>(m, "Test");
+
 		DICT test_dict;
 		test_dict = typeof<DICT>()();
 		VERIFY(test_dict);
@@ -55,13 +59,13 @@ namespace ism
 
 		MAIN_PRINT("%s\n", typeof<METHOD>().attr("__subclasscheck__")(typeof<FUNCTION>()) ? "true" : "false");
 		
-		LIST list = m.attr("list") = LIST::new_();
+		LIST list = m.attr("list") = typeof<LIST>()();
 		list.append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0]).c_str());
 		OBJ nn = typeof<LIST>().attr("__name__");
 		MAIN_PRINT("%s\n", STR(nn).c_str());
 		
-		OBJ d{ DICT::new_() };
+		OBJ d{ typeof<DICT>()() };
 		d["ABC"] = 42;
 		d["DEF"] = "Hello, World!";
 		VERIFY(d.contains("ABC"));

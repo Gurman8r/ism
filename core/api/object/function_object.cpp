@@ -17,9 +17,9 @@ ISM_IMPLEMENT_CLASS_TYPE(FunctionObject, t)
 
 	t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(FunctionObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(FunctionObject); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((FunctionObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((FunctionObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -28,11 +28,7 @@ void FunctionObject::_bind_methods()
 {
 	CLASS_<FUNCTION>()
 
-		.def(init<>())
-
 		//.def_property("__name__", [](FUNCTION self) { return self->m_name; }, [](FUNCTION self, STR value) { self->m_name = value; })
-
-		//.def_property("__doc__", [](FUNCTION self) { return self->m_doc; }, [](FUNCTION self, STR value) { self->m_doc = value; })
 
 		;
 }

@@ -27,14 +27,9 @@ ISM_IMPLEMENT_CLASS_TYPE(ListObject, t)
 		}
 	};
 
-	t.tp_vectorcall = (vectorcallfunc)[](OBJ callable, OBJ const * argv, size_t argc) -> OBJ
-	{
-		return nullptr;
-	};
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(ListObject); };
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(ListObject); };
-
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((ListObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((ListObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -43,13 +38,7 @@ void ListObject::_bind_methods()
 {
 	CLASS_<LIST>()
 
-		.def(init<>())
-
 		.def("__contains__", &LIST::contains<OBJ const &>)
-
-		.def("__getitem__", [](LIST self, INT index) { return self[index]; })
-
-		.def("__setitem__", [](LIST self, INT index, OBJ value) { self[index] = value; })
 
 		;
 }

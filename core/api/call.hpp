@@ -129,7 +129,7 @@ namespace ism
 	{
 		~FunctionRecord() { if (free_data) { free_data(this); } }
 
-		String name{}, doc{}, signature{};
+		String name{}, signature{};
 
 		OBJ(*impl)(struct FunctionCall &){};
 

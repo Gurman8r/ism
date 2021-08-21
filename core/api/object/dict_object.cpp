@@ -17,9 +17,9 @@ ISM_IMPLEMENT_CLASS_TYPE(DictObject, t)
 
 	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(DictObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(DictObject); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((DictObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((DictObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -27,8 +27,6 @@ ISM_IMPLEMENT_CLASS_TYPE(DictObject, t)
 void DictObject::_bind_methods()
 {
 	CLASS_<DICT>()
-
-		.def(init<>())
 
 		.def("__contains__", &DICT::contains<OBJ const &>)
 

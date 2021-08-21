@@ -61,15 +61,15 @@ ISM_IMPLEMENT_CLASS_TYPE(TypeObject, t)
 	
 	t.tp_setattro = (setattrofunc)type_setattro;
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(TypeObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(TypeObject); };
 	
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((TypeObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((TypeObject *)ptr); };
 
 	t.tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ
 	{
 		VERIFY(TYPE::check_(self));
 		
-		constructor create{ TYPE(self)->tp_create };
+		newfunc create{ TYPE(self)->tp_new };
 		
 		if (!create) { return nullptr; }
 		
@@ -82,8 +82,6 @@ ISM_IMPLEMENT_CLASS_TYPE(TypeObject, t)
 void TypeObject::_bind_methods()
 {
 	CLASS_<TYPE>()
-
-		.def(init<>())
 
 		.def("__contains__", [](TYPE self, OBJ value) { return DICT(self->tp_dict).contains(value); })
 
@@ -108,8 +106,6 @@ void TypeObject::_bind_methods()
 		.def_property_readonly("__qualname__", [](TYPE self) { return STR(/* TODO */); })
 	
 		.def_property("__name__", [](TYPE self) { return self->tp_name; }, [](TYPE self, STR value) { self->tp_name = value; })
-	
-		.def_property("__doc__", [](TYPE self) { return self->tp_doc; }, [](TYPE self, STR value) { self->tp_doc = value; })
 
 		;
 }
@@ -141,7 +137,9 @@ bool TypeObject::ready()
 	for (TYPE const & base : LIST(tp_mro)) { inherit_slots(*base); }
 
 	copy_val(*tp_base, &TypeObject::tp_as_number);
+	
 	copy_val(*tp_base, &TypeObject::tp_as_sequence);
+	
 	copy_val(*tp_base, &TypeObject::tp_as_mapping);
 
 	for (TYPE const & base : LIST(tp_bases)) { base->add_subclass(this); }
@@ -225,70 +223,53 @@ Error TypeObject::update_slot(STR name)
 	{
 	default: return Error_None;
 
-	case hash("__create__"): { tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ {
-		ISM_IDENTIFIER(__create__);
-		if (OBJ f{ type.lookup(&ID___create__) }) { return call_object(f, args); }
+	case hash("__new__"): { tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ {
+		if (ISM_IDENTIFIER(__new__); OBJ f{ type.lookup(&ID___new__) }) { return call_object(f, args); }
 		return nullptr;
 	}; } break;
+
+	case hash("__del__"): {} break;
 
 	case hash("__getattr__"): {} break;
 	case hash("__setattr__"): {} break;
 	case hash("__delattr__"): {} break;
 
 	case hash("__get__"): { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ {
-		ISM_IDENTIFIER(__get__);
-		if (OBJ f{ typeof(self).lookup(&ID___get__) }) { return f(self, obj, cls); }
+		if (ISM_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) { return call_object(f, LIST({ { self, obj, cls } })); }
 		return nullptr;
 	}; } break;
 
 	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ cls) -> Error {
-		ISM_IDENTIFIER(__set__);
-		if (OBJ f{ typeof(self).lookup(&ID___set__) }) { return f(self, obj, cls), Error_None; }
-		return Error_None;
+		if (ISM_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) { return call_object(f, LIST({ { self, obj, cls } })), Error_None; }
+		return Error_Unknown;
 	}; } break;
 
 	case hash("__call__"): { tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
-		ISM_IDENTIFIER(__call__);
-		if (OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
+		if (ISM_IDENTIFIER(__call__); OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
 		return nullptr;
 	}; } break;
 
-	case hash("__clear__"): { tp_clear = (inquiry)[](OBJ self) -> bool {
-		ISM_IDENTIFIER(__clear__);
-		if (OBJ f{ typeof(self).lookup(&ID___clear__) }) { return call_object(f, self).cast<bool>(); }
-		return false;
-	}; } break;
-
 	case hash("__hash__"): { tp_hash = (hashfunc)[](OBJ self) -> hash_t {
-		ISM_IDENTIFIER(__hash__);
-		if (OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
+		if (ISM_IDENTIFIER(__hash__); OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
 		return 0;
 	}; } break;
 
 	case hash("__len__"): { tp_len = (lenfunc)[](OBJ self) -> ssize_t {
-		ISM_IDENTIFIER(__len__);
-		if (OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
+		if (ISM_IDENTIFIER(__len__); OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
 		return -1;
 	}; } break;
 
 	case hash("__repr__"): { tp_repr = (reprfunc)[](OBJ self) -> STR {
-		ISM_IDENTIFIER(__repr__);
-		if (OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
+		if (ISM_IDENTIFIER(__repr__); OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
 		return nullptr;
 	}; } break;
 
 	case hash("__str__"): { tp_str = (reprfunc)[](OBJ self) -> STR {
-		ISM_IDENTIFIER(__str__);
-		if (OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
+		if (ISM_IDENTIFIER(__str__); OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
 		return nullptr;
 	}; } break;
 
 	}
-	return Error_None;
-}
-
-Error TypeObject::update_all_slots()
-{
 	return Error_None;
 }
 
@@ -332,16 +313,9 @@ bool TypeObject::mro_internal(OBJ * in_old_mro)
 
 void TypeObject::inherit_special(TypeObject * base)
 {
-	if (!tp_traverse && !tp_clear)
+	if (typeof<OBJ>() != base || (tp_flags & TypeFlags_HeapType) && !tp_new)
 	{
-		tp_traverse = base->tp_traverse;
-
-		tp_clear = base->tp_clear;
-	}
-
-	if (base != *typeof<OBJ>() || (tp_flags & TypeFlags_HeapType) && !tp_create)
-	{
-		tp_create = base->tp_create;
+		tp_new = base->tp_new;
 	}
 
 	copy_val(base, &TypeObject::tp_size);
@@ -414,7 +388,7 @@ void TypeObject::inherit_slots(TypeObject * base)
 
 	basebase = *(base->tp_base);
 
-	copy_slot(base, basebase, &TypeObject::tp_destroy);
+	copy_slot(base, basebase, &TypeObject::tp_del);
 
 	if (!tp_getattr && !tp_getattro) { tp_getattr = base->tp_getattr; tp_getattro = base->tp_getattro; }
 
@@ -442,6 +416,7 @@ void TypeObject::inherit_slots(TypeObject * base)
 		if (DICT dict{ tp_dict }; dict && !dict.contains(&ID___eq__) && !dict.contains(&ID___hash__))
 		{
 			tp_compare = base->tp_compare;
+
 			tp_hash = base->tp_hash;
 		}
 	}

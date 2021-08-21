@@ -25,9 +25,9 @@ ISM_IMPLEMENT_CLASS_TYPE(PropertyObject, t)
 		return PROPERTY(self).set(obj, value), Error_None;
 	};
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(PropertyObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(PropertyObject); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((PropertyObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((PropertyObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -35,8 +35,6 @@ ISM_IMPLEMENT_CLASS_TYPE(PropertyObject, t)
 void PropertyObject::_bind_methods()
 {
 	CLASS_<PROPERTY>()
-
-		.def(init<>())
 
 		;
 }

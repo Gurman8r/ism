@@ -20,6 +20,10 @@ namespace ism
 
 		Batch<hash_t, StringName, TYPE> classes;
 
+		TypeMap<TYPE> builtin_types{};
+
+		TypeMap<TYPE> generic_types{};
+
 	public:
 		NODISCARD static Internals & get_singleton() noexcept { return singleton; }
 
@@ -38,12 +42,7 @@ namespace ism
 		{
 			T::initialize_class();
 
-			TYPE t{ *singleton.classes.map<hash_t, TYPE>(hash(ctti::type_v<T>)) };
-
-			if (t.is_null())
-			{
-				FATAL("failed to register class");
-			}
+			VERIFY(TYPE(*singleton.classes.map<hash_t, TYPE>(hash(ctti::type_v<T>))));
 		}
 	};
 

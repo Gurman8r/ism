@@ -82,16 +82,16 @@ namespace ism::attr
 	};
 
 	// doc
-	ISM_ATTR_STRING(doc, value);
-	template <> ISM_PROCESS_ATTR(doc) {
-		static void init(FunctionRecord & r, doc && a) { r.doc = a.value; }
-		static void init(TypeObject & r, doc && a) { r.tp_doc = a.value; }
-	};
-	template <> ISM_PROCESS_ATTR(cstring) {
-		static void init(FunctionRecord & r, cstring a) { r.doc = a; }
-		static void init(TypeObject & r, cstring a) { r.tp_doc = a; }
-	};
-	template <> ISM_PROCESS_ATTR_BASE(char *, cstring) {};
+	//ISM_ATTR_STRING(doc, value);
+	//template <> ISM_PROCESS_ATTR(doc) {
+	//	static void init(FunctionRecord & r, doc && a) { r.doc = a.value; }
+	//	static void init(TypeObject & r, doc && a) { r.tp_doc = a.value; }
+	//};
+	//template <> ISM_PROCESS_ATTR(cstring) {
+	//	static void init(FunctionRecord & r, cstring a) { r.doc = a; }
+	//	static void init(TypeObject & r, cstring a) { r.tp_doc = a; }
+	//};
+	//template <> ISM_PROCESS_ATTR_BASE(char *, cstring) {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -143,18 +143,6 @@ namespace ism::attr
 		static void init(TypeObject & r, T && a) { LIST(r.tp_bases).append(typeof(FWD(a))); }
 	};
 
-	// multiple inheritance
-	ISM_ATTR_EMPTY(multiple_inheritance);
-	template <> ISM_PROCESS_ATTR(multiple_inheritance) {
-		static void init(TypeObject & r, multiple_inheritance && a) { if (!r.tp_bases) { r.tp_bases = LIST::new_(); } }
-	};
-
-	// dynamic_attr
-	ISM_ATTR_EMPTY(dynamic_attr);
-	template <> ISM_PROCESS_ATTR(dynamic_attr) {
-		static void init(TypeObject & r, dynamic_attr && a) { if (!r.tp_dict) { r.tp_dict = DICT::new_(); } }
-	};
-
 	// is_final
 	ISM_ATTR_EMPTY(is_final);
 	template <> ISM_PROCESS_ATTR(is_final) {
@@ -170,13 +158,7 @@ namespace ism::attr
 	// module_local
 	ISM_ATTR_BOOL(module_local, value);
 	template <> ISM_PROCESS_ATTR(module_local) {
-		static void init(TypeObject & r, module_local && a) { flag_write(r.tp_flags, TypeFlags_IsFinal, a.value); }
-	};
-
-	// arithmetic
-	ISM_ATTR_EMPTY(arithmetic);
-	template <> ISM_PROCESS_ATTR(arithmetic) {
-		static void init(TypeObject & r, arithmetic && a) { /* nothing to do here */ }
+		static void init(TypeObject & r, module_local && a) { flag_write(r.tp_flags, TypeFlags_IsLocal, a.value); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -197,7 +179,7 @@ namespace ism::attr
 	{
 		struct type
 		{
-			T guard{}; // compose multiple guard types with left-to-right default-constructor order
+			T guard{}; // compose multiple guard types with left-to-right default-newfunc order
 
 			typename call_guard<Ts...>::type next{};
 		};

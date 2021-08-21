@@ -17,14 +17,11 @@ namespace ism
 	public:
 		void * m_pointer{}, * m_context{};
 
-		destructor m_closure{};
+		delfunc m_closure{};
 
-		String m_name{}, m_doc{};
+		String m_name{};
 
-		virtual ~CapsuleObject() override
-		{
-			if (m_closure) { m_closure((Object *)m_pointer); }
-		}
+		virtual ~CapsuleObject() override { if (m_closure) { m_closure(this); } }
 
 		CapsuleObject() : Object{ get_class_static() } {}
 
@@ -35,7 +32,7 @@ namespace ism
 			m_closure = nullptr;
 		}
 
-		CapsuleObject(void const * value, destructor closure = nullptr) : CapsuleObject{}
+		CapsuleObject(void const * value, delfunc closure = nullptr) : CapsuleObject{}
 		{
 			m_pointer = (void *)value;
 			m_context = nullptr;
@@ -45,8 +42,8 @@ namespace ism
 		CapsuleObject(void const * value, void(*closure)(void *)) : CapsuleObject{}
 		{
 			m_pointer = (void *)value;
-			m_context = nullptr;
-			m_closure = (destructor)[](Object * o)
+			m_context = (void *)closure;
+			m_closure = (delfunc)[](Object * o)
 			{
 				if (auto self{ dynamic_cast<CapsuleObject *>(o) })
 				{
@@ -61,7 +58,7 @@ namespace ism
 		{
 			m_pointer = (void *)closure;
 			m_context = nullptr;
-			m_closure = (destructor)[](Object * o)
+			m_closure = (delfunc)[](Object * o)
 			{
 				if (auto self{ dynamic_cast<CapsuleObject *>(o) })
 				{

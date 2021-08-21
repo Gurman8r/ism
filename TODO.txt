@@ -1,7 +1,22 @@
-class constructors / init
-
 function overloading (kind of works)
 
 global type database (map cpptype to typeobject)
 
 generic types
+
+
+
+class OBJ			;
+class TYPE			;
+class INT			;
+class FLT			;
+class STR			;
+class LIST			;
+class DICT			;
+class CAPSULE		;
+class FUNCTION		;
+class METHOD		;	
+class PROPERTY		;
+class CPP_FUNCTION	;
+class MODULE		;	
+class GENERIC		;

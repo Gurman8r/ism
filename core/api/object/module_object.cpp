@@ -29,9 +29,9 @@ ISM_IMPLEMENT_CLASS_TYPE(ModuleObject, t)
 		}
 	};
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(ModuleObject((String)STR(args[0]))); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(ModuleObject((String)STR(args[0]))); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((ModuleObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((ModuleObject *)ptr); };
 };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -40,13 +40,11 @@ void ModuleObject::_bind_methods()
 {
 	CLASS_<MODULE>()
 
-		.def(init<String const &>())
-
 		.def("__contains__", [](MODULE self, OBJ value) { return DICT(self->m_dict).contains(value); })
 
-		.def_property("__name__", [](MODULE self) { return self->m_name; }, [](MODULE self, STR value) { self->m_name = value; })
+		.def_property("__dict__", [](MODULE self) { return self->m_dict; }, [](MODULE self, DICT value) { self->m_dict = value; })
 
-		.def_property("__doc__", [](MODULE self) { return self->m_doc; }, [](MODULE self, STR value) { self->m_doc = value; })
+		.def_property("__name__", [](MODULE self) { return self->m_name; }, [](MODULE self, STR value) { self->m_name = value; })
 		
 		;
 }

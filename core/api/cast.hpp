@@ -20,6 +20,10 @@ namespace ism
 
 	NODISCARD inline TYPE typeof_generic(std::type_info const & t)
 	{
+		auto & internals{ get_internals() };
+
+
+
 		return nullptr;
 	}
 
@@ -108,12 +112,12 @@ public:																								\
 	template <class T_> using cast_op_type = ism::movable_cast_op_type<T_>;							\
 																									\
 	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0		\
-	> static OBJ cast(T_ * src, ReturnPolicy policy, OBJ parent)								\
+	> static OBJ cast(T_ * src, ReturnPolicy policy, OBJ parent)									\
 	{																								\
 		if (!src) { return nullptr; }																\
 		else if (policy == ReturnPolicy_TakeOwnership)												\
 		{																							\
-			OBJ h{ cast(std::move(*src), policy, parent) };										\
+			OBJ h{ cast(std::move(*src), policy, parent) };											\
 			memdelete(src);																			\
 			return h;																				\
 		}																							\
@@ -325,8 +329,7 @@ public:																								\
 		ISM_TYPE_CASTER(T, "object");
 	};
 
-	template <class T> struct type_caster<T, std::enable_if_t<is_api_v<T>>>
-		: object_caster<T> {};
+	template <class T> struct type_caster<T, std::enable_if_t<is_api_v<T>>> : object_caster<T> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

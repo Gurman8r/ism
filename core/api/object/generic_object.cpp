@@ -17,16 +17,14 @@ ISM_IMPLEMENT_CLASS_TYPE(GenericObject, t)
 
 	t.tp_setattro = (setattrofunc)type_setattro;
 
-	t.tp_create = (constructor)[](TYPE type, OBJ args) -> OBJ { return memnew(GenericObject); };
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(GenericObject); };
 
-	t.tp_destroy = (destructor)[](Object * ptr) { memdelete((GenericObject *)ptr); };
+	t.tp_del = (delfunc)[](Object * ptr) { memdelete((GenericObject *)ptr); };
 };
 
 void GenericObject::_bind_methods()
 {
 	CLASS_<GENERIC>()
-
-		.def(init<>())
 
 		;
 }
