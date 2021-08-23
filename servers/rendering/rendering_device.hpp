@@ -8,7 +8,7 @@ namespace ism
 	// rendering device
 	class ISM_API RenderingDevice : public Object
 	{
-		ISM_OBJECT_DEFAULT(RenderingDevice, Object);
+		ISM_OBJECT(RenderingDevice, Object);
 
 	public:
 		virtual ~RenderingDevice();

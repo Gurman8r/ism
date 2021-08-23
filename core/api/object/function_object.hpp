@@ -9,7 +9,7 @@ namespace ism
 	// function object
 	class ISM_API FunctionObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(FunctionObject, Object);
+		ISM_OBJECT(FunctionObject, Object);
 
 	public:
 		OBJ m_name{}, m_qualname{};
@@ -20,7 +20,9 @@ namespace ism
 
 		virtual ~FunctionObject() noexcept override = default;
 
-		FunctionObject() noexcept : FunctionObject{ get_class() } {}
+		FunctionObject() noexcept : Object{} {}
+
+		FunctionObject(vectorcallfunc vectorcall) noexcept : FunctionObject{} { m_vectorcall = vectorcall; }
 	};
 
 	// function delete
@@ -32,7 +34,7 @@ namespace ism
 	// function handle
 	template <> class Handle<FunctionObject> : public Ref<FunctionObject>
 	{
-		ISM_HANDLE(FunctionObject, ISM_CHECK_FUNCTION);
+		ISM_HANDLE(Handle, FunctionObject, ISM_CHECK_FUNCTION);
 
 	public:
 		NODISCARD OBJ cpp_function() const; // cppfunction_object.hpp

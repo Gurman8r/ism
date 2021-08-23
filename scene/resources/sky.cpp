@@ -11,6 +11,6 @@ Sky::~Sky()
 {
 }
 
-Sky::Sky() : Sky{ get_class() }
+Sky::Sky() : Resource{}
 {
 }

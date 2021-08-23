@@ -7,12 +7,12 @@ namespace ism
 {
 	class ISM_API InputMap : public Object
 	{
-		ISM_OBJECT_DEFAULT(InputMap, Object);
+		ISM_OBJECT(InputMap, Object);
 
 	public:
 		virtual ~InputMap() override;
 
-		InputMap() noexcept : InputMap{ get_class() } {}
+		InputMap() noexcept : Object{} {}
 	};
 }
 

@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API ConfigFile : public Resource
 	{
-		ISM_OBJECT_DEFAULT(ConfigFile, Resource);
+		ISM_OBJECT(ConfigFile, Resource);
 
 	public:
 		virtual ~ConfigFile();

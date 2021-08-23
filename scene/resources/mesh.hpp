@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API Mesh : public Resource
 	{
-		ISM_OBJECT_DEFAULT(Mesh, Resource);
+		ISM_OBJECT(Mesh, Resource);
 
 	public:
 		virtual ~Mesh();

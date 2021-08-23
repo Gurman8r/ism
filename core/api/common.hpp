@@ -574,41 +574,41 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// handle default
-#define ISM_HANDLE(m_class, m_check)																\
+#define ISM_HANDLE(m_handle, m_class, m_check)														\
 public:																								\
 	using value_type = typename m_class;															\
 																									\
-	NODISCARD static TYPE get_class() noexcept { return m_class::get_class(); }		\
+	NODISCARD static TYPE get_class() noexcept { return m_class::get_class(); }						\
 																									\
 	NODISCARD static bool check_(OBJ const & o) { return o && (bool)(m_check(o)); }					\
 																									\
 	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }						\
 																									\
-	~Handle() noexcept = default;																	\
+	~m_handle() noexcept = default;																	\
 																									\
-	Handle() noexcept = default;																	\
+	m_handle() noexcept = default;																	\
 																									\
-	Handle(nullptr_t) noexcept {}																	\
+	m_handle(nullptr_t) noexcept {}																	\
 																									\
-	Handle(m_class * value) { if (value) { ref_pointer(value); } }									\
+	m_handle(m_class * value) { if (value) { ref_pointer(value); } }								\
 																									\
-	Handle(Ref<m_class> const & value) { ref(value); }												\
+	m_handle(Ref<m_class> const & value) { ref(value); }											\
 																									\
-	template <class U> Handle(Ref<U> const & value) { reset(value); }								\
+	template <class U> m_handle(Ref<U> const & value) { reset(value); }								\
 																									\
-	Handle(m_class const & value) { instance(value); }												\
+	m_handle(m_class const & value) { instance(value); }											\
 																									\
-	Handle(m_class && value) noexcept { instance(std::move(value)); }								\
+	m_handle(m_class && value) noexcept { instance(std::move(value)); }								\
 																									\
-	Handle & operator=(nullptr_t) { unref(); return (*this); }										\
+	m_handle & operator=(nullptr_t) { unref(); return (*this); }									\
 																									\
-	Handle & operator=(Ref<m_class> const & value) { reset(value); return (*this); }				\
+	m_handle & operator=(Ref<m_class> const & value) { reset(value); return (*this); }				\
 																									\
-	template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
+	template <class U> m_handle & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
 																									\
-	Handle & operator=(m_class const & value) { instance(value); return (*this); }					\
+	m_handle & operator=(m_class const & value) { instance(value); return (*this); }				\
 																									\
-	Handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }	\
+	m_handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }	\
 																									\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

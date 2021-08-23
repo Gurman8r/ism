@@ -9,12 +9,12 @@ namespace ism
 	// property object
 	class ISM_API PropertyObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(PropertyObject, Object);
+		ISM_OBJECT(PropertyObject, Object);
 
 	public:
 		OBJ m_get{}, m_set{};
 
-		PropertyObject() : Object{ get_class() } {}
+		PropertyObject() : Object{} {}
 
 		PropertyObject(OBJ const & fget, OBJ const & fset) : PropertyObject{} { m_get = fget; m_set = fset; }
 
@@ -42,7 +42,7 @@ namespace ism
 	// property handle
 	template <> class Handle<PropertyObject> : public Ref<PropertyObject>
 	{
-		ISM_HANDLE(PropertyObject, ISM_CHECK_PROPERTY);
+		ISM_HANDLE(Handle, PropertyObject, ISM_CHECK_PROPERTY);
 
 	public:
 		template <class ... Args

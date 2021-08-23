@@ -11,6 +11,6 @@ Mesh::~Mesh()
 {
 }
 
-Mesh::Mesh() : Mesh{ get_class() }
+Mesh::Mesh() : Resource{}
 {
 }

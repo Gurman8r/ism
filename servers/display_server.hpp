@@ -149,7 +149,7 @@ namespace ism
 	protected:
 		static DisplayServer * singleton;
 
-		explicit DisplayServer(TYPE const & type) noexcept : Object{ type } { singleton = this; }
+		explicit DisplayServer() noexcept : Object{} { singleton = this; }
 		
 	public:
 		static DisplayServer * get_singleton() { return singleton; }

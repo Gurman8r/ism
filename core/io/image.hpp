@@ -13,7 +13,7 @@ namespace ism
 
 	class ISM_API Image : public Resource
 	{
-		ISM_OBJECT_DEFAULT(Image, Resource);
+		ISM_OBJECT(Image, Resource);
 
 		friend class ImageLoader;
 
@@ -24,7 +24,7 @@ namespace ism
 	public:
 		virtual ~Image();
 
-		DEFAULT_COPYABLE_MOVABLE(Image);
+		Image() noexcept : Resource{} {}
 
 	public:
 		void flip_vertically();

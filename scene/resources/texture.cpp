@@ -15,6 +15,6 @@ Texture::~Texture()
 {
 }
 
-Texture::Texture() : Texture{ get_class() }
+Texture::Texture() : Resource{}
 {
 }

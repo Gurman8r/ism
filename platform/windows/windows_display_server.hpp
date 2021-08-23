@@ -11,10 +11,10 @@ namespace ism
 	// windows display server
 	class ISM_API Windows_DisplayServer : public DisplayServer
 	{
-		ISM_OBJECT_DEFAULT(Windows_DisplayServer, DisplayServer);
+		ISM_OBJECT(Windows_DisplayServer, DisplayServer);
 
 	public:
-		Windows_DisplayServer() noexcept : Windows_DisplayServer{ get_class() } {}
+		Windows_DisplayServer() noexcept : DisplayServer{} {}
 
 		virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) override;
 

@@ -23,8 +23,6 @@ namespace ism
 	public:
 		NODISCARD static TYPE get_class() noexcept;
 
-		explicit TypeObject(TYPE const & type) noexcept;
-
 		TypeObject() noexcept;
 
 		template <class T, class ... Extra
@@ -169,7 +167,7 @@ namespace ism
 	// type handle
 	template <> class Handle<TypeObject> : public Ref<TypeObject>
 	{
-		ISM_HANDLE(TypeObject, ISM_CHECK_TYPE);
+		ISM_HANDLE(Handle, TypeObject, ISM_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }

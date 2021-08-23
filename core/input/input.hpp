@@ -42,7 +42,7 @@ namespace ism
 
 	class ISM_API Input : public Object
 	{
-		ISM_OBJECT_DEFAULT(Input, Object);
+		ISM_OBJECT(Input, Object);
 
 	private:
 		static Input * singleton;
@@ -50,7 +50,7 @@ namespace ism
 	public:
 		virtual ~Input();
 
-		Input() noexcept : Input{ get_class() } {}
+		Input() noexcept : Object{} {}
 
 	public:
 		FORCE_INLINE static Input * get_singleton() { return singleton; }

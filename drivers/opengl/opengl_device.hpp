@@ -9,7 +9,7 @@ namespace ism
 {
 	class ISM_API OpenGL_RenderingDevice : public RenderingDevice
 	{
-		ISM_OBJECT_DEFAULT(OpenGL_RenderingDevice, RenderingDevice);
+		ISM_OBJECT(OpenGL_RenderingDevice, RenderingDevice);
 
 	public:
 		~OpenGL_RenderingDevice();

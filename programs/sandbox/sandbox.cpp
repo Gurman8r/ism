@@ -44,10 +44,6 @@ namespace ism
 			.def("pass_ptr", [](void * a) { return a; })
 			;
 
-		DICT test_dict;
-		test_dict = typeof<DICT>()();
-		VERIFY(test_dict);
-
 		m.attr("hello")();
 		m.attr("say")(m.attr("get_string")());
 		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);

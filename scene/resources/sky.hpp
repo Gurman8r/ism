@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API Sky : public Resource
 	{
-		ISM_OBJECT_DEFAULT(Sky, Resource);
+		ISM_OBJECT(Sky, Resource);
 
 	public:
 		virtual ~Sky();

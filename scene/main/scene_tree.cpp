@@ -19,7 +19,7 @@ namespace ism
 		if (m_root) { memdelete(m_root); m_root = nullptr; }
 	}
 
-	SceneTree::SceneTree(String const & name) : SceneTree{ get_class() }
+	SceneTree::SceneTree(String const & name) : MainLoop{}
 	{
 		m_name = name.empty() ? "New Scene" : name;
 	}

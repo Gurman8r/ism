@@ -9,7 +9,7 @@ namespace ism
 	// module object
 	class ISM_API ModuleObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(ModuleObject, Object);
+		ISM_OBJECT(ModuleObject, Object);
 
 	public:
 		DICT		m_dict	{ DICT::new_() };
@@ -17,7 +17,7 @@ namespace ism
 		inquiry		m_clear	{};
 		freefunc	m_free	{};
 
-		ModuleObject(String const & name) : ModuleObject{ get_class() }
+		ModuleObject(String const & name) : Object{}
 		{
 			m_name = name;
 		}
@@ -32,7 +32,7 @@ namespace ism
 	// module handle
 	template <> class Handle<ModuleObject> : public Ref<ModuleObject>
 	{
-		ISM_HANDLE(ModuleObject, ISM_CHECK_MODULE);
+		ISM_HANDLE(Handle, ModuleObject, ISM_CHECK_MODULE);
 
 	public:
 		template <class Func, class ... Extra

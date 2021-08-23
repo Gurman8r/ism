@@ -11,6 +11,6 @@ OpenGL_RenderingDevice::~OpenGL_RenderingDevice()
 {
 }
 
-OpenGL_RenderingDevice::OpenGL_RenderingDevice() : OpenGL_RenderingDevice{ get_class() }
+OpenGL_RenderingDevice::OpenGL_RenderingDevice() : RenderingDevice{}
 {
 }

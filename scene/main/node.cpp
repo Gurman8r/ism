@@ -14,8 +14,8 @@ namespace ism
 
 	Node::~Node() { clear_children(); }
 
-	Node::Node(TYPE const & type, SceneTree * tree, Node * parent)
-		: Object	{ type }
+	Node::Node(SceneTree * tree, Node * parent)
+		: Object	{}
 		, m_tree	{ CHECK(tree) }
 		, m_parent	{ parent }
 		, m_children{}

@@ -11,6 +11,6 @@ Material::~Material()
 {
 }
 
-Material::Material() : Material{ get_class() }
+Material::Material() : Resource{}
 {
 }

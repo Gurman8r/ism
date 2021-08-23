@@ -9,7 +9,7 @@ namespace ism
 	// string object
 	class ISM_API StringObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(StringObject, Object);
+		ISM_OBJECT(StringObject, Object);
 
 	public:
 		String m_string{};
@@ -24,7 +24,7 @@ namespace ism
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 
-		StringObject() noexcept : Object{ get_class() } {}
+		StringObject() noexcept : Object{} {}
 
 		StringObject(storage_type const & value) : StringObject{} { m_string = value; }
 
@@ -66,7 +66,7 @@ namespace ism
 	// string handle
 	template <> class Handle<StringObject> : public Ref<StringObject>
 	{
-		ISM_HANDLE(StringObject, ISM_CHECK_STR);
+		ISM_HANDLE(Handle, StringObject, ISM_CHECK_STR);
 
 	public:
 		using storage_type = value_type::storage_type;

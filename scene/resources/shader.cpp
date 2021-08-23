@@ -15,6 +15,6 @@ Shader::~Shader()
 {
 }
 
-Shader::Shader() : Shader{ get_class() }
+Shader::Shader() : Resource{}
 {
 }

@@ -9,7 +9,7 @@ namespace ism
 	// capsule object
 	class ISM_API CapsuleObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(CapsuleObject, Object);
+		ISM_OBJECT(CapsuleObject, Object);
 
 	public:
 		void * m_pointer{}, * m_context{};
@@ -18,7 +18,7 @@ namespace ism
 
 		virtual ~CapsuleObject() override { if (m_closure) { m_closure(this); } }
 
-		CapsuleObject() noexcept : Object{ get_class() } {}
+		CapsuleObject() noexcept : Object{} {}
 
 		CapsuleObject(nullptr_t) : CapsuleObject{}
 		{
@@ -74,7 +74,7 @@ namespace ism
 	// capsule handle
 	template <> class Handle<CapsuleObject> : public Ref<CapsuleObject>
 	{
-		ISM_HANDLE(CapsuleObject, ISM_CHECK_CAPSULE);
+		ISM_HANDLE(Handle, CapsuleObject, ISM_CHECK_CAPSULE);
 
 	public:
 		template <class T

@@ -19,7 +19,7 @@ void Object::_initialize_classv() { initialize_class(); }
 
 void Object::_construct_object() { m_refcount.init(); m_refcount_init.init(); }
 
-Object::Object(TYPE const & type) noexcept : ob_type{ type } { _construct_object(); }
+Object::Object() noexcept { _construct_object(); }
 
 Object::~Object() { ob_type = nullptr; }
 

@@ -9,7 +9,7 @@ namespace ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		ISM_OBJECT_DEFAULT(CppFunctionObject, FunctionObject);
+		ISM_OBJECT(CppFunctionObject, FunctionObject);
 
 	public:
 		FunctionRecord * m_record{};
@@ -84,7 +84,7 @@ namespace ism
 	// cppfunction handle
 	template <> class Handle<CppFunctionObject> : public Ref<CppFunctionObject>
 	{
-		ISM_HANDLE(CppFunctionObject, ISM_CHECK_CPPFUNCTION);
+		ISM_HANDLE(Handle, CppFunctionObject, ISM_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }

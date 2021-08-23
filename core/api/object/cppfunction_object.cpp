@@ -49,9 +49,8 @@ CppFunctionObject::~CppFunctionObject()
 	}
 }
 
-CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ get_class() }
+CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ cppfunction_vectorcall }
 {
-	m_vectorcall = cppfunction_vectorcall;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -11,6 +11,6 @@ Font::~Font()
 {
 }
 
-Font::Font() : Font{ get_class() }
+Font::Font() : Resource{}
 {
 }

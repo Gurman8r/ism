@@ -9,7 +9,7 @@ namespace ism
 	// list object
 	class ISM_API ListObject : public Object
 	{
-		ISM_OBJECT_DEFAULT(ListObject, Object);
+		ISM_OBJECT(ListObject, Object);
 
 	public:
 		Vector<OBJ> m_list{};
@@ -27,7 +27,7 @@ namespace ism
 		template <class Iter
 		> ListObject(Iter first, Iter last) : ListObject{} { m_list = { first, last }; }
 
-		ListObject() noexcept : Object{ get_class() } {}
+		ListObject() noexcept : Object{} {}
 
 		ListObject(storage_type const & value) : ListObject{} { m_list = value; }
 
@@ -50,7 +50,7 @@ namespace ism
 	// list handle
 	template <> class Handle<ListObject> : public Ref<ListObject>
 	{
-		ISM_HANDLE(ListObject, ISM_CHECK_LIST);
+		ISM_HANDLE(Handle, ListObject, ISM_CHECK_LIST);
 
 	public:
 		using storage_type = value_type::storage_type;

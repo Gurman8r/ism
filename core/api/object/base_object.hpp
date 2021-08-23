@@ -56,17 +56,6 @@ private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object with constructors
-#define ISM_OBJECT_DEFAULT(m_class, m_inherits)									\
-ISM_OBJECT(m_class, m_inherits)													\
-																				\
-public:																			\
-	explicit m_class(ism::TYPE const & type) noexcept : m_inherits{ type } {}	\
-																				\
-private:
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 // implement object type
 #define ISM_OBJECT_IMPLEMENTATION(m_class, m_var, m_name, ...)								\
 	namespace ism { static void CAT(_ism_bind_class_, m_class)(ism::TypeObject & m_var); }	\
@@ -100,7 +89,7 @@ namespace ism
 
 		void _construct_object();
 
-		explicit Object(TYPE const & type) noexcept;
+		explicit Object() noexcept;
 
 		virtual void on_inc_ref() {}
 
@@ -157,7 +146,7 @@ namespace ism
 	// default handle
 	template <class T> class Handle : public Ref<T>
 	{
-		ISM_HANDLE(T, ISM_NO_CHECK);
+		ISM_HANDLE(Handle, T, ISM_NO_CHECK);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -21,9 +21,7 @@ TYPE TypeObject::_get_typev() const noexcept { return get_class(); }
 
 TYPE TypeObject::get_class() noexcept { return &_class_type_static; }
 
-TypeObject::TypeObject(TYPE const & type) noexcept : Object{ type } {}
-
-TypeObject::TypeObject() noexcept : TypeObject{ get_class() } {}
+TypeObject::TypeObject() noexcept : Object{} {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

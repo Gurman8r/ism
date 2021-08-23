@@ -11,6 +11,6 @@ TextFile::~TextFile()
 {
 }
 
-TextFile::TextFile() : TextFile{ get_class() }
+TextFile::TextFile() : Resource{}
 {
 }

@@ -10,19 +10,17 @@ namespace ism
 	// window
 	class ISM_API Window : public Viewport
 	{
-		ISM_OBJECT_DEFAULT(Window, Viewport);
+		ISM_OBJECT(Window, Viewport);
 
 	protected:
 		WindowID	m_window	{};
 		WindowHints	m_hints		{ WindowHints_Default };
 
-		Window() noexcept : Viewport{ get_class() } {}
-
 	public:
 		static Window * new_(SceneTree * tree, Node * parent, WindowSettings const & settings);
 
 		Window(SceneTree * tree, Node * parent, WindowID window = nullptr, WindowHints hints = WindowHints_Default)
-			: Viewport	{ get_class(), tree, parent }
+			: Viewport	{ tree, parent }
 			, m_window	{ window }
 			, m_hints	{ hints }
 		{

@@ -32,13 +32,14 @@ OBJ ism::method_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 	OBJ self{ method->m_self };
 	OBJ func{ method->m_func };
 	vectorcallfunc vcall{ get_vectorcall_func(func) };
-	if (argc == 0) { return vcall(func, &self, 1); }
+	if (argc == 0)
+	{
+		return vcall(func, &self, 1);
+	}
 	else
 	{
-		LIST args{ LIST::new_() };
-		args.reserve(argc + 1);
-		args.append(self);
-		for (size_t i = 0; i < argc; ++i) { args.append(argv[i]); }
+		LIST args{ LIST::new_(argv, argv + argc) };
+		args.insert(0, self);
 		return vcall(func, args.data(), args.size());
 	}
 }

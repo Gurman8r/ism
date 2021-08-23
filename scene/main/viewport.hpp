@@ -12,11 +12,9 @@ namespace ism
 	// viewport
 	class ISM_API Viewport : public Node
 	{
-		ISM_OBJECT_DEFAULT(Viewport, Node);
+		ISM_OBJECT(Viewport, Node);
 
 	protected:
-		explicit Viewport(TYPE const & type, SceneTree * tree, Node * parent) : Node{ type, tree, parent } {}
-
 		explicit Viewport(SceneTree * tree, Node * parent) : Node{ tree, parent } {}
 
 		explicit Viewport(SceneTree * tree) : Node{ tree } {}
@@ -25,8 +23,6 @@ namespace ism
 
 	public:
 		virtual ~Viewport() override;
-
-		Viewport() noexcept : Node{ get_class() } {}
 
 		NODISCARD inline Rect get_bounds() const noexcept { return Rect{ get_position(), get_size() }; }
 

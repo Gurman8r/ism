@@ -9,12 +9,12 @@ namespace ism
 
 	class ISM_API InputEvent : public Resource
 	{
-		ISM_OBJECT_DEFAULT(InputEvent, Resource);
+		ISM_OBJECT(InputEvent, Resource);
 
 	public:
 		virtual ~InputEvent();
 
-		InputEvent() noexcept : InputEvent{ get_class() } {}
+		InputEvent() noexcept : Resource{} {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -9,12 +9,12 @@ namespace ism
 
 	class ISM_API MainLoop : public Object
 	{
-		ISM_OBJECT_DEFAULT(MainLoop, Object);
+		ISM_OBJECT(MainLoop, Object);
 
 		OBJ m_startup_script{};
 
 	protected:
-		MainLoop() noexcept : Object{ get_class() } {}
+		MainLoop() noexcept : Object{} {}
 
 	public:
 		virtual ~MainLoop();
