@@ -6,38 +6,14 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object common
-#define ISM_OBJECT_COMMON(m_class, m_inherits)										\
-private:																			\
-	friend class ism::Internals;													\
-																					\
-	friend class ism::Handle<m_class>;												\
-																					\
-	static ism::TypeObject _class_type_static;										\
-																					\
-protected:																			\
-	static void initialize_class()													\
-	{																				\
-		if (static bool once{}; !once && (once = true))								\
-		{																			\
-			ism::Internals::add_class<m_class>();									\
-																					\
-			if (m_class::_get_bind_methods() != m_inherits::_get_bind_methods())	\
-			{																		\
-				m_class::_bind_methods();											\
-			}																		\
-		};																			\
-	}																				\
-																					\
-	virtual void _initialize_classv() override										\
-	{																				\
-		m_class::initialize_class();												\
-	}																				\
-																					\
-	FORCE_INLINE static constexpr void (*_get_bind_methods())(void)					\
-	{																				\
-		return &m_class::_bind_methods;												\
-	}																				\
-																					\
+#define ISM_OBJECT_COMMON(m_class, m_inherits)		\
+private:											\
+	friend class ism::Internals;					\
+													\
+	friend class ism::Handle<m_class>;				\
+													\
+	static ism::TypeObject _class_type_static;		\
+													\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -47,6 +23,21 @@ private:
 ISM_OBJECT_COMMON(m_class, m_inherits)												\
 																					\
 protected:																			\
+	static void initialize_class()													\
+	{																				\
+		if (static bool once{}; !once && (once = true))								\
+		{																			\
+			ism::Internals::add_class<m_class>();									\
+																					\
+			m_class::_class_type_static.tp_bind(&m_class::_class_type_static);		\
+		};																			\
+	}																				\
+																					\
+	virtual void _initialize_classv() override										\
+	{																				\
+		m_class::initialize_class();												\
+	}																				\
+																					\
 	FORCE_INLINE virtual ism::TYPE _get_typev() const override						\
 	{																				\
 		return m_class::get_class_static();											\
@@ -62,9 +53,13 @@ private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// implement class type
-#define ISM_IMPLEMENT_CLASS_TYPE(m_class, m_var, ...) \
-	DECLEXPR(m_class::_class_type_static) = COMPOSE(ism::TypeObject, m_var, ##__VA_ARGS__)
+// implement object type
+#define ISM_OBJECT_IMPLEMENTATION(m_class, m_var, m_name, ...)								\
+	namespace ism { static void CAT(_ism_bind_class_, m_class)(ism::TypeObject & m_var); }	\
+	DECLEXPR(m_class::_class_type_static) =													\
+	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), m_name, ##__VA_ARGS__)		\
+	+ ism::CAT(_ism_bind_class_, m_class);													\
+	void ism::CAT(_ism_bind_class_, m_class)(ism::TypeObject & m_var)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -91,10 +86,6 @@ namespace ism
 
 		virtual void _initialize_classv();
 
-		static void _bind_methods();
-
-		FORCE_INLINE static constexpr void (*_get_bind_methods())(void) { return &Object::_bind_methods; }
-
 		FORCE_INLINE virtual TYPE _get_typev() const;
 
 		void _construct_object();
@@ -107,6 +98,8 @@ namespace ism
 
 	public:
 		virtual ~Object();
+
+		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
 
 		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
 
@@ -127,8 +120,6 @@ namespace ism
 		template <class T> NODISCARD T cast() const &; // cast.hpp
 
 		template <class T> NODISCARD T cast() &&; // cast.hpp
-
-		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -151,7 +142,7 @@ namespace ism
 	};
 
 	// no check
-#define ISM_NO_CHECK(o) (true)
+#define ISM_NO_CHECK(o) (false)
 
 	// default handle
 	template <class T> class Handle : public Ref<T>

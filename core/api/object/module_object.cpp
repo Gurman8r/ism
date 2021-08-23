@@ -5,19 +5,13 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_IMPLEMENT_CLASS_TYPE(ModuleObject, t)
+ISM_OBJECT_IMPLEMENTATION(ModuleObject, t, "module", TypeFlags_BaseType)
 {
-	t.tp_name = "module";
-
-	t.tp_size = sizeof(ModuleObject);
-
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
-
 	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 
-	t.tp_getattro = (getattrofunc)module_getattro;
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(ModuleObject((String)STR(args[0]))); };
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
+	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other)
 	{
 		if (MODULE::check_(other))
 		{
@@ -29,25 +23,21 @@ ISM_IMPLEMENT_CLASS_TYPE(ModuleObject, t)
 		}
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(ModuleObject((String)STR(args[0]))); };
+	t.tp_getattro = (getattrofunc)module_getattro;
 
-	t.tp_del = (delfunc)[](Object * ptr) { memdelete((ModuleObject *)ptr); };
+	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	{
+		return CLASS_<MODULE>(type)
+
+			.def("__contains__", [](MODULE self, OBJ value) { return DICT(self->m_dict).contains(value); })
+
+			.def_property("__dict__", [](MODULE self) { return self->m_dict; }, [](MODULE self, DICT value) { self->m_dict = value; })
+
+			.def_property("__name__", [](MODULE self) { return self->m_name; }, [](MODULE self, STR value) { self->m_name = value; })
+
+			;
+	};
 };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void ModuleObject::_bind_methods()
-{
-	CLASS_<MODULE>()
-
-		.def("__contains__", [](MODULE self, OBJ value) { return DICT(self->m_dict).contains(value); })
-
-		.def_property("__dict__", [](MODULE self) { return self->m_dict; }, [](MODULE self, DICT value) { self->m_dict = value; })
-
-		.def_property("__name__", [](MODULE self) { return self->m_name; }, [](MODULE self, STR value) { self->m_name = value; })
-		
-		;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

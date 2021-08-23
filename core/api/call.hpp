@@ -198,7 +198,7 @@ namespace ism
 	> template <ReturnPolicy policy, class ...Args
 	> inline OBJ ObjectAPI<Derived>::operator()(Args && ... args) const
 	{
-		return ism::collect_arguments<policy>(FWD(args)...).call(handle());
+		return ism::collect_arguments<policy>(FWD(args)...).call(derived().ptr());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

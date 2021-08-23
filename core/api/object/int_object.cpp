@@ -5,13 +5,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_IMPLEMENT_CLASS_TYPE(IntObject, t)
+ISM_OBJECT_IMPLEMENTATION(IntObject, t, "int", TypeFlags_Int_Subclass)
 {
-	t.tp_name = "int";
-
-	t.tp_size = sizeof(IntObject);
-
-	t.tp_flags = TypeFlags_Default | TypeFlags_Int_Subclass;
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(IntObject); };
 
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<int64_t>()(***INT(self)); };
 
@@ -19,7 +15,7 @@ ISM_IMPLEMENT_CLASS_TYPE(IntObject, t)
 
 	t.tp_str = (reprfunc)[](OBJ self) { return STR(util::to_string(***INT(self))); };
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
+	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other)
 	{
 		if (INT::check_(other))
 		{
@@ -31,21 +27,11 @@ ISM_IMPLEMENT_CLASS_TYPE(IntObject, t)
 		}
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(IntObject); };
-
-	t.tp_del = (delfunc)[](Object * ptr) { memdelete((IntObject *)ptr); };
+	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	{
+		return CLASS_<INT>(type);
+	};
 };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void IntObject::_bind_methods()
-{
-	CLASS_<INT>()
-
-		.def(init<storage_type>())
-
-		;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

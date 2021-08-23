@@ -236,6 +236,7 @@ namespace ism
 	ALIAS(setter)			Error(*)(OBJ self, OBJ value, void * context);
 	ALIAS(wrapperfunc)		OBJ(*)(OBJ self, OBJ args, void * wrapped);
 	ALIAS(freefunc)			void(*)(void * ptr);
+	ALIAS(bindfunc)			TYPE(*)(TYPE type);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -333,23 +334,11 @@ namespace ism
 		NODISCARD auto derived() const & noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
 
 	public:
-		NODISCARD auto handle() const & noexcept
-		{
-			if constexpr (is_base_object_v<Derived>)
-			{
-				return Handle<Derived>{ derived().ptr() };
-			}
-			else
-			{
-				return derived();
-			}
-		}
+		template <class Index = cstring
+		> NODISCARD auto attr(Index && i) const { return AttrAccessor<Index>{ derived().ptr(), FWD(i) }; }
 
 		template <class Index = cstring
-		> NODISCARD auto attr(Index && i) const { return AttrAccessor<Index>{ handle(), FWD(i) }; }
-
-		template <class Index = cstring
-		> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ handle(), FWD(i) }; }
+		> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ derived().ptr(), FWD(i) }; }
 
 		template <class Value = OBJ
 		> NODISCARD bool contains(Value && value) const { return attr("__contains__")(FWD(value)).cast<bool>(); }
@@ -384,9 +373,9 @@ namespace ism
 	private:
 		NODISCARD auto compare(ObjectAPI const & o) const
 		{
-			if (TYPE t{ typeof(derived().ptr()) }; t && t->tp_compare)
+			if (TYPE t{ typeof(derived().ptr()) }; t && t->tp_cmp)
 			{
-				return t->tp_compare(derived().ptr(), o.derived().ptr());
+				return t->tp_cmp(derived().ptr(), o.derived().ptr());
 			}
 			else
 			{
@@ -617,7 +606,7 @@ namespace ism
 	// handle default
 #define ISM_HANDLE(m_class, m_check)																	\
 public:																									\
-	using typename Ref<m_class>::value_type;															\
+	using value_type = typename m_class;																\
 																										\
 	NODISCARD static TYPE get_class_static() noexcept { return m_class::get_class_static(); }			\
 																										\

@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(ModuleObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		DICT		m_dict	{ DICT::new_() };
 		STR			m_name	{};

@@ -5,13 +5,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_IMPLEMENT_CLASS_TYPE(FloatObject, t)
+ISM_OBJECT_IMPLEMENTATION(FloatObject, t, "float", TypeFlags_Float_Subclass)
 {
-	t.tp_name = "float";
-
-	t.tp_size = sizeof(FloatObject);
-
-	t.tp_flags = TypeFlags_Default | TypeFlags_Float_Subclass;
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(FloatObject); };
 
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<double_t>()(***FLT(self)); };
 
@@ -19,7 +15,7 @@ ISM_IMPLEMENT_CLASS_TYPE(FloatObject, t)
 
 	t.tp_str = (reprfunc)[](OBJ self) { return STR(util::to_string(***FLT(self))); };
 
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other)
+	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other)
 	{
 		if (FLT::check_(other))
 		{
@@ -31,20 +27,10 @@ ISM_IMPLEMENT_CLASS_TYPE(FloatObject, t)
 		}
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(FloatObject); };
-
-	t.tp_del = (delfunc)[](Object * ptr) { memdelete((FloatObject *)ptr); };
+	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	{
+		return CLASS_<FLT>(type);
+	};
 };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void FloatObject::_bind_methods()
-{
-	CLASS_<FLT>()
-
-		.def(init<storage_type>())
-
-		;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

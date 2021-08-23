@@ -7,10 +7,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Resource
+	class ISM_API Resource : public Object
 	{
+		ISM_OBJECT(Resource, Object);
+
 	protected:
-		Resource() noexcept = default;
+		Resource() noexcept : Object{ get_class_static() } {}
 		
 	public:
 		virtual ~Resource();

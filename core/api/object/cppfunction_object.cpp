@@ -5,46 +5,35 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_IMPLEMENT_CLASS_TYPE(CppFunctionObject, t)
+ISM_OBJECT_IMPLEMENTATION(CppFunctionObject, t, "cpp_function", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
-	t.tp_name = "cpp_function";
-
-	t.tp_size = sizeof(CppFunctionObject);
-
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
+	t.tp_base = typeof<FUNCTION>();
 
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);
 
-	t.tp_base = typeof<FUNCTION>();
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(CppFunctionObject); };
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type)->OBJ
 	{
 		return !obj ? self : METHOD({ self, obj, ism::method_vectorcall });
 	};
 
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(CppFunctionObject); };
+	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	{
+		DICT(type->tp_dict)["__name__"] = PROPERTY({
+			CPP_FUNCTION({ [](CPP_FUNCTION self) { return (***self).name; }, attr::is_method(type) }),
+			CPP_FUNCTION({ [](CPP_FUNCTION self, STR value) { (***self).name = value; }, attr::is_method(type) }),
+			});
 
-	t.tp_del = (delfunc)[](Object * ptr) { memdelete((CppFunctionObject *)ptr); };
+		return CLASS_<CPP_FUNCTION>(type)
+
+			.def_property("__text_signature__", [](CPP_FUNCTION self) { return (***self).signature; }, [](CPP_FUNCTION self, STR value) { (***self).signature = value; })
+
+			;
+	};
 };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void CppFunctionObject::_bind_methods()
-{
-	TYPE type{ get_class_static() };
-	DICT(type->tp_dict)["__name__"] = PROPERTY({
-		CPP_FUNCTION({ [](CPP_FUNCTION self) { return (***self).name; }, attr::is_method(type) }),
-		CPP_FUNCTION({ [](CPP_FUNCTION self, STR value) { (***self).name = value; }, attr::is_method(type) }),
-		});
-
-	CLASS_<CPP_FUNCTION>()
-	
-		.def_property("__text_signature__", [](CPP_FUNCTION self) { return (***self).signature; }, [](CPP_FUNCTION self, STR value) { (***self).signature = value; })
-		
-		;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -84,16 +73,31 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 		rec->args.push_back(ArgumentRecord{ arg_str, nullptr, false, false });
 	}
 
-	// overload chaining (this is a hack, needs rethinking)
+	// overload chaining
 	if (CPP_FUNCTION::check_(rec->sibling))
 	{
-		auto sibling{ (CppFunctionObject *)(rec->sibling) };
+		FunctionRecord *& chain{ ((CppFunctionObject *)(rec->sibling))->m_record };
 
-		if (rec->scope == sibling->m_record->scope)
+		if (rec->scope == chain->scope)
 		{
-			rec->next = sibling->m_record;
+			if (rec->prepend)
+			{
+				rec->next = chain;
 
-			sibling->m_record = nullptr;
+				chain = nullptr;
+			}
+			else
+			{
+				FunctionRecord * it{ chain };
+				
+				while (it->next) { it = it->next; }
+				
+				it->next = rec;
+				
+				m_record = chain;
+				
+				chain = nullptr;
+			}
 		}
 	}
 

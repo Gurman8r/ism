@@ -11,19 +11,14 @@ namespace ism
 	{
 		ISM_OBJECT(CapsuleObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		void * m_pointer{}, * m_context{};
 
 		delfunc m_closure{};
 
-		String m_name{};
-
 		virtual ~CapsuleObject() override { if (m_closure) { m_closure(this); } }
 
-		CapsuleObject() : Object{ get_class_static() } {}
+		CapsuleObject() noexcept : Object{ get_class_static() } {}
 
 		CapsuleObject(nullptr_t) : CapsuleObject{}
 		{
@@ -89,8 +84,6 @@ namespace ism
 		> NODISCARD auto get_pointer() const { return static_cast<T *>(m_ptr->m_pointer); }
 
 		void set_pointer(void const * value) { m_ptr->m_pointer = (void *)value; }
-
-		NODISCARD auto name() const { return attr("__name__"); }
 	};
 }
 

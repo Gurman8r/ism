@@ -14,32 +14,38 @@ namespace ism
 		ISM_OBJECT_COMMON(TypeObject, Object);
 
 	protected:
-		static void _bind_methods();
+		static void initialize_class();
+
+		virtual void _initialize_classv() override;
 
 		virtual TYPE _get_typev() const noexcept override;
 
 	public:
+		NODISCARD static TYPE get_class_static() noexcept;
+
 		explicit TypeObject(TYPE type) noexcept;
 
 		TypeObject() noexcept;
 
-		NODISCARD static TYPE get_class_static() noexcept;
+		template <class T, class ... Extra
+		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags, Extra && ... extra) noexcept : TypeObject{}
+		{
+			tp_name = name;
+			tp_size = sizeof(T);
+			tp_flags = flags;
+			tp_bind = (bindfunc)[](TYPE type) { return type; };
+			tp_cmp = (cmpfunc)[](OBJ lhs, OBJ rhs) { return util::compare(*lhs, *rhs); };
+			tp_del = (delfunc)memdelete<T>;
+		}
 
 	public:
 		String				tp_name				{};
 		ssize_t				tp_size				{};
 		int32_t				tp_flags			{};
+		bindfunc			tp_bind				{};
+
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
-		
-		newfunc				tp_new				{};
-		delfunc				tp_del				{};
-		binaryfunc			tp_call				{};
-		cmpfunc				tp_compare			{};
-		hashfunc			tp_hash				{};
-		lenfunc				tp_len				{};
-		reprfunc			tp_repr				{};
-		reprfunc			tp_str				{};
 
 		getattrfunc			tp_getattr			{};
 		setattrfunc			tp_setattr			{};
@@ -48,10 +54,15 @@ namespace ism
 		descrgetfunc		tp_descr_get		{};
 		descrsetfunc		tp_descr_set		{};
 
-		NumberMethods *		tp_as_number		{};
-		SequenceMethods *	tp_as_sequence		{};
-		MappingMethods *	tp_as_mapping		{};
-
+		binaryfunc			tp_call				{};
+		cmpfunc				tp_cmp				{};
+		delfunc				tp_del				{};
+		hashfunc			tp_hash				{};
+		lenfunc				tp_len				{};
+		newfunc				tp_new				{};
+		reprfunc			tp_repr				{};
+		reprfunc			tp_str				{};
+		
 		Ref<TypeObject>		tp_base				{ /* type handle doesn't exist yet */ };
 		OBJ					tp_bases			{};
 		OBJ					tp_dict				{};
@@ -163,13 +174,6 @@ namespace ism
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
 
-		NODISCARD OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
-
-		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
-
-		NODISCARD auto name() const { return attr("__name__"); }
-
-	public:
 		NODISCARD bool has_feature(int32_t flag) const { return flag_read(m_ptr->tp_flags, flag); }
 
 		NODISCARD bool is_abstract() const { return has_feature(TypeFlags_IsAbstract); }
@@ -177,6 +181,12 @@ namespace ism
 		NODISCARD bool is_final() const { return has_feature(TypeFlags_IsFinal); }
 
 		NODISCARD bool is_local() const { return has_feature(TypeFlags_IsLocal); }
+
+		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
+
+		NODISCARD OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
+
+		NODISCARD auto name() const { return attr("__name__"); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

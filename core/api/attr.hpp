@@ -13,7 +13,6 @@ namespace ism::attr
 	{
 		using type = typename T;
 		static void init(T &&, FunctionRecord &) {}
-		static void init(T &&, TypeObject &) {}
 		static void precall(FunctionCall &) {}
 		static void postcall(FunctionCall &, OBJ) {}
 	};
@@ -39,126 +38,72 @@ namespace ism::attr
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// empty attribute
-#define ISM_ATTR_EMPTY(m_class) \
-	struct m_class final { \
-		explicit m_class() noexcept {} \
-	}
-
-// object attribute
-#define ISM_ATTR_OBJECT(m_class, m_value) \
-	struct m_class final { \
-		ism::Object * const m_value; \
-		explicit m_class(ism::Object * value) : m_value{ value } {} \
-		explicit m_class(ism::OBJ value) : m_value{ *value } {} \
-	}
-
-// string attribute
-#define ISM_ATTR_STRING(m_class, m_value) \
-	struct m_class final { \
-		char const * const m_value; \
-		explicit m_class(char const * value) : m_value{ value } {} \
-		explicit m_class(char * value) : m_value{ (char const *)value } {} \
-	}
-
-// bool attribute
-#define ISM_ATTR_BOOL(m_class, m_value) \
-	struct m_class final { \
-		bool const m_value; \
-		explicit m_class(bool value) : m_value{ value } {} \
-	}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// name
-	ISM_ATTR_STRING(name, value);
-	template <> ISM_PROCESS_ATTR(name) {
-		static void init(FunctionRecord & r, name && a) { r.name = a.value; }
-		static void init(TypeObject & r, name && a) { r.tp_name = a.value; }
-	};
-
-	// doc
-	//ISM_ATTR_STRING(doc, value);
-	//template <> ISM_PROCESS_ATTR(doc) {
-	//	static void init(FunctionRecord & r, doc && a) { r.doc = a.value; }
-	//	static void init(TypeObject & r, doc && a) { r.tp_doc = a.value; }
-	//};
-	//template <> ISM_PROCESS_ATTR(cstring) {
-	//	static void init(FunctionRecord & r, cstring a) { r.doc = a; }
-	//	static void init(TypeObject & r, cstring a) { r.tp_doc = a; }
-	//};
-	//template <> ISM_PROCESS_ATTR_BASE(char *, cstring) {};
+	struct name { cstring value; name(cstring value) : value{ value } {} };
+	
+	struct sibling { Object * value; sibling(Object * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
+	
+	struct is_method { Object * value; is_method(Object * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
+	
+	struct scope { Object * value; scope(Object * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
+	
+	struct is_operator {};
+	
+	struct is_constructor {};
+	
+	struct prepend {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// name
+	template <> ISM_PROCESS_ATTR(name)
+	{
+		static void init(FunctionRecord & r, name && a) noexcept { r.name = a.value; }
+	};
+
 	// ReturnPolicy
-	template <> ISM_PROCESS_ATTR(ReturnPolicy) {
-		static void init(FunctionRecord & r, ReturnPolicy && a) { r.policy = a; }
+	template <> ISM_PROCESS_ATTR(ReturnPolicy)
+	{
+		static void init(FunctionRecord & r, ReturnPolicy && a) noexcept { r.policy = a; }
 	};
 
 	// sibling
-	ISM_ATTR_OBJECT(sibling, value);
-	template <> ISM_PROCESS_ATTR(sibling) {
-		static void init(FunctionRecord & r, sibling && a) { r.sibling = a.value; }
+	template <> ISM_PROCESS_ATTR(sibling)
+	{
+		static void init(FunctionRecord & r, sibling && a) noexcept { r.sibling = a.value; }
 	};
 
 	// is_method
-	ISM_ATTR_OBJECT(is_method, value);
-	template <> ISM_PROCESS_ATTR(is_method) {
-		static void init(FunctionRecord & r, is_method && a) { r.is_method = true; r.scope = a.value; }
+	template <> ISM_PROCESS_ATTR(is_method)
+	{
+		static void init(FunctionRecord & r, is_method && a) noexcept { r.is_method = true; r.scope = a.value; }
 	};
 
 	// scope
-	ISM_ATTR_OBJECT(scope, value);
-	template <> ISM_PROCESS_ATTR(scope) {
-		static void init(FunctionRecord & r, scope && a) { r.scope = a.value; }
+	template <> ISM_PROCESS_ATTR(scope)
+	{
+		static void init(FunctionRecord & r, scope && a) noexcept { r.scope = a.value; }
 	};
 
 	// is_operator
-	ISM_ATTR_EMPTY(is_operator);
-	template <> ISM_PROCESS_ATTR(is_operator) {
-		static void init(FunctionRecord & r, is_operator && a) { r.is_operator = true; }
+	template <> ISM_PROCESS_ATTR(is_operator)
+	{
+		static void init(FunctionRecord & r, is_operator && a) noexcept { r.is_operator = true; }
 	};
 
 	// is_constructor
-	ISM_ATTR_EMPTY(is_constructor);
-	template <> ISM_PROCESS_ATTR(is_constructor) {
-		static void init(FunctionRecord & r, is_constructor && a) { r.is_constructor = true; }
+	template <> ISM_PROCESS_ATTR(is_constructor)
+	{
+		static void init(FunctionRecord & r, is_constructor && a) noexcept { r.is_constructor = true; }
 	};
 
 	// prepend
-	ISM_ATTR_EMPTY(prepend);
-	template <> ISM_PROCESS_ATTR(prepend) {
-		static void init(FunctionRecord & r, prepend && a) { r.prepend = true; }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// parent class
-	template <class T> ISM_PROCESS_ATTR_SFINAE(T, is_api_v<T>) {
-		static void init(TypeObject & r, T && a) { LIST(r.tp_bases).append(typeof(FWD(a))); }
-	};
-
-	// is_final
-	ISM_ATTR_EMPTY(is_final);
-	template <> ISM_PROCESS_ATTR(is_final) {
-		static void init(TypeObject & r, is_final && a) { flag_set(r.tp_flags, TypeFlags_IsFinal); }
-	};
-
-	// metaclass
-	ISM_ATTR_OBJECT(metaclass, value);
-	template <> ISM_PROCESS_ATTR(metaclass) {
-		static void init(TypeObject & r, type && a) { r.set_type((TypeObject *)a.value); }
-	};
-
-	// module_local
-	ISM_ATTR_BOOL(module_local, value);
-	template <> ISM_PROCESS_ATTR(module_local) {
-		static void init(TypeObject & r, module_local && a) { flag_write(r.tp_flags, TypeFlags_IsLocal, a.value); }
+	template <> ISM_PROCESS_ATTR(prepend)
+	{
+		static void init(FunctionRecord & r, prepend && a) noexcept { r.prepend = true; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

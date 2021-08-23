@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(CppFunctionObject, FunctionObject);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		FunctionRecord * m_record{};
 

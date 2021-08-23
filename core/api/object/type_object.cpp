@@ -5,65 +5,41 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+void TypeObject::initialize_class()
+{
+	if (static bool once{}; !once && (once = true))
+	{
+		Internals::add_class<TypeObject>();
+
+		typeof<TypeObject>()->tp_bind(typeof<TypeObject>());
+	};
+}
+
+void TypeObject::_initialize_classv() { TypeObject::initialize_class(); }
+
+TYPE TypeObject::_get_typev() const noexcept { return get_class_static(); }
+
+TYPE TypeObject::get_class_static() noexcept { return &_class_type_static; }
+
 TypeObject::TypeObject(TYPE type) noexcept : Object{ type } {}
 
 TypeObject::TypeObject() noexcept : TypeObject{ get_class_static() } {}
 
-TYPE TypeObject::get_class_static() noexcept { return &_class_type_static; }
-
-TYPE TypeObject::_get_typev() const noexcept { return get_class_static(); }
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static MemberDef type_members[] = { {/* sentinal */}, };
-
-static MethodDef type_methods[] = { {/* sentinal */}, };
-
-static GetSetDef type_getsets[] = { {/* sentinal */}, };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static NumberMethods type_as_number = COMPOSE(NumberMethods, m) {};
-
-static MappingMethods type_as_mapping = COMPOSE(MappingMethods, m) {};
-
-static SequenceMethods type_as_sequence = COMPOSE(SequenceMethods, m) {};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-ISM_IMPLEMENT_CLASS_TYPE(TypeObject, t)
+ISM_OBJECT_IMPLEMENTATION(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
 {
-	t.tp_name = "type";
-	
-	t.tp_size = sizeof(TypeObject);
-	
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass;
-	
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 	
 	t.tp_vectorcalloffset = offsetof(TypeObject, tp_vectorcall);
 
-	t.tp_as_number = &type_as_number;
-	
-	t.tp_as_mapping = &type_as_mapping;
-	
-	t.tp_as_sequence = &type_as_sequence;
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(TypeObject); };
 
 	t.tp_hash = (hashfunc)[](OBJ self) { return ism::hash(TYPE(self)->tp_name); };
 	
 	t.tp_repr = (reprfunc)[](OBJ self) { return STR(TYPE(self)->tp_name); };
 	
 	t.tp_str = (reprfunc)[](OBJ self) { return STR(TYPE(self)->tp_name); };
-	
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
-
-	t.tp_getattro = (getattrofunc)type_getattro;
-	
-	t.tp_setattro = (setattrofunc)type_setattro;
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(TypeObject); };
-	
-	t.tp_del = (delfunc)[](Object * ptr) { memdelete((TypeObject *)ptr); };
 
 	t.tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ
 	{
@@ -75,40 +51,44 @@ ISM_IMPLEMENT_CLASS_TYPE(TypeObject, t)
 		
 		return create(self, args);
 	};
+
+	t.tp_getattro = (getattrofunc)type_getattro;
+
+	t.tp_setattro = (setattrofunc)type_setattro;
+
+	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	{
+		return CLASS_<TYPE>(type)
+
+			.def("__contains__", [](TYPE self, OBJ value) { return DICT(self->tp_dict).contains(value); })
+
+			.def("__instancecheck__", [](OBJ inst, OBJ cls) { return isinstance(inst, cls); })
+
+			.def("__subclasscheck__", &TYPE::is_subtype)
+
+			.def_property_readonly("__base__", [](TYPE self) { return TYPE(self->tp_base); })
+
+			.def_property_readonly("__dict__", [](TYPE self) { return self->tp_dict; })
+
+			.def_property_readonly("__dictoffset__", [](TYPE self) { return self->tp_dictoffset; })
+
+			.def_property_readonly("__flags__", [](TYPE self) { return self->tp_flags; })
+
+			.def_property_readonly("__mro__", [](TYPE self) { return self->tp_mro; })
+
+			.def_property_readonly("__text_signature__", [](TYPE self) { return STR(/* TODO */); })
+
+			.def_property_readonly("__size__", [](TYPE self) { return self->tp_size; })
+
+			.def_property_readonly("__qualname__", [](TYPE self) { return STR(/* TODO */); })
+
+			.def_property_readonly("__vectorcalloffset__", [](TYPE self) { return self->tp_vectorcalloffset; })
+
+			.def_property("__name__", [](TYPE self) { return self->tp_name; }, [](TYPE self, STR value) { self->tp_name = value; })
+
+			;
+	};
 };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void TypeObject::_bind_methods()
-{
-	CLASS_<TYPE>()
-
-		.def("__contains__", [](TYPE self, OBJ value) { return DICT(self->tp_dict).contains(value); })
-
-		.def("__instancecheck__", [](OBJ inst, OBJ cls) { return isinstance(inst, cls); })
-
-		.def("__subclasscheck__", &TYPE::is_subtype)
-
-		.def_property_readonly("__dictoffset__", [](TYPE self) { return self->tp_dictoffset; })
-
-		.def_property_readonly("__size__", [](TYPE self) { return self->tp_size; })
-	
-		.def_property_readonly("__flags__", [](TYPE self) { return self->tp_flags; })
-	
-		.def_property_readonly("__base__", [](TYPE self) { return TYPE(self->tp_base); })
-	
-		.def_property_readonly("__mro__", [](TYPE self) { return self->tp_mro; })
-	
-		.def_property_readonly("__dict__", [](TYPE self) { return self->tp_dict; })
-	
-		.def_property_readonly("__text_signature__", [](TYPE self) { return STR(/* TODO */); })
-	
-		.def_property_readonly("__qualname__", [](TYPE self) { return STR(/* TODO */); })
-	
-		.def_property("__name__", [](TYPE self) { return self->tp_name; }, [](TYPE self, STR value) { self->tp_name = value; })
-
-		;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -129,18 +109,12 @@ bool TypeObject::ready()
 	tp_bases = tp_base ? LIST::new_(tp_base) : LIST::new_();
 
 	if (!tp_dict) { tp_dict = DICT::new_(); }
-	
+
 	VERIFY(mro_internal(nullptr));
 	
 	if (tp_base) { inherit_special(*tp_base); }
 
 	for (TYPE const & base : LIST(tp_mro)) { inherit_slots(*base); }
-
-	copy_val(*tp_base, &TypeObject::tp_as_number);
-	
-	copy_val(*tp_base, &TypeObject::tp_as_sequence);
-	
-	copy_val(*tp_base, &TypeObject::tp_as_mapping);
 
 	for (TYPE const & base : LIST(tp_bases)) { base->add_subclass(this); }
 
@@ -228,21 +202,12 @@ Error TypeObject::update_slot(STR name)
 		return nullptr;
 	}; } break;
 
-	case hash("__del__"): {} break;
+	case hash("__del__"): {
+	} break;
 
 	case hash("__getattr__"): {} break;
 	case hash("__setattr__"): {} break;
 	case hash("__delattr__"): {} break;
-
-	case hash("__get__"): { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ {
-		if (ISM_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) { return call_object(f, LIST({ { self, obj, cls } })); }
-		return nullptr;
-	}; } break;
-
-	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ cls) -> Error {
-		if (ISM_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) { return call_object(f, LIST({ { self, obj, cls } })), Error_None; }
-		return Error_Unknown;
-	}; } break;
 
 	case hash("__call__"): { tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
 		if (ISM_IDENTIFIER(__call__); OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
@@ -268,6 +233,43 @@ Error TypeObject::update_slot(STR name)
 		if (ISM_IDENTIFIER(__str__); OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
 		return nullptr;
 	}; } break;
+
+	case hash("__get__"): { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ {
+		if (ISM_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) {}
+		return nullptr;
+	}; } break;
+
+	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ cls) -> Error {
+		if (ISM_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) {}
+		return Error_Unknown;
+	}; } break;
+
+	case hash("__eq__"): {} break;
+	case hash("__ne__"): {} break;
+	case hash("__lt__"): {} break;
+	case hash("__le__"): {} break;
+	case hash("__gt__"): {} break;
+	case hash("__ge__"): {} break;
+
+	case hash("__add__"): {} break;
+	case hash("__sub__"): {} break;
+	case hash("__div__"): {} break;
+	case hash("__mul__"): {} break;
+	case hash("__mod__"): {} break;
+	case hash("__pow__"): {} break;
+	case hash("__pos__"): {} break;
+	case hash("__neg__"): {} break;
+
+	case hash("__invert__"): {} break;
+	case hash("__lshift__"): {} break;
+	case hash("__rshift__"): {} break;
+	case hash("__and__"): {} break;
+	case hash("__or__"): {} break;
+	case hash("__xor__"): {} break;
+
+	case hash("__int__"): {} break;
+	case hash("__float__"): {} break;
+	case hash("__bool__"): {} break;
 
 	}
 	return Error_None;
@@ -335,58 +337,7 @@ void TypeObject::inherit_special(TypeObject * base)
 
 void TypeObject::inherit_slots(TypeObject * base)
 {
-	TypeObject * basebase{};
-
-	if (tp_as_number && base->tp_as_number)
-	{
-		if (basebase = *(base->tp_base); !basebase->tp_as_number) { basebase = nullptr; }
-		copy_slot(base, basebase, &NumberMethods::operator_add);
-		copy_slot(base, basebase, &NumberMethods::operator_subtract);
-		copy_slot(base, basebase, &NumberMethods::operator_multiply);
-		copy_slot(base, basebase, &NumberMethods::operator_divide);
-		copy_slot(base, basebase, &NumberMethods::operator_remainder);
-		copy_slot(base, basebase, &NumberMethods::operator_power);
-		copy_slot(base, basebase, &NumberMethods::operator_lshift);
-		copy_slot(base, basebase, &NumberMethods::operator_rshift);
-		copy_slot(base, basebase, &NumberMethods::operator_and);
-		copy_slot(base, basebase, &NumberMethods::operator_xor);
-		copy_slot(base, basebase, &NumberMethods::operator_or);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_add);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_subtract);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_multiply);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_divide);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_remainder);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_power);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_lshift);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_rshift);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_and);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_xor);
-		copy_slot(base, basebase, &NumberMethods::operator_inplace_or);
-		copy_slot(base, basebase, &NumberMethods::operator_positive);
-		copy_slot(base, basebase, &NumberMethods::operator_negative);
-		copy_slot(base, basebase, &NumberMethods::operator_absolute);
-		copy_slot(base, basebase, &NumberMethods::operator_bool);
-		copy_slot(base, basebase, &NumberMethods::operator_invert);
-		copy_slot(base, basebase, &NumberMethods::operator_integer);
-		copy_slot(base, basebase, &NumberMethods::operator_decimal);
-	}
-
-	if (tp_as_mapping && base->tp_as_mapping)
-	{
-		if (basebase = *(base->tp_base); !basebase->tp_as_mapping) { basebase = nullptr; }
-		copy_slot(base, basebase, &SequenceMethods::sequence_length);
-		copy_slot(base, basebase, &SequenceMethods::sequence_item);
-		copy_slot(base, basebase, &SequenceMethods::sequence_contains);
-	}
-
-	if (tp_as_sequence && base->tp_as_sequence)
-	{
-		if (basebase = *(base->tp_base); !basebase->tp_as_sequence) { basebase = nullptr; }
-		copy_slot(base, basebase, &MappingMethods::mapping_length);
-		copy_slot(base, basebase, &MappingMethods::mapping_subscript);
-	}
-
-	basebase = *(base->tp_base);
+	TypeObject * basebase{ *(base->tp_base) };
 
 	copy_slot(base, basebase, &TypeObject::tp_del);
 
@@ -409,13 +360,13 @@ void TypeObject::inherit_slots(TypeObject * base)
 
 	copy_slot(base, basebase, &TypeObject::tp_call);
 
-	if (!tp_compare && !tp_hash)
+	if (!tp_cmp && !tp_hash)
 	{
 		ISM_IDENTIFIER(__eq__);
 		ISM_IDENTIFIER(__hash__);
 		if (DICT dict{ tp_dict }; dict && !dict.contains(&ID___eq__) && !dict.contains(&ID___hash__))
 		{
-			tp_compare = base->tp_compare;
+			tp_cmp = base->tp_cmp;
 
 			tp_hash = base->tp_hash;
 		}

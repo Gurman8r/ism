@@ -40,13 +40,9 @@ namespace ism
 			.def("get_uint", get_uint)
 			.def("get_float", get_float)
 			.def("get_string", get_string)
-			.def("pass_ptr", [](void * a) { return a; })
 			.def("pass_ptr", [](void * a, void * b) { return b; })
+			.def("pass_ptr", [](void * a) { return a; })
 			;
-
-		//CAPSULE test_cap({ new Test, [](void * ptr) { delete((Test *)ptr); } });
-
-		//CLASS_<Test>(m, "Test");
 
 		DICT test_dict;
 		test_dict = typeof<DICT>()();

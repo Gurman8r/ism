@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(MethodObject, FunctionObject);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		OBJ m_func{}, m_self{};
 

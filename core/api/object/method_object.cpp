@@ -5,33 +5,23 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_IMPLEMENT_CLASS_TYPE(MethodObject, t)
+ISM_OBJECT_IMPLEMENTATION(MethodObject, t, "method", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
-	t.tp_name = "method";
-
-	t.tp_size = sizeof(MethodObject);
-
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
+	t.tp_base = typeof<FUNCTION>();
 
 	t.tp_dictoffset = offsetof(MethodObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
-	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) { return self; };
-
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(MethodObject); };
 
-	t.tp_del = (delfunc)[](Object * ptr) { memdelete((MethodObject *)ptr); };
+	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) { return self; };
+
+	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	{
+		return CLASS_<METHOD>(type);
+	};
 };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void MethodObject::_bind_methods()
-{
-	CLASS_<METHOD>()
-
-		;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

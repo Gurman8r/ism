@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(StringObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		String m_string{};
 
@@ -23,41 +20,39 @@ namespace ism
 
 		using const_iterator = storage_type::const_iterator;
 
-		using allocator_type = storage_type::allocator_type;
-
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 
-		StringObject(allocator_type al = {}) noexcept : Object{ get_class_static() }, m_string{ al } {}
+		StringObject() noexcept : Object{ get_class_static() } {}
 
-		StringObject(storage_type const & v, allocator_type al = {}) : Object{ get_class_static() }, m_string{ v, al } {}
+		StringObject(storage_type const & value) : StringObject{} { m_string = value; }
 
-		StringObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class_static() }, m_string{ std::move(v), al } {}
+		StringObject(storage_type && value) noexcept : StringObject{} { m_string = std::move(value); }
 
-		StringObject(cstring v, allocator_type al = {}) : Object{ get_class_static() }, m_string{ v, al } {}
+		StringObject(cstring value) : StringObject{} { m_string = value; }
 
-		StringObject(cstring v, size_t n, allocator_type al = {}) : Object{ get_class_static() }, m_string{ v, n, al } {}
+		StringObject(cstring value, size_t n) : StringObject{} { m_string = { value, n }; }
 
-		StringObject(StringName const & v, allocator_type al = {}) : StringObject{ v.string(), al } {}
+		StringObject(StringName const & value) : StringObject{ value.string() } {}
 
-		StringObject(StringName && v, allocator_type al = {}) noexcept : StringObject{ std::move(v).string(), al } {}
+		StringObject(StringName && value) noexcept : StringObject{ std::move(value).string() } {}
 
-		StringObject(std::initializer_list<char> init, allocator_type al = {}) : StringObject{ storage_type{ init.begin(), init.end() }, al } {}
+		StringObject(std::initializer_list<char> init) : StringObject{} { m_string = init; }
 
-		template <class T> StringObject(Handle<T> const & o, allocator_type al = {}) : StringObject{ al }
+		template <class T> StringObject(Handle<T> const & value) : StringObject{}
 		{
 			if constexpr (std::is_same_v<T, StringObject>)
 			{
-				m_string = (storage_type)o;
+				m_string = (storage_type)value;
 			}
-			else if (STR::check_(o))
+			else if (STR::check_(value))
 			{
-				m_string = (storage_type)STR(o);
+				m_string = (storage_type)STR(value);
 			}
-			else if (TYPE t{ typeof(o) }; t->tp_str)
+			else if (TYPE t{ typeof(value) }; t->tp_str)
 			{
-				m_string = (storage_type)t->tp_str(o);
+				m_string = (storage_type)t->tp_str(value);
 			}
 		}
 	};
@@ -80,43 +75,33 @@ namespace ism
 
 		using const_iterator = value_type::const_iterator;
 
-		using allocator_type = value_type::allocator_type;
+		NODISCARD auto string() const & noexcept -> storage_type & { return **CHECK(m_ptr); }
 
-		void reserve(size_t count) { (**m_ptr).reserve(count); }
+		NODISCARD operator storage_type() const { return string(); }
 
-		void resize(size_t count) { (**m_ptr).resize(count); }
+		void reserve(size_t count) { string().reserve(count); }
 
-		NODISCARD operator storage_type() const { return storage_type(**m_ptr); }
+		void resize(size_t count) { string().resize(count); }
 
-		NODISCARD auto string() const & -> storage_type const & { return **m_ptr; }
+		NODISCARD auto c_str() const { return string().c_str(); }
 
-		NODISCARD auto string() & -> storage_type & { return **m_ptr; }
+		NODISCARD auto data() const { return string().data(); }
 
-		NODISCARD auto string() && -> storage_type && { return std::move(**m_ptr); }
+		NODISCARD bool empty() const { return string().empty(); }
 
-		NODISCARD auto c_str() const { return (**m_ptr).c_str(); }
+		NODISCARD auto size() const { return string().size(); }
 
-		NODISCARD auto data() const { return (**m_ptr).data(); }
+		NODISCARD auto begin() -> iterator { return string().begin(); }
 
-		NODISCARD bool empty() const { return (**m_ptr).empty(); }
+		NODISCARD auto begin() const -> const_iterator { return string().begin(); }
 
-		NODISCARD auto size() const { return (**m_ptr).size(); }
+		NODISCARD auto cbegin() const -> const_iterator { return string().cbegin(); }
 
-		NODISCARD auto front() const -> char & { return (**m_ptr).front(); }
+		NODISCARD auto end() -> iterator { return string().end(); }
 
-		NODISCARD auto back() const -> char & { return (**m_ptr).back(); }
+		NODISCARD auto end() const -> const_iterator { return string().end(); }
 
-		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
-
-		NODISCARD auto begin() const -> const_iterator { return (**m_ptr).begin(); }
-
-		NODISCARD auto cbegin() const -> const_iterator { return (**m_ptr).cbegin(); }
-
-		NODISCARD auto end() -> iterator { return (**m_ptr).end(); }
-
-		NODISCARD auto end() const -> const_iterator { return (**m_ptr).end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return (**m_ptr).cend(); }
+		NODISCARD auto cend() const -> const_iterator { return string().cend(); }
 	};
 }
 

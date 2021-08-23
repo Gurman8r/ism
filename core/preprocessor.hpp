@@ -95,18 +95,19 @@ namespace ism::impl
 		T value;
 
 		constexpr ComposeHelper(T && value) noexcept : value{ FWD(value) } {}
+
+		template <class Fn = void(*)(T &)
+		> constexpr decltype(auto) operator+(Fn && fn) && noexcept
+		{
+			return fn(value), std::move(value);
+		}
 	};
 
-	template <class T, class Fn = void(*)(T &)
-	> constexpr decltype(auto) operator+(ComposeHelper<T> && helper, Fn && fn) noexcept
-	{
-		fn(helper.value);
+#define COMPOSE_EX(m_class, ...) \
+	(ism::impl::ComposeHelper<m_class>(m_class{ ##__VA_ARGS__ }))
 
-		return std::move(helper.value);
-	}
-
-#define COMPOSE(m_type, m_var, ...) \
-	(ism::impl::ComposeHelper<m_type>(m_type{ ##__VA_ARGS__ })) + [&](m_type & m_var) noexcept -> void
+#define COMPOSE(m_class, m_var, ...) \
+	COMPOSE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

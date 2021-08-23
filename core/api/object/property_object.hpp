@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(PropertyObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		OBJ m_get{}, m_set{};
 

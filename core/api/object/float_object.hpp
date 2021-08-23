@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(FloatObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		double_t m_float{};
 

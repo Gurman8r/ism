@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(DictObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		HashMap<OBJ, OBJ> m_dict{};
 
@@ -23,22 +20,20 @@ namespace ism
 
 		using const_iterator = storage_type::const_iterator;
 
-		using allocator_type = storage_type::allocator_type;
-
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_dict); }
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_dict); }
 
-		DictObject(std::initializer_list<std::pair<OBJ, OBJ>> init, allocator_type al = {}) : DictObject{ al }
+		DictObject() noexcept : Object{ get_class_static() }, m_dict{} {}
+
+		DictObject(storage_type const & value) : DictObject{} { m_dict = value; }
+
+		DictObject(storage_type && value) noexcept : DictObject{} { m_dict = std::move(value); }
+
+		DictObject(std::initializer_list<std::pair<OBJ, OBJ>> init) : DictObject{}
 		{
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
-
-		DictObject(allocator_type al = {}) noexcept : Object{ get_class_static() }, m_dict{ al } {}
-
-		DictObject(storage_type const & v, allocator_type al = {}) : Object{ get_class_static() }, m_dict{ v, al } {}
-
-		DictObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class_static() }, m_dict{ std::move(v), al } {}
 	};
 
 	// dict delete
@@ -59,29 +54,29 @@ namespace ism
 
 		using const_iterator = value_type::const_iterator;
 
-		using allocator_type = value_type::allocator_type;
+		NODISCARD auto dict() const & noexcept -> storage_type & { return **CHECK(m_ptr); }
 
-		void clear() const { (**m_ptr).clear(); }
+		void clear() const { dict().clear(); }
 
-		void reserve(size_t count) const { (**m_ptr).reserve(count); }
+		void reserve(size_t count) const { dict().reserve(count); }
 
 		template <class Index = OBJ
-		> auto del(Index && i) const -> Error { return (**m_ptr).erase(FWD_OBJ(i)), Error_None; }
+		> auto del(Index && i) const -> Error { return dict().erase(FWD_OBJ(i)), Error_None; }
 
 		template <class Index = OBJ, class Value = OBJ
-		> bool insert(Index && i, Value && v) const { return (**m_ptr).try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second; }
+		> bool insert(Index && i, Value && v) const { return dict().try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
 		template <class Index = OBJ, class Value = OBJ
-		> bool insert_or_assign(Index && i, Value && v) const { return (**m_ptr).insert_or_assign(FWD_OBJ(i), FWD_OBJ(v)).second; }
+		> bool insert_or_assign(Index && i, Value && v) const { return dict().insert_or_assign(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
 		template <class Index = OBJ
 		> NODISCARD bool contains(Index && i) const { return find(FWD(i)) != end(); }
 
 		template <class Index = OBJ
-		> NODISCARD auto find(Index && i) -> iterator { return (**m_ptr).find(FWD_OBJ(i)); }
+		> NODISCARD auto find(Index && i) -> iterator { return dict().find(FWD_OBJ(i)); }
 
 		template <class Index = OBJ
-		> NODISCARD auto find(Index && i) const -> const_iterator { return (**m_ptr).find(FWD_OBJ(i)); }
+		> NODISCARD auto find(Index && i) const -> const_iterator { return dict().find(FWD_OBJ(i)); }
 
 		template <class Index = OBJ
 		> NODISCARD auto lookup(Index && i) const -> OBJ { return lookup(FWD_OBJ(i), OBJ{}); }
@@ -89,28 +84,28 @@ namespace ism
 		template <class Index = OBJ, class Defval = OBJ
 		> NODISCARD auto lookup(Index && i, Defval && dv) const -> OBJ
 		{
-			if (auto const ptr{ ism::getptr(**m_ptr, FWD_OBJ(i)) }) { return *ptr; }
+			if (auto const ptr{ ism::getptr(dict(), FWD_OBJ(i)) }) { return *ptr; }
 			else { return FWD_OBJ(dv); }
 		}
 
 		template <class Index = OBJ
 		> NODISCARD auto operator[](Index && i) const -> OBJ & { return (**m_ptr)[FWD_OBJ(i)]; }
 
-		NODISCARD bool empty() const { return (**m_ptr).empty(); }
+		NODISCARD bool empty() const { return dict().empty(); }
 
-		NODISCARD auto size() const { return (**m_ptr).size(); }
+		NODISCARD auto size() const { return dict().size(); }
 
-		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
+		NODISCARD auto begin() -> iterator { return dict().begin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return (**m_ptr).begin(); }
+		NODISCARD auto begin() const -> const_iterator { return dict().begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return (**m_ptr).cbegin(); }
+		NODISCARD auto cbegin() const -> const_iterator { return dict().cbegin(); }
 
-		NODISCARD auto end() -> iterator { return (**m_ptr).end(); }
+		NODISCARD auto end() -> iterator { return dict().end(); }
 
-		NODISCARD auto end() const -> const_iterator { return (**m_ptr).end(); }
+		NODISCARD auto end() const -> const_iterator { return dict().end(); }
 
-		NODISCARD auto cend() const -> const_iterator { return (**m_ptr).cend(); }
+		NODISCARD auto cend() const -> const_iterator { return dict().cend(); }
 	};
 }
 

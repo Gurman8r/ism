@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(GenericObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		virtual ~GenericObject() override {}
 

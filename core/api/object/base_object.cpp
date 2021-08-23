@@ -11,7 +11,7 @@ void Object::initialize_class()
 	{
 		Internals::add_class<Object>();
 
-		_bind_methods();
+		typeof<Object>()->tp_bind(typeof<Object>());
 	}
 }
 
@@ -62,33 +62,19 @@ bool Object::dec_ref()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_IMPLEMENT_CLASS_TYPE(Object, t)
+ISM_OBJECT_IMPLEMENTATION(Object, t, "object", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
-	t.tp_name = "object";
-
-	t.tp_size = sizeof(Object);
-
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType;
+	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
 
 	t.tp_getattro = (getattrofunc)generic_getattr;
 
 	t.tp_setattro = (setattrofunc)generic_setattr;
 
-	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
-
-	t.tp_compare = (cmpfunc)[](OBJ self, OBJ other) { return util::compare(*self, *other); };
-
-	t.tp_del = (delfunc)[](Object * ptr) { memdelete(ptr); };
+	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	{
+		return CLASS_<OBJ>(type);
+	};
 };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void Object::_bind_methods()
-{
-	CLASS_<OBJ>()
-
-		;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -100,17 +86,17 @@ OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 
 	OBJ descr{ type.lookup(name) };
 
-	descrgetfunc fn{};
+	descrgetfunc get{};
 
 	if (descr)
 	{
 		TYPE descr_type{ typeof(descr) };
 
-		fn = descr_type->tp_descr_get;
+		get = descr_type->tp_descr_get;
 
-		if (fn && descr_type->tp_descr_set)
+		if (get && descr_type->tp_descr_set)
 		{
-			return fn(descr, obj, type);
+			return get(descr, obj, type);
 		}
 	}
 
@@ -124,7 +110,7 @@ OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 		return DICT(dict).lookup(name);
 	}
 
-	if (fn) { return fn(descr, obj, type); }
+	if (get) { return get(descr, obj, type); }
 
 	if (descr) { return descr; }
 
@@ -139,11 +125,11 @@ Error ism::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 
 	OBJ descr{ type.lookup(name) };
 
-	descrsetfunc fn{};
+	descrsetfunc set{};
 
-	if (descr && (fn = typeof(descr)->tp_descr_set))
+	if (descr && (set = typeof(descr)->tp_descr_set))
 	{
-		return fn(descr, obj, value);
+		return set(descr, obj, value);
 	}
 
 	if (!dict)

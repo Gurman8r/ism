@@ -11,9 +11,6 @@ namespace ism
 	{
 		ISM_OBJECT(ListObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		Vector<OBJ> m_list{};
 
@@ -23,27 +20,25 @@ namespace ism
 
 		using const_iterator = storage_type::const_iterator;
 
-		using allocator_type = storage_type::allocator_type;
-
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_list); }
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_list); }
 
 		template <class Iter
-		> ListObject(Iter first, Iter last, allocator_type al = {}) : Object{ get_class_static() }, m_list{ first, last, al } {}
+		> ListObject(Iter first, Iter last) : ListObject{} { m_list = { first, last }; }
 
-		ListObject(std::initializer_list<OBJ> init, allocator_type al = {}) : ListObject{ al }
+		ListObject() noexcept : Object{ get_class_static() } {}
+
+		ListObject(storage_type const & value) : ListObject{} { m_list = value; }
+
+		ListObject(storage_type && value) noexcept : ListObject{} { m_list = std::move(value); }
+
+		ListObject(std::initializer_list<OBJ> init) : ListObject{}
 		{
 			m_list.reserve(init.size());
 
 			for (auto const & e : init) { m_list.push_back(e); }
 		}
-
-		ListObject(allocator_type al = {}) noexcept : Object{ get_class_static() }, m_list{ al } {}
-
-		ListObject(storage_type const & v, allocator_type al = {}) : Object{ get_class_static() }, m_list{ v, al } {}
-
-		ListObject(storage_type && v, allocator_type al = {}) noexcept : Object{ get_class_static() }, m_list{ std::move(v), al } {}
 	};
 
 	// list delete
@@ -64,43 +59,43 @@ namespace ism
 
 		using const_iterator = value_type::const_iterator;
 
-		using allocator_type = value_type::allocator_type;
+		NODISCARD auto list() const & noexcept -> storage_type & { return **CHECK(m_ptr); }
 
 		template <class Index = OBJ
 		> auto del(Index && i) const -> Error
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
-				return (**m_ptr).erase(begin() + static_cast<size_t>(i)), Error_None;
+				return list().erase(begin() + static_cast<size_t>(i)), Error_None;
 			}
 			else
 			{
-				return (**m_ptr).erase(begin() + FWD_OBJ(i).cast<size_t>()), Error_None;
+				return list().erase(begin() + FWD_OBJ(i).cast<size_t>()), Error_None;
 			}
 		}
 
-		void clear() const { (**m_ptr).clear(); }
+		void clear() const { list().clear(); }
 
-		void reserve(size_t count) const { (**m_ptr).reserve(count); }
+		void reserve(size_t count) const { list().reserve(count); }
 
-		void resize(size_t count) const { (**m_ptr).resize(count); }
-
-		template <class Value = OBJ
-		> void resize(size_t count, Value && value) const { (**m_ptr).resize(count, FWD_OBJ(value)); }
+		void resize(size_t count) const { list().resize(count); }
 
 		template <class Value = OBJ
-		> void append(Value && v) const { (**m_ptr).emplace_back(FWD_OBJ(v)); }
+		> void resize(size_t count, Value && value) const { list().resize(count, FWD_OBJ(value)); }
+
+		template <class Value = OBJ
+		> void append(Value && v) const { list().emplace_back(FWD_OBJ(v)); }
 
 		template <class Index = OBJ, class Value = OBJ
 		> void insert(Index && i, Value && v)
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
-				(**m_ptr).insert(begin() + i, FWD_OBJ(v));
+				list().insert(begin() + i, FWD_OBJ(v));
 			}
 			else
 			{
-				(**m_ptr).insert(begin() + i.cast<size_t>(), FWD_OBJ(v));
+				list().insert(begin() + i.cast<size_t>(), FWD_OBJ(v));
 			}
 		}
 
@@ -119,44 +114,40 @@ namespace ism
 		template <class Value = OBJ, class Defval = OBJ
 		> NODISCARD auto lookup(Value && v, Defval && dv) -> OBJ
 		{
-			if (auto const ptr{ ism::getptr(**m_ptr, FWD_OBJ(v)) };) { return *ptr; }
+			if (auto const ptr{ ism::getptr(list(), FWD_OBJ(v)) };) { return *ptr; }
 			else { return FWD_OBJ(dv); }
 		}
 
 		template <class Index = OBJ
-		> NODISCARD auto operator[](Index && i) const -> OBJ &
+		> NODISCARD auto operator[](Index && i) const -> OBJ
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
-				return (**m_ptr)[static_cast<size_t>(i)];
+				return list()[static_cast<size_t>(i)];
 			}
 			else
 			{
-				return (**m_ptr)[FWD_OBJ(i).cast<size_t>()];
+				return list()[FWD_OBJ(i).cast<size_t>()];
 			}
 		}
 
-		NODISCARD auto data() const { return (**m_ptr).data(); }
+		NODISCARD auto data() const { return list().data(); }
 
-		NODISCARD bool empty() const { return (**m_ptr).empty(); }
+		NODISCARD bool empty() const { return list().empty(); }
 
-		NODISCARD auto size() const { return (**m_ptr).size(); }
+		NODISCARD auto size() const { return list().size(); }
 
-		NODISCARD auto front() const -> OBJ & { return (**m_ptr).front(); }
+		NODISCARD auto begin() -> iterator { return list().begin(); }
 
-		NODISCARD auto back() const -> OBJ & { return (**m_ptr).back(); }
+		NODISCARD auto begin() const -> const_iterator { return list().begin(); }
 
-		NODISCARD auto begin() -> iterator { return (**m_ptr).begin(); }
+		NODISCARD auto cbegin() const -> const_iterator { return list().cbegin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return (**m_ptr).begin(); }
+		NODISCARD auto end() -> iterator { return list().end(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return (**m_ptr).cbegin(); }
+		NODISCARD auto end() const -> const_iterator { return list().end(); }
 
-		NODISCARD auto end() -> iterator { return (**m_ptr).end(); }
-
-		NODISCARD auto end() const -> const_iterator { return (**m_ptr).end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return (**m_ptr).cend(); }
+		NODISCARD auto cend() const -> const_iterator { return list().cend(); }
 	};
 }
 

@@ -5,32 +5,24 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_IMPLEMENT_CLASS_TYPE(FunctionObject, t)
+ISM_OBJECT_IMPLEMENTATION(FunctionObject, t, "function", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
-	t.tp_name = "function";
-
-	t.tp_size = sizeof(FunctionObject);
-
-	t.tp_flags = TypeFlags_Default | TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor;
-
 	t.tp_dictoffset = offsetof(FunctionObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(FunctionObject); };
 
-	t.tp_del = (delfunc)[](Object * ptr) { memdelete((FunctionObject *)ptr); };
+	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	{
+		return CLASS_<FUNCTION>(type)
+
+			.def_property_readonly("__dict__", [](FUNCTION self) { return self->m_dict; })
+
+			.def_property_readonly("__module__", [](FUNCTION self) { return self->m_module; })
+
+			;
+	};
 };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void FunctionObject::_bind_methods()
-{
-	CLASS_<FUNCTION>()
-
-		//.def_property("__name__", [](FUNCTION self) { return self->m_name; }, [](FUNCTION self, STR value) { self->m_name = value; })
-
-		;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

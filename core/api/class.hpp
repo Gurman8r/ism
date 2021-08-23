@@ -10,27 +10,16 @@ namespace ism
 	> class CLASS_ : public TYPE
 	{
 	public:
-		using holder_type = typename std::conditional_t<!is_api_v<_type>, GENERIC, std::conditional_t<is_ref_v<_type>, _type, Handle<_type>>>;
+		using value_type = std::conditional_t<is_base_object_v<_type>, _type, typename _type::value_type>;
 		
-		using value_type = typename std::conditional_t<!is_api_v<_type>, _type, std::conditional_t<is_ref_v<_type>, typename _type::value_type, _type>>;
+		using holder_type = std::conditional_t<is_base_object_v<_type>, Handle<_type>, _type>;
 		
-		using type = _type;
-	
+		using type = holder_type;
+
 	public:
 		template <class ... Extra
-		> CLASS_(OBJ scope, cstring name, Extra && ... extra) : TYPE{ TYPE::new_() }
+		> CLASS_(TYPE target, Extra && ... extra) : TYPE{ target }
 		{
-			VERIFY(is_valid());
-			m_ptr->tp_name = name;
-			m_ptr->tp_size = sizeof(value_type);
-			m_ptr->tp_del = (delfunc)[](Object * ptr) {};
-			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
-		}
-
-		template <class ... Extra
-		> CLASS_(Extra && ... extra) : TYPE{ typeof<value_type>() }
-		{
-			attr::process_attributes<Extra...>::init(*m_ptr, FWD(extra)...);
 		}
 
 	public:

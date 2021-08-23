@@ -16,9 +16,6 @@ namespace ism
 	{
 		ISM_OBJECT(IntObject, Object);
 
-	protected:
-		static void _bind_methods();
-
 	public:
 		int64_t m_int{};
 

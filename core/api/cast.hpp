@@ -135,7 +135,7 @@ public:																								\
 
 		caster_t subcaster;
 
-		NODISCARD bool load(OBJ src, bool convert) { return subcaster.load(src, convert); }
+		bool load(OBJ src, bool convert) { return subcaster.load(src, convert); }
 
 		static OBJ cast(std::reference_wrapper<T> const & src) { return caster_t::cast(src.get()); }
 	};
@@ -150,7 +150,7 @@ public:																								\
 		using _type1 = std::conditional_t<std::is_signed_v<T>, _type0, std::make_unsigned_t<_type0>>;
 		using _convt = std::conditional_t<std::is_floating_point_v<T>, double_t, _type1>;
 
-		NODISCARD bool load(OBJ src, bool convert)
+		bool load(OBJ src, bool convert)
 		{
 			if (!src) { return false; }
 			else if (isinstance<FLT>(src)) { return (value = (_convt)(_ftype)FLT(src)), true; }
@@ -158,7 +158,7 @@ public:																								\
 			else { return false; }
 		}
 
-		NODISCARD static OBJ cast(T src, ReturnPolicy, OBJ)
+		static OBJ cast(T src, ReturnPolicy, OBJ)
 		{
 			if constexpr (std::is_floating_point_v<T>) {
 				return FLT(static_cast<_ftype>(src));
@@ -175,9 +175,9 @@ public:																								\
 
 	template <class T> struct void_caster
 	{
-		NODISCARD bool load(OBJ src, bool) { return src.is_valid(); }
+		bool load(OBJ src, bool) { return src.is_valid(); }
 
-		NODISCARD static OBJ cast(T, ReturnPolicy, OBJ) { return OBJ{}; }
+		static OBJ cast(T, ReturnPolicy, OBJ) { return OBJ{}; }
 
 		ISM_TYPE_CASTER(T, "none");
 	};
@@ -190,14 +190,14 @@ public:																								\
 	{
 		using type_caster<void_type>::cast;
 
-		NODISCARD bool load(OBJ src, bool)
+		bool load(OBJ src, bool)
 		{
 			if (src.is_null()) { return (value = nullptr), true; }
 			else if (isinstance<CAPSULE>(src)) { return (value = CAPSULE(src)), true; }
 			else { return false; }
 		}
 
-		NODISCARD static OBJ cast(void const * src, ReturnPolicy, OBJ)
+		static OBJ cast(void const * src, ReturnPolicy, OBJ)
 		{
 			return src ? CAPSULE({ static_cast<void const *>(src) }) : nullptr;
 		}
@@ -216,14 +216,14 @@ public:																								\
 
 	template <> struct type_caster<bool>
 	{
-		NODISCARD bool load(OBJ src, bool convert)
+		bool load(OBJ src, bool convert)
 		{
 			if (src == ISM_True) { return (value = true), true; }
 			else if (src == ISM_False) { return (value = false), true; }
 			else { return (value = src.is_valid()), true; }
 		}
 
-		NODISCARD static OBJ cast(bool src, ReturnPolicy, OBJ) { return ISM_Bool(src); }
+		static OBJ cast(bool src, ReturnPolicy, OBJ) { return ISM_Bool(src); }
 
 		ISM_TYPE_CASTER(bool, "bool");
 	};
@@ -232,13 +232,13 @@ public:																								\
 
 	template <class T> struct string_caster
 	{
-		NODISCARD bool load(OBJ src, bool convert)
+		bool load(OBJ src, bool convert)
 		{
 			if (!src) { return false; }
 			else { return (value = (String)STR(src)), true; }
 		}
 
-		NODISCARD static OBJ cast(T const & src, ReturnPolicy, OBJ) { return STR(src); }
+		static OBJ cast(T const & src, ReturnPolicy, OBJ) { return STR(src); }
 
 		ISM_TYPE_CASTER(T, "string");
 	};
@@ -251,15 +251,15 @@ public:																								\
 	{
 		type_caster<BasicString<T>> str_caster;
 
-		NODISCARD bool load(OBJ src, bool convert)
+		bool load(OBJ src, bool convert)
 		{
 			if (!src) { return false; }
 			else { return str_caster.load(src, convert); }
 		}
 
-		NODISCARD static OBJ cast(T const * src, ReturnPolicy, OBJ) { return STR(src); }
+		static OBJ cast(T const * src, ReturnPolicy, OBJ) { return STR(src); }
 
-		NODISCARD static OBJ cast(T const src, ReturnPolicy, OBJ) { return INT(src); }
+		static OBJ cast(T const src, ReturnPolicy, OBJ) { return INT(src); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -317,14 +317,14 @@ public:																								\
 	template <class T> struct object_caster
 	{
 		template <class U = T
-		> NODISCARD bool load(Handle<U> const & src, bool)
+		> bool load(Handle<U> const & src, bool)
 		{
 			if (!isinstance<T>(src)) { return false; }
 			value = src;
 			return true;
 		}
 
-		NODISCARD static OBJ cast(OBJ src, ReturnPolicy, OBJ) { return src; }
+		static OBJ cast(OBJ src, ReturnPolicy, OBJ) { return src; }
 
 		ISM_TYPE_CASTER(T, "object");
 	};
