@@ -1,12 +1,16 @@
 #include <scene/resources/mesh.hpp>
 
-namespace ism
-{
-	Mesh::~Mesh()
-	{
-	}
+using namespace ism;
 
-	Mesh::Mesh()
-	{
-	}
+ISM_OBJECT_IMPLEMENTATION(Mesh, t, "mesh")
+{
+	t.tp_base = typeof<Resource>();
+}
+
+Mesh::~Mesh()
+{
+}
+
+Mesh::Mesh() : Mesh{ get_class() }
+{
 }

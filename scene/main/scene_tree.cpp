@@ -1,6 +1,15 @@
 #include <scene/main/scene_tree.hpp>
 #include <scene/components/components.hpp>
 
+using namespace ism;
+
+ISM_OBJECT_IMPLEMENTATION(SceneTree, t, "scene_tree")
+{
+	t.tp_base = typeof<MainLoop>();
+
+	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(SceneTree{ (String)STR(args[0]) }); };
+}
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -10,7 +19,7 @@ namespace ism
 		if (m_root) { memdelete(m_root); m_root = nullptr; }
 	}
 
-	SceneTree::SceneTree(String const & name)
+	SceneTree::SceneTree(String const & name) : SceneTree{ get_class() }
 	{
 		m_name = name.empty() ? "New Scene" : name;
 	}

@@ -13,7 +13,8 @@ namespace ism
 
 	class ISM_API Image : public Resource
 	{
-	private:
+		ISM_OBJECT_DEFAULT(Image, Resource);
+
 		friend class ImageLoader;
 
 		int32_t m_width{}, m_height{}, m_channels{};

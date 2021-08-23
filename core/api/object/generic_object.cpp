@@ -13,6 +13,6 @@ ISM_OBJECT_IMPLEMENTATION(GenericObject, t, "generic_type", TypeFlags_BaseType)
 	{
 		return CLASS_<GENERIC>(type);
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

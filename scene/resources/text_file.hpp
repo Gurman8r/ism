@@ -7,6 +7,8 @@ namespace ism
 {
 	class ISM_API TextFile : public Resource
 	{
+		ISM_OBJECT_DEFAULT(TextFile, Resource);
+
 	public:
 		virtual ~TextFile();
 

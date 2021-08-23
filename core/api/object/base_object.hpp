@@ -6,30 +6,33 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object common
-#define ISM_OBJECT_COMMON(m_class, m_inherits)		\
-private:											\
-	friend class ism::Internals;					\
-													\
-	friend class ism::Handle<m_class>;				\
-													\
-	static ism::TypeObject _class_type_static;		\
-													\
+#define ISM_OBJECT_COMMON(m_class)				\
+private:										\
+	friend class ism::Internals;				\
+												\
+	friend class ism::Handle<m_class>;			\
+												\
+	static ism::TypeObject _class_type_static;	\
+												\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object default
 #define ISM_OBJECT(m_class, m_inherits)												\
-ISM_OBJECT_COMMON(m_class, m_inherits)												\
+ISM_OBJECT_COMMON(m_class)															\
 																					\
 protected:																			\
 	static void initialize_class()													\
 	{																				\
 		if (static bool once{}; !once && (once = true))								\
 		{																			\
-			ism::Internals::add_class<m_class>();									\
+			ism::get_internals().add_class(&m_class::_class_type_static);			\
 																					\
-			m_class::_class_type_static.tp_bind(&m_class::_class_type_static);		\
+			if (m_class::_class_type_static.tp_bind)								\
+			{																		\
+				m_class::_class_type_static.tp_bind(&m_class::_class_type_static);	\
+			}																		\
 		};																			\
 	}																				\
 																					\
@@ -40,15 +43,26 @@ protected:																			\
 																					\
 	FORCE_INLINE virtual ism::TYPE _get_typev() const override						\
 	{																				\
-		return m_class::get_class_static();											\
+		return m_class::get_class();												\
 	}																				\
 																					\
 public:																				\
-	FORCE_INLINE static ism::TYPE get_class_static() noexcept						\
+	FORCE_INLINE static ism::TYPE get_class() noexcept								\
 	{																				\
 		return &m_class::_class_type_static;										\
 	}																				\
 																					\
+private:
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// object with constructors
+#define ISM_OBJECT_DEFAULT(m_class, m_inherits)									\
+ISM_OBJECT(m_class, m_inherits)													\
+																				\
+public:																			\
+	explicit m_class(ism::TYPE const & type) noexcept : m_inherits{ type } {}	\
+																				\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -71,11 +85,7 @@ namespace ism
 	// object object
 	class ISM_API Object : public ObjectAPI<Object>
 	{
-		friend class Internals;
-
-		friend class Handle<Object>;
-
-		static TypeObject _class_type_static;
+		ISM_OBJECT_COMMON(Object);
 
 		RefCount m_refcount{}, m_refcount_init{};
 
@@ -111,7 +121,7 @@ namespace ism
 		
 		bool dec_ref();
 
-		NODISCARD static TYPE get_class_static() noexcept;
+		NODISCARD static TYPE get_class() noexcept;
 
 		NODISCARD TYPE get_type() const noexcept;
 
@@ -176,7 +186,7 @@ namespace ism
 	> NODISCARD TYPE typeof() noexcept { return typeof_generic(typeid(T)); }
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof() noexcept { return T::get_class_static(); }
+	> NODISCARD TYPE typeof() noexcept { return T::get_class(); }
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept { return CHECK(FWD(o))->get_type(); }

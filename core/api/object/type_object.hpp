@@ -11,7 +11,7 @@ namespace ism
 	// type object
 	class ISM_API TypeObject : public Object
 	{
-		ISM_OBJECT_COMMON(TypeObject, Object);
+		ISM_OBJECT_COMMON(TypeObject);
 
 	protected:
 		static void initialize_class();
@@ -21,14 +21,14 @@ namespace ism
 		virtual TYPE _get_typev() const noexcept override;
 
 	public:
-		NODISCARD static TYPE get_class_static() noexcept;
+		NODISCARD static TYPE get_class() noexcept;
 
-		explicit TypeObject(TYPE type) noexcept;
+		explicit TypeObject(TYPE const & type) noexcept;
 
 		TypeObject() noexcept;
 
 		template <class T, class ... Extra
-		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags, Extra && ... extra) noexcept : TypeObject{}
+		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags = TypeFlags_Default, Extra && ... extra) noexcept : TypeObject{}
 		{
 			tp_name = name;
 			tp_size = sizeof(T);

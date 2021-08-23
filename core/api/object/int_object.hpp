@@ -14,7 +14,7 @@ namespace ism
 	// int object
 	class ISM_API IntObject : public Object
 	{
-		ISM_OBJECT(IntObject, Object);
+		ISM_OBJECT_DEFAULT(IntObject, Object);
 
 	public:
 		int64_t m_int{};
@@ -23,7 +23,7 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
-		IntObject() noexcept : Object{ get_class_static() } {}
+		IntObject() noexcept : Object{ get_class() } {}
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> explicit IntObject(T const value) : IntObject{} { m_int = static_cast<storage_type>(value); }

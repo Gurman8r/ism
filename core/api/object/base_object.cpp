@@ -9,9 +9,9 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		Internals::add_class<Object>();
+		get_internals().add_class(&_class_type_static);
 
-		typeof<Object>()->tp_bind(typeof<Object>());
+		_class_type_static.tp_bind(&_class_type_static);
 	}
 }
 
@@ -23,9 +23,9 @@ Object::Object(TYPE const & type) noexcept : ob_type{ type } { _construct_object
 
 Object::~Object() { ob_type = nullptr; }
 
-TYPE Object::get_class_static() noexcept { return &_class_type_static; }
+TYPE Object::get_class() noexcept { return &_class_type_static; }
 
-TYPE Object::_get_typev() const { return get_class_static(); }
+TYPE Object::_get_typev() const { return get_class(); }
 
 TYPE Object::get_type() const noexcept { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
 
@@ -74,7 +74,7 @@ ISM_OBJECT_IMPLEMENTATION(Object, t, "object", TypeFlags_BaseType | TypeFlags_Is
 	{
 		return CLASS_<OBJ>(type);
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -84,9 +84,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct Hash;
+	template <class T, class SFINAE = void> struct Hash;
 
-	template <class T> struct Hash {
+	template <class T> struct Hash<T> {
 		Hash() = default;
 		NODISCARD hash_t operator()(T const & value) const {
 			return std::hash<T>{}(value);

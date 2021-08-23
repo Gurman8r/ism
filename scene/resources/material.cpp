@@ -1,12 +1,16 @@
 #include <scene/resources/material.hpp>
 
-namespace ism
-{
-	Material::~Material()
-	{
-	}
+using namespace ism;
 
-	Material::Material()
-	{
-	}
+ISM_OBJECT_IMPLEMENTATION(Material, t, "material")
+{
+	t.tp_base = typeof<Resource>();
+}
+
+Material::~Material()
+{
+}
+
+Material::Material() : Material{ get_class() }
+{
 }

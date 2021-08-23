@@ -135,7 +135,7 @@ public:																								\
 
 		caster_t subcaster;
 
-		bool load(OBJ src, bool convert) { return subcaster.load(src, convert); }
+		bool load(OBJ const & src, bool convert) { return subcaster.load(src, convert); }
 
 		static OBJ cast(std::reference_wrapper<T> const & src) { return caster_t::cast(src.get()); }
 	};
@@ -150,7 +150,7 @@ public:																								\
 		using _type1 = std::conditional_t<std::is_signed_v<T>, _type0, std::make_unsigned_t<_type0>>;
 		using _convt = std::conditional_t<std::is_floating_point_v<T>, double_t, _type1>;
 
-		bool load(OBJ src, bool convert)
+		bool load(OBJ const & src, bool convert)
 		{
 			if (!src) { return false; }
 			else if (isinstance<FLT>(src)) { return (value = (_convt)(_ftype)FLT(src)), true; }
@@ -175,7 +175,7 @@ public:																								\
 
 	template <class T> struct void_caster
 	{
-		bool load(OBJ src, bool) { return src.is_valid(); }
+		bool load(OBJ const & src, bool) { return src.is_valid(); }
 
 		static OBJ cast(T, ReturnPolicy, OBJ) { return OBJ{}; }
 
@@ -190,10 +190,12 @@ public:																								\
 	{
 		using type_caster<void_type>::cast;
 
-		bool load(OBJ src, bool)
+		bool load(OBJ const & src, bool)
 		{
 			if (src.is_null()) { return (value = nullptr), true; }
+
 			else if (isinstance<CAPSULE>(src)) { return (value = CAPSULE(src)), true; }
+			
 			else { return false; }
 		}
 
@@ -216,7 +218,7 @@ public:																								\
 
 	template <> struct type_caster<bool>
 	{
-		bool load(OBJ src, bool convert)
+		bool load(OBJ const & src, bool convert)
 		{
 			if (src == ISM_True) { return (value = true), true; }
 			else if (src == ISM_False) { return (value = false), true; }
@@ -232,7 +234,7 @@ public:																								\
 
 	template <class T> struct string_caster
 	{
-		bool load(OBJ src, bool convert)
+		bool load(OBJ const & src, bool convert)
 		{
 			if (!src) { return false; }
 			else { return (value = (String)STR(src)), true; }
@@ -251,7 +253,7 @@ public:																								\
 	{
 		type_caster<BasicString<T>> str_caster;
 
-		bool load(OBJ src, bool convert)
+		bool load(OBJ const & src, bool convert)
 		{
 			if (!src) { return false; }
 			else { return str_caster.load(src, convert); }
@@ -317,20 +319,26 @@ public:																								\
 	template <class T> struct object_caster
 	{
 		template <class U = T
-		> bool load(Handle<U> const & src, bool)
+		> bool load(Ref<U> const & src, bool)
 		{
 			if (!isinstance<T>(src)) { return false; }
 			value = src;
 			return true;
 		}
 
-		static OBJ cast(OBJ src, ReturnPolicy, OBJ) { return src; }
+		static OBJ cast(OBJ const & src, ReturnPolicy, OBJ) { return src; }
 
 		ISM_TYPE_CASTER(T, "object");
 	};
 
 	template <class T> struct type_caster<T, std::enable_if_t<is_api_v<T>>> : object_caster<T> {};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// cast
+namespace ism
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// move_is_plain_type
@@ -365,12 +373,6 @@ public:																								\
 	template <class T> using move_never = mpl::none_of<move_always<T>, move_if_unreferenced<T>>;
 	template <class T> constexpr bool move_never_v{ move_never<T>::value };
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// cast
-namespace ism
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class T, class SFINAE = void

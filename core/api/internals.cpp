@@ -23,17 +23,17 @@ void Internals::finalize()
 	import_func = nullptr;
 }
 
-void Internals::add_class(StringName const & name, TYPE type)
+void Internals::add_class(TYPE type)
 {
-	VERIFY(!name.empty());
-
 	VERIFY(type);
 
 	VERIFY(type.ready());
 
+	String const & name{ type->tp_name };
+
 	hash_t const id{ ism::hash(name) };
 
-	VERIFY(!singleton.classes.contains<hash_t>(id));
+	VERIFY(!classes.contains<hash_t>(id));
 
-	singleton.classes.push_back(id, name, type);
+	classes.push_back(id, name, type);
 }

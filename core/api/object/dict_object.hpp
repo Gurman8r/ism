@@ -9,7 +9,7 @@ namespace ism
 	// dict object
 	class ISM_API DictObject : public Object
 	{
-		ISM_OBJECT(DictObject, Object);
+		ISM_OBJECT_DEFAULT(DictObject, Object);
 
 	public:
 		HashMap<OBJ, OBJ> m_dict{};
@@ -24,7 +24,7 @@ namespace ism
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_dict); }
 
-		DictObject() noexcept : Object{ get_class_static() }, m_dict{} {}
+		DictObject() noexcept : Object{ get_class() }, m_dict{} {}
 
 		DictObject(storage_type const & value) : DictObject{} { m_dict = value; }
 

@@ -9,7 +9,7 @@ namespace ism
 	// capsule object
 	class ISM_API CapsuleObject : public Object
 	{
-		ISM_OBJECT(CapsuleObject, Object);
+		ISM_OBJECT_DEFAULT(CapsuleObject, Object);
 
 	public:
 		void * m_pointer{}, * m_context{};
@@ -18,7 +18,7 @@ namespace ism
 
 		virtual ~CapsuleObject() override { if (m_closure) { m_closure(this); } }
 
-		CapsuleObject() noexcept : Object{ get_class_static() } {}
+		CapsuleObject() noexcept : Object{ get_class() } {}
 
 		CapsuleObject(nullptr_t) : CapsuleObject{}
 		{

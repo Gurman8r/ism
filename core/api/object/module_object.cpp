@@ -37,7 +37,7 @@ ISM_OBJECT_IMPLEMENTATION(ModuleObject, t, "module", TypeFlags_BaseType)
 
 			;
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

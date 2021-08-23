@@ -1,12 +1,16 @@
 #include <scene/resources/sky.hpp>
 
-namespace ism
-{
-	Sky::~Sky()
-	{
-	}
+using namespace ism;
 
-	Sky::Sky()
-	{
-	}
+ISM_OBJECT_IMPLEMENTATION(Sky, t, "sky")
+{
+	t.tp_base = typeof<Resource>();
+}
+
+Sky::~Sky()
+{
+}
+
+Sky::Sky() : Sky{ get_class() }
+{
 }

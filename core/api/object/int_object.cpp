@@ -31,7 +31,7 @@ ISM_OBJECT_IMPLEMENTATION(IntObject, t, "int", TypeFlags_Int_Subclass)
 	{
 		return CLASS_<INT>(type);
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

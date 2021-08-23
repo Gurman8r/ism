@@ -32,18 +32,9 @@ namespace ism
 		void finalize();
 
 	public:
-		static void add_class(StringName const & name, TYPE type);
+		void add_class(TYPE type);
 
-		template <class T
-		> static void add_class() { add_class(ctti::type_v<T>, T::get_class_static()); }
-
-		template <class T
-		> static void bind_class()
-		{
-			T::initialize_class();
-
-			VERIFY(TYPE(*singleton.classes.map<hash_t, TYPE>(hash(ctti::type_v<T>))));
-		}
+		template <class T> static void bind_class() { T::initialize_class(); }
 	};
 
 	NODISCARD inline Internals & get_internals() noexcept { return Internals::get_singleton(); }

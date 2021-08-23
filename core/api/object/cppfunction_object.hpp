@@ -9,7 +9,7 @@ namespace ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		ISM_OBJECT(CppFunctionObject, FunctionObject);
+		ISM_OBJECT_DEFAULT(CppFunctionObject, FunctionObject);
 
 	public:
 		FunctionRecord * m_record{};

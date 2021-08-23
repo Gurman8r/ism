@@ -9,7 +9,7 @@ namespace ism
 	// function object
 	class ISM_API FunctionObject : public Object
 	{
-		ISM_OBJECT(FunctionObject, Object);
+		ISM_OBJECT_DEFAULT(FunctionObject, Object);
 
 	public:
 		OBJ m_name{}, m_qualname{};
@@ -20,9 +20,7 @@ namespace ism
 
 		virtual ~FunctionObject() noexcept override = default;
 
-		explicit FunctionObject(TYPE type) noexcept : Object{ type } {}
-
-		FunctionObject() noexcept : FunctionObject{ get_class_static() } {}
+		FunctionObject() noexcept : FunctionObject{ get_class() } {}
 	};
 
 	// function delete

@@ -9,10 +9,10 @@ namespace ism
 
 	class ISM_API Resource : public Object
 	{
-		ISM_OBJECT(Resource, Object);
+		ISM_OBJECT_DEFAULT(Resource, Object);
 
 	protected:
-		Resource() noexcept : Object{ get_class_static() } {}
+		Resource() noexcept : Object{ get_class() } {}
 		
 	public:
 		virtual ~Resource();

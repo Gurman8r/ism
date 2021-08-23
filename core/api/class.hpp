@@ -10,16 +10,17 @@ namespace ism
 	> class CLASS_ : public TYPE
 	{
 	public:
-		using value_type = std::conditional_t<is_base_object_v<_type>, _type, typename _type::value_type>;
-		
 		using holder_type = std::conditional_t<is_base_object_v<_type>, Handle<_type>, _type>;
+
+		using value_type = std::conditional_t<is_base_object_v<_type>, _type, typename holder_type::value_type>;
 		
-		using type = holder_type;
+		using type = _type;
 
 	public:
 		template <class ... Extra
 		> CLASS_(TYPE target, Extra && ... extra) : TYPE{ target }
 		{
+			VERIFY(is_valid());
 		}
 
 	public:

@@ -1,12 +1,16 @@
 #include <drivers/opengl/opengl_device.hpp>
 
-namespace ism
-{
-	OpenGL_RenderingDevice::~OpenGL_RenderingDevice()
-	{
-	}
+using namespace ism;
 
-	OpenGL_RenderingDevice::OpenGL_RenderingDevice() : RenderingDevice{}
-	{
-	}
+ISM_OBJECT_IMPLEMENTATION(OpenGL_RenderingDevice, t, "opengl_rendering_device")
+{
+	t.tp_base = typeof<RenderingDevice>();
+}
+
+OpenGL_RenderingDevice::~OpenGL_RenderingDevice()
+{
+}
+
+OpenGL_RenderingDevice::OpenGL_RenderingDevice() : OpenGL_RenderingDevice{ get_class() }
+{
 }

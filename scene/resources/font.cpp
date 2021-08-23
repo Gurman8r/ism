@@ -1,12 +1,16 @@
 #include <scene/resources/font.hpp>
 
-namespace ism
-{
-	Font::~Font()
-	{
-	}
+using namespace ism;
 
-	Font::Font()
-	{
-	}
+ISM_OBJECT_IMPLEMENTATION(Font, t, "font")
+{
+	t.tp_base = typeof<Resource>();
+}
+
+Font::~Font()
+{
+}
+
+Font::Font() : Font{ get_class() }
+{
 }

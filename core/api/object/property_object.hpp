@@ -9,12 +9,12 @@ namespace ism
 	// property object
 	class ISM_API PropertyObject : public Object
 	{
-		ISM_OBJECT(PropertyObject, Object);
+		ISM_OBJECT_DEFAULT(PropertyObject, Object);
 
 	public:
 		OBJ m_get{}, m_set{};
 
-		PropertyObject() : Object{ get_class_static() } {}
+		PropertyObject() : Object{ get_class() } {}
 
 		PropertyObject(OBJ const & fget, OBJ const & fset) : PropertyObject{} { m_get = fget; m_set = fset; }
 

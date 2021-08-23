@@ -4,13 +4,17 @@
 #include <drivers/opengl/opengl_texture.hpp>
 #endif
 
-namespace ism
-{
-	Texture::~Texture()
-	{
-	}
+using namespace ism;
 
-	Texture::Texture()
-	{
-	}
+ISM_OBJECT_IMPLEMENTATION(Texture, t, "texture")
+{
+	t.tp_base = typeof<Resource>();
+}
+
+Texture::~Texture()
+{
+}
+
+Texture::Texture() : Texture{ get_class() }
+{
 }

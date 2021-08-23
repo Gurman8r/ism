@@ -2,6 +2,11 @@
 
 using namespace ism;
 
+ISM_OBJECT_IMPLEMENTATION(RenderingDevice, t, "rendering_device", TypeFlags_BaseType | TypeFlags_IsAbstract)
+{
+	t.tp_base = typeof<Object>();
+}
+
 RenderingDevice::~RenderingDevice()
 {
 }

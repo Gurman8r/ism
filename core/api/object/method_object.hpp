@@ -9,12 +9,12 @@ namespace ism
 	// method object
 	class ISM_API MethodObject : public FunctionObject
 	{
-		ISM_OBJECT(MethodObject, FunctionObject);
+		ISM_OBJECT_DEFAULT(MethodObject, FunctionObject);
 
 	public:
 		OBJ m_func{}, m_self{};
 
-		MethodObject() noexcept : FunctionObject{ get_class_static() } {}
+		MethodObject() noexcept : MethodObject{ get_class() } {}
 
 		MethodObject(OBJ func, OBJ self, vectorcallfunc vectorcall) : MethodObject{}
 		{

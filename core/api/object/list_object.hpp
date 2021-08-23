@@ -9,7 +9,7 @@ namespace ism
 	// list object
 	class ISM_API ListObject : public Object
 	{
-		ISM_OBJECT(ListObject, Object);
+		ISM_OBJECT_DEFAULT(ListObject, Object);
 
 	public:
 		Vector<OBJ> m_list{};
@@ -27,7 +27,7 @@ namespace ism
 		template <class Iter
 		> ListObject(Iter first, Iter last) : ListObject{} { m_list = { first, last }; }
 
-		ListObject() noexcept : Object{ get_class_static() } {}
+		ListObject() noexcept : Object{ get_class() } {}
 
 		ListObject(storage_type const & value) : ListObject{} { m_list = value; }
 

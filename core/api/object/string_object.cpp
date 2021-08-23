@@ -37,6 +37,6 @@ ISM_OBJECT_IMPLEMENTATION(StringObject, t, "string", TypeFlags_Str_Subclass)
 	{
 		return CLASS_<STR>(type);
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

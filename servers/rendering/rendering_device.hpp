@@ -6,8 +6,10 @@
 namespace ism
 {
 	// rendering device
-	class ISM_API RenderingDevice
+	class ISM_API RenderingDevice : public Object
 	{
+		ISM_OBJECT_DEFAULT(RenderingDevice, Object);
+
 	public:
 		virtual ~RenderingDevice();
 	};

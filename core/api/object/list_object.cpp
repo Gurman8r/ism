@@ -31,6 +31,6 @@ ISM_OBJECT_IMPLEMENTATION(ListObject, t, "list", TypeFlags_List_Subclass)
 
 			;
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

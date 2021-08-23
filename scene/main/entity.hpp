@@ -9,6 +9,8 @@ namespace ism
 
 	class ISM_API Entity : public Node
 	{
+		ISM_OBJECT_DEFAULT(Entity, Node);
+
 		entt::entity m_entity{}; // entity
 
 	public:

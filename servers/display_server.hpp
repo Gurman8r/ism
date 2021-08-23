@@ -142,12 +142,14 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// display server
-	class ISM_API DisplayServer
+	class ISM_API DisplayServer : Object
 	{
+		ISM_OBJECT(DisplayServer, Object);
+
 	protected:
 		static DisplayServer * singleton;
 
-		explicit DisplayServer() noexcept { singleton = this; }
+		explicit DisplayServer(TYPE const & type) noexcept : Object{ type } { singleton = this; }
 		
 	public:
 		static DisplayServer * get_singleton() { return singleton; }

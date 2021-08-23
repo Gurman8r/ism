@@ -9,21 +9,21 @@ void TypeObject::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		Internals::add_class<TypeObject>();
+		get_internals().add_class(&_class_type_static);
 
-		typeof<TypeObject>()->tp_bind(typeof<TypeObject>());
+		_class_type_static.tp_bind(&_class_type_static);
 	};
 }
 
 void TypeObject::_initialize_classv() { TypeObject::initialize_class(); }
 
-TYPE TypeObject::_get_typev() const noexcept { return get_class_static(); }
+TYPE TypeObject::_get_typev() const noexcept { return get_class(); }
 
-TYPE TypeObject::get_class_static() noexcept { return &_class_type_static; }
+TYPE TypeObject::get_class() noexcept { return &_class_type_static; }
 
-TypeObject::TypeObject(TYPE type) noexcept : Object{ type } {}
+TypeObject::TypeObject(TYPE const & type) noexcept : Object{ type } {}
 
-TypeObject::TypeObject() noexcept : TypeObject{ get_class_static() } {}
+TypeObject::TypeObject() noexcept : TypeObject{ get_class() } {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -88,7 +88,7 @@ ISM_OBJECT_IMPLEMENTATION(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_
 
 			;
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

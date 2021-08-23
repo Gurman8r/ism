@@ -19,6 +19,6 @@ ISM_OBJECT_IMPLEMENTATION(DictObject, t, "dict", TypeFlags_Dict_Subclass)
 
 			;
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

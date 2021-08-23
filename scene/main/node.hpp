@@ -11,8 +11,10 @@ namespace ism
 
 	class SceneTree;
 
-	class ISM_API Node
+	class ISM_API Node : public Object
 	{
+		ISM_OBJECT_DEFAULT(Node, Object);
+
 	public:
 		using iterator					= typename Vector<Node *>::iterator;
 		using const_iterator			= typename Vector<Node *>::const_iterator;
@@ -22,7 +24,9 @@ namespace ism
 		virtual ~Node();
 
 	protected:
-		explicit Node(SceneTree * tree, Node * parent);
+		explicit Node(TYPE const & type, SceneTree * tree, Node * parent);
+
+		explicit Node(SceneTree * tree, Node * parent) : Node{ get_class(), tree, parent } {}
 
 		explicit Node(SceneTree * tree) noexcept : Node{ tree, nullptr } {}
 

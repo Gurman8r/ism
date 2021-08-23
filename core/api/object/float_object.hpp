@@ -9,7 +9,7 @@ namespace ism
 	// float object
 	class ISM_API FloatObject : public Object
 	{
-		ISM_OBJECT(FloatObject, Object);
+		ISM_OBJECT_DEFAULT(FloatObject, Object);
 
 	public:
 		double_t m_float{};
@@ -18,7 +18,7 @@ namespace ism
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
 
-		FloatObject() noexcept : Object{ get_class_static() } {}
+		FloatObject() noexcept : Object{ get_class() } {}
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> explicit FloatObject(T const value) : FloatObject{} { m_float = static_cast<storage_type>(value); }

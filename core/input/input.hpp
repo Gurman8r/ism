@@ -40,15 +40,17 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Input
+	class ISM_API Input : public Object
 	{
+		ISM_OBJECT_DEFAULT(Input, Object);
+
 	private:
 		static Input * singleton;
 
 	public:
 		virtual ~Input();
 
-		DEFAULT_COPYABLE_MOVABLE(Input);
+		Input() noexcept : Input{ get_class() } {}
 
 	public:
 		FORCE_INLINE static Input * get_singleton() { return singleton; }

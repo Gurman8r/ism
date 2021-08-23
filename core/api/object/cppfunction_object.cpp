@@ -33,7 +33,7 @@ ISM_OBJECT_IMPLEMENTATION(CppFunctionObject, t, "cpp_function", TypeFlags_BaseTy
 
 			;
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -49,7 +49,7 @@ CppFunctionObject::~CppFunctionObject()
 	}
 }
 
-CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ get_class_static() }
+CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ get_class() }
 {
 	m_vectorcall = cppfunction_vectorcall;
 }

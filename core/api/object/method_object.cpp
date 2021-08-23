@@ -21,7 +21,7 @@ ISM_OBJECT_IMPLEMENTATION(MethodObject, t, "method", TypeFlags_BaseType | TypeFl
 	{
 		return CLASS_<METHOD>(type);
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -23,6 +23,6 @@ ISM_OBJECT_IMPLEMENTATION(FunctionObject, t, "function", TypeFlags_BaseType | Ty
 
 			;
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,6 +1,10 @@
 #include <scene/main/viewport.hpp>
 
-namespace ism
+using namespace ism;
+
+ISM_OBJECT_IMPLEMENTATION(Viewport, t, "viewport")
 {
-	Viewport::~Viewport() {}
+	t.tp_base = typeof<Node>();
 }
+
+Viewport::~Viewport() {}

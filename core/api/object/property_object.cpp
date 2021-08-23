@@ -23,6 +23,6 @@ ISM_OBJECT_IMPLEMENTATION(PropertyObject, t, "property", TypeFlags_BaseType | Ty
 	{
 		return CLASS_<PROPERTY>(type);
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

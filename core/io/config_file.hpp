@@ -9,12 +9,12 @@ namespace ism
 
 	class ISM_API ConfigFile : public Resource
 	{
+		ISM_OBJECT_DEFAULT(ConfigFile, Resource);
+
 	public:
 		virtual ~ConfigFile();
 
-		DEFAULT_COPYABLE_MOVABLE(ConfigFile);
-
-	public:
+		ConfigFile() : Resource{} {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

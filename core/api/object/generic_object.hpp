@@ -9,14 +9,12 @@ namespace ism
 	// generic object
 	class ISM_API GenericObject : public Object
 	{
-		ISM_OBJECT(GenericObject, Object);
+		ISM_OBJECT_DEFAULT(GenericObject, Object);
 
 	public:
 		virtual ~GenericObject() override {}
 
-		explicit GenericObject(TYPE type) noexcept : Object{ type } {}
-
-		GenericObject() noexcept : GenericObject{ get_class_static() } {}
+		GenericObject() noexcept : GenericObject{ get_class() } {}
 	};
 
 	// generic delete

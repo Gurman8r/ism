@@ -7,10 +7,14 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API MainLoop //: public Object
+	class ISM_API MainLoop : public Object
 	{
-	private:
+		ISM_OBJECT_DEFAULT(MainLoop, Object);
+
 		OBJ m_startup_script{};
+
+	protected:
+		MainLoop() noexcept : Object{ get_class() } {}
 
 	public:
 		virtual ~MainLoop();

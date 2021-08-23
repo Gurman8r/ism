@@ -1,12 +1,16 @@
 #include <scene/resources/text_file.hpp>
 
-namespace ism
-{
-	TextFile::~TextFile()
-	{
-	}
+using namespace ism;
 
-	TextFile::TextFile()
-	{
-	}
+ISM_OBJECT_IMPLEMENTATION(TextFile, t, "text_file")
+{
+	t.tp_base = typeof<Resource>();
+}
+
+TextFile::~TextFile()
+{
+}
+
+TextFile::TextFile() : TextFile{ get_class() }
+{
 }
