@@ -17,7 +17,7 @@ namespace ism
 		inquiry		m_clear	{};
 		freefunc	m_free	{};
 
-		ModuleObject(String const & name) : Object{}
+		ModuleObject(STR const & name) : Object{}
 		{
 			m_name = name;
 		}
@@ -32,7 +32,7 @@ namespace ism
 	// module handle
 	template <> class Handle<ModuleObject> : public Ref<ModuleObject>
 	{
-		ISM_HANDLE(Handle, ModuleObject, ISM_CHECK_MODULE);
+		ISM_HANDLE(ModuleObject, ISM_CHECK_MODULE);
 
 	public:
 		template <class Func, class ... Extra
@@ -48,15 +48,17 @@ namespace ism
 			return (*this);
 		}
 
-		template <class Name = cstring, class Value = OBJ
-		> void add_object(Name && name, Value && value, bool overwrite = false)
+		template <class Value = OBJ
+		> void add_object(cstring name, Value && value, bool overwrite = false)
 		{
-			VERIFY(overwrite || !hasattr(*this, name));
+			STR str_name{ name };
 
-			m_ptr->m_dict[FWD(name)] = FWD(value);
+			VERIFY(overwrite || !hasattr(*this, str_name));
+
+			m_ptr->m_dict[str_name] = FWD(value);
 		}
 
-		MODULE def_submodule(cstring name, cstring doc = "")
+		MODULE def_submodule(cstring name)
 		{
 			return nullptr;
 		}
@@ -72,13 +74,36 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <class Name = cstring
+	> MODULE create_extension_module(Name && name) noexcept
+	{
+		DICT modules{ get_internals().modules };
+
+		STR str_name{ FWD_OBJ(name) };
+
+		return !modules.contains(str_name) ? (modules[str_name] = MODULE({ str_name })) : nullptr;
+	}
+
+	template <class Name = cstring
+	> MODULE import_module(Name && name) noexcept
+	{
+		DICT modules{ get_internals().modules };
+
+		STR str_name{ FWD_OBJ(name) };
+
+		return modules.lookup(name, MODULE{});
+	}
+
+	inline DICT globals()
+	{
+		ISM_IDENTIFIER(__main__);
+		ISM_IDENTIFIER(__dict__);
+		return import_module(&ID___main__).attr(&ID___dict__);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ISM_API_FUNC(OBJ) module_getattro(MODULE m, OBJ name);
-
-	ISM_API_FUNC(MODULE) create_extension_module(cstring name);
-
-	ISM_API_FUNC(MODULE) import_module(cstring name);
-
-	inline DICT globals() { return import_module("__main__").attr("__dict__"); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

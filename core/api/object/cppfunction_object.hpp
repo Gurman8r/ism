@@ -21,12 +21,10 @@ namespace ism
 		virtual ~CppFunctionObject() override;
 
 		CppFunctionObject() noexcept;
-		
-		CppFunctionObject(CppFunctionObject const & value) : CppFunctionObject{} { m_record = value.m_record; }
+
+		NON_COPYABLE(CppFunctionObject);
 		
 		CppFunctionObject(CppFunctionObject && value) noexcept : CppFunctionObject{} { swap(std::move(value)); }
-		
-		CppFunctionObject & operator=(CppFunctionObject const & value) { CppFunctionObject temp{ value }; return swap(temp); }
 		
 		CppFunctionObject & operator=(CppFunctionObject && value) noexcept { return swap(std::move(value)); }
 		
@@ -84,7 +82,7 @@ namespace ism
 	// cppfunction handle
 	template <> class Handle<CppFunctionObject> : public Ref<CppFunctionObject>
 	{
-		ISM_HANDLE(Handle, CppFunctionObject, ISM_CHECK_CPPFUNCTION);
+		ISM_HANDLE(CppFunctionObject, ISM_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }

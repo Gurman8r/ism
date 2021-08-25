@@ -11,7 +11,7 @@ ISM_OBJECT_IMPLEMENTATION(GenericObject, t, "generic_type", TypeFlags_BaseType)
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<GENERIC>(type);
+		return CLASS_<GenericObject>(type);
 	};
 }
 

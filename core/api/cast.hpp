@@ -12,6 +12,43 @@
 #include <core/api/object/function_object.hpp>
 #include <core/api/object/method_object.hpp>
 #include <core/api/object/property_object.hpp>
+#include <core/api/object/generic_object.hpp>
+
+// life-support
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct LoaderLifeSupport final
+	{
+		LoaderLifeSupport()
+		{
+			get_internals().loader_stack.push_back(nullptr);
+		}
+
+		~LoaderLifeSupport()
+		{
+			auto & stack{ get_internals().loader_stack };
+			VERIFY(!stack.empty());
+
+			OBJ & ptr{ stack.back() };
+			stack.pop_back();
+			ptr = nullptr;
+		}
+
+		static void add(OBJ const & value)
+		{
+			auto & stack{ get_internals().loader_stack };
+			VERIFY(!stack.empty());
+
+			LIST & list{ (LIST &)stack.back() };
+			if (!list) { list = LIST::new_(); }
+			list.append(value);
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
 // info
 namespace ism
@@ -31,34 +68,6 @@ namespace ism
 	{
 		return false;
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct life_support
-	{
-		life_support()
-		{
-			get_internals().loader_stack.push_back(nullptr);
-		}
-
-		~life_support()
-		{
-			auto & stack{ get_internals().loader_stack };
-			VERIFY(!stack.empty());
-			OBJ & ptr{ stack.back() };
-			stack.pop_back();
-			ptr = nullptr;
-		}
-
-		static void add(OBJ value)
-		{
-			auto & stack{ get_internals().loader_stack };
-			VERIFY(!stack.empty());
-			LIST & list_ptr = (LIST &)stack.back();
-			if (!list_ptr) { list_ptr = LIST::new_(); }
-			list_ptr.append(value);
-		}
-	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -126,7 +135,7 @@ namespace ism
 
 #define ISM_TYPE_CASTER(m_type, m_name)																\
 protected:																							\
-	m_type value;																					\
+	m_type value{};																					\
 																									\
 public:																								\
 	static constexpr auto name{ m_name };															\
@@ -265,12 +274,24 @@ public:																								\
 		bool load(OBJ const & src, bool convert)
 		{
 			if (!src) { return false; }
-			return (value = (String)STR(src)), true;
+
+			if (isinstance<STR>(src)) { return (value = STR(src)), true; }
+
+			return (value = STR({ src })), true;
 		}
 
-		static OBJ cast(T const & src, ReturnPolicy, OBJ) { return STR(src); }
+		static OBJ cast(T const & src, ReturnPolicy, OBJ) { return STR({ src }); }
 
-		ISM_TYPE_CASTER(T, "string");
+		template <class U> operator U & () { return static_cast<U &>(***value); }
+
+		template <class U> operator U * () { return static_cast<U *>(&***value); }
+
+		template <class U> using cast_op_type = ism::cast_op_type<U>;
+
+		static constexpr auto name{ "string" };
+
+	protected:
+		STR value{};
 	};
 
 	template <class Ch, class Tr, class Al
@@ -283,12 +304,12 @@ public:																								\
 
 		bool load(OBJ const & src, bool convert)
 		{
-			return src && str_caster.load(src, convert);
+			return str_caster.load(src, convert);
 		}
 
-		static OBJ cast(T const * src, ReturnPolicy, OBJ) { return STR(src); }
+		static OBJ cast(T const * src, ReturnPolicy, OBJ) { return STR({ src }); }
 
-		static OBJ cast(T const src, ReturnPolicy, OBJ) { return INT(src); }
+		static OBJ cast(T const src, ReturnPolicy, OBJ) { return INT({ src }); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -367,7 +388,7 @@ public:																								\
 		{
 			if (!isinstance<T>(src)) { return false; }
 
-			life_support::add(src);
+			LoaderLifeSupport::add(src);
 
 			return (value = src), true;
 		}
@@ -376,12 +397,15 @@ public:																								\
 
 		template <class U> static OBJ cast(U && src, ReturnPolicy, OBJ) noexcept { return Ref<U>(std::move(src)); }
 
-		template <class U> operator U & () { return (U &)(**value); }
+		template <class U> operator U & () { return static_cast<U &>(**value); }
 
-		template <class U> operator U * () { return (U *)(*value); }
+		template <class U> operator U * () { return static_cast<U *>(*value); }
 
 		template <class U> using cast_op_type = ism::cast_op_type<U>;
 
+		static constexpr auto name{ "object" };
+
+	protected:
 		OBJ value{};
 	};
 

@@ -25,9 +25,9 @@ ISM_OBJECT_IMPLEMENTATION(ListObject, t, "list", TypeFlags_List_Subclass)
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<LIST>(type)
+		return CLASS_<ListObject>(type)
 
-			.def("__contains__", &LIST::contains<OBJ const &>)
+			.def("__contains__", &ListObject::contains<OBJ const &>)
 
 			;
 	};

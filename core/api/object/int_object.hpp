@@ -49,7 +49,7 @@ namespace ism
 	// int handle
 	template <> class Handle<IntObject> : public Ref<IntObject>
 	{
-		ISM_HANDLE(Handle, IntObject, ISM_CHECK_INT);
+		ISM_HANDLE(IntObject, ISM_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;

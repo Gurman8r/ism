@@ -9,9 +9,9 @@ void TypeObject::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		get_internals().add_class(&_class_type_static);
+		get_internals().add_class(&_class_type);
 
-		_class_type_static.tp_bind(&_class_type_static);
+		_class_type.tp_bind(&_class_type);
 	};
 }
 
@@ -19,7 +19,7 @@ void TypeObject::_initialize_classv() { TypeObject::initialize_class(); }
 
 TYPE TypeObject::_get_typev() const noexcept { return get_class(); }
 
-TYPE TypeObject::get_class() noexcept { return &_class_type_static; }
+TYPE TypeObject::get_class() noexcept { return &_class_type; }
 
 TypeObject::TypeObject() noexcept : Object{} {}
 
@@ -43,11 +43,9 @@ ISM_OBJECT_IMPLEMENTATION(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_
 	{
 		VERIFY(TYPE::check_(self));
 		
-		newfunc create{ TYPE(self)->tp_new };
-		
-		if (!create) { return nullptr; }
-		
-		return create(self, args);
+		if (newfunc fn{ TYPE(self)->tp_new }; fn) { return fn(self, args); }
+
+		return nullptr;
 	};
 
 	t.tp_getattro = (getattrofunc)type_getattro;
@@ -58,9 +56,9 @@ ISM_OBJECT_IMPLEMENTATION(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_
 	{
 		return CLASS_<TypeObject>(type)
 
-			.def("__contains__", [](TypeObject const & self, OBJ const & value) { return DICT(self.tp_dict).contains(value); })
+			.def_static("__instancecheck__", [](OBJ const & inst, OBJ const & cls) { return isinstance(inst, cls); })
 
-			.def("__instancecheck__", [](OBJ const & inst, OBJ const & cls) { return isinstance(inst, cls); })
+			.def("__contains__", [](TypeObject const & self, OBJ const & value) { return DICT(self.tp_dict).contains(value); })
 
 			.def("__subclasscheck__", &TypeObject::is_subtype)
 
@@ -73,12 +71,8 @@ ISM_OBJECT_IMPLEMENTATION(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_
 			.def_readonly("__flags__", &TypeObject::tp_flags)
 			
 			.def_readonly("__mro__", &TypeObject::tp_mro)
-
-			.def_property("__name__",
-				[](TypeObject const & self) { return self.tp_name; },
-				[](TypeObject & self, STR const & value) { self.tp_name = value; })
 			
-			//.def_readwrite("__name__", &TypeObject::tp_name)
+			.def_readwrite("__name__", &TypeObject::tp_name)
 			
 			.def_readonly("__size__", &TypeObject::tp_size)
 
@@ -87,36 +81,6 @@ ISM_OBJECT_IMPLEMENTATION(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_
 			.def_property_readonly("__qualname__", [](TypeObject const & self) { return STR(/* TODO */); })
 
 			.def_readonly("__vectorcalloffset__", &TypeObject::tp_vectorcalloffset)
-
-			;
-
-		//return CLASS_<TYPE>(type)
-
-			//.def("__contains__", [](TYPE self, OBJ value) { return DICT(self->tp_dict).contains(value); })
-
-			//.def("__instancecheck__", [](OBJ inst, OBJ cls) { return isinstance(inst, cls); })
-
-			//.def("__subclasscheck__", &TYPE::is_subtype)
-
-			//.def_property_readonly("__base__", [](TYPE self) { return TYPE(self->tp_base); })
-
-			//.def_property_readonly("__dict__", [](TYPE self) { return self->tp_dict; })
-
-			//.def_property_readonly("__dictoffset__", [](TYPE self) { return self->tp_dictoffset; })
-
-			//.def_property_readonly("__flags__", [](TYPE self) { return self->tp_flags; })
-
-			//.def_property_readonly("__mro__", [](TYPE self) { return self->tp_mro; })
-
-			//.def_property_readonly("__text_signature__", [](TYPE self) { return STR(/* TODO */); })
-
-			//.def_property_readonly("__size__", [](TYPE self) { return self->tp_size; })
-
-			//.def_property_readonly("__qualname__", [](TYPE self) { return STR(/* TODO */); })
-
-			//.def_property_readonly("__vectorcalloffset__", [](TYPE self) { return self->tp_vectorcalloffset; })
-
-			//.def_property("__name__", [](TYPE self) { return self->tp_name; }, [](TYPE self, STR value) { self->tp_name = value; })
 
 			;
 	};
@@ -136,7 +100,7 @@ bool TypeObject::ready()
 	
 	if (tp_base && !tp_base->tp_dict) { VERIFY(tp_base->ready()); }
 	
-	if (!ob_type && tp_base) { ob_type = tp_base->ob_type; }
+	if (!get_type() && tp_base) { set_type(tp_base->get_type()); }
 	
 	tp_bases = tp_base ? LIST::new_(tp_base) : LIST::new_();
 
@@ -267,12 +231,12 @@ Error TypeObject::update_slot(STR name)
 	}; } break;
 
 	case hash("__get__"): { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ {
-		if (ISM_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) {}
+		if (ISM_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) { /* TODO */ }
 		return nullptr;
 	}; } break;
 
 	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ cls) -> Error {
-		if (ISM_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) {}
+		if (ISM_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
 		return Error_Unknown;
 	}; } break;
 
@@ -420,52 +384,14 @@ void TypeObject::inherit_slots(TypeObject * base)
 
 OBJ ism::type_getattro(TYPE type, OBJ name)
 {
-	return generic_getattr(type, name);
-
-	// FIXME
-
-	if (!type->tp_dict && !type.ready()) { return nullptr; }
-
-	TYPE metatype{ typeof(type) };
-
-	OBJ meta_attribute{ metatype.lookup(name) };
-
-	descrgetfunc meta_get{};
-
-	if (meta_attribute)
-	{
-		TYPE meta_attr_type{ typeof(meta_attribute) };
-
-		meta_get = meta_attr_type->tp_descr_get;
-
-		if (meta_get && meta_attr_type->tp_descr_set)
-		{
-			return meta_get(meta_attribute, type, metatype);
-		}
-	}
-
-	if (OBJ attribute{ type.lookup(name) })
-	{
-		TYPE attr_type{ typeof(attribute) };
-
-		if (descrgetfunc local_get{ attr_type->tp_descr_get })
-		{
-			return local_get(attribute, nullptr, type);
-		}
-	}
-
-	if (meta_get) { return meta_get(meta_attribute, type, metatype); }
-
-	if (meta_attribute) { return meta_attribute; }
-
-	return nullptr;
+	return generic_getattr_with_dict(type, name, nullptr);
 }
 
 Error ism::type_setattro(TYPE type, OBJ name, OBJ value)
 {
 	VERIFY(STR::check_(name));
 
-	Error err{ generic_setattr(type, name, value) };
+	Error err{ generic_setattr_with_dict(type, name, value, nullptr) };
 
 	if (err == Error_None)
 	{

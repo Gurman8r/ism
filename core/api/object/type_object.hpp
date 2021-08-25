@@ -25,8 +25,8 @@ namespace ism
 
 		TypeObject() noexcept;
 
-		template <class T, class ... Extra
-		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags = TypeFlags_Default, Extra && ... extra) noexcept : TypeObject{}
+		template <class T
+		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags = TypeFlags_Default) noexcept : TypeObject{}
 		{
 			tp_name = name;
 			tp_size = sizeof(T);
@@ -96,21 +96,6 @@ namespace ism
 			return (this->*slot) && (!base || (this->*slot) != (base->*slot));
 		}
 
-		template <class Slot> bool slot_defined(TypeObject * base, Slot NumberMethods:: * slot) const
-		{
-			return ((*this->tp_as_number).*slot) && (!base || ((*this->tp_as_number).*slot) != ((*base->tp_as_number).*slot));
-		}
-
-		template <class Slot> bool slot_defined(TypeObject * base, Slot SequenceMethods:: * slot) const
-		{
-			return ((*this->tp_as_sequence).*slot) && (!base || ((*this->tp_as_sequence).*slot) != ((*base->tp_as_sequence).*slot));
-		}
-
-		template <class Slot> bool slot_defined(TypeObject * base, Slot MappingMethods:: * slot) const
-		{
-			return ((*this->tp_as_mapping).*slot) && (!base || ((*this->tp_as_mapping).*slot) != ((*base->tp_as_mapping).*slot));
-		}
-
 		template <class Slot> void copy_val(TypeObject * base, Slot TypeObject:: * slot)
 		{
 			if (!(this->*slot) && base)
@@ -124,30 +109,6 @@ namespace ism
 			if (!(this->*slot) && base && base->slot_defined(basebase, slot))
 			{
 				(this->*slot) = (base->*slot);
-			}
-		}
-
-		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot NumberMethods:: * slot)
-		{
-			if (!((*this->tp_as_number).*slot) && base && base->slot_defined(basebase, slot))
-			{
-				((*this->tp_as_number).*slot) = ((*base->tp_as_number).*slot);
-			}
-		}
-
-		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot SequenceMethods:: * slot)
-		{
-			if (!((*this->tp_as_sequence).*slot) && base && base->slot_defined(basebase, slot))
-			{
-				((*this->tp_as_sequence).*slot) = ((*base->tp_as_sequence).*slot);
-			}
-		}
-
-		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot MappingMethods:: * slot)
-		{
-			if (!((*this->tp_as_mapping).*slot) && base && base->slot_defined(basebase, slot))
-			{
-				((*this->tp_as_mapping).*slot) = ((*base->tp_as_mapping).*slot);
 			}
 		}
 	};
@@ -167,7 +128,7 @@ namespace ism
 	// type handle
 	template <> class Handle<TypeObject> : public Ref<TypeObject>
 	{
-		ISM_HANDLE(Handle, TypeObject, ISM_CHECK_TYPE);
+		ISM_HANDLE(TypeObject, ISM_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
@@ -185,6 +146,25 @@ namespace ism
 		NODISCARD OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
 
 		NODISCARD auto name() const { return attr("__name__"); }
+
+		template <class Name = cstring, class Value = OBJ
+		> void add_object(Name && name, Value && value) noexcept
+		{
+			if (!m_ptr || !m_ptr->tp_dict || !m_ptr->ready()) { return; }
+
+			STR str_name{ FWD(name) };
+
+			DICT(m_ptr->tp_dict)[str_name] = FWD(value);
+
+			m_ptr->modified();
+
+			if (is_dunder_name(str_name))
+			{
+				m_ptr->update_slot(str_name);
+			}
+
+			VERIFY(m_ptr->check_consistency());
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

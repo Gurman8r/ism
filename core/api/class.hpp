@@ -1,7 +1,7 @@
 #ifndef _ISM_CLASS_HPP_
 #define _ISM_CLASS_HPP_
 
-#include <core/api/object/generic_object.hpp>
+#include <core/api/object/module_object.hpp>
 
 namespace ism
 {
@@ -18,9 +18,8 @@ namespace ism
 
 	public:
 		template <class ... Extra
-		> CLASS_(TYPE target, Extra && ... extra) : TYPE{ target }
+		> CLASS_(TYPE target, Extra && ... extra) : TYPE{ CHECK(target) }
 		{
-			VERIFY(is_valid());
 		}
 
 	public:
@@ -45,7 +44,7 @@ namespace ism
 				attr::is_method(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			attr(cf.name()) = cf;
+			add_object(cf.name(), cf);
 			return (*this);
 		}
 
@@ -58,7 +57,7 @@ namespace ism
 				attr::scope(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			attr(cf.name()) = cf;
+			add_object(cf.name(), cf);
 			return (*this);
 		}
 
@@ -149,7 +148,7 @@ namespace ism
 	
 			if (fset) { attr::process_attributes<Extra...>::init(***fset, FWD(extra)...); }
 
-			attr(name) = PROPERTY({ fget, fset });
+			add_object(name, PROPERTY({ fget, fset }));
 			
 			return (*this);
 		}

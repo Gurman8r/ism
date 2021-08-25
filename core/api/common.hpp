@@ -24,14 +24,12 @@
 	(ism::object_or_cast(FWD(expr)))
 
 #define ISM_IDENTIFIER(m_name) \
-	static StringObject CAT(ID_, m_name){ TOSTR(m_name) }
+	static ism::StringObject CAT(ID_, m_name){ TOSTR(m_name) }
 
 // types
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	DECL_HANDLE(InstanceID);
 
 	class Internals;
 
@@ -316,6 +314,7 @@ namespace ism
 		template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
 		> OBJ operator()(Args && ... args) const; // call.hpp
 
+	public:
 		NODISCARD bool is_null() const noexcept { return derived().ptr() == nullptr; }
 		
 		NODISCARD bool is_valid() const noexcept { return derived().ptr() != nullptr; }
@@ -328,6 +327,7 @@ namespace ism
 		template <class O, class = std::enable_if_t<is_api_v<O>>
 		> NODISCARD bool is(O const & other) const noexcept { return derived().ptr() == other.ptr(); }
 		
+	public:
 		NODISCARD bool equal_to(ObjectAPI const & other) const noexcept { return compare(other) == 0; }
 		
 		NODISCARD bool not_equal_to(ObjectAPI const & other) const noexcept { return compare(other) != 0; }
@@ -343,7 +343,11 @@ namespace ism
 	private:
 		NODISCARD auto compare(ObjectAPI const & o) const
 		{
-			if (TYPE t{ typeof(derived().ptr()) }; t && t->tp_cmp)
+			if (derived().ptr() == o.derived().ptr())
+			{
+				return 0;
+			}
+			else if (TYPE t{ typeof(derived().ptr()) }; t->tp_cmp)
 			{
 				return t->tp_cmp(derived().ptr(), o.derived().ptr());
 			}
@@ -574,7 +578,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// handle default
-#define ISM_HANDLE(m_handle, m_class, m_check)														\
+#define ISM_HANDLE(m_class, m_check)																\
 public:																								\
 	using value_type = typename m_class;															\
 																									\
@@ -584,28 +588,39 @@ public:																								\
 																									\
 	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }						\
 																									\
-	~m_handle() noexcept = default;																	\
+	~Handle() noexcept = default;																	\
 																									\
-	m_handle() noexcept = default;																	\
+	Handle() noexcept = default;																	\
 																									\
-	m_handle(nullptr_t) noexcept {}																	\
+	Handle(nullptr_t) noexcept {}																	\
 																									\
-	m_handle(m_class * value) { if (value) { ref_pointer(value); } }								\
+	Handle(m_class * value) { if (value) { ref_pointer(value); } }									\
 																									\
-	m_handle(Ref<m_class> const & value) { ref(value); }											\
+	Handle(Ref<m_class> const & value) { ref(value); }												\
 																									\
-	template <class U> m_handle(Ref<U> const & value) { reset(value); }								\
+	template <class U> Handle(Ref<U> const & value) { reset(value); }								\
 																									\
-	m_handle(m_class && value) noexcept { instance(std::move(value)); }								\
+	Handle(m_class && value) noexcept { instance(std::move(value)); }								\
 																									\
-	m_handle & operator=(nullptr_t) { unref(); return (*this); }									\
+	Handle & operator=(nullptr_t) { unref(); return (*this); }										\
 																									\
-	m_handle & operator=(Ref<m_class> const & value) { reset(value); return (*this); }				\
+	Handle & operator=(Ref<m_class> const & value) { reset(value); return (*this); }				\
 																									\
-	template <class U> m_handle & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
+	template <class U> Handle & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
 																									\
-	m_handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }	\
+	Handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }	\
 																									\
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// no check
+#define ISM_NO_CHECK(o) (false)
+
+	// default handle
+	template <class T> class Handle : public Ref<T>
+	{
+		ISM_HANDLE(T, ISM_NO_CHECK);
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

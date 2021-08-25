@@ -16,12 +16,12 @@ ISM_OBJECT_IMPLEMENTATION(PropertyObject, t, "property", TypeFlags_BaseType | Ty
 
 	t.tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ value) -> Error
 	{
-		return PROPERTY(self).set(obj, value), Error_None;
+		return PROPERTY(self).set(obj, value);
 	};
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<PROPERTY>(type);
+		return CLASS_<PropertyObject>(type);
 	};
 }
 

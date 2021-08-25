@@ -12,46 +12,46 @@ private:										\
 												\
 	friend class ism::Handle<m_class>;			\
 												\
-	static ism::TypeObject _class_type_static;	\
+	static ism::TypeObject _class_type;			\
 												\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object default
-#define ISM_OBJECT(m_class, m_inherits)												\
-ISM_OBJECT_COMMON(m_class)															\
-																					\
-protected:																			\
-	static void initialize_class()													\
-	{																				\
-		if (static bool once{}; !once && (once = true))								\
-		{																			\
-			ism::get_internals().add_class(&m_class::_class_type_static);			\
-																					\
-			if (m_class::_class_type_static.tp_bind)								\
-			{																		\
-				m_class::_class_type_static.tp_bind(&m_class::_class_type_static);	\
-			}																		\
-		};																			\
-	}																				\
-																					\
-	virtual void _initialize_classv() override										\
-	{																				\
-		m_class::initialize_class();												\
-	}																				\
-																					\
-	FORCE_INLINE virtual ism::TYPE _get_typev() const override						\
-	{																				\
-		return m_class::get_class();												\
-	}																				\
-																					\
-public:																				\
-	FORCE_INLINE static ism::TYPE get_class() noexcept								\
-	{																				\
-		return &m_class::_class_type_static;										\
-	}																				\
-																					\
+#define ISM_OBJECT(m_class, m_inherits)									\
+ISM_OBJECT_COMMON(m_class)												\
+																		\
+protected:																\
+	static void initialize_class()										\
+	{																	\
+		if (static bool once{}; !once && (once = true))					\
+		{																\
+			ism::get_internals().add_class(&m_class::_class_type);		\
+																		\
+			if (m_class::_class_type.tp_bind)							\
+			{															\
+				m_class::_class_type.tp_bind(&m_class::_class_type);	\
+			}															\
+		};																\
+	}																	\
+																		\
+	virtual void _initialize_classv() override							\
+	{																	\
+		m_class::initialize_class();									\
+	}																	\
+																		\
+	FORCE_INLINE virtual ism::TYPE _get_typev() const override			\
+	{																	\
+		return m_class::get_class();									\
+	}																	\
+																		\
+public:																	\
+	FORCE_INLINE static ism::TYPE get_class() noexcept					\
+	{																	\
+		return &m_class::_class_type;									\
+	}																	\
+																		\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -59,10 +59,13 @@ private:
 // implement object type
 #define ISM_OBJECT_IMPLEMENTATION(m_class, m_var, m_name, ...)								\
 	namespace ism { static void CAT(_ism_bind_class_, m_class)(ism::TypeObject & m_var); }	\
-	DECLEXPR(m_class::_class_type_static) =													\
+																							\
+	DECLEXPR(m_class::_class_type) =														\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), m_name, ##__VA_ARGS__)		\
 	+ ism::CAT(_ism_bind_class_, m_class);													\
-	void ism::CAT(_ism_bind_class_, m_class)(ism::TypeObject & m_var)
+																							\
+	void ism::CAT(_ism_bind_class_, m_class)(ism::TypeObject & m_var)						\
+																							\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -78,9 +81,9 @@ namespace ism
 
 		RefCount m_refcount{}, m_refcount_init{};
 
-	protected:
-		mutable Ref<TypeObject> ob_type{ /* TYPE doesn't exist yet */ };
+		mutable Ref<TypeObject> m_type{};
 
+	protected:
 		static void initialize_class();
 
 		virtual void _initialize_classv();
@@ -140,15 +143,6 @@ namespace ism
 		}
 	};
 
-	// no check
-#define ISM_NO_CHECK(o) (false)
-
-	// default handle
-	template <class T> class Handle : public Ref<T>
-	{
-		ISM_HANDLE(Handle, T, ISM_NO_CHECK);
-	};
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
@@ -163,7 +157,8 @@ namespace ism
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD OBJ object_or_cast(T && o);
 
-	NODISCARD inline OBJ object_or_cast(Object * o) { return OBJ{ o }; }
+	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
+	> NODISCARD inline OBJ object_or_cast(T * o) { return Ref<T>{ o }; }
 
 	NODISCARD inline OBJ object_or_cast(cstring s) { return object_or_cast(String{ s }); }
 
@@ -208,7 +203,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Index = OBJ
-	> NODISCARD OBJ getattr(OBJ obj, Index && index)
+	> NODISCARD OBJ getattr(OBJ const & obj, Index && index)
 	{
 		if (!obj) { return nullptr; }
 
@@ -233,7 +228,7 @@ namespace ism
 	}
 
 	template <class Index = OBJ, class Value = OBJ
-	> NODISCARD OBJ getattr(OBJ obj, Index && index, Value && defval)
+	> NODISCARD OBJ getattr(OBJ const & obj, Index && index, Value && defval)
 	{
 		if (STR str_name{ FWD_OBJ(index) }; str_name && hasattr(obj, str_name))
 		{
@@ -246,7 +241,7 @@ namespace ism
 	}
 
 	template <class Index = OBJ, class Value = OBJ
-	> Error setattr(OBJ obj, Index && index, Value && value)
+	> Error setattr(OBJ const & obj, Index && index, Value && value)
 	{
 		if (!obj) { return Error_Unknown; }
 
@@ -271,7 +266,7 @@ namespace ism
 	}
 
 	template <class Index = OBJ
-	> NODISCARD bool hasattr(OBJ obj, Index && index)
+	> NODISCARD bool hasattr(OBJ const & obj, Index && index)
 	{
 		if (!obj) { return false; }
 
@@ -302,7 +297,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Index = OBJ
-	> NODISCARD OBJ getitem(OBJ obj, Index && index)
+	> NODISCARD OBJ getitem(OBJ const & obj, Index && index)
 	{
 		if (!obj) { return nullptr; }
 		
@@ -318,7 +313,7 @@ namespace ism
 	}
 
 	template <class Index = OBJ, class Value = OBJ
-	> Error setitem(OBJ obj, Index && index, Value && value)
+	> Error setitem(OBJ const & obj, Index && index, Value && value)
 	{
 		if (!obj) { return Error_Unknown; }
 		

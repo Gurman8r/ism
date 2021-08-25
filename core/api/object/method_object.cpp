@@ -19,7 +19,7 @@ ISM_OBJECT_IMPLEMENTATION(MethodObject, t, "method", TypeFlags_BaseType | TypeFl
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<METHOD>(type);
+		return CLASS_<MethodObject>(type);
 	};
 }
 

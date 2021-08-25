@@ -9,9 +9,9 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		get_internals().add_class(&_class_type_static);
+		get_internals().add_class(&_class_type);
 
-		_class_type_static.tp_bind(&_class_type_static);
+		_class_type.tp_bind(&_class_type);
 	}
 }
 
@@ -21,15 +21,15 @@ void Object::_construct_object() { m_refcount.init(); m_refcount_init.init(); }
 
 Object::Object() noexcept { _construct_object(); }
 
-Object::~Object() { ob_type = nullptr; }
+Object::~Object() { m_type = nullptr; }
 
-TYPE Object::get_class() noexcept { return &_class_type_static; }
+TYPE Object::get_class() noexcept { return &_class_type; }
 
 TYPE Object::_get_typev() const { return get_class(); }
 
-TYPE Object::get_type() const noexcept { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
+TYPE Object::get_type() const noexcept { if (!m_type) { m_type = _get_typev(); } return m_type; }
 
-bool Object::set_type(TYPE const & value) noexcept { return (ob_type = value).is_valid(); }
+bool Object::set_type(TYPE const & value) noexcept { return (m_type = value).is_valid(); }
 
 bool Object::init_ref()
 {
@@ -72,7 +72,7 @@ ISM_OBJECT_IMPLEMENTATION(Object, t, "object", TypeFlags_BaseType | TypeFlags_Is
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<OBJ>(type);
+		return CLASS_<Object>(type);
 	};
 }
 
@@ -127,9 +127,14 @@ Error ism::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 
 	descrsetfunc set{};
 
-	if (descr && (set = typeof(descr)->tp_descr_set))
+	if (descr)
 	{
-		return set(descr, obj, value);
+		set = typeof(descr)->tp_descr_set;
+
+		if (set)
+		{
+			return set(descr, obj, value);
+		}
 	}
 
 	if (!dict)

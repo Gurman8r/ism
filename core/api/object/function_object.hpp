@@ -34,7 +34,7 @@ namespace ism
 	// function handle
 	template <> class Handle<FunctionObject> : public Ref<FunctionObject>
 	{
-		ISM_HANDLE(Handle, FunctionObject, ISM_CHECK_FUNCTION);
+		ISM_HANDLE(FunctionObject, ISM_CHECK_FUNCTION);
 
 	public:
 		NODISCARD OBJ cpp_function() const; // cppfunction_object.hpp

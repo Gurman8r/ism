@@ -11,7 +11,7 @@ ISM_OBJECT_IMPLEMENTATION(CapsuleObject, t, "capsule", TypeFlags_BaseType)
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<CAPSULE>(type);
+		return CLASS_<CapsuleObject>(type);
 	};
 }
 

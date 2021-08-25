@@ -31,16 +31,9 @@ namespace ism
 	auto get_float() { return 7.89f; }
 	auto get_string() { return "abc"; }
 
-	void pass_object_ref(Object const & obj)
-	{
-		MODULE m = import_module("__main__");
-
-		VERIFY(m.ptr() == obj.ptr());
-	}
-
 	void test_main()
 	{
-		MODULE m = create_extension_module("__main__")
+		CHECK(create_extension_module("__main__"))
 			.def("hello", hello)
 			.def("say", say)
 			.def("get_int", get_int)
@@ -49,19 +42,20 @@ namespace ism
 			.def("get_string", get_string)
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			.def("pass_ptr", [](void * a) { return a; })
-
-			.def("pass_object_ref", pass_object_ref)
 			;
 
-		m.attr("hello")();
-		m.attr("say")(m.attr("get_string")());
-		VERIFY(m.attr("pass_ptr")((void *)123).cast<void const *>() == (void *)123);
-		VERIFY(m.attr("pass_ptr")((void *)123, (void *)321).cast<void const *>() == (void *)321);
+		DICT g = globals();
+
+		g["hello"]();
+		g["say"](g["get_string"]());
+		VERIFY(g["pass_ptr"]((void *)123).cast<void const *>() == (void *)123);
+		VERIFY(g["pass_ptr"]((void *)123, (void *)321).cast<void const *>() == (void *)321);
 
 		MAIN_PRINT("%s\n", typeof<METHOD>().attr("__subclasscheck__")(typeof<FUNCTION>()) ? "true" : "false");
 
-		
-		LIST list = m.attr("list") = typeof<LIST>()();
+		VERIFY(typeof<LIST>().attr("__size__").cast<size_t>() == sizeof(ListObject));
+
+		LIST list{ typeof<LIST>()() };
 		list.append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0]).c_str());
 		OBJ nn = typeof<LIST>().attr("__name__");
@@ -77,8 +71,6 @@ namespace ism
 		typeof(d).name() = "changed";
 		MAIN_PRINT("%s\n", STR(typeof(d).name()).c_str());
 
-		m.attr("pass_object_ref")(**m);
-		
 		MAIN_PRINT("\n");
 		MAIN_PAUSE();
 	}

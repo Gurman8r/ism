@@ -9,21 +9,23 @@ namespace ism
 
 	inline OBJ call_object(OBJ callable, LIST args)
 	{
-		if (TYPE type; !args || !callable || !(type = typeof(callable)))
-		{
-			return nullptr;
-		}
-		else if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
-		{
-			return vcall(callable, args.data(), args.size());
-		}
-		else if (binaryfunc tcall{ type->tp_call })
-		{
-			return tcall(callable, args);
-		}
+		if (!args || !callable) { return nullptr; }
 		else
 		{
-			return nullptr;
+			TYPE type{ typeof(callable) };
+
+			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+			{
+				return vcall(callable, args.data(), args.size());
+			}
+			else if (binaryfunc tcall{ type->tp_call })
+			{
+				return tcall(callable, args);
+			}
+			else
+			{
+				return nullptr;
+			}
 		}
 	}
 
@@ -49,7 +51,7 @@ namespace ism
 
 		NODISCARD LIST args() && { return std::move(m_args); }
 
-		NODISCARD OBJ call(OBJ callable) { return ism::call_object(callable, m_args); }
+		NODISCARD OBJ call(OBJ const & callable) { return ism::call_object(callable, m_args); }
 
 	private: LIST m_args;
 	};
@@ -177,6 +179,20 @@ namespace ism
 
 		bool try_next_overload : 1;
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// guarded function call
+	inline OBJ guarded_call(FunctionCall & call)
+	{
+		OBJ result{};
+		{
+			LoaderLifeSupport guard{};
+
+			result = call.record.impl(call);
+		}
+		return result;
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -29,7 +29,7 @@ ISM_OBJECT_IMPLEMENTATION(IntObject, t, "int", TypeFlags_Int_Subclass)
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<INT>(type);
+		return CLASS_<IntObject>(type);
 	};
 }
 

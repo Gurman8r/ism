@@ -13,9 +13,9 @@ ISM_OBJECT_IMPLEMENTATION(DictObject, t, "dict", TypeFlags_Dict_Subclass)
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<DICT>(type)
+		return CLASS_<DictObject>(type)
 
-			.def("__contains__", &DICT::contains<OBJ const &>)
+			.def("__contains__", &DictObject::contains<OBJ const &>)
 
 			;
 	};

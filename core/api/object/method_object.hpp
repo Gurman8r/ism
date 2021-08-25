@@ -32,7 +32,7 @@ namespace ism
 	// method handle
 	template <> class Handle<MethodObject> : public Ref<MethodObject>
 	{
-		ISM_HANDLE(Handle, MethodObject, ISM_CHECK_METHOD);
+		ISM_HANDLE(MethodObject, ISM_CHECK_METHOD);
 	};
 }
 

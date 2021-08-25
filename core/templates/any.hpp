@@ -28,9 +28,9 @@ namespace ism
 		
 		template <class T> NODISCARD auto cast() const -> T const * { return _Mybase::_Cast<T>(); }
 		
-		template <class T> NODISCARD operator T() & { return *_Mybase::_Cast<T>(); }
+		template <class T> NODISCARD operator T & () & { return *_Mybase::_Cast<T>(); }
 		
-		template <class T> NODISCARD operator T() const & { return *_Mybase::_Cast<T>(); }
+		template <class T> NODISCARD operator T const & () const & { return *_Mybase::_Cast<T>(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

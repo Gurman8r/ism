@@ -35,7 +35,13 @@ ISM_OBJECT_IMPLEMENTATION(StringObject, t, "string", TypeFlags_Str_Subclass)
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<STR>(type);
+		return CLASS_<StringObject>(type)
+			
+			.def("empty", &StringObject::empty)
+
+			.def("size", &StringObject::size)
+
+			;
 	};
 }
 

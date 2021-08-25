@@ -29,7 +29,7 @@ ISM_OBJECT_IMPLEMENTATION(FloatObject, t, "float", TypeFlags_Float_Subclass)
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<FLT>(type);
+		return CLASS_<FloatObject>(type);
 	};
 };
 

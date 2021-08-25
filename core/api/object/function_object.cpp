@@ -15,11 +15,11 @@ ISM_OBJECT_IMPLEMENTATION(FunctionObject, t, "function", TypeFlags_BaseType | Ty
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<FUNCTION>(type)
+		return CLASS_<FunctionObject>(type)
 
-			.def_property_readonly("__dict__", [](FUNCTION self) { return self->m_dict; })
+			.def_readwrite("__dict__", &FunctionObject::m_dict)
 
-			.def_property_readonly("__module__", [](FUNCTION self) { return self->m_module; })
+			.def_readwrite("__module__", &FunctionObject::m_module)
 
 			;
 	};

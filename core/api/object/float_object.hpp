@@ -39,7 +39,7 @@ namespace ism
 	// float handle
 	template <> class Handle<FloatObject> : public Ref<FloatObject>
 	{
-		ISM_HANDLE(Handle, FloatObject, ISM_CHECK_FLOAT);
+		ISM_HANDLE(FloatObject, ISM_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;

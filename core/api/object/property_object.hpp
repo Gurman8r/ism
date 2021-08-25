@@ -42,14 +42,12 @@ namespace ism
 	// property handle
 	template <> class Handle<PropertyObject> : public Ref<PropertyObject>
 	{
-		ISM_HANDLE(Handle, PropertyObject, ISM_CHECK_PROPERTY);
+		ISM_HANDLE(PropertyObject, ISM_CHECK_PROPERTY);
 
 	public:
-		template <class ... Args
-		> OBJ get(Args && ... args) const { return m_ptr->m_get(FWD(args)...); }
+		OBJ get(OBJ const & self) const { return m_ptr->m_get(self); }
 
-		template <class ... Args
-		> OBJ set(Args && ... args) const { return m_ptr->m_set(FWD(args)...); }
+		Error set(OBJ const & self, OBJ const & value) const { return m_ptr->m_set(self, value), Error_None; }
 	};
 }
 

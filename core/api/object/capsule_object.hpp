@@ -74,7 +74,7 @@ namespace ism
 	// capsule handle
 	template <> class Handle<CapsuleObject> : public Ref<CapsuleObject>
 	{
-		ISM_HANDLE(Handle, CapsuleObject, ISM_CHECK_CAPSULE);
+		ISM_HANDLE(CapsuleObject, ISM_CHECK_CAPSULE);
 
 	public:
 		template <class T
