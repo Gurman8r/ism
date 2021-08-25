@@ -31,6 +31,13 @@ namespace ism
 	auto get_float() { return 7.89f; }
 	auto get_string() { return "abc"; }
 
+	void pass_object_ref(Object const & obj)
+	{
+		MODULE m = import_module("__main__");
+
+		VERIFY(m.ptr() == obj.ptr());
+	}
+
 	void test_main()
 	{
 		MODULE m = create_extension_module("__main__")
@@ -42,6 +49,8 @@ namespace ism
 			.def("get_string", get_string)
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			.def("pass_ptr", [](void * a) { return a; })
+
+			.def("pass_object_ref", pass_object_ref)
 			;
 
 		m.attr("hello")();
@@ -50,6 +59,7 @@ namespace ism
 		VERIFY(m.attr("pass_ptr")((void *)123, (void *)321).cast<void const *>() == (void *)321);
 
 		MAIN_PRINT("%s\n", typeof<METHOD>().attr("__subclasscheck__")(typeof<FUNCTION>()) ? "true" : "false");
+
 		
 		LIST list = m.attr("list") = typeof<LIST>()();
 		list.append("IT WORKS");
@@ -66,6 +76,8 @@ namespace ism
 		MAIN_PRINT("%s\n", typeof(d).name().cast<String>().c_str());
 		typeof(d).name() = "changed";
 		MAIN_PRINT("%s\n", STR(typeof(d).name()).c_str());
+
+		m.attr("pass_object_ref")(**m);
 		
 		MAIN_PRINT("\n");
 		MAIN_PAUSE();

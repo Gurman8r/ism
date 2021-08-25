@@ -56,33 +56,67 @@ ISM_OBJECT_IMPLEMENTATION(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		return CLASS_<TYPE>(type)
+		return CLASS_<TypeObject>(type)
 
-			.def("__contains__", [](TYPE self, OBJ value) { return DICT(self->tp_dict).contains(value); })
+			.def("__contains__", [](TypeObject const & self, OBJ const & value) { return DICT(self.tp_dict).contains(value); })
 
-			.def("__instancecheck__", [](OBJ inst, OBJ cls) { return isinstance(inst, cls); })
+			.def("__instancecheck__", [](OBJ const & inst, OBJ const & cls) { return isinstance(inst, cls); })
 
-			.def("__subclasscheck__", &TYPE::is_subtype)
+			.def("__subclasscheck__", &TypeObject::is_subtype)
 
-			.def_property_readonly("__base__", [](TYPE self) { return TYPE(self->tp_base); })
+			.def_readonly("__base__", &TypeObject::tp_base)
 
-			.def_property_readonly("__dict__", [](TYPE self) { return self->tp_dict; })
+			.def_readonly("__dict__", &TypeObject::tp_dict)
+			
+			.def_readonly("__dictoffset__", &TypeObject::tp_dictoffset)
+			
+			.def_readonly("__flags__", &TypeObject::tp_flags)
+			
+			.def_readonly("__mro__", &TypeObject::tp_mro)
 
-			.def_property_readonly("__dictoffset__", [](TYPE self) { return self->tp_dictoffset; })
+			.def_property("__name__",
+				[](TypeObject const & self) { return self.tp_name; },
+				[](TypeObject & self, STR const & value) { self.tp_name = value; })
+			
+			//.def_readwrite("__name__", &TypeObject::tp_name)
+			
+			.def_readonly("__size__", &TypeObject::tp_size)
 
-			.def_property_readonly("__flags__", [](TYPE self) { return self->tp_flags; })
+			.def_property_readonly("__text_signature__", [](TypeObject const & self) { return STR(/* TODO */); })
 
-			.def_property_readonly("__mro__", [](TYPE self) { return self->tp_mro; })
+			.def_property_readonly("__qualname__", [](TypeObject const & self) { return STR(/* TODO */); })
 
-			.def_property_readonly("__text_signature__", [](TYPE self) { return STR(/* TODO */); })
+			.def_readonly("__vectorcalloffset__", &TypeObject::tp_vectorcalloffset)
 
-			.def_property_readonly("__size__", [](TYPE self) { return self->tp_size; })
+			;
 
-			.def_property_readonly("__qualname__", [](TYPE self) { return STR(/* TODO */); })
+		//return CLASS_<TYPE>(type)
 
-			.def_property_readonly("__vectorcalloffset__", [](TYPE self) { return self->tp_vectorcalloffset; })
+			//.def("__contains__", [](TYPE self, OBJ value) { return DICT(self->tp_dict).contains(value); })
 
-			.def_property("__name__", [](TYPE self) { return self->tp_name; }, [](TYPE self, STR value) { self->tp_name = value; })
+			//.def("__instancecheck__", [](OBJ inst, OBJ cls) { return isinstance(inst, cls); })
+
+			//.def("__subclasscheck__", &TYPE::is_subtype)
+
+			//.def_property_readonly("__base__", [](TYPE self) { return TYPE(self->tp_base); })
+
+			//.def_property_readonly("__dict__", [](TYPE self) { return self->tp_dict; })
+
+			//.def_property_readonly("__dictoffset__", [](TYPE self) { return self->tp_dictoffset; })
+
+			//.def_property_readonly("__flags__", [](TYPE self) { return self->tp_flags; })
+
+			//.def_property_readonly("__mro__", [](TYPE self) { return self->tp_mro; })
+
+			//.def_property_readonly("__text_signature__", [](TYPE self) { return STR(/* TODO */); })
+
+			//.def_property_readonly("__size__", [](TYPE self) { return self->tp_size; })
+
+			//.def_property_readonly("__qualname__", [](TYPE self) { return STR(/* TODO */); })
+
+			//.def_property_readonly("__vectorcalloffset__", [](TYPE self) { return self->tp_vectorcalloffset; })
+
+			//.def_property("__name__", [](TYPE self) { return self->tp_name; }, [](TYPE self, STR value) { self->tp_name = value; })
 
 			;
 	};

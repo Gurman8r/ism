@@ -33,6 +33,34 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct life_support
+	{
+		life_support()
+		{
+			get_internals().loader_stack.push_back(nullptr);
+		}
+
+		~life_support()
+		{
+			auto & stack{ get_internals().loader_stack };
+			VERIFY(!stack.empty());
+			OBJ & ptr{ stack.back() };
+			stack.pop_back();
+			ptr = nullptr;
+		}
+
+		static void add(OBJ value)
+		{
+			auto & stack{ get_internals().loader_stack };
+			VERIFY(!stack.empty());
+			LIST & list_ptr = (LIST &)stack.back();
+			if (!list_ptr) { list_ptr = LIST::new_(); }
+			list_ptr.append(value);
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // base casters
@@ -237,7 +265,7 @@ public:																								\
 		bool load(OBJ const & src, bool convert)
 		{
 			if (!src) { return false; }
-			else { return (value = (String)STR(src)), true; }
+			return (value = (String)STR(src)), true;
 		}
 
 		static OBJ cast(T const & src, ReturnPolicy, OBJ) { return STR(src); }
@@ -255,8 +283,7 @@ public:																								\
 
 		bool load(OBJ const & src, bool convert)
 		{
-			if (!src) { return false; }
-			else { return str_caster.load(src, convert); }
+			return src && str_caster.load(src, convert);
 		}
 
 		static OBJ cast(T const * src, ReturnPolicy, OBJ) { return STR(src); }
@@ -316,22 +343,49 @@ public:																								\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct object_caster
+	template <class T> struct ref_caster
 	{
-		template <class U = T
-		> bool load(Ref<U> const & src, bool)
+		bool load(OBJ const & src, bool)
 		{
 			if (!isinstance<T>(src)) { return false; }
-			value = src;
-			return true;
+
+			return (value = src), true;
 		}
 
 		static OBJ cast(OBJ const & src, ReturnPolicy, OBJ) { return src; }
 
-		ISM_TYPE_CASTER(T, "object");
+		ISM_TYPE_CASTER(T, "ref");
 	};
 
-	template <class T> struct type_caster<T, std::enable_if_t<is_api_v<T>>> : object_caster<T> {};
+	template <class T> struct type_caster<T, std::enable_if_t<is_api_v<T> && !is_base_object_v<T>>> : ref_caster<T> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> struct object_caster
+	{
+		bool load(OBJ const & src, bool)
+		{
+			if (!isinstance<T>(src)) { return false; }
+
+			life_support::add(src);
+
+			return (value = src), true;
+		}
+
+		template <class U> static OBJ cast(U & src, ReturnPolicy, OBJ) { return Ref<U>(std::addressof(src)); }
+
+		template <class U> static OBJ cast(U && src, ReturnPolicy, OBJ) noexcept { return Ref<U>(std::move(src)); }
+
+		template <class U> operator U & () { return (U &)(**value); }
+
+		template <class U> operator U * () { return (U *)(*value); }
+
+		template <class U> using cast_op_type = ism::cast_op_type<U>;
+
+		OBJ value{};
+	};
+
+	template <class T> struct type_caster<T, std::enable_if_t<is_base_object_v<T>>> : object_caster<T> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -20,9 +20,7 @@ namespace ism
 
 		Batch<hash_t, StringName, TYPE> classes;
 
-		TypeMap<TYPE> builtin_types{};
-
-		TypeMap<TYPE> generic_types{};
+		Vector<OBJ> loader_stack;
 
 	public:
 		NODISCARD static Internals & get_singleton() noexcept { return singleton; }

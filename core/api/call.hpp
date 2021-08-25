@@ -65,6 +65,15 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <class Derived
+	> template <ReturnPolicy policy, class ...Args
+	> inline OBJ ObjectAPI<Derived>::operator()(Args && ... args) const
+	{
+		return ism::collect_arguments<policy>(FWD(args)...).call(derived().ptr());
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// argument loader
 	template <class ... Args
 	> struct NODISCARD ArgumentLoader final
@@ -190,15 +199,6 @@ namespace ism
 			mpl::is_accessible_base_of_v<Class, Derived>,
 			"Cannot bind an inaccessible base class method; use a lambda definition instead");
 		return pmf;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Derived
-	> template <ReturnPolicy policy, class ...Args
-	> inline OBJ ObjectAPI<Derived>::operator()(Args && ... args) const
-	{
-		return ism::collect_arguments<policy>(FWD(args)...).call(derived().ptr());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

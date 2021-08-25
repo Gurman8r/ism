@@ -23,13 +23,13 @@ ISM_OBJECT_IMPLEMENTATION(CppFunctionObject, t, "cpp_function", TypeFlags_BaseTy
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
 		DICT(type->tp_dict)["__name__"] = PROPERTY({
-			CPP_FUNCTION({ [](CPP_FUNCTION self) { return (***self).name; }, attr::is_method(type) }),
-			CPP_FUNCTION({ [](CPP_FUNCTION self, STR value) { (***self).name = value; }, attr::is_method(type) }),
+			CPP_FUNCTION({ [](CppFunctionObject & self) { return self->name; }, attr::is_method(type) }),
+			CPP_FUNCTION({ [](CppFunctionObject const & self, STR value) { self->name = value; }, attr::is_method(type) }),
 			});
 
-		return CLASS_<CPP_FUNCTION>(type)
+		return CLASS_<CppFunctionObject>(type)
 
-			.def_property("__text_signature__", [](CPP_FUNCTION self) { return (***self).signature; }, [](CPP_FUNCTION self, STR value) { (***self).signature = value; })
+			.def_property("__text_signature__", [](CppFunctionObject & self) { return self->signature; }, [](CppFunctionObject const & self, STR value) { self->signature = value; })
 
 			;
 	};
@@ -169,7 +169,12 @@ OBJ ism::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 		}
 
 		// execute call
-		if (OBJ result{ func.impl(call) }; !call.try_next_overload)
+		OBJ result;
+		{
+			life_support guard{};
+			result = func.impl(call);
+		}
+		if (!call.try_next_overload)
 		{
 			return result;
 		}

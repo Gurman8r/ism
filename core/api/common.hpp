@@ -464,7 +464,7 @@ namespace ism
 		template <class U
 		> Ref(Ref<U> const & value) { reset(value); }
 
-		Ref(value_type const & value) { instance(value); }
+		Ref(value_type && value) noexcept { instance(std::move(value)); }
 
 		Ref & operator=(nullptr_t) { unref(); return (*this); }
 
@@ -473,7 +473,7 @@ namespace ism
 		template <class U
 		> Ref & operator=(Ref<U> const & value) { reset(value); return (*this); }
 
-		Ref & operator=(value_type const & value) { instance(value); return (*this); }
+		Ref & operator=(value_type && value) noexcept { instance(std::move(value)); return (*this); }
 
 	public:
 		template <class ... Args
@@ -596,8 +596,6 @@ public:																								\
 																									\
 	template <class U> m_handle(Ref<U> const & value) { reset(value); }								\
 																									\
-	m_handle(m_class const & value) { instance(value); }											\
-																									\
 	m_handle(m_class && value) noexcept { instance(std::move(value)); }								\
 																									\
 	m_handle & operator=(nullptr_t) { unref(); return (*this); }									\
@@ -605,8 +603,6 @@ public:																								\
 	m_handle & operator=(Ref<m_class> const & value) { reset(value); return (*this); }				\
 																									\
 	template <class U> m_handle & operator=(Ref<U> const & value) { reset(value); return (*this); }	\
-																									\
-	m_handle & operator=(m_class const & value) { instance(value); return (*this); }				\
 																									\
 	m_handle & operator=(m_class && value) noexcept { instance(std::move(value)); return (*this); }	\
 																									\
