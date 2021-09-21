@@ -107,6 +107,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// cpp_function initialize
 	template <class Func, class Return, class ... Args, class ... Extra
 	> inline void CppFunctionObject::initialize(Func && func, Return(*)(Args...), Extra && ... extra)
 	{

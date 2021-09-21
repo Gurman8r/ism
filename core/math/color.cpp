@@ -1,5 +1,3 @@
 #include <core/math/color.hpp>
 
-namespace ism
-{
-}
+using namespace ism;

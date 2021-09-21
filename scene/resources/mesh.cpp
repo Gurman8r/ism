@@ -4,7 +4,6 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(Mesh, t, "mesh")
 {
-	t.tp_base = typeof<Resource>();
 }
 
 Mesh::~Mesh()

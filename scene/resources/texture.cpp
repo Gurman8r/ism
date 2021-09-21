@@ -8,7 +8,6 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(Texture, t, "texture")
 {
-	t.tp_base = typeof<Resource>();
 }
 
 Texture::~Texture()

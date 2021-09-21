@@ -1,6 +1,8 @@
 #include <core/error/error_macros.hpp>
 #include <core/os/os.hpp>
 
+using namespace ism;
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void * ism::_err_occurred()

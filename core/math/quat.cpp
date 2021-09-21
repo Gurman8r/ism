@@ -1,5 +1,3 @@
 #include <core/math/quat.hpp>
 
-namespace ism
-{
-}
+using namespace ism;

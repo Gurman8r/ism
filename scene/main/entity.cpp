@@ -5,8 +5,8 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(Entity, t, "entity")
 {
-	t.tp_base = typeof<Node>();
 }
+
 Entity::~Entity() {}
 
 Entity::Entity(SceneTree * tree, Node * parent) : Node{ tree, parent }, m_entity{ get_tree()->get_reg()->create() } {}

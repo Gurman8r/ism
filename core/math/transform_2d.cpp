@@ -1,5 +1,3 @@
 #include <core/math/transform_2d.hpp>
 
-namespace ism
-{
-}
+using namespace ism;

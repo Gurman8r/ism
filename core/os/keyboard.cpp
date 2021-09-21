@@ -1,5 +1,3 @@
 #include <core/os/keyboard.hpp>
 
-namespace ism
-{
-}
+using namespace ism;

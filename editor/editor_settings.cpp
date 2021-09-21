@@ -1,6 +1,7 @@
 #include <editor/editor_settings.hpp>
 
-namespace ism
+using namespace ism;
+
+EditorSettings::~EditorSettings()
 {
-	EditorSettings::~EditorSettings() {}
 }

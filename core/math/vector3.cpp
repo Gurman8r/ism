@@ -1,5 +1,3 @@
 #include <core/math/vector3.hpp>
 
-namespace ism
-{
-}
+using namespace ism;

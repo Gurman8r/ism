@@ -8,7 +8,6 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(Shader, t, "shader")
 {
-	t.tp_base = typeof<Resource>();
 }
 
 Shader::~Shader()

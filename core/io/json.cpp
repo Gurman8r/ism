@@ -1,6 +1,3 @@
 #include <core/io/json.hpp>
 
-namespace ism
-{
-
-}
+using namespace ism;

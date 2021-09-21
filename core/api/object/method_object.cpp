@@ -7,8 +7,6 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(MethodObject, t, "method", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
-	t.tp_base = typeof<FUNCTION>();
-
 	t.tp_dictoffset = offsetof(MethodObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);

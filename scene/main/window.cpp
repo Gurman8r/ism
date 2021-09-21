@@ -9,7 +9,6 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(Window, t, "window")
 {
-	t.tp_base = typeof<Viewport>();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

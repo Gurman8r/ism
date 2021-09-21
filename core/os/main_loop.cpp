@@ -4,7 +4,6 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(MainLoop, t, "main_loop")
 {
-	t.tp_base = typeof<Object>();
 }
 
 namespace ism

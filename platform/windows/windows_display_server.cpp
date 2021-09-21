@@ -15,7 +15,6 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(Windows_DisplayServer, t, "windows_display_server")
 {
-	t.tp_base = typeof<Windows_DisplayServer>();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

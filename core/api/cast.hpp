@@ -28,7 +28,7 @@ namespace ism
 
 		~LoaderLifeSupport()
 		{
-			auto & stack{ get_internals().loader_stack };
+			Vector<OBJ> & stack{ get_internals().loader_stack };
 			VERIFY(!stack.empty());
 
 			OBJ & ptr{ stack.back() };
@@ -38,7 +38,7 @@ namespace ism
 
 		static void add(OBJ const & value)
 		{
-			auto & stack{ get_internals().loader_stack };
+			Vector<OBJ> & stack{ get_internals().loader_stack };
 			VERIFY(!stack.empty());
 
 			LIST & list{ (LIST &)stack.back() };
@@ -57,10 +57,6 @@ namespace ism
 
 	NODISCARD inline TYPE typeof_generic(std::type_info const & t)
 	{
-		auto & internals{ get_internals() };
-
-
-
 		return nullptr;
 	}
 

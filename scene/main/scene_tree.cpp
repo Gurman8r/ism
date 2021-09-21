@@ -1,12 +1,10 @@
 #include <scene/main/scene_tree.hpp>
-#include <scene/components/components.hpp>
+#include <scene/components/all_components.hpp>
 
 using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(SceneTree, t, "scene_tree")
 {
-	t.tp_base = typeof<MainLoop>();
-
 	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(SceneTree{ (String)STR(args[0]) }); };
 }
 

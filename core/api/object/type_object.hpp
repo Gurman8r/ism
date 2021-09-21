@@ -31,6 +31,7 @@ namespace ism
 			tp_name = name;
 			tp_size = sizeof(T);
 			tp_flags = flags;
+			tp_base = baseof<T>();
 			tp_bind = (bindfunc)[](TYPE type) { return type; };
 			tp_cmp = (cmpfunc)[](OBJ lhs, OBJ rhs) { return util::compare(*lhs, *rhs); };
 			tp_del = (delfunc)memdelete<T>;
@@ -40,10 +41,12 @@ namespace ism
 		String				tp_name				{};
 		ssize_t				tp_size				{};
 		int32_t				tp_flags			{};
-		bindfunc			tp_bind				{};
 
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
+
+		bindfunc			tp_bind				{};
+		vectorcallfunc		tp_vectorcall		{};
 
 		getattrfunc			tp_getattr			{};
 		setattrfunc			tp_setattr			{};
@@ -61,12 +64,11 @@ namespace ism
 		reprfunc			tp_repr				{};
 		reprfunc			tp_str				{};
 		
-		Ref<TypeObject>		tp_base				{ /* type handle doesn't exist yet */ };
-		OBJ					tp_bases			{};
-		OBJ					tp_dict				{};
-		OBJ					tp_mro				{};
-		OBJ					tp_subclasses		{};
-		vectorcallfunc		tp_vectorcall		{};
+		Ref<TypeObject>		tp_base				{ /* TYPE */ };
+		OBJ					tp_bases			{ /* LIST */ };
+		OBJ					tp_dict				{ /* DICT */ };
+		OBJ					tp_mro				{ /* LIST */ };
+		OBJ					tp_subclasses		{ /* LIST */ };
 
 	public:
 		NODISCARD bool ready();

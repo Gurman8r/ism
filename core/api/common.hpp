@@ -38,7 +38,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct _API_Tag {};
+	struct _API_Tag { /* used to determine if type derives ObjectAPI<> */ };
 	
 	template <class T
 	> constexpr bool is_api_v{ std::is_base_of_v<_API_Tag, mpl::intrinsic_t<T>> };
@@ -67,7 +67,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct _Ref_Tag {};
+	struct _Ref_Tag { /* used to determine if type derives Ref<> */ };
 
 	template <class T
 	> constexpr bool is_ref_v{ std::is_base_of_v<_Ref_Tag, mpl::intrinsic_t<T>> };
@@ -108,6 +108,12 @@ namespace ism
 	class RuntimeState;
 	class ThreadState;
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// enum types
+namespace ism
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	typedef enum DataType_ : int32_t
@@ -201,15 +207,21 @@ namespace ism
 	MethodFlags;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// function types
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(unaryfunc)		OBJ(*)(OBJ a);
 	ALIAS(binaryfunc)		OBJ(*)(OBJ a, OBJ b);
 	ALIAS(ternaryfunc)		OBJ(*)(OBJ a, OBJ b, OBJ c);
 	
-	ALIAS(inquiry)			bool(*)(OBJ o);
-	ALIAS(sizeargfunc)		OBJ(*)(OBJ o, ssize_t i);
-	ALIAS(sizesizeargfunc)	OBJ(*)(OBJ o, ssize_t i, ssize_t j);
-	ALIAS(objobjproc)		int32_t(*)(OBJ a, OBJ b);
+	ALIAS(inquiry)			bool(*)(OBJ obj);
+	ALIAS(sizeargfunc)		OBJ(*)(OBJ obj, ssize_t i);
+	ALIAS(sizesizeargfunc)	OBJ(*)(OBJ obj, ssize_t i, ssize_t j);
+	ALIAS(objobjproc)		int32_t(*)(OBJ lhs, OBJ rhs);
 
 	ALIAS(getattrfunc)		OBJ(*)(OBJ obj, cstring name);
 	ALIAS(setattrfunc)		Error(*)(OBJ obj, cstring name, OBJ value);
@@ -218,21 +230,22 @@ namespace ism
 	ALIAS(descrgetfunc)		OBJ(*)(OBJ descr, OBJ obj, OBJ type);
 	ALIAS(descrsetfunc)		Error(*)(OBJ descr, OBJ obj, OBJ value);
 
-	ALIAS(cmpfunc)			int32_t(*)(OBJ a, OBJ b);
-	ALIAS(hashfunc)			hash_t(*)(OBJ o);
-	ALIAS(lenfunc)			ssize_t(*)(OBJ o);
-	ALIAS(reprfunc)			STR(*)(OBJ o);
+	ALIAS(cmpfunc)			int32_t(*)(OBJ lhs, OBJ rhs);
+	ALIAS(hashfunc)			hash_t(*)(OBJ obj);
+	ALIAS(lenfunc)			ssize_t(*)(OBJ obj);
+	ALIAS(reprfunc)			STR(*)(OBJ obj);
 
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
 	ALIAS(delfunc)			void(*)(Object * ptr);
 
+	ALIAS(bindfunc)			TYPE(*)(TYPE type);
 	ALIAS(cfunction)		OBJ(*)(OBJ self, OBJ args);
 	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argc, size_t argv);
+
+	ALIAS(freefunc)			void(*)(void * ptr);
 	ALIAS(getter)			OBJ(*)(OBJ self, void * context);
 	ALIAS(setter)			Error(*)(OBJ self, OBJ value, void * context);
 	ALIAS(wrapperfunc)		OBJ(*)(OBJ self, OBJ args, void * wrapped);
-	ALIAS(freefunc)			void(*)(void * ptr);
-	ALIAS(bindfunc)			TYPE(*)(TYPE type);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -343,17 +356,17 @@ namespace ism
 	private:
 		NODISCARD auto compare(ObjectAPI const & o) const
 		{
-			if (derived().ptr() == o.derived().ptr())
+			if (auto self{ derived().ptr() }, other{ o.derived().ptr() }; self == other)
 			{
 				return 0;
 			}
-			else if (TYPE t{ typeof(derived().ptr()) }; t->tp_cmp)
+			else if (cmpfunc cmp{ typeof(self)->tp_cmp })
 			{
-				return t->tp_cmp(derived().ptr(), o.derived().ptr());
+				return cmp(self, other);
 			}
 			else
 			{
-				return util::compare((void *)derived().ptr(), (void *)o.derived().ptr());
+				return util::compare((void *)self, (void *)other);
 			}
 		}
 	};
@@ -542,15 +555,13 @@ namespace ism
 
 		NODISCARD auto operator->() const noexcept { return const_cast<value_type *>(m_ptr); }
 
-		NODISCARD bool operator==(value_type const * value) const noexcept { return m_ptr == value; }
+		NODISCARD bool operator==(value_type const * value) const noexcept { return (m_ptr == value) || ((m_ptr && value) && m_ptr->equal_to(*value)); }
+
+		NODISCARD bool operator!=(value_type const * value) const noexcept { return ((m_ptr && value) && m_ptr->not_equal_to(*value)) || (m_ptr != value); }
 		
-		NODISCARD bool operator!=(value_type const * value) const noexcept { return m_ptr != value; }
+		NODISCARD bool operator==(Ref const & value) const noexcept { return operator==(*value); }
 		
-		NODISCARD bool operator<(Ref const & value) const noexcept { return m_ptr < value.m_ptr; }
-		
-		NODISCARD bool operator==(Ref const & value) const noexcept { return m_ptr == value.m_ptr; }
-		
-		NODISCARD bool operator!=(Ref const & value) const noexcept { return m_ptr != value.m_ptr; }
+		NODISCARD bool operator!=(Ref const & value) const noexcept { return operator!=(*value); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -653,7 +664,7 @@ namespace ism
 	public:
 		using key_type = typename Policy::key_type;
 
-		Accessor(OBJ obj, key_type key) : m_obj{ obj }, m_key{ key } {}
+		Accessor(OBJ const & obj, key_type const & key) : m_obj{ obj }, m_key{ key } {}
 
 		Accessor(Accessor const &) = default;
 

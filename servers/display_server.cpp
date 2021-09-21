@@ -6,7 +6,6 @@ DECLEXPR(ism::DisplayServer::singleton) {};
 
 ISM_OBJECT_IMPLEMENTATION(DisplayServer, t, "display_server", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
-	t.tp_base = typeof<Object>();
 }
 
 VideoMode const & ism::get_desktop_video_mode()

@@ -1,12 +1,11 @@
 #include <drivers/opengl/opengl_texture.hpp>
 
-namespace ism
-{
-	OpenGL_Texture::~OpenGL_Texture()
-	{
-	}
+using namespace ism;
 
-	OpenGL_Texture::OpenGL_Texture()
-	{
-	}
+OpenGL_Texture::~OpenGL_Texture()
+{
+}
+
+OpenGL_Texture::OpenGL_Texture()
+{
 }

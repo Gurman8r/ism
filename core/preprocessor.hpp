@@ -90,11 +90,12 @@
 // compose
 namespace ism::impl
 {
-	template <class T> struct ComposeHelper final
+	// compose helper
+	template <class T> struct ComposerHelper final
 	{
 		T value;
 
-		constexpr ComposeHelper(T && value) noexcept : value{ FWD(value) } {}
+		constexpr ComposerHelper(T && value) noexcept : value{ FWD(value) } {}
 
 		template <class Fn = void(*)(T &)
 		> constexpr decltype(auto) operator+(Fn && fn) && noexcept
@@ -104,7 +105,7 @@ namespace ism::impl
 	};
 
 #define COMPOSE_EX(m_class, ...) \
-	(ism::impl::ComposeHelper<m_class>(m_class{ ##__VA_ARGS__ }))
+	(ism::impl::ComposerHelper<m_class>(m_class{ ##__VA_ARGS__ }))
 
 #define COMPOSE(m_class, m_var, ...) \
 	COMPOSE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void

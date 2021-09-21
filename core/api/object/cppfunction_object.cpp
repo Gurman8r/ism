@@ -7,8 +7,6 @@ using namespace ism;
 
 ISM_OBJECT_IMPLEMENTATION(CppFunctionObject, t, "cpp_function", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
-	t.tp_base = typeof<FUNCTION>();
-
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);

@@ -1,6 +1,7 @@
 #include <editor/editor_data.hpp>
 
-namespace ism
+using namespace ism;
+
+EditorData::~EditorData()
 {
-	EditorData::~EditorData() {}
 }

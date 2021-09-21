@@ -1,5 +1,3 @@
 #include <core/math/rect.hpp>
 
-namespace ism
-{
-}
+using namespace ism;

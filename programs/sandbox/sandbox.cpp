@@ -42,9 +42,13 @@ namespace ism
 			.def("get_string", get_string)
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			.def("pass_ptr", [](void * a) { return a; })
+
+			.def("test_static", &Test::test_static)
 			;
 
 		DICT g = globals();
+
+		g["test_static"]();
 
 		g["hello"]();
 		g["say"](g["get_string"]());

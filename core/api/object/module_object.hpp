@@ -12,14 +12,11 @@ namespace ism
 		ISM_OBJECT(ModuleObject, Object);
 
 	public:
-		DICT		m_dict	{ DICT::new_() };
-		STR			m_name	{};
-		inquiry		m_clear	{};
-		freefunc	m_free	{};
+		DICT	m_dict	{};
+		STR		m_name	{};
 
-		ModuleObject(STR const & name) : Object{}
+		ModuleObject(STR const & name) : Object{}, m_dict{ DICT::new_() }, m_name{ name }
 		{
-			m_name = name;
 		}
 	};
 

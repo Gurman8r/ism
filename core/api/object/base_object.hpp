@@ -47,6 +47,8 @@ protected:																\
 	}																	\
 																		\
 public:																	\
+	using base_type = typename m_inherits;								\
+																		\
 	FORCE_INLINE static ism::TYPE get_class() noexcept					\
 	{																	\
 		return &m_class::_class_type;									\
@@ -99,6 +101,8 @@ namespace ism
 		virtual void on_dec_ref() {}
 
 	public:
+		using base_type = typename void;
+
 		virtual ~Object();
 
 		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
@@ -158,7 +162,7 @@ namespace ism
 	> NODISCARD OBJ object_or_cast(T && o);
 
 	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
-	> NODISCARD inline OBJ object_or_cast(T * o) { return Ref<T>{ o }; }
+	> NODISCARD inline OBJ object_or_cast(T const * o) { return Ref<T>{ (T *)o }; }
 
 	NODISCARD inline OBJ object_or_cast(cstring s) { return object_or_cast(String{ s }); }
 
@@ -177,6 +181,16 @@ namespace ism
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
+	> NODISCARD TYPE baseof() noexcept
+	{
+		using Base = typename T::base_type;
+		if constexpr (std::is_void_v<Base>) { return nullptr; }
+		else { return typeof<Base>(); }
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -202,6 +216,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// getattr
 	template <class Index = OBJ
 	> NODISCARD OBJ getattr(OBJ const & obj, Index && index)
 	{
@@ -227,6 +242,7 @@ namespace ism
 		}
 	}
 
+	// getattr (default)
 	template <class Index = OBJ, class Value = OBJ
 	> NODISCARD OBJ getattr(OBJ const & obj, Index && index, Value && defval)
 	{
@@ -240,6 +256,7 @@ namespace ism
 		}
 	}
 
+	// setattr
 	template <class Index = OBJ, class Value = OBJ
 	> Error setattr(OBJ const & obj, Index && index, Value && value)
 	{
@@ -265,6 +282,7 @@ namespace ism
 		}
 	}
 
+	// hasattr
 	template <class Index = OBJ
 	> NODISCARD bool hasattr(OBJ const & obj, Index && index)
 	{
@@ -296,6 +314,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// getitem
 	template <class Index = OBJ
 	> NODISCARD OBJ getitem(OBJ const & obj, Index && index)
 	{
@@ -312,6 +331,7 @@ namespace ism
 		else { return nullptr; }
 	}
 
+	// setitem
 	template <class Index = OBJ, class Value = OBJ
 	> Error setitem(OBJ const & obj, Index && index, Value && value)
 	{

@@ -1,6 +1,7 @@
 #include <editor/editor_properties.hpp>
 
-namespace ism
+using namespace ism;
+
+EditorProperties::~EditorProperties()
 {
-	EditorProperties::~EditorProperties() {}
 }
