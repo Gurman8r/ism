@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(MainLoop, t, "main_loop")
+ISM_OBJECT_IMPL(MainLoop, t, "main_loop")
 {
 }
 

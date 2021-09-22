@@ -6,7 +6,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Texture, t, "texture")
+ISM_OBJECT_IMPL(Texture, t, "texture")
 {
 }
 

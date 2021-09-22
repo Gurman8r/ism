@@ -13,7 +13,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Windows_DisplayServer, t, "windows_display_server")
+ISM_OBJECT_IMPL(Windows_DisplayServer, t, "windows_display_server")
 {
 }
 

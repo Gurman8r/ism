@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Material, t, "material")
+ISM_OBJECT_IMPL(Material, t, "material")
 {
 }
 

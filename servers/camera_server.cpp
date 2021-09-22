@@ -4,4 +4,6 @@ using namespace ism;
 
 DECLEXPR(ism::CameraServer::singleton) {};
 
-CameraServer::~CameraServer() {}
+ISM_OBJECT_IMPL(CameraServer, t, "camera_server")
+{
+}

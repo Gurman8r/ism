@@ -1,5 +1,5 @@
 #include <core/register_core_types.hpp>
-#include <core/api/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 using namespace ism;
@@ -21,20 +21,22 @@ void ism::register_core_types()
 	VERIFY(typeof<MODULE>().ready());
 	VERIFY(typeof<GENERIC>().ready());
 
-	Internals::bind_class<CppFunctionObject>();
-	Internals::bind_class<Object>();
-	Internals::bind_class<TypeObject>();
-	Internals::bind_class<IntObject>();
-	Internals::bind_class<FloatObject>();
-	Internals::bind_class<StringObject>();
-	Internals::bind_class<ListObject>();
-	Internals::bind_class<DictObject>();
-	Internals::bind_class<CapsuleObject>();
-	Internals::bind_class<FunctionObject>();
-	Internals::bind_class<MethodObject>();
-	Internals::bind_class<PropertyObject>();
-	Internals::bind_class<ModuleObject>();
-	Internals::bind_class<GenericObject>();
+	get_internals()
+		.bind_class<CppFunctionObject>()
+		.bind_class<Object>()
+		.bind_class<TypeObject>()
+		.bind_class<IntObject>()
+		.bind_class<FloatObject>()
+		.bind_class<StringObject>()
+		.bind_class<ListObject>()
+		.bind_class<DictObject>()
+		.bind_class<CapsuleObject>()
+		.bind_class<FunctionObject>()
+		.bind_class<MethodObject>()
+		.bind_class<PropertyObject>()
+		.bind_class<ModuleObject>()
+		.bind_class<GenericObject>()
+		;
 }
 
 void ism::register_core_driver_types()
@@ -55,7 +57,7 @@ void ism::unregister_core_driver_types()
 
 void ism::unregister_core_types()
 {
-	auto & db{ get_internals().classes };
+	auto & db{ get_internals().class_db };
 
 	for (size_t i = 0; i < db.size(); ++i)
 	{

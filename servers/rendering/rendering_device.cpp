@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(RenderingDevice, t, "rendering_device", TypeFlags_BaseType | TypeFlags_IsAbstract)
+ISM_OBJECT_IMPL(RenderingDevice, t, "rendering_device", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 }
 

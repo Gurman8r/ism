@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Image, t, "image")
+ISM_OBJECT_IMPL(Image, t, "image")
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(Image); };
 }

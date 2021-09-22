@@ -4,7 +4,7 @@ using namespace ism;
 
 DECLEXPR(ism::DisplayServer::singleton) {};
 
-ISM_OBJECT_IMPLEMENTATION(DisplayServer, t, "display_server", TypeFlags_BaseType | TypeFlags_IsAbstract)
+ISM_OBJECT_IMPL(DisplayServer, t, "display_server", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 }
 

@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Resource, t, "resource", TypeFlags_BaseType | TypeFlags_IsAbstract)
+ISM_OBJECT_IMPL(Resource, t, "resource", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 	t.tp_bind = (bindfunc)[](TYPE type)->TYPE
 	{

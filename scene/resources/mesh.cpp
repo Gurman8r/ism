@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Mesh, t, "mesh")
+ISM_OBJECT_IMPL(Mesh, t, "mesh")
 {
 }
 

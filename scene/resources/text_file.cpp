@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(TextFile, t, "text_file")
+ISM_OBJECT_IMPL(TextFile, t, "text_file")
 {
 }
 

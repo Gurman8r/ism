@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Sky, t, "sky")
+ISM_OBJECT_IMPL(Sky, t, "sky")
 {
 }
 

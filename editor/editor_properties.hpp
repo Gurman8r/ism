@@ -1,7 +1,7 @@
 #ifndef _ISM_EDITOR_PROPERTIES_HPP_
 #define _ISM_EDITOR_PROPERTIES_HPP_
 
-#include <core/api/class.hpp>
+#include <core/detail/class.hpp>
 
 namespace ism
 {

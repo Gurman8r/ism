@@ -33,7 +33,7 @@ namespace ism
 		template <class T> void on_component_added(Node &, T &) {}
 
 	public:
-		NODISCARD auto get_reg() const noexcept { return const_cast<entt::registry *>(&m_reg); }
+		NODISCARD auto get_reg() const noexcept { return const_cast<EntityRegistry *>(&m_reg); }
 
 		NODISCARD auto get_root() const noexcept -> Window * { return m_root; }
 
@@ -46,7 +46,7 @@ namespace ism
 
 		String			m_name	{}; // name
 		Window *		m_root	{}; // root
-		entt::registry	m_reg	{}; // registry
+		EntityRegistry	m_reg	{}; // registry
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

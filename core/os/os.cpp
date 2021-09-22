@@ -8,6 +8,24 @@ OS * OS::singleton{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+OS::OS()
+{
+	singleton = this;
+
+	Vector<Logger *> temp{};
+	temp.push_back(memnew(StdLogger));
+	set_logger(memnew(CompositeLogger(std::move(temp))));
+}
+
+OS::~OS()
+{
+	memdelete(m_logger);
+
+	singleton = nullptr;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 void OS::add_logger(Logger * value)
 {
 	if (!value)
@@ -66,24 +84,6 @@ void OS::printerr(cstring fmt, ...)
 	va_start(args, fmt);
 	m_logger->logv(fmt, args, true);
 	va_end(args);
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-OS::OS()
-{
-	singleton = this;
-
-	Vector<Logger *> temp{};
-	temp.push_back(memnew(StdLogger));
-	set_logger(memnew(CompositeLogger(std::move(temp))));
-}
-
-OS::~OS()
-{
-	memdelete(m_logger);
-
-	singleton = nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

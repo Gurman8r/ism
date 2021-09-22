@@ -33,7 +33,7 @@ namespace ism
 
 	void test_main()
 	{
-		CHECK(create_extension_module("__main__"))
+		create_extension_module("__main__")
 			.def("hello", hello)
 			.def("say", say)
 			.def("get_int", get_int)
@@ -79,9 +79,9 @@ namespace ism
 		MAIN_PAUSE();
 	}
 
-	void test_loop()
+	void test_scene()
 	{
-		SceneTree * scene{ (SceneTree *)get_os().get_main_loop() };
+		SceneTree * scene{ (SceneTree *)(get_os().get_main_loop()) };
 		scene->initialize(); SCOPE_EXIT(&) { scene->finalize(); };
 
 		Window * window{ scene->get_root() };
@@ -118,7 +118,7 @@ int main(int argc, char * argv[])
 	VERIFY(Main::start());
 
 	test_main();
-	//test_loop();
+	//test_scene();
 
 	Main::cleanup();
 

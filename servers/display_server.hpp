@@ -140,21 +140,28 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// display server
-	class ISM_API DisplayServer : Object
+	class ISM_API DisplayServer : public Object
 	{
 		ISM_OBJECT(DisplayServer, Object);
 
-	protected:
 		static DisplayServer * singleton;
 
+	protected:
 		explicit DisplayServer() noexcept : Object{} { singleton = this; }
 		
 	public:
-		static DisplayServer * get_singleton() { return singleton; }
+		virtual ~DisplayServer() override { singleton = nullptr; }
 
-		virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) = 0;
+		NODISCARD static DisplayServer * get_singleton() noexcept { return singleton; }
+
+		NODISCARD virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) = 0;
 
 		virtual bool initialize() = 0;
 
@@ -343,7 +350,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline DisplayServer * get_display_server() noexcept { return DisplayServer::get_singleton(); }
+	NODISCARD inline DisplayServer & get_display_server() noexcept { return *DisplayServer::get_singleton(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

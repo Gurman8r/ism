@@ -11,7 +11,7 @@ namespace ism
 	{
 		ISM_OBJECT(Entity, Node);
 
-		entt::entity m_entity{}; // entity
+		EntityID m_entity{}; // entity
 
 	public:
 		virtual ~Entity();
@@ -24,9 +24,9 @@ namespace ism
 		explicit Entity(Node * parent);
 
 	public:
-		NODISCARD operator entt::entity() const noexcept { return m_entity; }
+		NODISCARD operator EntityID() const noexcept { return m_entity; }
 
-		NODISCARD auto get_entity() const noexcept -> entt::entity { return m_entity; }
+		NODISCARD auto get_entity() const noexcept -> EntityID { return m_entity; }
 
 		template <class Component, class ... Args
 		> Component & add_component(Args && ... args) noexcept

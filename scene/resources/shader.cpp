@@ -6,7 +6,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Shader, t, "shader")
+ISM_OBJECT_IMPL(Shader, t, "shader")
 {
 }
 

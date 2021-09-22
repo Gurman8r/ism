@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(Viewport, t, "viewport")
+ISM_OBJECT_IMPL(Viewport, t, "viewport")
 {
 }
 

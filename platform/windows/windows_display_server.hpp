@@ -16,7 +16,7 @@ namespace ism
 	public:
 		Windows_DisplayServer() noexcept : DisplayServer{} {}
 
-		virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) override;
+		NODISCARD virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) override;
 
 		virtual bool initialize() override;
 

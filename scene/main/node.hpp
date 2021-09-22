@@ -11,15 +11,23 @@ namespace ism
 
 	class SceneTree;
 
+	class Node;
+
+	ALIAS(NodeList) Vector<Node *>;
+
+	ALIAS(EntityID) ::entt::entity;
+
+	ALIAS(EntityRegistry) ::entt::registry;
+
 	class ISM_API Node : public Object
 	{
 		ISM_OBJECT(Node, Object);
 
 	public:
-		using iterator					= typename Vector<Node *>::iterator;
-		using const_iterator			= typename Vector<Node *>::const_iterator;
-		using reverse_iterator			= typename Vector<Node *>::reverse_iterator;
-		using const_reverse_iterator	= typename Vector<Node *>::const_reverse_iterator;
+		using iterator					= typename NodeList::iterator;
+		using const_iterator			= typename NodeList::const_iterator;
+		using reverse_iterator			= typename NodeList::reverse_iterator;
+		using const_reverse_iterator	= typename NodeList::const_reverse_iterator;
 
 		virtual ~Node();
 
@@ -35,7 +43,7 @@ namespace ism
 
 		NODISCARD auto get_child_count() const noexcept -> size_t { return m_children.size(); }
 
-		NODISCARD auto get_children() const noexcept -> Vector<Node *> const & { return m_children; }
+		NODISCARD auto get_children() const noexcept -> NodeList const & { return m_children; }
 
 		NODISCARD auto get_parent() const noexcept -> Node * { return m_parent; }
 
@@ -177,9 +185,9 @@ namespace ism
 		}
 
 	private:
-		SceneTree *		m_tree		{}; // tree
-		Node *			m_parent	{}; // parent
-		Vector<Node *>	m_children	{}; // children
+		SceneTree *	m_tree		{}; // tree
+		Node *		m_parent	{}; // parent
+		NodeList	m_children	{}; // children
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

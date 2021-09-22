@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(OpenGL_RenderingDevice, t, "opengl_rendering_device")
+ISM_OBJECT_IMPL(OpenGL_RenderingDevice, t, "opengl_rendering_device")
 {
 }
 

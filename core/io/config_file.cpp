@@ -4,7 +4,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPLEMENTATION(ConfigFile, t, "config_file")
+ISM_OBJECT_IMPL(ConfigFile, t, "config_file")
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(ConfigFile); };
 }
