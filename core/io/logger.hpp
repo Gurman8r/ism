@@ -8,7 +8,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Logger
+	API_CLASS(Logger)
 	{
 	public:
 		enum Error
@@ -28,7 +28,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API StdLogger : public Logger
+	API_CLASS(StdLogger) : public Logger
 	{
 	public:
 		virtual void logv(cstring fmt, va_list args, bool is_error = false) override;
@@ -38,7 +38,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API CompositeLogger : public Logger
+	API_CLASS(CompositeLogger) : public Logger
 	{
 		Vector<Logger *> m_loggers;
 

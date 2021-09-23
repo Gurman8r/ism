@@ -9,7 +9,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API FileSystem
+	API_CLASS(FileSystem)
 	{
 	public:
 		NODISCARD static Path get_current_path();

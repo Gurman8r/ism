@@ -5,8 +5,8 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object class
-#define OBJ_CLASS(m_class, m_inherits)									\
+// object common
+#define OBJ_COMMON(m_class, m_inherits)									\
 private:																\
 	friend class ism::Internals;										\
 																		\
@@ -51,7 +51,7 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // implement object type
-#define OBJ_CLASS_IMPL(m_class, m_var, m_name, ...)											\
+#define OBJ_IMPL(m_class, m_var, m_name, ...)												\
 																							\
 	/* declare binder function */															\
 	namespace ism { static void CAT(_obj_class_impl_, m_class)(ism::TypeObject & m_var); }	\
@@ -73,7 +73,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// object object
-	class ISM_API Object : public ObjectAPI<Object>
+	API_CLASS(Object) : public ObjectAPI<Object>
 	{
 	private:
 		friend class Internals;
@@ -352,9 +352,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(OBJ) generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
+	API_FUNC(OBJ) generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
 
-	ISM_API_FUNC(Error) generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
+	API_FUNC(Error) generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
 
 	NODISCARD inline OBJ generic_getattr(OBJ obj, OBJ name) noexcept { return generic_getattr_with_dict(obj, name, nullptr); }
 

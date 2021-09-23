@@ -45,9 +45,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Input : public Object
+	API_CLASS(Input) : public Object
 	{
-		OBJ_CLASS(Input, Object);
+		OBJ_COMMON(Input, Object);
 
 		static Input * singleton;
 

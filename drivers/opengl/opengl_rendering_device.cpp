@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_CLASS_IMPL(OpenGL_RenderingDevice, t, "opengl_rendering_device")
+OBJ_IMPL(OpenGL_RenderingDevice, t, "opengl_rendering_device")
 {
 }
 

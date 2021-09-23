@@ -6,7 +6,7 @@
 namespace ism
 {
 	// string name
-	class ISM_API StringName
+	API_CLASS(StringName)
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

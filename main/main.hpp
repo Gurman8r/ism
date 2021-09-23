@@ -7,7 +7,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Main final
+	API_CLASS(Main) final
 	{
 	private:
 		static uint32_t	g_frame_count;

@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API Sky : public Resource
+	API_CLASS(Sky) : public Resource
 	{
-		OBJ_CLASS(Sky, Resource);
+		OBJ_COMMON(Sky, Resource);
 
 	public:
 		virtual ~Sky();

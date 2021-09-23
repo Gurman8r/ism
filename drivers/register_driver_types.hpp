@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	ISM_API_FUNC(void) register_driver_types();
+	API_FUNC(void) register_driver_types();
 
-	ISM_API_FUNC(void) unregister_driver_types();
+	API_FUNC(void) unregister_driver_types();
 }
 
 #endif // !_ISM_REGISTER_DRIVER_TYPES_HPP_

@@ -47,9 +47,7 @@ namespace ism
 			;
 
 		DICT g = globals();
-
 		g["test_static"]();
-
 		g["hello"]();
 		g["say"](g["get_string"]());
 		VERIFY(g["pass_ptr"]((void *)123).cast<void const *>() == (void *)123);
@@ -103,11 +101,11 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-extern ISM_IMPLEMENTATION(void *);
-
 int main(int argc, char * argv[])
 {
-	IMPLEMENT_ISM(nullptr);
+	extern OS_IMPL(void *);
+
+	OS_LAUNCH(nullptr);
 
 	switch (Main::setup(argv[0], argc, argv))
 	{

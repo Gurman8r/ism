@@ -7,9 +7,9 @@
 namespace ism
 {
 	// float object
-	class ISM_API FloatObject : public Object
+	API_CLASS(FloatObject) : public Object
 	{
-		OBJ_CLASS(FloatObject, Object);
+		OBJ_COMMON(FloatObject, Object);
 
 	public:
 		double_t m_float{};
@@ -34,12 +34,12 @@ namespace ism
 	template <> struct DefaultDelete<FloatObject> : DefaultDelete<Object> {};
 
 	// float check
-#define ISM_CHECK_FLOAT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
+#define OBJ_CHECK_FLOAT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
 
 	// float handle
-	template <> class Handle<FloatObject> : public Ref<FloatObject>
+	HANDLE_CLASS(FloatObject)
 	{
-		HANDLE_CLASS(FloatObject, ISM_CHECK_FLOAT);
+		HANDLE_COMMON(FloatObject, OBJ_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;

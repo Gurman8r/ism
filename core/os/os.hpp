@@ -4,14 +4,13 @@
 #include <core/io/logger.hpp>
 #include <core/os/filesystem.hpp>
 #include <core/os/main_loop.hpp>
-
 #include <iostream>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API OS
+	API_CLASS(OS)
 	{
 	private:
 		static OS * singleton;

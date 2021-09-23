@@ -7,9 +7,9 @@
 namespace ism
 {
 	// list object
-	class ISM_API ListObject : public Object
+	API_CLASS(ListObject) : public Object
 	{
-		OBJ_CLASS(ListObject, Object);
+		OBJ_COMMON(ListObject, Object);
 
 	public:
 		Vector<OBJ> m_list{};
@@ -135,12 +135,12 @@ namespace ism
 	template <> struct DefaultDelete<ListObject> : DefaultDelete<Object> {};
 
 	// list check
-#define ISM_CHECK_LIST(o) (ism::typeof(o).has_feature(ism::TypeFlags_List_Subclass))
+#define OBJ_CHECK_LIST(o) (ism::typeof(o).has_feature(ism::TypeFlags_List_Subclass))
 
 	// list handle
-	template <> class Handle<ListObject> : public Ref<ListObject>
+	HANDLE_CLASS(ListObject)
 	{
-		HANDLE_CLASS(ListObject, ISM_CHECK_LIST);
+		HANDLE_COMMON(ListObject, OBJ_CHECK_LIST);
 
 	public:
 		using storage_type = value_type::storage_type;

@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_CLASS_IMPL(CapsuleObject, t, "capsule", TypeFlags_BaseType)
+OBJ_IMPL(CapsuleObject, t, "capsule", TypeFlags_BaseType)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(CapsuleObject); };
 

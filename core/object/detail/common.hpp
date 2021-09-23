@@ -23,7 +23,7 @@
 #define FWD_OBJ(expr) \
 	(ism::object_or_cast(FWD(expr)))
 
-#define ISM_IDENTIFIER(m_name) \
+#define STR_IDENTIFIER(m_name) \
 	static ism::StringObject CAT(ID_, m_name){ TOSTR(m_name) }
 
 // types
@@ -586,8 +586,14 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// handle default
-#define HANDLE_CLASS(m_class, m_check)																\
+	// handle class
+#define HANDLE_CLASS(m_class) \
+	template <> class Handle<m_class> : public Ref<m_class>
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// handle common
+#define HANDLE_COMMON(m_class, m_check)																\
 public:																								\
 	using value_type = typename m_class;															\
 																									\
@@ -623,12 +629,12 @@ public:																								\
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// no check
-#define ISM_NO_CHECK(o) (false)
+#define OBJ_NO_CHECK(o) (false)
 
 	// default handle
 	template <class T> class Handle : public Ref<T>
 	{
-		HANDLE_CLASS(T, ISM_NO_CHECK);
+		HANDLE_COMMON(T, OBJ_NO_CHECK);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -674,14 +680,12 @@ namespace ism
 
 		template <class Value> decltype(auto) operator=(Value && value) &&
 		{
-			Policy::set(m_obj, m_key, FWD_OBJ(value));
-			return (*this);
+			return Policy::set(m_obj, m_key, FWD_OBJ(value)), (*this);
 		}
 
 		template <class Value> decltype(auto) operator=(Value && value) &
 		{
-			get_cache() = FWD_OBJ(value);
-			return (*this);
+			return (get_cache() = FWD_OBJ(value)), (*this);
 		}
 
 		NODISCARD auto ptr() const { return const_cast<Object *>(get_cache().ptr()); }
@@ -691,10 +695,7 @@ namespace ism
 		template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
 
 	protected:
-		OBJ & get_cache() const {
-			if (!m_cache) { m_cache = Policy::get(m_obj, m_key); }
-			return m_cache;
-		}
+		OBJ & get_cache() const { return ((!!m_cache) || (m_cache = Policy::get(m_obj, m_key))), m_cache; }
 
 	private:
 		OBJ m_obj;

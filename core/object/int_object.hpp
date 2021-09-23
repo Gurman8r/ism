@@ -4,17 +4,17 @@
 #include <core/object/type_object.hpp>
 
 // bool
-#define ISM_True		(ism::INT(&ism::IntObject::g_true))
-#define ISM_False		(ism::INT(&ism::IntObject::g_false))
-#define ISM_Bool(b)		((b) ? ISM_True : ISM_False)
+#define OBJ_TRUE		(ism::INT(&ism::IntObject::g_true))
+#define OBJ_FALSE		(ism::INT(&ism::IntObject::g_false))
+#define OBJ_BOOL(b)		((b) ? OBJ_TRUE : OBJ_FALSE)
 
 // int
 namespace ism
 {
 	// int object
-	class ISM_API IntObject : public Object
+	API_CLASS(IntObject) : public Object
 	{
-		OBJ_CLASS(IntObject, Object);
+		OBJ_COMMON(IntObject, Object);
 
 	public:
 		int64_t m_int{};
@@ -44,12 +44,12 @@ namespace ism
 	template <> struct DefaultDelete<IntObject> : DefaultDelete<Object> {};
 
 	// int check
-#define ISM_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
+#define OBJ_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
 
 	// int handle
-	template <> class Handle<IntObject> : public Ref<IntObject>
+	HANDLE_CLASS(IntObject)
 	{
-		HANDLE_CLASS(IntObject, ISM_CHECK_INT);
+		HANDLE_COMMON(IntObject, OBJ_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;

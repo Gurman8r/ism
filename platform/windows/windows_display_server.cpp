@@ -13,7 +13,7 @@
 
 using namespace ism;
 
-OBJ_CLASS_IMPL(Windows_DisplayServer, t, "windows_display_server")
+OBJ_IMPL(Windows_DisplayServer, t, "windows_display_server")
 {
 }
 

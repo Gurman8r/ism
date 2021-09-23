@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_CLASS_IMPL(Viewport, t, "viewport", TypeFlags_BaseType)
+OBJ_IMPL(Viewport, t, "viewport", TypeFlags_BaseType)
 {
 }
 

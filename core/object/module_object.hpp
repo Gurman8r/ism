@@ -7,9 +7,9 @@
 namespace ism
 {
 	// module object
-	class ISM_API ModuleObject : public Object
+	API_CLASS(ModuleObject) : public Object
 	{
-		OBJ_CLASS(ModuleObject, Object);
+		OBJ_COMMON(ModuleObject, Object);
 
 	public:
 		DICT	m_dict	{};
@@ -24,12 +24,12 @@ namespace ism
 	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<Object> {};
 
 	// module check
-#define ISM_CHECK_MODULE(o) (ism::isinstance<ism::MODULE>(o))
+#define OBJ_CHECK_MODULE(o) (ism::isinstance<ism::MODULE>(o))
 
 	// module handle
-	template <> class Handle<ModuleObject> : public Ref<ModuleObject>
+	HANDLE_CLASS(ModuleObject)
 	{
-		HANDLE_CLASS(ModuleObject, ISM_CHECK_MODULE);
+		HANDLE_COMMON(ModuleObject, OBJ_CHECK_MODULE);
 
 	public:
 		template <class Func, class ... Extra
@@ -93,14 +93,14 @@ namespace ism
 
 	inline DICT globals()
 	{
-		ISM_IDENTIFIER(__main__);
-		ISM_IDENTIFIER(__dict__);
+		STR_IDENTIFIER(__main__);
+		STR_IDENTIFIER(__dict__);
 		return import_module(&ID___main__).attr(&ID___dict__);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(OBJ) module_getattro(MODULE m, OBJ name);
+	API_FUNC(OBJ) module_getattro(MODULE m, OBJ name);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

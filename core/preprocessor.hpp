@@ -5,12 +5,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define ISM_NAMESPACE ism
-
-#define _ISM ::ISM_NAMESPACE::
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 // concat implementation
 #define _IMPL_CAT(a, b) \
 	a##b
@@ -59,16 +53,16 @@
 
 // make anonymous
 #if defined(__COUNTER__)
-#	define MAKE_ANONYMOUS(expr) CAT(_, CAT(expr, CAT(_, CAT(__COUNTER__, _))))
+#	define MAKE_ANON(expr) CAT(_, CAT(expr, CAT(_, CAT(__COUNTER__, _))))
 #elif defined(__LINE__)
-#	define MAKE_ANONYMOUS(expr) CAT(_, CAT(expr, CAT(_, CAT(__LINE__, _))))
+#	define MAKE_ANON(expr) CAT(_, CAT(expr, CAT(_, CAT(__LINE__, _))))
 #else
-#	define MAKE_ANONYMOUS(expr) CAT(_, CAT(expr, _))
+#	define MAKE_ANON(expr) CAT(_, CAT(expr, _))
 #endif
 
 // anonymous
-#define ANONYMOUS \
-	MAKE_ANONYMOUS(anonymous)
+#define ANON \
+	MAKE_ANON(anonymous)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -83,7 +77,7 @@
 
 // sink
 #define SINK(...) \
-	_IMPL_SINK(ANONYMOUS, ##__VA_ARGS__)
+	_IMPL_SINK(ANON, ##__VA_ARGS__)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -120,7 +114,7 @@ namespace ism::impl
 
 // return static
 #define RETURN_STATIC(expr) \
-	_IMPL_RETURN_STATIC(ANONYMOUS, expr)
+	_IMPL_RETURN_STATIC(ANON, expr)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -147,7 +141,7 @@ namespace ism::impl
 
 // scope enter
 #define SCOPE_ENTER(...) \
-	auto ANONYMOUS = SCOPE_ENTER_EX(##__VA_ARGS__)
+	auto ANON = SCOPE_ENTER_EX(##__VA_ARGS__)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -178,7 +172,7 @@ namespace ism::impl
 
 // scope exit
 #define SCOPE_EXIT(...) \
-	auto ANONYMOUS = SCOPE_EXIT_EX(##__VA_ARGS__)
+	auto ANON = SCOPE_EXIT_EX(##__VA_ARGS__)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -7,9 +7,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API ConfigFile : public Resource
+	API_CLASS(ConfigFile) : public Resource
 	{
-		OBJ_CLASS(ConfigFile, Resource);
+		OBJ_COMMON(ConfigFile, Resource);
 
 	public:
 		virtual ~ConfigFile();

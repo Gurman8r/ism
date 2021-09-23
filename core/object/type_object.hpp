@@ -9,7 +9,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type object
-	class ISM_API TypeObject : public Object
+	API_CLASS(TypeObject) : public Object
 	{
 	private:
 		friend class Internals;
@@ -128,14 +128,14 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type check
-#define ISM_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
+#define OBJ_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type handle
-	template <> class Handle<TypeObject> : public Ref<TypeObject>
+	HANDLE_CLASS(TypeObject)
 	{
-		HANDLE_CLASS(TypeObject, ISM_CHECK_TYPE);
+		HANDLE_COMMON(TypeObject, OBJ_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
@@ -236,9 +236,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(OBJ) type_getattro(TYPE type, OBJ name);
+	API_FUNC(OBJ) type_getattro(TYPE type, OBJ name);
 
-	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJ name, OBJ value);
+	API_FUNC(Error) type_setattro(TYPE type, OBJ name, OBJ value);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

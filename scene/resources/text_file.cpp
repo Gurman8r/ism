@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_CLASS_IMPL(TextFile, t, "text_file")
+OBJ_IMPL(TextFile, t, "text_file")
 {
 }
 

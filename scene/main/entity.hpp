@@ -7,9 +7,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Entity : public Node
+	API_CLASS(Entity) : public Node
 	{
-		OBJ_CLASS(Entity, Node);
+		OBJ_COMMON(Entity, Node);
 
 		EntityID m_entity{}; // entity
 

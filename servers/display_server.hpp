@@ -122,9 +122,9 @@ namespace ism
 		DEFAULT_COPYABLE_MOVABLE(VideoMode);
 	};
 
-	ISM_API_FUNC(VideoMode const &) get_desktop_video_mode();
+	API_FUNC(VideoMode const &) get_desktop_video_mode();
 
-	ISM_API_FUNC(Vector<VideoMode> const &) get_fullscreen_video_modes();
+	API_FUNC(Vector<VideoMode> const &) get_fullscreen_video_modes();
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -147,9 +147,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// display server
-	class ISM_API DisplayServer : public Object
+	API_CLASS(DisplayServer) : public Object
 	{
-		OBJ_CLASS(DisplayServer, Object);
+		OBJ_COMMON(DisplayServer, Object);
 
 		static DisplayServer * singleton;
 

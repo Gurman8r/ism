@@ -19,9 +19,9 @@ namespace ism
 
 	ALIAS(EntityRegistry) ::entt::registry;
 
-	class ISM_API Node : public Object
+	API_CLASS(Node) : public Object
 	{
-		OBJ_CLASS(Node, Object);
+		OBJ_COMMON(Node, Object);
 
 	public:
 		using iterator					= typename NodeList::iterator;

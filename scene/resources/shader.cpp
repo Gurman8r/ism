@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_CLASS_IMPL(Shader, t, "shader")
+OBJ_IMPL(Shader, t, "shader")
 {
 }
 

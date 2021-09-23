@@ -27,11 +27,11 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define __ISM_IMPLEMENTATION__		__ism_implementation__
+#define __OS_IMPL__		__os_impl__
 
-#define ISM_IMPLEMENTATION(inst)	ism::OS & __ISM_IMPLEMENTATION__(inst)
+#define OS_IMPL(user)	ism::OS & __OS_IMPL__(user)
 
-#define IMPLEMENT_ISM(inst)			static ism::OS & ANONYMOUS{ __ISM_IMPLEMENTATION__(inst) }
+#define OS_LAUNCH(user)	static ism::OS & ANON{ __OS_IMPL__(user) }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

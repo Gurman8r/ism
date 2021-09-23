@@ -4,7 +4,7 @@ using namespace ism;
 
 MEMBER_IMPL(RenderingDevice::singleton) {};
 
-OBJ_CLASS_IMPL(RenderingDevice, t, "rendering_device", TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJ_IMPL(RenderingDevice, t, "rendering_device", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 }
 

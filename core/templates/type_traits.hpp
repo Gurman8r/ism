@@ -311,15 +311,6 @@ namespace ism::mpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef __cpp_fold_expressions
-#define ISM_EXPAND_SIDE_EFFECTS(PATTERN) (((PATTERN), void()), ...)
-#else
-	using expand_side_effects = bool[];
-#define ISM_EXPAND_SIDE_EFFECTS(PATTERN) (void)ism::expand_side_effects{ ((PATTERN), void(), false)..., false }
-#endif
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class T, class SFINAE = void> struct has_operator_delete : std::false_type {};
 
 	template <class T, class SFINAE = void> struct has_operator_delete_size : std::false_type {};

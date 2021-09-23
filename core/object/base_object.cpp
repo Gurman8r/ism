@@ -62,7 +62,7 @@ bool Object::dec_ref()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_CLASS_IMPL(Object, t, "object", TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJ_IMPL(Object, t, "object", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
 

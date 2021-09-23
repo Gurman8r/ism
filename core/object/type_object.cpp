@@ -25,7 +25,7 @@ TypeObject::TypeObject() noexcept : Object{} {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_CLASS_IMPL(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
+OBJ_IMPL(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 	
@@ -194,7 +194,7 @@ Error TypeObject::update_slot(STR name)
 	default: return Error_None;
 
 	case hash("__new__"): { tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ {
-		if (ISM_IDENTIFIER(__new__); OBJ f{ type.lookup(&ID___new__) }) { return call_object(f, args); }
+		if (STR_IDENTIFIER(__new__); OBJ f{ type.lookup(&ID___new__) }) { return call_object(f, args); }
 		return nullptr;
 	}; } break;
 
@@ -206,37 +206,37 @@ Error TypeObject::update_slot(STR name)
 	case hash("__delattr__"): {} break;
 
 	case hash("__call__"): { tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
-		if (ISM_IDENTIFIER(__call__); OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
+		if (STR_IDENTIFIER(__call__); OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
 		return nullptr;
 	}; } break;
 
 	case hash("__hash__"): { tp_hash = (hashfunc)[](OBJ self) -> hash_t {
-		if (ISM_IDENTIFIER(__hash__); OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
+		if (STR_IDENTIFIER(__hash__); OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
 		return 0;
 	}; } break;
 
 	case hash("__len__"): { tp_len = (lenfunc)[](OBJ self) -> ssize_t {
-		if (ISM_IDENTIFIER(__len__); OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
+		if (STR_IDENTIFIER(__len__); OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
 		return -1;
 	}; } break;
 
 	case hash("__repr__"): { tp_repr = (reprfunc)[](OBJ self) -> STR {
-		if (ISM_IDENTIFIER(__repr__); OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
+		if (STR_IDENTIFIER(__repr__); OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
 		return nullptr;
 	}; } break;
 
 	case hash("__str__"): { tp_str = (reprfunc)[](OBJ self) -> STR {
-		if (ISM_IDENTIFIER(__str__); OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
+		if (STR_IDENTIFIER(__str__); OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
 		return nullptr;
 	}; } break;
 
 	case hash("__get__"): { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ {
-		if (ISM_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) { /* TODO */ }
+		if (STR_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) { /* TODO */ }
 		return nullptr;
 	}; } break;
 
 	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ cls) -> Error {
-		if (ISM_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
+		if (STR_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
 		return Error_Unknown;
 	}; } break;
 
@@ -358,8 +358,8 @@ void TypeObject::inherit_slots(TypeObject * base)
 
 	if (!tp_cmp && !tp_hash)
 	{
-		ISM_IDENTIFIER(__eq__);
-		ISM_IDENTIFIER(__hash__);
+		STR_IDENTIFIER(__eq__);
+		STR_IDENTIFIER(__hash__);
 		if (DICT dict{ tp_dict }; dict && !dict.contains(&ID___eq__) && !dict.contains(&ID___hash__))
 		{
 			tp_cmp = base->tp_cmp;

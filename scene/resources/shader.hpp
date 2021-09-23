@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API Shader : public Resource
+	API_CLASS(Shader) : public Resource
 	{
-		OBJ_CLASS(Shader, Resource);
+		OBJ_COMMON(Shader, Resource);
 
 	public:
 		virtual ~Shader();

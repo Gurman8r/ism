@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	class ISM_API Path
+	API_CLASS(Path)
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

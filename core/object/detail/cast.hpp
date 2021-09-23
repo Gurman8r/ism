@@ -252,12 +252,12 @@ public:																								\
 	{
 		bool load(OBJ const & src, bool convert)
 		{
-			if (src == ISM_True) { return (value = true), true; }
-			else if (src == ISM_False) { return (value = false), true; }
+			if (src == OBJ_TRUE) { return (value = true), true; }
+			else if (src == OBJ_FALSE) { return (value = false), true; }
 			else { return (value = src.is_valid()), true; }
 		}
 
-		static OBJ cast(bool src, ReturnPolicy, OBJ) { return ISM_Bool(src); }
+		static OBJ cast(bool src, ReturnPolicy, OBJ) { return OBJ_BOOL(src); }
 
 		ISM_TYPE_CASTER(bool, "bool");
 	};

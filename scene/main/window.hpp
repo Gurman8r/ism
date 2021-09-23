@@ -8,9 +8,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window
-	class ISM_API Window : public Viewport
+	API_CLASS(Window) : public Viewport
 	{
-		OBJ_CLASS(Window, Viewport);
+		OBJ_COMMON(Window, Viewport);
 
 	protected:
 		WindowID	m_window	{};

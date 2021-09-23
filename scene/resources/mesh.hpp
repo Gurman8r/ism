@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API Mesh : public Resource
+	API_CLASS(Mesh) : public Resource
 	{
-		OBJ_CLASS(Mesh, Resource);
+		OBJ_COMMON(Mesh, Resource);
 
 	public:
 		virtual ~Mesh();

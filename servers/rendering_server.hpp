@@ -7,9 +7,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API RenderingServer : public Object
+	API_CLASS(RenderingServer) : public Object
 	{
-		OBJ_CLASS(RenderingServer, Object);
+		OBJ_COMMON(RenderingServer, Object);
 
 		static RenderingServer * singleton;
 

@@ -3,7 +3,7 @@
 
 using namespace ism;
 
-OBJ_CLASS_IMPL(SceneTree, t, "scene_tree")
+OBJ_IMPL(SceneTree, t, "scene_tree")
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(SceneTree{ (String)STR(args[0]) }); };
 }

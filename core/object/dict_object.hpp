@@ -7,9 +7,9 @@
 namespace ism
 {
 	// dict object
-	class ISM_API DictObject : public Object
+	API_CLASS(DictObject) : public Object
 	{
-		OBJ_CLASS(DictObject, Object);
+		OBJ_COMMON(DictObject, Object);
 
 	public:
 		HashMap<OBJ, OBJ> m_dict{};
@@ -93,12 +93,12 @@ namespace ism
 	template <> struct DefaultDelete<DictObject> : DefaultDelete<Object> {};
 
 	// dict check
-#define ISM_CHECK_DICT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
+#define OBJ_CHECK_DICT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
 
 	// dict handle
-	template <> class Handle<DictObject> : public Ref<DictObject>
+	HANDLE_CLASS(DictObject)
 	{
-		HANDLE_CLASS(DictObject, ISM_CHECK_DICT);
+		HANDLE_COMMON(DictObject, OBJ_CHECK_DICT);
 
 	public:
 		using storage_type = value_type::storage_type;

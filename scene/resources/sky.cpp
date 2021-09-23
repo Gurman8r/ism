@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_CLASS_IMPL(Sky, t, "sky")
+OBJ_IMPL(Sky, t, "sky")
 {
 }
 

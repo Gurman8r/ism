@@ -7,9 +7,9 @@
 namespace ism
 {
 	// method object
-	class ISM_API MethodObject : public FunctionObject
+	API_CLASS(MethodObject) : public FunctionObject
 	{
-		OBJ_CLASS(MethodObject, FunctionObject);
+		OBJ_COMMON(MethodObject, FunctionObject);
 
 	public:
 		OBJ m_func{}, m_self{};
@@ -27,19 +27,19 @@ namespace ism
 	template <> struct DefaultDelete<MethodObject> : DefaultDelete<Object> {};
 
 	// method check
-#define ISM_CHECK_METHOD(o) (ism::isinstance<ism::METHOD>(o))
+#define OBJ_CHECK_METHOD(o) (ism::isinstance<ism::METHOD>(o))
 
 	// method handle
-	template <> class Handle<MethodObject> : public Ref<MethodObject>
+	HANDLE_CLASS(MethodObject)
 	{
-		HANDLE_CLASS(MethodObject, ISM_CHECK_METHOD);
+		HANDLE_COMMON(MethodObject, OBJ_CHECK_METHOD);
 	};
 }
 
 // functions
 namespace ism
 {
-	ISM_API_FUNC(OBJ) method_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
+	API_FUNC(OBJ) method_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
 }
 
 #endif // !_ISM_METHOD_OBJECT_HPP_

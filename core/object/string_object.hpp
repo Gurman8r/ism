@@ -7,9 +7,9 @@
 namespace ism
 {
 	// string object
-	class ISM_API StringObject : public Object
+	API_CLASS(StringObject) : public Object
 	{
-		OBJ_CLASS(StringObject, Object);
+		OBJ_COMMON(StringObject, Object);
 
 	public:
 		String m_string{};
@@ -87,12 +87,12 @@ namespace ism
 	template <> struct DefaultDelete<StringObject> : DefaultDelete<Object> {};
 
 	// string check
-#define ISM_CHECK_STR(o) (ism::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))
+#define OBJ_CHECK_STR(o) (ism::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))
 
 	// string handle
-	template <> class Handle<StringObject> : public Ref<StringObject>
+	HANDLE_CLASS(StringObject)
 	{
-		HANDLE_CLASS(StringObject, ISM_CHECK_STR);
+		HANDLE_COMMON(StringObject, OBJ_CHECK_STR);
 
 	public:
 		using storage_type = value_type::storage_type;

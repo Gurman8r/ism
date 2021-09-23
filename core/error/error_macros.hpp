@@ -23,11 +23,11 @@ namespace ism
 		void set_error() const override { _err_set_string(type, what()); } \
 	};
 
-	ISM_API_FUNC(void *) _err_occurred();
-	ISM_API_FUNC(void) _err_set_string(void * exception, cstring message);
-	ISM_API_FUNC(void) _err_format(void * exception, cstring message, ...);
-	ISM_API_FUNC(void) _err_fetch(void ** type, void ** value, void ** trace);
-	ISM_API_FUNC(void) _err_restore(void * type, void * value, void * trace);
+	API_FUNC(void *) _err_occurred();
+	API_FUNC(void) _err_set_string(void * exception, cstring message);
+	API_FUNC(void) _err_format(void * exception, cstring message, ...);
+	API_FUNC(void) _err_fetch(void ** type, void ** value, void ** trace);
+	API_FUNC(void) _err_restore(void * type, void * value, void * trace);
 
 	struct ErrorScope final
 	{
@@ -44,8 +44,8 @@ namespace ism
 		ERR_HANDLER_WARNING,
 	};
 
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
+	API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
+	API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

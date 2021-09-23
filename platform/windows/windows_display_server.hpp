@@ -9,9 +9,9 @@ struct GLFWmonitor;
 namespace ism
 {
 	// windows display server
-	class ISM_API Windows_DisplayServer : public DisplayServer
+	API_CLASS(Windows_DisplayServer) : public DisplayServer
 	{
-		OBJ_CLASS(Windows_DisplayServer, DisplayServer);
+		OBJ_COMMON(Windows_DisplayServer, DisplayServer);
 
 	public:
 		Windows_DisplayServer();

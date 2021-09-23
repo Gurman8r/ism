@@ -10,9 +10,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// viewport
-	class ISM_API Viewport : public Node
+	API_CLASS(Viewport) : public Node
 	{
-		OBJ_CLASS(Viewport, Node);
+		OBJ_COMMON(Viewport, Node);
 
 	protected:
 		explicit Viewport(SceneTree * tree, Node * parent) : Node{ tree, parent } {}

@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API Material : public Resource
+	API_CLASS(Material) : public Resource
 	{
-		OBJ_CLASS(Material, Resource);
+		OBJ_COMMON(Material, Resource);
 
 	public:
 		virtual ~Material();
