@@ -12,7 +12,6 @@
 #include <core/object/function_object.hpp>
 #include <core/object/method_object.hpp>
 #include <core/object/property_object.hpp>
-#include <core/object/generic_object.hpp>
 
 // life-support
 namespace ism

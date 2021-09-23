@@ -9,7 +9,7 @@ namespace ism
 	// method object
 	class ISM_API MethodObject : public FunctionObject
 	{
-		ISM_OBJECT(MethodObject, FunctionObject);
+		OBJ_CLASS(MethodObject, FunctionObject);
 
 	public:
 		OBJ m_func{}, m_self{};
@@ -32,7 +32,7 @@ namespace ism
 	// method handle
 	template <> class Handle<MethodObject> : public Ref<MethodObject>
 	{
-		ISM_HANDLE(MethodObject, ISM_CHECK_METHOD);
+		HANDLE_CLASS(MethodObject, ISM_CHECK_METHOD);
 	};
 }
 

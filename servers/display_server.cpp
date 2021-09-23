@@ -2,9 +2,9 @@
 
 using namespace ism;
 
-DECLEXPR(ism::DisplayServer::singleton) {};
+MEMBER_IMPL(DisplayServer::singleton) {};
 
-ISM_OBJECT_IMPL(DisplayServer, t, "display_server", TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJ_CLASS_IMPL(DisplayServer, t, "display_server", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 }
 

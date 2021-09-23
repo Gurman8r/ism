@@ -9,7 +9,7 @@ namespace ism
 	// float object
 	class ISM_API FloatObject : public Object
 	{
-		ISM_OBJECT(FloatObject, Object);
+		OBJ_CLASS(FloatObject, Object);
 
 	public:
 		double_t m_float{};
@@ -39,7 +39,7 @@ namespace ism
 	// float handle
 	template <> class Handle<FloatObject> : public Ref<FloatObject>
 	{
-		ISM_HANDLE(FloatObject, ISM_CHECK_FLOAT);
+		HANDLE_CLASS(FloatObject, ISM_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;

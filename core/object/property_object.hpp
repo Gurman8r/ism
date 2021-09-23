@@ -9,7 +9,7 @@ namespace ism
 	// property object
 	class ISM_API PropertyObject : public Object
 	{
-		ISM_OBJECT(PropertyObject, Object);
+		OBJ_CLASS(PropertyObject, Object);
 
 	public:
 		OBJ m_get{}, m_set{};
@@ -42,7 +42,7 @@ namespace ism
 	// property handle
 	template <> class Handle<PropertyObject> : public Ref<PropertyObject>
 	{
-		ISM_HANDLE(PropertyObject, ISM_CHECK_PROPERTY);
+		HANDLE_CLASS(PropertyObject, ISM_CHECK_PROPERTY);
 
 	public:
 		OBJ get(OBJ const & self) const { return m_ptr->m_get(self); }

@@ -10,7 +10,7 @@ namespace ism
 	// window
 	class ISM_API Window : public Viewport
 	{
-		ISM_OBJECT(Window, Viewport);
+		OBJ_CLASS(Window, Viewport);
 
 	protected:
 		WindowID	m_window	{};

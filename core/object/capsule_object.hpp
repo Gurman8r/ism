@@ -9,7 +9,7 @@ namespace ism
 	// capsule object
 	class ISM_API CapsuleObject : public Object
 	{
-		ISM_OBJECT(CapsuleObject, Object);
+		OBJ_CLASS(CapsuleObject, Object);
 
 	public:
 		void * m_pointer{}, * m_context{};
@@ -74,7 +74,7 @@ namespace ism
 	// capsule handle
 	template <> class Handle<CapsuleObject> : public Ref<CapsuleObject>
 	{
-		ISM_HANDLE(CapsuleObject, ISM_CHECK_CAPSULE);
+		HANDLE_CLASS(CapsuleObject, ISM_CHECK_CAPSULE);
 
 	public:
 		template <class T

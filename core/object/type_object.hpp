@@ -1,7 +1,7 @@
 #ifndef _ISM_TYPE_OBJECT_HPP_
 #define _ISM_TYPE_OBJECT_HPP_
 
-#include <core/detail/internals.hpp>
+#include <core/object/detail/internals.hpp>
 
 // type
 namespace ism
@@ -135,7 +135,7 @@ namespace ism
 	// type handle
 	template <> class Handle<TypeObject> : public Ref<TypeObject>
 	{
-		ISM_HANDLE(TypeObject, ISM_CHECK_TYPE);
+		HANDLE_CLASS(TypeObject, ISM_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }

@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Entity : public Node
 	{
-		ISM_OBJECT(Entity, Node);
+		OBJ_CLASS(Entity, Node);
 
 		EntityID m_entity{}; // entity
 
@@ -26,7 +26,7 @@ namespace ism
 	public:
 		NODISCARD operator EntityID() const noexcept { return m_entity; }
 
-		NODISCARD auto get_entity() const noexcept -> EntityID { return m_entity; }
+		NODISCARD auto get_entity_id() const noexcept -> EntityID { return m_entity; }
 
 		template <class Component, class ... Args
 		> Component & add_component(Args && ... args) noexcept

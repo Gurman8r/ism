@@ -1,9 +1,9 @@
-#include <core/detail/internals.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/internals.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
-DECLEXPR(Internals::singleton) {};
+MEMBER_IMPL(Internals::singleton) {};
 
 void Internals::initialize()
 {

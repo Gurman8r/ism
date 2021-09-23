@@ -1,11 +1,11 @@
 #include <core/object/cppfunction_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(CppFunctionObject, t, "cpp_function", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+OBJ_CLASS_IMPL(CppFunctionObject, t, "cpp_function", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 

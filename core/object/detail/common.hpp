@@ -60,7 +60,6 @@ namespace ism
 	class PropertyObject;
 	class CppFunctionObject;
 	class ModuleObject;
-	class GenericObject;
 
 	template <class T
 	> constexpr bool is_base_object_v{ std::is_base_of_v<Object, mpl::intrinsic_t<T>> };
@@ -88,7 +87,6 @@ namespace ism
 	ALIAS(PROPERTY)			Handle<PropertyObject>;
 	ALIAS(CPP_FUNCTION)		Handle<CppFunctionObject>;
 	ALIAS(MODULE)			Handle<ModuleObject>;
-	ALIAS(GENERIC)			Handle<GenericObject>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -589,7 +587,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// handle default
-#define ISM_HANDLE(m_class, m_check)																\
+#define HANDLE_CLASS(m_class, m_check)																\
 public:																								\
 	using value_type = typename m_class;															\
 																									\
@@ -630,7 +628,7 @@ public:																								\
 	// default handle
 	template <class T> class Handle : public Ref<T>
 	{
-		ISM_HANDLE(T, ISM_NO_CHECK);
+		HANDLE_CLASS(T, ISM_NO_CHECK);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

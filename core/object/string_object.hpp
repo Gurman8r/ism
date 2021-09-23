@@ -9,7 +9,7 @@ namespace ism
 	// string object
 	class ISM_API StringObject : public Object
 	{
-		ISM_OBJECT(StringObject, Object);
+		OBJ_CLASS(StringObject, Object);
 
 	public:
 		String m_string{};
@@ -92,7 +92,7 @@ namespace ism
 	// string handle
 	template <> class Handle<StringObject> : public Ref<StringObject>
 	{
-		ISM_HANDLE(StringObject, ISM_CHECK_STR);
+		HANDLE_CLASS(StringObject, ISM_CHECK_STR);
 
 	public:
 		using storage_type = value_type::storage_type;

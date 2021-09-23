@@ -1,11 +1,11 @@
 #include <core/object/int_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(IntObject, t, "int", TypeFlags_Int_Subclass)
+OBJ_CLASS_IMPL(IntObject, t, "int", TypeFlags_Int_Subclass)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(IntObject); };
 
@@ -35,8 +35,8 @@ ISM_OBJECT_IMPL(IntObject, t, "int", TypeFlags_Int_Subclass)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLEXPR(IntObject::g_true) { true };
+MEMBER_IMPL(IntObject::g_true) { true };
 
-DECLEXPR(IntObject::g_false) { false };
+MEMBER_IMPL(IntObject::g_false) { false };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

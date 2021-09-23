@@ -1,12 +1,12 @@
 #ifndef _ISM_BASE_OBJECT_HPP_
 #define _ISM_BASE_OBJECT_HPP_
 
-#include <core/detail/common.hpp>
+#include <core/object/detail/common.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object class
-#define ISM_OBJECT(m_class, m_inherits)									\
+#define OBJ_CLASS(m_class, m_inherits)									\
 private:																\
 	friend class ism::Internals;										\
 																		\
@@ -51,18 +51,18 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // implement object type
-#define ISM_OBJECT_IMPL(m_class, m_var, m_name, ...)										\
+#define OBJ_CLASS_IMPL(m_class, m_var, m_name, ...)											\
 																							\
 	/* declare binder function */															\
-	namespace ism { static void CAT(_ism_bind_class_, m_class)(ism::TypeObject & m_var); }	\
+	namespace ism { static void CAT(_obj_class_impl_, m_class)(ism::TypeObject & m_var); }	\
 																							\
 	/* create type object */																\
-	DECLEXPR(m_class::__class_type) =														\
+	MEMBER_IMPL(m_class::__class_type) =													\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), m_name, ##__VA_ARGS__)		\
-	+ ism::CAT(_ism_bind_class_, m_class);													\
+	+ ism::CAT(_obj_class_impl_, m_class);													\
 																							\
 	/* implement binder function */															\
-	void ism::CAT(_ism_bind_class_, m_class)(ism::TypeObject & m_var)						\
+	void ism::CAT(_obj_class_impl_, m_class)(ism::TypeObject & m_var)						\
 																							\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

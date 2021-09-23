@@ -7,7 +7,9 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPL(Window, t, "window")
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+OBJ_CLASS_IMPL(Window, t, "window", TypeFlags_BaseType)
 {
 }
 

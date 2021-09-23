@@ -9,7 +9,7 @@ namespace ism
 	// module object
 	class ISM_API ModuleObject : public Object
 	{
-		ISM_OBJECT(ModuleObject, Object);
+		OBJ_CLASS(ModuleObject, Object);
 
 	public:
 		DICT	m_dict	{};
@@ -29,7 +29,7 @@ namespace ism
 	// module handle
 	template <> class Handle<ModuleObject> : public Ref<ModuleObject>
 	{
-		ISM_HANDLE(ModuleObject, ISM_CHECK_MODULE);
+		HANDLE_CLASS(ModuleObject, ISM_CHECK_MODULE);
 
 	public:
 		template <class Func, class ... Extra

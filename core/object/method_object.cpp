@@ -1,11 +1,11 @@
 #include <core/object/method_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(MethodObject, t, "method", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+OBJ_CLASS_IMPL(MethodObject, t, "method", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(MethodObject, m_dict);
 

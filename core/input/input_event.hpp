@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API InputEvent : public Resource
 	{
-		ISM_OBJECT(InputEvent, Resource);
+		OBJ_CLASS(InputEvent, Resource);
 
 	public:
 		virtual ~InputEvent();

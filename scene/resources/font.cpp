@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPL(Font, t, "font")
+OBJ_CLASS_IMPL(Font, t, "font")
 {
 }
 

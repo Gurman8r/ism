@@ -12,9 +12,9 @@ namespace ism
 		static Internals * singleton;
 
 	public:
-		Internals() noexcept { singleton = this; }
+		Internals() noexcept { singleton = this; initialize(); }
 
-		~Internals() noexcept { singleton = nullptr; }
+		~Internals() noexcept { finalize(); }
 
 		NON_COPYABLE(Internals);
 

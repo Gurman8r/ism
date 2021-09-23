@@ -13,8 +13,20 @@
 
 using namespace ism;
 
-ISM_OBJECT_IMPL(Windows_DisplayServer, t, "windows_display_server")
+OBJ_CLASS_IMPL(Windows_DisplayServer, t, "windows_display_server")
 {
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+Windows_DisplayServer::Windows_DisplayServer()
+{
+	VERIFY(glfwInit() == GLFW_TRUE);
+}
+
+Windows_DisplayServer::~Windows_DisplayServer()
+{
+	glfwTerminate();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -71,16 +83,6 @@ Window * Windows_DisplayServer::create_window(SceneTree * tree, Node * parent, W
 		(GLFWmonitor *)settings.monitor,
 		(GLFWwindow *)settings.share),
 		settings.hints));
-}
-
-bool Windows_DisplayServer::initialize()
-{
-	return glfwInit() == GLFW_TRUE;
-}
-
-void Windows_DisplayServer::finalize()
-{
-	glfwTerminate();
 }
 
 void Windows_DisplayServer::poll_events()

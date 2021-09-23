@@ -1,7 +1,7 @@
 #ifndef _ISM_CAMERA_SERVER_HPP_
 #define _ISM_CAMERA_SERVER_HPP_
 
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 namespace ism
 {
@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API CameraServer : public Object
 	{
-		ISM_OBJECT(CameraServer, Object);
+		OBJ_CLASS(CameraServer, Object);
 
 		static CameraServer * singleton;
 
@@ -17,14 +17,14 @@ namespace ism
 		explicit CameraServer() noexcept : Object{} { singleton = this; }
 
 	public:
-		virtual ~CameraServer() override { singleton = nullptr; }
+		virtual ~CameraServer() override {}
 
 		NODISCARD static CameraServer * get_singleton() noexcept { return singleton; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD CameraServer & get_camera_server() { return *CameraServer::get_singleton(); }
+	NODISCARD inline CameraServer & get_camera_server() { return *CHECK(CameraServer::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

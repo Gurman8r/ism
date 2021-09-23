@@ -1,7 +1,7 @@
 #ifndef _ISM_TRANSFORM_COMPONENT_HPP_
 #define _ISM_TRANSFORM_COMPONENT_HPP_
 
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 namespace ism
 {

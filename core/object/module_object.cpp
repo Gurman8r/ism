@@ -1,11 +1,11 @@
 #include <core/object/module_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(ModuleObject, t, "module", TypeFlags_BaseType)
+OBJ_CLASS_IMPL(ModuleObject, t, "module", TypeFlags_BaseType)
 {
 	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 

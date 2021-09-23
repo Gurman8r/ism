@@ -1,5 +1,5 @@
 #include <core/object/base_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -62,7 +62,7 @@ bool Object::dec_ref()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(Object, t, "object", TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJ_CLASS_IMPL(Object, t, "object", TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
 

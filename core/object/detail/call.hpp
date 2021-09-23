@@ -1,7 +1,7 @@
 #ifndef _ISM_CALL_HPP_
 #define _ISM_CALL_HPP_
 
-#include <core/detail/cast.hpp>
+#include <core/object/detail/cast.hpp>
 
 namespace ism
 {

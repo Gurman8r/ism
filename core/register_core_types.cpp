@@ -1,25 +1,24 @@
 #include <core/register_core_types.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 using namespace ism;
 
 void ism::register_core_types()
 {
-	VERIFY(typeof<OBJ>().ready());
-	VERIFY(typeof<TYPE>().ready());
-	VERIFY(typeof<INT>().ready());
-	VERIFY(typeof<FLT>().ready());
-	VERIFY(typeof<STR>().ready());
-	VERIFY(typeof<LIST>().ready());
-	VERIFY(typeof<DICT>().ready());
-	VERIFY(typeof<CAPSULE>().ready());
-	VERIFY(typeof<FUNCTION>().ready());
-	VERIFY(typeof<METHOD>().ready());
-	VERIFY(typeof<CPP_FUNCTION>().ready());
-	VERIFY(typeof<PROPERTY>().ready());
-	VERIFY(typeof<MODULE>().ready());
-	VERIFY(typeof<GENERIC>().ready());
+	VERIFY(typeof<Object>().ready());
+	VERIFY(typeof<TypeObject>().ready());
+	VERIFY(typeof<IntObject>().ready());
+	VERIFY(typeof<FloatObject>().ready());
+	VERIFY(typeof<StringObject>().ready());
+	VERIFY(typeof<ListObject>().ready());
+	VERIFY(typeof<DictObject>().ready());
+	VERIFY(typeof<CapsuleObject>().ready());
+	VERIFY(typeof<FunctionObject>().ready());
+	VERIFY(typeof<MethodObject>().ready());
+	VERIFY(typeof<CppFunctionObject>().ready());
+	VERIFY(typeof<PropertyObject>().ready());
+	VERIFY(typeof<ModuleObject>().ready());
 
 	get_internals()
 		.bind_class<CppFunctionObject>()
@@ -35,7 +34,6 @@ void ism::register_core_types()
 		.bind_class<MethodObject>()
 		.bind_class<PropertyObject>()
 		.bind_class<ModuleObject>()
-		.bind_class<GenericObject>()
 		;
 }
 

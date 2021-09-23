@@ -9,7 +9,7 @@ namespace ism
 	// dict object
 	class ISM_API DictObject : public Object
 	{
-		ISM_OBJECT(DictObject, Object);
+		OBJ_CLASS(DictObject, Object);
 
 	public:
 		HashMap<OBJ, OBJ> m_dict{};
@@ -98,7 +98,7 @@ namespace ism
 	// dict handle
 	template <> class Handle<DictObject> : public Ref<DictObject>
 	{
-		ISM_HANDLE(DictObject, ISM_CHECK_DICT);
+		HANDLE_CLASS(DictObject, ISM_CHECK_DICT);
 
 	public:
 		using storage_type = value_type::storage_type;

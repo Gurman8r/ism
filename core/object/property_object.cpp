@@ -1,11 +1,11 @@
 #include <core/object/property_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(PropertyObject, t, "property", TypeFlags_BaseType | TypeFlags_MethodDescriptor)
+OBJ_CLASS_IMPL(PropertyObject, t, "property", TypeFlags_BaseType | TypeFlags_MethodDescriptor)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(PropertyObject); };
 

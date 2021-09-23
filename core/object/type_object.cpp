@@ -1,5 +1,5 @@
 #include <core/object/type_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -25,7 +25,7 @@ TypeObject::TypeObject() noexcept : Object{} {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
+OBJ_CLASS_IMPL(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 	

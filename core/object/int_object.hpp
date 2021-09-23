@@ -14,7 +14,7 @@ namespace ism
 	// int object
 	class ISM_API IntObject : public Object
 	{
-		ISM_OBJECT(IntObject, Object);
+		OBJ_CLASS(IntObject, Object);
 
 	public:
 		int64_t m_int{};
@@ -49,7 +49,7 @@ namespace ism
 	// int handle
 	template <> class Handle<IntObject> : public Ref<IntObject>
 	{
-		ISM_HANDLE(IntObject, ISM_CHECK_INT);
+		HANDLE_CLASS(IntObject, ISM_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;

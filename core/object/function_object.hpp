@@ -9,7 +9,7 @@ namespace ism
 	// function object
 	class ISM_API FunctionObject : public Object
 	{
-		ISM_OBJECT(FunctionObject, Object);
+		OBJ_CLASS(FunctionObject, Object);
 
 	public:
 		OBJ m_name{}, m_qualname{};
@@ -34,7 +34,7 @@ namespace ism
 	// function handle
 	template <> class Handle<FunctionObject> : public Ref<FunctionObject>
 	{
-		ISM_HANDLE(FunctionObject, ISM_CHECK_FUNCTION);
+		HANDLE_CLASS(FunctionObject, ISM_CHECK_FUNCTION);
 
 	public:
 		NODISCARD OBJ cpp_function() const; // cppfunction_object.hpp

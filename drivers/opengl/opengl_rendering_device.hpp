@@ -1,5 +1,5 @@
-#ifndef _ISM_OPENGL_DEVICE_HPP_
-#define _ISM_OPENGL_DEVICE_HPP_
+#ifndef _ISM_OPENGL_RENDERING_DEVICE_HPP_
+#define _ISM_OPENGL_RENDERING_DEVICE_HPP_
 
 #include <drivers/opengl/opengl.hpp>
 
@@ -9,7 +9,7 @@ namespace ism
 {
 	class ISM_API OpenGL_RenderingDevice : public RenderingDevice
 	{
-		ISM_OBJECT(OpenGL_RenderingDevice, RenderingDevice);
+		OBJ_CLASS(OpenGL_RenderingDevice, RenderingDevice);
 
 	public:
 		~OpenGL_RenderingDevice();

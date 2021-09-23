@@ -1,11 +1,11 @@
 #include <core/object/float_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(FloatObject, t, "float", TypeFlags_Float_Subclass)
+OBJ_CLASS_IMPL(FloatObject, t, "float", TypeFlags_Float_Subclass)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(FloatObject); };
 

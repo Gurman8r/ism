@@ -1,11 +1,11 @@
 #include <core/object/list_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(ListObject, t, "list", TypeFlags_List_Subclass)
+OBJ_CLASS_IMPL(ListObject, t, "list", TypeFlags_List_Subclass)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(ListObject); };
 

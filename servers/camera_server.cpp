@@ -2,8 +2,8 @@
 
 using namespace ism;
 
-DECLEXPR(ism::CameraServer::singleton) {};
+MEMBER_IMPL(CameraServer::singleton) {};
 
-ISM_OBJECT_IMPL(CameraServer, t, "camera_server")
+OBJ_CLASS_IMPL(CameraServer, t, "camera_server")
 {
 }

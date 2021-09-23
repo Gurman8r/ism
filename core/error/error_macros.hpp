@@ -116,19 +116,6 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// debug
-#if ISM_IS_DEBUG
-#define DEBUG_FATAL(message)	FATAL(message)
-#define DEBUG_VERIFY(expr)		VERIFY(expr)
-#define DEBUG_CHECK(expr)		CHECK(expr)
-#else
-#define DEBUG_FATAL(message)	UNUSED(0)
-#define DEBUG_VERIFY(expr)		UNUSED(0)
-#define DEBUG_CHECK(expr)		UNUSED(0)
-#endif
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 #define ERR_PRINT_ERROR(desc) \
 	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), ism::ERR_HANDLER_ERROR)
 

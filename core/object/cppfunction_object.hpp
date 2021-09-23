@@ -1,7 +1,7 @@
 #ifndef _ISM_CPPFUNCTION_OBJECT_HPP_
 #define _ISM_CPPFUNCTION_OBJECT_HPP_
 
-#include <core/detail/initimpl.hpp>
+#include <core/object/detail/initimpl.hpp>
 
 // cppfunction
 namespace ism
@@ -9,7 +9,7 @@ namespace ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		ISM_OBJECT(CppFunctionObject, FunctionObject);
+		OBJ_CLASS(CppFunctionObject, FunctionObject);
 
 	public:
 		FunctionRecord * m_record{};
@@ -147,7 +147,7 @@ namespace ism
 	// cppfunction handle
 	template <> class Handle<CppFunctionObject> : public Ref<CppFunctionObject>
 	{
-		ISM_HANDLE(CppFunctionObject, ISM_CHECK_CPPFUNCTION);
+		HANDLE_CLASS(CppFunctionObject, ISM_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }

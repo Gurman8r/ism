@@ -1,7 +1,7 @@
 #ifndef _ISM_RENDERING_SERVER_HPP_
 #define _ISM_RENDERING_SERVER_HPP_
 
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 namespace ism
 {
@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API RenderingServer : public Object
 	{
-		ISM_OBJECT(RenderingServer, Object);
+		OBJ_CLASS(RenderingServer, Object);
 
 		static RenderingServer * singleton;
 
@@ -17,14 +17,14 @@ namespace ism
 		explicit RenderingServer() noexcept : Object{} { singleton = this; }
 
 	public:
-		virtual ~RenderingServer() override { singleton = nullptr; }
+		virtual ~RenderingServer() override {}
 
 		NODISCARD static RenderingServer * get_singleton() noexcept { return singleton; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline RenderingServer & get_rendering_server() { return *RenderingServer::get_singleton(); }
+	NODISCARD inline RenderingServer & get_rendering_server() { return *CHECK(RenderingServer::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

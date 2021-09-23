@@ -9,7 +9,7 @@ namespace ism
 	// list object
 	class ISM_API ListObject : public Object
 	{
-		ISM_OBJECT(ListObject, Object);
+		OBJ_CLASS(ListObject, Object);
 
 	public:
 		Vector<OBJ> m_list{};
@@ -140,7 +140,7 @@ namespace ism
 	// list handle
 	template <> class Handle<ListObject> : public Ref<ListObject>
 	{
-		ISM_HANDLE(ListObject, ISM_CHECK_LIST);
+		HANDLE_CLASS(ListObject, ISM_CHECK_LIST);
 
 	public:
 		using storage_type = value_type::storage_type;

@@ -12,7 +12,7 @@ namespace ism
 
 	class ISM_API SceneTree : public MainLoop
 	{
-		ISM_OBJECT(SceneTree, MainLoop);
+		OBJ_CLASS(SceneTree, MainLoop);
 
 	public:
 		virtual ~SceneTree() override;
@@ -33,7 +33,7 @@ namespace ism
 		template <class T> void on_component_added(Node &, T &) {}
 
 	public:
-		NODISCARD auto get_reg() const noexcept { return const_cast<EntityRegistry *>(&m_reg); }
+		NODISCARD auto get_reg() const noexcept -> EntityRegistry * { return const_cast<EntityRegistry *>(&m_reg); }
 
 		NODISCARD auto get_root() const noexcept -> Window * { return m_root; }
 

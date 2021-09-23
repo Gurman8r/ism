@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_OBJECT_IMPL(Node, t, "node")
+OBJ_CLASS_IMPL(Node, t, "node")
 {
 }
 

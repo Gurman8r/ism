@@ -1,7 +1,7 @@
 #ifndef _ISM_INITIMPL_HPP_
 #define _ISM_INITIMPL_HPP_
 
-#include <core/detail/attr.hpp>
+#include <core/object/detail/attr.hpp>
 
 namespace ism::initimpl
 {
@@ -33,7 +33,7 @@ namespace ism::initimpl
 			// TODO...
 			return c.def("__new__", [](Args ... args)
 			{
-				return GENERIC();
+				return OBJ();
 			}
 			, attr::is_constructor(), FWD(extra)...);
 		}
@@ -65,7 +65,7 @@ namespace ism::initimpl
 			// TODO...
 			return c.def("__new__", [func = std::move(class_factory)](Args ... args)
 			{
-				return GENERIC();
+				return OBJ();
 			}
 			, attr::is_constructor(), FWD(extra)...);
 		}
