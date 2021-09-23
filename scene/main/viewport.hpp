@@ -10,7 +10,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// viewport
-	API_CLASS(Viewport) : public Node
+	class ISM_API Viewport : public Node
 	{
 		OBJ_COMMON(Viewport, Node);
 

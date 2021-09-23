@@ -7,7 +7,7 @@
 namespace ism
 {
 	// function object
-	API_CLASS(FunctionObject) : public Object
+	class ISM_API FunctionObject : public Object
 	{
 		OBJ_COMMON(FunctionObject, Object);
 

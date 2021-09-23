@@ -19,7 +19,7 @@ namespace ism
 
 	ALIAS(EntityRegistry) ::entt::registry;
 
-	API_CLASS(Node) : public Object
+	class ISM_API Node : public Object
 	{
 		OBJ_COMMON(Node, Object);
 

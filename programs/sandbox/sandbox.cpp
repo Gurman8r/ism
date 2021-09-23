@@ -101,10 +101,10 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+extern OS_IMPL(void *);
+
 int main(int argc, char * argv[])
 {
-	extern OS_IMPL(void *);
-
 	OS_LAUNCH(nullptr);
 
 	switch (Main::setup(argv[0], argc, argv))

@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	API_CLASS(Mesh) : public Resource
+	class ISM_API Mesh : public Resource
 	{
 		OBJ_COMMON(Mesh, Resource);
 

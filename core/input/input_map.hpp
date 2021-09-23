@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	API_CLASS(InputMap) : public Object
+	class ISM_API InputMap : public Object
 	{
 		OBJ_COMMON(InputMap, Object);
 

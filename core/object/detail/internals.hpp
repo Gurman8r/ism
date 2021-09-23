@@ -7,7 +7,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(Internals) final
+	class ISM_API Internals final
 	{
 		static Internals * singleton;
 

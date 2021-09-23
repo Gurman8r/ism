@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	API_CLASS(EditorData)
+	class ISM_API EditorData
 	{
 	public:
 		virtual ~EditorData();

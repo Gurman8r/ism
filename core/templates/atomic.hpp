@@ -134,7 +134,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(RefCount) final
+	class ISM_API RefCount final
 	{
 		uint32_t m_count{};
 

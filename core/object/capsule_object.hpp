@@ -7,7 +7,7 @@
 namespace ism
 {
 	// capsule object
-	API_CLASS(CapsuleObject) : public Object
+	class ISM_API CapsuleObject : public Object
 	{
 		OBJ_COMMON(CapsuleObject, Object);
 

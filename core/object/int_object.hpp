@@ -12,7 +12,7 @@
 namespace ism
 {
 	// int object
-	API_CLASS(IntObject) : public Object
+	class ISM_API IntObject : public Object
 	{
 		OBJ_COMMON(IntObject, Object);
 

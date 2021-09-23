@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	API_CLASS(Shader) : public Resource
+	class ISM_API Shader : public Resource
 	{
 		OBJ_COMMON(Shader, Resource);
 

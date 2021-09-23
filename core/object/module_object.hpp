@@ -7,7 +7,7 @@
 namespace ism
 {
 	// module object
-	API_CLASS(ModuleObject) : public Object
+	class ISM_API ModuleObject : public Object
 	{
 		OBJ_COMMON(ModuleObject, Object);
 
@@ -100,7 +100,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_FUNC(OBJ) module_getattro(MODULE m, OBJ name);
+	ISM_API_FUNC(OBJ) module_getattro(MODULE m, OBJ name);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

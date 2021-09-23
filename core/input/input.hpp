@@ -13,28 +13,28 @@ namespace ism
 	// cursor mode
 	typedef enum CursorMode_ : int32_t
 	{
-		CursorMode_Normal, // normal
-		CursorMode_Hidden, // hidden
-		CursorMode_Disabled, // disabled
+		CursorMode_Normal		, // normal
+		CursorMode_Hidden		, // hidden
+		CursorMode_Disabled		, // disabled
 	}
 	CursorMode;
 
 	// cursor shape
 	typedef enum CursorShape_ : int32_t
 	{
-		CursorShape_Arrow, // arrow
-		CursorShape_IBeam, // ibeam
-		CursorShape_Crosshair, // crosshair
-		CursorShape_PointingHand, // pointing hand
-		CursorShape_EW, // ew
-		CursorShape_NS, // ns
-		CursorShape_NESW, // nesw
-		CursorShape_NWSE, // nwse
-		CursorShape_ResizeAll, // resize all
-		CursorShape_NotAllowed, // not allowed
-		CursorShape_HResize, // hresize
-		CursorShape_VResize, // vresize
-		CursorShape_Hand, // hand
+		CursorShape_Arrow			, // arrow
+		CursorShape_IBeam			, // ibeam
+		CursorShape_Crosshair		, // crosshair
+		CursorShape_PointingHand	, // pointing hand
+		CursorShape_EW				, // ew
+		CursorShape_NS				, // ns
+		CursorShape_NESW			, // nesw
+		CursorShape_NWSE			, // nwse
+		CursorShape_ResizeAll		, // resize all
+		CursorShape_NotAllowed		, // not allowed
+		CursorShape_HResize			, // hresize
+		CursorShape_VResize			, // vresize
+		CursorShape_Hand			, // hand
 	}
 	CursorShape;
 
@@ -45,7 +45,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(Input) : public Object
+	class ISM_API Input : public Object
 	{
 		OBJ_COMMON(Input, Object);
 

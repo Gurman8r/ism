@@ -10,7 +10,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(SceneTree) : public MainLoop
+	class ISM_API SceneTree : public MainLoop
 	{
 		OBJ_COMMON(SceneTree, MainLoop);
 

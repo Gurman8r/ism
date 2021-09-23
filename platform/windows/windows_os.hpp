@@ -11,7 +11,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(Windows_OS) : public OS
+	class ISM_API Windows_OS : public OS
 	{
 		MainLoop *	m_main_loop{};
 		HINSTANCE	m_instance{};

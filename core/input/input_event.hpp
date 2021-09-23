@@ -7,7 +7,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(InputEvent) : public Resource
+	class ISM_API InputEvent : public Resource
 	{
 		OBJ_COMMON(InputEvent, Resource);
 

@@ -7,7 +7,7 @@
 namespace ism
 {
 	// property object
-	API_CLASS(PropertyObject) : public Object
+	class ISM_API PropertyObject : public Object
 	{
 		OBJ_COMMON(PropertyObject, Object);
 

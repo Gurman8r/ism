@@ -7,7 +7,7 @@
 namespace ism
 {
 	// string object
-	API_CLASS(StringObject) : public Object
+	class ISM_API StringObject : public Object
 	{
 		OBJ_COMMON(StringObject, Object);
 

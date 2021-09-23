@@ -9,9 +9,9 @@
 
 namespace ism
 {
-	API_FUNC(void) print_line(String const & s);
+	ISM_API_FUNC(void) print_line(String const & s);
 
-	API_FUNC(void) print_error(String const & s);
+	ISM_API_FUNC(void) print_error(String const & s);
 }
 
 #endif // !_ISM_PRINT_STRING_HPP_

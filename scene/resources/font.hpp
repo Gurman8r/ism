@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	API_CLASS(Font) : public Resource
+	class ISM_API Font : public Resource
 	{
 		OBJ_COMMON(Font, Resource);
 

@@ -9,7 +9,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type object
-	API_CLASS(TypeObject) : public Object
+	class ISM_API TypeObject : public Object
 	{
 	private:
 		friend class Internals;
@@ -236,9 +236,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_FUNC(OBJ) type_getattro(TYPE type, OBJ name);
+	ISM_API_FUNC(OBJ) type_getattro(TYPE type, OBJ name);
 
-	API_FUNC(Error) type_setattro(TYPE type, OBJ name, OBJ value);
+	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJ name, OBJ value);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

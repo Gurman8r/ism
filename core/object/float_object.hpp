@@ -7,7 +7,7 @@
 namespace ism
 {
 	// float object
-	API_CLASS(FloatObject) : public Object
+	class ISM_API FloatObject : public Object
 	{
 		OBJ_COMMON(FloatObject, Object);
 

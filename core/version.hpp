@@ -27,11 +27,11 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define __OS_IMPL__		__os_impl__
+#define _OS_IMPL_		_os_impl_
 
-#define OS_IMPL(user)	ism::OS & __OS_IMPL__(user)
+#define OS_IMPL(user)	ism::OS & _OS_IMPL_(user)
 
-#define OS_LAUNCH(user)	static ism::OS & ANON{ __OS_IMPL__(user) }
+#define OS_LAUNCH(user)	static ism::OS & ANON{ _OS_IMPL_(user) }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

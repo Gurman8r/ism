@@ -11,7 +11,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(Image) : public Resource
+	class ISM_API Image : public Resource
 	{
 		OBJ_COMMON(Image, Resource);
 

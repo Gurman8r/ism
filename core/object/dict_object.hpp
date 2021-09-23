@@ -7,7 +7,7 @@
 namespace ism
 {
 	// dict object
-	API_CLASS(DictObject) : public Object
+	class ISM_API DictObject : public Object
 	{
 		OBJ_COMMON(DictObject, Object);
 

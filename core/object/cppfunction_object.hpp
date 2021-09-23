@@ -7,7 +7,7 @@
 namespace ism
 {
 	// cppfunction object
-	API_CLASS(CppFunctionObject) : public FunctionObject
+	class ISM_API CppFunctionObject : public FunctionObject
 	{
 		OBJ_COMMON(CppFunctionObject, FunctionObject);
 
@@ -161,7 +161,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_FUNC(OBJ) cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
+	ISM_API_FUNC(OBJ) cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

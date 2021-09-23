@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	API_CLASS(TextFile) : public Resource
+	class ISM_API TextFile : public Resource
 	{
 		OBJ_COMMON(TextFile, Resource);
 

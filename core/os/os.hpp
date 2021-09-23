@@ -10,7 +10,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(OS)
+	class ISM_API OS
 	{
 	private:
 		static OS * singleton;

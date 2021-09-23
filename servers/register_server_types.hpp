@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	API_FUNC(void) register_server_types();
+	ISM_API_FUNC(void) register_server_types();
 
-	API_FUNC(void) unregister_server_types();
+	ISM_API_FUNC(void) unregister_server_types();
 }
 
 #endif // !_ISM_REGISTER_SERVER_TYPES_HPP_

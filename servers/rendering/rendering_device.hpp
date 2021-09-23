@@ -6,7 +6,7 @@
 namespace ism
 {
 	// rendering device
-	API_CLASS(RenderingDevice) : public Object
+	class ISM_API RenderingDevice : public Object
 	{
 		OBJ_COMMON(RenderingDevice, Object);
 

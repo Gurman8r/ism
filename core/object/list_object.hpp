@@ -7,7 +7,7 @@
 namespace ism
 {
 	// list object
-	API_CLASS(ListObject) : public Object
+	class ISM_API ListObject : public Object
 	{
 		OBJ_COMMON(ListObject, Object);
 

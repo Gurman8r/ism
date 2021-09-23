@@ -8,7 +8,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window
-	API_CLASS(Window) : public Viewport
+	class ISM_API Window : public Viewport
 	{
 		OBJ_COMMON(Window, Viewport);
 

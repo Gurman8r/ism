@@ -299,10 +299,8 @@
 #	endif
 #endif
 
-#define API_FUNC(RTYPE) ISM_API RTYPE 
+#define ISM_API_FUNC(rtype) ISM_API rtype
 
-#define API_DATA(RTYPE) ISM_API extern RTYPE
-
-#define API_CLASS(NAME) class ISM_API NAME
+#define ISM_API_DATA(rtype) ISM_API extern rtype
 
 #endif // !_ISM_LANGUAGE_FEATURES_HPP_

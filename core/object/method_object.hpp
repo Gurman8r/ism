@@ -7,7 +7,7 @@
 namespace ism
 {
 	// method object
-	API_CLASS(MethodObject) : public FunctionObject
+	class ISM_API MethodObject : public FunctionObject
 	{
 		OBJ_COMMON(MethodObject, FunctionObject);
 
@@ -39,7 +39,7 @@ namespace ism
 // functions
 namespace ism
 {
-	API_FUNC(OBJ) method_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
+	ISM_API_FUNC(OBJ) method_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
 }
 
 #endif // !_ISM_METHOD_OBJECT_HPP_

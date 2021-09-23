@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	API_CLASS(Sky) : public Resource
+	class ISM_API Sky : public Resource
 	{
 		OBJ_COMMON(Sky, Resource);
 

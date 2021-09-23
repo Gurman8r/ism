@@ -7,7 +7,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	API_CLASS(CameraServer) : public Object
+	class ISM_API CameraServer : public Object
 	{
 		OBJ_COMMON(CameraServer, Object);
 
