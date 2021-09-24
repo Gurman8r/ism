@@ -29,7 +29,6 @@ namespace ism
 		{
 			Vector<OBJ> & stack{ get_internals().loader_stack };
 			VERIFY(!stack.empty());
-
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
 			ptr = nullptr;
@@ -39,7 +38,6 @@ namespace ism
 		{
 			Vector<OBJ> & stack{ get_internals().loader_stack };
 			VERIFY(!stack.empty());
-
 			LIST & list{ (LIST &)stack.back() };
 			if (!list) { list = LIST::new_(); }
 			list.append(value);
@@ -128,7 +126,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define ISM_TYPE_CASTER(m_type, m_name)																\
+#define TYPE_CASTER_COMMON(m_type, m_name)															\
 protected:																							\
 	m_type value{};																					\
 																									\
@@ -185,22 +183,22 @@ public:																								\
 		bool load(OBJ const & src, bool convert)
 		{
 			if (!src) { return false; }
-			else if (isinstance<FLT>(src)) { return (value = (_convt)(_ftype)FLT(src)), true; }
-			else if (isinstance<INT>(src)) { return (value = (_convt)(_itype)INT(src)), true; }
+			
+			else if (FLT::check_(src)) { return (value = (_convt)(_ftype)FLT(src)), true; }
+			
+			else if (INT::check_(src)) { return (value = (_convt)(_itype)INT(src)), true; }
+			
 			else { return false; }
 		}
 
 		static OBJ cast(T src, ReturnPolicy, OBJ)
 		{
-			if constexpr (std::is_floating_point_v<T>) {
-				return FLT(static_cast<_ftype>(src));
-			}
-			else {
-				return INT(static_cast<_itype>(src));
-			}
+			if constexpr (std::is_floating_point_v<T>) { return FLT(static_cast<_ftype>(src)); }
+
+			else { return INT(static_cast<_itype>(src)); }
 		}
 
-		ISM_TYPE_CASTER(T, std::is_floating_point_v<T> ? "float" : "int");
+		TYPE_CASTER_COMMON(T, std::is_floating_point_v<T> ? "float" : "int");
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -211,7 +209,7 @@ public:																								\
 
 		static OBJ cast(T, ReturnPolicy, OBJ) { return OBJ{}; }
 
-		ISM_TYPE_CASTER(T, "none");
+		TYPE_CASTER_COMMON(T, "none");
 	};
 
 	template <> struct type_caster<void_type> : void_caster<void_type> {};
@@ -226,7 +224,7 @@ public:																								\
 		{
 			if (src.is_null()) { return (value = nullptr), true; }
 
-			else if (isinstance<CAPSULE>(src)) { return (value = CAPSULE(src)), true; }
+			else if (CAPSULE::check_(src)) { return (value = CAPSULE(src)), true; }
 			
 			else { return false; }
 		}
@@ -253,13 +251,15 @@ public:																								\
 		bool load(OBJ const & src, bool convert)
 		{
 			if (src == OBJ_TRUE) { return (value = true), true; }
+			
 			else if (src == OBJ_FALSE) { return (value = false), true; }
+			
 			else { return (value = src.is_valid()), true; }
 		}
 
 		static OBJ cast(bool src, ReturnPolicy, OBJ) { return OBJ_BOOL(src); }
 
-		ISM_TYPE_CASTER(bool, "bool");
+		TYPE_CASTER_COMMON(bool, "bool");
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -270,7 +270,7 @@ public:																								\
 		{
 			if (!src) { return false; }
 
-			if (isinstance<STR>(src)) { return (value = STR(src)), true; }
+			if (STR::check_(src)) { return (value = STR(src)), true; }
 
 			return (value = STR({ src })), true;
 		}
@@ -309,56 +309,6 @@ public:																								\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct holder_helper
-	{
-		static auto get(T const & p) -> decltype(p.get()) { return p.get(); }
-	};
-
-	template <class T, class Holder
-	> struct copyable_holder_caster : type_caster_base<T>
-	{
-		// for types like shared_ptr, unique_ptr, etc...
-	};
-
-	template <class T> struct type_caster<std::shared_ptr<T>> : copyable_holder_caster<T, std::shared_ptr<T>> {};
-
-	template <class T, class Holder
-	> struct move_only_holder_caster
-	{
-		static_assert(
-			std::is_base_of_v<type_caster_base<T>, type_caster<T>>,
-			"holder classes are only supported for custom types");
-
-		static OBJ cast(Holder && src, ReturnPolicy, OBJ)
-		{
-			auto ptr{ holder_helper<Holder>::get(src) };
-			return type_caster_base<T>::cast_holder(ptr, std::addressof(src));
-		}
-	};
-
-	template <class T, class Deleter
-	> struct type_caster<std::unique_ptr<T, Deleter>>
-		: move_only_holder_caster<T, std::unique_ptr<T, Deleter>> {};
-
-	template <class T, class Holder
-	> using type_caster_holder = std::conditional_t<
-		mpl::is_copy_constructible_v<Holder>,
-		copyable_holder_caster<T, Holder>,
-		move_only_holder_caster<T, Holder>>;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, bool Value = false
-	> struct always_construct_holder { static constexpr bool value = Value; };
-
-	template <class T, class Holder
-	> struct is_holder_type : std::is_base_of<type_caster_holder<T, Holder>, type_caster<Holder>> {};
-
-	template <class T, class Deleter
-	> struct is_holder_type<T, std::unique_ptr<T, Deleter>> : std::true_type {};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class T> struct ref_caster
 	{
 		bool load(OBJ const & src, bool)
@@ -370,7 +320,7 @@ public:																								\
 
 		static OBJ cast(OBJ const & src, ReturnPolicy, OBJ) { return src; }
 
-		ISM_TYPE_CASTER(T, "ref");
+		TYPE_CASTER_COMMON(T, "ref");
 	};
 
 	template <class T> struct type_caster<T, std::enable_if_t<is_api_v<T> && !is_base_object_v<T>>> : ref_caster<T> {};

@@ -1,8 +1,8 @@
 #include <scene/main/window.hpp>
 
 #ifdef ISM_OS_WINDOWS
-#include <platform/windows/windows_display_server.hpp>
-#define WINDOW_IMPL ism::Windows_DisplayServer
+#include <platform/windows/display_server_windows.hpp>
+#define WINDOW_IMPL ism::DisplayServerWindows
 #endif
 
 using namespace ism;

@@ -1,5 +1,5 @@
-#ifndef _ISM_WINDOWS_DISPLAY_SERVER_HPP_
-#define _ISM_WINDOWS_DISPLAY_SERVER_HPP_
+#ifndef _ISM_DISPLAY_SERVER_WINDOWS_HPP_
+#define _ISM_DISPLAY_SERVER_WINDOWS_HPP_
 
 #include <scene/main/window.hpp>
 
@@ -9,14 +9,14 @@ struct GLFWmonitor;
 namespace ism
 {
 	// windows display server
-	class ISM_API Windows_DisplayServer : public DisplayServer
+	class ISM_API DisplayServerWindows : public DisplayServer
 	{
-		OBJ_COMMON(Windows_DisplayServer, DisplayServer);
+		OBJ_COMMON(DisplayServerWindows, DisplayServer);
 
 	public:
-		Windows_DisplayServer();
+		DisplayServerWindows();
 
-		~Windows_DisplayServer();
+		~DisplayServerWindows();
 
 		NODISCARD virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) override;
 
@@ -202,4 +202,4 @@ namespace ism
 	};
 }
 
-#endif // !_ISM_WINDOWS_DISPLAY_SERVER_HPP_
+#endif // !_ISM_DISPLAY_SERVER_WINDOWS_HPP_

@@ -108,13 +108,13 @@ namespace ism::impl
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // return static implementation
-#define _IMPL_RETURN_STATIC(var, expr)	\
+#define __RETURN_STATIC(var, expr)	\
 	static auto var = expr;				\
 	return var;							\
 
 // return static
 #define RETURN_STATIC(expr) \
-	_IMPL_RETURN_STATIC(ANON, expr)
+	__RETURN_STATIC(ANON, expr)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

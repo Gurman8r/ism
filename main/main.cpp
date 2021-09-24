@@ -11,22 +11,23 @@
 #include <scene/register_scene_types.hpp>
 #include <servers/register_server_types.hpp>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#include <servers/camera_server.hpp>
+#include <servers/rendering_server.hpp>
+
 #if TOOLS_ENABLED
 #include <editor/register_editor_types.hpp>
 #endif
 
-#include <servers/camera_server.hpp>
-#include <servers/display_server.hpp>
-#include <servers/rendering_server.hpp>
-
-#ifdef ISM_OS_WINDOWS
-#include <platform/windows/windows_display_server.hpp>
-#define DISPLAY_SERVER_DEFAULT Windows_DisplayServer
+#if ISM_OS_WINDOWS
+#include <platform/windows/display_server_windows.hpp>
+#define DISPLAY_SERVER_DEFAULT DisplayServerWindows
 #endif
 
-#ifdef ISM_RENDERER_OPENGL
-#include <drivers/opengl/opengl_rendering_device.hpp>
-#define RENDERING_DEVICE_DEFAULT OpenGL_RenderingDevice
+#if ISM_RENDERER_OPENGL
+#include <drivers/opengl/rendering_device_opengl.hpp>
+#define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -2,18 +2,18 @@
 
 #ifdef ISM_OS_WINDOWS
 
-#include <platform/windows/windows_os.hpp>
+#include <platform/windows/os_windows.hpp>
 
 extern int main(int, char * []);
 
-OS_IMPL(void * hInstance)
+OS_IMPL(void * user)
 {
-	RETURN_STATIC(ism::Windows_OS{ hInstance ? (HINSTANCE)hInstance : GetModuleHandle(NULL) });
+	RETURN_STATIC(ism::OS_Windows{ user ? (HINSTANCE)user : GetModuleHandle(NULL) });
 }
 
-INT CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, INT nCmdShow)
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 {
-	OS_LAUNCH(hInstance);
+	OS_MAIN(hInstance);
 
 	return main(__argc, __argv);
 }

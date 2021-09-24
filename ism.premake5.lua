@@ -17,8 +17,8 @@ dependson{ "assimp", "glew", "glfw", "imgui", }
 links{ "assimp", "glew", "glfw", "imgui", }
 
 defines{
+	"TOOLS_ENABLED",
 	"ISM_API=ISM_API_EXPORT",
-	"ISM_WINDOW_GLFW",
 	"ISM_RENDERER_OPENGL",
 	"ISM_OPENGL_LOADER_GLEW",
 	"IMGUI_API=ISM_API_IMPORT",

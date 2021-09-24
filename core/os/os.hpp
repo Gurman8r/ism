@@ -6,6 +6,14 @@
 #include <core/os/main_loop.hpp>
 #include <iostream>
 
+// os implementation
+#define OS_IMPL(user) \
+	ism::OS & __os_impl__(user)
+
+// os main
+#define OS_MAIN(user) \
+	static ism::OS & ANON{ __os_impl__(user) }
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

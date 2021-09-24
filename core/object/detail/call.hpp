@@ -9,7 +9,7 @@ namespace ism
 
 	inline OBJ call_object(OBJ callable, LIST args)
 	{
-		if (!args || !callable) { return nullptr; }
+		if (!callable || !args) { return nullptr; }
 		else
 		{
 			TYPE type{ typeof(callable) };

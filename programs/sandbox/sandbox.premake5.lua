@@ -16,7 +16,7 @@ dependson{ "ism", }
 
 links{ "ism", "assimp", "glew", "glfw", "imgui", }
 
-defines{ "IMGUI_API=ISM_API_IMPORT", }
+defines{ "TOOLS_ENABLED", "IMGUI_API=ISM_API_IMPORT", }
 
 files{
 	"%{wks.location}/programs/%{prj.name}/**.**",

@@ -27,12 +27,4 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define _OS_IMPL_		_os_impl_
-
-#define OS_IMPL(user)	ism::OS & _OS_IMPL_(user)
-
-#define OS_LAUNCH(user)	static ism::OS & ANON{ _OS_IMPL_(user) }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 #endif // !_ISM_VERSION_HPP_

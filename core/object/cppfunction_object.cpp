@@ -20,10 +20,10 @@ OBJ_IMPL(CppFunctionObject, t, "cpp_function", TypeFlags_BaseType | TypeFlags_Ha
 
 	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
 	{
-		DICT(type->tp_dict)["__name__"] = PROPERTY({
+		type.add_object("__name__", PROPERTY({
 			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(type) }),
 			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(type) }),
-			});
+			}));
 
 		return CLASS_<CppFunctionObject>(type)
 
