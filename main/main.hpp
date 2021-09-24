@@ -9,7 +9,6 @@ namespace ism
 
 	class ISM_API Main final
 	{
-	private:
 		static uint32_t	g_frame_count;
 		static uint32_t	g_frame_index;
 		static int32_t	g_iterating;

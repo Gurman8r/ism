@@ -12,9 +12,9 @@ namespace ism
 	class Viewport;
 	class Window;
 
-	DECL_HANDLE(MonitorID);
+	DECL_POINTER(MonitorID);
 
-	DECL_HANDLE(WindowID);
+	DECL_POINTER(WindowID);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -149,7 +149,7 @@ namespace ism
 	// display server
 	class ISM_API DisplayServer : public Object
 	{
-		OBJ_COMMON(DisplayServer, Object);
+		OBJECT_CLASS(DisplayServer, Object);
 
 		static DisplayServer * singleton;
 

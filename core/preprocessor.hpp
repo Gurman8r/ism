@@ -46,7 +46,7 @@
 	(std::forward<decltype(expr)>(expr))
 
 // static member helper
-#define MEMBER_IMPL(expr) \
+#define MEMBER_IMP(expr) \
 	decltype(expr) expr
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

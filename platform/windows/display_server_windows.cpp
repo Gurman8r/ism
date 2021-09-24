@@ -13,9 +13,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(DisplayServerWindows, t, "display_server_windows")
-{
-}
+OBJECT_IMP(DisplayServerWindows, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

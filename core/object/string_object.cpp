@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(StringObject, t, "string", TypeFlags_Str_Subclass)
+OBJECT_IMP(StringObject, t, TypeFlags_Str_Subclass)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(StringObject); };
 

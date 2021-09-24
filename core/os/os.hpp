@@ -92,7 +92,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline OS & get_os() { return *OS::get_singleton(); }
+	NODISCARD inline OS & get_os() noexcept { return *CHECK(OS::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

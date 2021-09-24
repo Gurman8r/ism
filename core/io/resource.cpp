@@ -2,12 +2,17 @@
 
 using namespace ism;
 
-OBJ_IMPL(Resource, t, "resource", TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJECT_IMP(Resource, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
-	t.tp_bind = (bindfunc)[](TYPE type)->TYPE
-	{
-		return type;
-	};
 };
 
 Resource::~Resource() {}
+
+void Resource::reload_from_file()
+{
+}
+
+void Resource::set_path(String const & value, bool take_over)
+{
+	m_path_cache = value;
+}

@@ -8,7 +8,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// cursor handle
-	DECL_HANDLE(CursorID);
+	DECL_POINTER(CursorID);
 
 	// cursor mode
 	typedef enum CursorMode_ : int32_t
@@ -47,7 +47,7 @@ namespace ism
 
 	class ISM_API Input : public Object
 	{
-		OBJ_COMMON(Input, Object);
+		OBJECT_CLASS(Input, Object);
 
 		static Input * singleton;
 

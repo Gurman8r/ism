@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(InputMap, t, "input_map", TypeFlags_BaseType)
+OBJECT_IMP(InputMap, t, TypeFlags_BaseType)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(InputMap); };
 }

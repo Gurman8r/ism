@@ -6,68 +6,68 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object common
-#define OBJ_COMMON(m_class, m_inherits)									\
-private:																\
-	friend class ism::Internals;										\
-																		\
-	friend class ism::Handle<m_class>;									\
-																		\
-	static ism::TypeObject __class_type;								\
-																		\
-protected:																\
-	static void initialize_class()										\
-	{																	\
-		if (static bool once{}; !once && (once = true))					\
-		{																\
-			ism::get_internals().add_class(&m_class::__class_type);		\
-																		\
-			if (m_class::__class_type.tp_bind)							\
-			{															\
-				m_class::__class_type.tp_bind(&m_class::__class_type);	\
-			}															\
-		};																\
-	}																	\
-																		\
-	virtual void _initialize_classv() override							\
-	{																	\
-		m_class::initialize_class();									\
-	}																	\
-																		\
-	FORCE_INLINE virtual ism::TYPE _get_typev() const override			\
-	{																	\
-		return m_class::get_class();									\
-	}																	\
-																		\
-public:																	\
-	using base_type = typename m_inherits;								\
-																		\
-	FORCE_INLINE static ism::TYPE get_class() noexcept					\
-	{																	\
-		return &m_class::__class_type;									\
-	}																	\
-																		\
+#define OBJECT_CLASS(m_class, m_inherits)						\
+private:														\
+	friend class ism::Internals;								\
+																\
+	friend class ism::Handle<m_class>;							\
+																\
+	static ism::TypeObject ob_class;							\
+																\
+protected:														\
+	static void initialize_class()								\
+	{															\
+		if (static bool once{}; !once && (once = true))			\
+		{														\
+			ism::get_internals().add_class(&m_class::ob_class);	\
+																\
+			if (m_class::ob_class.tp_bind)						\
+			{													\
+				m_class::ob_class.tp_bind(&m_class::ob_class);	\
+			}													\
+		};														\
+	}															\
+																\
+	virtual void _initialize_classv() override					\
+	{															\
+		m_class::initialize_class();							\
+	}															\
+																\
+	FORCE_INLINE virtual ism::TYPE _get_typev() const override	\
+	{															\
+		return m_class::get_class();							\
+	}															\
+																\
+public:															\
+	using base_type = typename m_inherits;						\
+																\
+	FORCE_INLINE static ism::TYPE get_class() noexcept			\
+	{															\
+		return &m_class::ob_class;								\
+	}															\
+																\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object impl format
-#define _OBJ_IMPL_(m_class) \
-	CAT(CAT(_obj_impl_, m_class), _)
+// "_obj_imp_class_"
+#define __OBJ_IMP__(m_class) \
+	CAT(CAT(_obj_imp_, m_class), _)
 
-// object implementation
-#define OBJ_IMPL(m_class, m_var, m_name, ...)											\
-																						\
-	/* declare binder function */														\
-	namespace ism { static void _OBJ_IMPL_(m_class)(ism::TypeObject & m_var); }			\
-																						\
-	/* create type object */															\
-	MEMBER_IMPL(m_class::__class_type) =												\
-	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), m_name, ##__VA_ARGS__)	\
-	+ ism::_OBJ_IMPL_(m_class);															\
-																						\
-	/* implement binder function */														\
-	void ism::_OBJ_IMPL_(m_class)(ism::TypeObject & m_var)								\
-																						\
+// implement object class
+#define OBJECT_IMP(m_class, m_var, ...)															\
+																								\
+	/* declare binder function */																\
+	namespace ism { static void __OBJ_IMP__(m_class)(ism::TypeObject & m_var); }				\
+																								\
+	/* construct type */																		\
+	MEMBER_IMP(m_class::ob_class) =																\
+	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
+	+ ism::__OBJ_IMP__(m_class);																\
+																								\
+	/* implement binder function */																\
+	void ism::__OBJ_IMP__(m_class)(ism::TypeObject & m_var)										\
+																								\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -84,12 +84,12 @@ namespace ism
 
 		friend class Handle<Object>;
 
-		static TypeObject __class_type;
+		static TypeObject ob_class;
 
 	protected:
-		RefCount m_refcount{}, m_refcount_init{};
+		mutable Ref<TypeObject> ob_type{};
 
-		mutable Ref<TypeObject> m_type{};
+		RefCount m_refcount{}, m_refcount_init{};
 
 	protected:
 		static void initialize_class();

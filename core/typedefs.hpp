@@ -7,7 +7,7 @@
 #define ALIAS(type)	using type = 
 
 // declare handle
-#define DECL_HANDLE(name)					\
+#define DECL_POINTER(name)					\
 	struct CAT(__, name) { int unused; };	\
 	ALIAS(name) CAT(__, name) *
 

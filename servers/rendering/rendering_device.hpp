@@ -8,7 +8,7 @@ namespace ism
 	// rendering device
 	class ISM_API RenderingDevice : public Object
 	{
-		OBJ_COMMON(RenderingDevice, Object);
+		OBJECT_CLASS(RenderingDevice, Object);
 
 		static RenderingDevice * singleton;
 

@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(IntObject, t, "int", TypeFlags_Int_Subclass)
+OBJECT_IMP(IntObject, t, TypeFlags_Int_Subclass)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(IntObject); };
 
@@ -35,8 +35,8 @@ OBJ_IMPL(IntObject, t, "int", TypeFlags_Int_Subclass)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMPL(IntObject::g_true) { true };
+MEMBER_IMP(IntObject::g_true) { true };
 
-MEMBER_IMPL(IntObject::g_false) { false };
+MEMBER_IMP(IntObject::g_false) { false };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -2,8 +2,8 @@
 
 using namespace ism;
 
-MEMBER_IMPL(CameraServer::singleton) {};
+MEMBER_IMP(CameraServer::singleton) {};
 
-OBJ_IMPL(CameraServer, t, "camera_server")
-{
-}
+MEMBER_IMP(CameraServer::create_func) {};
+
+OBJECT_IMP(CameraServer, t) {}

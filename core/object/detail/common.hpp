@@ -587,13 +587,13 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// handle class
-#define HANDLE_CLASS(m_class) \
+#define CUSTOM_HANDLE(m_class) \
 	template <> class Handle<m_class> : public Ref<m_class>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// handle common
-#define HANDLE_COMMON(m_class, m_check)																\
+#define HANDLE_CLASS(m_class, m_check)																\
 public:																								\
 	using value_type = typename m_class;															\
 																									\
@@ -634,7 +634,7 @@ public:																								\
 	// default handle
 	template <class T> class Handle : public Ref<T>
 	{
-		HANDLE_COMMON(T, OBJ_NO_CHECK);
+		HANDLE_CLASS(T, OBJ_NO_CHECK);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

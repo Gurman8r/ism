@@ -9,7 +9,7 @@ namespace ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		OBJ_COMMON(CppFunctionObject, FunctionObject);
+		OBJECT_CLASS(CppFunctionObject, FunctionObject);
 
 	public:
 		FunctionRecord * m_record{};
@@ -142,12 +142,12 @@ namespace ism
 	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<Object> {};
 
 	// cppfunction check
-#define OBJ_CHECK_CPPFUNCTION(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
+#define OBJECT_CHECK_CPPFUNCTION(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
 
 	// cppfunction handle
-	HANDLE_CLASS(CppFunctionObject)
+	CUSTOM_HANDLE(CppFunctionObject)
 	{
-		HANDLE_COMMON(CppFunctionObject, OBJ_CHECK_CPPFUNCTION);
+		HANDLE_CLASS(CppFunctionObject, OBJECT_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }

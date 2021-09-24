@@ -2,9 +2,9 @@
 
 using namespace ism;
 
-MEMBER_IMPL(RenderingDevice::singleton) {};
+MEMBER_IMP(RenderingDevice::singleton) {};
 
-OBJ_IMPL(RenderingDevice, t, "rendering_device", TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJECT_IMP(RenderingDevice, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 }
 

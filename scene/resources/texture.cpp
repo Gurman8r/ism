@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(Texture, t, "texture")
+OBJECT_IMP(Texture, t)
 {
 }
 

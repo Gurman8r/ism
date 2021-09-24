@@ -14,7 +14,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <servers/camera_server.hpp>
-#include <servers/rendering_server.hpp>
+
+#include <servers/rendering/rendering_server_default.hpp>
 
 #if TOOLS_ENABLED
 #include <editor/register_editor_types.hpp>
@@ -34,9 +35,9 @@
 
 using namespace ism;
 
-MEMBER_IMPL(Main::g_frame_count) {};
-MEMBER_IMPL(Main::g_frame_index) {};
-MEMBER_IMPL(Main::g_iterating) {};
+MEMBER_IMP(Main::g_frame_count) {};
+MEMBER_IMP(Main::g_frame_index) {};
+MEMBER_IMP(Main::g_iterating) {};
 
 static Input * g_input{};
 static Internals * g_internals{};
@@ -49,13 +50,13 @@ static RenderingServer * g_rendering_server{};
 Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
 	get_os().initialize();
-
+	
 	g_internals = memnew(Internals);
 
 	register_core_types();
 	
 	register_core_driver_types();
-
+	
 	register_core_settings();
 
 	//preregister_module_types();
@@ -63,7 +64,7 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 	//preregister_server_types();
 
 	register_core_singletons();
-
+	
 	register_server_types();
 	
 	register_scene_types();
@@ -73,24 +74,30 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 #endif
 
 	register_platform_apis();
-
+	
 	//register_module_types();
+
+	g_camera_server = CameraServer::create();
 	
 	register_driver_types();
-
+	
 	//initialize_physics();
 	
 	//register_server_singletons();
 	
 	get_os().set_cmdline(exepath, { argv, argv + argc });
 
+	g_input = memnew(Input);
+
+	g_display_server = memnew(DISPLAY_SERVER_DEFAULT);
+
+	g_rendering_server = memnew(RenderingServerDefault);
+
 	return Error_None;
 }
 
 bool Main::start()
 {
-	g_display_server = memnew(DISPLAY_SERVER_DEFAULT);
-
 	get_os().set_main_loop(memnew(SceneTree));
 
 	//ResourceLoader::add_custom_loaders();
@@ -116,12 +123,9 @@ bool Main::iteration()
 void Main::cleanup()
 {
 	//ResourceLoader::remove_custom_loaders();
-	
 	//ResourceSaver::remove_custom_savers();
 
 	get_os().delete_main_loop();
-
-	memdelete(g_display_server);
 
 	//ScriptServer::finish_languages();
 
@@ -130,23 +134,26 @@ void Main::cleanup()
 #endif
 
 	unregister_driver_types();
-	
 	//unregister_module_types();
-	
 	unregister_platform_apis();
-	
 	unregister_scene_types();
-	
 	unregister_server_types();
+
+	//memdelete(g_audio_server);
+	memdelete(g_camera_server);
 
 	get_os().finalize();
 
-	unregister_core_driver_types();
+	g_rendering_server->finalize();
+	memdelete(g_rendering_server);
+	memdelete(g_display_server);
 	
+	memdelete(g_input);
+
+	unregister_core_driver_types();
 	unregister_core_types();
 
 	memdelete(g_internals);
-
 	get_os().finalize_core();
 }
 

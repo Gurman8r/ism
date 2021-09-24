@@ -16,7 +16,7 @@ namespace ism
 
 		friend class Handle<TypeObject>;
 
-		static TypeObject __class_type;
+		static TypeObject ob_class;
 
 	protected:
 		static void initialize_class();
@@ -128,14 +128,14 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type check
-#define OBJ_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
+#define OBJECT_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type handle
-	HANDLE_CLASS(TypeObject)
+	CUSTOM_HANDLE(TypeObject)
 	{
-		HANDLE_COMMON(TypeObject, OBJ_CHECK_TYPE);
+		HANDLE_CLASS(TypeObject, OBJECT_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }

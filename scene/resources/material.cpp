@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(Material, t, "material")
+OBJECT_IMP(Material, t)
 {
 }
 

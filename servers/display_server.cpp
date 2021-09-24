@@ -2,11 +2,9 @@
 
 using namespace ism;
 
-MEMBER_IMPL(DisplayServer::singleton) {};
+MEMBER_IMP(DisplayServer::singleton) {};
 
-OBJ_IMPL(DisplayServer, t, "display_server", TypeFlags_BaseType | TypeFlags_IsAbstract)
-{
-}
+OBJECT_IMP(DisplayServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
 
 VideoMode const & ism::get_desktop_video_mode()
 {

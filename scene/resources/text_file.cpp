@@ -2,14 +2,15 @@
 
 using namespace ism;
 
-OBJ_IMPL(TextFile, t, "text_file")
+OBJECT_IMP(TextFile, t)
 {
 }
 
-TextFile::~TextFile()
+void TextFile::reload_from_file()
 {
 }
 
-TextFile::TextFile() : Resource{}
+Error TextFile::load_text(String const & path)
 {
+	return Error_None;
 }

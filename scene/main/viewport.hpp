@@ -12,7 +12,7 @@ namespace ism
 	// viewport
 	class ISM_API Viewport : public Node
 	{
-		OBJ_COMMON(Viewport, Node);
+		OBJECT_CLASS(Viewport, Node);
 
 	protected:
 		explicit Viewport(SceneTree * tree, Node * parent) : Node{ tree, parent } {}

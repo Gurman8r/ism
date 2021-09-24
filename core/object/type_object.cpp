@@ -9,9 +9,9 @@ void TypeObject::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		get_internals().add_class(&__class_type);
+		get_internals().add_class(&ob_class);
 
-		CHECK(__class_type.tp_bind)(&__class_type);
+		CHECK(ob_class.tp_bind)(&ob_class);
 	};
 }
 
@@ -19,13 +19,13 @@ void TypeObject::_initialize_classv() { TypeObject::initialize_class(); }
 
 TYPE TypeObject::_get_typev() const noexcept { return get_class(); }
 
-TYPE TypeObject::get_class() noexcept { return &__class_type; }
+TYPE TypeObject::get_class() noexcept { return &ob_class; }
 
 TypeObject::TypeObject() noexcept : Object{} {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(TypeObject, t, "type", TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
+OBJECT_IMP(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 	

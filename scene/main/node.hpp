@@ -21,7 +21,7 @@ namespace ism
 
 	class ISM_API Node : public Object
 	{
-		OBJ_COMMON(Node, Object);
+		OBJECT_CLASS(Node, Object);
 
 	public:
 		using iterator					= typename NodeList::iterator;

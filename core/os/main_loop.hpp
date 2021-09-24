@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API MainLoop : public Object
 	{
-		OBJ_COMMON(MainLoop, Object);
+		OBJECT_CLASS(MainLoop, Object);
 
 		OBJ m_startup_script{};
 

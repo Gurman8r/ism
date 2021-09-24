@@ -2,8 +2,8 @@
 
 using namespace ism;
 
-MEMBER_IMPL(RenderingServer::singleton) {};
+MEMBER_IMP(RenderingServer::singleton) {};
 
-OBJ_IMPL(RenderingServer, t, "rendering_server", TypeFlags_BaseType | TypeFlags_IsAbstract)
-{
-}
+MEMBER_IMP(RenderingServer::create_func) {};
+
+OBJECT_IMP(RenderingServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}

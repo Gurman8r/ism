@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(PropertyObject, t, "property", TypeFlags_BaseType | TypeFlags_MethodDescriptor)
+OBJECT_IMP(PropertyObject, t, TypeFlags_BaseType | TypeFlags_MethodDescriptor)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(PropertyObject); };
 

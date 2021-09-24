@@ -9,9 +9,9 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		get_internals().add_class(&__class_type);
+		get_internals().add_class(&ob_class);
 
-		CHECK(__class_type.tp_bind)(&__class_type);
+		CHECK(ob_class.tp_bind)(&ob_class);
 	}
 }
 
@@ -21,15 +21,15 @@ void Object::_construct_object() { m_refcount.init(); m_refcount_init.init(); }
 
 Object::Object() noexcept { _construct_object(); }
 
-Object::~Object() { m_type = nullptr; }
+Object::~Object() { ob_type = nullptr; }
 
-TYPE Object::get_class() noexcept { return &__class_type; }
+TYPE Object::get_class() noexcept { return &ob_class; }
 
 TYPE Object::_get_typev() const { return get_class(); }
 
-TYPE Object::get_type() const noexcept { if (!m_type) { m_type = _get_typev(); } return m_type; }
+TYPE Object::get_type() const noexcept { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
 
-bool Object::set_type(TYPE const & value) noexcept { return (m_type = value).is_valid(); }
+bool Object::set_type(TYPE const & value) noexcept { return (ob_type = value).is_valid(); }
 
 bool Object::init_ref()
 {
@@ -62,7 +62,7 @@ bool Object::dec_ref()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(Object, t, "object", TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJECT_IMP(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
 

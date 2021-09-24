@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API Font : public Resource
 	{
-		OBJ_COMMON(Font, Resource);
+		OBJECT_CLASS(Font, Resource);
 
 	public:
 		virtual ~Font();

@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(Mesh, t, "mesh")
+OBJECT_IMP(Mesh, t)
 {
 }
 

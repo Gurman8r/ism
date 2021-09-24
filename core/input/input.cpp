@@ -2,9 +2,9 @@
 
 using namespace ism;
 
-MEMBER_IMPL(Input::singleton) {};
+MEMBER_IMP(Input::singleton) {};
 
-OBJ_IMPL(Input, t, "input", TypeFlags_BaseType)
+OBJECT_IMP(Input, t, TypeFlags_BaseType)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(Input); };
 }

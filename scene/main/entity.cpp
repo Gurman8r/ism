@@ -3,7 +3,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(Entity, t, "entity")
+OBJECT_IMP(Entity, t)
 {
 }
 

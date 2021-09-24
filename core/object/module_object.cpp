@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(ModuleObject, t, "module", TypeFlags_BaseType)
+OBJECT_IMP(ModuleObject, t, TypeFlags_BaseType)
 {
 	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 

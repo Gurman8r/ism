@@ -3,7 +3,7 @@
 
 using namespace ism;
 
-MEMBER_IMPL(Internals::singleton) {};
+MEMBER_IMP(Internals::singleton) {};
 
 void Internals::initialize()
 {

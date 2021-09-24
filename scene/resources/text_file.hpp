@@ -7,15 +7,22 @@ namespace ism
 {
 	class ISM_API TextFile : public Resource
 	{
-		OBJ_COMMON(TextFile, Resource);
+		OBJECT_CLASS(TextFile, Resource);
+
+		String m_text{}, m_path{};
 
 	public:
-		virtual ~TextFile();
+		virtual bool has_text() const { return !m_text.empty(); }
 
-		TextFile();
+		virtual String const & get_text() const { return m_text; }
 
-	private:
+		virtual void set_text(String const & value) { m_text = value; }
 
+		virtual void reload_from_file() override;
+
+		void set_file_path(String const & value) noexcept { m_path = value; }
+
+		Error load_text(String const & path);
 	};
 }
 

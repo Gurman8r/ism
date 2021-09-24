@@ -11,7 +11,7 @@ namespace ism
 	// windows display server
 	class ISM_API DisplayServerWindows : public DisplayServer
 	{
-		OBJ_COMMON(DisplayServerWindows, DisplayServer);
+		OBJECT_CLASS(DisplayServerWindows, DisplayServer);
 
 	public:
 		DisplayServerWindows();

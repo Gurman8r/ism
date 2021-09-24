@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(InputEvent, t, "input_event")
+OBJECT_IMP(InputEvent, t)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(InputEvent); };
 }
