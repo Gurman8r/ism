@@ -1,72 +1,72 @@
 #ifndef _ISM_BASE_OBJECT_HPP_
 #define _ISM_BASE_OBJECT_HPP_
 
-#include <core/object/detail/common.hpp>
+#include <core/detail/common.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object common
-#define OBJECT_CLASS(m_class, m_inherits)						\
-private:														\
-	friend class ism::Internals;								\
-																\
-	friend class ism::Handle<m_class>;							\
-																\
-	static ism::TypeObject ob_class;							\
-																\
-protected:														\
-	static void initialize_class()								\
-	{															\
-		if (static bool once{}; !once && (once = true))			\
-		{														\
-			ism::get_internals().add_class(&m_class::ob_class);	\
-																\
-			if (m_class::ob_class.tp_bind)						\
-			{													\
-				m_class::ob_class.tp_bind(&m_class::ob_class);	\
-			}													\
-		};														\
-	}															\
-																\
-	virtual void _initialize_classv() override					\
-	{															\
-		m_class::initialize_class();							\
-	}															\
-																\
-	FORCE_INLINE virtual ism::TYPE _get_typev() const override	\
-	{															\
-		return m_class::get_class();							\
-	}															\
-																\
-public:															\
-	using base_type = typename m_inherits;						\
-																\
-	FORCE_INLINE static ism::TYPE get_class() noexcept			\
-	{															\
-		return &m_class::ob_class;								\
-	}															\
-																\
+#define OBJ_CLASS(m_class, m_inherits)										\
+private:																	\
+	friend class ism::Internals;											\
+																			\
+	friend class ism::Handle<m_class>;										\
+																			\
+	static ism::TypeObject ob_class_type;									\
+																			\
+protected:																	\
+	static void initialize_class()											\
+	{																		\
+		if (static bool once{}; !once && (once = true))						\
+		{																	\
+			ism::get_internals().add_class(&m_class::ob_class_type);		\
+																			\
+			if (m_class::ob_class_type.tp_bind)								\
+			{																\
+				m_class::ob_class_type.tp_bind(&m_class::ob_class_type);	\
+			}																\
+		};																	\
+	}																		\
+																			\
+	virtual void _initialize_classv() override								\
+	{																		\
+		m_class::initialize_class();										\
+	}																		\
+																			\
+	FORCE_INLINE virtual ism::TYPE _get_typev() const override				\
+	{																		\
+		return m_class::get_type_static();									\
+	}																		\
+																			\
+public:																		\
+	using base_type = typename m_inherits;									\
+																			\
+	FORCE_INLINE static ism::TYPE get_type_static() noexcept				\
+	{																		\
+		return &m_class::ob_class_type;										\
+	}																		\
+																			\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // "_obj_imp_class_"
-#define __OBJ_IMP__(m_class) \
+#define __OBJ_IMPL__(m_class) \
 	CAT(CAT(_obj_imp_, m_class), _)
 
 // implement object class
-#define OBJECT_IMP(m_class, m_var, ...)															\
+#define OBJ_IMPL(m_class, m_var, ...)															\
 																								\
 	/* declare binder function */																\
-	namespace ism { static void __OBJ_IMP__(m_class)(ism::TypeObject & m_var); }				\
+	namespace ism { static void __OBJ_IMPL__(m_class)(ism::TypeObject & m_var); }				\
 																								\
 	/* construct type */																		\
-	MEMBER_IMP(m_class::ob_class) =																\
+	VAR_IMPL(m_class::ob_class_type) =														\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
-	+ ism::__OBJ_IMP__(m_class);																\
+	+ ism::__OBJ_IMPL__(m_class);																\
 																								\
 	/* implement binder function */																\
-	void ism::__OBJ_IMP__(m_class)(ism::TypeObject & m_var)										\
+	void ism::__OBJ_IMPL__(m_class)(ism::TypeObject & m_var)									\
 																								\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -81,15 +81,15 @@ namespace ism
 	{
 	private:
 		friend class Internals;
-
 		friend class Handle<Object>;
+		friend bool predelete_handler(Object *);
+		friend void postinitialize_handler(Object *);
 
-		static TypeObject ob_class;
+		static TypeObject ob_class_type;
 
-	protected:
-		mutable Ref<TypeObject> ob_type{};
+		mutable Ref<TypeObject> m_type;
 
-		RefCount m_refcount{}, m_refcount_init{};
+		SafeRefCount m_refcount{}, m_refcount_init{};
 
 	protected:
 		static void initialize_class();
@@ -98,32 +98,22 @@ namespace ism
 
 		FORCE_INLINE virtual TYPE _get_typev() const;
 
-		void _construct_object();
-
 		explicit Object() noexcept;
 
-		virtual void on_inc_ref() {}
+		virtual void _postinitialize() {}
 
-		virtual void on_dec_ref() {}
+		virtual bool _predelete() { return true; }
+
+		virtual void on_reference() {}
+
+		virtual void on_unreference() {}
 
 	public:
 		using base_type = typename void;
 
 		virtual ~Object();
 
-		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
-
-		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
-
-		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
-
-		bool init_ref();
-
-		bool inc_ref(); // returns false if refcount is at zero and didn't get increased
-		
-		bool dec_ref();
-
-		NODISCARD static TYPE get_class() noexcept;
+		NODISCARD static TYPE get_type_static() noexcept;
 
 		NODISCARD TYPE get_type() const noexcept;
 
@@ -132,6 +122,42 @@ namespace ism
 		template <class T> NODISCARD T cast() const &; // cast.hpp
 
 		template <class T> NODISCARD T cast() &&; // cast.hpp
+
+		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
+
+	public:
+		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
+
+		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
+
+		bool init_ref()
+		{
+			if (reference())
+			{
+				if (!has_references() && m_refcount_init.unref())
+				{
+					unreference(); // first referencing is already 1, so compensate for the ref above
+				}
+				return true;
+			}
+			return false;
+		}
+
+		bool reference()
+		{
+			uint32_t rc_val{ m_refcount.refval() };
+			bool success{ rc_val != 0 };
+			if (success && rc_val <= 2 /* higher is not relevant */) { on_reference(); }
+			return success;
+		}
+
+		bool unreference()
+		{
+			uint32_t rc_val{ m_refcount.unrefval() };
+			bool die{ rc_val == 0 };
+			if (rc_val <= 1 /* higher is not relevant */) { on_unreference(); }
+			return die;
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -161,6 +187,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	inline bool ism::predelete_handler(Object * value) { return value->_predelete(); }
+
+	inline void ism::postinitialize_handler(Object * value) { value->_postinitialize(); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
 	> NODISCARD auto object_or_cast(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
 
@@ -180,10 +212,10 @@ namespace ism
 	> NODISCARD TYPE typeof() noexcept { return typeof_generic(typeid(T)); }
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof() noexcept { return T::get_class(); }
+	> NODISCARD TYPE typeof() noexcept { return T::get_type_static(); }
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o) noexcept { return CHECK(FWD(o))->get_type(); }
+	> NODISCARD TYPE typeof(T && o) noexcept { return CHECK(o)->get_type(); }
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }

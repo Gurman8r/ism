@@ -1,19 +1,17 @@
 #include <core/object/dict_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(DictObject, t, TypeFlags_Dict_Subclass)
+OBJ_IMPL(DictObject, t, TypeFlags_Dict_Subclass)
 {
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(DictObject); };
-
 	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)DICT(self).size(); };
 
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(DictObject, c)
 	{
-		return CLASS_<DictObject>(type)
+		return c
 
 			.def("__contains__", &DictObject::contains<OBJ const &>)
 

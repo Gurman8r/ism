@@ -47,7 +47,7 @@ namespace ism
 
 	class ISM_API Input : public Object
 	{
-		OBJECT_CLASS(Input, Object);
+		OBJ_CLASS(Input, Object);
 
 		static Input * singleton;
 
@@ -64,7 +64,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline Input & get_input() { return *Input::get_singleton(); }
+	NODISCARD inline Input & get_input() noexcept { return *Input::get_singleton(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

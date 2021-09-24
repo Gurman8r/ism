@@ -3,8 +3,11 @@
 
 #include <core/object/module_object.hpp>
 
+// class
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// class interface
 	template <class _type, class ... _options
 	> class CLASS_ : public TYPE
@@ -17,10 +20,7 @@ namespace ism
 		using type = _type;
 
 	public:
-		template <class ... Extra
-		> CLASS_(TYPE target, Extra && ... extra) : TYPE{ CHECK(target) }
-		{
-		}
+		CLASS_(TYPE target) : TYPE{ CHECK(target) } {}
 
 	public:
 		template <class ... Args, class ... Extra
@@ -153,6 +153,26 @@ namespace ism
 			return (*this);
 		}
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	namespace impl
+	{
+		template <class T> struct ClassBinderHelper
+		{
+			constexpr ClassBinderHelper() noexcept = default;
+
+			NODISCARD constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
+			{
+				return static_cast<bindfunc>(static_cast<void *>(fn));
+			}
+		};
+	}
+
+#define CLASS_BINDER(m_class, m_var) \
+	(ism::impl::ClassBinderHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_CLASS_HPP_

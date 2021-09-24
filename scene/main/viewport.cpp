@@ -2,8 +2,6 @@
 
 using namespace ism;
 
-OBJECT_IMP(Viewport, t, TypeFlags_BaseType)
-{
-}
+OBJ_IMPL(Viewport, t, TypeFlags_BaseType) {}
 
 Viewport::~Viewport() {}

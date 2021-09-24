@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API RenderingServer : public Object
 	{
-		OBJECT_CLASS(RenderingServer, Object);
+		OBJ_CLASS(RenderingServer, Object);
 
 		static RenderingServer * singleton;
 
@@ -45,7 +45,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline RenderingServer & get_rendering_server() { return *CHECK(RenderingServer::get_singleton()); }
+	NODISCARD inline RenderingServer & get_rendering_server() noexcept { return *CHECK(RenderingServer::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -3,10 +3,10 @@
 
 using namespace ism;
 
-OBJECT_IMP(SceneTree, t)
+OBJ_IMPL(SceneTree, t)
 {
-	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(SceneTree{ (String)STR(args[0]) }); };
-}
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(SceneTree{ (String)STR(args[0]) }); };
+};
 
 namespace ism
 {

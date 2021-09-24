@@ -1,14 +1,14 @@
 #ifndef _ISM_RENDERING_DEVICE_HPP_
 #define _ISM_RENDERING_DEVICE_HPP_
 
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 namespace ism
 {
 	// rendering device
 	class ISM_API RenderingDevice : public Object
 	{
-		OBJECT_CLASS(RenderingDevice, Object);
+		OBJ_CLASS(RenderingDevice, Object);
 
 		static RenderingDevice * singleton;
 

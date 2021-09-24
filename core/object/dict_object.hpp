@@ -9,7 +9,7 @@ namespace ism
 	// dict object
 	class ISM_API DictObject : public Object
 	{
-		OBJECT_CLASS(DictObject, Object);
+		OBJ_CLASS(DictObject, Object);
 
 	public:
 		HashMap<OBJ, OBJ> m_dict{};
@@ -46,9 +46,6 @@ namespace ism
 
 		template <class Index = OBJ, class Value = OBJ
 		> bool insert(Index && i, Value && v) const { return m_dict.try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second; }
-
-		template <class Index = OBJ, class Value = OBJ
-		> bool insert_or_assign(Index && i, Value && v) const { return m_dict.insert_or_assign(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
 		template <class Index = OBJ
 		> NODISCARD bool contains(Index && i) const { return find(FWD(i)) != end(); }
@@ -93,12 +90,12 @@ namespace ism
 	template <> struct DefaultDelete<DictObject> : DefaultDelete<Object> {};
 
 	// dict check
-#define OBJECT_CHECK_DICT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
+#define OBJ_CHECK_DICT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
 
 	// dict handle
 	CUSTOM_HANDLE(DictObject)
 	{
-		HANDLE_CLASS(DictObject, OBJECT_CHECK_DICT);
+		HANDLE_CLASS(DictObject, OBJ_CHECK_DICT);
 
 	public:
 		using storage_type = value_type::storage_type;
@@ -118,9 +115,6 @@ namespace ism
 
 		template <class Index = OBJ, class Value = OBJ
 		> bool insert(Index && i, Value && v) const { return m_ptr->try_emplace(FWD(i), FWD(v)); }
-
-		template <class Index = OBJ, class Value = OBJ
-		> bool insert_or_assign(Index && i, Value && v) const { return m_ptr->insert_or_assign(FWD(i), FWD(v)); }
 
 		template <class Index = OBJ
 		> NODISCARD bool contains(Index && i) const { return m_ptr->contains(FWD(i)); }

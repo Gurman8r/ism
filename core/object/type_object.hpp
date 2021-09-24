@@ -1,7 +1,7 @@
 #ifndef _ISM_TYPE_OBJECT_HPP_
 #define _ISM_TYPE_OBJECT_HPP_
 
-#include <core/object/detail/internals.hpp>
+#include <core/detail/internals.hpp>
 
 // type
 namespace ism
@@ -13,10 +13,9 @@ namespace ism
 	{
 	private:
 		friend class Internals;
-
 		friend class Handle<TypeObject>;
 
-		static TypeObject ob_class;
+		static TypeObject ob_class_type;
 
 	protected:
 		static void initialize_class();
@@ -26,7 +25,7 @@ namespace ism
 		virtual TYPE _get_typev() const noexcept override;
 
 	public:
-		NODISCARD static TYPE get_class() noexcept;
+		NODISCARD static TYPE get_type_static() noexcept;
 
 		TypeObject() noexcept;
 
@@ -38,8 +37,13 @@ namespace ism
 			tp_flags = flags;
 			tp_base = baseof<T>();
 			tp_bind = (bindfunc)[](TYPE type) { return type; };
-			tp_cmp = (cmpfunc)[](OBJ lhs, OBJ rhs) { return util::compare(*lhs, *rhs); };
 			tp_del = (delfunc)memdelete<T>;
+			tp_cmp = (cmpfunc)[](OBJ lhs, OBJ rhs) { return util::compare(*lhs, *rhs); };
+
+			if constexpr (std::is_default_constructible_v<T>)
+			{
+				tp_new = (newfunc)[](TYPE, OBJ) -> OBJ { return memnew(T); };
+			}
 		}
 
 	public:
@@ -128,14 +132,14 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type check
-#define OBJECT_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
+#define OBJ_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type handle
 	CUSTOM_HANDLE(TypeObject)
 	{
-		HANDLE_CLASS(TypeObject, OBJECT_CHECK_TYPE);
+		HANDLE_CLASS(TypeObject, OBJ_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }

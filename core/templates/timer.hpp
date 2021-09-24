@@ -7,9 +7,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(HighResolutionClock) std::chrono::high_resolution_clock;
-
-	ALIAS(TimePoint) HighResolutionClock::time_point;
+	ALIAS(TimePoint) std::chrono::high_resolution_clock::time_point;
 
 	struct Timer final
 	{
@@ -17,7 +15,7 @@ namespace ism
 
 		explicit Timer(bool running) noexcept
 			: m_running		{ running }
-			, m_start_time	{ HighResolutionClock::now() }
+			, m_start_time	{ std::chrono::high_resolution_clock::now() }
 			, m_stop_time	{ m_start_time }
 			, m_elapsed		{}
 		{
@@ -51,7 +49,7 @@ namespace ism
 		{
 			if (m_running)
 			{
-				return HighResolutionClock::now() - m_start_time;
+				return std::chrono::high_resolution_clock::now() - m_start_time;
 			}
 			else
 			{
@@ -71,7 +69,7 @@ namespace ism
 		{
 			m_running = true;
 
-			m_start_time = m_stop_time = HighResolutionClock::now();
+			m_start_time = m_stop_time = std::chrono::high_resolution_clock::now();
 
 			m_elapsed = {};
 
@@ -84,7 +82,7 @@ namespace ism
 
 			m_running = false;
 
-			m_stop_time = HighResolutionClock::now();
+			m_stop_time = std::chrono::high_resolution_clock::now();
 
 			m_elapsed = (m_stop_time - m_start_time);
 

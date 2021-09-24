@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMP(MainLoop, t)
+OBJ_IMPL(MainLoop, t)
 {
 }
 

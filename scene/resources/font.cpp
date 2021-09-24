@@ -2,9 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMP(Font, t)
-{
-}
+OBJ_IMPL(Font, t) {}
 
 Font::~Font()
 {

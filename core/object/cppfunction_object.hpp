@@ -1,7 +1,7 @@
 #ifndef _ISM_CPPFUNCTION_OBJECT_HPP_
 #define _ISM_CPPFUNCTION_OBJECT_HPP_
 
-#include <core/object/detail/initimpl.hpp>
+#include <core/detail/init.hpp>
 
 // cppfunction
 namespace ism
@@ -9,7 +9,7 @@ namespace ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		OBJECT_CLASS(CppFunctionObject, FunctionObject);
+		OBJ_CLASS(CppFunctionObject, FunctionObject);
 
 	public:
 		FunctionRecord * m_record{};
@@ -67,7 +67,7 @@ namespace ism
 		}
 
 	protected:
-		void initialize_generic(FunctionRecord * record_in, std::type_info const * const * info_in, size_t argc_in);
+		void initialize_generic(FunctionRecord * record_in, std::type_info const * const * info_in, size_t argc_in, bool prepend = false);
 
 		template <class Func, class Return, class ... Args, class ... Extra
 		> void initialize(Func && func, Return(*)(Args...), Extra && ... extra)
@@ -126,8 +126,11 @@ namespace ism
 			Array<std::type_info const *, argc> types{};
 			mpl::for_types_i<Args...>([&](size_t i, auto tag) { types[i] = &typeid(TAG_TYPE(tag)); });
 
+			// prepend?
+			constexpr bool prepend{ mpl::contains_v<attr::prepend, mpl::type_list<Extra...>> };
+
 			// initialize generic
-			initialize_generic(rec, types, argc);
+			initialize_generic(rec, types, argc, prepend);
 
 			// stash some additional information used in 'functional.h'
 			if constexpr (std::is_convertible_v<Func, Return(*)(Args...)> && sizeof(Capture) == sizeof(void *))
@@ -142,12 +145,12 @@ namespace ism
 	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<Object> {};
 
 	// cppfunction check
-#define OBJECT_CHECK_CPPFUNCTION(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
+#define OBJ_CHECK_CPPFUNCTION(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
 
 	// cppfunction handle
 	CUSTOM_HANDLE(CppFunctionObject)
 	{
-		HANDLE_CLASS(CppFunctionObject, OBJECT_CHECK_CPPFUNCTION);
+		HANDLE_CLASS(CppFunctionObject, OBJ_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }

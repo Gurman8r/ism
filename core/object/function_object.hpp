@@ -9,7 +9,7 @@ namespace ism
 	// function object
 	class ISM_API FunctionObject : public Object
 	{
-		OBJECT_CLASS(FunctionObject, Object);
+		OBJ_CLASS(FunctionObject, Object);
 
 	public:
 		OBJ m_dict{}, m_module{};
@@ -27,12 +27,12 @@ namespace ism
 	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<Object> {};
 
 	// function check
-#define OBJECT_CHECK_FUNCTION(o) (ism::isinstance<ism::FUNCTION>(o))
+#define OBJ_CHECK_FUNCTION(o) (ism::isinstance<ism::FUNCTION>(o))
 
 	// function handle
 	CUSTOM_HANDLE(FunctionObject)
 	{
-		HANDLE_CLASS(FunctionObject, OBJECT_CHECK_FUNCTION);
+		HANDLE_CLASS(FunctionObject, OBJ_CHECK_FUNCTION);
 
 	public:
 		NODISCARD OBJ cpp_function() const; // cppfunction_object.hpp

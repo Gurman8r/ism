@@ -1,14 +1,12 @@
 #include <core/object/property_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(PropertyObject, t, TypeFlags_BaseType | TypeFlags_MethodDescriptor)
+OBJ_IMPL(PropertyObject, t, TypeFlags_BaseType | TypeFlags_MethodDescriptor)
 {
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(PropertyObject); };
-
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) -> OBJ
 	{
 		return PROPERTY(self).get(obj);
@@ -19,9 +17,9 @@ OBJECT_IMP(PropertyObject, t, TypeFlags_BaseType | TypeFlags_MethodDescriptor)
 		return PROPERTY(self).set(obj, value);
 	};
 
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(PropertyObject, c)
 	{
-		return CLASS_<PropertyObject>(type);
+		return c;
 	};
 }
 

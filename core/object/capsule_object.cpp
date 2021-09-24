@@ -1,17 +1,15 @@
 #include <core/object/capsule_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(CapsuleObject, t, TypeFlags_BaseType)
+OBJ_IMPL(CapsuleObject, t, TypeFlags_BaseType)
 {
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(CapsuleObject); };
-
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(CapsuleObject, c)
 	{
-		return CLASS_<CapsuleObject>(type);
+		return c;
 	};
 }
 

@@ -9,7 +9,7 @@ namespace ism
 {
 	class ISM_API ConfigFile : public Resource
 	{
-		OBJECT_CLASS(ConfigFile, Resource);
+		OBJ_CLASS(ConfigFile, Resource);
 
 	public:
 		ConfigFile() noexcept {}

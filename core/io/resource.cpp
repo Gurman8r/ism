@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMP(Resource, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJ_IMPL(Resource, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 };
 

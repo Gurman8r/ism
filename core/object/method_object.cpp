@@ -1,23 +1,21 @@
 #include <core/object/method_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(MethodObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+OBJ_IMPL(MethodObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(MethodObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(MethodObject); };
-
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) { return self; };
 
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(MethodObject, c)
 	{
-		return CLASS_<MethodObject>(type);
+		return c;
 	};
 }
 

@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API Texture : public Resource
 	{
-		OBJECT_CLASS(Texture, Resource);
+		OBJ_CLASS(Texture, Resource);
 
 	public:
 		virtual ~Texture();

@@ -1,14 +1,12 @@
 #include <core/object/list_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(ListObject, t, TypeFlags_List_Subclass)
+OBJ_IMPL(ListObject, t, TypeFlags_List_Subclass)
 {
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(ListObject); };
-
 	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)LIST(self).size(); };
 
 	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other)
@@ -23,9 +21,9 @@ OBJECT_IMP(ListObject, t, TypeFlags_List_Subclass)
 		}
 	};
 
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(ListObject, c)
 	{
-		return CLASS_<ListObject>(type)
+		return c
 
 			.def("__contains__", &ListObject::contains<OBJ const &>)
 

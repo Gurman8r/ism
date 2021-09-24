@@ -1,5 +1,5 @@
 #include <core/object/base_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
@@ -9,70 +9,39 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		get_internals().add_class(&ob_class);
+		get_internals().add_class(&ob_class_type);
 
-		CHECK(ob_class.tp_bind)(&ob_class);
+		CHECK(ob_class_type.tp_bind)(&ob_class_type);
 	}
 }
 
 void Object::_initialize_classv() { initialize_class(); }
 
-void Object::_construct_object() { m_refcount.init(); m_refcount_init.init(); }
+Object::Object() noexcept { m_refcount.init(); m_refcount_init.init(); }
 
-Object::Object() noexcept { _construct_object(); }
+Object::~Object() { m_type = nullptr; }
 
-Object::~Object() { ob_type = nullptr; }
+TYPE Object::get_type_static() noexcept { return &ob_class_type; }
 
-TYPE Object::get_class() noexcept { return &ob_class; }
+TYPE Object::_get_typev() const { return get_type_static(); }
 
-TYPE Object::_get_typev() const { return get_class(); }
+TYPE Object::get_type() const noexcept { if (!m_type) { m_type = _get_typev(); } return m_type; }
 
-TYPE Object::get_type() const noexcept { if (!ob_type) { ob_type = _get_typev(); } return ob_type; }
-
-bool Object::set_type(TYPE const & value) noexcept { return (ob_type = value).is_valid(); }
-
-bool Object::init_ref()
-{
-	if (inc_ref())
-	{
-		if (!has_references() && m_refcount_init.unref())
-		{
-			dec_ref(); // first referencing is already 1, so compensate for the ref above
-		}
-		return true;
-	}
-	return false;
-}
-
-bool Object::inc_ref()
-{
-	uint32_t rc_val{ m_refcount.refval() };
-	bool success{ rc_val != 0 };
-	if (success && rc_val <= 2 /* higher is not relevant */) { on_inc_ref(); }
-	return success;
-}
-
-bool Object::dec_ref()
-{
-	uint32_t rc_val{ m_refcount.unrefval() };
-	bool die{ rc_val == 0 };
-	if (rc_val <= 1 /* higher is not relevant */) { on_dec_ref(); }
-	return die;
-}
+bool Object::set_type(TYPE const & value) noexcept { return (m_type = value).is_valid(); }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJ_IMPL(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
-	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
-
 	t.tp_getattro = (getattrofunc)generic_getattr;
 
 	t.tp_setattro = (setattrofunc)generic_setattr;
 
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
+
+	t.tp_bind = CLASS_BINDER(Object, c)
 	{
-		return CLASS_<Object>(type);
+		return c;
 	};
 }
 

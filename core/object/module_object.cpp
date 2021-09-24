@@ -1,17 +1,22 @@
 #include <core/object/module_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(ModuleObject, t, TypeFlags_BaseType)
+OBJ_IMPL(ModuleObject, t, TypeFlags_BaseType)
 {
 	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(ModuleObject(STR(args[0]))); };
+	t.tp_getattro = (getattrofunc)module_getattro;
 
-	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other)
+	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
+	{
+		return memnew(ModuleObject(STR(args[0])));
+	};
+
+	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> int32_t
 	{
 		if (MODULE::check_(other))
 		{
@@ -23,11 +28,9 @@ OBJECT_IMP(ModuleObject, t, TypeFlags_BaseType)
 		}
 	};
 
-	t.tp_getattro = (getattrofunc)module_getattro;
-
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(ModuleObject, c)
 	{
-		return CLASS_<ModuleObject>(type)
+		return c
 
 			.def("__contains__", [](ModuleObject const & self, OBJ const & value) { return self.m_dict.contains(value); })
 

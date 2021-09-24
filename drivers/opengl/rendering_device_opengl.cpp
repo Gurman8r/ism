@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMP(RenderingDeviceOpenGL, t)
+OBJ_IMPL(RenderingDeviceOpenGL, t)
 {
 }
 

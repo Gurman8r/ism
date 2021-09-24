@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API RenderingServerDefault : public RenderingServer
 	{
-		OBJECT_CLASS(RenderingServerDefault, RenderingServer);
+		OBJ_CLASS(RenderingServerDefault, RenderingServer);
 
 	public:
 		explicit RenderingServerDefault();

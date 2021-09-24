@@ -9,27 +9,27 @@ namespace ism
 	// module object
 	class ISM_API ModuleObject : public Object
 	{
-		OBJECT_CLASS(ModuleObject, Object);
+		OBJ_CLASS(ModuleObject, Object);
 
 	public:
 		DICT	m_dict	{};
 		STR		m_name	{};
 
-		ModuleObject(STR const & name) : Object{}, m_dict{ DICT::new_() }, m_name{ name }
-		{
-		}
+		ModuleObject() noexcept : Object{} {}
+
+		ModuleObject(STR const & name) : Object{}, m_dict{ DICT::new_() }, m_name{ name } {}
 	};
 
 	// module delete
 	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<Object> {};
 
 	// module check
-#define OBJECT_CHECK_MODULE(o) (ism::isinstance<ism::MODULE>(o))
+#define OBJ_CHECK_MODULE(o) (ism::isinstance<ism::MODULE>(o))
 
 	// module handle
 	CUSTOM_HANDLE(ModuleObject)
 	{
-		HANDLE_CLASS(ModuleObject, OBJECT_CHECK_MODULE);
+		HANDLE_CLASS(ModuleObject, OBJ_CHECK_MODULE);
 
 	public:
 		template <class Func, class ... Extra

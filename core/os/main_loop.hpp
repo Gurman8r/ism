@@ -1,7 +1,7 @@
 #ifndef _ISM_MAIN_LOOP_HPP_
 #define _ISM_MAIN_LOOP_HPP_
 
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 namespace ism
 {
@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API MainLoop : public Object
 	{
-		OBJECT_CLASS(MainLoop, Object);
+		OBJ_CLASS(MainLoop, Object);
 
 		OBJ m_startup_script{};
 

@@ -1,7 +1,7 @@
 #ifndef _ISM_ATTR_HPP_
 #define _ISM_ATTR_HPP_
 
-#include <core/object/detail/call.hpp>
+#include <core/detail/call.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -21,19 +21,19 @@ namespace ism::attr
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // process attribute default
-#define ISM_PROCESS_ATTR(m_class) \
+#define PROCESS_ATTRIBUTE(m_class) \
 	struct ism::attr::process_attribute<m_class> : ism::attr::process_attribute_default<m_class>
 
 // process attribute base
-#define ISM_PROCESS_ATTR_BASE(m_class, m_inherits) \
+#define PROCESS_ATTRIBUTE_BASE(m_class, m_inherits) \
 	struct ism::attr::process_attribute<m_class> : ism::attr::process_attribute_default<m_inherits>
 
 // process attribute sfinae
-#define ISM_PROCESS_ATTR_SFINAE(m_class, m_sfinae) \
+#define PROCESS_ATTRIBUTE_SFINAE(m_class, m_sfinae) \
 	struct ism::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::attr::process_attribute_default<m_class>
 
 // process attribute base/sfinae
-#define ISM_PROCESS_ATTR_BASE_SFINAE(m_class, m_sfinae, m_inherits) \
+#define PROCESS_ATTRIBUTE_BASE_SFINAE(m_class, m_sfinae, m_inherits) \
 	struct ism::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::attr::process_attribute_default<m_inherits>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -59,51 +59,50 @@ namespace ism::attr
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// name
-	template <> ISM_PROCESS_ATTR(name)
+	template <> PROCESS_ATTRIBUTE(name)
 	{
 		static void init(FunctionRecord & r, name && a) noexcept { r.name = a.value; }
 	};
 
 	// ReturnPolicy
-	template <> ISM_PROCESS_ATTR(ReturnPolicy)
+	template <> PROCESS_ATTRIBUTE(ReturnPolicy)
 	{
 		static void init(FunctionRecord & r, ReturnPolicy && a) noexcept { r.policy = a; }
 	};
 
 	// sibling
-	template <> ISM_PROCESS_ATTR(sibling)
+	template <> PROCESS_ATTRIBUTE(sibling)
 	{
 		static void init(FunctionRecord & r, sibling && a) noexcept { r.sibling = a.value; }
 	};
 
 	// is_method
-	template <> ISM_PROCESS_ATTR(is_method)
+	template <> PROCESS_ATTRIBUTE(is_method)
 	{
 		static void init(FunctionRecord & r, is_method && a) noexcept { r.is_method = true; r.scope = a.value; }
 	};
 
 	// scope
-	template <> ISM_PROCESS_ATTR(scope)
+	template <> PROCESS_ATTRIBUTE(scope)
 	{
 		static void init(FunctionRecord & r, scope && a) noexcept { r.scope = a.value; }
 	};
 
 	// is_operator
-	template <> ISM_PROCESS_ATTR(is_operator)
+	template <> PROCESS_ATTRIBUTE(is_operator)
 	{
 		static void init(FunctionRecord & r, is_operator && a) noexcept { r.is_operator = true; }
 	};
 
 	// is_constructor
-	template <> ISM_PROCESS_ATTR(is_constructor)
+	template <> PROCESS_ATTRIBUTE(is_constructor)
 	{
 		static void init(FunctionRecord & r, is_constructor && a) noexcept { r.is_constructor = true; }
 	};
 
 	// prepend
-	template <> ISM_PROCESS_ATTR(prepend)
+	template <> PROCESS_ATTRIBUTE(prepend)
 	{
-		static void init(FunctionRecord & r, prepend && a) noexcept { r.prepend = true; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -130,7 +129,7 @@ namespace ism::attr
 		};
 	};
 
-	template <class ... Ts> ISM_PROCESS_ATTR(call_guard<Ts...>) {};
+	template <class ... Ts> PROCESS_ATTRIBUTE(call_guard<Ts...>) {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -1,31 +1,29 @@
 #include <core/object/cppfunction_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+OBJ_IMPL(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);
-
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(CppFunctionObject); };
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type)->OBJ
 	{
 		return !obj ? self : METHOD({ self, obj, ism::method_vectorcall });
 	};
 
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(CppFunctionObject, c)
 	{
-		type.add_object("__name__", PROPERTY({
-			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(type) }),
-			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(type) }),
+		c.add_object("__name__", PROPERTY({
+			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(c) }),
+			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(c) }),
 			}));
 
-		return CLASS_<CppFunctionObject>(type)
+		return c
 
 			.def_property("__text_signature__", [](CppFunctionObject const & self) { return self->signature; }, [](CppFunctionObject & self, String const & value) { self->signature = value; })
 
@@ -53,7 +51,7 @@ CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ cppfunction_ve
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in)
+void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in, bool prepend)
 {
 	VERIFY("BAD FUNCTION RECORD" && rec && !rec->next);
 
@@ -77,7 +75,7 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 
 		if (rec->scope == chain->scope)
 		{
-			if (rec->prepend)
+			if (prepend)
 			{
 				rec->next = chain;
 
@@ -100,9 +98,9 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 
 	if (!rec->next && rec->scope)
 	{
-		if (hasattr(rec->scope, "__module__")) { m_module = getattr(rec->scope, "__module__"); }
+		if (STR_IDENTIFIER(__module__); hasattr(rec->scope, &ID___module__)) { m_module = getattr(rec->scope, &ID___module__); }
 
-		else if (hasattr(rec->scope, "__name__")) { m_module = getattr(rec->scope, "__name__"); }
+		else if (STR_IDENTIFIER(__name__); hasattr(rec->scope, &ID___name__)) { m_module = getattr(rec->scope, &ID___name__); }
 	}
 }
 

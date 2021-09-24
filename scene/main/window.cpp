@@ -9,9 +9,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(Window, t, TypeFlags_BaseType)
-{
-}
+OBJ_IMPL(Window, t, TypeFlags_BaseType) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

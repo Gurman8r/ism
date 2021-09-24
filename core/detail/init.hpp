@@ -1,7 +1,7 @@
-#ifndef _ISM_INITIMPL_HPP_
-#define _ISM_INITIMPL_HPP_
+#ifndef _ISM_INIT_HPP_
+#define _ISM_INIT_HPP_
 
-#include <core/object/detail/attr.hpp>
+#include <core/detail/attr.hpp>
 
 namespace ism::initimpl
 {
@@ -30,10 +30,9 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
-			// TODO...
 			return c.def("__new__", [](Args ... args)
 			{
-				return OBJ();
+				return OBJ(/* TODO */);
 			}
 			, attr::is_constructor(), FWD(extra)...);
 		}
@@ -62,10 +61,9 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
-			// TODO...
 			return c.def("__new__", [func = std::move(class_factory)](Args ... args)
 			{
-				return OBJ();
+				return OBJ(/* TODO */);
 			}
 			, attr::is_constructor(), FWD(extra)...);
 		}
@@ -87,4 +85,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_INITIMPL_HPP_
+#endif // !_ISM_INIT_HPP_

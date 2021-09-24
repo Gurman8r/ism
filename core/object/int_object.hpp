@@ -14,7 +14,7 @@ namespace ism
 	// int object
 	class ISM_API IntObject : public Object
 	{
-		OBJECT_CLASS(IntObject, Object);
+		OBJ_CLASS(IntObject, Object);
 
 	public:
 		int64_t m_int{};
@@ -44,12 +44,12 @@ namespace ism
 	template <> struct DefaultDelete<IntObject> : DefaultDelete<Object> {};
 
 	// int check
-#define OBJECT_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
+#define OBJ_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
 
 	// int handle
 	CUSTOM_HANDLE(IntObject)
 	{
-		HANDLE_CLASS(IntObject, OBJECT_CHECK_INT);
+		HANDLE_CLASS(IntObject, OBJ_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;

@@ -1,14 +1,12 @@
 #include <core/object/int_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(IntObject, t, TypeFlags_Int_Subclass)
+OBJ_IMPL(IntObject, t, TypeFlags_Int_Subclass)
 {
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(IntObject); };
-
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<int64_t>()(***INT(self)); };
 
 	t.tp_repr = (reprfunc)[](OBJ self) { return STR(util::to_string(***INT(self))); };
@@ -27,16 +25,16 @@ OBJECT_IMP(IntObject, t, TypeFlags_Int_Subclass)
 		}
 	};
 
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(IntObject, c)
 	{
-		return CLASS_<IntObject>(type);
+		return c;
 	};
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMP(IntObject::g_true) { true };
+VAR_IMPL(IntObject::g_true) { true };
 
-MEMBER_IMP(IntObject::g_false) { false };
+VAR_IMPL(IntObject::g_false) { false };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

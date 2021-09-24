@@ -640,6 +640,9 @@ namespace ism::mpl
 	> struct contains<T, type_list<T, Ts...>>
 		: std::true_type {};
 
+	template <class T, class Ls
+	> constexpr bool contains_v{ contains<T, Ls>::value };
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
@@ -658,6 +661,9 @@ namespace ism::mpl
 	template <class T, class U, class ... Ts
 	> struct index_of<T, type_list<U, Ts...>>
 		: std::integral_constant<size_t, 1 + index_of<T, type_list<Ts...>>::value> {};
+
+	template <class T, class Ls
+	> constexpr auto index_of_v{ index_of<T, Ls>::value };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

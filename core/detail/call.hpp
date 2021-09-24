@@ -1,7 +1,7 @@
 #ifndef _ISM_CALL_HPP_
 #define _ISM_CALL_HPP_
 
-#include <core/object/detail/cast.hpp>
+#include <core/detail/cast.hpp>
 
 namespace ism
 {
@@ -162,8 +162,7 @@ namespace ism
 			is_stateless	: 1,
 			is_constructor	: 1,
 			is_operator		: 1,
-			is_method		: 1,
-			prepend			: 1;
+			is_method		: 1;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

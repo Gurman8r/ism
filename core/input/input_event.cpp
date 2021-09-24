@@ -2,9 +2,8 @@
 
 using namespace ism;
 
-OBJECT_IMP(InputEvent, t)
+OBJ_IMPL(InputEvent, t)
 {
-	t.tp_new = (newfunc)[](TYPE type, OBJ args)->OBJ { return memnew(InputEvent); };
 }
 
 InputEvent::~InputEvent()

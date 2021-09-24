@@ -1,14 +1,12 @@
 #include <core/object/float_object.hpp>
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMP(FloatObject, t, TypeFlags_Float_Subclass)
+OBJ_IMPL(FloatObject, t, TypeFlags_Float_Subclass)
 {
-	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(FloatObject); };
-
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<double_t>()(***FLT(self)); };
 
 	t.tp_repr = (reprfunc)[](OBJ self) { return STR(util::to_string(***FLT(self))); };
@@ -27,10 +25,10 @@ OBJECT_IMP(FloatObject, t, TypeFlags_Float_Subclass)
 		}
 	};
 
-	t.tp_bind = (bindfunc)[](TYPE type) -> TYPE
+	t.tp_bind = CLASS_BINDER(FloatObject, c)
 	{
-		return CLASS_<FloatObject>(type);
+		return c;
 	};
-};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

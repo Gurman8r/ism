@@ -9,7 +9,7 @@ namespace ism
 	// method object
 	class ISM_API MethodObject : public FunctionObject
 	{
-		OBJECT_CLASS(MethodObject, FunctionObject);
+		OBJ_CLASS(MethodObject, FunctionObject);
 
 	public:
 		OBJ m_func{}, m_self{};
@@ -27,12 +27,12 @@ namespace ism
 	template <> struct DefaultDelete<MethodObject> : DefaultDelete<Object> {};
 
 	// method check
-#define OBJECT_CHECK_METHOD(o) (ism::isinstance<ism::METHOD>(o))
+#define OBJ_CHECK_METHOD(o) (ism::isinstance<ism::METHOD>(o))
 
 	// method handle
 	CUSTOM_HANDLE(MethodObject)
 	{
-		HANDLE_CLASS(MethodObject, OBJECT_CHECK_METHOD);
+		HANDLE_CLASS(MethodObject, OBJ_CHECK_METHOD);
 	};
 }
 

@@ -149,7 +149,7 @@ namespace ism
 	// display server
 	class ISM_API DisplayServer : public Object
 	{
-		OBJECT_CLASS(DisplayServer, Object);
+		OBJ_CLASS(DisplayServer, Object);
 
 		static DisplayServer * singleton;
 

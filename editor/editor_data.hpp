@@ -1,7 +1,7 @@
 #ifndef _ISM_EDITOR_DATA_HPP_
 #define _ISM_EDITOR_DATA_HPP_
 
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 namespace ism
 {

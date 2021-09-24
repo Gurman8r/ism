@@ -22,11 +22,9 @@ namespace ism
 
 		NODISCARD static Internals * get_singleton() noexcept { return singleton; }
 
-		void initialize();
-
-		void finalize();
-
 	public:
+		Batch<hash_t, StringName, TYPE> class_db;
+
 		OBJ dict, builtins, modules, importlib;
 
 		OBJ import_func;
@@ -34,7 +32,9 @@ namespace ism
 		Vector<OBJ> loader_stack;
 
 	public:
-		Batch<hash_t, StringName, TYPE> class_db;
+		void initialize();
+
+		void finalize();
 
 		void add_class(TYPE type);
 

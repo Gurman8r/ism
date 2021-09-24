@@ -2,9 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMP(Mesh, t)
-{
-}
+OBJ_IMPL(Mesh, t) {}
 
 Mesh::~Mesh()
 {

@@ -45,8 +45,8 @@
 #define FWD(expr) \
 	(std::forward<decltype(expr)>(expr))
 
-// static member helper
-#define MEMBER_IMP(expr) \
+// static member variable helper
+#define VAR_IMPL(expr) \
 	decltype(expr) expr
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

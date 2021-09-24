@@ -1,7 +1,7 @@
 #ifndef _ISM_RESOURCE_HPP_
 #define _ISM_RESOURCE_HPP_
 
-#include <core/object/detail/class.hpp>
+#include <core/detail/class.hpp>
 
 namespace ism
 {
@@ -15,7 +15,7 @@ namespace ism
 
 	class ISM_API Resource : public Object
 	{
-		OBJECT_CLASS(Resource, Object);
+		OBJ_CLASS(Resource, Object);
 
 	private:
 		String m_name{}, m_path_cache{};

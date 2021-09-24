@@ -12,7 +12,7 @@ namespace ism
 
 	class ISM_API SceneTree : public MainLoop
 	{
-		OBJECT_CLASS(SceneTree, MainLoop);
+		OBJ_CLASS(SceneTree, MainLoop);
 
 	public:
 		virtual ~SceneTree() override;

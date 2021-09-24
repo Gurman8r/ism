@@ -2,9 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMP(Texture, t)
-{
-}
+OBJ_IMPL(Texture, t) {}
 
 Texture::~Texture()
 {

@@ -134,7 +134,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API RefCount final
+	class ISM_API SafeRefCount final
 	{
 		uint32_t m_count{};
 
