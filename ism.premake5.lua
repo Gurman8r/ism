@@ -14,13 +14,13 @@ location		"%{wks.location}/workspace/%{_ACTION}/%{prj.name}"
 
 dependson{ "assimp", "glew", "glfw", "imgui", }
 
-links{ "assimp", "glew", "glfw", "imgui", }
+links{ "assimp", "glew", "glfw", "imgui" }
 
 defines{
 	"TOOLS_ENABLED",
+	"OPENGL_ENABLED",
+	"OPENGL_LOADER_GLEW",
 	"ISM_API=ISM_API_EXPORT",
-	"ISM_RENDERER_OPENGL",
-	"ISM_OPENGL_LOADER_GLEW",
 	"IMGUI_API=ISM_API_IMPORT",
 }
 

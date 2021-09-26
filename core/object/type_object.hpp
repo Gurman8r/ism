@@ -1,7 +1,7 @@
 #ifndef _ISM_TYPE_OBJECT_HPP_
 #define _ISM_TYPE_OBJECT_HPP_
 
-#include <core/detail/internals.hpp>
+#include <core/object/detail/internals.hpp>
 
 // type
 namespace ism
@@ -36,9 +36,9 @@ namespace ism
 			tp_size = sizeof(T);
 			tp_flags = flags;
 			tp_base = baseof<T>();
-			tp_bind = (bindfunc)[](TYPE type) { return type; };
+			tp_bind = (bindfunc)[](TYPE t) { return t; };
 			tp_del = (delfunc)memdelete<T>;
-			tp_cmp = (cmpfunc)[](OBJ lhs, OBJ rhs) { return util::compare(*lhs, *rhs); };
+			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) { return util::compare(*a, *b); };
 
 			if constexpr (std::is_default_constructible_v<T>)
 			{
@@ -186,14 +186,14 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD hash_t hash(Handle<T> const & o) noexcept
+	template <class T> NODISCARD hash_t hash(Ref<T> const & o) noexcept
 	{
 		if (!o) { return 0; }
 		TYPE t{ typeof(o) };
 		return t->tp_hash ? t->tp_hash(o) : 0;
 	}
 
-	template <class T> NODISCARD ssize_t len(Handle<T> const & o) noexcept
+	template <class T> NODISCARD ssize_t len(Ref<T> const & o) noexcept
 	{
 		if (!o) { return -1; }
 		TYPE t{ typeof(o) };

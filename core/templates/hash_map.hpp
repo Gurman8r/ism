@@ -12,11 +12,11 @@ namespace ism
 
 	// hash_map
 	template <class _Kt, class _Vt, class _Hash = Hash<_Kt>, class _KeyEq = EqualTo<_Kt>
-	> ALIAS(HashMap) typename std::unordered_map<_Kt, _Vt, _Hash, _KeyEq, PolymorphicAllocator<std::pair<_Kt const, _Vt>>>;
+	> ALIAS(HashMap) std::unordered_map<_Kt, _Vt, _Hash, _KeyEq, PolymorphicAllocator<std::pair<_Kt const, _Vt>>>;
 
 	// hash_multimap
 	template <class _Kt, class _Vt, class _Hash = Hash<_Kt>, class _KeyEq = EqualTo<_Kt>
-	> ALIAS(HashMultimap) typename std::unordered_multimap<_Kt, _Vt, _Hash, _KeyEq, PolymorphicAllocator<std::pair<_Kt const, _Vt>>>;
+	> ALIAS(HashMultimap) std::unordered_multimap<_Kt, _Vt, _Hash, _KeyEq, PolymorphicAllocator<std::pair<_Kt const, _Vt>>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

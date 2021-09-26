@@ -41,8 +41,7 @@ namespace ism
 				attr::scope(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			add_object(name, cf, true);
-			return (*this);
+			return add_object(name, cf, true), (*this);
 		}
 
 		template <class Value = OBJ

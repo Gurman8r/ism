@@ -210,10 +210,6 @@ namespace ism::impl
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// default constructible
-#define DEFAULT(T)										\
-	T() noexcept = default;								\
-
 // copy constructible
 #define COPYABLE(T)										\
 	T(T const &) = default;								\
@@ -231,15 +227,11 @@ namespace ism::impl
 
 // default copy move constructible
 #define DEFAULT_COPYABLE_MOVABLE(T)						\
-	DEFAULT(T)											\
+	T() noexcept = default;								\
 	COPYABLE(T)											\
 	MOVABLE(T)											\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// constexpr default constructible
-#define CONSTEXPR_DEFAULT(T)							\
-	constexpr T() noexcept = default;					\
 
 // constexpr copy constructible
 #define CONSTEXPR_COPYABLE(T)							\
@@ -258,7 +250,7 @@ namespace ism::impl
 
 // constexpr default copy move constructible
 #define CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(T)			\
-	CONSTEXPR_DEFAULT(T)								\
+	constexpr T() noexcept = default;					\
 	CONSTEXPR_COPYABLE(T)								\
 	CONSTEXPR_MOVABLE(T)								\
 

@@ -12,9 +12,9 @@ namespace ism
 		static Internals * singleton;
 
 	public:
-		Internals() noexcept { singleton = this; initialize(); }
+		Internals();
 
-		~Internals() noexcept { finalize(); }
+		~Internals();
 
 		NON_COPYABLE(Internals);
 
@@ -32,13 +32,9 @@ namespace ism
 		Vector<OBJ> loader_stack;
 
 	public:
-		void initialize();
-
-		void finalize();
-
 		void add_class(TYPE type);
 
-		template <class T> auto bind_class() -> Internals & { T::initialize_class(); return (*this); }
+		template <class T> auto & bind_class() { T::initialize_class(); return (*this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

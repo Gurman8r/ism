@@ -112,7 +112,7 @@ namespace ism
 
 	template <class T, class SFINAE = void> struct type_caster : type_caster_base<T> {};
 
-	template <class T> ALIAS(make_caster) typename type_caster<mpl::intrinsic_t<T>>;
+	template <class T> ALIAS(make_caster) type_caster<mpl::intrinsic_t<T>>;
 
 	template <class T> auto cast_op(make_caster<T> & caster) -> typename make_caster<T>::template cast_op_type<T>
 	{

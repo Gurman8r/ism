@@ -151,7 +151,7 @@ namespace ism::mpl
 
 	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...) const> { using type = R(A...); };
 
-	template <class ... Ts> ALIAS(remove_class_t) typename remove_class<Ts...>::type;
+	template <class ... Ts> ALIAS(remove_class_t) remove_class<Ts...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -163,7 +163,7 @@ namespace ism::mpl
 	template <class T> struct intrinsic_type<T &&> { using type = typename intrinsic_type<T>::type; };
 	template <class T, size_t N> struct intrinsic_type<T const [N]> { using type = typename intrinsic_type<T>::type; };
 	template <class T, size_t N> struct intrinsic_type<T[N]> { using type = typename intrinsic_type<T>::type; };
-	template <class T> ALIAS(intrinsic_t) typename intrinsic_type<T>::type;
+	template <class T> ALIAS(intrinsic_t) intrinsic_type<T>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -556,7 +556,7 @@ namespace ism::mpl
 	};
 
 	template <class ... Ts
-	> ALIAS(concat) typename impl_concat<Ts...>::type;
+	> ALIAS(concat) impl_concat<Ts...>::type;
 
 	template <class ... Ts
 	> struct impl_concat<type_list<Ts...>>
@@ -585,7 +585,7 @@ namespace ism::mpl
 	};
 
 	template <template <class> class Pr, class Ls
-	> ALIAS(remap) typename impl_remap<Pr, Ls>::type;
+	> ALIAS(remap) impl_remap<Pr, Ls>::type;
 
 	template <template <class> class Pr, class T, class ... Ts
 	> struct impl_remap<Pr, type_list<T, Ts...>>
@@ -615,7 +615,7 @@ namespace ism::mpl
 
 	template<
 		template <class...> class To, class T
-	> ALIAS(rename) typename impl_rename<To, T>::type;
+	> ALIAS(rename) impl_rename<To, T>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -674,10 +674,10 @@ namespace ism::mpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class Ls
-	> ALIAS(tuple) typename rename<std::tuple, Ls>;
+	> ALIAS(tuple) rename<std::tuple, Ls>;
 	
 	template <class Ls
-	> ALIAS(tag_tuple) typename tuple<remap<type_tag, Ls>>;
+	> ALIAS(tag_tuple) tuple<remap<type_tag, Ls>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -723,15 +723,15 @@ namespace ism::mpl
 	template <class Ls
 	> constexpr size_t size() noexcept { return Ls::size; }
 
-	template <class Ls, class T> ALIAS(push_back) typename concat<Ls, type_list<T>>;
+	template <class Ls, class T> ALIAS(push_back) concat<Ls, type_list<T>>;
 
-	template <class Ls, class T> ALIAS(push_front) typename concat<type_list<T>, Ls>;
+	template <class Ls, class T> ALIAS(push_front) concat<type_list<T>, Ls>;
 
-	template <size_t I, class Ls> ALIAS(nth) typename std::tuple_element_t<I, tuple<Ls>>;
+	template <size_t I, class Ls> ALIAS(nth) std::tuple_element_t<I, tuple<Ls>>;
 
-	template <class Ls> ALIAS(head) typename nth<0, Ls>;
+	template <class Ls> ALIAS(head) nth<0, Ls>;
 
-	template <class Ls> ALIAS(tail) typename nth<size<Ls>() - 1, Ls>;
+	template <class Ls> ALIAS(tail) nth<size<Ls>() - 1, Ls>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -754,10 +754,10 @@ namespace ism::mpl
 	};
 
 	template <size_t N, class T
-	> ALIAS(repeat) typename impl_repeat<N, T>::type;
+	> ALIAS(repeat) impl_repeat<N, T>::type;
 
 	template <class T, size_t N
-	> ALIAS(array) typename tuple<repeat<N, T>>;
+	> ALIAS(array) tuple<repeat<N, T>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -774,7 +774,7 @@ namespace ism::mpl
 	};
 
 	template <template <class> class Pr, class Ls
-	> ALIAS(filter) typename impl_filter<Pr, Ls>::type;
+	> ALIAS(filter) impl_filter<Pr, Ls>::type;
 
 	template <template <class> class Pr, class T, class ... Ts
 	> struct impl_filter<Pr, type_list<T, Ts...>>

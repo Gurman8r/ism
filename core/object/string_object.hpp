@@ -42,15 +42,11 @@ namespace ism
 
 		StringObject(std::initializer_list<char> init) : StringObject{} { m_string = init; }
 
-		template <class T> StringObject(Handle<T> const & value) : StringObject{}
+		template <class T> StringObject(Ref<T> const & value) : StringObject{}
 		{
-			if constexpr (std::is_same_v<T, StringObject>)
+			if (STR::check_(value))
 			{
-				m_string = (storage_type)value;
-			}
-			else if (STR::check_(value))
-			{
-				m_string = (storage_type)STR(value);
+				m_string = (storage_type)(STR)value;
 			}
 			else if (TYPE t{ typeof(value) }; t->tp_str)
 			{
@@ -134,7 +130,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD STR repr(Handle<T> const & o) noexcept
+	template <class T> NODISCARD STR repr(Ref<T> const & o) noexcept
 	{
 		if (!o) { return nullptr; }
 

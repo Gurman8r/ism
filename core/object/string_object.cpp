@@ -1,5 +1,5 @@
 #include <core/object/string_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -31,9 +31,9 @@ OBJ_IMPL(StringObject, t, TypeFlags_Str_Subclass)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(StringObject, c)
+	t.tp_bind = CLASS_BINDER(StringObject, t)
 	{
-		return c
+		return t
 
 			.def("empty", &StringObject::empty)
 

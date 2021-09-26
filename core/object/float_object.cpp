@@ -1,5 +1,5 @@
 #include <core/object/float_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -25,9 +25,9 @@ OBJ_IMPL(FloatObject, t, TypeFlags_Float_Subclass)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(FloatObject, c)
+	t.tp_bind = CLASS_BINDER(FloatObject, t)
 	{
-		return c;
+		return t;
 	};
 }
 

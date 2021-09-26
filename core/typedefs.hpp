@@ -3,8 +3,21 @@
 
 #include <core/version.hpp>
 
-// typedef
-#define ALIAS(type)	using type = 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// standardized typedef
+#define ALIAS(type)	using type = typename
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// declare enum
+#define DECL_ENUM_EX(m_name, m_base) \
+		ALIAS(m_name) m_base; \
+		enum CAT(m_name, _) : m_name
+
+// declare enum default
+#define DECL_ENUM(m_name) \
+		DECL_ENUM_EX(m_name, int32_t)
 
 // declare handle
 #define DECL_POINTER(name)					\
@@ -16,8 +29,8 @@
 	struct type { struct _Tag {}; constexpr explicit type(_Tag) {} }; \
 	inline constexpr type var{ type::_Tag{} }; \
 
-// strong typedef
-#define STRONG_TYPEDEF(m_to, m_from)																			\
+// declare strong typedef
+#define DECL_STRONG(m_to, m_from)																				\
 class m_to final {																								\
 private:																										\
 	m_from value;																								\
@@ -37,7 +50,9 @@ public:																											\
 	inline constexpr decltype(auto) operator>(m_to const & other) noexcept { return value > other.value; }		\
 	inline constexpr decltype(auto) operator<=(m_to const & other) noexcept { return value <= other.value; }	\
 	inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
-}
+}																												\
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 namespace ism
 {

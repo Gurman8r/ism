@@ -12,7 +12,7 @@ namespace ism
 #if 1
 	// set
 	template <class _Ty, class _Pr = Less<_Ty>
-	> ALIAS(Set) typename std::set<_Ty, _Pr, PolymorphicAllocator<_Ty>>;
+	> ALIAS(Set) std::set<_Ty, _Pr, PolymorphicAllocator<_Ty>>;
 #else
 	// set
 	template <class _Ty, class _Pr = Less<_Ty>

@@ -12,7 +12,7 @@ namespace ism
 #if 1
 	// map
 	template <class _Kt, class _Vt, class _Pr = Less<_Kt>
-	> ALIAS(Map) typename std::map<_Kt, _Vt, _Pr, PolymorphicAllocator<std::pair<_Kt, _Vt>>>;
+	> ALIAS(Map) std::map<_Kt, _Vt, _Pr, PolymorphicAllocator<std::pair<_Kt, _Vt>>>;
 #else
 	// map
 	template <class _Kt, class _Vt, class _Pr = Less<_Kt>

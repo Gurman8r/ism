@@ -12,11 +12,11 @@ namespace ism
 
 	// hash_set
 	template <class _Ty, class _Hash = Hash<_Ty>, class _KeyEq = EqualTo<_Ty>
-	> ALIAS(HashSet) typename std::unordered_set<_Ty, _Hash, _KeyEq, PolymorphicAllocator<_Ty>>;
+	> ALIAS(HashSet) std::unordered_set<_Ty, _Hash, _KeyEq, PolymorphicAllocator<_Ty>>;
 
 	// hash_multiset
 	template <class _Ty, class _Hash = Hash<_Ty>, class _KeyEq = EqualTo<_Ty>
-	> ALIAS(HashMultiset) typename std::unordered_multiset<_Ty, _Hash, _KeyEq, PolymorphicAllocator<_Ty>>;
+	> ALIAS(HashMultiset) std::unordered_multiset<_Ty, _Hash, _KeyEq, PolymorphicAllocator<_Ty>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

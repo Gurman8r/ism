@@ -18,6 +18,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// operating system
 	class ISM_API OS
 	{
 	private:

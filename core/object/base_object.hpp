@@ -1,15 +1,14 @@
 #ifndef _ISM_BASE_OBJECT_HPP_
 #define _ISM_BASE_OBJECT_HPP_
 
-#include <core/detail/common.hpp>
+#include <core/object/detail/common.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object common
+// object class
 #define OBJ_CLASS(m_class, m_inherits)										\
 private:																	\
 	friend class ism::Internals;											\
-																			\
 	friend class ism::Handle<m_class>;										\
 																			\
 	static ism::TypeObject ob_class_type;									\
@@ -52,7 +51,7 @@ private:
 
 // "_obj_imp_class_"
 #define __OBJ_IMPL__(m_class) \
-	CAT(CAT(_obj_imp_, m_class), _)
+	CAT(CAT(_obj_impl_, m_class), _)
 
 // implement object class
 #define OBJ_IMPL(m_class, m_var, ...)															\
@@ -61,7 +60,7 @@ private:
 	namespace ism { static void __OBJ_IMPL__(m_class)(ism::TypeObject & m_var); }				\
 																								\
 	/* construct type */																		\
-	VAR_IMPL(m_class::ob_class_type) =														\
+	VAR_IMPL(m_class::ob_class_type) =															\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
 	+ ism::__OBJ_IMPL__(m_class);																\
 																								\
@@ -187,9 +186,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline bool ism::predelete_handler(Object * value) { return value->_predelete(); }
+	inline bool predelete_handler(Object * value) { return value->_predelete(); }
 
-	inline void ism::postinitialize_handler(Object * value) { value->_postinitialize(); }
+	inline void postinitialize_handler(Object * value) { value->_postinitialize(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

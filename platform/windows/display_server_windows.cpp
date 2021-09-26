@@ -62,7 +62,7 @@ Window * DisplayServerWindows::create_window(SceneTree * tree, Node * parent, Wi
 	glfwWindowHint(GLFW_VISIBLE, settings.hints & WindowHints_Visible);
 
 	// monitor hints
-	glfwWindowHint(GLFW_REFRESH_RATE, settings.video.rate);
+	glfwWindowHint(GLFW_REFRESH_RATE, settings.video.refresh_rate);
 
 	// framebuffer hints
 	glfwWindowHint(GLFW_RED_BITS, (int32_t)settings.video.bpp[0]);
@@ -588,6 +588,18 @@ window_scroll_callback DisplayServerWindows::window_set_scroll_callback(WindowID
 	return reinterpret_cast<window_scroll_callback>(
 		glfwSetScrollCallback((GLFWwindow *)id,
 			reinterpret_cast<GLFWscrollfun>(value)));
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+VideoMode const & DisplayServerWindows::get_desktop_video_mode() const
+{
+	RETURN_STATIC(VideoMode{});
+}
+
+Vector<VideoMode> const & DisplayServerWindows::get_fullscreen_video_modes() const
+{
+	RETURN_STATIC(Vector<VideoMode>{});
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

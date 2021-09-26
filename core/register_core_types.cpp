@@ -1,5 +1,5 @@
 #include <core/register_core_types.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 using namespace ism;

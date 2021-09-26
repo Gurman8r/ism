@@ -13,7 +13,7 @@ namespace ism
 
 	constexpr nullopt_t nullopt{ std::nullopt };
 
-	template <class T> ALIAS(Optional) typename std::optional<T>;
+	template <class T> ALIAS(Optional) std::optional<T>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

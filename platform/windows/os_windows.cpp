@@ -1,4 +1,5 @@
 #include <platform/windows/os_windows.hpp>
+#include <servers/display_server.hpp>
 
 using namespace ism;
 

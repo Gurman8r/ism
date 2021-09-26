@@ -1,5 +1,5 @@
 #include <core/object/type_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -50,9 +50,9 @@ OBJ_IMPL(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlag
 		return nullptr;
 	};
 
-	t.tp_bind = CLASS_BINDER(TypeObject, c)
+	t.tp_bind = CLASS_BINDER(TypeObject, t)
 	{
-		return c
+		return t
 
 			.def_static("__instancecheck__", [](OBJ const & obj, OBJ const & type) { return isinstance(obj, type); })
 
@@ -74,11 +74,11 @@ OBJ_IMPL(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlag
 
 			.def_readonly("__size__", &TypeObject::tp_size)
 
+			.def_readonly("__vectorcalloffset__", &TypeObject::tp_vectorcalloffset)
+
 			.def_property_readonly("__text_signature__", [](TypeObject const & self) { return STR(/* TODO */); })
 
 			.def_property_readonly("__qualname__", [](TypeObject const & self) { return STR(/* TODO */); })
-
-			.def_readonly("__vectorcalloffset__", &TypeObject::tp_vectorcalloffset)
 
 			;
 	};

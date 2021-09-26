@@ -1,5 +1,5 @@
 #include <core/object/cppfunction_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -16,14 +16,14 @@ OBJ_IMPL(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | T
 		return !obj ? self : METHOD({ self, obj, ism::method_vectorcall });
 	};
 
-	t.tp_bind = CLASS_BINDER(CppFunctionObject, c)
+	t.tp_bind = CLASS_BINDER(CppFunctionObject, t)
 	{
-		c.add_object("__name__", PROPERTY({
-			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(c) }),
-			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(c) }),
+		t.add_object("__name__", PROPERTY({
+			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(t) }),
+			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(t) }),
 			}));
 
-		return c
+		return t
 
 			.def_property("__text_signature__", [](CppFunctionObject const & self) { return self->signature; }, [](CppFunctionObject & self, String const & value) { self->signature = value; })
 
@@ -130,16 +130,11 @@ OBJ ism::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 		// copy positional arguments
 		for (; num_copied < num_to_copy; ++num_copied)
 		{
-			ArgumentRecord const * arg_rec{ num_copied < func.args.size() ? &func.args[num_copied] : nullptr };
+			ArgumentRecord const * arg{};
 
-			OBJ arg{ argv[num_copied] };
+			if (num_copied < func.args.size()) { arg = &func.args[num_copied]; }
 
-			if (arg_rec && !arg_rec->none && arg.is_null())
-			{
-				//FATAL("BAD NULL ARGUMENT");
-			}
-
-			call.args.push_back(arg, arg_rec ? arg_rec->convert : false);
+			call.args.push_back(argv[num_copied], arg && arg->convert);
 		}
 
 		// fill in missing arguments
@@ -147,11 +142,11 @@ OBJ ism::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 		{
 			for (; num_copied < num_args; ++num_copied)
 			{
-				ArgumentRecord const & arg_rec{ func.args[num_copied] };
+				ArgumentRecord const & arg{ func.args[num_copied] };
 
-				if (!arg_rec.value) { break; }
+				if (!arg.value) { break; }
 
-				else { call.args.push_back(arg_rec.value, arg_rec.convert); }
+				else { call.args.push_back(arg.value, arg.convert); }
 			}
 
 			if (num_copied < num_args)

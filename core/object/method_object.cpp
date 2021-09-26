@@ -1,5 +1,5 @@
 #include <core/object/method_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -13,9 +13,9 @@ OBJ_IMPL(MethodObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFl
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) { return self; };
 
-	t.tp_bind = CLASS_BINDER(MethodObject, c)
+	t.tp_bind = CLASS_BINDER(MethodObject, t)
 	{
-		return c;
+		return t;
 	};
 }
 

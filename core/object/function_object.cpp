@@ -1,5 +1,5 @@
 #include <core/object/function_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -11,9 +11,9 @@ OBJ_IMPL(FunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | Type
 
 	t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-	t.tp_bind = CLASS_BINDER(FunctionObject, c)
+	t.tp_bind = CLASS_BINDER(FunctionObject, t)
 	{
-		return c
+		return t
 
 			.def_readwrite("__dict__", &FunctionObject::m_dict)
 

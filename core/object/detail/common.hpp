@@ -74,7 +74,7 @@ namespace ism
 	template <class T> class Ref;
 	template <class T> class Handle;
 
-	ALIAS(OBJ)				Handle<Object>;
+	ALIAS(OBJ)				Ref<Object>;
 	ALIAS(TYPE)				Handle<TypeObject>;
 	ALIAS(INT)				Handle<IntObject>;
 	ALIAS(FLT)				Handle<FloatObject>;
@@ -98,13 +98,6 @@ namespace ism
 	}
 	template <class I> ALIAS(AttrAccessor) Accessor<accessor_policies::Attr<I>>;
 	template <class I> ALIAS(ItemAccessor) Accessor<accessor_policies::Item<I>>;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class StackFrame;
-	class InterpreterState;
-	class RuntimeState;
-	class ThreadState;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -498,6 +491,8 @@ namespace ism
 
 		template <class U> NODISCARD U cast() &&; // cast.hpp
 
+		NODISCARD static auto get_type_static() noexcept { return value_type::get_type_static(); }
+
 	public:
 		template <class ... Args
 		> void instance(Args && ... args)
@@ -548,7 +543,7 @@ namespace ism
 
 		NODISCARD bool operator==(value_type const * value) const noexcept { return (m_ptr == value) || ((m_ptr && value) && m_ptr->equal_to(*value)); }
 
-		NODISCARD bool operator!=(value_type const * value) const noexcept { return ((m_ptr && value) && m_ptr->not_equal_to(*value)) || (m_ptr != value); }
+		NODISCARD bool operator!=(value_type const * value) const noexcept { return (m_ptr != value) && ((m_ptr && value) && m_ptr->not_equal_to(*value)); }
 		
 		NODISCARD bool operator==(Ref const & value) const noexcept { return operator==(*value); }
 		
@@ -585,12 +580,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// handle common
+	// handle class
 #define HANDLE_CLASS(m_class, m_check)																\
 public:																								\
 	using value_type = typename m_class;															\
-																									\
-	NODISCARD static TYPE get_type_static() noexcept { return m_class::get_type_static(); }			\
 																									\
 	NODISCARD static bool check_(OBJ const & o) { return o && (bool)(m_check(o)); }					\
 																									\
@@ -683,7 +676,7 @@ namespace ism
 
 		NODISCARD auto ptr() const { return const_cast<Object *>(get_cache().ptr()); }
 
-		template <class T> NODISCARD operator Handle<T>() const { return get_cache(); }
+		template <class T> NODISCARD operator Ref<T>() const { return get_cache(); }
 
 		template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
 

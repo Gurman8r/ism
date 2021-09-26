@@ -13,7 +13,7 @@ namespace ism
 	> class CLASS_ : public TYPE
 	{
 	public:
-		using holder_type = std::conditional_t<is_base_object_v<_type>, Handle<_type>, _type>;
+		using holder_type = std::conditional_t<is_base_object_v<_type>, Ref<_type>, _type>;
 
 		using value_type = std::conditional_t<is_base_object_v<_type>, _type, typename holder_type::value_type>;
 		
@@ -44,8 +44,7 @@ namespace ism
 				attr::is_method(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			add_object(cf.name(), cf);
-			return (*this);
+			return add_object(cf.name(), cf), (*this);
 		}
 
 		template <class Func, class ... Extra
@@ -57,8 +56,7 @@ namespace ism
 				attr::scope(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
-			add_object(cf.name(), cf);
-			return (*this);
+			return add_object(cf.name(), cf), (*this);
 		}
 
 		template <class C, class D, class ... Extra
@@ -148,9 +146,7 @@ namespace ism
 	
 			if (fset) { attr::process_attributes<Extra...>::init(***fset, FWD(extra)...); }
 
-			add_object(name, PROPERTY({ fget, fset }));
-			
-			return (*this);
+			return add_object(name, PROPERTY({ fget, fset })), (*this);
 		}
 	};
 

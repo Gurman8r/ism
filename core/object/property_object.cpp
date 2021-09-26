@@ -1,5 +1,5 @@
 #include <core/object/property_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -17,9 +17,9 @@ OBJ_IMPL(PropertyObject, t, TypeFlags_BaseType | TypeFlags_MethodDescriptor)
 		return PROPERTY(self).set(obj, value);
 	};
 
-	t.tp_bind = CLASS_BINDER(PropertyObject, c)
+	t.tp_bind = CLASS_BINDER(PropertyObject, t)
 	{
-		return c;
+		return t;
 	};
 }
 

@@ -1,5 +1,5 @@
 #include <core/object/base_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -39,9 +39,9 @@ OBJ_IMPL(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
 
-	t.tp_bind = CLASS_BINDER(Object, c)
+	t.tp_bind = CLASS_BINDER(Object, t)
 	{
-		return c;
+		return t;
 	};
 }
 

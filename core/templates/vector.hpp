@@ -12,11 +12,11 @@ namespace ism
 
 	// vector
 	template <class _Ty
-	> ALIAS(Vector) typename std::vector<_Ty, PolymorphicAllocator<_Ty>>;
+	> ALIAS(Vector) std::vector<_Ty, PolymorphicAllocator<_Ty>>;
 
 	// forward_list
 	template <class _Ty
-	> ALIAS(ForwardList) typename std::forward_list<_Ty, PolymorphicAllocator<_Ty>>;
+	> ALIAS(ForwardList) std::forward_list<_Ty, PolymorphicAllocator<_Ty>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

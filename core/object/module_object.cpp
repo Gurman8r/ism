@@ -1,5 +1,5 @@
 #include <core/object/module_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -28,9 +28,9 @@ OBJ_IMPL(ModuleObject, t, TypeFlags_BaseType)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(ModuleObject, c)
+	t.tp_bind = CLASS_BINDER(ModuleObject, t)
 	{
-		return c
+		return t
 
 			.def("__contains__", [](ModuleObject const & self, OBJ const & value) { return self.m_dict.contains(value); })
 

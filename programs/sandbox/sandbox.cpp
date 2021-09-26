@@ -33,7 +33,7 @@ namespace ism
 
 	void test_main()
 	{
-		create_extension_module("__main__")
+		CHECK(create_extension_module("__main__"))
 			.def("hello", hello)
 			.def("say", say)
 			.def("get_int", get_int)
@@ -42,7 +42,6 @@ namespace ism
 			.def("get_string", get_string)
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			.def("pass_ptr", [](void * a) { return a; })
-
 			.def("test_static", &Test::test_static)
 			;
 
@@ -74,12 +73,11 @@ namespace ism
 		MAIN_PRINT("%s\n", STR(typeof(d).name()).c_str());
 
 		MAIN_PRINT("\n");
-		MAIN_PAUSE();
 	}
 
 	void test_scene()
 	{
-		SceneTree * scene{ (SceneTree *)(get_os().get_main_loop()) };
+		SceneTree * scene{ (SceneTree *)get_os().get_main_loop() };
 		scene->initialize(); SCOPE_EXIT(&) { scene->finalize(); };
 
 		Window * window{ scene->get_root() };
@@ -89,7 +87,7 @@ namespace ism
 			Timer const loop_timer{ true };
 			window->poll_events();
 
-			StringStream title;
+			StringStream title{};
 			title << "ism_api @ " << (delta_time.count() * 1000.f) << " ms/frame";
 			window->set_title(title.str());
 
@@ -101,7 +99,7 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-extern OS_IMPL(void * user);
+extern OS_IMPL(void *);
 
 int main(int argc, char * argv[])
 {
@@ -116,7 +114,8 @@ int main(int argc, char * argv[])
 	VERIFY(Main::start());
 
 	test_main();
-	//test_scene();
+	test_scene();
+	//MAIN_PAUSE();
 
 	Main::cleanup();
 

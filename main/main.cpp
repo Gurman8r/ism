@@ -13,8 +13,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <servers/camera_server.hpp>
-
 #include <servers/rendering/rendering_server_default.hpp>
 
 #if TOOLS_ENABLED
@@ -26,7 +24,7 @@
 #define DISPLAY_SERVER_DEFAULT DisplayServerWindows
 #endif
 
-#if ISM_RENDERER_OPENGL
+#if OPENGL_ENABLED
 #include <drivers/opengl/rendering_device_opengl.hpp>
 #define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
 #endif
@@ -41,7 +39,6 @@ VAR_IMPL(Main::g_iterating) {};
 
 static Input * g_input{};
 static Internals * g_internals{};
-static CameraServer * g_camera_server{};
 static DisplayServer * g_display_server{};
 static RenderingServer * g_rendering_server{};
 
@@ -77,7 +74,7 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_module_types();
 
-	g_camera_server = CameraServer::create();
+	//g_camera_server = CameraServer::create();
 	
 	register_driver_types();
 	
@@ -140,7 +137,7 @@ void Main::cleanup()
 	unregister_server_types();
 
 	//memdelete(g_audio_server);
-	memdelete(g_camera_server);
+	//memdelete(g_camera_server);
 
 	get_os().finalize();
 

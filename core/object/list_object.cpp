@@ -1,5 +1,5 @@
 #include <core/object/list_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -21,9 +21,9 @@ OBJ_IMPL(ListObject, t, TypeFlags_List_Subclass)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(ListObject, c)
+	t.tp_bind = CLASS_BINDER(ListObject, t)
 	{
-		return c
+		return t
 
 			.def("__contains__", &ListObject::contains<OBJ const &>)
 

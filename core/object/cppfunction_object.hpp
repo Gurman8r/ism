@@ -1,7 +1,7 @@
 #ifndef _ISM_CPPFUNCTION_OBJECT_HPP_
 #define _ISM_CPPFUNCTION_OBJECT_HPP_
 
-#include <core/detail/init.hpp>
+#include <core/object/detail/init.hpp>
 
 // cppfunction
 namespace ism

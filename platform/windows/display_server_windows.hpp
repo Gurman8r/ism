@@ -18,6 +18,7 @@ namespace ism
 
 		~DisplayServerWindows();
 
+	public:
 		NODISCARD virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) override;
 
 		virtual void poll_events() override;
@@ -199,6 +200,11 @@ namespace ism
 		virtual window_resize_callback window_set_resize_callback(WindowID id, window_resize_callback value) override;
 
 		virtual window_scroll_callback window_set_scroll_callback(WindowID id, window_scroll_callback value) override;
+
+	public:
+		NODISCARD virtual VideoMode const & get_desktop_video_mode() const override;
+
+		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
 	};
 }
 

@@ -13,7 +13,7 @@ namespace ism
 
 	// basic string
 	template <class Ch = char
-	> ALIAS(BasicString) typename std::basic_string<Ch, std::char_traits<Ch>, PolymorphicAllocator<Ch>>;
+	> ALIAS(BasicString) std::basic_string<Ch, std::char_traits<Ch>, PolymorphicAllocator<Ch>>;
 
 	// string
 	ALIAS(String) BasicString<char>;
@@ -25,7 +25,7 @@ namespace ism
 
 	// basic string stream
 	template <class Ch = char
-	> ALIAS(BasicStringStream) typename std::basic_stringstream<Ch, std::char_traits<Ch>, PolymorphicAllocator<Ch>>;
+	> ALIAS(BasicStringStream) std::basic_stringstream<Ch, std::char_traits<Ch>, PolymorphicAllocator<Ch>>;
 
 	// string stream
 	ALIAS(StringStream) BasicStringStream<char>;

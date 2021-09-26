@@ -1,7 +1,7 @@
 #ifndef _ISM_ATTR_HPP_
 #define _ISM_ATTR_HPP_
 
-#include <core/detail/call.hpp>
+#include <core/object/detail/call.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -114,7 +114,7 @@ namespace ism::attr
 
 	template <class T> struct call_guard<T>
 	{
-		static_assert(std::is_default_constructorible<T>::value, "The guard type must be default constructible");
+		static_assert(std::is_default_constructible_v<T>, "The guard type must be default constructible");
 
 		using type = T;
 	};

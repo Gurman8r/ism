@@ -1,7 +1,7 @@
 #ifndef _ISM_INIT_HPP_
 #define _ISM_INIT_HPP_
 
-#include <core/detail/attr.hpp>
+#include <core/object/detail/attr.hpp>
 
 namespace ism::initimpl
 {
@@ -20,7 +20,8 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__new__", [](Args ... args)
+			STR_IDENTIFIER(__new__);
+			return c.def(&ID___new__, [](Args ... args)
 			{
 				return Holder<Class>{ Cpp<Class>{ args... } };
 			}
@@ -30,7 +31,8 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__new__", [](Args ... args)
+			STR_IDENTIFIER(__new__);
+			return c.def(&ID___new__, [](Args ... args)
 			{
 				return OBJ(/* TODO */);
 			}
@@ -51,7 +53,8 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__new__", [func = std::move(class_factory)](Args ... args)
+			STR_IDENTIFIER(__new__);
+			return c.def(&ID___new__, [func = std::move(class_factory)](Args ... args)
 			{
 				return Holder<Class>{ func(args...) };
 			}
@@ -61,7 +64,8 @@ namespace ism::initimpl
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
-			return c.def("__new__", [func = std::move(class_factory)](Args ... args)
+			STR_IDENTIFIER(__new__);
+			return c.def(&ID___new__, [func = std::move(class_factory)](Args ... args)
 			{
 				return OBJ(/* TODO */);
 			}

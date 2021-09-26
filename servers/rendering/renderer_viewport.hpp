@@ -1,8 +1,0 @@
-#ifndef _ISM_RENDERER_VIEWPORT_HPP_
-#define _ISM_RENDERER_VIEWPORT_HPP_
-
-namespace ism
-{
-}
-
-#endif // !_ISM_RENDERER_VIEWPORT_HPP_

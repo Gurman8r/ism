@@ -1,6 +1,7 @@
 #ifndef _ISM_DISPLAY_SERVER_HPP_
 #define _ISM_DISPLAY_SERVER_HPP_
 
+#include <core/os/os.hpp>
 #include <core/input/input.hpp>
 
 namespace ism
@@ -115,16 +116,12 @@ namespace ism
 	// video mode
 	struct NODISCARD VideoMode
 	{
-		Vec2	size	{ 1280, 720 }	; // resolution
-		Vec4	bpp		{ 8, 8, 8, 8 }	; // bits-per-pixel
-		int32_t	rate	{ -1 }			; // refresh rate
+		Vec2 size{ 1280, 720 };
 
-		DEFAULT_COPYABLE_MOVABLE(VideoMode);
+		Vec4 bpp{ 8, 8, 8, 8 };
+
+		int32_t refresh_rate{ -1 };
 	};
-
-	ISM_API_FUNC(VideoMode const &) get_desktop_video_mode();
-
-	ISM_API_FUNC(Vector<VideoMode> const &) get_fullscreen_video_modes();
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -161,6 +158,7 @@ namespace ism
 
 		NODISCARD static DisplayServer * get_singleton() noexcept { return singleton; }
 
+	public:
 		NODISCARD virtual Window * create_window(SceneTree * tree, Node * parent, WindowSettings const & settings) = 0;
 
 		virtual void poll_events() = 0;
@@ -342,6 +340,11 @@ namespace ism
 		virtual window_resize_callback window_set_resize_callback(WindowID id, window_resize_callback value) = 0;
 
 		virtual window_scroll_callback window_set_scroll_callback(WindowID id, window_scroll_callback value) = 0;
+
+	public:
+		NODISCARD virtual VideoMode const & get_desktop_video_mode() const = 0;
+
+		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

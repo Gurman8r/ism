@@ -1,5 +1,5 @@
 #include <core/object/capsule_object.hpp>
-#include <core/detail/class.hpp>
+#include <core/object/detail/class.hpp>
 
 using namespace ism;
 
@@ -7,9 +7,9 @@ using namespace ism;
 
 OBJ_IMPL(CapsuleObject, t, TypeFlags_BaseType)
 {
-	t.tp_bind = CLASS_BINDER(CapsuleObject, c)
+	t.tp_bind = CLASS_BINDER(CapsuleObject, t)
 	{
-		return c;
+		return t;
 	};
 }
 

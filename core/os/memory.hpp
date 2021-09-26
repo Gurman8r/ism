@@ -108,7 +108,7 @@ namespace ism
 
 	// Polymorphic Allocator
 	template <class T = byte
-	> ALIAS(PolymorphicAllocator) typename _STD pmr::polymorphic_allocator<T>;
+	> ALIAS(PolymorphicAllocator) _STD pmr::polymorphic_allocator<T>;
 
 	// Default Allocator
 	class DefaultAllocator final
@@ -165,7 +165,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> ALIAS(Shared) typename std::shared_ptr<T>;
+	> ALIAS(Shared) std::shared_ptr<T>;
 
 	template <class T, class ... Args
 	> NODISCARD auto make_shared(Args && ... args)
@@ -176,7 +176,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class Dx = DefaultDelete<T>
-	> ALIAS(Unique) typename std::unique_ptr<T, Dx>; // unique pointer
+	> ALIAS(Unique) std::unique_ptr<T, Dx>; // unique pointer
 
 	template <class T, class Dx = DefaultDelete<T>
 	> NODISCARD auto make_scope() -> Unique<T, Dx>
@@ -199,7 +199,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> ALIAS(Scary) typename std::unique_ptr<T, NoDelete>; // non-deleting unique-pointer
+	> ALIAS(Scary) std::unique_ptr<T, NoDelete>; // non-deleting unique-pointer
 
 	template <class T, class ... Args
 	> NODISCARD auto make_scary(Args && ... args) -> Scary<T>

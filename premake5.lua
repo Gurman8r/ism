@@ -95,8 +95,11 @@ libdirs{
 links{ "opengl32", "freetype", "assimp", "IrrXML", "zlibstatic", }
 filter{ "configurations:Debug" } links{ "glew32d", "python39_d", }
 filter{ "configurations:Release" } links{ "glew32", "python39", }
-filter{ "system:windows", "configurations:Debug" } linkoptions{ "/NODEFAULTLIB:MSVCRT.lib", "/NODEFAULTLIB:LIBCMT.lib", "/NODEFAULTLIB:LIBCMTD.lib" }
-filter{ "system:windows", "configurations:Release" } linkoptions{ "/NODEFAULTLIB:LIBCMT.lib" }
+filter{}
+
+filter{ "system:windows" } links{ "dwmapi", }
+filter{ "configurations:Debug" } linkoptions{ "/NODEFAULTLIB:MSVCRT.lib", "/NODEFAULTLIB:LIBCMT.lib", "/NODEFAULTLIB:LIBCMTD.lib" }
+filter{ "configurations:Release" } linkoptions{ "/NODEFAULTLIB:LIBCMT.lib" }
 filter{}
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

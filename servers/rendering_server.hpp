@@ -2,6 +2,7 @@
 #define _ISM_RENDERING_SERVER_HPP_
 
 #include <core/io/image.hpp>
+#include <servers/rendering/rendering_device.hpp>
 
 namespace ism
 {
