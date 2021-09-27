@@ -6,7 +6,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(ConfigFile, t)
+OBJECT_IMPL(ConfigFile, t)
 {
 }
 

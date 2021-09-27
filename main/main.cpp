@@ -33,9 +33,9 @@
 
 using namespace ism;
 
-VAR_IMPL(Main::g_frame_count) {};
-VAR_IMPL(Main::g_frame_index) {};
-VAR_IMPL(Main::g_iterating) {};
+MEMBER_IMPL(Main::g_frame_count) {};
+MEMBER_IMPL(Main::g_frame_index) {};
+MEMBER_IMPL(Main::g_iterating) {};
 
 static Input * g_input{};
 static Internals * g_internals{};

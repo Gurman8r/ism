@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API MainLoop : public Object
 	{
-		OBJ_CLASS(MainLoop, Object);
+		OBJECT_COMMON(MainLoop, Object);
 
 		OBJ m_startup_script{};
 
@@ -21,7 +21,7 @@ namespace ism
 
 		virtual void initialize();
 
-		virtual bool process(Duration delta_time);
+		virtual bool process(Duration const & delta_time);
 
 		virtual void finalize();
 

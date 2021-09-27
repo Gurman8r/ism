@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(Image, t)
+OBJECT_IMPL(Image, t)
 {
 }
 

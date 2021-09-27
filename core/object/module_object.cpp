@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(ModuleObject, t, TypeFlags_BaseType)
+OBJECT_IMPL(ModuleObject, t, TypeFlags_BaseType)
 {
 	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 
@@ -28,7 +28,7 @@ OBJ_IMPL(ModuleObject, t, TypeFlags_BaseType)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(ModuleObject, t)
+	t.tp_bind = BIND_CLASS_HELPER(ModuleObject, t)
 	{
 		return t
 

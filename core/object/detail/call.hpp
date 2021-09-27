@@ -10,23 +10,20 @@ namespace ism
 	inline OBJ call_object(OBJ callable, LIST args)
 	{
 		if (!callable || !args) { return nullptr; }
-		else
-		{
-			TYPE type{ typeof(callable) };
 
-			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
-			{
-				return vcall(callable, args.data(), args.size());
-			}
-			else if (binaryfunc tcall{ type->tp_call })
-			{
-				return tcall(callable, args);
-			}
-			else
-			{
-				return nullptr;
-			}
+		TYPE type{ typeof(callable) };
+
+		if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+		{
+			return vcall(callable, args.data(), args.size());
 		}
+		
+		if (binaryfunc tcall{ type->tp_call })
+		{
+			return tcall(callable, args);
+		}
+		
+		return nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -55,8 +52,6 @@ namespace ism
 
 	private: LIST m_args;
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// collect arguments
 	template <ReturnPolicy policy = ReturnPolicy_AutomaticReference, class ... Args
@@ -156,13 +151,9 @@ namespace ism
 
 		Object * scope{}, * sibling{};
 
-		FunctionRecord * next{};
+		bool is_stateless : 1, is_constructor : 1, is_operator : 1, is_method : 1;
 
-		bool
-			is_stateless	: 1,
-			is_constructor	: 1,
-			is_operator		: 1,
-			is_method		: 1;
+		FunctionRecord * next{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -178,9 +169,9 @@ namespace ism
 
 		bool try_next_overload : 1;
 
-		OBJ invoke() noexcept
+		NODISCARD OBJ invoke() noexcept
 		{
-			OBJ result;
+			OBJ result{};
 			{
 				LoaderLifeSupport guard{};
 
@@ -196,7 +187,7 @@ namespace ism
 	> auto method_adaptor(Func && func) -> decltype(FWD(func)) { return FWD(func); }
 
 	template <class Derived, class Return, class Class, class ... Args
-	> auto method_adaptor(Return(Class:: * pmf)(Args...))->Return(Derived:: *)(Args...)
+	> auto method_adaptor(Return(Class:: * pmf)(Args...)) -> Return(Derived:: *)(Args...)
 	{
 		static_assert(
 			mpl::is_accessible_base_of_v<Class, Derived>,
@@ -205,7 +196,7 @@ namespace ism
 	}
 
 	template <class Derived, class Return, class Class, class ... Args
-	> auto method_adaptor(Return(Class:: * pmf)(Args...) const)->Return(Derived:: *)(Args...) const
+	> auto method_adaptor(Return(Class:: * pmf)(Args...) const) -> Return(Derived:: *)(Args...) const
 	{
 		static_assert(
 			mpl::is_accessible_base_of_v<Class, Derived>,

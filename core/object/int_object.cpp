@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(IntObject, t, TypeFlags_Int_Subclass)
+OBJECT_IMPL(IntObject, t, TypeFlags_Int_Subclass)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<int64_t>()(***INT(self)); };
 
@@ -25,7 +25,7 @@ OBJ_IMPL(IntObject, t, TypeFlags_Int_Subclass)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(IntObject, t)
+	t.tp_bind = BIND_CLASS_HELPER(IntObject, t)
 	{
 		return t;
 	};
@@ -33,8 +33,8 @@ OBJ_IMPL(IntObject, t, TypeFlags_Int_Subclass)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-VAR_IMPL(IntObject::g_true) { true };
+MEMBER_IMPL(IntObject::g_true) { true };
 
-VAR_IMPL(IntObject::g_false) { false };
+MEMBER_IMPL(IntObject::g_false) { false };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

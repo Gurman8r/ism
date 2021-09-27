@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+OBJECT_IMPL(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
@@ -16,11 +16,11 @@ OBJ_IMPL(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | T
 		return !obj ? self : METHOD({ self, obj, ism::method_vectorcall });
 	};
 
-	t.tp_bind = CLASS_BINDER(CppFunctionObject, t)
+	t.tp_bind = BIND_CLASS_HELPER(CppFunctionObject, t)
 	{
 		t.add_object("__name__", PROPERTY({
-			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(t) }),
-			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(t) }),
+			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, detail::is_method(t) }),
+			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, detail::is_method(t) }),
 			}));
 
 		return t
@@ -72,25 +72,19 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 	if (CPP_FUNCTION::check_(rec->sibling))
 	{
 		FunctionRecord *& chain{ ((CppFunctionObject *)(rec->sibling))->m_record };
-
 		if (rec->scope == chain->scope)
 		{
 			if (prepend)
 			{
 				rec->next = chain;
-
 				chain = nullptr;
 			}
 			else
 			{
 				FunctionRecord * it{ chain };
-				
 				while (it->next) { it = it->next; }
-				
 				it->next = rec;
-				
 				m_record = chain;
-				
 				chain = nullptr;
 			}
 		}

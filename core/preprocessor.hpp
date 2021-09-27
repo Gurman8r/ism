@@ -46,7 +46,7 @@
 	(std::forward<decltype(expr)>(expr))
 
 // static member variable helper
-#define VAR_IMPL(expr) \
+#define MEMBER_IMPL(expr) \
 	decltype(expr) expr
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -108,13 +108,13 @@ namespace ism::impl
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // return static implementation
-#define __RETURN_STATIC(var, expr)	\
-	static auto var = expr;				\
-	return var;							\
+#define _RETURN_STATIC(var, expr)	\
+	static auto var = expr;			\
+	return var;						\
 
 // return static
 #define RETURN_STATIC(expr) \
-	__RETURN_STATIC(ANON, expr)
+	_RETURN_STATIC(ANON, expr)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

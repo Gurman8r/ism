@@ -3,7 +3,7 @@
 
 #include <core/object/detail/attr.hpp>
 
-namespace ism::initimpl
+namespace ism::detail
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -25,18 +25,13 @@ namespace ism::initimpl
 			{
 				return Holder<Class>{ Cpp<Class>{ args... } };
 			}
-			, attr::is_constructor(), FWD(extra)...);
+			, detail::is_constructor(), FWD(extra)...);
 		}
 
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 		> static Class & execute(Class & c, Extra && ... extra)
 		{
-			STR_IDENTIFIER(__new__);
-			return c.def(&ID___new__, [](Args ... args)
-			{
-				return OBJ(/* TODO */);
-			}
-			, attr::is_constructor(), FWD(extra)...);
+			return c; // TODO
 		}
 	};
 
@@ -58,18 +53,13 @@ namespace ism::initimpl
 			{
 				return Holder<Class>{ func(args...) };
 			}
-			, attr::is_constructor(), FWD(extra)...);
+			, detail::is_constructor(), FWD(extra)...);
 		}
 
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 		> Class & execute(Class & c, Extra && ... extra)
 		{
-			STR_IDENTIFIER(__new__);
-			return c.def(&ID___new__, [func = std::move(class_factory)](Args ... args)
-			{
-				return OBJ(/* TODO */);
-			}
-			, attr::is_constructor(), FWD(extra)...);
+			return c; // TODO
 		}
 	};
 
@@ -81,9 +71,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class ... Args
-	> NODISCARD auto init() -> initimpl::Constructor<Args...> { return {}; }
+	> NODISCARD auto init() -> detail::Constructor<Args...> { return {}; }
 
-	template <class Func, class Ret = initimpl::Factory<Func>
+	template <class Func, class Ret = detail::Factory<Func>
 	> NODISCARD auto init(Func && fn) -> Ret { return { FWD(fn) }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -120,7 +120,7 @@ namespace ism::mpl
 		std::is_same<Ch, wchar_t>
 	> };
 
-	template <class T> constexpr bool is_numeric_v{ std::is_arithmetic_v<T> && !mpl::is_char_v<T> };
+	template <class T> constexpr bool is_number_v{ std::is_arithmetic_v<T> && !mpl::is_char_v<T> };
 
 	template <class> constexpr bool is_string_v{ false };
 

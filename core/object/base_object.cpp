@@ -21,17 +21,46 @@ Object::Object() noexcept { m_refcount.init(); m_refcount_init.init(); }
 
 Object::~Object() { m_type = nullptr; }
 
+bool Object::init_ref()
+{
+	if (reference())
+	{
+		if (!has_references() && m_refcount_init.unref())
+		{
+			unreference(); // first referencing is already 1, so compensate for the ref above
+		}
+		return true;
+	}
+	return false;
+}
+
+bool Object::reference()
+{
+	uint32_t rc_val{ m_refcount.refval() };
+	bool success{ rc_val != 0 };
+	if (success && rc_val <= 2 /* higher is not relevant */) { on_reference(); }
+	return success;
+}
+
+bool Object::unreference()
+{
+	uint32_t rc_val{ m_refcount.unrefval() };
+	bool die{ rc_val == 0 };
+	if (rc_val <= 1 /* higher is not relevant */) { on_unreference(); }
+	return die;
+}
+
 TYPE Object::get_type_static() noexcept { return &ob_class_type; }
 
 TYPE Object::_get_typev() const { return get_type_static(); }
 
-TYPE Object::get_type() const noexcept { if (!m_type) { m_type = _get_typev(); } return m_type; }
+TYPE Object::get_type() const noexcept { return ((!!m_type) || (m_type = _get_typev())), m_type; }
 
-bool Object::set_type(TYPE const & value) noexcept { return (m_type = value).is_valid(); }
+void Object::set_type(TYPE const & value) noexcept { m_type = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJECT_IMPL(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 	t.tp_getattro = (getattrofunc)generic_getattr;
 
@@ -39,7 +68,7 @@ OBJ_IMPL(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
 
-	t.tp_bind = CLASS_BINDER(Object, t)
+	t.tp_bind = BIND_CLASS_HELPER(Object, t)
 	{
 		return t;
 	};

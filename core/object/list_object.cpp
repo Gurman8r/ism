@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(ListObject, t, TypeFlags_List_Subclass)
+OBJECT_IMPL(ListObject, t, TypeFlags_List_Subclass)
 {
 	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)LIST(self).size(); };
 
@@ -21,7 +21,7 @@ OBJ_IMPL(ListObject, t, TypeFlags_List_Subclass)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(ListObject, t)
+	t.tp_bind = BIND_CLASS_HELPER(ListObject, t)
 	{
 		return t
 

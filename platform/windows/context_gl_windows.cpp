@@ -18,15 +18,13 @@
 
 typedef HGLRC(APIENTRY * PFNWGLCREATECONTEXTATTRIBSARBPROC)(HDC, HGLRC, int const *);
 
-using namespace ism;
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+using namespace ism;
 
 ContextGL_Windows::ContextGL_Windows(HWND hwnd, bool opengl_3_context) : hWnd{ hwnd }, opengl_3_context{ opengl_3_context } {}
 
 ContextGL_Windows::~ContextGL_Windows() {}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void ContextGL_Windows::release_current()
 {

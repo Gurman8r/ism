@@ -25,7 +25,7 @@ TypeObject::TypeObject() noexcept : Object{} {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
+OBJECT_IMPL(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -50,7 +50,7 @@ OBJ_IMPL(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlag
 		return nullptr;
 	};
 
-	t.tp_bind = CLASS_BINDER(TypeObject, t)
+	t.tp_bind = BIND_CLASS_HELPER(TypeObject, t)
 	{
 		return t
 
@@ -203,9 +203,11 @@ Error TypeObject::update_slot(STR name)
 		return nullptr;
 	}; } break;
 
-	case hash("__del__"): {
-		// TODO
-	} break;
+	case hash("__del__"): { tp_del = (delfunc)[](Object * obj) -> void {
+		if (STR_IDENTIFIER(__del__); OBJ f{ typeof(obj).lookup(&ID___del__) })
+		{
+		}
+	}; } break;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

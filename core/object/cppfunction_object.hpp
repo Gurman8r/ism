@@ -9,7 +9,7 @@ namespace ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		OBJ_CLASS(CppFunctionObject, FunctionObject);
+		OBJECT_COMMON(CppFunctionObject, FunctionObject);
 
 	public:
 		FunctionRecord * m_record{};
@@ -99,27 +99,27 @@ namespace ism
 
 				if (!args.load_args(call.args)) { call.try_next_overload = true; return nullptr; }
 
-				attr::process_attributes<Extra...>::precall(call);
+				detail::process_attributes<Extra...>::precall(call);
 
 				auto data{ (sizeof(Capture) <= sizeof(call.record.data) ? &call.record.data : call.record.data[0]) };
 
 				auto capture{ const_cast<Capture *>(reinterpret_cast<Capture const *>(data)) };
 
-				ReturnPolicy policy{ return_policy_override<Return>::policy(call.record.policy) };
+				ReturnPolicy policy{ ReturnPolicyOverride<Return>::policy(call.record.policy) };
 
-				using Guard = attr::extract_guard_t<Extra...>;
+				using Guard = detail::extract_guard_t<Extra...>;
 
 				using Yield = make_caster<std::conditional_t<std::is_void_v<Return>, void_type, Return>>;
 
 				OBJ result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
 
-				attr::process_attributes<Extra...>::postcall(call, result);
+				detail::process_attributes<Extra...>::postcall(call, result);
 
 				return result;
 			};
 
 			// process function attributes
-			attr::process_attributes<Extra...>::init(*rec, FWD(extra)...);
+			detail::process_attributes<Extra...>::init(*rec, FWD(extra)...);
 
 			// collect type info
 			constexpr size_t argc{ sizeof...(Args) };
@@ -127,7 +127,7 @@ namespace ism
 			mpl::for_types_i<Args...>([&](size_t i, auto tag) { types[i] = &typeid(TAG_TYPE(tag)); });
 
 			// prepend?
-			constexpr bool prepend{ mpl::contains_v<attr::prepend, mpl::type_list<Extra...>> };
+			constexpr bool prepend{ mpl::contains_v<detail::prepend, mpl::type_list<Extra...>> };
 
 			// initialize generic
 			initialize_generic(rec, types, argc, prepend);
@@ -145,12 +145,12 @@ namespace ism
 	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<Object> {};
 
 	// cppfunction check
-#define OBJ_CHECK_CPPFUNCTION(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
+#define OBJECT_CHECK_CPPFUNCTION(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
 
 	// cppfunction handle
-	CUSTOM_HANDLE(CppFunctionObject)
+	DECL_CUSTOM_REF(CppFunctionObject)
 	{
-		HANDLE_CLASS(CppFunctionObject, OBJ_CHECK_CPPFUNCTION);
+		REF_COMMON(CppFunctionObject, OBJECT_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }
@@ -168,7 +168,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline OBJ Handle<FunctionObject>::cpp_function() const
+	NODISCARD inline OBJ CustomRef<FunctionObject>::cpp_function() const
 	{
 		return CPP_FUNCTION::check_(*this) ? CPP_FUNCTION(*this) : nullptr;
 	}

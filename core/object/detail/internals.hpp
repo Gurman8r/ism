@@ -25,9 +25,7 @@ namespace ism
 	public:
 		Batch<hash_t, StringName, TYPE> class_db;
 
-		OBJ dict, builtins, modules, importlib;
-
-		OBJ import_func;
+		OBJ builtins, dict, modules;
 
 		Vector<OBJ> loader_stack;
 

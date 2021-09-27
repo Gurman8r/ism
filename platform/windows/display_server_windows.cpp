@@ -13,7 +13,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(DisplayServerWindows, t) {}
+OBJECT_IMPL(DisplayServerWindows, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -65,10 +65,10 @@ Window * DisplayServerWindows::create_window(SceneTree * tree, Node * parent, Wi
 	glfwWindowHint(GLFW_REFRESH_RATE, settings.video.refresh_rate);
 
 	// framebuffer hints
-	glfwWindowHint(GLFW_RED_BITS, (int32_t)settings.video.bpp[0]);
-	glfwWindowHint(GLFW_GREEN_BITS, (int32_t)settings.video.bpp[1]);
-	glfwWindowHint(GLFW_BLUE_BITS, (int32_t)settings.video.bpp[2]);
-	glfwWindowHint(GLFW_ALPHA_BITS, (int32_t)settings.video.bpp[3]);
+	glfwWindowHint(GLFW_RED_BITS, (int32_t)settings.video.bits_per_pixel[0]);
+	glfwWindowHint(GLFW_GREEN_BITS, (int32_t)settings.video.bits_per_pixel[1]);
+	glfwWindowHint(GLFW_BLUE_BITS, (int32_t)settings.video.bits_per_pixel[2]);
+	glfwWindowHint(GLFW_ALPHA_BITS, (int32_t)settings.video.bits_per_pixel[3]);
 	glfwWindowHint(GLFW_DEPTH_BITS, settings.context.depth_bits);
 	glfwWindowHint(GLFW_STENCIL_BITS, settings.context.stencil_bits);
 	glfwWindowHint(GLFW_SRGB_CAPABLE, settings.context.srgb_capable);

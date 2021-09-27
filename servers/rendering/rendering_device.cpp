@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-VAR_IMPL(RenderingDevice::singleton) {};
+MEMBER_IMPL(RenderingDevice::singleton) {};
 
-OBJ_IMPL(RenderingDevice, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
+OBJECT_IMPL(RenderingDevice, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}

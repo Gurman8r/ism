@@ -5,11 +5,11 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object class
-#define OBJ_CLASS(m_class, m_inherits)										\
+// object common
+#define OBJECT_COMMON(m_class, m_inherits)									\
 private:																	\
 	friend class ism::Internals;											\
-	friend class ism::Handle<m_class>;										\
+	friend class ism::CustomRef<m_class>;									\
 																			\
 	static ism::TypeObject ob_class_type;									\
 																			\
@@ -50,22 +50,22 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // "_obj_imp_class_"
-#define __OBJ_IMPL__(m_class) \
-	CAT(CAT(_obj_impl_, m_class), _)
+#define __OBJECT_IMPL__(m_class) \
+	CAT(CAT(_bind_object_type_, m_class), _)
 
 // implement object class
-#define OBJ_IMPL(m_class, m_var, ...)															\
+#define OBJECT_IMPL(m_class, m_var, ...)														\
 																								\
 	/* declare binder function */																\
-	namespace ism { static void __OBJ_IMPL__(m_class)(ism::TypeObject & m_var); }				\
+	namespace ism { static void __OBJECT_IMPL__(m_class)(ism::TypeObject & m_var); }			\
 																								\
-	/* construct type */																		\
-	VAR_IMPL(m_class::ob_class_type) =															\
+	/* construct class type */																	\
+	MEMBER_IMPL(m_class::ob_class_type) =														\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
-	+ ism::__OBJ_IMPL__(m_class);																\
+	+ ism::__OBJECT_IMPL__(m_class);															\
 																								\
 	/* implement binder function */																\
-	void ism::__OBJ_IMPL__(m_class)(ism::TypeObject & m_var)									\
+	void ism::__OBJECT_IMPL__(m_class)(ism::TypeObject & m_var)									\
 																								\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -80,15 +80,15 @@ namespace ism
 	{
 	private:
 		friend class Internals;
-		friend class Handle<Object>;
+		friend class CustomRef<Object>;
 		friend bool predelete_handler(Object *);
 		friend void postinitialize_handler(Object *);
 
 		static TypeObject ob_class_type;
 
-		mutable Ref<TypeObject> m_type;
-
 		SafeRefCount m_refcount{}, m_refcount_init{};
+
+		mutable Ref<TypeObject> m_type{};
 
 	protected:
 		static void initialize_class();
@@ -112,51 +112,27 @@ namespace ism
 
 		virtual ~Object();
 
-		NODISCARD static TYPE get_type_static() noexcept;
+		bool init_ref();
 
-		NODISCARD TYPE get_type() const noexcept;
+		bool reference();
 
-		bool set_type(TYPE const & value) noexcept;
+		bool unreference();
 
-		template <class T> NODISCARD T cast() const &; // cast.hpp
-
-		template <class T> NODISCARD T cast() &&; // cast.hpp
-
-		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
-
-	public:
 		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
 
 		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
 
-		bool init_ref()
-		{
-			if (reference())
-			{
-				if (!has_references() && m_refcount_init.unref())
-				{
-					unreference(); // first referencing is already 1, so compensate for the ref above
-				}
-				return true;
-			}
-			return false;
-		}
+		NODISCARD static TYPE get_type_static() noexcept;
 
-		bool reference()
-		{
-			uint32_t rc_val{ m_refcount.refval() };
-			bool success{ rc_val != 0 };
-			if (success && rc_val <= 2 /* higher is not relevant */) { on_reference(); }
-			return success;
-		}
+		NODISCARD TYPE get_type() const noexcept;
 
-		bool unreference()
-		{
-			uint32_t rc_val{ m_refcount.unrefval() };
-			bool die{ rc_val == 0 };
-			if (rc_val <= 1 /* higher is not relevant */) { on_unreference(); }
-			return die;
-		}
+		void set_type(TYPE const & value) noexcept;
+
+		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
+
+		template <class T> NODISCARD T cast() const &; // cast.hpp
+
+		template <class T> NODISCARD T cast() &&; // cast.hpp
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

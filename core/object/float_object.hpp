@@ -9,7 +9,7 @@ namespace ism
 	// float object
 	class ISM_API FloatObject : public Object
 	{
-		OBJ_CLASS(FloatObject, Object);
+		OBJECT_COMMON(FloatObject, Object);
 
 	public:
 		double_t m_float{};
@@ -34,18 +34,18 @@ namespace ism
 	template <> struct DefaultDelete<FloatObject> : DefaultDelete<Object> {};
 
 	// float check
-#define OBJ_CHECK_FLOAT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
+#define OBJECT_CHECK_FLOAT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
 
 	// float handle
-	CUSTOM_HANDLE(FloatObject)
+	DECL_CUSTOM_REF(FloatObject)
 	{
-		HANDLE_CLASS(FloatObject, OBJ_CHECK_FLOAT);
+		REF_COMMON(FloatObject, OBJECT_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> Handle(T const value) { instance(value); }
+		> CustomRef(T const value) { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> operator T () const { return (T)(**m_ptr); }

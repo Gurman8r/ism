@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API InputMap : public Object
 	{
-		OBJ_CLASS(InputMap, Object);
+		OBJECT_COMMON(InputMap, Object);
 
 	public:
 		virtual ~InputMap() override;

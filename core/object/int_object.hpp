@@ -14,7 +14,7 @@ namespace ism
 	// int object
 	class ISM_API IntObject : public Object
 	{
-		OBJ_CLASS(IntObject, Object);
+		OBJECT_COMMON(IntObject, Object);
 
 	public:
 		int64_t m_int{};
@@ -44,18 +44,18 @@ namespace ism
 	template <> struct DefaultDelete<IntObject> : DefaultDelete<Object> {};
 
 	// int check
-#define OBJ_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
+#define OBJECT_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
 
 	// int handle
-	CUSTOM_HANDLE(IntObject)
+	DECL_CUSTOM_REF(IntObject)
 	{
-		HANDLE_CLASS(IntObject, OBJ_CHECK_INT);
+		REF_COMMON(IntObject, OBJECT_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> Handle(T const value) { instance(value); }
+		> CustomRef(T const value) { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> operator T () const { return (T)(**m_ptr); }

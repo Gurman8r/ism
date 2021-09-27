@@ -70,10 +70,10 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// type_caster_generic
-	struct type_caster_generic
+	// generic caster
+	struct TypeCasterGeneric
 	{
-		type_caster_generic(std::type_info const & type_info)
+		TypeCasterGeneric(std::type_info const & type_info)
 		{
 		}
 	};
@@ -96,8 +96,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// type_caster_base
-	template <class T> struct type_caster_base : type_caster_generic
+	// base caster
+	template <class T> struct TypeCasterBase : TypeCasterGeneric
 	{
 	};
 
@@ -110,9 +110,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, class SFINAE = void> struct type_caster : type_caster_base<T> {};
+	template <class T, class SFINAE = void> struct TypeCaster : TypeCasterBase<T> {};
 
-	template <class T> ALIAS(make_caster) type_caster<mpl::intrinsic_t<T>>;
+	template <class T> ALIAS(make_caster) TypeCaster<mpl::intrinsic_t<T>>;
 
 	template <class T> auto cast_op(make_caster<T> & caster) -> typename make_caster<T>::template cast_op_type<T>
 	{
@@ -159,7 +159,7 @@ public:																								\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct type_caster<std::reference_wrapper<T>>
+	template <class T> struct TypeCaster<std::reference_wrapper<T>>
 	{
 		using caster_t = make_caster<T>;
 
@@ -172,7 +172,7 @@ public:																								\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct type_caster<T, std::enable_if_t<mpl::is_numeric_v<T>>>
+	template <class T> struct TypeCaster<T, std::enable_if_t<mpl::is_number_v<T>>>
 	{
 		using _itype = IntObject::storage_type;
 		using _ftype = FloatObject::storage_type;
@@ -203,7 +203,7 @@ public:																								\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct void_caster
+	template <class T> struct VoidCaster
 	{
 		bool load(OBJ const & src, bool) { return src.is_valid(); }
 
@@ -212,13 +212,13 @@ public:																								\
 		TYPE_CASTER_COMMON(T, "none");
 	};
 
-	template <> struct type_caster<void_type> : void_caster<void_type> {};
+	template <> struct TypeCaster<void_type> : VoidCaster<void_type> {};
 
-	template <> struct type_caster<nullptr_t> : void_caster<nullptr_t> {};
+	template <> struct TypeCaster<nullptr_t> : VoidCaster<nullptr_t> {};
 
-	template <> struct type_caster<void> : type_caster<void_type>
+	template <> struct TypeCaster<void> : TypeCaster<void_type>
 	{
-		using type_caster<void_type>::cast;
+		using TypeCaster<void_type>::cast;
 
 		bool load(OBJ const & src, bool)
 		{
@@ -246,7 +246,7 @@ public:																								\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <> struct type_caster<bool>
+	template <> struct TypeCaster<bool>
 	{
 		bool load(OBJ const & src, bool convert)
 		{
@@ -264,7 +264,7 @@ public:																								\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct string_caster
+	template <class T> struct StringCaster
 	{
 		bool load(OBJ const & src, bool convert)
 		{
@@ -290,12 +290,12 @@ public:																								\
 	};
 
 	template <class Ch, class Tr, class Al
-	> struct type_caster<std::basic_string<Ch, Tr, Al>, std::enable_if_t<mpl::is_char_v<Ch>>>
-		: string_caster<std::basic_string<Ch, Tr, Al>> {};
+	> struct TypeCaster<std::basic_string<Ch, Tr, Al>, std::enable_if_t<mpl::is_char_v<Ch>>>
+		: StringCaster<std::basic_string<Ch, Tr, Al>> {};
 
-	template <class T> struct type_caster<T, std::enable_if_t<mpl::is_char_v<T>>> : type_caster<BasicString<T>>
+	template <class T> struct TypeCaster<T, std::enable_if_t<mpl::is_char_v<T>>> : TypeCaster<BasicString<T>>
 	{
-		type_caster<BasicString<T>> str_caster;
+		TypeCaster<BasicString<T>> str_caster;
 
 		bool load(OBJ const & src, bool convert)
 		{
@@ -309,7 +309,7 @@ public:																								\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct ref_caster
+	template <class T> struct RefCaster
 	{
 		bool load(OBJ const & src, bool)
 		{
@@ -323,11 +323,11 @@ public:																								\
 		TYPE_CASTER_COMMON(T, "ref");
 	};
 
-	template <class T> struct type_caster<T, std::enable_if_t<is_api_v<T> && !is_base_object_v<T>>> : ref_caster<T> {};
+	template <class T> struct TypeCaster<T, std::enable_if_t<is_api_v<T> && !is_base_object_v<T>>> : RefCaster<T> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct object_caster
+	template <class T> struct ObjectCaster
 	{
 		bool load(OBJ const & src, bool)
 		{
@@ -354,7 +354,7 @@ public:																								\
 		OBJ value{};
 	};
 
-	template <class T> struct type_caster<T, std::enable_if_t<is_base_object_v<T>>> : object_caster<T> {};
+	template <class T> struct TypeCaster<T, std::enable_if_t<is_base_object_v<T>>> : ObjectCaster<T> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -399,9 +399,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class T, class SFINAE = void
-	> struct return_policy_override { static ReturnPolicy policy(ReturnPolicy p) { return p; } };
+	> struct ReturnPolicyOverride { static ReturnPolicy policy(ReturnPolicy p) { return p; } };
 
-	template <class T> struct return_policy_override<T, std::enable_if_t<std::is_base_of_v<ism::type_caster_generic, ism::make_caster<T>>, void>>
+	template <class T> struct ReturnPolicyOverride<T, std::enable_if_t<std::is_base_of_v<ism::TypeCasterGeneric, ism::make_caster<T>>, void>>
 	{
 		static ReturnPolicy policy(ReturnPolicy p) { return !std::is_lvalue_reference_v<T> && !std::is_pointer_v<T> ? ReturnPolicy_Move : p; }
 	};
@@ -409,7 +409,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class SFINAE
-	> auto load_type(ism::type_caster<T, SFINAE> & convt, OBJ const & o) -> ism::type_caster<T, SFINAE> &
+	> auto load_type(ism::TypeCaster<T, SFINAE> & convt, OBJ const & o) -> ism::TypeCaster<T, SFINAE> &
 	{
 		if (!convt.load(o, true)) {
 			FATAL("TYPE CONVERSION FAILED");

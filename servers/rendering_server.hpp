@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API RenderingServer : public Object
 	{
-		OBJ_CLASS(RenderingServer, Object);
+		OBJECT_COMMON(RenderingServer, Object);
 
 		static RenderingServer * singleton;
 

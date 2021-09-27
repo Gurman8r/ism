@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(InputMap, t, TypeFlags_BaseType)
+OBJECT_IMPL(InputMap, t, TypeFlags_BaseType)
 {
 }
 

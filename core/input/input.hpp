@@ -47,7 +47,7 @@ namespace ism
 
 	class ISM_API Input : public Object
 	{
-		OBJ_CLASS(Input, Object);
+		OBJECT_COMMON(Input, Object);
 
 		static Input * singleton;
 

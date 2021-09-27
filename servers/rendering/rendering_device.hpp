@@ -12,7 +12,7 @@ namespace ism
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		OBJ_CLASS(RenderingDevice, Object);
+		OBJECT_COMMON(RenderingDevice, Object);
 
 		static RenderingDevice * singleton;
 

@@ -9,7 +9,7 @@ namespace ism
 	// property object
 	class ISM_API PropertyObject : public Object
 	{
-		OBJ_CLASS(PropertyObject, Object);
+		OBJECT_COMMON(PropertyObject, Object);
 
 	public:
 		OBJ m_get{}, m_set{};
@@ -37,12 +37,12 @@ namespace ism
 	template <> struct DefaultDelete<PropertyObject> : DefaultDelete<Object> {};
 
 	// property check
-#define OBJ_CHECK_PROPERTY(o) (ism::isinstance<ism::PROPERTY>(o))
+#define OBJECT_CHECK_PROPERTY(o) (ism::isinstance<ism::PROPERTY>(o))
 
 	// property handle
-	CUSTOM_HANDLE(PropertyObject)
+	DECL_CUSTOM_REF(PropertyObject)
 	{
-		HANDLE_CLASS(PropertyObject, OBJ_CHECK_PROPERTY);
+		REF_COMMON(PropertyObject, OBJECT_CHECK_PROPERTY);
 
 	public:
 		OBJ get(OBJ const & self) const { return m_ptr->m_get(self); }

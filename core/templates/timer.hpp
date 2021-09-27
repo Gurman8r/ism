@@ -23,11 +23,11 @@ namespace ism
 
 		Timer() noexcept = default;
 
-		Timer(Timer && other) noexcept : Timer{} { this->swap(std::move(other)); }
+		Timer(Timer && other) noexcept : Timer{} { swap(std::move(other)); }
 
-		Timer & operator=(Timer && other) noexcept { this->swap(std::move(other)); return (*this); }
+		Timer & operator=(Timer && other) noexcept { return swap(std::move(other)); }
 
-		void swap(Timer & other) noexcept
+		Timer & swap(Timer & other) noexcept
 		{
 			if (this != std::addressof(other))
 			{
@@ -36,6 +36,7 @@ namespace ism
 				std::swap(m_stop_time, other.m_stop_time);
 				std::swap(m_elapsed, other.m_elapsed);
 			}
+			return (*this);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -47,14 +48,9 @@ namespace ism
 
 		NODISCARD Duration elapsed() const noexcept
 		{
-			if (m_running)
-			{
-				return std::chrono::high_resolution_clock::now() - m_start_time;
-			}
-			else
-			{
-				return m_elapsed;
-			}
+			if (m_running) { return std::chrono::high_resolution_clock::now() - m_start_time; }
+
+			else { return m_elapsed; }
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -62,7 +58,8 @@ namespace ism
 		Timer & start() noexcept
 		{
 			if (m_running) { return *this; }
-			else { return this->restart(); }
+
+			else { return restart(); }
 		}
 
 		Timer & restart() noexcept

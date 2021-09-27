@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(TextFile, t) {}
+OBJECT_IMPL(TextFile, t) {}
 
 void TextFile::reload_from_file()
 {

@@ -13,7 +13,7 @@ namespace ism
 
 	class ISM_API Image : public Resource
 	{
-		OBJ_CLASS(Image, Resource);
+		OBJECT_COMMON(Image, Resource);
 
 		friend class ImageLoader;
 

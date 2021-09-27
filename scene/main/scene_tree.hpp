@@ -12,7 +12,7 @@ namespace ism
 
 	class ISM_API SceneTree : public MainLoop
 	{
-		OBJ_CLASS(SceneTree, MainLoop);
+		OBJECT_COMMON(SceneTree, MainLoop);
 
 	public:
 		virtual ~SceneTree() override;
@@ -22,12 +22,12 @@ namespace ism
 	public:
 		virtual void initialize() override;
 
-		virtual bool process(Duration delta_time) override;
+		virtual bool process(Duration const & delta_time) override;
 
 		virtual void finalize() override;
 
 	public:
-		void on_runtime_update(Duration dt);
+		void on_runtime_updateprocess(Duration const & delta_time);
 
 	protected:
 		template <class T> void on_component_added(Node &, T &) {}

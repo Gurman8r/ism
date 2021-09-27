@@ -5,32 +5,11 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// standardized typedef
+// typedef
 #define ALIAS(type)	using type = typename
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// declare enum
-#define DECL_ENUM_EX(m_name, m_base) \
-		ALIAS(m_name) m_base; \
-		enum CAT(m_name, _) : m_name
-
-// declare enum default
-#define DECL_ENUM(m_name) \
-		DECL_ENUM_EX(m_name, int32_t)
-
-// declare handle
-#define DECL_POINTER(name)					\
-	struct CAT(__, name) { int unused; };	\
-	ALIAS(name) CAT(__, name) *
-
-// declare tag
-#define DECL_TAG(type, var) \
-	struct type { struct _Tag {}; constexpr explicit type(_Tag) {} }; \
-	inline constexpr type var{ type::_Tag{} }; \
-
-// declare strong typedef
-#define DECL_STRONG(m_to, m_from)																				\
+// strong typedef
+#define STRONG_ALIAS(m_to, m_from)																				\
 class m_to final {																								\
 private:																										\
 	m_from value;																								\
@@ -51,6 +30,27 @@ public:																											\
 	inline constexpr decltype(auto) operator<=(m_to const & other) noexcept { return value <= other.value; }	\
 	inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
 }																												\
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// declare enum
+#define DECL_ENUM_EX(m_name, m_base) \
+	ALIAS(m_name) m_base; \
+	enum CAT(m_name, _) : m_name
+
+// declare enum default
+#define DECL_ENUM(m_name) \
+	DECL_ENUM_EX(m_name, int32_t)
+
+// declare handle
+#define DECL_POINTER(m_name) \
+	struct CAT(__, m_name) { int unused; }; \
+	ALIAS(m_name) CAT(__, m_name) *
+
+// declare tag
+#define DECL_TAG(m_type, m_var) \
+	struct m_type { struct _Tag {}; constexpr explicit m_type(_Tag) {} }; \
+	inline constexpr m_type m_var{ m_type::_Tag{} }; \
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

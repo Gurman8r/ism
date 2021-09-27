@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(Material, t) {}
+OBJECT_IMPL(Material, t) {}
 
 Material::~Material()
 {

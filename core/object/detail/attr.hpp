@@ -3,10 +3,10 @@
 
 #include <core/object/detail/call.hpp>
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-namespace ism::attr
+namespace ism::detail
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class T, class SFINAE = void> struct process_attribute;
 
 	template <class T> struct process_attribute_default
@@ -16,98 +16,64 @@ namespace ism::attr
 		static void precall(FunctionCall &) {}
 		static void postcall(FunctionCall &, OBJ) {}
 	};
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// process attribute default
-#define PROCESS_ATTRIBUTE(m_class) \
-	struct ism::attr::process_attribute<m_class> : ism::attr::process_attribute_default<m_class>
-
-// process attribute base
-#define PROCESS_ATTRIBUTE_BASE(m_class, m_inherits) \
-	struct ism::attr::process_attribute<m_class> : ism::attr::process_attribute_default<m_inherits>
-
-// process attribute sfinae
-#define PROCESS_ATTRIBUTE_SFINAE(m_class, m_sfinae) \
-	struct ism::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::attr::process_attribute_default<m_class>
-
-// process attribute base/sfinae
-#define PROCESS_ATTRIBUTE_BASE_SFINAE(m_class, m_sfinae, m_inherits) \
-	struct ism::attr::process_attribute<m_class, std::enable_if_t<m_sfinae>> : ism::attr::process_attribute_default<m_inherits>
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-namespace ism::attr
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct name { cstring value; name(cstring value) : value{ value } {} };
-	
-	struct sibling { Object * value; sibling(Object * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
-	
-	struct is_method { Object * value; is_method(Object * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
-	
-	struct scope { Object * value; scope(Object * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
-	
-	struct is_operator {};
-	
-	struct is_constructor {};
-	
-	struct prepend {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// name
-	template <> PROCESS_ATTRIBUTE(name)
+	struct name { cstring value; name(cstring value) : value{ value } {} };
+	template <> struct process_attribute<name> : process_attribute_default<name>
 	{
 		static void init(FunctionRecord & r, name && a) noexcept { r.name = a.value; }
 	};
 
-	// ReturnPolicy
-	template <> PROCESS_ATTRIBUTE(ReturnPolicy)
+	// return policy
+	template <> struct process_attribute<ReturnPolicy_> : process_attribute_default<ReturnPolicy_>
 	{
-		static void init(FunctionRecord & r, ReturnPolicy && a) noexcept { r.policy = a; }
+		static void init(FunctionRecord & r, ReturnPolicy_ && a) noexcept { r.policy = a; }
 	};
 
 	// sibling
-	template <> PROCESS_ATTRIBUTE(sibling)
+	struct sibling { Object * value; sibling(Object * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
+	template <> struct process_attribute<sibling> : process_attribute_default<sibling>
 	{
 		static void init(FunctionRecord & r, sibling && a) noexcept { r.sibling = a.value; }
 	};
 
 	// is_method
-	template <> PROCESS_ATTRIBUTE(is_method)
+	struct is_method { Object * value; is_method(Object * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
+	template <> struct process_attribute<is_method> : process_attribute_default<is_method>
 	{
 		static void init(FunctionRecord & r, is_method && a) noexcept { r.is_method = true; r.scope = a.value; }
 	};
 
 	// scope
-	template <> PROCESS_ATTRIBUTE(scope)
+	struct scope { Object * value; scope(Object * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
+	template <> struct process_attribute<scope> : process_attribute_default<scope>
 	{
 		static void init(FunctionRecord & r, scope && a) noexcept { r.scope = a.value; }
 	};
 
 	// is_operator
-	template <> PROCESS_ATTRIBUTE(is_operator)
+	struct is_operator {};
+	template <> struct process_attribute<is_operator> : process_attribute_default<is_operator>
 	{
 		static void init(FunctionRecord & r, is_operator && a) noexcept { r.is_operator = true; }
 	};
 
 	// is_constructor
-	template <> PROCESS_ATTRIBUTE(is_constructor)
+	struct is_constructor {};
+	template <> struct process_attribute<is_constructor> : process_attribute_default<is_constructor>
 	{
 		static void init(FunctionRecord & r, is_constructor && a) noexcept { r.is_constructor = true; }
 	};
 
 	// prepend
-	template <> PROCESS_ATTRIBUTE(prepend)
-	{
-	};
+	struct prepend {};
+	template <> struct process_attribute<prepend> : process_attribute_default<prepend> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// call_guard
+	// call guard
 	template <class... Ts> struct call_guard;
 
 	template <> struct call_guard<> { using type = void_type; };
@@ -129,12 +95,18 @@ namespace ism::attr
 		};
 	};
 
-	template <class ... Ts> PROCESS_ATTRIBUTE(call_guard<Ts...>) {};
+	template <class ... Ts> struct process_attribute<call_guard<Ts...>> : process_attribute_default<call_guard<Ts...>> {};
+
+	template <class T
+	> ALIAS(is_call_guard) mpl::is_instantiation<call_guard, T>;
+
+	template <class ... Extra
+	> ALIAS(extract_guard_t) mpl::exactly_one_t<is_call_guard, call_guard<>, Extra...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism::attr
+namespace ism::detail
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -143,6 +115,12 @@ namespace ism::attr
 	{
 		template <class T> static void init(T & r, Args && ... args)
 		{
+			//mpl::for_args([](auto && arg) noexcept
+			//{
+			//	process_attribute<std::decay_t<decltype(arg)>>::init(r, arg);
+			//}
+			//, FWD(args)...);
+
 			SINK(0, (process_attribute<std::decay_t<Args>>::init(r, FWD(args)), 0) ...);
 		}
 
@@ -156,14 +134,6 @@ namespace ism::attr
 			SINK(0, (process_attribute<std::decay_t<Args>>::postcall(call, retv), 0) ...);
 		}
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T
-	> using is_call_guard = mpl::is_instantiation<call_guard, T>;
-
-	template <class ... Extra
-	> using extract_guard_t = typename mpl::exactly_one_t<is_call_guard, call_guard<>, Extra...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

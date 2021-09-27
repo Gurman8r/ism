@@ -13,7 +13,7 @@ namespace ism
 	{
 	private:
 		friend class Internals;
-		friend class Handle<TypeObject>;
+		friend class CustomRef<TypeObject>;
 
 		static TypeObject ob_class_type;
 
@@ -50,12 +50,10 @@ namespace ism
 		String				tp_name				{};
 		ssize_t				tp_size				{};
 		int32_t				tp_flags			{};
+		bindfunc			tp_bind				{};
 
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
-
-		bindfunc			tp_bind				{};
-		vectorcallfunc		tp_vectorcall		{};
 
 		getattrfunc			tp_getattr			{};
 		setattrfunc			tp_setattr			{};
@@ -72,6 +70,7 @@ namespace ism
 		newfunc				tp_new				{};
 		reprfunc			tp_repr				{};
 		reprfunc			tp_str				{};
+		vectorcallfunc		tp_vectorcall		{};
 		
 		Ref<TypeObject>		tp_base				{ /* TYPE */ };
 		OBJ					tp_bases			{ /* LIST */ };
@@ -109,18 +108,12 @@ namespace ism
 
 		template <class Slot> void copy_val(TypeObject * base, Slot TypeObject:: * slot)
 		{
-			if (!(this->*slot) && base)
-			{
-				(this->*slot) = (base->*slot);
-			}
+			if (!(this->*slot) && base) { (this->*slot) = (base->*slot); }
 		}
 
 		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot TypeObject:: * slot)
 		{
-			if (!(this->*slot) && base && base->slot_defined(basebase, slot))
-			{
-				(this->*slot) = (base->*slot);
-			}
+			if (!(this->*slot) && base && base->slot_defined(basebase, slot)) { (this->*slot) = (base->*slot); }
 		}
 	};
 
@@ -132,25 +125,19 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type check
-#define OBJ_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
+#define OBJECT_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type handle
-	CUSTOM_HANDLE(TypeObject)
+	DECL_CUSTOM_REF(TypeObject)
 	{
-		HANDLE_CLASS(TypeObject, OBJ_CHECK_TYPE);
+		REF_COMMON(TypeObject, OBJECT_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
 
 		NODISCARD bool has_feature(int32_t flag) const { return flag_read(m_ptr->tp_flags, flag); }
-
-		NODISCARD bool is_abstract() const { return has_feature(TypeFlags_IsAbstract); }
-
-		NODISCARD bool is_final() const { return has_feature(TypeFlags_IsFinal); }
-
-		NODISCARD bool is_local() const { return has_feature(TypeFlags_IsLocal); }
 
 		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
 
@@ -169,10 +156,7 @@ namespace ism
 
 			m_ptr->modified();
 
-			if (is_dunder_name(str_name))
-			{
-				m_ptr->update_slot(str_name);
-			}
+			if (is_dunder_name(str_name)) { m_ptr->update_slot(str_name); }
 
 			VERIFY(m_ptr->check_consistency());
 		}

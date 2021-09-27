@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(StringObject, t, TypeFlags_Str_Subclass)
+OBJECT_IMPL(StringObject, t, TypeFlags_Str_Subclass)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) { return ism::hash((String)STR(self)); };
 
@@ -31,7 +31,7 @@ OBJ_IMPL(StringObject, t, TypeFlags_Str_Subclass)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(StringObject, t)
+	t.tp_bind = BIND_CLASS_HELPER(StringObject, t)
 	{
 		return t
 

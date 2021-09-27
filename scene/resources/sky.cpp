@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(Sky, t) {}
+OBJECT_IMPL(Sky, t) {}
 
 Sky::~Sky()
 {

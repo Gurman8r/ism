@@ -5,11 +5,11 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ_IMPL(DictObject, t, TypeFlags_Dict_Subclass)
+OBJECT_IMPL(DictObject, t, TypeFlags_Dict_Subclass)
 {
 	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)DICT(self).size(); };
 
-	t.tp_bind = CLASS_BINDER(DictObject, t)
+	t.tp_bind = BIND_CLASS_HELPER(DictObject, t)
 	{
 		return t
 

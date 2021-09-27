@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-VAR_IMPL(DisplayServer::singleton) {};
+MEMBER_IMPL(DisplayServer::singleton) {};
 
-OBJ_IMPL(DisplayServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
+OBJECT_IMPL(DisplayServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}

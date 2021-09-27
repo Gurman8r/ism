@@ -9,7 +9,7 @@ namespace ism
 	// capsule object
 	class ISM_API CapsuleObject : public Object
 	{
-		OBJ_CLASS(CapsuleObject, Object);
+		OBJECT_COMMON(CapsuleObject, Object);
 
 	public:
 		void * m_pointer{}, * m_context{};
@@ -69,12 +69,12 @@ namespace ism
 	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<Object> {};
 
 	// capsule check
-#define OBJ_CHECK_CAPSULE(o) (ism::isinstance<ism::CAPSULE>(o))
+#define OBJECT_CHECK_CAPSULE(o) (ism::isinstance<ism::CAPSULE>(o))
 
 	// capsule handle
-	CUSTOM_HANDLE(CapsuleObject)
+	DECL_CUSTOM_REF(CapsuleObject)
 	{
-		HANDLE_CLASS(CapsuleObject, OBJ_CHECK_CAPSULE);
+		REF_COMMON(CapsuleObject, OBJECT_CHECK_CAPSULE);
 
 	public:
 		template <class T

@@ -9,7 +9,7 @@ namespace ism
 	// module object
 	class ISM_API ModuleObject : public Object
 	{
-		OBJ_CLASS(ModuleObject, Object);
+		OBJECT_COMMON(ModuleObject, Object);
 
 	public:
 		DICT	m_dict	{};
@@ -24,12 +24,12 @@ namespace ism
 	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<Object> {};
 
 	// module check
-#define OBJ_CHECK_MODULE(o) (ism::isinstance<ism::MODULE>(o))
+#define OBJECT_CHECK_MODULE(o) (ism::isinstance<ism::MODULE>(o))
 
 	// module handle
-	CUSTOM_HANDLE(ModuleObject)
+	DECL_CUSTOM_REF(ModuleObject)
 	{
-		HANDLE_CLASS(ModuleObject, OBJ_CHECK_MODULE);
+		REF_COMMON(ModuleObject, OBJECT_CHECK_MODULE);
 
 	public:
 		template <class Func, class ... Extra
@@ -37,9 +37,9 @@ namespace ism
 		{
 			CPP_FUNCTION cf({
 				FWD(func),
-				attr::name(name),
-				attr::scope(*this),
-				attr::sibling(getattr(*this, name, nullptr)),
+				detail::name(name),
+				detail::scope(*this),
+				detail::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
 			return add_object(name, cf, true), (*this);
 		}
@@ -93,8 +93,14 @@ namespace ism
 	inline DICT globals()
 	{
 		STR_IDENTIFIER(__main__);
+		MODULE m{ import_module(&ID___main__) };
+		if (!m) { return nullptr; }
+		
 		STR_IDENTIFIER(__dict__);
-		return import_module(&ID___main__).attr(&ID___dict__);
+		DICT d{ m.attr(&ID___dict__) };
+		if (!d) { return nullptr; }
+
+		return d;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

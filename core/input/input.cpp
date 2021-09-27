@@ -2,8 +2,8 @@
 
 using namespace ism;
 
-VAR_IMPL(Input::singleton) {};
+MEMBER_IMPL(Input::singleton) {};
 
-OBJ_IMPL(Input, t, TypeFlags_BaseType)
+OBJECT_IMPL(Input, t, TypeFlags_BaseType)
 {
 }

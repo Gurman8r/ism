@@ -3,7 +3,7 @@
 
 using namespace ism;
 
-OBJ_IMPL(SceneTree, t)
+OBJECT_IMPL(SceneTree, t)
 {
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ { return memnew(SceneTree{ (String)STR(args[0]) }); };
 };
@@ -42,7 +42,7 @@ namespace ism
 		VERIFY(m_root);
 	}
 
-	bool SceneTree::process(Duration delta_time)
+	bool SceneTree::process(Duration const & delta_time)
 	{
 		MainLoop::process(delta_time);
 
@@ -58,7 +58,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void SceneTree::on_runtime_update(Duration dt)
+	void SceneTree::on_runtime_updateprocess(Duration const & delta_time)
 	{
 		if (!m_root) { return; }
 
@@ -71,7 +71,7 @@ namespace ism
 		//		scr.instance->on_create();
 		//	}
 		//	
-		//	scr.instance->on_update(dt);
+		//	scr.instance->on_update(delta_time);
 		//});
 	}
 

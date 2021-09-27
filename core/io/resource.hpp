@@ -9,13 +9,13 @@ namespace ism
 
 	class Resource;
 
-	ALIAS(RES) Handle<Resource>;
+	ALIAS(RES) Ref<Resource>;
 
 	DECL_POINTER(RID);
 
 	class ISM_API Resource : public Object
 	{
-		OBJ_CLASS(Resource, Object);
+		OBJECT_COMMON(Resource, Object);
 
 	private:
 		String m_name{}, m_path_cache{};

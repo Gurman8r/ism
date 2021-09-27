@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API Material : public Resource
 	{
-		OBJ_CLASS(Material, Resource);
+		OBJECT_COMMON(Material, Resource);
 
 	public:
 		virtual ~Material();

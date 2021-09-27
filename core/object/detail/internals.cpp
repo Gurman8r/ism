@@ -3,7 +3,7 @@
 
 using namespace ism;
 
-VAR_IMPL(Internals::singleton) {};
+MEMBER_IMPL(Internals::singleton) {};
 
 Internals::Internals()
 {
@@ -11,8 +11,6 @@ Internals::Internals()
 	dict = DICT::new_();
 	builtins = DICT::new_();
 	modules = DICT::new_();
-	importlib = DICT::new_();
-	import_func = nullptr;
 }
 
 Internals::~Internals()
@@ -20,8 +18,6 @@ Internals::~Internals()
 	dict = nullptr;
 	builtins = nullptr;
 	modules = nullptr;
-	importlib = nullptr;
-	import_func = nullptr;
 }
 
 void Internals::add_class(TYPE type)
