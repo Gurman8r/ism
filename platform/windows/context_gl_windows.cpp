@@ -38,12 +38,12 @@ void ContextGL_Windows::make_current()
 
 int32_t ContextGL_Windows::get_window_width()
 {
-	return (int32_t)get_display_server().get_desktop_video_mode().size[0];
+	return (int32_t)get_display_context().get_desktop_video_mode().size[0];
 }
 
 int32_t ContextGL_Windows::get_window_height()
 {
-	return (int32_t)get_display_server().get_desktop_video_mode().size[1];
+	return (int32_t)get_display_context().get_desktop_video_mode().size[1];
 }
 
 void ContextGL_Windows::swap_buffers()

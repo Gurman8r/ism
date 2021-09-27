@@ -2,7 +2,7 @@
 #ifndef _ISM_CONTEXT_GL_WINDOWS_HPP_
 #define _ISM_CONTEXT_GL_WINDOWS_HPP_
 
-#include <servers/display_server.hpp>
+#include <runtime/window/display_context.hpp>
 #include <platform/windows/windows.hpp>
 
 typedef bool(APIENTRY * PFNWGLSWAPINTERVALEXTPROC)(int interval);

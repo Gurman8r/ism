@@ -1,7 +1,7 @@
 #ifndef _ISM_RENDERING_DEVICE_OPENGL_HPP_
 #define _ISM_RENDERING_DEVICE_OPENGL_HPP_
 
-#include <servers/rendering/rendering_device.hpp>
+#include <runtime/renderer/rendering_device.hpp>
 
 namespace ism
 {

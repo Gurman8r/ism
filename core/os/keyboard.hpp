@@ -8,7 +8,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// key codes
-	typedef enum KeyCode_ : int32_t
+	DECL_ENUM(KeyCode)
 	{
 		KeyCode_Space			= 32,	// space
 		KeyCode_Apostrophe		= 39,	// apostrophe
@@ -54,12 +54,12 @@ namespace ism
 		KeyCode_X				= 88,	// x
 		KeyCode_Y				= 89,	// y
 		KeyCode_Z				= 90,	// z
-		KeyCode_Left_Bracket	= 91,	// left bracket
+		KeyCode_LeftBracket		= 91,	// left bracket
 		KeyCode_Backslash		= 92,	// backslash
-		KeyCode_Right_Bracket	= 93,	// right bracket
-		KeyCode_Grave_Accent	= 96,	// grave accent
-		KeyCode_World_1			= 161,	// world 1
-		KeyCode_World_2			= 162,	// world 2
+		KeyCode_RightBracket	= 93,	// right bracket
+		KeyCode_GraveAccent		= 96,	// grave accent
+		KeyCode_World1			= 161,	// world 1
+		KeyCode_World2			= 162,	// world 2
 		KeyCode_Escape			= 256,	// escape
 		KeyCode_Enter			= 257,	// enter
 		KeyCode_Tab				= 258,	// tab
@@ -70,14 +70,14 @@ namespace ism
 		KeyCode_Left			= 263,	// left
 		KeyCode_Down			= 264,	// down
 		KeyCode_Up				= 265,	// up
-		KeyCode_Page_Up			= 266,	// page up
-		KeyCode_Page_Down		= 267,	// page down
+		KeyCode_PageUp			= 266,	// page up
+		KeyCode_PageDown		= 267,	// page down
 		KeyCode_Home			= 268,	// home
 		KeyCode_End				= 269,	// end
-		KeyCode_Caps_Lock		= 280,	// caps lock
-		KeyCode_Scroll_Lock		= 281,	// scroll lock
-		KeyCode_Num_Lock		= 282,	// num lock
-		KeyCode_Print_Screen	= 283,	// print screen
+		KeyCode_CapsLock		= 280,	// caps lock
+		KeyCode_ScrollLock		= 281,	// scroll lock
+		KeyCode_NumLock			= 282,	// num lock
+		KeyCode_PrintScreen		= 283,	// print screen
 		KeyCode_Pause			= 284,	// pause
 		KeyCode_Fn1				= 290,	// f1
 		KeyCode_Fn2				= 291,	// f2
@@ -121,34 +121,32 @@ namespace ism
 		KeyCode_KpAdd			= 334,	// keypad add
 		KeyCode_KpEnter			= 335,	// keypad enter
 		KeyCode_KpEqual			= 336,	// keypad equal
-		KeyCode_Left_Shift		= 340,	// left shift
-		KeyCode_Left_Ctrl		= 341,	// left control
-		KeyCode_Left_Alt		= 342,	// left alt
-		KeyCode_Left_Super		= 343,	// left super
-		KeyCode_Right_Shift		= 344,	// right shift
-		KeyCode_Right_Ctrl		= 345,	// right control
-		KeyCode_Right_Alt		= 346,	// right alt
-		KeyCode_Right_Super		= 347,	// right super
+		KeyCode_LeftShift		= 340,	// left shift
+		KeyCode_LeftCtrl		= 341,	// left control
+		KeyCode_LeftAlt			= 342,	// left alt
+		KeyCode_LeftSuper		= 343,	// left super
+		KeyCode_RightShift		= 344,	// right shift
+		KeyCode_RightCtrl		= 345,	// right control
+		KeyCode_RightAlt		= 346,	// right alt
+		KeyCode_RightSuper		= 347,	// right super
 		KeyCode_Menu			= 348,	// menu
 
 		KeyCode_MAX
-	}
-	KeyCode;
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// key modifiers
-	typedef enum KeyMods_ : int32_t
+	DECL_ENUM(KeyMods)
 	{
-		keymods_none = 0 << 0,	// nullptr
-		keymods_shift = 0 << 1,	// shift
-		keymods_ctrl = 1 << 1,	// ctrl
-		keymods_alt = 1 << 2,	// alt
-		keymods_super = 1 << 3,	// super
-		keymods_caps = 1 << 4,	// caps
-		keymods_numlk = 1 << 5	// numlock
-	}
-	KeyMods;
+		KeyMods_None	= 0 << 0,	// nullptr
+		KeyMods_Shift	= 0 << 1,	// shift
+		KeyMods_Ctrl	= 1 << 1,	// ctrl
+		KeyMods_Alt		= 1 << 2,	// alt
+		KeyMods_Super	= 1 << 3,	// super
+		KeyMods_Caps	= 1 << 4,	// caps
+		KeyMods_NumLock	= 1 << 5,	// numlock
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

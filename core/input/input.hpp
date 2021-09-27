@@ -2,6 +2,7 @@
 #define _ISM_INPUT_HPP_
 
 #include <core/input/input_event.hpp>
+#include <core/os/keyboard.hpp>
 
 namespace ism
 {
@@ -11,16 +12,15 @@ namespace ism
 	DECL_POINTER(CursorID);
 
 	// cursor mode
-	typedef enum CursorMode_ : int32_t
+	DECL_ENUM(CursorMode)
 	{
 		CursorMode_Normal		, // normal
 		CursorMode_Hidden		, // hidden
 		CursorMode_Disabled		, // disabled
-	}
-	CursorMode;
+	};
 
 	// cursor shape
-	typedef enum CursorShape_ : int32_t
+	DECL_ENUM(CursorShape)
 	{
 		CursorShape_Arrow			, // arrow
 		CursorShape_IBeam			, // ibeam
@@ -35,8 +35,7 @@ namespace ism
 		CursorShape_HResize			, // hresize
 		CursorShape_VResize			, // vresize
 		CursorShape_Hand			, // hand
-	}
-	CursorShape;
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -55,7 +54,7 @@ namespace ism
 		explicit Input() noexcept : Object{} { singleton = this; }
 
 	public:
-		virtual ~Input() override { singleton = nullptr; }
+		virtual ~Input() override {}
 
 		FORCE_INLINE static Input * get_singleton() noexcept { return singleton; }
 

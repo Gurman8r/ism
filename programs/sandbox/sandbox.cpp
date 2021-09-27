@@ -1,5 +1,5 @@
 #include <main/main.hpp>
-#include <scene/main/scene_tree.hpp>
+#include <runtime/scene/scene_tree.hpp>
 
 using namespace ism;
 
@@ -80,7 +80,7 @@ namespace ism
 		SceneTree * scene{ (SceneTree *)get_os().get_main_loop() };
 		scene->initialize(); SCOPE_EXIT(&) { scene->finalize(); };
 
-		Window * window{ scene->get_root() };
+		Window * window{ scene->get_window() };
 		while (window && window->is_open())
 		{
 			static Duration delta_time{};
