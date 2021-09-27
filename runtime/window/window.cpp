@@ -1,6 +1,6 @@
 #include <runtime/window/window.hpp>
 
-#ifdef ISM_OS_WINDOWS
+#ifdef SYSTEM_WINDOWS
 #include <platform/windows/display_context_windows.hpp>
 #define WINDOW_IMPL ism::DisplayContextWindows
 #endif
@@ -15,7 +15,7 @@ OBJECT_IMPL(Window, t, TypeFlags_BaseType) {}
 
 Window * Window::new_(WindowSettings const & settings)
 {
-	Window * w{ get_display_context().create_window(settings) };
+	Window * w{ get_display_context().new_window(settings) };
 
 	w->make_context_current();
 

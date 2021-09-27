@@ -33,7 +33,7 @@ namespace ism
 
 	void test_main()
 	{
-		CHECK(create_extension_module("__main__"))
+		VALIDATE(api::create_extension_module("__main__"))
 			.def("hello", hello)
 			.def("say", say)
 			.def("get_int", get_int)
@@ -45,32 +45,32 @@ namespace ism
 			.def("test_static", &Test::test_static)
 			;
 
-		DICT g = globals();
+		DICT g = api::globals();
 		g["test_static"]();
 		g["hello"]();
 		g["say"](g["get_string"]());
 		VERIFY(g["pass_ptr"]((void *)123).cast<void const *>() == (void *)123);
 		VERIFY(g["pass_ptr"]((void *)123, (void *)321).cast<void const *>() == (void *)321);
 
-		MAIN_PRINT("%s\n", typeof<METHOD>().attr("__subclasscheck__")(typeof<FUNCTION>()) ? "true" : "false");
+		MAIN_PRINT("%s\n", api::typeof<METHOD>().attr("__subclasscheck__")(api::typeof<FUNCTION>()) ? "true" : "false");
 
-		VERIFY(typeof<LIST>().attr("__size__").cast<size_t>() == sizeof(ListObject));
+		VERIFY(api::typeof<LIST>().attr("__size__").cast<size_t>() == sizeof(ListObject));
 
-		LIST list{ typeof<LIST>()() };
+		LIST list{ api::typeof<LIST>()() };
 		list.append("IT WORKS");
 		MAIN_PRINT("%s\n", STR(list[0]).c_str());
-		OBJ nn = typeof<LIST>().attr("__name__");
+		OBJ nn = api::typeof<LIST>().attr("__name__");
 		MAIN_PRINT("%s\n", STR(nn).c_str());
 		
-		OBJ d{ typeof<DICT>()() };
+		OBJ d{ api::typeof<DICT>()() };
 		d["ABC"] = 42;
 		d["DEF"] = "Hello, World!";
 		VERIFY(d.contains("ABC"));
 		MAIN_PRINT("%d\n", d["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
-		MAIN_PRINT("%s\n", typeof(d).name().cast<String>().c_str());
-		typeof(d).name() = "changed";
-		MAIN_PRINT("%s\n", STR(typeof(d).name()).c_str());
+		MAIN_PRINT("%s\n", api::typeof(d).name().cast<String>().c_str());
+		api::typeof(d).name() = "changed";
+		MAIN_PRINT("%s\n", STR(api::typeof(d).name()).c_str());
 
 		MAIN_PRINT("\n");
 	}
@@ -84,14 +84,17 @@ namespace ism
 		while (window && window->is_open())
 		{
 			static Duration delta_time{};
+
 			Timer const loop_timer{ true };
+
 			window->poll_events();
 
 			StringStream title{};
-			title << "ism_api @ " << (delta_time.count() * 1000.f) << " ms/frame";
+			title << "ism @ " << (delta_time.count() * 1000.f) << " ms/frame";
 			window->set_title(title.str());
 
 			window->swap_buffers();
+
 			delta_time = loop_timer.elapsed();
 		}
 	}

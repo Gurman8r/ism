@@ -68,27 +68,27 @@
 
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(__MINGW32__) || defined(__MINGW64__)
 //									Windows
-#   define ISM_OS_WINDOWS			1
+#   define SYSTEM_WINDOWS			1
 
 #elif defined(__APPLE__) && defined(__MACH__)
 //									Apple
-#   define ISM_OS_APPLE				1
+#   define SYSTEM_APPLE				1
 
 #elif defined(__unix__)
 //									Unix
-#   define ISM_OS_UNIX				1
+#   define SYSTEM_UNIX				1
 
 #   if defined(__ANDROID__)
 //									Android
-#       define ISM_OS_ANDROID		1
+#       define SYSTEM_ANDROID		1
 
 #   elif defined(__linux__)
 //									Linux
-#       define ISM_OS_LINUX			1
+#       define SYSTEM_LINUX			1
 
 #   elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 //									FreeBSD
-#       define ISM_OS_FREEBSD		1
+#       define SYSTEM_FREEBSD		1
 
 #   else
 #       error "this unix operating system is not supported"
@@ -105,32 +105,32 @@
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(_x64)
 //									x64
-#	define ISM_CPU_X64				1
-#	define ISM_ARCH					64
+#	define CPU_X64					1
+#	define ARCHITECTURE				64
 
 #elif defined(__i386__) || defined(_M_IX86)
 //									x86
-#	define ISM_CPU_X86				1
-#	define ISM_ARCH					32
+#	define CPU_X86					1
+#	define ARCHITECTURE				32
 
 #elif defined(__arm__) || defined(_M_ARM) || defined(__aarch64__)
 //									ARM
 #	if defined(__aarch64__)
-#		define ISM_CPU_ARM64		1
-#		define ISM_ARCH				64
+#		define CPU_ARM64			1
+#		define ARCHITECTURE			64
 #	else
-#		define ISM_CPU_ARM32		1
-#		define ISM_ARCH				32
+#		define CPU_ARM32			1
+#		define ARCHITECTURE			32
 #	endif
 
 #elif defined(ppc) || defined(_M_PPC) || defined(__ppc64__)
 //									PowerPC
 #	if defined(__ppc64__)
-#		define ISM_CPU_PPC64		1
-#		define ISM_ARCH				64
+#		define CPU_PPC64			1
+#		define ARCHITECTURE			64
 #	else
-#		define ISM_CPU_PPC32		1
-#		define ISM_ARCH				32
+#		define CPU_PPC32			1
+#		define ARCHITECTURE			32
 #	endif
 
 #else
@@ -144,47 +144,47 @@
 
 #if defined(_MSC_VER)
 //									Visual Studio
-#	define ISM_CC_MSVC				_MSC_VER
+#	define COMPILER_MSVC			_MSC_VER
 
 #elif defined(__clang__)
 //									Clang / LLVM
-#	define ISM_CC_CLANG				__clang__
+#	define COMPILER_CLANG			__clang__
 
 #elif (defined(__GNUC__) || defined(__GNUG__)) && !defined(__clang__)
 //									GCC
 #	ifdef __GNUC__
-#		define ISM_CC_GCC			__GNUC__
+#		define COMPILER_GCC			__GNUC__
 #	else
-#		define ISM_CC_GCC			__GNUG__
+#		define COMPILER_GCC			__GNUG__
 #	endif
 
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
 //									Intel
 #	ifdef __ICC
-#		define ISM_CC_INTEL			__ICC
+#		define COMPILER_INTEL		__ICC
 #	else
-#		define ISM_CC_INTEL			__INTEL_COMPILER
+#		define COMPILER_INTEL		__INTEL_COMPILER
 #	endif
 
 #elif defined(__MINGW32__) || defined(__MINGW64__)
 //									MinGW
 #	ifdef __MINGW64__
-#		define ISM_CC_MINGW			__MINGW64__
+#		define COMPILER_MINGW		__MINGW64__
 #	else
-#		define ISM_CC_MINGW			__MINGW32__
+#		define COMPILER_MINGW		__MINGW32__
 #	endif
 
 #elif defined(__EMSCRIPTEN__)
 //									Emscripten
-#	define ISM_CC_EMSCRIPTEN		__EMSCRIPTEN__
+#	define COMPILER_EMSCRIPTEN		__EMSCRIPTEN__
 
 #elif defined(__asmjs__)
 //									asm.js
-#	define ISM_CC_ASMJS				__asmjs__
+#	define COMPILER_ASMJS			__asmjs__
 
 #elif defined(__wasm__)
 //									WebAssembly
-#	define ISM_CC_WASM				__wasm__
+#	define COMPILER_WASM			__wasm__
 
 #else
 #   error "this compiler is not supported"
@@ -203,18 +203,18 @@
 #endif
 
 // novtable
-#ifdef ISM_CC_MSVC
+#ifdef COMPILER_MSVC
 #define NOVTABLE __declspec(novtable)
 #else
 #define NOVTABLE
 #endif
 
 // inlining
-#ifdef ISM_CC_MSVC
+#ifdef COMPILER_MSVC
 #	define FORCE_INLINE __forceinline
 #	define NEVER_INLINE __declspec(noinline)
 
-#elif defined(ISM_CC_CLANG) || defined(ISM_CC_GCC)
+#elif defined(COMPILER_CLANG) || defined(COMPILER_GCC)
 #	define FORCE_INLINE __attribute__((always_inline))
 #	define NEVER_INLINE __attribute__((noinline))
 
@@ -241,7 +241,7 @@
 // DISABLE ANNOYING COMPILER WARNINGS
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if ISM_OS_WINDOWS
+#if SYSTEM_WINDOWS
 #	pragma warning(disable: 4031)	// second formal parameter list longer than the first list
 #	pragma warning(disable: 4067)	// unexpected tokens following preprocessor directive - expected a newline
 #	pragma warning(disable: 4251)	// type1 needs to have dll-interface to be used by type2
@@ -278,11 +278,11 @@
 #	define ISM_API_EXPORT
 #	define ISM_API_IMPORT
 
-#elif defined(ISM_OS_WINDOWS)
+#elif defined(SYSTEM_WINDOWS)
 #	define ISM_API_EXPORT __declspec(dllexport)
 #	define ISM_API_IMPORT __declspec(dllimport)
 
-#elif defined(__clang__) || (defined(__GNUC__) && (__GNUC__ >= 4))
+#elif defined(COMPILER_CLANG) || (defined(__GNUC__) && (__GNUC__ >= 4))
 #	define ISM_API_EXPORT __attribute__((visibility("default")))
 #	define ISM_API_IMPORT __attribute__((visibility("hidden")))
 

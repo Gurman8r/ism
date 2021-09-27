@@ -1,5 +1,5 @@
-#ifndef _ISM_OS_HPP_
-#define _ISM_OS_HPP_
+#ifndef _SYSTEM_HPP_
+#define _SYSTEM_HPP_
 
 #include <core/io/logger.hpp>
 #include <core/os/filesystem.hpp>
@@ -93,9 +93,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline OS & get_os() noexcept { return *CHECK(OS::get_singleton()); }
+	NODISCARD inline OS & get_os() noexcept { return *VALIDATE(OS::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_OS_HPP_
+#endif // !_SYSTEM_HPP_

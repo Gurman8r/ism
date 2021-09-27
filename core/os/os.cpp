@@ -57,7 +57,7 @@ void OS::set_logger(CompositeLogger * value)
 
 void OS::pause()
 {
-#ifdef ISM_OS_WINDOWS
+#ifdef SYSTEM_WINDOWS
 	std::system("pause");
 #else
 	this->print("\nPress enter to continue . . .");

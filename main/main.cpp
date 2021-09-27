@@ -18,7 +18,7 @@
 #include <editor/register_editor_types.hpp>
 #endif
 
-#if ISM_OS_WINDOWS
+#if SYSTEM_WINDOWS
 #include <platform/windows/display_context_windows.hpp>
 #define DISPLAY_SERVER_DEFAULT DisplayContextWindows
 #endif
@@ -37,7 +37,7 @@ MEMBER_IMPL(Main::g_frame_index) {};
 MEMBER_IMPL(Main::g_iterating) {};
 
 static Input * g_input{};
-static Internals * g_internals{};
+static api::Internals * g_internals{};
 static DisplayContext * g_display_context{};
 static RenderingContext * g_rendering_context{};
 
@@ -47,7 +47,7 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
 	get_os().initialize();
 	
-	g_internals = memnew(Internals);
+	g_internals = memnew(api::Internals);
 
 	register_core_types();
 	

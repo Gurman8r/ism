@@ -1,7 +1,7 @@
 #ifndef _ISM_MAIN_LOOP_HPP_
 #define _ISM_MAIN_LOOP_HPP_
 
-#include <core/object/detail/class.hpp>
+#include <core/api/class.hpp>
 
 namespace ism
 {

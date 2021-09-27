@@ -251,7 +251,7 @@ namespace ism::mpl
 	};
 
 	template <template<class...> class Base, class T>
-#if !ISM_CC_MSVC
+#if !COMPILER_MSVC
 	using is_template_base_of = decltype(is_template_base_of_impl<Base>::check((intrinsic_t<T> *)nullptr));
 #else
 	struct is_template_base_of : decltype(is_template_base_of_impl<Base>::check((intrinsic_t<T> *)nullptr)) {};

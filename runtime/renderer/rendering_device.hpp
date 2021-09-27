@@ -27,7 +27,8 @@ namespace ism
 
 	public: /* GENERIC */
 
-		DECL_ENUM(CompareOperator) {
+		MAKE_ENUM(CompareOperator)
+		{
 			CompareOperator_Never,
 			CompareOperator_Less,
 			CompareOperator_Equal,
@@ -39,7 +40,8 @@ namespace ism
 			CompareOperator_MAX
 		};
 
-		DECL_ENUM(DataFormat) {
+		MAKE_ENUM(DataFormat)
+		{
 			DataFormat_R4G4_UNORM_PACK8,
 			DataFormat_R4G4B4A4_UNORM_PACK16,
 			DataFormat_B4G4R4A4_UNORM_PACK16,
@@ -273,7 +275,8 @@ namespace ism
 
 	public: /* TEXTURE */
 
-		DECL_ENUM(TextureType) {
+		MAKE_ENUM(TextureType)
+		{
 			TextureType_1D,
 			TextureType_2D,
 			TextureType_3D,
@@ -284,7 +287,8 @@ namespace ism
 			TextureType_MAX
 		};
 
-		DECL_ENUM(TextureSamples) {
+		MAKE_ENUM(TextureSamples)
+		{
 			TextureSamples_1,
 			TextureSamples_2,
 			TextureSamples_4,
@@ -295,7 +299,8 @@ namespace ism
 			TextureSamples_MAX
 		};
 
-		DECL_ENUM(TextureUsage) {
+		MAKE_ENUM(TextureUsage)
+		{
 			TextureUsage_Sampling				= 1 << 0,
 			TextureUsage_ColorAttachment		= 1 << 1,
 			TextureUsage_DepthStencilAttachment = 1 << 2,
@@ -308,7 +313,8 @@ namespace ism
 			TextureUsage_ResolveAttachment		= 1 << 9,
 		};
 
-		DECL_ENUM(TextureSwizzle) {
+		MAKE_ENUM(TextureSwizzle)
+		{
 			TextureSwizzle_Identity,
 			TextureSwizzle_Zero,
 			TextureSwizzle_One,
@@ -357,7 +363,8 @@ namespace ism
 			TextureSwizzle swizzle_a{ TextureSwizzle_A };
 		};
 
-		DECL_ENUM(TextureSliceType) {
+		MAKE_ENUM(TextureSliceType)
+		{
 			TextureSliceType_2D,
 			TextureSliceType_Cube,
 			TextureSliceType_3D,
@@ -389,12 +396,14 @@ namespace ism
 
 	public: /* SAMPLER */
 
-		DECL_ENUM(SamplerFilter) {
+		MAKE_ENUM(SamplerFilter)
+		{
 			SamplerFilter_Nearest,
 			SamplerFilter_Linear,
 		};
 
-		DECL_ENUM(SamplerRepeatMode) {
+		MAKE_ENUM(SamplerRepeatMode)
+		{
 			SamplerRepeatMode_Repeat,
 			SamplerRepeatMode_MirroredRepeat,
 			SamplerRepeatMode_ClampToEdge,
@@ -403,7 +412,8 @@ namespace ism
 			SamplerRepeatMode_MAX
 		};
 
-		DECL_ENUM(SamplerBorderColor) {
+		MAKE_ENUM(SamplerBorderColor)
+		{
 			SamplerBorderColor_Float_Transparent_Black,
 			SamplerBorderColor_Int_Transparent_Black,
 			SamplerBorderColor_Float_Opaque_Black,
@@ -452,7 +462,8 @@ namespace ism
 
 	public: /* BUFFER */
 
-		DECL_ENUM(VertexFrequency) {
+		MAKE_ENUM(VertexFrequency)
+		{
 			VertexFrequency_Vertex,
 			VertexFrequency_Instance,
 		};
@@ -474,7 +485,8 @@ namespace ism
 
 		ALIAS(VertexFormatID) int64_t;
 
-		DECL_ENUM(IndexBufferFormat) {
+		MAKE_ENUM(IndexBufferFormat)
+		{
 			IndexBufferFormat_U16,
 			IndexBufferFormat_U32,
 		};
@@ -491,7 +503,8 @@ namespace ism
 
 	public: /* SHADER */
 
-		DECL_ENUM(ShaderStage) {
+		MAKE_ENUM(ShaderStage)
+		{
 			ShaderStage_Vertex,
 			ShaderStage_Fragment,
 			ShaderStage_TesselationControl,
@@ -505,7 +518,8 @@ namespace ism
 			ShaderStage_Compute_Bit					= 1 << ShaderStage_Compute,
 		};
 
-		DECL_ENUM(ShaderLanguage) {
+		MAKE_ENUM(ShaderLanguage)
+		{
 			ShaderLanguage_GLSL,
 			ShaderLanguage_HLSL,
 		};
@@ -525,7 +539,8 @@ namespace ism
 
 	public: /* UNIFORMS */
 
-		DECL_ENUM(UniformType) {
+		MAKE_ENUM(UniformType)
+		{
 			UniformType_Sampler,
 			UniformType_SamplerWithTexture,
 			UniformType_Texture,
@@ -554,18 +569,21 @@ namespace ism
 
 	public: /* RENDER PIPELINE */
 
-		DECL_ENUM(PolygonCullMode) {
+		MAKE_ENUM(PolygonCullMode)
+		{
 			PolygonCullMode_Disabled,
 			PolygonCullMode_Front,
 			PolygonCullMode_Back,
 		};
 
-		DECL_ENUM(PolygonFrontFace) {
+		MAKE_ENUM(PolygonFrontFace)
+		{
 			PolygonFrontFace_Clockwise,
 			PolygonFrontFace_CounterClockwise,
 		};
 
-		DECL_ENUM(StencilOperation) {
+		MAKE_ENUM(StencilOperation)
+		{
 			StencilOperation_Keep,
 			StencilOperation_Zero,
 			StencilOperation_Replace,
@@ -577,7 +595,8 @@ namespace ism
 			StencilOperation_MAX
 		};
 
-		DECL_ENUM(LogicOperation) {
+		MAKE_ENUM(LogicOperation)
+		{
 			LogicOperation_Clear,
 			LogicOperation_And,
 			LogicOperation_AndReverse,
@@ -597,7 +616,8 @@ namespace ism
 			LogicOperation_MAX
 		};
 
-		DECL_ENUM(BlendFactor) {
+		MAKE_ENUM(BlendFactor)
+		{
 			BlendFactor_Zero,
 			BlendFactor_One,
 			BlendFactor_SrcColor,
@@ -620,7 +640,8 @@ namespace ism
 			BlendFactor_MAX
 		};
 
-		DECL_ENUM(BlendOperation) {
+		MAKE_ENUM(BlendOperation)
+		{
 			BlendOperation_Add,
 			BlendOperation_Subtract,
 			BlendOperation_ReverseSubtract,
@@ -796,7 +817,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline RenderingDevice & get_rendering_device() noexcept { return *CHECK(RenderingDevice::get_singleton()); }
+	NODISCARD inline RenderingDevice & get_rendering_device() noexcept { return *VALIDATE(RenderingDevice::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

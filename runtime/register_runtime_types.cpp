@@ -6,7 +6,7 @@ using namespace ism;
 
 void ism::register_runtime_types()
 {
-	get_internals()
+	api::get_internals()
 		.bind_class<DisplayContext>()
 		.bind_class<RenderingContext>()
 		;

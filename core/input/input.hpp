@@ -9,10 +9,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// cursor handle
-	DECL_POINTER(CursorID);
+	MAKE_HANDLE(CursorID);
 
 	// cursor mode
-	DECL_ENUM(CursorMode)
+	MAKE_ENUM(CursorMode)
 	{
 		CursorMode_Normal		, // normal
 		CursorMode_Hidden		, // hidden
@@ -20,7 +20,7 @@ namespace ism
 	};
 
 	// cursor shape
-	DECL_ENUM(CursorShape)
+	MAKE_ENUM(CursorShape)
 	{
 		CursorShape_Arrow			, // arrow
 		CursorShape_IBeam			, // ibeam

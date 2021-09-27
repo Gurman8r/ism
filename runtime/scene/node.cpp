@@ -13,7 +13,7 @@ Node::~Node() { clear_children(); }
 
 Node::Node(SceneTree * tree, Node * parent)
 	: Object{}
-	, m_tree{ CHECK(tree) }
+	, m_tree{ VALIDATE(tree) }
 	, m_parent{ parent }
 	, m_children{}
 {

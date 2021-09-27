@@ -1,11 +1,11 @@
-#ifndef _ISM_OS_WINDOWS_HPP_
-#define _ISM_OS_WINDOWS_HPP_
+#ifndef _SYSTEM_WINDOWS_HPP_
+#define _SYSTEM_WINDOWS_HPP_
 
 #include <platform/windows/windows.hpp>
 
 #include <core/os/os.hpp>
 
-static_assert(ISM_OS_WINDOWS);
+static_assert(SYSTEM_WINDOWS);
 
 namespace ism
 {
@@ -65,4 +65,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_OS_WINDOWS_HPP_
+#endif // !_SYSTEM_WINDOWS_HPP_

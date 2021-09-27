@@ -34,21 +34,21 @@ public:																											\
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // declare enum
-#define DECL_ENUM_EX(m_name, m_base) \
+#define MAKE_ENUM_EX(m_name, m_base) \
 	ALIAS(m_name) m_base; \
 	enum CAT(m_name, _) : m_name
 
 // declare enum default
-#define DECL_ENUM(m_name) \
-	DECL_ENUM_EX(m_name, int32_t)
+#define MAKE_ENUM(m_name) \
+	MAKE_ENUM_EX(m_name, int32_t)
 
 // declare handle
-#define DECL_POINTER(m_name) \
+#define MAKE_HANDLE(m_name) \
 	struct CAT(__, m_name) { int unused; }; \
 	ALIAS(m_name) CAT(__, m_name) *
 
 // declare tag
-#define DECL_TAG(m_type, m_var) \
+#define MAKE_TAG(m_type, m_var) \
 	struct m_type { struct _Tag {}; constexpr explicit m_type(_Tag) {} }; \
 	inline constexpr m_type m_var{ m_type::_Tag{} }; \
 
@@ -60,7 +60,7 @@ namespace ism
 
 	struct void_type {};
 
-#ifdef ISM_CC_MSVC
+#ifdef COMPILER_MSVC
 	ALIAS(int8_t)		signed __int8;
 	ALIAS(int16_t)		signed __int16;
 	ALIAS(int32_t)		signed __int32;
@@ -92,7 +92,7 @@ namespace ism
 	ALIAS(float_t)		float32_t;
 	ALIAS(double_t)		float64_t;
 
-#if (ISM_ARCH == 32)
+#if (ARCHITECTURE == 32)
 	ALIAS(intmax_t)		int32_t;
 	ALIAS(uintmax_t)	uint32_t;
 #else

@@ -2,7 +2,7 @@
 #include <runtime/scene/scene_tree.hpp>
 
 #include <glfw/glfw3.h>
-#if defined(ISM_OS_WINDOWS)
+#if defined(SYSTEM_WINDOWS)
 #	undef APIENTRY
 #	include <Windows.h>
 #	define GLFW_EXPOSE_NATIVE_WIN32
@@ -29,21 +29,21 @@ DisplayContextWindows::~DisplayContextWindows()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window * DisplayContextWindows::create_window(WindowSettings const & settings)
+Window * DisplayContextWindows::new_window(WindowSettings const & settings)
 {
 	// context hints
 	glfwWindowHint(GLFW_CLIENT_API, std::invoke([&]() noexcept {
 		switch (settings.context.api) {
 		default: return GLFW_NO_API;
-		case ContextAPI_OpenGL: return GLFW_OPENGL_API;
+		case RendererAPI_OpenGL: return GLFW_OPENGL_API;
 		}
 	}));
 	glfwWindowHint(GLFW_OPENGL_PROFILE, std::invoke([&]() noexcept {
 		switch (settings.context.profile) {
 		default: return GLFW_OPENGL_ANY_PROFILE;
-		case ContextProfile_Core: return GLFW_OPENGL_CORE_PROFILE;
-		case ContextProfile_Compat: return GLFW_OPENGL_COMPAT_PROFILE;
-		case ContextProfile_Debug: return GLFW_OPENGL_DEBUG_CONTEXT;
+		case RendererProfile_Core: return GLFW_OPENGL_CORE_PROFILE;
+		case RendererProfile_Compat: return GLFW_OPENGL_COMPAT_PROFILE;
+		case RendererProfile_Debug: return GLFW_OPENGL_DEBUG_CONTEXT;
 		}
 	}));
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, settings.context.major);
@@ -180,7 +180,7 @@ Vec2 DisplayContextWindows::window_get_mouse_pos(WindowID id) const
 
 WindowID DisplayContextWindows::window_get_native_handle(WindowID id) const
 {
-#ifdef ISM_OS_WINDOWS
+#ifdef SYSTEM_WINDOWS
 	return (WindowID)glfwGetWin32Window((GLFWwindow *)id);
 #else
 	return (WindowID)(GLFWwindow *)id;

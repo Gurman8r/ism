@@ -1,7 +1,7 @@
 #ifndef _ISM_RESOURCE_HPP_
 #define _ISM_RESOURCE_HPP_
 
-#include <core/object/detail/class.hpp>
+#include <core/api/class.hpp>
 
 namespace ism
 {
@@ -11,7 +11,7 @@ namespace ism
 
 	ALIAS(RES) Ref<Resource>;
 
-	DECL_POINTER(RID);
+	MAKE_HANDLE(RID);
 
 	class ISM_API Resource : public Object
 	{

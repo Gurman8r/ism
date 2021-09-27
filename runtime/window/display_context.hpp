@@ -8,14 +8,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class SceneTree;
-	class Node;
 	class Viewport;
 	class Window;
 
-	DECL_POINTER(MonitorID);
+	MAKE_HANDLE(MonitorID);
 
-	DECL_POINTER(WindowID);
+	MAKE_HANDLE(WindowID);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -40,7 +38,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window hints
-	DECL_ENUM(WindowHints)
+	MAKE_ENUM(WindowHints)
 	{
 		WindowHints_None			= 0		, // none
 		WindowHints_AutoIconify		= 1 << 0, // auto iconify
@@ -75,22 +73,22 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// context api
-	DECL_ENUM(ContextAPI)
+	// renderer api
+	MAKE_ENUM(RendererAPI)
 	{
-		ContextAPI_Unknown		, // unknown
-		ContextAPI_OpenGL		, // opengl
-		ContextAPI_Vulkan		, // vulkan
-		ContextAPI_DirectX		, // directx
+		RendererAPI_Unknown		, // unknown
+		RendererAPI_OpenGL		, // opengl
+		RendererAPI_Vulkan		, // vulkan
+		RendererAPI_DirectX		, // directx
 	};
 
-	// context profile
-	DECL_ENUM(ContextProfile)
+	// renderer profile
+	MAKE_ENUM(RendererProfile)
 	{
-		ContextProfile_Any		, // any
-		ContextProfile_Core		, // core
-		ContextProfile_Compat	, // compat
-		ContextProfile_Debug	, // debug
+		RendererProfile_Any		, // any
+		RendererProfile_Core	, // core
+		RendererProfile_Compat	, // compat
+		RendererProfile_Debug	, // debug
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -98,10 +96,10 @@ namespace ism
 	// context settings
 	struct NODISCARD ContextSettings
 	{
-		ContextAPI		api				{ ContextAPI_OpenGL };
+		RendererAPI		api				{ RendererAPI_OpenGL };
 		int32_t			major			{ 4 };
 		int32_t			minor			{ 6 };
-		ContextProfile	profile			{ ContextProfile_Compat };
+		RendererProfile	profile			{ RendererProfile_Compat };
 		int32_t			depth_bits		{ 24 };
 		int32_t			stencil_bits	{ 8 };
 		bool			multisample		{ true };
@@ -160,7 +158,7 @@ namespace ism
 
 		NODISCARD static DisplayContext * get_singleton() noexcept { return singleton; }
 
-		NODISCARD virtual Window * create_window(WindowSettings const & settings) = 0;
+		NODISCARD virtual Window * new_window(WindowSettings const & settings) = 0;
 
 	public:
 		virtual void poll_events() = 0;
@@ -177,6 +175,7 @@ namespace ism
 		virtual void request_window_attention(WindowID id) = 0;
 
 	public:
+		NODISCARD virtual Rect window_get_bounds(WindowID id) const { return Rect{ window_get_position(id), window_get_size(id) }; }
 		NODISCARD virtual String window_get_clipboard(WindowID id) const = 0;
 		NODISCARD virtual Vec2 window_get_content_scale(WindowID id) const = 0;
 		NODISCARD virtual Vec2 window_get_framebuffer_size(WindowID id) const = 0;
@@ -271,7 +270,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline DisplayContext & get_display_context() noexcept { return *CHECK(DisplayContext::get_singleton()); }
+	NODISCARD inline DisplayContext & get_display_context() noexcept { return *VALIDATE(DisplayContext::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

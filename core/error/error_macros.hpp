@@ -53,14 +53,14 @@ namespace ism
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // generate trap
-#if defined(ISM_CC_MSVC)
+#if defined(COMPILER_MSVC)
 #	define DEBUG_BREAK		(_CSTD __debugbreak)
 
-#elif defined(ISM_CC_CLANG)
+#elif defined(COMPILER_CLANG)
 #	define DEBUG_BREAK		(_CSTD __builtin_debugtrap)
 
 #else
-#	define DEBUG_BREAK()		_CSTD raise(SIGTRAP)
+#	define DEBUG_BREAK()	(_CSTD raise(SIGTRAP))
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -69,7 +69,7 @@ namespace ism
 {
 	inline void _ism_wassert(cwstring message, cwstring file, uint32_t line) noexcept
 	{
-#if defined(ISM_CC_MSVC)
+#if defined(COMPILER_MSVC)
 		_CSTD _wassert(message, file, line);
 
 #elif defined(assert)
@@ -105,12 +105,12 @@ namespace ism
 		return ((void)((!!(expr)) || (WIDE_ASSERT(message, file, line), 0))), FWD(expr);
 	}
 
-// check message
-#define CHECK_MSG(expr, msg) \
+// validate message
+#define VALIDATE_MSG(expr, msg) \
 	(ism::_ism_check)(expr, WIDE(msg), WIDE(__FILE__), (unsigned)__LINE__)
 
-// check
-#define CHECK(expr) \
+// validate
+#define VALIDATE(expr) \
 	(ism::_ism_check)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
 }
 

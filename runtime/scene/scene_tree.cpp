@@ -35,7 +35,7 @@ namespace ism
 
 			VideoMode{ { 1280, 720 }, { 8, 8, 8, 8 }, -1 },
 
-			ContextSettings{ ContextAPI_OpenGL, 4, 6, ContextProfile_Compat, 24, 8, true, false },
+			ContextSettings{ RendererAPI_OpenGL, 4, 6, RendererProfile_Compat, 24, 8, true, false },
 
 			WindowHints_Default_Maximized
 		});

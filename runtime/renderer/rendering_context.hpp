@@ -46,7 +46,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline RenderingContext & get_rendering_context() noexcept { return *CHECK(RenderingContext::get_singleton()); }
+	NODISCARD inline RenderingContext & get_rendering_context() noexcept { return *VALIDATE(RenderingContext::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

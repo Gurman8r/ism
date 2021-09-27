@@ -36,7 +36,7 @@ namespace ism
 
 		explicit Node(SceneTree * tree) noexcept : Node{ tree, nullptr } {}
 
-		explicit Node(Node * parent) noexcept : Node{ CHECK(parent)->m_tree, parent } {}
+		explicit Node(Node * parent) noexcept : Node{ VALIDATE(parent)->m_tree, parent } {}
 
 	public:
 		NODISCARD auto get_child(size_t i) const noexcept -> Node * { return (i < get_child_count()) ? m_children[i] : nullptr; }

@@ -18,7 +18,7 @@ namespace ism
 
 		~DisplayContextWindows();
 
-		NODISCARD virtual Window * create_window(WindowSettings const & settings) override;
+		NODISCARD virtual Window * new_window(WindowSettings const & settings) override;
 
 	public:
 		virtual void poll_events() override;
