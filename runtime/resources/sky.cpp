@@ -4,10 +4,10 @@ using namespace ism;
 
 OBJECT_IMPL(Sky, t) {}
 
-Sky::~Sky()
+Sky::Sky() : Resource{}
 {
 }
 
-Sky::Sky() : Resource{}
+Sky::~Sky()
 {
 }

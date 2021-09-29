@@ -60,7 +60,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void SceneTree::on_runtime_updateprocess(Duration const & delta_time)
+	void SceneTree::on_runtime_update(Duration const & delta_time)
 	{
 		if (!m_root) { return; }
 

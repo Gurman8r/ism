@@ -1,7 +1,7 @@
 #ifndef _ISM_RESOURCE_HPP_
 #define _ISM_RESOURCE_HPP_
 
-#include <core/api/class.hpp>
+#include <core/object/api/class.hpp>
 
 namespace ism
 {
@@ -11,33 +11,39 @@ namespace ism
 
 	ALIAS(RES) Ref<Resource>;
 
-	MAKE_HANDLE(RID);
+	MAKE_OPAQUE(RID);
 
 	class ISM_API Resource : public Object
 	{
 		OBJECT_COMMON(Resource, Object);
 
-	private:
+		RID m_resource_id{};
+
 		String m_name{}, m_path_cache{};
 
 		int32_t m_subindex{};
 
 	protected:
-		Resource() noexcept : Object{} {}
+		explicit Resource() noexcept;
 		
 	public:
 		virtual ~Resource();
 
-	public:
 		virtual void reload_from_file();
 
+	public:
+		NODISCARD auto get_id() const -> RID { return m_resource_id; }
+		
 		NODISCARD auto get_name() const -> String const & { return m_name; }
+		
+		NODISCARD auto get_path() const -> String const & { return m_path_cache; }
+		
+		NODISCARD auto get_subindex() const -> int32_t { return m_subindex; }
+
 		void set_name(String const & value) { m_name = value; }
 
-		NODISCARD auto get_path() const -> String const & { return m_path_cache; }
 		virtual void set_path(String const & value, bool take_over = false);
 
-		NODISCARD auto get_subindex() const -> int32_t { return m_subindex; }
 		void set_subindex(int32_t value) { m_subindex = value; }
 	};
 

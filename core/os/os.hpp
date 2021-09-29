@@ -67,13 +67,6 @@ namespace ism
 		virtual String get_stdin_string(bool block = true) = 0;
 
 	public:
-		virtual Error open_dynamic_library(String const & path, void *& instance) { return Error_Unknown; }
-		
-		virtual Error close_dynamic_library(void * instance) { return Error_Unknown; }
-		
-		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) { return Error_Unknown; }
-
-	public:
 		NODISCARD virtual String get_executable_path() const { return m_exepath; }
 		
 		NODISCARD virtual String get_environment(String const & key) const = 0;
@@ -89,6 +82,13 @@ namespace ism
 		virtual Error set_cwd(String const & path) { return Error_Unknown; }
 
 		virtual bool set_environment(String const & key, String const & value) const = 0;
+
+	public:
+		virtual Error open_dynamic_library(String const & path, void *& instance) { return Error_Unknown; }
+		
+		virtual Error close_dynamic_library(void * instance) { return Error_Unknown; }
+		
+		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) { return Error_Unknown; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -10,9 +10,9 @@ namespace ism
 		OBJECT_COMMON(Shader, Resource);
 
 	public:
-		virtual ~Shader();
-
 		Shader();
+
+		virtual ~Shader();
 
 	private:
 

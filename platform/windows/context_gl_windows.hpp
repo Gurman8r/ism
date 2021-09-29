@@ -20,10 +20,6 @@ namespace ism
 		void release_current();
 		
 		void make_current();
-
-		int32_t get_window_width();
-		
-		int32_t get_window_height();
 		
 		void swap_buffers();
 

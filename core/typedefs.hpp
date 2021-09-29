@@ -42,8 +42,8 @@ public:																											\
 #define MAKE_ENUM(m_name) \
 	MAKE_ENUM_EX(m_name, int32_t)
 
-// declare handle
-#define MAKE_HANDLE(m_name) \
+// declare opaque handle type
+#define MAKE_OPAQUE(m_name) \
 	struct CAT(__, m_name) { int unused; }; \
 	ALIAS(m_name) CAT(__, m_name) *
 

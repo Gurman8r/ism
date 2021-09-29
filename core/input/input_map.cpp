@@ -2,9 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMPL(InputMap, t, TypeFlags_BaseType)
-{
-}
+OBJECT_IMPL(InputMap, t, TypeFlags_BaseType) {}
 
 InputMap::~InputMap()
 {

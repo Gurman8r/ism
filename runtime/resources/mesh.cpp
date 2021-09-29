@@ -4,10 +4,10 @@ using namespace ism;
 
 OBJECT_IMPL(Mesh, t) {}
 
-Mesh::~Mesh()
+Mesh::Mesh() : Resource{}
 {
 }
 
-Mesh::Mesh() : Resource{}
+Mesh::~Mesh()
 {
 }

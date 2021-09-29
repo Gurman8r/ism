@@ -5,6 +5,15 @@
 
 namespace ism
 {
+	class Texture2D;
+
+	struct NODISCARD Glyph
+	{
+		Ref<Texture2D> graphic{};
+		Rect bounds{};
+		uint32_t advance{};
+	};
+
 	class ISM_API Font : public Resource
 	{
 		OBJECT_COMMON(Font, Resource);

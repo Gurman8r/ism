@@ -15,20 +15,13 @@ OBJECT_IMPL(Window, t, TypeFlags_BaseType) {}
 
 Window * Window::new_(WindowSettings const & settings)
 {
-	Window * w{ get_display_context().new_window(settings) };
-
-	w->make_context_current();
-
-	w->set_user_pointer(w);
-
-	w->set_position((Vec2(1920, 1080) - settings.video.size) / 2);
-
-	if (w->has_hints(WindowHints_Maximized)) { w->maximize(); }
-
-	return w;
+	return get_display_context().window_new(settings);
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+void Window::make_context_current()
+{
+	get_display_context().make_context_current(m_window_id);
+}
 
 void Window::poll_events()
 {
@@ -37,439 +30,434 @@ void Window::poll_events()
 
 void Window::swap_buffers()
 {
-	get_display_context().swap_buffers(m_window);
-}
-
-void Window::make_context_current()
-{
-	get_display_context().make_context_current(m_window);
+	get_display_context().swap_buffers(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void Window::focus()
 {
-	get_display_context().focus_window(m_window);
+	get_display_context().focus_window(m_window_id);
 }
 
 void Window::hide()
 {
-	get_display_context().hide_window(m_window);
+	get_display_context().hide_window(m_window_id);
 }
 
 void Window::iconify()
 {
-	get_display_context().iconify_window(m_window);
+	get_display_context().iconify_window(m_window_id);
 }
 
 void Window::maximize()
 {
-	get_display_context().maximize_window(m_window);
+	get_display_context().maximize_window(m_window_id);
 }
 
 void Window::restore()
 {
-	get_display_context().restore_window(m_window);
+	get_display_context().restore_window(m_window_id);
 }
 
 void Window::request_attention()
 {
-	get_display_context().request_window_attention(m_window);
+	get_display_context().request_window_attention(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 String Window::get_clipboard() const
 {
-	return get_display_context().window_get_clipboard(m_window);
+	return get_display_context().window_get_clipboard(m_window_id);
 }
 
 Vec2 Window::get_content_scale() const
 {
-	return get_display_context().window_get_content_scale(m_window);
+	return get_display_context().window_get_content_scale(m_window_id);
 }
 
 Vec2 Window::get_framebuffer_size() const
 {
-	return get_display_context().window_get_framebuffer_size(m_window);
+	return get_display_context().window_get_framebuffer_size(m_window_id);
 }
 
 int32_t Window::get_input_mode(int32_t value) const
 {
-	return get_display_context().window_get_input_mode(m_window, value);
+	return get_display_context().window_get_input_mode(m_window_id, value);
 }
 
 int32_t Window::get_key(int32_t value) const
 {
-	return get_display_context().window_get_key(m_window, value);
+	return get_display_context().window_get_key(m_window_id, value);
 }
 
 int32_t Window::get_mouse_button(int32_t value) const
 {
-	return get_display_context().window_get_mouse_button(m_window, value);
+	return get_display_context().window_get_mouse_button(m_window_id, value);
 }
 
 Vec2 Window::get_mouse_pos() const
 {
-	return get_display_context().window_get_mouse_pos(m_window);
+	return get_display_context().window_get_mouse_pos(m_window_id);
 }
 
 WindowID Window::get_native_handle() const
 {
-	return get_display_context().window_get_native_handle(m_window);
+	return get_display_context().window_get_native_handle(m_window_id);
 }
 
 float_t Window::get_opacity() const
 {
-	return get_display_context().window_get_opacity(m_window);
+	return get_display_context().window_get_opacity(m_window_id);
 }
 
 Vec2 Window::get_position() const
 {
-	return get_display_context().window_get_position(m_window);
+	return get_display_context().window_get_position(m_window_id);
 }
 
 Vec2 Window::get_size() const
 {
-	return get_display_context().window_get_size(m_window);
+	return get_display_context().window_get_size(m_window_id);
 }
 
 void * Window::get_user_pointer() const
 {
-	return get_display_context().window_get_user_pointer(m_window);
+	return get_display_context().window_get_user_pointer(m_window_id);
 }
 
 Rect Window::get_frame_size() const
 {
-	return get_display_context().window_get_frame_size(m_window);
+	return get_display_context().window_get_frame_size(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 bool Window::is_auto_iconify() const
 {
-	return get_display_context().window_is_auto_iconify(m_window);
+	return get_display_context().window_is_auto_iconify(m_window_id);
 }
 
 bool Window::is_decorated() const
 {
-	return get_display_context().window_is_decorated(m_window);
+	return get_display_context().window_is_decorated(m_window_id);
 }
 
 bool Window::is_floating() const
 {
-	return get_display_context().window_is_floating(m_window);
+	return get_display_context().window_is_floating(m_window_id);
 }
 
 bool Window::is_focused() const
 {
-	return get_display_context().window_is_focused(m_window);
+	return get_display_context().window_is_focused(m_window_id);
 }
 
 bool Window::is_focus_on_show() const
 {
-	return get_display_context().window_is_focus_on_show(m_window);
+	return get_display_context().window_is_focus_on_show(m_window_id);
 }
 
 bool Window::is_hovered() const
 {
-	return get_display_context().window_is_hovered(m_window);
+	return get_display_context().window_is_hovered(m_window_id);
 }
 
 bool Window::is_iconified() const
 {
-	return get_display_context().window_is_iconified(m_window);
+	return get_display_context().window_is_iconified(m_window_id);
 }
 
 bool Window::is_maximized() const
 {
-	return get_display_context().window_is_maximized(m_window);
+	return get_display_context().window_is_maximized(m_window_id);
 }
 
 bool Window::is_open() const
 {
-	return get_display_context().window_is_open(m_window);
+	return get_display_context().window_is_open(m_window_id);
 }
 
 bool Window::is_resizable() const
 {
-	return get_display_context().window_is_resizable(m_window);
+	return get_display_context().window_is_resizable(m_window_id);
 }
 
 bool Window::is_transparent() const
 {
-	return get_display_context().window_is_transparent(m_window);
+	return get_display_context().window_is_transparent(m_window_id);
 }
 
 bool Window::is_visible() const
 {
-	return get_display_context().window_is_visible(m_window);
+	return get_display_context().window_is_visible(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void Window::set_auto_iconify(bool value)
 {
-	get_display_context().window_set_auto_iconify(m_window, value);
+	get_display_context().window_set_auto_iconify(m_window_id, value);
 }
 
 void Window::set_clipboard(String const & value)
 {
-	get_display_context().window_set_clipboard(m_window, value);
+	get_display_context().window_set_clipboard(m_window_id, value);
 }
 
 void Window::set_cursor(CursorID value)
 {
-	get_display_context().window_set_cursor(m_window, value);
+	get_display_context().window_set_cursor(m_window_id, value);
 }
 
 void Window::set_cursor_mode(int32_t value)
 {
-	get_display_context().window_set_cursor_mode(m_window, value);
+	get_display_context().window_set_cursor_mode(m_window_id, value);
 }
 
 void Window::set_mouse_pos(Vec2 const & value)
 {
-	get_display_context().window_set_mouse_pos(m_window, value);
+	get_display_context().window_set_mouse_pos(m_window_id, value);
 }
 
 void Window::set_decorated(bool value)
 {
-	get_display_context().window_set_decorated(m_window, value);
+	get_display_context().window_set_decorated(m_window_id, value);
 }
 
 void Window::set_floating(bool value)
 {
-	get_display_context().window_set_floating(m_window, value);
+	get_display_context().window_set_floating(m_window_id, value);
 }
 
 void Window::set_focus_on_show(bool value)
 {
-	get_display_context().window_set_focus_on_show(m_window, value);
+	get_display_context().window_set_focus_on_show(m_window_id, value);
 }
 
 void Window::set_icons(int32_t width, int32_t height, uint8_t * pixels, int32_t count)
 {
-	get_display_context().window_set_icons(m_window, width, height, pixels, count);
+	get_display_context().window_set_icons(m_window_id, width, height, pixels, count);
 }
 
 void Window::set_input_mode(int32_t mode, int32_t value)
 {
-	get_display_context().window_set_input_mode(m_window, mode, value);
+	get_display_context().window_set_input_mode(m_window_id, mode, value);
 }
 
 void Window::set_opacity(float_t value)
 {
-	get_display_context().window_set_opacity(m_window, value);
+	get_display_context().window_set_opacity(m_window_id, value);
 }
 
 void Window::set_position(Vec2 const & value)
 {
-	get_display_context().window_set_position(m_window, value);
+	get_display_context().window_set_position(m_window_id, value);
 }
 
 void Window::set_monitor(MonitorID monitor, Rect const & bounds)
 {
-	get_display_context().window_set_monitor(m_window, monitor, bounds);
+	get_display_context().window_set_monitor(m_window_id, monitor, bounds);
 }
 
 void Window::set_resizable(bool value)
 {
-	get_display_context().window_set_resizable(m_window, value);
+	get_display_context().window_set_resizable(m_window_id, value);
 }
 
 void Window::set_should_close(bool value)
 {
-	get_display_context().window_set_should_close(m_window, value);
+	get_display_context().window_set_should_close(m_window_id, value);
 }
 
 void Window::set_size(Vec2 const & value)
 {
-	get_display_context().window_set_size(m_window, value);
+	get_display_context().window_set_size(m_window_id, value);
 }
 
 void Window::set_title(String const & value)
 {
-	get_display_context().window_set_title(m_window, value);
+	get_display_context().window_set_title(m_window_id, value);
 }
 
 void Window::set_user_pointer(void * value)
 {
-	get_display_context().window_set_user_pointer(m_window, value);
+	get_display_context().window_set_user_pointer(m_window_id, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-window_char_callback Window::get_char_callback() const
+WindowCharCallback Window::get_char_callback() const
 {
-	return get_display_context().window_get_char_callback(m_window);
+	return get_display_context().window_get_char_callback(m_window_id);
 }
 
-window_char_mods_callback Window::get_char_mods_callback() const
+WindowCharModsCallback Window::get_char_mods_callback() const
 {
-	return get_display_context().window_get_char_mods_callback(m_window);
+	return get_display_context().window_get_char_mods_callback(m_window_id);
 }
 
-window_close_callback Window::get_close_callback() const
+WindowCloseCallback Window::get_close_callback() const
 {
-	return get_display_context().window_get_close_callback(m_window);
+	return get_display_context().window_get_close_callback(m_window_id);
 }
 
-window_content_scale_callback Window::get_content_scale_callback() const
+WindowContentCallback Window::get_content_scale_callback() const
 {
-	return get_display_context().window_get_content_scale_callback(m_window);
+	return get_display_context().window_get_content_scale_callback(m_window_id);
 }
 
-window_mouse_enter_callback Window::get_mouse_enter_callback() const
+WindowMouseEnterCallback Window::get_mouse_enter_callback() const
 {
-	return get_display_context().window_get_mouse_enter_callback(m_window);
+	return get_display_context().window_get_mouse_enter_callback(m_window_id);
 }
 
-window_mouse_pos_callback Window::get_mouse_pos_callback() const
+WindowMousePosCallback Window::get_mouse_pos_callback() const
 {
-	return get_display_context().window_get_mouse_pos_callback(m_window);
+	return get_display_context().window_get_mouse_pos_callback(m_window_id);
 }
 
-window_drop_callback Window::get_drop_callback() const
+WindowDropCallback Window::get_drop_callback() const
 {
-	return get_display_context().window_get_drop_callback(m_window);
+	return get_display_context().window_get_drop_callback(m_window_id);
 }
 
-window_focus_callback Window::get_focus_callback() const
+WindowFocusCallback Window::get_focus_callback() const
 {
-	return get_display_context().window_get_focus_callback(m_window);
+	return get_display_context().window_get_focus_callback(m_window_id);
 }
 
-window_framebuffer_resize_callback Window::get_framebuffer_resize_callback() const
+WindowFramebufferResizeCallback Window::get_framebuffer_resize_callback() const
 {
-	return get_display_context().window_get_framebuffer_resize_callback(m_window);
+	return get_display_context().window_get_framebuffer_resize_callback(m_window_id);
 }
 
-window_iconify_callback Window::get_iconify_callback() const
+WindowIconifyCallback Window::get_iconify_callback() const
 {
-	return get_display_context().window_get_iconify_callback(m_window);
+	return get_display_context().window_get_iconify_callback(m_window_id);
 }
 
-window_key_callback Window::get_key_callback() const
+WindowKeyCallback Window::get_key_callback() const
 {
-	return get_display_context().window_get_key_callback(m_window);
+	return get_display_context().window_get_key_callback(m_window_id);
 }
 
-window_maximize_callback Window::get_maximize_callback() const
+WindowMaximizeCallback Window::get_maximize_callback() const
 {
-	return get_display_context().window_get_maximize_callback(m_window);
+	return get_display_context().window_get_maximize_callback(m_window_id);
 }
 
-window_mouse_button_callback Window::get_mouse_button_callback() const
+WindowMouseButtonCallback Window::get_mouse_button_callback() const
 {
-	return get_display_context().window_get_mouse_button_callback(m_window);
+	return get_display_context().window_get_mouse_button_callback(m_window_id);
 }
 
-window_position_callback Window::get_position_callback() const
+WindowPositionCallback Window::get_position_callback() const
 {
-	return get_display_context().window_get_position_callback(m_window);
+	return get_display_context().window_get_position_callback(m_window_id);
 }
 
-window_refresh_callback Window::get_refresh_callback() const
+WindowRefreshCallback Window::get_refresh_callback() const
 {
-	return get_display_context().window_get_refresh_callback(m_window);
+	return get_display_context().window_get_refresh_callback(m_window_id);
 }
 
-window_resize_callback Window::get_resize_callback() const
+WindowResizeCallback Window::get_resize_callback() const
 {
-	return get_display_context().window_get_resize_callback(m_window);
+	return get_display_context().window_get_resize_callback(m_window_id);
 }
 
-window_scroll_callback Window::get_scroll_callback() const
+WindowMouseScrollCallback Window::get_scroll_callback() const
 {
-	return get_display_context().window_get_scroll_callback(m_window);
+	return get_display_context().window_get_scroll_callback(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-window_char_callback Window::set_char_callback(window_char_callback value)
+WindowCharCallback Window::set_char_callback(WindowCharCallback value)
 {
-	return get_display_context().window_set_char_callback(m_window, value);
+	return get_display_context().window_set_char_callback(m_window_id, value);
 }
 
-window_char_mods_callback Window::set_char_mods_callback(window_char_mods_callback value)
+WindowCharModsCallback Window::set_char_mods_callback(WindowCharModsCallback value)
 {
-	return get_display_context().window_set_char_mods_callback(m_window, value);
+	return get_display_context().window_set_char_mods_callback(m_window_id, value);
 }
 
-window_close_callback Window::set_close_callback(window_close_callback value)
+WindowCloseCallback Window::set_close_callback(WindowCloseCallback value)
 {
-	return get_display_context().window_set_close_callback(m_window, value);
+	return get_display_context().window_set_close_callback(m_window_id, value);
 }
 
-window_content_scale_callback Window::set_content_scale_callback(window_content_scale_callback value)
+WindowContentCallback Window::set_content_scale_callback(WindowContentCallback value)
 {
-	return get_display_context().window_set_content_scale_callback(m_window, value);
+	return get_display_context().window_set_content_scale_callback(m_window_id, value);
 }
 
-window_mouse_enter_callback Window::set_mouse_enter_callback(window_mouse_enter_callback value)
+WindowDropCallback Window::set_drop_callback(WindowDropCallback value)
 {
-	return get_display_context().window_set_mouse_enter_callback(m_window, value);
+	return get_display_context().window_set_drop_callback(m_window_id, value);
 }
 
-window_mouse_pos_callback Window::set_mouse_pos_callback(window_mouse_pos_callback value)
+WindowFocusCallback Window::set_focus_callback(WindowFocusCallback value)
 {
-	return get_display_context().window_set_mouse_pos_callback(m_window, value);
+	return get_display_context().window_set_focus_callback(m_window_id, value);
 }
 
-window_drop_callback Window::set_drop_callback(window_drop_callback value)
+WindowFramebufferResizeCallback Window::set_framebuffer_resize_callback(WindowFramebufferResizeCallback value)
 {
-	return get_display_context().window_set_drop_callback(m_window, value);
+	return get_display_context().window_set_framebuffer_resize_callback(m_window_id, value);
 }
 
-window_focus_callback Window::set_focus_callback(window_focus_callback value)
+WindowIconifyCallback Window::set_iconify_callback(WindowIconifyCallback value)
 {
-	return get_display_context().window_set_focus_callback(m_window, value);
+	return get_display_context().window_set_iconify_callback(m_window_id, value);
 }
 
-window_framebuffer_resize_callback Window::set_framebuffer_resize_callback(window_framebuffer_resize_callback value)
+WindowKeyCallback Window::set_key_callback(WindowKeyCallback value)
 {
-	return get_display_context().window_set_framebuffer_resize_callback(m_window, value);
+	return get_display_context().window_set_key_callback(m_window_id, value);
 }
 
-window_iconify_callback Window::set_iconify_callback(window_iconify_callback value)
+WindowMaximizeCallback Window::set_maximize_callback(WindowMaximizeCallback value)
 {
-	return get_display_context().window_set_iconify_callback(m_window, value);
+	return get_display_context().window_set_maximize_callback(m_window_id, value);
 }
 
-window_key_callback Window::set_key_callback(window_key_callback value)
+WindowMouseButtonCallback Window::set_mouse_button_callback(WindowMouseButtonCallback value)
 {
-	return get_display_context().window_set_key_callback(m_window, value);
+	return get_display_context().window_set_mouse_button_callback(m_window_id, value);
 }
 
-window_maximize_callback Window::set_maximize_callback(window_maximize_callback value)
+WindowMouseEnterCallback Window::set_mouse_enter_callback(WindowMouseEnterCallback value)
 {
-	return get_display_context().window_set_maximize_callback(m_window, value);
+	return get_display_context().window_set_mouse_enter_callback(m_window_id, value);
 }
 
-window_mouse_button_callback Window::set_mouse_button_callback(window_mouse_button_callback value)
+WindowMousePosCallback Window::set_mouse_pos_callback(WindowMousePosCallback value)
 {
-	return get_display_context().window_set_mouse_button_callback(m_window, value);
+	return get_display_context().window_set_mouse_pos_callback(m_window_id, value);
 }
 
-window_position_callback Window::set_position_callback(window_position_callback value)
+WindowMouseScrollCallback Window::set_mouse_scroll_callback(WindowMouseScrollCallback value)
 {
-	return get_display_context().window_set_position_callback(m_window, value);
+	return get_display_context().window_set_mouse_scroll_callback(m_window_id, value);
 }
 
-window_refresh_callback Window::set_refresh_callback(window_refresh_callback value)
+WindowPositionCallback Window::set_position_callback(WindowPositionCallback value)
 {
-	return get_display_context().window_set_refresh_callback(m_window, value);
+	return get_display_context().window_set_position_callback(m_window_id, value);
 }
 
-window_resize_callback Window::set_resize_callback(window_resize_callback value)
+WindowRefreshCallback Window::set_refresh_callback(WindowRefreshCallback value)
 {
-	return get_display_context().window_set_resize_callback(m_window, value);
+	return get_display_context().window_set_refresh_callback(m_window_id, value);
 }
 
-window_scroll_callback Window::set_scroll_callback(window_scroll_callback value)
+WindowResizeCallback Window::set_resize_callback(WindowResizeCallback value)
 {
-	return get_display_context().window_set_scroll_callback(m_window, value);
+	return get_display_context().window_set_resize_callback(m_window_id, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

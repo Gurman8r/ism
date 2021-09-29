@@ -149,7 +149,7 @@ namespace ism
 		}
 	};
 
-	template <class T> void default_delete(T * value) noexcept
+	template <class T> void call_default_delete(T * value) noexcept
 	{
 		DefaultDelete<T>{}(value);
 	}

@@ -16,30 +16,6 @@ OS_Windows::~OS_Windows()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error OS_Windows::open_dynamic_library(String const & path, void *& instance)
-{
-	if (path.empty()) { return Error_Unknown; }
-	instance = LoadLibraryA(path.c_str());
-	if (!instance) { return Error_Unknown; }
-	return Error_None;
-}
-
-Error OS_Windows::close_dynamic_library(void * instance)
-{
-	FreeLibrary((HMODULE)instance);
-	return Error_None;
-}
-
-Error OS_Windows::get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional)
-{
-	if (!instance || name.empty()) { return Error_Unknown; }
-	symbol = GetProcAddress((HMODULE)instance, name.c_str());
-	if (!symbol && !is_optional) { return Error_Unknown; }
-	return Error_None;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 bool OS_Windows::has_environment(String const & key) const
 {
 	return false;
@@ -111,6 +87,30 @@ void OS_Windows::set_main_loop(MainLoop * value)
 void OS_Windows::delete_main_loop()
 {
 	if (m_main_loop) { memdelete(m_main_loop); m_main_loop = nullptr; }
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+Error OS_Windows::open_dynamic_library(String const & path, void *& instance)
+{
+	if (path.empty()) { return Error_Unknown; }
+	instance = LoadLibraryA(path.c_str());
+	if (!instance) { return Error_Unknown; }
+	return Error_None;
+}
+
+Error OS_Windows::close_dynamic_library(void * instance)
+{
+	FreeLibrary((HMODULE)instance);
+	return Error_None;
+}
+
+Error OS_Windows::get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional)
+{
+	if (!instance || name.empty()) { return Error_Unknown; }
+	symbol = GetProcAddress((HMODULE)instance, name.c_str());
+	if (!symbol && !is_optional) { return Error_Unknown; }
+	return Error_None;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

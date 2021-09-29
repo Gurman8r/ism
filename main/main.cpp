@@ -10,10 +10,6 @@
 #include <platform/register_platform_apis.hpp>
 #include <runtime/register_runtime_types.hpp>
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#include <runtime/renderer/rendering_context_default.hpp>
-
 #if TOOLS_ENABLED
 #include <editor/register_editor_types.hpp>
 #endif
@@ -28,6 +24,8 @@
 #define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
 #endif
 
+#include <runtime/renderer/rendering_context_default.hpp>
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 using namespace ism;
@@ -36,8 +34,8 @@ MEMBER_IMPL(Main::g_frame_count) {};
 MEMBER_IMPL(Main::g_frame_index) {};
 MEMBER_IMPL(Main::g_iterating) {};
 
-static Input * g_input{};
 static api::Internals * g_internals{};
+static Input * g_input{};
 static DisplayContext * g_display_context{};
 static RenderingContext * g_rendering_context{};
 

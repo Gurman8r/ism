@@ -5,3 +5,5 @@ global type database (map cpptype to typeobject)
 generic types
 
 iterator objects
+
+function objects are an absolute nightmare

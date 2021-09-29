@@ -41,11 +41,11 @@ namespace ism
 		virtual void delete_main_loop() override;
 
 	public:
-		virtual Error open_dynamic_library(String const & path, void *& instance) override;
-		
-		virtual Error close_dynamic_library(void * instance) override;
-		
-		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) override;
+		virtual String get_stdin_string(bool block = true) override;
+
+		virtual Error set_cwd(String const & path) override;
+
+		NODISCARD virtual String get_name() const override;
 
 	public:
 		NODISCARD virtual bool has_environment(String const & key) const override;
@@ -55,11 +55,11 @@ namespace ism
 		virtual bool set_environment(String const & key, String const & value) const override;
 
 	public:
-		virtual String get_stdin_string(bool block = true) override;
-		
-		virtual Error set_cwd(String const & path) override;
-		
-		NODISCARD virtual String get_name() const override;
+		virtual Error open_dynamic_library(String const & path, void *& instance) override;
+
+		virtual Error close_dynamic_library(void * instance) override;
+
+		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

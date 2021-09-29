@@ -1,15 +1,16 @@
 #ifndef _ISM_INPUT_HPP_
 #define _ISM_INPUT_HPP_
 
+#include <core/input/keyboard.hpp>
 #include <core/input/input_event.hpp>
-#include <core/os/keyboard.hpp>
+#include <core/input/input_map.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// cursor handle
-	MAKE_HANDLE(CursorID);
+	MAKE_OPAQUE(CursorID);
 
 	// cursor mode
 	MAKE_ENUM(CursorMode)
@@ -63,7 +64,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline Input & get_input() noexcept { return *Input::get_singleton(); }
+	NODISCARD inline Input & get_input() noexcept { return *VALIDATE(Input::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -4,10 +4,10 @@ using namespace ism;
 
 OBJECT_IMPL(Shader, t) {}
 
-Shader::~Shader()
+Shader::Shader() : Resource{}
 {
 }
 
-Shader::Shader() : Resource{}
+Shader::~Shader()
 {
 }

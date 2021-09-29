@@ -29,7 +29,7 @@ DisplayContextWindows::~DisplayContextWindows()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window * DisplayContextWindows::new_window(WindowSettings const & settings)
+Window * DisplayContextWindows::window_new(WindowSettings const & settings)
 {
 	// context hints
 	glfwWindowHint(GLFW_CLIENT_API, std::invoke([&]() noexcept {
@@ -74,23 +74,19 @@ Window * DisplayContextWindows::new_window(WindowSettings const & settings)
 	glfwWindowHint(GLFW_SRGB_CAPABLE, settings.context.srgb_capable);
 
 	// create window
-	return memnew(Window((WindowID)glfwCreateWindow(
+	Window * w{ memnew(Window((WindowID)glfwCreateWindow(
 		(int32_t)settings.video.size[0],
 		(int32_t)settings.video.size[1],
 		(cstring)settings.title.c_str(),
 		(GLFWmonitor *)settings.monitor,
-		(GLFWwindow *)settings.share),
-		settings.hints));
-}
+		(GLFWwindow *)settings.share))) };
 
-void DisplayContextWindows::poll_events()
-{
-	glfwPollEvents();
-}
+	w->make_context_current();
+	w->set_user_pointer(w);
+	w->set_position((Vec2(1920, 1080) - settings.video.size) / 2);
+	if (flag_read(settings.hints, WindowHints_Maximized)) { w->maximize(); }
 
-void DisplayContextWindows::swap_buffers(WindowID id)
-{
-	glfwSwapBuffers((GLFWwindow *)id);
+	return w;
 }
 
 WindowID DisplayContextWindows::get_current_context() const
@@ -101,6 +97,16 @@ WindowID DisplayContextWindows::get_current_context() const
 void DisplayContextWindows::make_context_current(WindowID id)
 {
 	glfwMakeContextCurrent((GLFWwindow *)id);
+}
+
+void DisplayContextWindows::poll_events()
+{
+	glfwPollEvents();
+}
+
+void DisplayContextWindows::swap_buffers(WindowID id)
+{
+	glfwSwapBuffers((GLFWwindow *)id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -384,210 +390,210 @@ void DisplayContextWindows::window_set_user_pointer(WindowID id, void * value)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-window_char_callback DisplayContextWindows::window_get_char_callback(WindowID id) const
+WindowCharCallback DisplayContextWindows::window_get_char_callback(WindowID id) const
 {
-	return window_char_callback{};
+	return m_on_char;
 }
 
-window_char_mods_callback DisplayContextWindows::window_get_char_mods_callback(WindowID id) const
+WindowCharModsCallback DisplayContextWindows::window_get_char_mods_callback(WindowID id) const
 {
-	return window_char_mods_callback{};
+	return m_on_char_mods;
 }
 
-window_close_callback DisplayContextWindows::window_get_close_callback(WindowID id) const
+WindowCloseCallback DisplayContextWindows::window_get_close_callback(WindowID id) const
 {
-	return window_close_callback{};
+	return m_on_close;
 }
 
-window_content_scale_callback DisplayContextWindows::window_get_content_scale_callback(WindowID id) const
+WindowContentCallback DisplayContextWindows::window_get_content_scale_callback(WindowID id) const
 {
-	return window_content_scale_callback{};
+	return m_on_content_scale;
 }
 
-window_mouse_enter_callback DisplayContextWindows::window_get_mouse_enter_callback(WindowID id) const
+WindowDropCallback DisplayContextWindows::window_get_drop_callback(WindowID id) const
 {
-	return window_mouse_enter_callback{};
+	return m_on_drop;
 }
 
-window_mouse_pos_callback DisplayContextWindows::window_get_mouse_pos_callback(WindowID id) const
+WindowFocusCallback DisplayContextWindows::window_get_focus_callback(WindowID id) const
 {
-	return window_mouse_pos_callback{};
+	return m_on_focus;
 }
 
-window_drop_callback DisplayContextWindows::window_get_drop_callback(WindowID id) const
+WindowFramebufferResizeCallback DisplayContextWindows::window_get_framebuffer_resize_callback(WindowID id) const
 {
-	return window_drop_callback{};
+	return m_on_framebuffer_resize;
 }
 
-window_focus_callback DisplayContextWindows::window_get_focus_callback(WindowID id) const
+WindowIconifyCallback DisplayContextWindows::window_get_iconify_callback(WindowID id) const
 {
-	return window_focus_callback{};
+	return m_on_iconify;
 }
 
-window_framebuffer_resize_callback DisplayContextWindows::window_get_framebuffer_resize_callback(WindowID id) const
+WindowKeyCallback DisplayContextWindows::window_get_key_callback(WindowID id) const
 {
-	return window_framebuffer_resize_callback{};
+	return m_on_key;
 }
 
-window_iconify_callback DisplayContextWindows::window_get_iconify_callback(WindowID id) const
+WindowMaximizeCallback DisplayContextWindows::window_get_maximize_callback(WindowID id) const
 {
-	return window_iconify_callback{};
+	return m_on_maximize;
 }
 
-window_key_callback DisplayContextWindows::window_get_key_callback(WindowID id) const
+WindowMouseButtonCallback DisplayContextWindows::window_get_mouse_button_callback(WindowID id) const
 {
-	return window_key_callback{};
+	return m_on_mouse_button;
 }
 
-window_maximize_callback DisplayContextWindows::window_get_maximize_callback(WindowID id) const
+WindowMouseEnterCallback DisplayContextWindows::window_get_mouse_enter_callback(WindowID id) const
 {
-	return window_maximize_callback{};
+	return m_on_mouse_enter;
 }
 
-window_mouse_button_callback DisplayContextWindows::window_get_mouse_button_callback(WindowID id) const
+WindowMousePosCallback DisplayContextWindows::window_get_mouse_pos_callback(WindowID id) const
 {
-	return window_mouse_button_callback{};
+	return m_on_mouse_pos;
 }
 
-window_position_callback DisplayContextWindows::window_get_position_callback(WindowID id) const
+WindowPositionCallback DisplayContextWindows::window_get_position_callback(WindowID id) const
 {
-	return window_position_callback{};
+	return m_on_position;
 }
 
-window_refresh_callback DisplayContextWindows::window_get_refresh_callback(WindowID id) const
+WindowRefreshCallback DisplayContextWindows::window_get_refresh_callback(WindowID id) const
 {
-	return window_refresh_callback{};
+	return m_on_refresh;
 }
 
-window_resize_callback DisplayContextWindows::window_get_resize_callback(WindowID id) const
+WindowResizeCallback DisplayContextWindows::window_get_resize_callback(WindowID id) const
 {
-	return window_resize_callback{};
+	return m_on_resize;
 }
 
-window_scroll_callback DisplayContextWindows::window_get_scroll_callback(WindowID id) const
+WindowMouseScrollCallback DisplayContextWindows::window_get_scroll_callback(WindowID id) const
 {
-	return window_scroll_callback{};
+	return m_on_mouse_scroll;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-window_char_callback DisplayContextWindows::window_set_char_callback(WindowID id, window_char_callback value)
+WindowCharCallback DisplayContextWindows::window_set_char_callback(WindowID id, WindowCharCallback value)
 {
-	return reinterpret_cast<window_char_callback>(
+	return reinterpret_cast<WindowCharCallback>(
 		glfwSetCharCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWcharfun>(value)));
+			reinterpret_cast<GLFWcharfun>(m_on_char = value)));
 }
 
-window_char_mods_callback DisplayContextWindows::window_set_char_mods_callback(WindowID id, window_char_mods_callback value)
+WindowCharModsCallback DisplayContextWindows::window_set_char_mods_callback(WindowID id, WindowCharModsCallback value)
 {
-	return reinterpret_cast<window_char_mods_callback>(
+	return reinterpret_cast<WindowCharModsCallback>(
 		glfwSetCharModsCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWcharmodsfun>(value)));
+			reinterpret_cast<GLFWcharmodsfun>(m_on_char_mods = value)));
 }
 
-window_close_callback DisplayContextWindows::window_set_close_callback(WindowID id, window_close_callback value)
+WindowCloseCallback DisplayContextWindows::window_set_close_callback(WindowID id, WindowCloseCallback value)
 {
-	return reinterpret_cast<window_close_callback>(
+	return reinterpret_cast<WindowCloseCallback>(
 		glfwSetWindowCloseCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowclosefun>(value)));
+			reinterpret_cast<GLFWwindowclosefun>(m_on_close = value)));
 }
 
-window_content_scale_callback DisplayContextWindows::window_set_content_scale_callback(WindowID id, window_content_scale_callback value)
+WindowContentCallback DisplayContextWindows::window_set_content_scale_callback(WindowID id, WindowContentCallback value)
 {
-	return reinterpret_cast<window_content_scale_callback>(
+	return reinterpret_cast<WindowContentCallback>(
 		glfwSetWindowContentScaleCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowcontentscalefun>(value)));
+			reinterpret_cast<GLFWwindowcontentscalefun>(m_on_content_scale = value)));
 }
 
-window_drop_callback DisplayContextWindows::window_set_drop_callback(WindowID id, window_drop_callback value)
+WindowDropCallback DisplayContextWindows::window_set_drop_callback(WindowID id, WindowDropCallback value)
 {
-	return reinterpret_cast<window_drop_callback>(
+	return reinterpret_cast<WindowDropCallback>(
 		glfwSetDropCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWdropfun>(value)));
+			reinterpret_cast<GLFWdropfun>(m_on_drop = value)));
 }
 
-window_focus_callback DisplayContextWindows::window_set_focus_callback(WindowID id, window_focus_callback value)
+WindowFocusCallback DisplayContextWindows::window_set_focus_callback(WindowID id, WindowFocusCallback value)
 {
-	return reinterpret_cast<window_focus_callback>(
+	return reinterpret_cast<WindowFocusCallback>(
 		glfwSetWindowFocusCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowfocusfun>(value)));
+			reinterpret_cast<GLFWwindowfocusfun>(m_on_focus = value)));
 }
 
-window_framebuffer_resize_callback DisplayContextWindows::window_set_framebuffer_resize_callback(WindowID id, window_framebuffer_resize_callback value)
+WindowFramebufferResizeCallback DisplayContextWindows::window_set_framebuffer_resize_callback(WindowID id, WindowFramebufferResizeCallback value)
 {
-	return reinterpret_cast<window_framebuffer_resize_callback>(
+	return reinterpret_cast<WindowFramebufferResizeCallback>(
 		glfwSetFramebufferSizeCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWframebuffersizefun>(value)));
+			reinterpret_cast<GLFWframebuffersizefun>(m_on_framebuffer_resize = value)));
 }
 
-window_iconify_callback DisplayContextWindows::window_set_iconify_callback(WindowID id, window_iconify_callback value)
+WindowIconifyCallback DisplayContextWindows::window_set_iconify_callback(WindowID id, WindowIconifyCallback value)
 {
-	return reinterpret_cast<window_iconify_callback>(
+	return reinterpret_cast<WindowIconifyCallback>(
 		glfwSetWindowIconifyCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowiconifyfun>(value)));
+			reinterpret_cast<GLFWwindowiconifyfun>(m_on_iconify = value)));
 }
 
-window_key_callback DisplayContextWindows::window_set_key_callback(WindowID id, window_key_callback value)
+WindowKeyCallback DisplayContextWindows::window_set_key_callback(WindowID id, WindowKeyCallback value)
 {
-	return reinterpret_cast<window_key_callback>(
+	return reinterpret_cast<WindowKeyCallback>(
 		glfwSetKeyCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWkeyfun>(value)));
+			reinterpret_cast<GLFWkeyfun>(m_on_key = value)));
 }
 
-window_maximize_callback DisplayContextWindows::window_set_maximize_callback(WindowID id, window_maximize_callback value)
+WindowMaximizeCallback DisplayContextWindows::window_set_maximize_callback(WindowID id, WindowMaximizeCallback value)
 {
-	return reinterpret_cast<window_maximize_callback>(
+	return reinterpret_cast<WindowMaximizeCallback>(
 		glfwSetWindowMaximizeCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowmaximizefun>(value)));
+			reinterpret_cast<GLFWwindowmaximizefun>(m_on_maximize = value)));
 }
 
-window_mouse_button_callback DisplayContextWindows::window_set_mouse_button_callback(WindowID id, window_mouse_button_callback value)
+WindowMouseButtonCallback DisplayContextWindows::window_set_mouse_button_callback(WindowID id, WindowMouseButtonCallback value)
 {
-	return reinterpret_cast<window_mouse_button_callback>(
+	return reinterpret_cast<WindowMouseButtonCallback>(
 		glfwSetMouseButtonCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWmousebuttonfun>(value)));
+			reinterpret_cast<GLFWmousebuttonfun>(m_on_mouse_button = value)));
 }
 
-window_mouse_enter_callback DisplayContextWindows::window_set_mouse_enter_callback(WindowID id, window_mouse_enter_callback value)
+WindowMouseEnterCallback DisplayContextWindows::window_set_mouse_enter_callback(WindowID id, WindowMouseEnterCallback value)
 {
-	return reinterpret_cast<window_mouse_enter_callback>(
+	return reinterpret_cast<WindowMouseEnterCallback>(
 		glfwSetCursorEnterCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWcursorenterfun>(value)));
+			reinterpret_cast<GLFWcursorenterfun>(m_on_mouse_enter = value)));
 }
 
-window_mouse_pos_callback DisplayContextWindows::window_set_mouse_pos_callback(WindowID id, window_mouse_pos_callback value)
+WindowMousePosCallback DisplayContextWindows::window_set_mouse_pos_callback(WindowID id, WindowMousePosCallback value)
 {
-	return reinterpret_cast<window_mouse_pos_callback>(
+	return reinterpret_cast<WindowMousePosCallback>(
 		glfwSetCursorPosCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWcursorposfun>(value)));
+			reinterpret_cast<GLFWcursorposfun>(m_on_mouse_pos = value)));
 }
 
-window_position_callback DisplayContextWindows::window_set_position_callback(WindowID id, window_position_callback value)
+WindowMouseScrollCallback DisplayContextWindows::window_set_mouse_scroll_callback(WindowID id, WindowMouseScrollCallback value)
 {
-	return reinterpret_cast<window_position_callback>(
-		glfwSetWindowPosCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowposfun>(value)));
-}
-
-window_refresh_callback DisplayContextWindows::window_set_refresh_callback(WindowID id, window_refresh_callback value)
-{
-	return reinterpret_cast<window_refresh_callback>(
-		glfwSetWindowRefreshCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowrefreshfun>(value)));
-}
-
-window_resize_callback DisplayContextWindows::window_set_resize_callback(WindowID id, window_resize_callback value)
-{
-	return reinterpret_cast<window_resize_callback>(
-		glfwSetWindowSizeCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowposfun>(value)));
-}
-
-window_scroll_callback DisplayContextWindows::window_set_scroll_callback(WindowID id, window_scroll_callback value)
-{
-	return reinterpret_cast<window_scroll_callback>(
+	return reinterpret_cast<WindowMouseScrollCallback>(
 		glfwSetScrollCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWscrollfun>(value)));
+			reinterpret_cast<GLFWscrollfun>(m_on_mouse_scroll = value)));
+}
+
+WindowPositionCallback DisplayContextWindows::window_set_position_callback(WindowID id, WindowPositionCallback value)
+{
+	return reinterpret_cast<WindowPositionCallback>(
+		glfwSetWindowPosCallback((GLFWwindow *)id,
+			reinterpret_cast<GLFWwindowposfun>(m_on_position = value)));
+}
+
+WindowRefreshCallback DisplayContextWindows::window_set_refresh_callback(WindowID id, WindowRefreshCallback value)
+{
+	return reinterpret_cast<WindowRefreshCallback>(
+		glfwSetWindowRefreshCallback((GLFWwindow *)id,
+			reinterpret_cast<GLFWwindowrefreshfun>(m_on_refresh = value)));
+}
+
+WindowResizeCallback DisplayContextWindows::window_set_resize_callback(WindowID id, WindowResizeCallback value)
+{
+	return reinterpret_cast<WindowResizeCallback>(
+		glfwSetWindowSizeCallback((GLFWwindow *)id,
+			reinterpret_cast<GLFWwindowposfun>(m_on_resize = value)));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -27,7 +27,7 @@ namespace ism
 		virtual void finalize() override;
 
 	public:
-		void on_runtime_updateprocess(Duration const & delta_time);
+		void on_runtime_update(Duration const & delta_time);
 
 	protected:
 		template <class T> void on_component_added(Node &, T &) {}
