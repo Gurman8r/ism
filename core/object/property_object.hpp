@@ -40,9 +40,9 @@ namespace ism
 #define OBJECT_CHECK_PROPERTY(o) (ism::api::isinstance<ism::PROPERTY>(o))
 
 	// property ref
-	MAKE_SPECIAL_REF(PropertyObject)
+	class PROPERTY : public Ref<PropertyObject>
 	{
-		REF_COMMON(PropertyObject, OBJECT_CHECK_PROPERTY);
+		REF_COMMON(PROPERTY, OBJECT_CHECK_PROPERTY);
 
 	public:
 		OBJ get(OBJ const & self) const { return m_ptr->m_get(self); }

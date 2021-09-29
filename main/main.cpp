@@ -1,22 +1,23 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <main/main.hpp>
-#include <runtime/scene/scene_tree.hpp>
+#include <scene/main/scene_tree.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <core/register_core_types.hpp>
 #include <drivers/register_driver_types.hpp>
 #include <platform/register_platform_apis.hpp>
-#include <runtime/register_runtime_types.hpp>
+#include <scene/register_scene_types.hpp>
+#include <servers/register_server_types.hpp>
 
 #if TOOLS_ENABLED
 #include <editor/register_editor_types.hpp>
 #endif
 
 #if SYSTEM_WINDOWS
-#include <platform/windows/display_context_windows.hpp>
-#define DISPLAY_SERVER_DEFAULT DisplayContextWindows
+#include <platform/windows/display_server_windows.hpp>
+#define DISPLAY_SERVER_DEFAULT DisplayServerWindows
 #endif
 
 #if OPENGL_ENABLED
@@ -24,7 +25,7 @@
 #define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
 #endif
 
-#include <runtime/renderer/rendering_context_default.hpp>
+#include <servers/rendering/rendering_server_default.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -35,9 +36,12 @@ MEMBER_IMPL(Main::g_frame_index) {};
 MEMBER_IMPL(Main::g_iterating) {};
 
 static api::Internals * g_internals{};
+
 static Input * g_input{};
-static DisplayContext * g_display_context{};
-static RenderingContext * g_rendering_context{};
+
+static DisplayServer * g_display_server{};
+
+static RenderingServer * g_rendering_server{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -59,7 +63,9 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 
 	register_core_singletons();
 	
-	register_runtime_types();
+	register_server_types();
+	
+	register_scene_types();
 	
 #if TOOLS_ENABLED
 	register_editor_types();
@@ -81,9 +87,9 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 
 	g_input = memnew(Input);
 
-	g_display_context = memnew(DISPLAY_SERVER_DEFAULT);
+	g_display_server = memnew(DISPLAY_SERVER_DEFAULT);
 
-	g_rendering_context = memnew(RenderingContextDefault);
+	g_rendering_server = memnew(RenderingServerDefault);
 
 	return Error_None;
 }
@@ -129,15 +135,16 @@ void Main::cleanup()
 	//unregister_module_types();
 	unregister_platform_apis();
 	unregister_server_types();
+	unregister_scene_types();
 
 	//memdelete(g_audio_server);
 	//memdelete(g_camera_server);
 
 	get_os().finalize();
 
-	g_rendering_context->finalize();
-	memdelete(g_rendering_context);
-	memdelete(g_display_context);
+	g_rendering_server->finalize();
+	memdelete(g_rendering_server);
+	memdelete(g_display_server);
 	
 	memdelete(g_input);
 

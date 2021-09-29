@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMPL(MethodObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+EMBED_CLASS(MethodObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(MethodObject, m_dict);
 
@@ -13,7 +13,7 @@ OBJECT_IMPL(MethodObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | Typ
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
 
-	t.tp_bind = MAKE_CLASS_BINDER(MethodObject, t)
+	t.tp_bind = CLASS_BINDFUNC(MethodObject, t)
 	{
 		return t;
 	};

@@ -13,9 +13,10 @@ namespace ism
 	{
 	private:
 		friend class api::Internals;
-		friend class SpecialRef<TypeObject>;
 
-		static TypeObject ob_class_type;
+		friend class api::EmbedClassHelper<TypeObject>;
+
+		static TypeObject g_class_type;
 
 	protected:
 		static void initialize_class();
@@ -130,9 +131,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type ref
-	MAKE_SPECIAL_REF(TypeObject)
+	class TYPE : public Ref<TypeObject>
 	{
-		REF_COMMON(TypeObject, OBJECT_CHECK_TYPE);
+		REF_COMMON(TYPE, OBJECT_CHECK_TYPE);
 
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }

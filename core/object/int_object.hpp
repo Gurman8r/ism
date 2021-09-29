@@ -47,15 +47,15 @@ namespace ism
 #define OBJECT_CHECK_INT(o) (ism::api::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
 
 	// int ref
-	MAKE_SPECIAL_REF(IntObject)
+	class INT : public Ref<IntObject>
 	{
-		REF_COMMON(IntObject, OBJECT_CHECK_INT);
+		REF_COMMON(INT, OBJECT_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> SpecialRef(T const value) { instance(value); }
+		> INT(T const value) { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> operator T () const { return (T)(**m_ptr); }

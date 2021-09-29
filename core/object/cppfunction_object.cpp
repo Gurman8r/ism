@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMPL(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+EMBED_CLASS(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
@@ -16,11 +16,11 @@ OBJECT_IMPL(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall 
 		return !obj ? self : METHOD({ self, obj, api::method_vectorcall });
 	};
 
-	t.tp_bind = MAKE_CLASS_BINDER(CppFunctionObject, t)
+	t.tp_bind = CLASS_BINDFUNC(CppFunctionObject, t)
 	{
 		t.add_object("__name__", PROPERTY({
-			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, api::is_method(t) }),
-			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, api::is_method(t) }),
+			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, api::attr::is_method(t) }),
+			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, api::attr::is_method(t) }),
 			}));
 
 		return t

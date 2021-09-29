@@ -99,7 +99,7 @@ namespace ism
 
 				if (!args.load_args(call.args)) { call.try_next_overload = true; return nullptr; }
 
-				api::process_attributes<Extra...>::precall(call);
+				api::attr::process_attributes<Extra...>::precall(call);
 
 				auto data{ (sizeof(Capture) <= sizeof(call.record.data) ? &call.record.data : call.record.data[0]) };
 
@@ -107,19 +107,19 @@ namespace ism
 
 				ReturnPolicy_ policy{ api::return_policy_override<Return>::policy(call.record.policy) };
 
-				using Guard = api::extract_guard_t<Extra...>;
+				using Guard = api::attr::extract_guard_t<Extra...>;
 
 				using Yield = api::make_caster<std::conditional_t<std::is_void_v<Return>, void_type, Return>>;
 
 				OBJ result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
 
-				api::process_attributes<Extra...>::postcall(call, result);
+				api::attr::process_attributes<Extra...>::postcall(call, result);
 
 				return result;
 			};
 
 			// process function attributes
-			api::process_attributes<Extra...>::init(*rec, FWD(extra)...);
+			api::attr::process_attributes<Extra...>::init(*rec, FWD(extra)...);
 
 			// collect type info
 			constexpr size_t argc{ sizeof...(Args) };
@@ -127,7 +127,7 @@ namespace ism
 			mpl::for_types_i<Args...>([&](size_t i, auto tag) { types[i] = &typeid(TAG_TYPE(tag)); });
 
 			// prepend?
-			constexpr bool prepend{ mpl::contains_v<api::prepend, mpl::type_list<Extra...>> };
+			constexpr bool prepend{ mpl::contains_v<api::attr::prepend, mpl::type_list<Extra...>> };
 
 			// initialize generic
 			initialize_generic(rec, types, argc, prepend);
@@ -148,20 +148,20 @@ namespace ism
 #define OBJECT_CHECK_CPPFUNCTION(o) (ism::api::isinstance<ism::CPP_FUNCTION>(o))
 
 	// cppfunction ref
-	MAKE_SPECIAL_REF(CppFunctionObject)
+	class CPP_FUNCTION : public Ref<CppFunctionObject>
 	{
-		REF_COMMON(CppFunctionObject, OBJECT_CHECK_CPPFUNCTION);
+		REF_COMMON(CPP_FUNCTION, OBJECT_CHECK_CPPFUNCTION);
 
 	public:
 		NODISCARD auto name() const { return attr("__name__"); }
 
 		NODISCARD auto signature() const { return attr("__text_signature__"); }
 	};
-}
 
-NODISCARD inline ism::OBJ ism::SpecialRef<ism::FunctionObject>::cpp_function() const
-{
-	return ism::CPP_FUNCTION::check_(*this) ? ism::CPP_FUNCTION(*this) : nullptr;
+	NODISCARD inline OBJ FUNCTION::cpp_function() const
+	{
+		return CPP_FUNCTION::check_(*this) ? CPP_FUNCTION(*this) : nullptr;
+	}
 }
 
 // functions

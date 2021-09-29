@@ -9,9 +9,9 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		api::get_internals().add_class(&ob_class_type);
+		api::get_internals().add_class(&g_class_type);
 
-		VALIDATE(ob_class_type.tp_bind)(&ob_class_type);
+		VALIDATE(g_class_type.tp_bind)(&g_class_type);
 	}
 }
 
@@ -50,7 +50,7 @@ bool Object::unreference()
 	return die;
 }
 
-TYPE Object::get_type_static() noexcept { return &ob_class_type; }
+TYPE Object::get_type_static() noexcept { return &g_class_type; }
 
 TYPE Object::_get_typev() const { return get_type_static(); }
 
@@ -60,15 +60,15 @@ void Object::set_type(TYPE const & value) noexcept { m_type = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMPL(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
+EMBED_CLASS(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 	t.tp_getattro = (getattrofunc)api::generic_getattr;
 
 	t.tp_setattro = (setattrofunc)api::generic_setattr;
 
-	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<void *>{}(self.ptr()); };
+	t.tp_hash = (hashfunc)[](OBJ self) { return Hasher<void *>{}(self.ptr()); };
 
-	t.tp_bind = MAKE_CLASS_BINDER(Object, t)
+	t.tp_bind = CLASS_BINDFUNC(Object, t)
 	{
 		return t;
 	};
@@ -88,7 +88,7 @@ OBJ ism::api::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 
 	if (descr)
 	{
-		TYPE descr_type{ api::typeof(descr) };
+		TYPE descr_type{ typeof(descr) };
 
 		get = descr_type->tp_descr_get;
 
@@ -117,7 +117,7 @@ OBJ ism::api::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 
 Error ism::api::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 {
-	TYPE type{ api::typeof(obj) };
+	TYPE type{ typeof(obj) };
 
 	if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
 
@@ -127,7 +127,7 @@ Error ism::api::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict
 
 	if (descr)
 	{
-		set = api::typeof(descr)->tp_descr_set;
+		set = typeof(descr)->tp_descr_set;
 
 		if (set)
 		{

@@ -84,38 +84,36 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, class SFINAE = void> struct Hash;
-
-	template <class T> struct Hash<T> {
-		Hash() = default;
+	template <class T> struct Hasher {
+		Hasher() = default;
 		NODISCARD hash_t operator()(T const & value) const {
 			return std::hash<T>{}(value);
 		}
 	};
 
-	template <> struct Hash<float32_t> {
-		Hash() = default;
+	template <> struct Hasher<float32_t> {
+		Hasher() = default;
 		NODISCARD hash_t operator()(float32_t const value) const {
 			return std::hash<float32_t>{}(value);
 		}
 	};
 
-	template <> struct Hash<float64_t> {
-		Hash() = default;
+	template <> struct Hasher<float64_t> {
+		Hasher() = default;
 		NODISCARD hash_t operator()(float64_t const value) const {
 			return std::hash<float64_t>{}(value);
 		}
 	};
 
-	template <> struct Hash<float80_t> {
-		Hash() = default;
+	template <> struct Hasher<float80_t> {
+		Hasher() = default;
 		NODISCARD hash_t operator()(float80_t const value) const {
 			return std::hash<float80_t>{}(value);
 		}
 	};
 
-	template <> struct Hash<nullptr_t> {
-		Hash() = default;
+	template <> struct Hasher<nullptr_t> {
+		Hasher() = default;
 		NODISCARD hash_t operator()(nullptr_t) const {
 			return std::hash<nullptr_t>{}(nullptr_t{});
 		}

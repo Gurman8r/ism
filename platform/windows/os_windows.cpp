@@ -1,5 +1,5 @@
 #include <platform/windows/os_windows.hpp>
-#include <runtime/window/display_context.hpp>
+#include <servers/display_server.hpp>
 
 using namespace ism;
 

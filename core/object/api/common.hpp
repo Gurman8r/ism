@@ -31,7 +31,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace api { class Internals; }
+	namespace api
+	{
+		class Internals;
+
+		template <class T> class EmbedClassHelper;
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -69,21 +74,20 @@ namespace ism
 	> constexpr bool is_ref_v{ std::is_base_of_v<_Ref_Tag, mpl::intrinsic_t<T>> };
 
 	template <class T> class Ref;
-	template <class T> class SpecialRef;
 
-	ALIAS(OBJ)				SpecialRef<Object>;
-	ALIAS(TYPE)				SpecialRef<TypeObject>;
-	ALIAS(INT)				SpecialRef<IntObject>;
-	ALIAS(FLT)				SpecialRef<FloatObject>;
-	ALIAS(STR)				SpecialRef<StringObject>;
-	ALIAS(LIST)				SpecialRef<ListObject>;
-	ALIAS(DICT)				SpecialRef<DictObject>;
-	ALIAS(CAPSULE)			SpecialRef<CapsuleObject>;
-	ALIAS(FUNCTION)			SpecialRef<FunctionObject>;
-	ALIAS(METHOD)			SpecialRef<MethodObject>;
-	ALIAS(PROPERTY)			SpecialRef<PropertyObject>;
-	ALIAS(CPP_FUNCTION)		SpecialRef<CppFunctionObject>;
-	ALIAS(MODULE)			SpecialRef<ModuleObject>;
+	class OBJ;
+	class TYPE;
+	class INT;
+	class FLT;
+	class STR;
+	class LIST;
+	class DICT;
+	class CAPSULE;
+	class FUNCTION;
+	class METHOD;
+	class PROPERTY;
+	class CPP_FUNCTION;
+	class MODULE;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -143,7 +147,6 @@ namespace ism
 		TypeFlags_MethodDescriptor	= 1 << 5,
 		TypeFlags_IsAbstract		= 1 << 6,
 		TypeFlags_IsFinal			= 1 << 7,
-		TypeFlags_IsLocal			= 1 << 8,
 
 		TypeFlags_Int_Subclass		= 1 << 25,
 		TypeFlags_Float_Subclass	= 1 << 26,
@@ -270,7 +273,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct Hash<ObjectAPI<T>>
+	template <class T> struct Hasher<ObjectAPI<T>>
 	{
 		template <class U> hash_t operator()(U const & o) const { return api::hash(o); }
 	};
@@ -340,7 +343,7 @@ namespace ism
 	public:
 		~Ref() noexcept { unref(); }
 
-		Ref() noexcept {}
+		Ref() noexcept = default;
 
 		Ref(nullptr_t) noexcept {}
 
@@ -427,15 +430,11 @@ namespace ism
 		NODISCARD bool operator==(value_type const * value) const noexcept { return (m_ptr == value) || ((m_ptr && value) && m_ptr->equal_to(*value)); }
 
 		NODISCARD bool operator!=(value_type const * value) const noexcept { return (m_ptr != value) && ((m_ptr && value) && m_ptr->not_equal_to(*value)); }
-		
-		NODISCARD bool operator==(Ref const & value) const noexcept { return operator==(*value); }
-		
-		NODISCARD bool operator!=(Ref const & value) const noexcept { return operator!=(*value); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct Hash<Ref<T>> : Hash<ObjectAPI<Ref<T>>> {};
+	template <class T> struct Hasher<Ref<T>> : Hasher<ObjectAPI<Ref<T>>> {};
 	template <class T> struct EqualTo<Ref<T>> : EqualTo<ObjectAPI<Ref<T>>> {};
 	template <class T> struct NotEqualTo<Ref<T>> : NotEqualTo<ObjectAPI<Ref<T>>> {};
 	template <class T> struct Less<Ref<T>> : Less<ObjectAPI<Ref<T>>> {};
@@ -444,71 +443,38 @@ namespace ism
 	template <class T> struct GreaterEqual<Ref<T>> : GreaterEqual<ObjectAPI<Ref<T>>> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// special ref
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// special ref
-#define MAKE_SPECIAL_REF(m_class) \
-	template <> class ism::SpecialRef<m_class> : public ism::Ref<m_class>
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// ref common
-#define REF_COMMON(m_class, m_check)																		\
-public:																										\
-	using value_type = typename m_class;																	\
-																											\
-	NODISCARD static bool check_(OBJ const & o) { return o && (bool)(m_check(o)); }							\
-																											\
-	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }								\
-																											\
-	~SpecialRef() noexcept = default;																		\
-																											\
-	SpecialRef() noexcept = default;																		\
-																											\
-	SpecialRef(nullptr_t) noexcept {}																		\
-																											\
-	SpecialRef(m_class * value) { if (value) { ref_pointer(value); } }										\
-																											\
-	SpecialRef(ism::Ref<m_class> const & value) { ref(value); }												\
-																											\
-	template <class U> SpecialRef(ism::Ref<U> const & value) { reset(value); }								\
-																											\
-	SpecialRef(m_class && value) noexcept { instance(std::move(value)); }									\
-																											\
-	SpecialRef & operator=(nullptr_t) { return unref(), (*this); }											\
-																											\
-	SpecialRef & operator=(ism::Ref<m_class> const & value) { return reset(value), (*this); }				\
-																											\
-	template <class U> SpecialRef & operator=(ism::Ref<U> const & value) { return reset(value), (*this); }	\
-																											\
-	SpecialRef & operator=(m_class && value) noexcept { return instance(std::move(value)), (*this); }		\
-																											\
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// default check
-#define OBJECT_CHECK_DEFAULT(o) (ism::isinstance<value_type>(o))
-
-	// default ref
-	template <class T> class SpecialRef : public Ref<T>
-	{
-		REF_COMMON(T, OBJECT_CHECK_DEFAULT);
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T> struct Hash<SpecialRef<T>> : Hash<Ref<T>> {};
-	template <class T> struct EqualTo<SpecialRef<T>> : EqualTo<Ref<T>> {};
-	template <class T> struct NotEqualTo<SpecialRef<T>> : NotEqualTo<Ref<T>> {};
-	template <class T> struct Less<SpecialRef<T>> : Less<Ref<T>> {};
-	template <class T> struct Greater<SpecialRef<T>> : Greater<Ref<T>> {};
-	template <class T> struct LessEqual<SpecialRef<T>> : LessEqual<Ref<T>> {};
-	template <class T> struct GreaterEqual<SpecialRef<T>> : GreaterEqual<Ref<T>> {};
+#define REF_COMMON(m_class, m_check)																	\
+public:																									\
+	ALIAS(base_type) ism::Ref<value_type>;																\
+																										\
+	NODISCARD static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }		\
+																										\
+	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }							\
+																										\
+	~m_class() noexcept = default;																		\
+																										\
+	m_class() noexcept = default;																		\
+																										\
+	m_class(nullptr_t) noexcept {}																		\
+																										\
+	m_class(value_type * value) { if (value) { ref_pointer(value); } }									\
+																										\
+	m_class(base_type const & value) { ref(value); }													\
+																										\
+	template <class U> m_class(ism::Ref<U> const & value) { reset(value); }								\
+																										\
+	m_class(value_type && value) noexcept { instance(std::move(value)); }								\
+																										\
+	m_class & operator=(nullptr_t) { return unref(), (*this); }											\
+																										\
+	m_class & operator=(base_type const & value) { return reset(value), (*this); }						\
+																										\
+	template <class U> m_class & operator=(ism::Ref<U> const & value) { return reset(value), (*this); }	\
+																										\
+	m_class & operator=(value_type && value) noexcept { return instance(std::move(value)), (*this); }	\
+																										\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -553,7 +519,7 @@ namespace ism
 		template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
 
 	protected:
-		obj_type & get_cache() const { return ((!!m_cache) || (m_cache = Policy::get(m_obj, m_key))), m_cache; }
+		NODISCARD obj_type & get_cache() const { return ((!!m_cache) || (m_cache = Policy::get(m_obj, m_key))), m_cache; }
 
 	private:
 		obj_type m_obj;

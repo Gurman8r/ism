@@ -4,7 +4,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMPL(MainLoop, t)
+EMBED_CLASS(MainLoop, t)
 {
 }
 

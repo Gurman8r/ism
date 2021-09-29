@@ -30,9 +30,9 @@ namespace ism
 #define OBJECT_CHECK_METHOD(o) (ism::api::isinstance<ism::METHOD>(o))
 
 	// method ref
-	MAKE_SPECIAL_REF(MethodObject)
+	class METHOD : public Ref<MethodObject>
 	{
-		REF_COMMON(MethodObject, OBJECT_CHECK_METHOD);
+		REF_COMMON(METHOD, OBJECT_CHECK_METHOD);
 	};
 }
 

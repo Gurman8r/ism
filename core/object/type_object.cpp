@@ -9,9 +9,9 @@ void TypeObject::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		api::get_internals().add_class(&ob_class_type);
+		api::get_internals().add_class(&g_class_type);
 
-		VALIDATE(ob_class_type.tp_bind)(&ob_class_type);
+		VALIDATE(g_class_type.tp_bind)(&g_class_type);
 	};
 }
 
@@ -19,13 +19,13 @@ void TypeObject::_initialize_classv() { TypeObject::initialize_class(); }
 
 TYPE TypeObject::_get_typev() const noexcept { return get_type_static(); }
 
-TYPE TypeObject::get_type_static() noexcept { return &ob_class_type; }
+TYPE TypeObject::get_type_static() noexcept { return &g_class_type; }
 
 TypeObject::TypeObject() noexcept : Object{} {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMPL(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
+EMBED_CLASS(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -50,7 +50,7 @@ OBJECT_IMPL(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeF
 		return nullptr;
 	};
 
-	t.tp_bind = MAKE_CLASS_BINDER(TypeObject, t)
+	t.tp_bind = CLASS_BINDFUNC(TypeObject, t)
 	{
 		return t
 

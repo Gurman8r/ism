@@ -38,7 +38,9 @@ files{
 	"%{wks.location}/platform/*.hpp", "%{wks.location}/platform/*.cpp",
 	"%{wks.location}/platform/%{_TARGET_OS}/**.hpp", "%{wks.location}/platform/%{_TARGET_OS}/**.cpp",
 
-	"%{wks.location}/runtime/**.hpp", "%{wks.location}/runtime/**.cpp",
+	"%{wks.location}/scene/**.hpp", "%{wks.location}/scene/**.cpp",
+
+	"%{wks.location}/servers/**.hpp", "%{wks.location}/servers/**.cpp",
 }
 
 postbuildcommands{

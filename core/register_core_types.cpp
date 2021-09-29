@@ -2,7 +2,7 @@
 #include <core/input/input.hpp>
 #include <core/io/config_file.hpp>
 #include <core/io/image.hpp>
-#include <core/io/resource.hpp>
+#include <core/os/main_loop.hpp>
 
 using namespace ism;
 using namespace ism;
@@ -24,7 +24,8 @@ void ism::register_core_types()
 	VERIFY(api::typeof<ModuleObject>().ready());
 
 	api::get_internals()
-		.bind_class<CppFunctionObject>() // <- cppfunction needs to go first
+
+		.bind_class<CppFunctionObject>() // <- cppfunction MUST go first
 		.bind_class<Object>()
 		.bind_class<TypeObject>()
 		.bind_class<IntObject>()
@@ -37,12 +38,17 @@ void ism::register_core_types()
 		.bind_class<MethodObject>()
 		.bind_class<PropertyObject>()
 		.bind_class<ModuleObject>()
-		;
 
-	api::get_internals()
+		.bind_class<Resource>()
+		.bind_class<ConfigFile>()
+		.bind_class<Image>()
+
 		.bind_class<Input>()
 		.bind_class<InputEvent>()
 		.bind_class<InputMap>()
+
+		.bind_class<MainLoop>()
+
 		;
 }
 

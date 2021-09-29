@@ -8,7 +8,7 @@ using VertexAttribute = RenderingDevice::VertexAttribute;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMPL(RenderingDeviceOpenGL, t)
+EMBED_CLASS(RenderingDeviceOpenGL, t)
 {
 }
 

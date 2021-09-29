@@ -85,9 +85,9 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 
-	template <> struct ism::Hash<Path>
+	template <> struct ism::Hasher<Path>
 	{
-		Hash() = default;
+		Hasher() = default;
 		hash_t operator()(Path const & value) const
 		{
 			return value.hash_code();

@@ -12,13 +12,13 @@ namespace ism
 		OBJECT_COMMON(DictObject, Object);
 
 	public:
-		HashMap<OBJ, OBJ> m_dict{};
+		HashMap<OBJ, OBJ, Hasher<Ref<Object>>, EqualTo<Ref<Object>>> m_dict{};
 
-		using storage_type = decltype(m_dict);
-
-		using iterator = storage_type::iterator;
-
-		using const_iterator = storage_type::const_iterator;
+		using storage_type		= decltype(m_dict);
+		using hasher			= storage_type::hasher;
+		using key_equal			= storage_type::key_equal;
+		using iterator			= storage_type::iterator;
+		using const_iterator	= storage_type::const_iterator;
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_dict); }
 
@@ -93,16 +93,16 @@ namespace ism
 #define OBJECT_CHECK_DICT(o) (ism::api::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
 
 	// dict ref
-	MAKE_SPECIAL_REF(DictObject)
+	class DICT : public Ref<DictObject>
 	{
-		REF_COMMON(DictObject, OBJECT_CHECK_DICT);
+		REF_COMMON(DICT, OBJECT_CHECK_DICT);
 
 	public:
-		using storage_type = value_type::storage_type;
-
-		using iterator = value_type::iterator;
-
-		using const_iterator = value_type::const_iterator;
+		using storage_type		= value_type::storage_type;
+		using hasher			= value_type::hasher;
+		using key_equal			= value_type::key_equal;
+		using iterator			= value_type::iterator;
+		using const_iterator	= value_type::const_iterator;
 
 		NODISCARD operator storage_type & () const { return m_ptr->operator storage_type &(); }
 

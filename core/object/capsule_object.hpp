@@ -72,9 +72,9 @@ namespace ism
 #define OBJECT_CHECK_CAPSULE(o) (ism::api::isinstance<ism::CAPSULE>(o))
 
 	// capsule ref
-	MAKE_SPECIAL_REF(CapsuleObject)
+	class CAPSULE : public Ref<CapsuleObject>
 	{
-		REF_COMMON(CapsuleObject, OBJECT_CHECK_CAPSULE);
+		REF_COMMON(CAPSULE, OBJECT_CHECK_CAPSULE);
 
 	public:
 		template <class T

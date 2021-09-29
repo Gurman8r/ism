@@ -1,5 +1,5 @@
 #include <main/main.hpp>
-#include <runtime/scene/scene_tree.hpp>
+#include <scene/main/scene_tree.hpp>
 
 using namespace ism;
 

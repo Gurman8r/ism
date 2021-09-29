@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMPL(InputMap, t, TypeFlags_BaseType) {}
+EMBED_CLASS(InputMap, t, TypeFlags_BaseType) {}
 
 InputMap::~InputMap()
 {

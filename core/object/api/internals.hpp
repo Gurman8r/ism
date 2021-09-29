@@ -25,9 +25,9 @@ namespace ism::api
 	public:
 		Batch<hash_t, StringName, TYPE> class_db; // class database
 
-		OBJ modules; // module dict
+		Vector<OBJ> loader_stack; // life support stack
 
-		Vector<OBJ> loader_stack; // loader life support stack
+		OBJ modules; // module dictionary
 
 	public:
 		void add_class(TYPE type);

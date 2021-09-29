@@ -105,11 +105,11 @@ namespace ism
 		}
 	};
 
-	template <> struct ism::Hash<std::type_index>
+	template <> struct ism::Hasher<std::type_index>
 	{
 		hash_t operator()(std::type_index const & t) const
 		{
-			return ism::Hash<String>()(t.name());
+			return ism::Hasher<String>()(t.name());
 		}
 	};
 

@@ -14,11 +14,9 @@ namespace ism
 	public:
 		String m_string{};
 
-		using storage_type = decltype(m_string);
-
-		using iterator = storage_type::iterator;
-
-		using const_iterator = storage_type::const_iterator;
+		using storage_type		= decltype(m_string);
+		using iterator			= storage_type::iterator;
+		using const_iterator	= storage_type::const_iterator;
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
 
@@ -86,16 +84,14 @@ namespace ism
 #define OBJECT_CHECK_STR(o) (ism::api::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))
 
 	// string ref
-	MAKE_SPECIAL_REF(StringObject)
+	class STR : public Ref<StringObject>
 	{
-		REF_COMMON(StringObject, OBJECT_CHECK_STR);
+		REF_COMMON(STR, OBJECT_CHECK_STR);
 
 	public:
-		using storage_type = value_type::storage_type;
-
-		using iterator = value_type::iterator;
-
-		using const_iterator = value_type::const_iterator;
+		using storage_type		= value_type::storage_type;
+		using iterator			= value_type::iterator;
+		using const_iterator	= value_type::const_iterator;
 
 		NODISCARD operator storage_type & () const { return m_ptr->operator storage_type & (); }
 

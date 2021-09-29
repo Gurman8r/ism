@@ -9,20 +9,21 @@
 #define OBJECT_COMMON(m_class, m_inherits)									\
 private:																	\
 	friend class ism::api::Internals;										\
-	friend class ism::SpecialRef<m_class>;									\
 																			\
-	static ism::TypeObject ob_class_type;									\
+	friend class ism::api::EmbedClassHelper<m_class>;						\
+																			\
+	static ism::TypeObject g_class_type;									\
 																			\
 protected:																	\
 	static void initialize_class()											\
 	{																		\
 		if (static bool once{}; !once && (once = true))						\
 		{																	\
-			ism::api::get_internals().add_class(&m_class::ob_class_type);	\
+			ism::api::get_internals().add_class(&m_class::g_class_type);	\
 																			\
-			if (m_class::ob_class_type.tp_bind)								\
+			if (m_class::g_class_type.tp_bind)								\
 			{																\
-				m_class::ob_class_type.tp_bind(&m_class::ob_class_type);	\
+				m_class::g_class_type.tp_bind(&m_class::g_class_type);		\
 			}																\
 		};																	\
 	}																		\
@@ -42,30 +43,30 @@ public:																		\
 																			\
 	FORCE_INLINE static ism::TYPE get_type_static() noexcept				\
 	{																		\
-		return &m_class::ob_class_type;										\
+		return &m_class::g_class_type;										\
 	}																		\
 																			\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// "_ism_class_binder_CLASS_"
-#define __OBJECT_IMPL__(m_class) \
-	CAT(CAT(_ism_class_binder_, m_class), _)
-
-// implement object class
-#define OBJECT_IMPL(m_class, m_var, ...)														\
+// embed class type
+#define EMBED_CLASS(m_class, m_var, ...)														\
 																								\
-	/* declare binder function */																\
-	namespace ism { static void __OBJECT_IMPL__(m_class)(ism::TypeObject & m_var); }			\
+	/* declare binder */																		\
+	template <> class ism::api::EmbedClassHelper<m_class> final									\
+	{																							\
+	public:																						\
+		static void bind(ism::TypeObject & t);													\
+	};																							\
 																								\
-	/* construct class type */																	\
-	MEMBER_IMPL(m_class::ob_class_type) =														\
+	/* construct type object */																	\
+	MEMBER_IMPL(m_class::g_class_type) =														\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
-	+ ism::__OBJECT_IMPL__(m_class);															\
+	+ ism::api::EmbedClassHelper<m_class>::bind;												\
 																								\
 	/* implement binder function */																\
-	void ism::__OBJECT_IMPL__(m_class)(ism::TypeObject & m_var)									\
+	void ism::api::EmbedClassHelper<m_class>::bind(ism::TypeObject & t)							\
 																								\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -80,11 +81,11 @@ namespace ism
 	{
 	private:
 		friend class api::Internals;
-		friend class SpecialRef<Object>;
+		friend class api::EmbedClassHelper<Object>;
 		friend bool predelete_handler(Object *);
 		friend void postinitialize_handler(Object *);
 
-		static TypeObject ob_class_type;
+		static TypeObject g_class_type;
 
 		SafeRefCount m_refcount{}, m_refcount_init{};
 
@@ -160,9 +161,9 @@ namespace ism
 #define OBJECT_NO_CHECK(o) (true)
 
 	// object ref
-	MAKE_SPECIAL_REF(Object)
+	class OBJ : public Ref<Object>
 	{
-		REF_COMMON(Object, OBJECT_NO_CHECK);
+		REF_COMMON(OBJ, OBJECT_NO_CHECK);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -197,6 +198,9 @@ namespace ism::api
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept { return VALIDATE(o)->get_type(); }
+
+	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
+	> NODISCARD TYPE typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -330,15 +334,11 @@ namespace ism::api
 
 		if (!obj) { return nullptr; }
 
-		else if constexpr (mpl::is_string_v<Index>) { return DICT(obj)[FWD(index)]; }
-
-		else if constexpr (std::is_integral_v<Index>) { return LIST(obj)[FWD(index)]; }
-
 		else if (DICT::check_(obj)) { return DICT(obj)[FWD(index)]; }
 
 		else if (LIST::check_(obj)) { return LIST(obj)[FWD(index)]; }
 
-		else if (OBJ fget{ typeof(obj).lookup(&ID___getitem__) }) { return fget(obj, FWD_OBJ(index)); }
+		else if (OBJ get{ typeof(obj).lookup(&ID___getitem__) }) { return get(obj, FWD_OBJ(index)); }
 
 		else { return nullptr; }
 	}
@@ -351,15 +351,11 @@ namespace ism::api
 
 		if (!obj) { return Error_Unknown; }
 
-		else if constexpr (mpl::is_string_v<Index>) { return (DICT(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
-
-		else if constexpr (std::is_integral_v<Index>) { return (LIST(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
-
 		else if (DICT::check_(obj)) { return (DICT(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
 
 		else if (LIST::check_(obj)) { return (LIST(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
 
-		else if (OBJ fset{ typeof(obj).lookup(&ID___setitem__) }) { return fset(obj, FWD_OBJ(index), FWD_OBJ(value)), Error_None; }
+		else if (OBJ set{ typeof(obj).lookup(&ID___setitem__) }) { return set(obj, FWD_OBJ(index), FWD_OBJ(value)), Error_None; }
 
 		else { return Error_Unknown; }
 	}

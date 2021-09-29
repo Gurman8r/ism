@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_IMPL(InputEvent, t)
+EMBED_CLASS(InputEvent, t)
 {
 }
 

@@ -78,9 +78,9 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 
-	template <> struct ism::Hash<StringName>
+	template <> struct ism::Hasher<StringName>
 	{
-		Hash() = default;
+		Hasher() = default;
 		hash_t operator()(StringName const & value) const
 		{
 			return value.hash_code();

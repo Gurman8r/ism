@@ -5,9 +5,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_IMPL(FloatObject, t, TypeFlags_Float_Subclass)
+EMBED_CLASS(FloatObject, t, TypeFlags_Float_Subclass)
 {
-	t.tp_hash = (hashfunc)[](OBJ self) { return Hash<double_t>()(***FLT(self)); };
+	t.tp_hash = (hashfunc)[](OBJ self) { return Hasher<double_t>()(***FLT(self)); };
 
 	t.tp_repr = (reprfunc)[](OBJ self) { return STR(util::to_string(***FLT(self))); };
 
@@ -25,7 +25,7 @@ OBJECT_IMPL(FloatObject, t, TypeFlags_Float_Subclass)
 		}
 	};
 
-	t.tp_bind = MAKE_CLASS_BINDER(FloatObject, t)
+	t.tp_bind = CLASS_BINDFUNC(FloatObject, t)
 	{
 		return t;
 	};

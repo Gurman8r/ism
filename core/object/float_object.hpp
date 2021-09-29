@@ -37,15 +37,15 @@ namespace ism
 #define OBJECT_CHECK_FLOAT(o) (ism::api::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
 
 	// float ref
-	MAKE_SPECIAL_REF(FloatObject)
+	class FLT : public Ref<FloatObject>
 	{
-		REF_COMMON(FloatObject, OBJECT_CHECK_FLOAT);
+		REF_COMMON(FLT, OBJECT_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> SpecialRef(T const value) { instance(value); }
+		> FLT(T const value) { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> operator T () const { return (T)(**m_ptr); }

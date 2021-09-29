@@ -12,8 +12,9 @@ namespace ism
 		OBJECT_COMMON(ModuleObject, Object);
 
 	public:
-		DICT	m_dict	{};
-		STR		m_name	{};
+		DICT m_dict{};
+
+		STR m_name{};
 
 		ModuleObject() noexcept : Object{} {}
 
@@ -27,9 +28,9 @@ namespace ism
 #define OBJECT_CHECK_MODULE(o) (ism::api::isinstance<ism::MODULE>(o))
 
 	// module ref
-	MAKE_SPECIAL_REF(ModuleObject)
+	class MODULE : public Ref<ModuleObject>
 	{
-		REF_COMMON(ModuleObject, OBJECT_CHECK_MODULE);
+		REF_COMMON(MODULE, OBJECT_CHECK_MODULE);
 
 	public:
 		template <class Func, class ... Extra
@@ -37,9 +38,9 @@ namespace ism
 		{
 			CPP_FUNCTION cf({
 				FWD(func),
-				api::name(name),
-				api::scope(*this),
-				api::sibling(api::getattr(*this, name, nullptr)),
+				api::attr::name(name),
+				api::attr::scope(*this),
+				api::attr::sibling(api::getattr(*this, name, nullptr)),
 				FWD(extra)... });
 			return add_object(name, cf, true), (*this);
 		}

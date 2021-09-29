@@ -13,11 +13,12 @@
 #include <core/object/method_object.hpp>
 #include <core/object/property_object.hpp>
 
-// loader life support
+// misc
 namespace ism::api
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// loader life support
 	struct LoaderLifeSupport final
 	{
 		LoaderLifeSupport() noexcept
@@ -55,9 +56,7 @@ namespace ism::api
 	// generic caster
 	struct TypeCasterGeneric
 	{
-		TypeCasterGeneric(std::type_info const & type_info)
-		{
-		}
+		// TODO...
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -81,6 +80,7 @@ namespace ism::api
 	// base caster
 	template <class T> struct TypeCasterBase : TypeCasterGeneric
 	{
+		// TODO...
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -174,7 +174,7 @@ public:																								\
 			else { return false; }
 		}
 
-		static OBJ cast(T src, ReturnPolicy, OBJ)
+		static OBJ cast(T src, ReturnPolicy_, OBJ)
 		{
 			if constexpr (_is_float) { return FLT(static_cast<_ftype>(src)); }
 
@@ -190,7 +190,7 @@ public:																								\
 	{
 		bool load(OBJ const & src, bool) { return src.is_valid(); }
 
-		static OBJ cast(T, ReturnPolicy, OBJ) { return OBJ{}; }
+		static OBJ cast(T, ReturnPolicy_, OBJ) { return OBJ{}; }
 
 		TYPE_CASTER_COMMON(T, "none");
 	};
@@ -212,7 +212,7 @@ public:																								\
 			else { return false; }
 		}
 
-		static OBJ cast(void const * src, ReturnPolicy, OBJ)
+		static OBJ cast(void const * src, ReturnPolicy_, OBJ)
 		{
 			return src ? CAPSULE({ static_cast<void const *>(src) }) : nullptr;
 		}
@@ -240,7 +240,7 @@ public:																								\
 			else { return (value = src.is_valid()), true; }
 		}
 
-		static OBJ cast(bool src, ReturnPolicy, OBJ) { return OBJ_BOOL(src); }
+		static OBJ cast(bool src, ReturnPolicy_, OBJ) { return OBJ_BOOL(src); }
 
 		TYPE_CASTER_COMMON(bool, "bool");
 	};
@@ -258,7 +258,7 @@ public:																								\
 			return (value = STR({ src })), true;
 		}
 
-		static OBJ cast(T const & src, ReturnPolicy, OBJ) { return STR({ src }); }
+		static OBJ cast(T const & src, ReturnPolicy_, OBJ) { return STR({ src }); }
 
 		template <class U> operator U & () { return static_cast<U &>(***value); }
 
@@ -285,9 +285,9 @@ public:																								\
 			return str_caster.load(src, convert);
 		}
 
-		static OBJ cast(T const * src, ReturnPolicy, OBJ) { return STR({ src }); }
+		static OBJ cast(T const * src, ReturnPolicy_, OBJ) { return STR({ src }); }
 
-		static OBJ cast(T const src, ReturnPolicy, OBJ) { return INT({ src }); }
+		static OBJ cast(T const src, ReturnPolicy_, OBJ) { return INT({ src }); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -301,7 +301,7 @@ public:																								\
 			else { return (value = src), true; }
 		}
 
-		static OBJ cast(OBJ const & src, ReturnPolicy, OBJ) { return src; }
+		static OBJ cast(OBJ const & src, ReturnPolicy_, OBJ) { return src; }
 
 		TYPE_CASTER_COMMON(T, "ref");
 	};
@@ -323,9 +323,9 @@ public:																								\
 			}
 		}
 
-		template <class U> static OBJ cast(U & src, ReturnPolicy, OBJ) { return Ref<U>(std::addressof(src)); }
+		template <class U> static OBJ cast(U & src, ReturnPolicy_, OBJ) { return Ref<U>(std::addressof(src)); }
 
-		template <class U> static OBJ cast(U && src, ReturnPolicy, OBJ) noexcept { return Ref<U>(std::move(src)); }
+		template <class U> static OBJ cast(U && src, ReturnPolicy_, OBJ) noexcept { return Ref<U>(std::move(src)); }
 
 		template <class U> operator U & () { return static_cast<U &>(**value); }
 

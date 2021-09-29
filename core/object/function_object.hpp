@@ -18,9 +18,7 @@ namespace ism
 
 		virtual ~FunctionObject() noexcept override = default;
 
-		FunctionObject() noexcept : Object{} {}
-
-		FunctionObject(vectorcallfunc vectorcall) noexcept : FunctionObject{} { m_vectorcall = vectorcall; }
+		FunctionObject(vectorcallfunc vectorcall = nullptr) noexcept : Object{} { m_vectorcall = vectorcall; }
 	};
 
 	// function delete
@@ -30,9 +28,9 @@ namespace ism
 #define OBJECT_CHECK_FUNCTION(o) (ism::api::isinstance<ism::FUNCTION>(o))
 
 	// function ref
-	MAKE_SPECIAL_REF(FunctionObject)
+	class FUNCTION : public Ref<FunctionObject>
 	{
-		REF_COMMON(FunctionObject, OBJECT_CHECK_FUNCTION);
+		REF_COMMON(FUNCTION, OBJECT_CHECK_FUNCTION);
 
 	public:
 		NODISCARD OBJ cpp_function() const; // cppfunction_object.hpp

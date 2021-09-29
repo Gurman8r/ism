@@ -14,11 +14,9 @@ namespace ism
 	public:
 		Vector<OBJ> m_list{};
 
-		using storage_type = decltype(m_list);
-
-		using iterator = storage_type::iterator;
-
-		using const_iterator = storage_type::const_iterator;
+		using storage_type		= decltype(m_list);
+		using iterator			= storage_type::iterator;
+		using const_iterator	= storage_type::const_iterator;
 
 		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_list); }
 
@@ -138,16 +136,14 @@ namespace ism
 #define OBJECT_CHECK_LIST(o) (ism::api::typeof(o).has_feature(ism::TypeFlags_List_Subclass))
 
 	// list ref
-	MAKE_SPECIAL_REF(ListObject)
+	class LIST : public Ref<ListObject>
 	{
-		REF_COMMON(ListObject, OBJECT_CHECK_LIST);
+		REF_COMMON(LIST, OBJECT_CHECK_LIST);
 
 	public:
-		using storage_type = value_type::storage_type;
-
-		using iterator = value_type::iterator;
-
-		using const_iterator = value_type::const_iterator;
+		using storage_type		= value_type::storage_type;
+		using iterator			= value_type::iterator;
+		using const_iterator	= value_type::const_iterator;
 
 		NODISCARD operator storage_type & () const { return m_ptr->operator storage_type & (); }
 
