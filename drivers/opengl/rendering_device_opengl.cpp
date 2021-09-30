@@ -1,3 +1,7 @@
+#ifdef OPENGL_ENABLED
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #include <drivers/opengl/rendering_device_opengl.hpp>
 
 using namespace ism;
@@ -8,14 +12,31 @@ using VertexAttribute = RenderingDevice::VertexAttribute;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(RenderingDeviceOpenGL, t)
+OBJECT_EMBED(RenderingDeviceOpenGL, t)
 {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RenderingDeviceOpenGL::RenderingDeviceOpenGL() : RenderingDevice{} {}
+RenderingDeviceOpenGL::RenderingDeviceOpenGL() : RenderingDevice{}
+{
+}
 
-RenderingDeviceOpenGL::~RenderingDeviceOpenGL() {}
+RenderingDeviceOpenGL::~RenderingDeviceOpenGL()
+{
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void RenderingDeviceOpenGL::initialize()
+{
+	VERIFY(OPENGL_INIT());
+}
+
+void RenderingDeviceOpenGL::finalize()
+{
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#endif // OPENGL_ENABLED

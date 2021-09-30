@@ -146,11 +146,8 @@ namespace ism::mpl
 
 	// remove_class
 	template <class T> struct remove_class {};
-
 	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...)> { using type = R(A...); };
-
 	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...) const> { using type = R(A...); };
-
 	template <class ... Ts> ALIAS(remove_class_t) remove_class<Ts...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

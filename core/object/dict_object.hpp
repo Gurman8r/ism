@@ -26,13 +26,13 @@ namespace ism
 
 		NODISCARD operator storage_type & () const { return const_cast<storage_type &>(m_dict); }
 
-		DictObject() noexcept : Object{}, m_dict{} {}
+		DictObject() noexcept : m_dict{} {}
 
-		DictObject(storage_type const & value) : DictObject{} { m_dict = value; }
+		DictObject(storage_type const & value) : m_dict{ value } {}
 
-		DictObject(storage_type && value) noexcept : DictObject{} { m_dict = std::move(value); }
+		DictObject(storage_type && value) noexcept : m_dict{ std::move(value) } {}
 
-		DictObject(std::initializer_list<std::pair<OBJ, OBJ>> init) : DictObject{}
+		DictObject(std::initializer_list<std::pair<OBJ, OBJ>> init) : m_dict{}
 		{
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
@@ -77,13 +77,9 @@ namespace ism
 
 		NODISCARD auto begin() const -> const_iterator { return m_dict.begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return m_dict.cbegin(); }
-
 		NODISCARD auto end() -> iterator { return m_dict.end(); }
 
 		NODISCARD auto end() const -> const_iterator { return m_dict.end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return m_dict.cend(); }
 	};
 
 	// dict delete
@@ -142,13 +138,9 @@ namespace ism
 
 		NODISCARD auto begin() const -> const_iterator { return m_ptr->begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return m_ptr->cbegin(); }
-
 		NODISCARD auto end() -> iterator { return m_ptr->end(); }
 
 		NODISCARD auto end() const -> const_iterator { return m_ptr->end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return m_ptr->cend(); }
 	};
 }
 

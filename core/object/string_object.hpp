@@ -24,23 +24,23 @@ namespace ism
 
 		NODISCARD operator storage_type & () const { return const_cast<storage_type &>(m_string); }
 
-		StringObject() noexcept : Object{} {}
+		StringObject() noexcept : m_string{} {}
 
-		StringObject(storage_type const & value) : StringObject{} { m_string = value; }
+		StringObject(storage_type const & value) : m_string{ value } {}
 
-		StringObject(storage_type && value) noexcept : StringObject{} { m_string = std::move(value); }
+		StringObject(storage_type && value) noexcept : m_string{ std::move(value) } {}
 
-		StringObject(cstring value) : StringObject{} { m_string = value; }
+		StringObject(cstring value) : m_string{ value } {}
 
-		StringObject(cstring value, size_t n) : StringObject{} { m_string = { value, n }; }
+		StringObject(cstring value, size_t n) : m_string{ value, n } {}
 
-		StringObject(StringName const & value) : StringObject{ value.string() } {}
+		StringObject(StringName const & value) : m_string{ value.string() } {}
 
-		StringObject(StringName && value) noexcept : StringObject{ std::move(value).string() } {}
+		StringObject(Path const & value) : m_string{ value.string() } {}
 
-		StringObject(std::initializer_list<char> init) : StringObject{} { m_string = init; }
+		StringObject(std::initializer_list<char> init) : m_string{ init } {}
 
-		template <class T> StringObject(Ref<T> const & value) : StringObject{}
+		template <class T> StringObject(Ref<T> const & value) : m_string{}
 		{
 			if (STR::check_(value))
 			{
@@ -68,13 +68,9 @@ namespace ism
 
 		NODISCARD auto begin() const -> const_iterator { return m_string.begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return m_string.cbegin(); }
-
 		NODISCARD auto end() -> iterator { return m_string.end(); }
 
 		NODISCARD auto end() const -> const_iterator { return m_string.end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return m_string.cend(); }
 	};
 
 	// string delete
@@ -111,13 +107,9 @@ namespace ism
 
 		NODISCARD auto begin() const -> const_iterator { return m_ptr->begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return m_ptr->cbegin(); }
-
 		NODISCARD auto end() -> iterator { return m_ptr->end(); }
 
 		NODISCARD auto end() const -> const_iterator { return m_ptr->end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return m_ptr->cend(); }
 	};
 }
 

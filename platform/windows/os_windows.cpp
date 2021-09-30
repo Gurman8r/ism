@@ -1,5 +1,6 @@
 #include <platform/windows/os_windows.hpp>
 #include <servers/display_server.hpp>
+#include <filesystem>
 
 using namespace ism;
 
@@ -12,6 +13,25 @@ OS_Windows::OS_Windows(HINSTANCE hInstance) : OS{}, m_instance{ hInstance }
 OS_Windows::~OS_Windows()
 {
 	delete_main_loop();
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void OS_Windows::initialize()
+{
+	m_main_loop = nullptr;
+}
+
+void OS_Windows::finalize()
+{
+	memdelete_nonzero(m_main_loop);
+
+	m_main_loop = nullptr;
+}
+
+void OS_Windows::finalize_core()
+{
+	// cleanup internals
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -33,6 +53,16 @@ bool OS_Windows::set_environment(String const & key, String const & value) const
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+String OS_Windows::get_cwd() const
+{
+	return (String)std::filesystem::current_path().string();
+}
+
+Error OS_Windows::set_cwd(String const & path)
+{
+	return std::filesystem::current_path(path), Error_Unknown;
+}
+
 String OS_Windows::get_name() const
 {
 	return String{};
@@ -46,30 +76,6 @@ String OS_Windows::get_stdin_string(bool block)
 		return temp;
 	}
 	return String{};
-}
-
-Error OS_Windows::set_cwd(String const & path)
-{
-	return Error_Unknown;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void OS_Windows::initialize()
-{
-	m_main_loop = nullptr;
-}
-
-void OS_Windows::finalize()
-{
-	memdelete_nonzero(m_main_loop);
-
-	m_main_loop = nullptr;
-}
-
-void OS_Windows::finalize_core()
-{
-	// cleanup internals
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

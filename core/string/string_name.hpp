@@ -8,11 +8,34 @@ namespace ism
 	// string name
 	class ISM_API StringName
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	private:
 		String m_text;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	public:
+		~StringName();
+
+		StringName() : m_text{} {}
+
+		StringName(nullptr_t) : m_text{} {}
+
+		StringName(cstring value) : m_text{ value } {}
+
+		StringName(StringName const & value) : m_text{ value } {}
+
+		StringName(String const & value) : m_text{ value } {}
+
+		StringName(StringView const & value) : m_text{ value } {}
+
+	public:
+		void clear() noexcept { m_text.clear(); }
+
+		void assign(StringName const & value) { m_text.assign(value.m_text); }
+
+		void swap(StringName & value) noexcept { m_text.swap(value.m_text); }
+
+		void operator=(StringName const & value) { assign(value); }
+
+		void operator=(StringName && value) noexcept { this->swap(std::move(value)); }
 
 	public:
 		NODISCARD operator void * () const noexcept { return !m_text.empty() ? (void *)1 : nullptr; }
@@ -48,34 +71,6 @@ namespace ism
 		NODISCARD auto string() const noexcept -> String { return m_text; }
 
 		NODISCARD operator String() const noexcept { return m_text; }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		void clear() noexcept { m_text.clear(); }
-
-		void assign(StringName const & value) { m_text.assign(value.m_text); }
-
-		void swap(StringName & value) noexcept { m_text.swap(value.m_text); }
-
-		void operator=(StringName const & value) { assign(value); }
-
-		void operator=(StringName && value) noexcept { this->swap(std::move(value)); }
-
-		~StringName();
-
-		StringName() : m_text{} {}
-
-		StringName(nullptr_t) : m_text{} {}
-
-		StringName(cstring value) : m_text{ value } {}
-
-		StringName(StringName const & value) : m_text{ value } {}
-
-		StringName(String const & value) : m_text{ value } {}
-
-		StringName(StringView const & value) : m_text{ value } {}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 
 	template <> struct ism::Hasher<StringName>

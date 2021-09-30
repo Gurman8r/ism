@@ -100,18 +100,18 @@ namespace ism
 namespace ism
 {
 	template <class T
-	> auto _ism_check(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
+	> auto _ism_validate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
 	{
 		return ((void)((!!(expr)) || (WIDE_ASSERT(message, file, line), 0))), FWD(expr);
 	}
 
 // validate message
 #define VALIDATE_MSG(expr, msg) \
-	(ism::_ism_check)(expr, WIDE(msg), WIDE(__FILE__), (unsigned)__LINE__)
+	(ism::_ism_validate)(expr, WIDE(msg), WIDE(__FILE__), (unsigned)__LINE__)
 
 // validate
 #define VALIDATE(expr) \
-	(ism::_ism_check)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
+	(ism::_ism_validate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

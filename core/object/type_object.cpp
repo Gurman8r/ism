@@ -25,7 +25,7 @@ TypeObject::TypeObject() noexcept : Object{} {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
+OBJECT_EMBED(TypeObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -165,17 +165,11 @@ bool TypeObject::check_consistency() const
 	// don't check static types before ready()
 	if (!(tp_flags & TypeFlags_Ready)) { return true; }
 
-	if (!TYPE::check_(ptr())) {
-		FATAL("");
-	}
+	VERIFY(TYPE::check_(ptr()));
 
-	if (tp_flags & TypeFlags_Readying) {
-		FATAL("");
-	}
+	VERIFY(!(tp_flags & TypeFlags_Readying));
 
-	if (!tp_dict) {
-		FATAL("");
-	}
+	VERIFY(tp_dict);
 
 	return true;
 }
@@ -406,7 +400,7 @@ Error ism::api::type_setattro(TYPE type, OBJ name, OBJ value)
 	{
 		type->modified();
 
-		if (api::is_dunder_name(name))
+		if (is_dunder_name(name))
 		{
 			err = type->update_slot(name);
 		}

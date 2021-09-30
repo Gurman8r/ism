@@ -65,7 +65,7 @@ namespace ism
 			static_assert(std::is_same_v<C, type> || std::is_base_of_v<C, type>, "def_readwrite() requires a class member (or base class member)");
 			CPP_FUNCTION fget({ [pm](type const & c) -> D const & { return c.*pm; }, api::attr::is_method(*this) });
 			CPP_FUNCTION fset({ [pm](type & c, D const & value) { c.*pm = value; }, api::attr::is_method(*this) });
-			return def_property(name, fget, fset, ReturnPolicy_ReferenceInternal, FWD(extra)...);
+			return def_property(name, fget, fset, ReturnValuePolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class C, class D, class ... Extra
@@ -73,7 +73,7 @@ namespace ism
 		{
 			static_assert(std::is_same_v<C, type> || std::is_base_of_v<C, type>, "def_readonly() requires a class member (or base class member)");
 			CPP_FUNCTION fget({ [pm](type const & c) -> D const & { return c.*pm; }, api::attr::is_method(*this) });
-			return def_property_readonly(name, fget, ReturnPolicy_ReferenceInternal, FWD(extra)...);
+			return def_property_readonly(name, fget, ReturnValuePolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class D, class ... Extra
@@ -81,20 +81,20 @@ namespace ism
 		{
 			CPP_FUNCTION fget({ [pm](OBJ) -> D const & { return *pm; }, api::attr::scope(*this) });
 			CPP_FUNCTION fset({ [pm](OBJ, D const & value) { *pm = value; }, api::attr::scope(*this) });
-			return def_property_static(name, fget, fset, ReturnPolicy_Reference, FWD(extra)...);
+			return def_property_static(name, fget, fset, ReturnValuePolicy_Reference, FWD(extra)...);
 		}
 
 		template <class D, class ... Extra
 		> CLASS_ & def_readonly_static(cstring name, D const * pm, Extra && ... extra)
 		{
 			CPP_FUNCTION fget({ [pm](OBJ) -> D const & { return *pm; }, api::attr::scope(*this) });
-			return def_property_readonly_static(name, fget, ReturnPolicy_Reference, FWD(extra)...);
+			return def_property_readonly_static(name, fget, ReturnValuePolicy_Reference, FWD(extra)...);
 		}
 
 		template <class Getter, class ... Extra
 		> CLASS_ & def_property_readonly(cstring name, Getter const & fget, Extra && ... extra)
 		{
-			return def_property_readonly(name, CPP_FUNCTION({ api::method_adaptor<type>(fget) }), ReturnPolicy_ReferenceInternal, FWD(extra)...);
+			return def_property_readonly(name, CPP_FUNCTION({ api::method_adaptor<type>(fget) }), ReturnValuePolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class ... Extra
@@ -106,7 +106,7 @@ namespace ism
 		template <class Getter, class ... Extra
 		> CLASS_ & def_property_readonly_static(cstring name, Getter const & fget, Extra && ... extra)
 		{
-			return def_property_readonly_static(name, CPP_FUNCTION({ fget }), ReturnPolicy_Reference, FWD(extra)...);
+			return def_property_readonly_static(name, CPP_FUNCTION({ fget }), ReturnValuePolicy_Reference, FWD(extra)...);
 		}
 
 		template <class ... Extra
@@ -124,7 +124,7 @@ namespace ism
 		template <class Getter, class ... Extra
 		> CLASS_ & def_property(cstring name, Getter const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			return def_property(name, CPP_FUNCTION({ api::method_adaptor<type>(fget) }), fset, ReturnPolicy_ReferenceInternal, FWD(extra)...);
+			return def_property(name, CPP_FUNCTION({ api::method_adaptor<type>(fget) }), fset, ReturnValuePolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class ... Extra
@@ -136,7 +136,7 @@ namespace ism
 		template <class Getter, class ... Extra
 		> CLASS_ & def_property_static(cstring name, Getter const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			return def_property_static(name, CPP_FUNCTION({ fget }), fset, ReturnPolicy_Reference, FWD(extra)...);
+			return def_property_static(name, CPP_FUNCTION({ fget }), fset, ReturnValuePolicy_Reference, FWD(extra)...);
 		}
 	
 		template <class ... Extra

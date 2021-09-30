@@ -5,12 +5,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <core/register_core_types.hpp>
-#include <drivers/register_driver_types.hpp>
-#include <platform/register_platform_apis.hpp>
-#include <scene/register_scene_types.hpp>
-#include <servers/register_server_types.hpp>
-
 #if TOOLS_ENABLED
 #include <editor/register_editor_types.hpp>
 #endif
@@ -26,6 +20,14 @@
 #endif
 
 #include <servers/rendering/rendering_server_default.hpp>
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#include <core/register_core_types.hpp>
+#include <drivers/register_driver_types.hpp>
+#include <platform/register_platform_apis.hpp>
+#include <scene/register_scene_types.hpp>
+#include <servers/register_server_types.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -96,7 +98,7 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 
 bool Main::start()
 {
-	get_os().set_main_loop(memnew(SceneTree));
+	get_os().set_main_loop(memnew(SceneTree{}));
 
 	//ResourceLoader::add_custom_loaders();
 	

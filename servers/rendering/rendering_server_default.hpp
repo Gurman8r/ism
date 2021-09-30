@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(RenderingServerDefault, RenderingServer);
 
+		Ref<RenderingDevice> m_device{};
+
 	public:
 		explicit RenderingServerDefault();
 
@@ -20,18 +22,6 @@ namespace ism
 		virtual void initialize() override;
 
 		virtual void finalize() override;
-
-	public:
-		NODISCARD virtual RID texture2d_create(Ref<Image> const & image) override;
-
-	public:
-		NODISCARD virtual RID shader_create() override;
-
-	public:
-		NODISCARD virtual RID material_create() override;
-
-	public:
-		NODISCARD virtual RID mesh_create() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

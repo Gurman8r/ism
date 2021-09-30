@@ -23,6 +23,10 @@ namespace ism
 
 		NODISCARD static RenderingDevice * get_singleton() noexcept { return singleton; }
 
+		virtual void initialize() = 0;
+
+		virtual void finalize() = 0;
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	public: /* GENERIC */

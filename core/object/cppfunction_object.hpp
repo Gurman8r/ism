@@ -105,7 +105,7 @@ namespace ism
 
 				auto capture{ const_cast<Capture *>(reinterpret_cast<Capture const *>(data)) };
 
-				ReturnPolicy_ policy{ api::return_policy_override<Return>::policy(call.record.policy) };
+				ReturnValuePolicy_ policy{ api::return_policy_override<Return>::policy(call.record.policy) };
 
 				using Guard = api::attr::extract_guard_t<Extra...>;
 
@@ -157,11 +157,11 @@ namespace ism
 
 		NODISCARD auto signature() const { return attr("__text_signature__"); }
 	};
+}
 
-	NODISCARD inline OBJ FUNCTION::cpp_function() const
-	{
-		return CPP_FUNCTION::check_(*this) ? CPP_FUNCTION(*this) : nullptr;
-	}
+NODISCARD inline ism::OBJ ism::FUNCTION::cpp_function() const
+{
+	return ism::CPP_FUNCTION::check_(*this) ? ism::CPP_FUNCTION(*this) : nullptr;
 }
 
 // functions

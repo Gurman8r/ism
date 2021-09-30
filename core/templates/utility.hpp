@@ -1,20 +1,7 @@
 #ifndef _ISM_UTILITY_HPP_
 #define _ISM_UTILITY_HPP_
 
-// Sources:
-// https://www.youtube.com/watch?v=NTWSeQtHZ9M
-// https://github.com/SuperV1234/cppcon2015
-// https://github.com/SuperV1234/cppcon2015/tree/master/Other/ecs/Utils/detail
-// https://github.com/SuperV1234/cppcon2015/blob/master/Other/ecs/Utils/MetaFor.hpp
-// https://github.com/SuperV1234/cppcon2015/blob/master/Other/ecs/Utils/detail/TypeListOps.hpp
-// https://stackoverflow.com/questions/18063451/get-index-of-a-tuple-elements-type
-// https://stackoverflow.com/questions/25958259/how-do-i-find-out-if-a-tuple-contains-a-type
-// https://stackoverflow.com/questions/37029886/how-to-construct-a-tuple-from-an-array
-// https://stackoverflow.com/questions/36580855/construct-tuple-by-passing-the-same-argument-to-each-element-with-explicit-const
-// https://stackoverflow.com/questions/22560100/how-to-initialize-all-tuple-elements-by-the-same-arguments
-
 #include <core/templates/type_traits.hpp>
-
 #include <core/os/copymem.hpp>
 
 #include <stdarg.h>

@@ -30,18 +30,6 @@ namespace ism
 		virtual void initialize() = 0;
 
 		virtual void finalize() = 0;
-
-	public:
-		NODISCARD virtual RID texture2d_create(Ref<Image> const & image) = 0;
-
-	public:
-		NODISCARD virtual RID shader_create() = 0;
-
-	public:
-		NODISCARD virtual RID material_create() = 0;
-
-	public:
-		NODISCARD virtual RID mesh_create() = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

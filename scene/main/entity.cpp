@@ -1,14 +1,17 @@
 #include <scene/main/entity.hpp>
 #include <scene/main/scene_tree.hpp>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 using namespace ism;
 
-EMBED_CLASS(Entity, t) {}
+OBJECT_EMBED(Entity, t, TypeFlags_BaseType) {}
 
-Entity::~Entity() {}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Entity::Entity(SceneTree * tree, Node * parent) : Node{ tree, parent }, m_entity{ get_tree()->get_registry()->create() } {}
+Entity::Entity(SceneTree * scene, Node * parent) noexcept : Node{ scene, parent }
+{
+	m_entity_id = m_scene->m_entt.create();
+}
 
-Entity::Entity(SceneTree * tree) : Node{ tree }, m_entity{ get_tree()->get_registry()->create() } {}
-
-Entity::Entity(Node * parent) : Node{ parent }, m_entity{ get_tree()->get_registry()->create() } {}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -34,25 +34,27 @@ namespace ism
 		virtual void finalize_core() override;
 
 	public:
-		virtual MainLoop * get_main_loop() const override;
+		NODISCARD virtual bool has_environment(String const & key) const override;
 
-		virtual void set_main_loop(MainLoop * value) override;
+		NODISCARD virtual String get_environment(String const & key) const override;
 
-		virtual void delete_main_loop() override;
+		virtual bool set_environment(String const & key, String const & value) const override;
 
 	public:
-		virtual String get_stdin_string(bool block = true) override;
+		virtual String get_cwd() const override;
 
 		virtual Error set_cwd(String const & path) override;
 
 		NODISCARD virtual String get_name() const override;
 
+		virtual String get_stdin_string(bool block = true) override;
+
 	public:
-		NODISCARD virtual bool has_environment(String const & key) const override;
-		
-		NODISCARD virtual String get_environment(String const & key) const override;
-		
-		virtual bool set_environment(String const & key, String const & value) const override;
+		virtual MainLoop * get_main_loop() const override;
+
+		virtual void set_main_loop(MainLoop * value) override;
+
+		virtual void delete_main_loop() override;
 
 	public:
 		virtual Error open_dynamic_library(String const & path, void *& instance) override;

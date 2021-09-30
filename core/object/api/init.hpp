@@ -22,7 +22,7 @@ namespace ism::api
 		{
 			return c.def("__new__", [](Args ... args)
 			{
-				return Holder<Class>{ Cpp<Class>{ args... } };
+				return Holder<Class>::new_(args...);
 			}
 			, api::is_constructor(), FWD(extra)...);
 		}
@@ -49,7 +49,7 @@ namespace ism::api
 		{
 			return c.def("__new__", [func = std::move(class_factory)](Args ... args)
 			{
-				return Holder<Class>{ func(args...) };
+				return Holder<Class>::new_(func(args...));
 			}
 			, api::is_constructor(), FWD(extra)...);
 		}

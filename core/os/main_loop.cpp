@@ -4,7 +4,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(MainLoop, t)
+OBJECT_EMBED(MainLoop, t)
 {
 }
 

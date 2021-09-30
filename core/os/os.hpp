@@ -2,7 +2,6 @@
 #define _SYSTEM_HPP_
 
 #include <core/io/logger.hpp>
-#include <core/os/filesystem.hpp>
 #include <core/os/main_loop.hpp>
 #include <iostream>
 
@@ -69,19 +68,21 @@ namespace ism
 	public:
 		NODISCARD virtual String get_executable_path() const { return m_exepath; }
 		
-		NODISCARD virtual String get_environment(String const & key) const = 0;
-
-		NODISCARD virtual String get_name() const = 0;
-		
 		NODISCARD virtual Vector<String> get_cmdline_args() const { return m_cmdline; }
 
-		NODISCARD virtual MainLoop * get_main_loop() const = 0;
+		NODISCARD virtual String get_environment(String const & key) const = 0;
 
 		NODISCARD virtual bool has_environment(String const & key) const = 0;
 
+		virtual bool set_environment(String const & key, String const & value) const = 0;
+
+		virtual String get_cwd() const = 0;
+
 		virtual Error set_cwd(String const & path) { return Error_Unknown; }
 
-		virtual bool set_environment(String const & key, String const & value) const = 0;
+		NODISCARD virtual String get_name() const = 0;
+
+		NODISCARD virtual MainLoop * get_main_loop() const = 0;
 
 	public:
 		virtual Error open_dynamic_library(String const & path, void *& instance) { return Error_Unknown; }

@@ -60,7 +60,7 @@ void Object::set_type(TYPE const & value) noexcept { m_type = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
+OBJECT_EMBED(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 {
 	t.tp_getattro = (getattrofunc)api::generic_getattr;
 

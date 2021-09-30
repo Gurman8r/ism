@@ -29,7 +29,7 @@ namespace ism::api
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// argument collector
-	template <ReturnPolicy_ policy = ReturnPolicy_AutomaticReference
+	template <ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference
 	> struct NODISCARD ArgumentCollector final
 	{
 		template <class ... Args
@@ -54,7 +54,7 @@ namespace ism::api
 	};
 
 	// collect arguments
-	template <ReturnPolicy_ policy = ReturnPolicy_AutomaticReference, class ... Args
+	template <ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference, class ... Args
 	> NODISCARD auto collect_arguments(Args && ... args) noexcept
 	{
 		return ArgumentCollector<policy>{ FWD(args)... };
@@ -138,7 +138,7 @@ namespace ism::api
 
 		Vector<ArgumentRecord> args{};
 
-		ReturnPolicy_ policy{ ReturnPolicy_AutomaticReference };
+		ReturnValuePolicy_ policy{ ReturnValuePolicy_AutomaticReference };
 
 		Object * scope{}, * sibling{};
 
@@ -203,7 +203,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Derived
-	> template <ReturnPolicy_ policy, class ...Args
+	> template <ReturnValuePolicy_ policy, class ...Args
 	> inline OBJ ObjectAPI<Derived>::operator()(Args && ... args) const
 	{
 		return api::collect_arguments<policy>(FWD(args)...).call(derived().ptr());

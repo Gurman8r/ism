@@ -6,4 +6,4 @@ MEMBER_IMPL(RenderingServer::singleton) {};
 
 MEMBER_IMPL(RenderingServer::create_func) {};
 
-EMBED_CLASS(RenderingServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
+OBJECT_EMBED(RenderingServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}

@@ -50,8 +50,8 @@ private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// embed class type
-#define EMBED_CLASS(m_class, m_var, ...)														\
+// embed object class
+#define OBJECT_EMBED(m_class, m_var, ...)														\
 																								\
 	/* declare binder */																		\
 	template <> class ism::api::EmbedClassHelper<m_class> final									\

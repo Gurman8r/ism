@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(DictObject, t, TypeFlags_Dict_Subclass)
+OBJECT_EMBED(DictObject, t, TypeFlags_Dict_Subclass)
 {
 	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)DICT(self).size(); };
 

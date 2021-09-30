@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(FloatObject, t, TypeFlags_Float_Subclass)
+OBJECT_EMBED(FloatObject, t, TypeFlags_Float_Subclass)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) { return Hasher<double_t>()(***FLT(self)); };
 

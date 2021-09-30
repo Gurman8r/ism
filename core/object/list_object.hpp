@@ -25,20 +25,15 @@ namespace ism
 		NODISCARD operator storage_type & () const { return const_cast<storage_type &>(m_list); }
 
 		template <class Iter
-		> ListObject(Iter first, Iter last) : ListObject{} { m_list = { first, last }; }
+		> ListObject(Iter first, Iter last) : m_list{ first, last } {}
 
-		ListObject() noexcept : Object{} {}
+		ListObject() noexcept : m_list{} {}
 
-		ListObject(storage_type const & value) : ListObject{} { m_list = value; }
+		ListObject(storage_type const & value) : m_list{ value } {}
 
-		ListObject(storage_type && value) noexcept : ListObject{} { m_list = std::move(value); }
+		ListObject(storage_type && value) noexcept : m_list{ std::move(value) } {}
 
-		ListObject(std::initializer_list<OBJ> init) : ListObject{}
-		{
-			m_list.reserve(init.size());
-
-			for (auto const & e : init) { m_list.push_back(e); }
-		}
+		ListObject(std::initializer_list<OBJ> init) : m_list{ init } {}
 
 		void clear() { m_list.clear(); }
 
@@ -120,13 +115,9 @@ namespace ism
 
 		NODISCARD auto begin() const -> const_iterator { return m_list.begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return m_list.cbegin(); }
-
 		NODISCARD auto end() -> iterator { return m_list.end(); }
 
 		NODISCARD auto end() const -> const_iterator { return m_list.end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return m_list.cend(); }
 	};
 
 	// list delete
@@ -193,13 +184,9 @@ namespace ism
 
 		NODISCARD auto begin() const -> const_iterator { return m_ptr->begin(); }
 
-		NODISCARD auto cbegin() const -> const_iterator { return m_ptr->cbegin(); }
-
 		NODISCARD auto end() -> iterator { return m_ptr->end(); }
 
 		NODISCARD auto end() const -> const_iterator { return m_ptr->end(); }
-
-		NODISCARD auto cend() const -> const_iterator { return m_ptr->cend(); }
 	};
 }
 

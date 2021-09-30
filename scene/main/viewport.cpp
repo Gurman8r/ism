@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_CLASS(Viewport, t, TypeFlags_BaseType) {}
+OBJECT_EMBED(Viewport, t, TypeFlags_BaseType) {}
 
 Viewport::~Viewport() {}

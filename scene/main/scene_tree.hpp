@@ -4,10 +4,22 @@
 #include <core/os/main_loop.hpp>
 #include <core/templates/duration.hpp>
 #include <scene/main/window.hpp>
+#include <main/performance.hpp>
+
+struct ImGuiContext;
 
 // scene
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	struct NODISCARD SceneSettings final
+	{
+		DEFAULT_COPYABLE_MOVABLE(SceneSettings);
+
+		String name{ "New Scene" };
+	};
+	
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API SceneTree : public MainLoop
@@ -17,7 +29,7 @@ namespace ism
 	public:
 		virtual ~SceneTree() override;
 
-		explicit SceneTree(String const & name = "New Scene");
+		explicit SceneTree(SceneSettings const & settings = {});
 
 	public:
 		virtual void initialize() override;
@@ -33,23 +45,23 @@ namespace ism
 		template <class T> void on_component_added(Node &, T &) {}
 
 	public:
-		NODISCARD auto get_registry() const noexcept -> EntityRegistry * { return const_cast<EntityRegistry *>(&m_reg); }
-
-		NODISCARD auto get_window() const noexcept -> Window * { return m_window; }
-		
-		NODISCARD auto get_root() const noexcept -> Node * { return m_root; }
-
 		NODISCARD auto get_name() const noexcept -> String const & { return m_name; }
-
 		void set_name(String const & value) noexcept { if (m_name != value) { m_name = value; } }
+
+		NODISCARD auto get_root() noexcept -> Window * { return m_root; }
+		NODISCARD auto get_root() const noexcept -> Window const * { return m_root; }
+		
+		NODISCARD auto get_entt() const noexcept -> entt::registry & { return const_cast<entt::registry &>(m_entt); }
+		NODISCARD auto get_imgui() const noexcept -> ImGuiContext * { return m_imgui; }
 
 	private:
 		friend class Node;
+		friend class Entity;
 
-		String			m_name		{};
-		Window *		m_window	{};
-		Node *			m_root		{};
-		EntityRegistry	m_reg		{};
+		String			m_name	{};
+		Window *		m_root	{};
+		entt::registry	m_entt	{};
+		ImGuiContext *	m_imgui	{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

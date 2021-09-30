@@ -112,9 +112,9 @@ namespace ism
 	{
 		DEFAULT_COPYABLE_MOVABLE(VideoMode);
 
-		Vec2 size{ 1280, 720 };
-		Vec4 bits_per_pixel{ 8, 8, 8, 8 };
-		int32_t refresh_rate{ -1 };
+		Vec2	size			{ 1280, 720 };
+		Vec4	bits_per_pixel	{ 8, 8, 8, 8 };
+		int32_t	refresh_rate	{ -1 };
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -124,12 +124,12 @@ namespace ism
 	{
 		DEFAULT_COPYABLE_MOVABLE(WindowSettings);
 
-		String title{};
-		VideoMode video{};
-		ContextSettings context{};
-		WindowHints hints{ WindowHints_Default };
-		MonitorID monitor{};
-		WindowID share{};
+		String			title	{ "New Window" };
+		VideoMode		video	{};
+		ContextSettings	context	{};
+		WindowHints		hints	{ WindowHints_Default };
+		MonitorID		monitor	{};
+		WindowID		share	{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

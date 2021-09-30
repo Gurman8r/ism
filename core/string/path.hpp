@@ -7,11 +7,40 @@ namespace ism
 {
 	class ISM_API Path
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	private:
 		friend class FileSystem;
 
 		WideString m_text{};
+
+	public:
+		~Path();
+
+		Path() : m_text{} {}
+
+		Path(nullptr_t) : m_text{} {}
+
+		Path(cwstring value) : m_text{ value } {}
+
+		Path(cstring value) : m_text{ util::widen((String)value) } {}
+
+		Path(Path const & value) : m_text{ value.m_text } {}
+
+		Path(WideString const & value) : m_text{ value } {}
+
+		Path(String const & value) : m_text{ util::widen(value) } {}
+
+		Path(StringView const & value) : m_text{ util::widen((String)value) } {}
+
+	public:
+		void clear() noexcept { m_text.clear(); }
+
+		void assign(Path const & value) { m_text.assign(value.m_text); }
+
+		void swap(Path & value) noexcept { m_text.swap(value.m_text); }
+
+		void operator=(Path const & value) { assign(value); }
+
+		void operator=(Path && value) noexcept { this->swap(std::move(value)); }
 
 	public:
 		NODISCARD operator void * () const noexcept { return !m_text.empty() ? (void *)1 : nullptr; }
@@ -51,36 +80,6 @@ namespace ism
 		NODISCARD operator WideString() const noexcept { return m_text; }
 
 		NODISCARD operator String() const noexcept { return util::narrow(m_text); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		void clear() noexcept { m_text.clear(); }
-
-		void assign(Path const & value) { m_text.assign(value.m_text); }
-
-		void swap(Path & value) noexcept { m_text.swap(value.m_text); }
-
-		void operator=(Path const & value) { assign(value); }
-
-		void operator=(Path && value) noexcept { this->swap(std::move(value)); }
-
-		~Path();
-
-		Path() : m_text{} {}
-
-		Path(nullptr_t) : m_text{} {}
-
-		Path(cwstring value) : m_text{ value } {}
-
-		Path(cstring value) : m_text{ util::widen((String)value) } {}
-
-		Path(Path const & value) : m_text{ value.m_text } {}
-
-		Path(WideString const & value) : m_text{ value } {}
-
-		Path(String const & value) : m_text{ util::widen(value) } {}
-
-		Path(StringView const & value) : m_text{ util::widen((String)value) } {}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

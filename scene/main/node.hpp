@@ -2,7 +2,6 @@
 #define _ISM_NODE_HPP_
 
 #include <core/input/input.hpp>
-
 #include <entt/entt.hpp>
 
 namespace ism
@@ -11,47 +10,55 @@ namespace ism
 
 	class SceneTree;
 
-	class Node;
-
-	ALIAS(NodeList) Vector<Node *>;
-
-	ALIAS(EntityID) ::entt::entity;
-
-	ALIAS(EntityRegistry) ::entt::registry;
-
 	class ISM_API Node : public Object
 	{
 		OBJECT_COMMON(Node, Object);
-
-	public:
-		using iterator					= typename NodeList::iterator;
-		using const_iterator			= typename NodeList::const_iterator;
-		using reverse_iterator			= typename NodeList::reverse_iterator;
-		using const_reverse_iterator	= typename NodeList::const_reverse_iterator;
-
-		virtual ~Node();
+		
+		friend class SceneTree;
 
 	protected:
-		explicit Node(SceneTree * tree, Node * parent);
-
-		explicit Node(SceneTree * tree) noexcept : Node{ tree, nullptr } {}
-
-		explicit Node(Node * parent) noexcept : Node{ VALIDATE(parent)->m_tree, parent } {}
+		SceneTree *			m_scene		{}; // scene
+		Node *				m_parent	{}; // parent
+		Vector<Ref<Node>>	m_children	{}; // children
 
 	public:
-		NODISCARD auto get_child(size_t i) const noexcept -> Node * { return (i < get_child_count()) ? m_children[i] : nullptr; }
+		using iterator					= typename Vector<Ref<Node>>::iterator;
+		using const_iterator			= typename Vector<Ref<Node>>::const_iterator;
+		using reverse_iterator			= typename Vector<Ref<Node>>::reverse_iterator;
+		using const_reverse_iterator	= typename Vector<Ref<Node>>::const_reverse_iterator;
+
+	protected:
+		Node(SceneTree * scene = nullptr, Node * parent = nullptr) noexcept : Object{}
+		{
+			if (scene && parent)
+			{
+				m_scene = scene;
+				m_parent = parent;
+			}
+			else if (scene && !parent)
+			{
+				m_scene = scene;
+				m_parent = nullptr;
+			}
+			else if (!scene && parent)
+			{
+				m_scene = parent->m_scene;
+				m_parent = parent;
+			}
+		}
+
+	public:
+		NODISCARD auto get_child(size_t i) const noexcept -> Ref<Node> { return (i < get_child_count()) ? m_children[i] : nullptr; }
 
 		NODISCARD auto get_child_count() const noexcept -> size_t { return m_children.size(); }
 
-		NODISCARD auto get_children() const noexcept -> NodeList const & { return m_children; }
+		NODISCARD auto get_children() const noexcept -> Vector<Ref<Node>> const & { return m_children; }
 
 		NODISCARD auto get_parent() const noexcept -> Node * { return m_parent; }
 
-		NODISCARD auto get_root() const noexcept -> Node * { return !m_parent ? m_parent->get_root() : const_cast<Node *>(this); }
+		NODISCARD auto get_scene() const noexcept -> SceneTree * { return m_scene; }
 
-		NODISCARD auto get_tree() const noexcept -> SceneTree * { return m_tree; }
-
-		NODISCARD auto get_sibling(size_t i) const noexcept -> Node * { return m_parent ? m_parent->get_child(i) : nullptr; }
+		NODISCARD auto get_sibling(size_t i) const noexcept -> Ref<Node> { return m_parent ? m_parent->get_child(i) : nullptr; }
 
 		NODISCARD auto get_sibling_count() const noexcept -> size_t { return !m_parent ? m_parent->get_child_count() : 0; }
 
@@ -59,12 +66,12 @@ namespace ism
 		{
 			return m_parent
 				? std::distance(m_parent->m_children.begin(), std::find_if(m_parent->m_children.begin(), m_parent->m_children.end(), [&
-				](auto const child) { return this == child; }))
+				](auto const & child) { return this == child; }))
 				: static_cast<size_t>(-1);
 		}
 
 		template <class Pr
-		> NODISCARD auto get_node_if(Pr && pr, bool recursive = true) const -> Node *
+		> NODISCARD auto get_node_if(Pr && pr, bool recursive = true) const -> Ref<Node>
 		{
 			if (auto const it{ std::find_if(m_children.begin(), m_children.end(), FWD(pr)) }; it != m_children.end())
 			{
@@ -72,27 +79,27 @@ namespace ism
 			}
 			else if (recursive)
 			{
-				for (auto const child : m_children)
+				for (auto const & child : m_children)
 				{
 					if (auto const found{ child->get_node_if(FWD(pr)) })
 					{
-						return const_cast<Node *>(found);
+						return found;
 					}
 				}
 			}
 			return nullptr;
 		}
 
-		NODISCARD auto get_node(Node const * value, bool recursive = true) const -> Node *
+		NODISCARD auto get_node(Ref<Node> const & value, bool recursive = true) const -> Ref<Node>
 		{
-			return get_node_if([&](auto const child) noexcept
+			return get_node_if([&](auto const & child) noexcept
 			{
 				return child == value;
 			}
 			, recursive);
 		}
 
-		NODISCARD bool is_child_of(Node const * other) const noexcept
+		NODISCARD bool is_child_of(Ref<Node> const & other) const noexcept
 		{
 			return (m_parent && other && (this != other)) && ((m_parent == other) || other->get_node_if([&](auto child) noexcept
 			{
@@ -100,7 +107,7 @@ namespace ism
 			}));
 		}
 
-		NODISCARD bool is_parent_of(Node const * other) const noexcept
+		NODISCARD bool is_parent_of(Ref<Node> const & other) const noexcept
 		{
 			return (0 < get_child_count()) && other && (this != other) && get_node(other, true);
 		}
@@ -118,20 +125,13 @@ namespace ism
 
 		void clear_children()
 		{
-			while (!m_children.empty())
-			{
-				memdelete(m_children.back());
-
-				m_children.pop_back();
-			}
+			m_children.clear();
 		}
 
 		void delete_child(size_t i)
 		{
 			if (i < m_children.size())
 			{
-				memdelete(m_children[i]);
-
 				m_children.erase(m_children.begin() + (ptrdiff_t)i);
 			}
 		}
@@ -140,7 +140,7 @@ namespace ism
 		{
 			if (m_parent)
 			{
-				for (auto const child : m_children)
+				for (auto const & child : m_children)
 				{
 					child->m_parent = m_parent;
 
@@ -149,7 +149,7 @@ namespace ism
 			}
 			else
 			{
-				for (auto const child : m_children)
+				for (auto const & child : m_children)
 				{
 					child->m_parent = nullptr;
 				}
@@ -183,11 +183,6 @@ namespace ism
 
 			children.insert(children.begin() + i, this);
 		}
-
-	private:
-		SceneTree *	m_tree		{}; // tree
-		Node *		m_parent	{}; // parent
-		NodeList	m_children	{}; // children
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

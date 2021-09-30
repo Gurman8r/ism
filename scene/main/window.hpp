@@ -15,10 +15,14 @@ namespace ism
 		OBJECT_COMMON(Window, Viewport);
 
 	protected:
+		friend class DisplayServer;
+
 		WindowID m_window_id{};
 
 	public:
-		Window(WindowID window = nullptr) noexcept : Viewport{} { m_window_id = window; }
+		Window(SceneTree * scene = nullptr, Node * parent = nullptr) noexcept : Viewport{ scene, parent } {}
+
+		Window(WindowID window) noexcept : Viewport{} { m_window_id = window; }
 
 		Window(Window && other) noexcept : Viewport{} { swap(std::move(other)); }
 		
@@ -26,9 +30,9 @@ namespace ism
 
 		void swap(Window & other) noexcept { if (this != std::addressof(other)) { std::swap(m_window_id, other.m_window_id); } }
 
-		NODISCARD WindowID get_id() const { return m_window_id; }
-
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		NODISCARD inline WindowID get_window_id() const { return m_window_id; }
 
 		static Window * new_(WindowSettings const & settings);
 		virtual void make_context_current();

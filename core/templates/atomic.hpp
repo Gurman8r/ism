@@ -5,11 +5,11 @@
 
 #include <atomic>
 
-#undef ISM_MULTICORE
-#define ISM_MULTICORE 0
-static_assert(!ISM_MULTICORE, "thread support not implemented");
+#undef MULTICORE_ENABLED
+#define MULTICORE_ENABLED 0
+static_assert(!MULTICORE_ENABLED, "thread support not implemented");
 
-#if !ISM_MULTICORE
+#if !MULTICORE_ENABLED
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

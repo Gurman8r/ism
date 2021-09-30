@@ -11,13 +11,13 @@
 #include <core/math/rect.hpp>
 #include <core/templates/any.hpp>
 #include <core/templates/atomic.hpp>
+#include <core/templates/duration.hpp>
 #include <core/templates/ecs.hpp>
 #include <core/templates/flat_map.hpp>
 #include <core/templates/hash_map.hpp>
 #include <core/templates/hash_set.hpp>
 #include <core/templates/map.hpp>
 #include <core/templates/set.hpp>
-#include <core/templates/timer.hpp>
 #include <core/templates/type_info.hpp>
 
 #define FWD_OBJ(expr) \
@@ -122,22 +122,22 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MAKE_ENUM(ReturnPolicy)
+	MAKE_ENUM(ReturnValuePolicy)
 	{
-		ReturnPolicy_Automatic,
-		ReturnPolicy_AutomaticReference,
-		ReturnPolicy_TakeOwnership,
-		ReturnPolicy_Copy,
-		ReturnPolicy_Move,
-		ReturnPolicy_Reference,
-		ReturnPolicy_ReferenceInternal,
+		ReturnValuePolicy_Automatic,
+		ReturnValuePolicy_AutomaticReference,
+		ReturnValuePolicy_TakeOwnership,
+		ReturnValuePolicy_Copy,
+		ReturnValuePolicy_Move,
+		ReturnValuePolicy_Reference,
+		ReturnValuePolicy_ReferenceInternal,
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	MAKE_ENUM(TypeFlags)
 	{
-		TypeFlags_None = 0,
+		TypeFlags_None,
 
 		TypeFlags_HeapType			= 1 << 0,
 		TypeFlags_BaseType			= 1 << 1,
@@ -208,7 +208,7 @@ namespace ism
 		template <class Value = OBJ
 		> NODISCARD bool contains(Value && value) const { return attr("__contains__")(FWD(value)).cast<bool>(); }
 
-		template <ReturnPolicy_ policy = ReturnPolicy_AutomaticReference, class ... Args
+		template <ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference, class ... Args
 		> OBJ operator()(Args && ... args) const; // call.hpp
 
 	public:
@@ -416,21 +416,27 @@ namespace ism
 
 	public:
 		NODISCARD operator bool() const noexcept { return m_ptr != nullptr; }
-
-		NODISCARD auto ptr() const noexcept { return const_cast<value_type *>(m_ptr); }
-
 		NODISCARD bool is_null() const noexcept { return m_ptr == nullptr; }
-
 		NODISCARD bool is_valid() const noexcept { return m_ptr != nullptr; }
 
-		NODISCARD auto operator*() const noexcept { return const_cast<value_type *>(m_ptr); }
+		NODISCARD auto ptr() noexcept { return m_ptr; }
+		NODISCARD auto ptr() const noexcept { return m_ptr; }
 
-		NODISCARD auto operator->() const noexcept { return const_cast<value_type *>(m_ptr); }
+		NODISCARD auto operator*() noexcept { return m_ptr; }
+		NODISCARD auto operator*() const noexcept { return m_ptr; }
+
+		NODISCARD auto operator->() noexcept { return m_ptr; }
+		NODISCARD auto operator->() const noexcept { return m_ptr; }
 
 		NODISCARD bool operator==(value_type const * value) const noexcept { return (m_ptr == value) || ((m_ptr && value) && m_ptr->equal_to(*value)); }
-
 		NODISCARD bool operator!=(value_type const * value) const noexcept { return (m_ptr != value) && ((m_ptr && value) && m_ptr->not_equal_to(*value)); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> bool operator==(T const * lhs, Ref<T> const & rhs) noexcept { return rhs.operator==(lhs); }
+
+	template <class T> bool operator!=(T const * lhs, Ref<T> const & rhs) noexcept { return rhs.operator!=(lhs); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

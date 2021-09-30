@@ -4,7 +4,7 @@ using namespace ism;
 
 MEMBER_IMPL(DisplayServer::singleton) {};
 
-EMBED_CLASS(DisplayServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
+OBJECT_EMBED(DisplayServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

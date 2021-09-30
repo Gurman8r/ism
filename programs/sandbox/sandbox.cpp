@@ -1,5 +1,7 @@
 #include <main/main.hpp>
 #include <scene/main/scene_tree.hpp>
+#include <drivers/opengl/opengl.hpp>
+#include <scene/gui/imgui.hpp>
 
 using namespace ism;
 
@@ -13,17 +15,6 @@ using namespace ism;
 
 namespace ism
 {
-	struct Test
-	{
-		int x{};
-
-		String y{};
-
-		static void test_static() { MAIN_PRINT("%s\n", PRETTY_FUNCTION); }
-
-		int test_const() const { MAIN_PRINT("%s\n", PRETTY_FUNCTION); return 0; }
-	};
-
 	void hello() { MAIN_PRINT("Hello: %s\n", PRETTY_FUNCTION); }
 	void say(String const & s) { MAIN_PRINT("Say: %s\n", s.c_str()); }
 	auto get_int() { return 123; }
@@ -42,7 +33,6 @@ namespace ism
 			.def("get_string", get_string)
 			.def("pass_ptr", [](void * a, void * b) { return b; })
 			.def("pass_ptr", [](void * a) { return a; })
-			.def("test_static", &Test::test_static)
 			;
 
 		DICT g = api::globals();
@@ -77,22 +67,79 @@ namespace ism
 
 	void test_scene()
 	{
+		FPS_Tracker fps_tracker{ 120 };
+
 		SceneTree * scene{ (SceneTree *)get_os().get_main_loop() };
 		scene->initialize(); SCOPE_EXIT(&) { scene->finalize(); };
 
-		Window * window{ scene->get_window() };
-		while (window && window->is_open())
+		Window * window{ scene->get_root() };
+		while (window->is_open())
 		{
-			static Duration delta_time{};
-
+			static Duration delta_time{ 16.f / 1000.f };
 			Timer const loop_timer{ true };
 
 			window->poll_events();
+			fps_tracker.update(delta_time);
 
 			StringStream title{};
-			title << "ism @ " << (delta_time.count() * 1000.f) << " ms/frame";
+			title << "ism @ " << fps_tracker.value << " fps";
 			window->set_title(title.str());
 
+			ImGuiViewportP * im_viewport{ scene->get_imgui()->Viewports[0] };
+			ImGui_NewFrame();
+			ImGui::NewFrame();
+			ImGuizmo::BeginFrame();
+			{
+				constexpr auto dockspace_name{ "##MainDockspace" };
+				ImGuiID const dockspace_id{ ImGui::GetID(dockspace_name) };
+				ImGui::SetNextWindowPos(im_viewport->Pos);
+				ImGui::SetNextWindowSize(im_viewport->Size);
+				ImGui::SetNextWindowViewport(im_viewport->ID);
+				ImGui::SetNextWindowBgAlpha(0.f);
+				ImGui::PushStyleVar(ImGuiStyleVarType_WindowRounding, 0.f);
+				ImGui::PushStyleVar(ImGuiStyleVarType_WindowBorderSize, 0.f);
+				ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, Vec2{ 0.f, 0.f });
+				bool const dockspace_open{ ImGui::Begin(dockspace_name, 0,
+					ImGuiWindowFlags_NoTitleBar |
+					ImGuiWindowFlags_NoCollapse |
+					ImGuiWindowFlags_NoResize |
+					ImGuiWindowFlags_NoMove |
+					ImGuiWindowFlags_NoBringToFrontOnFocus |
+					ImGuiWindowFlags_NoNavFocus |
+					ImGuiWindowFlags_NoDocking |
+					ImGuiWindowFlags_NoBackground
+				) };
+				ImGui::PopStyleVar(3);
+				if (dockspace_open)
+				{
+					if (!ImGui::DockBuilderGetNode(dockspace_id)) {
+						ImGui::DockBuilderRemoveNode(dockspace_id);
+						ImGui::DockBuilderAddNode(dockspace_id);
+						// BUILD DOCKSPACE HERE
+						ImGui::DockBuilderFinish(dockspace_id);
+					}
+					ImGui::DockSpace(dockspace_id);
+				}
+				ImGui::End();
+
+				// GUI GOES HERE
+				ImGui::ShowDemoWindow();
+			}
+			ImGui::Render();
+
+			Vec2 const window_size{ window->get_size() };
+			glViewport(0, 0, (int32_t)window_size[0], (int32_t)window_size[1]);
+			glClearColor(0.f, 0.f, 0.f, 1.f);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			ImGui_RenderDrawData(&im_viewport->DrawDataP);
+			if (scene->get_imgui()->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+				WindowID const backup{ get_display_server().get_current_context() };
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+				get_display_server().make_context_current(backup);
+			}
+			
 			window->swap_buffers();
 
 			delta_time = loop_timer.elapsed();

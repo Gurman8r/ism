@@ -32,9 +32,9 @@ namespace ism::api::attr
 	};
 
 	// return policy
-	template <> struct process_attribute<ReturnPolicy_> : process_attribute_default<ReturnPolicy_>
+	template <> struct process_attribute<ReturnValuePolicy_> : process_attribute_default<ReturnValuePolicy_>
 	{
-		static void init(FunctionRecord & r, ReturnPolicy_ && a) noexcept { r.policy = a; }
+		static void init(FunctionRecord & r, ReturnValuePolicy_ && a) noexcept { r.policy = a; }
 	};
 
 	// sibling

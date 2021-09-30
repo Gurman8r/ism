@@ -10,9 +10,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// viewport
-	class ISM_API Viewport : public Object
+	class ISM_API Viewport : public Node
 	{
-		OBJECT_COMMON(Viewport, Object);
+		OBJECT_COMMON(Viewport, Node);
+
+	public:
+		Viewport(SceneTree * scene = nullptr, Node * parent = nullptr) noexcept : Node{ scene, parent } {}
 
 	public:
 		virtual ~Viewport() override;

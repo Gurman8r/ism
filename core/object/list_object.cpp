@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(ListObject, t, TypeFlags_List_Subclass)
+OBJECT_EMBED(ListObject, t, TypeFlags_List_Subclass)
 {
 	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)LIST(self).size(); };
 
