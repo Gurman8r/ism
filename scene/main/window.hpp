@@ -15,26 +15,19 @@ namespace ism
 		OBJECT_COMMON(Window, Viewport);
 
 	protected:
-		friend class DisplayServer;
+		friend class SceneTree;
 
 		WindowID m_window_id{};
 
 	public:
-		Window(SceneTree * scene = nullptr, Node * parent = nullptr) noexcept : Viewport{ scene, parent } {}
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		Window(WindowID window) noexcept : Viewport{} { m_window_id = window; }
+		Window();
 
-		Window(Window && other) noexcept : Viewport{} { swap(std::move(other)); }
-		
-		Window & operator=(Window && other) noexcept { return swap(std::move(other)), (*this); }
-
-		void swap(Window & other) noexcept { if (this != std::addressof(other)) { std::swap(m_window_id, other.m_window_id); } }
+		virtual ~Window() override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD inline WindowID get_window_id() const { return m_window_id; }
-
-		static Window * new_(WindowSettings const & settings);
 		virtual void make_context_current();
 		virtual void poll_events();
 		virtual void swap_buffers();
@@ -63,6 +56,7 @@ namespace ism
 		NODISCARD virtual Vec2 get_size() const;
 		NODISCARD virtual void * get_user_pointer() const;
 		NODISCARD virtual Rect get_frame_size() const;
+		NODISCARD inline WindowID get_window_id() const { return m_window_id; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -12,7 +12,7 @@ using namespace ism;
 
 void ism::register_scene_types()
 {
-	api::get_internals()
+	ism::get_internals()
 		.bind_class<Font>()
 		.bind_class<Material>()
 		.bind_class<Mesh>()

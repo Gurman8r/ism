@@ -11,20 +11,20 @@ namespace ism
 	// windows display server
 	class ISM_API DisplayServerWindows : public DisplayServer
 	{
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		OBJECT_COMMON(DisplayServerWindows, DisplayServer);
 
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	public:
-		DisplayServerWindows();
+		DisplayServerWindows(DisplayServerSettings const & settings);
 
 		~DisplayServerWindows();
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD virtual Window * window_new(WindowSettings const & settings) override;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		virtual WindowID get_current_context() const override;
+		virtual WindowID get_context_current() const override;
 		virtual void make_context_current(WindowID id) override;
 		virtual void poll_events() override;
 		virtual void swap_buffers(WindowID id) override;
@@ -109,11 +109,6 @@ namespace ism
 		virtual WindowRefreshCallback window_set_refresh_callback(WindowID id, WindowRefreshCallback value) override;
 		virtual WindowResizeCallback window_set_resize_callback(WindowID id, WindowResizeCallback value) override;
 		virtual WindowMouseScrollCallback window_set_mouse_scroll_callback(WindowID id, WindowMouseScrollCallback value) override;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD virtual VideoMode const & get_desktop_video_mode() const override;
-		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

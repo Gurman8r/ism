@@ -6,7 +6,7 @@ using namespace ism;
 
 void ism::register_server_types()
 {
-	api::get_internals()
+	ism::get_internals()
 		.bind_class<DisplayServer>()
 		.bind_class<RenderingServer>()
 		;

@@ -7,6 +7,8 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API RenderingDeviceOpenGL : public RenderingDevice
 	{
 		OBJECT_COMMON(RenderingDeviceOpenGL, RenderingDevice);
@@ -16,13 +18,15 @@ namespace ism
 
 		RenderingDeviceOpenGL();
 
-	public: /* MISC */
-
 		virtual void initialize() override;
 
 		virtual void finalize() override;
 
+	public:
+		// LOW LEVEL RENDERING API GOES HERE
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_RENDERING_DEVICE_OPENGL_HPP_

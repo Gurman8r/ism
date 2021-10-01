@@ -13,10 +13,21 @@ OBJECT_EMBED(Window, t, TypeFlags_BaseType) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window * Window::new_(WindowSettings const & settings)
+Window::Window() : Viewport{}
 {
-	return get_display_server().window_new(settings);
+	m_window_id = get_display_server().get_context_current();
+
+	if (m_window_id) { set_user_pointer(this); }
 }
+
+Window::~Window()
+{
+	if (m_window_id) { set_user_pointer(nullptr); }
+
+	m_window_id = nullptr;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void Window::make_context_current()
 {

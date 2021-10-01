@@ -14,14 +14,16 @@ namespace ism
 		Ref<RenderingDevice> m_device{};
 
 	public:
-		explicit RenderingServerDefault();
+		RenderingServerDefault(RenderingServerSettings const & settings = {});
 
 		virtual ~RenderingServerDefault() override;
 
-	public:
 		virtual void initialize() override;
 
 		virtual void finalize() override;
+
+	public:
+		// HIGH LEVEL RENDERING API GOES HERE
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -4,18 +4,9 @@
 #include <core/templates/ratio.hpp>
 #include <chrono>
 
+// duration
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ALIAS(Nanoseconds)	std::chrono::duration<float_t, Nano>;
-	ALIAS(Microseconds)	std::chrono::duration<float_t, Micro>;
-	ALIAS(Milliseconds)	std::chrono::duration<float_t, Milli>;
-	ALIAS(Seconds)		std::chrono::duration<float_t, Ratio<1>>;
-	ALIAS(Minutes)		std::chrono::duration<float_t, Ratio<60>>;
-	ALIAS(Hours)		std::chrono::duration<float_t, Ratio<60 * 60>>;
-	ALIAS(Days)			std::chrono::duration<float_t, Ratio<60 * 60 * 24>>;
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct Duration final : public std::chrono::duration<float_t>
@@ -28,28 +19,118 @@ namespace ism
 
 		template <class T> NODISCARD constexpr operator T() const noexcept { return (T)count(); }
 
-		NODISCARD constexpr auto nanoseconds() const noexcept { return std::chrono::duration_cast<Nanoseconds>(*this); }
+		NODISCARD constexpr auto nanoseconds() const noexcept -> Duration {
+			return std::chrono::duration_cast<std::chrono::duration<float_t, Nano>>(*this);
+		}
 
-		NODISCARD constexpr auto microseconds() const noexcept { return std::chrono::duration_cast<Microseconds>(*this); }
+		NODISCARD constexpr auto microseconds() const noexcept -> Duration {
+			return std::chrono::duration_cast<std::chrono::duration<float_t, Micro>>(*this);
+		}
 
-		NODISCARD constexpr auto milliseconds() const noexcept { return std::chrono::duration_cast<Milliseconds>(*this); }
+		NODISCARD constexpr auto milliseconds() const noexcept -> Duration {
+			return std::chrono::duration_cast<std::chrono::duration<float_t, Milli>>(*this);
+		}
 
-		NODISCARD constexpr auto seconds() const noexcept { return std::chrono::duration_cast<Seconds>(*this); }
+		NODISCARD constexpr auto seconds() const noexcept -> Duration {
+			return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<1>>>(*this);
+		}
 
-		NODISCARD constexpr auto minutes() const noexcept { return std::chrono::duration_cast<Minutes>(*this); }
+		NODISCARD constexpr auto minutes() const noexcept -> Duration {
+			return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60>>>(*this);
+		}
 
-		NODISCARD constexpr auto hours() const noexcept { return std::chrono::duration_cast<Hours>(*this); }
+		NODISCARD constexpr auto hours() const noexcept -> Duration {
+			return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60 * 60>>>(*this);
+		}
 
-		NODISCARD constexpr auto days() const noexcept { return std::chrono::duration_cast<Days>(*this); }
+		NODISCARD constexpr auto days() const noexcept -> Duration {
+			return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60 * 60 * 24>>>(*this);
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(TimePoint) std::chrono::high_resolution_clock::time_point;
+	NODISCARD constexpr auto operator"" _ns(float80_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Nano()) };
+	}
+
+	NODISCARD constexpr auto operator"" _ns(uint64_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Nano()) };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr auto operator"" _us(float80_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Micro()) };
+	}
+
+	NODISCARD constexpr auto operator"" _us(uint64_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Micro()) };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr auto operator"" _ms(float80_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Milli()) };
+	}
+
+	NODISCARD constexpr auto operator"" _ms(uint64_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Milli()) };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr auto operator"" _s(float80_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<1>()) };
+	}
+
+	NODISCARD constexpr auto operator"" _s(uint64_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<1>()) };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr auto operator"" _min(float80_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60>()) };
+	}
+
+	NODISCARD constexpr auto operator"" _min(uint64_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60>()) };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr auto operator"" _hrs(float80_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60>()) };
+	}
+
+	NODISCARD constexpr auto operator"" _hrs(uint64_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60>()) };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr auto operator"" _days(float80_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60 * 24>()) };
+	}
+
+	NODISCARD constexpr auto operator"" _days(uint64_t value) noexcept {
+		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60 * 24>()) };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// timer
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct Timer final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		using time_point = std::chrono::high_resolution_clock::time_point;
 
 		explicit Timer(bool running) noexcept
 			: m_running{ running }
@@ -128,8 +209,8 @@ namespace ism
 
 	private:
 		bool		m_running;
-		TimePoint	m_start_time;
-		TimePoint	m_stop_time;
+		time_point	m_start_time;
+		time_point	m_stop_time;
 		Duration	m_elapsed;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

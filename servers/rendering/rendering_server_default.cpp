@@ -1,18 +1,21 @@
 #include <servers/rendering/rendering_server_default.hpp>
 
+#ifdef OPENGL_ENABLED
 #include <drivers/opengl/rendering_device_opengl.hpp>
-
-using namespace ism;
+#define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
+#endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+using namespace ism;
 
 OBJECT_EMBED(RenderingServerDefault, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RenderingServerDefault::RenderingServerDefault() : RenderingServer{}
+RenderingServerDefault::RenderingServerDefault(RenderingServerSettings const & settings) : RenderingServer{}
 {
-	m_device.reset(memnew(RenderingDeviceOpenGL{}));
+	m_device = memnew(RENDERING_DEVICE_DEFAULT());
 }
 
 RenderingServerDefault::~RenderingServerDefault()

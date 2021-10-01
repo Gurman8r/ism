@@ -13,9 +13,9 @@ namespace ism
 
 	class ISM_API OS_Windows : public OS
 	{
-		MainLoop *	m_main_loop{};
-		HINSTANCE	m_instance{};
-		HWND		m_main_window{};
+		Ref<MainLoop> m_main_loop{};
+		HINSTANCE m_instance{};
+		HWND m_main_window{};
 
 	public:
 		explicit OS_Windows(HINSTANCE hInstance);
@@ -50,9 +50,9 @@ namespace ism
 		virtual String get_stdin_string(bool block = true) override;
 
 	public:
-		virtual MainLoop * get_main_loop() const override;
+		virtual Ref<MainLoop> get_main_loop() const override;
 
-		virtual void set_main_loop(MainLoop * value) override;
+		virtual void set_main_loop(Ref<MainLoop> value) override;
 
 		virtual void delete_main_loop() override;
 
@@ -62,6 +62,11 @@ namespace ism
 		virtual Error close_dynamic_library(void * instance) override;
 
 		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) override;
+
+	public:
+		NODISCARD virtual VideoMode const & get_desktop_video_mode() const override;
+
+		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

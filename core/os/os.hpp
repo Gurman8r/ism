@@ -17,6 +17,10 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	struct VideoMode;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// operating system
 	class ISM_API OS
 	{
@@ -27,13 +31,6 @@ namespace ism
 		Vector<String>		m_cmdline{};
 		int32_t				m_exit_code{};
 		CompositeLogger *	m_logger{};
-
-	public:
-		OS();
-
-		virtual ~OS();
-
-		FORCE_INLINE static OS * get_singleton() noexcept { return singleton; }
 
 	protected:
 		friend class Main;
@@ -50,9 +47,16 @@ namespace ism
 
 		virtual void set_logger(CompositeLogger * value);
 
-		virtual void set_main_loop(MainLoop * p_main_loop) = 0;
+		virtual void set_main_loop(Ref<MainLoop> value) = 0;
 
 		virtual void delete_main_loop() = 0;
+
+		OS();
+
+	public:
+		virtual ~OS();
+
+		FORCE_INLINE static OS * get_singleton() noexcept { return singleton; }
 
 	public:
 		void pause();
@@ -82,7 +86,7 @@ namespace ism
 
 		NODISCARD virtual String get_name() const = 0;
 
-		NODISCARD virtual MainLoop * get_main_loop() const = 0;
+		NODISCARD virtual Ref<MainLoop> get_main_loop() const = 0;
 
 	public:
 		virtual Error open_dynamic_library(String const & path, void *& instance) { return Error_Unknown; }
@@ -90,6 +94,11 @@ namespace ism
 		virtual Error close_dynamic_library(void * instance) { return Error_Unknown; }
 		
 		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) { return Error_Unknown; }
+
+	public:
+		NODISCARD virtual VideoMode const & get_desktop_video_mode() const = 0;
+
+		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

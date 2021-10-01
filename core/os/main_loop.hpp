@@ -1,7 +1,7 @@
 #ifndef _ISM_MAIN_LOOP_HPP_
 #define _ISM_MAIN_LOOP_HPP_
 
-#include <core/object/api/class.hpp>
+#include <core/api/class.hpp>
 
 namespace ism
 {
@@ -11,7 +11,7 @@ namespace ism
 	{
 		OBJECT_COMMON(MainLoop, Object);
 
-		OBJ m_startup_script{};
+		OBJ m_script{};
 
 	protected:
 		MainLoop() noexcept : Object{} {}
@@ -25,7 +25,7 @@ namespace ism
 
 		virtual void finalize();
 
-		void set_startup_script(OBJ value);
+		void set_startup_script(OBJ const & value) { m_script = value; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

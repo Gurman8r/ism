@@ -24,14 +24,11 @@ void OS_Windows::initialize()
 
 void OS_Windows::finalize()
 {
-	memdelete_nonzero(m_main_loop);
-
 	m_main_loop = nullptr;
 }
 
 void OS_Windows::finalize_core()
 {
-	// cleanup internals
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -80,19 +77,19 @@ String OS_Windows::get_stdin_string(bool block)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MainLoop * OS_Windows::get_main_loop() const
+Ref<MainLoop> OS_Windows::get_main_loop() const
 {
 	return m_main_loop;
 }
 
-void OS_Windows::set_main_loop(MainLoop * value)
+void OS_Windows::set_main_loop(Ref<MainLoop> value)
 {
-	if (m_main_loop != value) { m_main_loop = value; }
+	m_main_loop = value;
 }
 
 void OS_Windows::delete_main_loop()
 {
-	if (m_main_loop) { memdelete(m_main_loop); m_main_loop = nullptr; }
+	m_main_loop = nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -117,6 +114,47 @@ Error OS_Windows::get_dynamic_library_symbol_handle(void * instance, String cons
 	symbol = GetProcAddress((HMODULE)instance, name.c_str());
 	if (!symbol && !is_optional) { return Error_Unknown; }
 	return Error_None;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+VideoMode const & OS_Windows::get_desktop_video_mode() const
+{
+	static VideoMode result{};
+	if (static bool once{}; !once && (once = true))
+	{
+		DEVMODE dm;
+		dm.dmSize = sizeof(dm);
+		EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm);
+
+		Vec2 resolution{ dm.dmPelsWidth, dm.dmPelsHeight };
+
+		result = VideoMode{ resolution, Vec4{}, -1 };
+	}
+	return result;
+}
+
+Vector<VideoMode> const & OS_Windows::get_fullscreen_video_modes() const
+{
+	static Vector<VideoMode> result{};
+	if (static bool once{}; !once && (once = true))
+	{
+		DEVMODE dm;
+		dm.dmSize = sizeof(dm);
+		for (int32_t count = 0; EnumDisplaySettings(nullptr, count, &dm); ++count)
+		{
+			Vec2 resolution{ dm.dmPelsWidth, dm.dmPelsHeight };
+
+			VideoMode vm{ resolution, Vec4{}, -1 };
+
+			if (!ism::has(result, vm))
+			{
+				result.push_back(vm);
+			}
+		}
+	}
+
+	return result;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

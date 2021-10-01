@@ -1,7 +1,7 @@
 #ifndef _ISM_EDITOR_DATA_HPP_
 #define _ISM_EDITOR_DATA_HPP_
 
-#include <core/object/api/class.hpp>
+#include <core/api/class.hpp>
 
 namespace ism
 {
@@ -9,8 +9,6 @@ namespace ism
 	{
 	public:
 		virtual ~EditorData();
-
-		DEFAULT_COPYABLE_MOVABLE(EditorData);
 	};
 }
 

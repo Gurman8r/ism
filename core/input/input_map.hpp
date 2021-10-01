@@ -1,7 +1,7 @@
 #ifndef _ISM_INPUT_MAP_HPP_
 #define _ISM_INPUT_MAP_HPP_
 
-#include <core/object/api/class.hpp>
+#include <core/api/class.hpp>
 
 namespace ism
 {

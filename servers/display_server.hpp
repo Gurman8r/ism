@@ -90,6 +90,32 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// video mode
+	struct NODISCARD VideoMode
+	{
+		DEFAULT_COPYABLE_MOVABLE(VideoMode);
+
+		Vec2	size			{ 1280, 720 };
+		Vec4	bits_per_pixel	{ 8, 8, 8, 8 };
+		int32_t	refresh_rate	{ -1 };
+
+		NODISCARD bool operator==(VideoMode const & other) const noexcept { return compare(other) == 0; }
+		NODISCARD bool operator!=(VideoMode const & other) const noexcept { return compare(other) != 0; }
+		NODISCARD bool operator< (VideoMode const & other) const noexcept { return compare(other) < 0; }
+		NODISCARD bool operator> (VideoMode const & other) const noexcept { return compare(other) > 0; }
+		NODISCARD bool operator<=(VideoMode const & other) const noexcept { return compare(other) <= 0; }
+		NODISCARD bool operator>=(VideoMode const & other) const noexcept { return compare(other) >= 0; }
+
+		NODISCARD int32_t compare(VideoMode const & other) const noexcept
+		{
+			if (this == std::addressof(other)) { return 0; }
+
+			return util::compare(size, other.size);
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// context settings
 	struct NODISCARD ContextSettings
 	{
@@ -107,22 +133,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// video mode
-	struct NODISCARD VideoMode
-	{
-		DEFAULT_COPYABLE_MOVABLE(VideoMode);
-
-		Vec2	size			{ 1280, 720 };
-		Vec4	bits_per_pixel	{ 8, 8, 8, 8 };
-		int32_t	refresh_rate	{ -1 };
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// window settings
-	struct NODISCARD WindowSettings
+	struct NODISCARD DisplayServerSettings
 	{
-		DEFAULT_COPYABLE_MOVABLE(WindowSettings);
+		DEFAULT_COPYABLE_MOVABLE(DisplayServerSettings);
 
 		String			title	{ "New Window" };
 		VideoMode		video	{};
@@ -156,11 +170,9 @@ namespace ism
 
 		NODISCARD static DisplayServer * get_singleton() noexcept { return singleton; }
 
-		NODISCARD virtual Window * window_new(WindowSettings const & settings);
-
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD virtual WindowID get_current_context() const;
+		NODISCARD virtual WindowID get_context_current() const;
 		virtual void make_context_current(WindowID id);
 		virtual void poll_events();
 		virtual void swap_buffers(WindowID id);
@@ -246,11 +258,6 @@ namespace ism
 		virtual WindowPositionCallback window_set_position_callback(WindowID id, WindowPositionCallback value);
 		virtual WindowRefreshCallback window_set_refresh_callback(WindowID id, WindowRefreshCallback value);
 		virtual WindowResizeCallback window_set_resize_callback(WindowID id, WindowResizeCallback value);
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD virtual VideoMode const & get_desktop_video_mode() const;
-		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

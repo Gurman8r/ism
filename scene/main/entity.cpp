@@ -9,9 +9,13 @@ OBJECT_EMBED(Entity, t, TypeFlags_BaseType) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Entity::Entity(SceneTree * scene, Node * parent) noexcept : Node{ scene, parent }
+Entity::Entity() : Node{}
 {
-	m_entity_id = m_scene->m_entt.create();
+	m_entity_id = m_tree->m_entt.create();
+}
+
+Entity::~Entity()
+{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

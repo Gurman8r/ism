@@ -1,7 +1,7 @@
 #ifndef _ISM_RESOURCE_HPP_
 #define _ISM_RESOURCE_HPP_
 
-#include <core/object/api/class.hpp>
+#include <core/api/class.hpp>
 
 namespace ism
 {

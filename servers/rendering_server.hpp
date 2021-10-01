@@ -8,6 +8,18 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	struct NODISCARD RenderingServerSettings final
+	{
+		DEFAULT_COPYABLE_MOVABLE(RenderingServerSettings);
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API RenderingServer : public Object
 	{
 		OBJECT_COMMON(RenderingServer, Object);
@@ -17,19 +29,21 @@ namespace ism
 	protected:
 		static RenderingServer * (*create_func)();
 
-	public:
 		explicit RenderingServer() noexcept : Object{} { singleton = this; }
 
+	public:
 		virtual ~RenderingServer() override {}
 
 		NODISCARD static RenderingServer * get_singleton() noexcept { return singleton; }
 
 		NODISCARD static RenderingServer * create() { return create_func ? create_func() : nullptr; }
 
-	public:
 		virtual void initialize() = 0;
 
 		virtual void finalize() = 0;
+
+	public:
+		// HIGH LEVEL RENDERING API GOES HERE
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

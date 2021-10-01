@@ -6,8 +6,6 @@
 #include <scene/main/window.hpp>
 #include <main/performance.hpp>
 
-struct ImGuiContext;
-
 // scene
 namespace ism
 {
@@ -26,10 +24,24 @@ namespace ism
 	{
 		OBJECT_COMMON(SceneTree, MainLoop);
 
+		friend class Main;
+		friend class Node;
+		friend class Entity;
+
+		static SceneTree * singleton;
+
+		Window * m_root{};
+
+		bool m_initialized{};
+
+		entt::registry m_entt{};
+
 	public:
+		SceneTree(SceneSettings const & settings = {});
+
 		virtual ~SceneTree() override;
 
-		explicit SceneTree(SceneSettings const & settings = {});
+		NODISCARD static SceneTree * get_singleton() noexcept { return singleton; }
 
 	public:
 		virtual void initialize() override;
@@ -39,29 +51,12 @@ namespace ism
 		virtual void finalize() override;
 
 	public:
-		void on_runtime_update(Duration const & delta_time);
+		NODISCARD auto get_root() const noexcept -> Window * const { return const_cast<Window *>(m_root); }
 
 	protected:
 		template <class T> void on_component_added(Node &, T &) {}
-
-	public:
-		NODISCARD auto get_name() const noexcept -> String const & { return m_name; }
-		void set_name(String const & value) noexcept { if (m_name != value) { m_name = value; } }
-
-		NODISCARD auto get_root() noexcept -> Window * { return m_root; }
-		NODISCARD auto get_root() const noexcept -> Window const * { return m_root; }
 		
-		NODISCARD auto get_entt() const noexcept -> entt::registry & { return const_cast<entt::registry &>(m_entt); }
-		NODISCARD auto get_imgui() const noexcept -> ImGuiContext * { return m_imgui; }
-
 	private:
-		friend class Node;
-		friend class Entity;
-
-		String			m_name	{};
-		Window *		m_root	{};
-		entt::registry	m_entt	{};
-		ImGuiContext *	m_imgui	{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

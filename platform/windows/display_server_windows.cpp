@@ -15,24 +15,16 @@
 
 using namespace ism;
 
+static WindowID g_main_window{};
+
 OBJECT_EMBED(DisplayServerWindows, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DisplayServerWindows::DisplayServerWindows()
+DisplayServerWindows::DisplayServerWindows(DisplayServerSettings const & settings)
 {
 	VERIFY(glfwInit() == GLFW_TRUE);
-}
 
-DisplayServerWindows::~DisplayServerWindows()
-{
-	glfwTerminate();
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-Window * DisplayServerWindows::window_new(WindowSettings const & settings)
-{
 	// context hints
 	glfwWindowHint(GLFW_CLIENT_API, std::invoke([&]() noexcept {
 		switch (settings.context.api) {
@@ -75,23 +67,27 @@ Window * DisplayServerWindows::window_new(WindowSettings const & settings)
 	glfwWindowHint(GLFW_STENCIL_BITS, settings.context.stencil_bits);
 	glfwWindowHint(GLFW_SRGB_CAPABLE, settings.context.srgb_capable);
 
-	// create window
-	Window * w{ memnew(Window((WindowID)glfwCreateWindow(
+	g_main_window = (WindowID)glfwCreateWindow(
 		(int32_t)settings.video.size[0],
 		(int32_t)settings.video.size[1],
 		(cstring)settings.title.c_str(),
 		(GLFWmonitor *)settings.monitor,
-		(GLFWwindow *)settings.share))) };
+		(GLFWwindow *)settings.share);
 
-	w->make_context_current();
-	w->set_user_pointer(w);
-	w->set_position((Vec2(1920, 1080) - settings.video.size) / 2);
-	if (flag_read(settings.hints, WindowHints_Maximized)) { w->maximize(); }
-
-	return w;
+	make_context_current(g_main_window);
+	
+	if (settings.hints & WindowHints_Maximized) { maximize_window(g_main_window); }
 }
 
-WindowID DisplayServerWindows::get_current_context() const
+DisplayServerWindows::~DisplayServerWindows()
+{
+	glfwDestroyWindow((GLFWwindow *)g_main_window);
+	glfwTerminate();
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+WindowID DisplayServerWindows::get_context_current() const
 {
 	return (WindowID)glfwGetCurrentContext();
 }
@@ -509,18 +505,6 @@ WindowResizeCallback DisplayServerWindows::window_set_resize_callback(WindowID i
 	return reinterpret_cast<WindowResizeCallback>(
 		glfwSetWindowSizeCallback((GLFWwindow *)id,
 			reinterpret_cast<GLFWwindowposfun>(value)));
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-VideoMode const & DisplayServerWindows::get_desktop_video_mode() const
-{
-	RETURN_STATIC(VideoMode{});
-}
-
-Vector<VideoMode> const & DisplayServerWindows::get_fullscreen_video_modes() const
-{
-	RETURN_STATIC(Vector<VideoMode>{});
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

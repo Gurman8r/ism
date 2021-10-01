@@ -128,6 +128,21 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	inline bool operator<(Vec2 const & a, Vec2 const & b) noexcept {
+		if (std::addressof(a) == std::addressof(b)) { return false; }
+		else if ((a[0] < b[0]) && (a[1] < b[1])) { return true; }
+		else { return (a[0] * a[1]) < (b[0] * b[1]); }
+	}
+
+	inline bool operator==(Vec2 const & a, Vec2 const & b) noexcept {
+		if (std::addressof(a) == std::addressof(b)) { return true; }
+		else { return a[0] == b[0] && a[1] == b[1]; }
+	}
+
+	inline bool operator!=(Vec2 const & a, Vec2 const & b) noexcept { return !(a == b); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	inline Vec2 operator+(Vec2 const & a, Vec2 const & b) noexcept { return Vec2{ a[0] + b[0], a[1] + b[1] }; }
 	
 	inline Vec2 operator-(Vec2 const & a, Vec2 const & b) noexcept { return Vec2{ a[0] - b[0], a[1] - b[1] }; }

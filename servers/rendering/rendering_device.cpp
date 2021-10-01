@@ -5,3 +5,12 @@ using namespace ism;
 MEMBER_IMPL(RenderingDevice::singleton) {};
 
 OBJECT_EMBED(RenderingDevice, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
+
+RenderingDevice::RenderingDevice() : Object{}
+{
+	singleton = this;
+}
+
+RenderingDevice::~RenderingDevice()
+{
+}

@@ -9,21 +9,21 @@ using namespace ism;
 
 void ism::register_core_types()
 {
-	VERIFY(api::typeof<Object>().ready());
-	VERIFY(api::typeof<TypeObject>().ready());
-	VERIFY(api::typeof<IntObject>().ready());
-	VERIFY(api::typeof<FloatObject>().ready());
-	VERIFY(api::typeof<StringObject>().ready());
-	VERIFY(api::typeof<ListObject>().ready());
-	VERIFY(api::typeof<DictObject>().ready());
-	VERIFY(api::typeof<CapsuleObject>().ready());
-	VERIFY(api::typeof<FunctionObject>().ready());
-	VERIFY(api::typeof<MethodObject>().ready());
-	VERIFY(api::typeof<CppFunctionObject>().ready());
-	VERIFY(api::typeof<PropertyObject>().ready());
-	VERIFY(api::typeof<ModuleObject>().ready());
+	VERIFY(ism::typeof<Object>().ready());
+	VERIFY(ism::typeof<TypeObject>().ready());
+	VERIFY(ism::typeof<IntObject>().ready());
+	VERIFY(ism::typeof<FloatObject>().ready());
+	VERIFY(ism::typeof<StringObject>().ready());
+	VERIFY(ism::typeof<ListObject>().ready());
+	VERIFY(ism::typeof<DictObject>().ready());
+	VERIFY(ism::typeof<CapsuleObject>().ready());
+	VERIFY(ism::typeof<FunctionObject>().ready());
+	VERIFY(ism::typeof<MethodObject>().ready());
+	VERIFY(ism::typeof<CppFunctionObject>().ready());
+	VERIFY(ism::typeof<PropertyObject>().ready());
+	VERIFY(ism::typeof<ModuleObject>().ready());
 
-	api::get_internals()
+	ism::get_internals()
 
 		.bind_class<CppFunctionObject>() // <- cppfunction MUST go first
 		.bind_class<Object>()
@@ -70,7 +70,7 @@ void ism::unregister_core_driver_types()
 
 void ism::unregister_core_types()
 {
-	auto & db{ api::get_internals().class_db };
+	auto & db{ ism::get_internals().class_db };
 
 	for (size_t i = 0; i < db.size(); ++i)
 	{

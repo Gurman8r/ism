@@ -14,8 +14,8 @@ namespace ism
 	{
 		OBJECT_COMMON(Viewport, Node);
 
-	public:
-		Viewport(SceneTree * scene = nullptr, Node * parent = nullptr) noexcept : Node{ scene, parent } {}
+	protected:
+		Viewport();
 
 	public:
 		virtual ~Viewport() override;

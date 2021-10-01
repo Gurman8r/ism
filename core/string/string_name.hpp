@@ -12,7 +12,7 @@ namespace ism
 		String m_text;
 
 	public:
-		~StringName();
+		~StringName() {}
 
 		StringName() : m_text{} {}
 

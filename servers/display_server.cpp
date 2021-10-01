@@ -8,14 +8,10 @@ OBJECT_EMBED(DisplayServer, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window * DisplayServer::window_new(WindowSettings const & settings)
+WindowID DisplayServer::get_context_current() const
 {
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION ""); return {};
-}
-
-WindowID DisplayServer::get_current_context() const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION ""); return {};
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
 }
 
 void DisplayServer::make_context_current(WindowID id)
@@ -371,20 +367,6 @@ WindowRefreshCallback DisplayServer::window_set_refresh_callback(WindowID id, Wi
 WindowResizeCallback DisplayServer::window_set_resize_callback(WindowID id, WindowResizeCallback value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION ""); return {};
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-VideoMode const & DisplayServer::get_desktop_video_mode() const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	RETURN_STATIC(VideoMode{});
-}
-
-Vector<VideoMode> const & DisplayServer::get_fullscreen_video_modes() const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	RETURN_STATIC(Vector<VideoMode>{});
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

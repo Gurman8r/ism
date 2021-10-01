@@ -8,3 +8,13 @@ using namespace ism;
 OBJECT_EMBED(Node, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+Node::Node() : Object{}
+{
+}
+
+Node::~Node()
+{
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

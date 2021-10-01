@@ -4,4 +4,10 @@ using namespace ism;
 
 OBJECT_EMBED(Viewport, t, TypeFlags_BaseType) {}
 
-Viewport::~Viewport() {}
+Viewport::Viewport() : Node{}
+{
+}
+
+Viewport::~Viewport()
+{
+}

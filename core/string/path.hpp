@@ -8,12 +8,10 @@ namespace ism
 	class ISM_API Path
 	{
 	private:
-		friend class FileSystem;
-
 		WideString m_text{};
 
 	public:
-		~Path();
+		~Path() {}
 
 		Path() : m_text{} {}
 

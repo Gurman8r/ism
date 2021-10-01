@@ -11,12 +11,16 @@ namespace ism
 	{
 		OBJECT_COMMON(Entity, Node);
 
+	protected:
+		friend class SceneTree;
+
 		entt::entity m_entity_id{}; // entity
 
-	protected:
-		Entity(SceneTree * scene = nullptr, Node * parent = nullptr) noexcept;
+		Entity();
 
 	public:
+		virtual ~Entity() override;
+
 		NODISCARD operator entt::entity() const noexcept { return m_entity_id; }
 
 		NODISCARD auto get_entity_id() const noexcept -> entt::entity { return m_entity_id; }
