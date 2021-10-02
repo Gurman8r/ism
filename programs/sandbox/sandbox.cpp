@@ -58,9 +58,9 @@ namespace ism
 		VERIFY(d.contains("ABC"));
 		MAIN_PRINT("%d\n", d["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
-		MAIN_PRINT("%s\n", typeof(d).name().cast<String>().c_str());
-		typeof(d).name() = "changed";
-		MAIN_PRINT("%s\n", STR(typeof(d).name()).c_str());
+		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<String>().c_str());
+		typeof(d).attr("__name__") = "changed";
+		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__")).c_str());
 
 		MAIN_PRINT("\n");
 	}
@@ -76,13 +76,15 @@ namespace ism
 			static FPS_Tracker fps_tracker{ 120 };
 			static Duration delta_time{ 16.f / 1000.f };
 			Timer const loop_timer{ true };
-
-			window->poll_events();
 			fps_tracker.update(delta_time);
 
 			char window_title[32]{};
 			std::sprintf(window_title, "ism @ %.01f fps", fps_tracker.value);
 			window->set_title(window_title);
+
+			window->poll_events();
+			
+			scene->process(delta_time);
 
 			ImGuiContext * im_context{ ImGui::GetCurrentContext() };
 			ImGuiViewportP * im_viewport{ im_context->Viewports[0] };

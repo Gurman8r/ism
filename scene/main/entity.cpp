@@ -5,7 +5,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(Entity, t, TypeFlags_BaseType) {}
+EMBEDDED_CLASS_TYPE(Entity, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

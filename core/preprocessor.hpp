@@ -45,6 +45,10 @@
 #define FWD(expr) \
 	(std::forward<decltype(expr)>(expr))
 
+// fixed array size
+#define ARRAY_SIZE(arr) \
+	(sizeof(arr) / sizeof(*arr))
+
 // static member variable helper
 #define MEMBER_IMPL(expr) \
 	decltype(expr) expr

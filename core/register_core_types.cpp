@@ -9,21 +9,21 @@ using namespace ism;
 
 void ism::register_core_types()
 {
-	VERIFY(ism::typeof<Object>().ready());
-	VERIFY(ism::typeof<TypeObject>().ready());
-	VERIFY(ism::typeof<IntObject>().ready());
-	VERIFY(ism::typeof<FloatObject>().ready());
-	VERIFY(ism::typeof<StringObject>().ready());
-	VERIFY(ism::typeof<ListObject>().ready());
-	VERIFY(ism::typeof<DictObject>().ready());
-	VERIFY(ism::typeof<CapsuleObject>().ready());
-	VERIFY(ism::typeof<FunctionObject>().ready());
-	VERIFY(ism::typeof<MethodObject>().ready());
-	VERIFY(ism::typeof<CppFunctionObject>().ready());
-	VERIFY(ism::typeof<PropertyObject>().ready());
-	VERIFY(ism::typeof<ModuleObject>().ready());
+	VERIFY(typeof<Object>().ready());
+	VERIFY(typeof<TypeObject>().ready());
+	VERIFY(typeof<IntObject>().ready());
+	VERIFY(typeof<FloatObject>().ready());
+	VERIFY(typeof<StringObject>().ready());
+	VERIFY(typeof<ListObject>().ready());
+	VERIFY(typeof<DictObject>().ready());
+	VERIFY(typeof<CapsuleObject>().ready());
+	VERIFY(typeof<FunctionObject>().ready());
+	VERIFY(typeof<MethodObject>().ready());
+	VERIFY(typeof<CppFunctionObject>().ready());
+	VERIFY(typeof<PropertyObject>().ready());
+	VERIFY(typeof<ModuleObject>().ready());
 
-	ism::get_internals()
+	get_internals()
 
 		.bind_class<CppFunctionObject>() // <- cppfunction MUST go first
 		.bind_class<Object>()

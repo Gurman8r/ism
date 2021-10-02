@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(PropertyObject, Object);
 
+		friend class PROPERTY;
+
 	public:
 		OBJ m_get{}, m_set{};
 

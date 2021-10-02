@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(Image, t)
+EMBEDDED_CLASS_TYPE(Image, t)
 {
 }
 

@@ -17,7 +17,7 @@ using namespace ism;
 
 static WindowID g_main_window{};
 
-OBJECT_EMBED(DisplayServerWindows, t) {}
+EMBEDDED_CLASS_TYPE(DisplayServerWindows, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

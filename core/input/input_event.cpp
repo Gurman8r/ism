@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(InputEvent, t)
+EMBEDDED_CLASS_TYPE(InputEvent, t)
 {
 }
 

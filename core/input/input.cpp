@@ -4,6 +4,6 @@ using namespace ism;
 
 MEMBER_IMPL(Input::singleton) {};
 
-OBJECT_EMBED(Input, t, TypeFlags_BaseType)
+EMBEDDED_CLASS_TYPE(Input, t)
 {
 }

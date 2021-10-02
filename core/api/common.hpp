@@ -20,6 +20,10 @@
 #include <core/templates/set.hpp>
 #include <core/templates/type_info.hpp>
 
+#ifndef MAX_ARGUMENTS
+#define MAX_ARGUMENTS 24
+#endif
+
 #define FWD_OBJ(expr) \
 	(ism::object_or_cast(FWD(expr)))
 
@@ -129,14 +133,12 @@ namespace ism
 	{
 		TypeFlags_None,
 
-		TypeFlags_HeapType			= 1 << 0,
-		TypeFlags_BaseType			= 1 << 1,
-		TypeFlags_HaveVectorCall	= 1 << 2,
-		TypeFlags_Ready				= 1 << 3,
-		TypeFlags_Readying			= 1 << 4,
-		TypeFlags_MethodDescriptor	= 1 << 5,
-		TypeFlags_IsAbstract		= 1 << 6,
-		TypeFlags_IsFinal			= 1 << 7,
+		TypeFlags_HaveVectorCall	= 1 << 0,
+		TypeFlags_Ready				= 1 << 1,
+		TypeFlags_Readying			= 1 << 2,
+		TypeFlags_MethodDescriptor	= 1 << 3,
+		TypeFlags_IsAbstract		= 1 << 4,
+		TypeFlags_IsFinal			= 1 << 5,
 
 		TypeFlags_Int_Subclass		= 1 << 25,
 		TypeFlags_Float_Subclass	= 1 << 26,
@@ -144,8 +146,6 @@ namespace ism
 		TypeFlags_List_Subclass		= 1 << 28,
 		TypeFlags_Dict_Subclass		= 1 << 29,
 		TypeFlags_Type_Subclass		= 1 << 30,
-
-		TypeFlags_Default = TypeFlags_None,
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -171,7 +171,7 @@ namespace ism
 		DataType_F32, DataType_F64,
 		DataType_String, DataType_Object,
 		DataType_Char, DataType_Byte, DataType_Bool,
-		DataType_None,
+		DataType_Void,
 
 #if ARCHITECTURE < 64
 		DataType_SizeT = DataType_U32,
@@ -271,17 +271,29 @@ namespace ism
 	private:
 		NODISCARD auto compare(ObjectAPI const & o) const
 		{
-			if (auto self{ derived().ptr() }, other{ o.derived().ptr() }; self == other)
+			if (auto * p_self{ derived().ptr() }, * p_other{ o.derived().ptr() }; p_self == p_other)
 			{
 				return 0;
 			}
-			else if (cmpfunc cmp{ ism::typeof(self)->tp_cmp })
+			else if (!p_self || !p_other)
 			{
-				return cmp(self, other);
+				return util::compare((intptr_t)p_self, (intptr_t)p_other);
+			}
+			else if (TYPE t_self{ typeof(p_self) }; t_self->tp_cmp)
+			{
+				return t_self->tp_cmp(p_self, p_other);
+			}
+			else if (TYPE t_other{ typeof(p_other) }; t_other->tp_cmp)
+			{
+				return t_other->tp_cmp(p_other, p_self);
+			}
+			else if (t_self->tp_hash && t_other->tp_hash)
+			{
+				return util::compare(t_self->tp_hash(p_self), t_other->tp_hash(p_other));
 			}
 			else
 			{
-				return util::compare((void *)self, (void *)other);
+				return util::compare((intptr_t)p_self, (intptr_t)p_other);
 			}
 		}
 	};
@@ -417,13 +429,20 @@ namespace ism
 			ref(ism::construct_or_initialize<value_type>(FWD(args)...));
 		}
 
+		void unref()
+		{
+			if (m_ptr && m_ptr->unreference()) {
+				ism::call_default_delete(m_ptr);
+			}
+			m_ptr = nullptr;
+		}
+
 		void reset(Ref const & value)
 		{
 			ref(value);
 		}
 
-		template <class U
-		> void reset(U * value)
+		template <class U> void reset(U * value)
 		{
 			if (m_ptr == value) { return; }
 			unref();
@@ -431,8 +450,7 @@ namespace ism
 			if (r) { ref_pointer(r); }
 		}
 
-		template <class U
-		> void reset(Ref<U> const & value)
+		template <class U> void reset(Ref<U> const & value)
 		{
 			Object * other{ static_cast<Object *>(value.ptr()) };
 			if (!other) { unref(); return; }
@@ -440,13 +458,6 @@ namespace ism
 			r.m_ptr = dynamic_cast<value_type *>(other);
 			ref(r);
 			r.m_ptr = nullptr;
-		}
-
-		void unref()
-		{
-			if (m_ptr && m_ptr->unreference()) { ism::call_default_delete(m_ptr); }
-			
-			m_ptr = nullptr;
 		}
 
 	public:
@@ -463,15 +474,12 @@ namespace ism
 		NODISCARD auto operator->() noexcept { return m_ptr; }
 		NODISCARD auto operator->() const noexcept { return m_ptr; }
 
-		NODISCARD bool operator==(value_type const * value) const noexcept { return (m_ptr == value) || ((m_ptr && value) && m_ptr->equal_to(*value)); }
-		NODISCARD bool operator!=(value_type const * value) const noexcept { return (m_ptr != value) && ((m_ptr && value) && m_ptr->not_equal_to(*value)); }
+		template <class U> friend bool operator==(Ref const & lhs, U const * rhs) noexcept { return (void *)lhs.m_ptr == (void *)rhs; }
+		template <class U> friend bool operator!=(Ref const & lhs, U const * rhs) noexcept { return (void *)lhs.m_ptr != (void *)rhs; }
+
+		template <class U> friend bool operator==(U const * lhs, Ref const & rhs) noexcept { return (void *)lhs == (void *)rhs.m_ptr; }
+		template <class U> friend bool operator!=(U const * lhs, Ref const & rhs) noexcept { return (void *)lhs != (void *)rhs.m_ptr; }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T> bool operator==(T const * lhs, Ref<T> const & rhs) noexcept { return rhs.operator==(lhs); }
-
-	template <class T> bool operator!=(T const * lhs, Ref<T> const & rhs) noexcept { return rhs.operator!=(lhs); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -516,6 +524,17 @@ public:																									\
 																										\
 	m_class & operator=(value_type && value) noexcept { return instance(std::move(value)), (*this); }	\
 																										\
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define IMPLEMENT_DEFAULT_REF_TRAITS(m_class)												\
+	template <> struct Hasher<m_class> : Hasher<Ref<m_class::value_type>> {};				\
+	template <> struct EqualTo<m_class> : EqualTo<Ref<m_class::value_type>> {};				\
+	template <> struct NotEqualTo<m_class> : NotEqualTo<Ref<m_class::value_type>> {};		\
+	template <> struct Less<m_class> : Less<Ref<m_class::value_type>> {};					\
+	template <> struct Greater<m_class> : Greater<Ref<m_class::value_type>> {};				\
+	template <> struct LessEqual<m_class> : LessEqual<Ref<m_class::value_type>> {};			\
+	template <> struct GreaterEqual<m_class> : GreaterEqual<Ref<m_class::value_type>> {};	\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

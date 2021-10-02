@@ -6,7 +6,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(ConfigFile, t)
+EMBEDDED_CLASS_TYPE(ConfigFile, t)
 {
 }
 

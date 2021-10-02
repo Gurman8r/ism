@@ -7,7 +7,7 @@ using namespace ism;
 
 MEMBER_IMPL(SceneTree::singleton) {};
 
-OBJECT_EMBED(SceneTree, t) {}
+EMBEDDED_CLASS_TYPE(SceneTree, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -45,6 +45,10 @@ bool SceneTree::process(Duration const & delta_time)
 
 void SceneTree::finalize()
 {
+	m_initialized = false;
+
+	MainLoop::finalize();
+
 	if (m_root) { memdelete(m_root); m_root = nullptr; }
 }
 

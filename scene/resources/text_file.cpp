@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(TextFile, t) {}
+EMBEDDED_CLASS_TYPE(TextFile, t) {}
 
 void TextFile::reload_from_file()
 {

@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(Viewport, t, TypeFlags_BaseType) {}
+EMBEDDED_CLASS_TYPE(Viewport, t) {}
 
 Viewport::Viewport() : Node{}
 {

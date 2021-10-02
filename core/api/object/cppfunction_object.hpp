@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(CppFunctionObject, FunctionObject);
 
+		friend class CPP_FUNCTION;
+
 	public:
 		ism::FunctionRecord * m_record{};
 
@@ -20,7 +22,7 @@ namespace ism
 
 		virtual ~CppFunctionObject() override;
 
-		CppFunctionObject() noexcept;
+		CppFunctionObject() noexcept : FunctionObject{ &cppfunction_vectorcall } {}
 
 		NON_COPYABLE(CppFunctionObject);
 		
@@ -139,6 +141,9 @@ namespace ism
 				rec->data[1] = const_cast<void *>(reinterpret_cast<void const *>(&typeid(Return(*)(Args...))));
 			}
 		}
+
+	public:
+		static OBJ cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
 	};
 
 	// cppfunction delete
@@ -164,14 +169,5 @@ NODISCARD inline ism::OBJ ism::FUNCTION::cpp_function() const
 	return ism::CPP_FUNCTION::check_(*this) ? ism::CPP_FUNCTION(*this) : nullptr;
 }
 
-// functions
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_FUNC(OBJ) cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
 #endif // !_ISM_CPPFUNCTION_OBJECT_HPP_

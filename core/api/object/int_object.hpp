@@ -16,6 +16,8 @@ namespace ism
 	{
 		OBJECT_COMMON(IntObject, Object);
 
+		friend class INT;
+
 	public:
 		int64_t m_int{};
 

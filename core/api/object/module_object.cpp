@@ -5,11 +5,11 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(ModuleObject, t, TypeFlags_BaseType)
+EMBEDDED_CLASS_TYPE(ModuleObject, t)
 {
 	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 
-	t.tp_getattro = (getattrofunc)ism::module_getattro;
+	t.tp_getattro = (getattrofunc)&ModuleObject::module_getattro;
 
 	t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
 	{
@@ -28,7 +28,7 @@ OBJECT_EMBED(ModuleObject, t, TypeFlags_BaseType)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDFUNC(ModuleObject, t)
+	t.tp_bind = CLASS_BINDER(ModuleObject, t)
 	{
 		return t
 
@@ -44,7 +44,7 @@ OBJECT_EMBED(ModuleObject, t, TypeFlags_BaseType)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ ism::module_getattro(MODULE m, OBJ name)
+OBJ ModuleObject::module_getattro(MODULE m, OBJ name)
 {
 	return generic_getattr(m, name);
 }

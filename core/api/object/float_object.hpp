@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(FloatObject, Object);
 
+		friend class FLT;
+
 	public:
 		double_t m_float{};
 

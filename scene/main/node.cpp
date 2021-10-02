@@ -5,7 +5,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(Node, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
+EMBEDDED_CLASS_TYPE(Node, t, TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

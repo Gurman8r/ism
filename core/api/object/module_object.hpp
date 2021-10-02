@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(ModuleObject, Object);
 
+		friend class MODULE;
+
 	public:
 		DICT m_dict{};
 
@@ -19,6 +21,9 @@ namespace ism
 		ModuleObject() noexcept : Object{} {}
 
 		ModuleObject(STR const & name) : Object{}, m_dict{ DICT::new_() }, m_name{ name } {}
+
+	public:
+		static OBJ module_getattro(MODULE m, OBJ name);
 	};
 
 	// module delete
@@ -103,10 +108,6 @@ namespace ism
 
 		return d;
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_FUNC(OBJ) module_getattro(MODULE m, OBJ name);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(CapsuleObject, Object);
 
+		friend class CAPSULE;
+
 	public:
 		void * m_pointer{}, * m_context{};
 

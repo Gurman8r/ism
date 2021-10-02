@@ -123,6 +123,8 @@ bool Main::start()
 		VERIFY(TYPE::check_(main_loop_type));
 
 		main_loop = call_object(main_loop_type);
+
+		VERIFY(main_loop);
 	}
 
 	if (isinstance<SceneTree>(main_loop))

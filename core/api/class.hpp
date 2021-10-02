@@ -154,9 +154,9 @@ namespace ism
 
 	namespace impl
 	{
-		template <class T> struct ClassBindFuncHelper final
+		template <class T> struct ClassBinderHelper final
 		{
-			constexpr ClassBindFuncHelper() noexcept = default;
+			constexpr ClassBinderHelper() noexcept = default;
 
 			NODISCARD constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
 			{
@@ -165,8 +165,8 @@ namespace ism
 		};
 	}
 
-#define CLASS_BINDFUNC(m_class, m_var) \
-	(ism::impl::ClassBindFuncHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
+#define CLASS_BINDER(m_class, m_var) \
+	(ism::impl::ClassBinderHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

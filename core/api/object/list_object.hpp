@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(ListObject, Object);
 
+		friend class LIST;
+
 	public:
 		Vector<OBJ> m_list{};
 

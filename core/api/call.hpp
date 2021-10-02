@@ -7,29 +7,28 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline OBJ call_object(OBJ callable, LIST args)
+	inline OBJ call_object(OBJ callable, LIST args = nullptr)
 	{
-		if (!callable || !args) { return nullptr; }
-
-		TYPE type{ typeof(callable) };
-
-		if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+		if (!callable) { return nullptr; }
+		else
 		{
-			return vcall(callable, args.data(), args.size());
+			TYPE type{ typeof(callable) };
+
+			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+			{
+				if (args) { return vcall(callable, args.data(), args.size()); }
+
+				else { return vcall(callable, nullptr, 0); }
+			}
+			else if (binaryfunc tcall{ type->tp_call })
+			{
+				return tcall(callable, args);
+			}
+			else
+			{
+				return nullptr;
+			}
 		}
-
-		if (binaryfunc tcall{ type->tp_call })
-		{
-			return tcall(callable, args);
-		}
-
-		return nullptr;
-	}
-
-	inline OBJ call_object(OBJ callable)
-	{
-		static ListObject args{};
-		return call_object(callable, &args);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -39,15 +38,20 @@ namespace ism
 	> struct NODISCARD ArgumentCollector final
 	{
 		template <class ... Args
-		> explicit ArgumentCollector(Args && ... values) noexcept : m_args{ LIST::new_() }
+		> explicit ArgumentCollector(Args && ... values) noexcept : m_args{}
 		{
-			m_args.reserve(sizeof...(Args));
-
-			mpl::for_args([&](auto && e) noexcept
+			if constexpr (0 < sizeof...(values))
 			{
-				m_args.append(make_caster<decltype(e)>::cast(FWD(e), policy, nullptr));
+				m_args = LIST::new_();
+
+				m_args.reserve(sizeof...(Args));
+
+				mpl::for_args([&](auto && e) noexcept
+				{
+					m_args.append(make_caster<decltype(e)>::cast(FWD(e), policy, nullptr));
+				}
+				, FWD(values)...);
 			}
-			, FWD(values)...);
 		}
 
 		NODISCARD LIST const & args() const & { return m_args; }

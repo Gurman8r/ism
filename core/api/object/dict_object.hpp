@@ -11,8 +11,10 @@ namespace ism
 	{
 		OBJECT_COMMON(DictObject, Object);
 
+		friend class DICT;
+
 	public:
-		HashMap<OBJ, OBJ, Hasher<Ref<Object>>, EqualTo<Ref<Object>>> m_dict{};
+		HashMap<OBJ, OBJ> m_dict{};
 
 		using storage_type		= decltype(m_dict);
 		using hasher			= storage_type::hasher;

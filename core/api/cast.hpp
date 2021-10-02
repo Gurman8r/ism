@@ -121,13 +121,13 @@ public:																								\
 																									\
 	operator m_type && () { return std::move(value); }												\
 																									\
-	template <class T_> ALIAS(cast_op_type) ism::movable_cast_op_type<T_>;						\
+	template <class T_> ALIAS(cast_op_type) ism::movable_cast_op_type<T_>;							\
 																									\
 	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0		\
-	> static ism::OBJ cast(T_ * src, ism::ReturnValuePolicy_ policy, ism::OBJ parent)					\
+	> static ism::OBJ cast(T_ * src, ism::ReturnValuePolicy_ policy, ism::OBJ parent)				\
 	{																								\
 		if (!src) { return nullptr; }																\
-		else if (policy == ism::ReturnValuePolicy_TakeOwnership)											\
+		else if (policy == ism::ReturnValuePolicy_TakeOwnership)									\
 		{																							\
 			ism::OBJ h{ cast(std::move(*src), policy, parent) };									\
 			ism::memdelete(src);																	\
@@ -135,7 +135,7 @@ public:																								\
 		}																							\
 		else																						\
 		{																							\
-			return ism::cast(*src, policy, parent);											\
+			return ism::cast(*src, policy, parent);													\
 		}																							\
 	}																								\
 
@@ -253,9 +253,18 @@ public:																								\
 		{
 			if (!src) { return false; }
 
-			if (STR::check_(src)) { return (value = STR(src)), true; }
+			else if (STR::check_(src)) { return (value = STR(src)), true; }
 
-			return (value = STR({ src })), true;
+			else
+			{
+				TYPE t{ typeof(src) };
+
+				if (t->tp_str) { return (value = t->tp_str(src)), true; }
+
+				else if (t->tp_repr) { return (value = t->tp_repr(src)), true; }
+
+				else { return false; }
+			}
 		}
 
 		static OBJ cast(T const & src, ReturnValuePolicy_, OBJ) { return STR({ src }); }

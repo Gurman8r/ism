@@ -5,27 +5,28 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(IntObject, t, TypeFlags_Int_Subclass)
+EMBEDDED_CLASS_TYPE(IntObject, t, TypeFlags_Int_Subclass)
 {
-	t.tp_hash = (hashfunc)[](OBJ self) { return Hasher<int64_t>()(***INT(self)); };
+	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<int64_t>()(***(INT &)self); };
 
-	t.tp_repr = (reprfunc)[](OBJ self) { return STR(util::to_string(***INT(self))); };
+	t.tp_repr = (reprfunc)[](OBJ self) -> STR { return STR(util::to_string(***(INT &)self)); };
 
-	t.tp_str = (reprfunc)[](OBJ self) { return STR(util::to_string(***INT(self))); };
+	t.tp_str = (reprfunc)[](OBJ self) -> STR { return STR(util::to_string(***(INT &)self)); };
 
-	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other)
+	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> int32_t
 	{
-		if (INT::check_(other))
-		{
-			return util::compare(***INT(self), ***INT(other));
+		if (self.is(other)) {
+			return 0;
 		}
-		else
-		{
-			return util::compare(*self, *other);
+		else if (INT::check_(self) && INT::check_(other)) {
+			return util::compare(***(INT &)self, ***(INT &)other);
+		}
+		else {
+			return util::compare((intptr_t)*self, (intptr_t)*other);
 		}
 	};
 
-	t.tp_bind = CLASS_BINDFUNC(IntObject, t)
+	t.tp_bind = CLASS_BINDER(IntObject, t)
 	{
 		return t;
 	};

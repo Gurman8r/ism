@@ -6,7 +6,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(RenderingDeviceOpenGL, t)
+EMBEDDED_CLASS_TYPE(RenderingDeviceOpenGL, t)
 {
 }
 

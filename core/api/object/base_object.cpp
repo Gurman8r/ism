@@ -9,9 +9,9 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		ism::get_internals().add_class(&g_class_type);
+		get_internals().add_class(&__class_type);
 
-		VALIDATE(g_class_type.tp_bind)(&g_class_type);
+		VALIDATE(__class_type.tp_bind)(&__class_type);
 	}
 }
 
@@ -50,7 +50,7 @@ bool Object::unreference()
 	return die;
 }
 
-TYPE Object::get_type_static() noexcept { return &g_class_type; }
+TYPE Object::get_type_static() noexcept { return &__class_type; }
 
 TYPE Object::_get_typev() const { return get_type_static(); }
 
@@ -60,15 +60,15 @@ void Object::set_type(TYPE const & value) noexcept { m_type = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
+EMBEDDED_CLASS_TYPE(Object, t, TypeFlags_IsAbstract)
 {
-	t.tp_getattro = (getattrofunc)ism::generic_getattr;
+	t.tp_getattro = (getattrofunc)&Object::generic_getattr;
 
-	t.tp_setattro = (setattrofunc)ism::generic_setattr;
+	t.tp_setattro = (setattrofunc)&Object::generic_setattr;
 
-	t.tp_hash = (hashfunc)[](OBJ self) { return Hasher<void *>{}(self.ptr()); };
+	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<void *>{}(self.ptr()); };
 
-	t.tp_bind = CLASS_BINDFUNC(Object, t)
+	t.tp_bind = CLASS_BINDER(Object, t)
 	{
 		return t;
 	};
@@ -76,7 +76,9 @@ OBJECT_EMBED(Object, t, TypeFlags_BaseType | TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
+OBJ Object::generic_getattr(OBJ obj, OBJ name) noexcept { return generic_getattr_with_dict(obj, name, nullptr); }
+
+OBJ Object::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 {
 	TYPE type{ ism::typeof(obj) };
 
@@ -105,7 +107,7 @@ OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 
 	if (dict)
 	{
-		return DICT(dict).lookup(name);
+		return ((DICT &)dict).lookup(name);
 	}
 
 	if (get) { return get(descr, obj, type); }
@@ -115,7 +117,11 @@ OBJ ism::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 	return nullptr;
 }
 
-Error ism::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+Error Object::generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept { return generic_setattr_with_dict(obj, name, value, nullptr); }
+
+Error Object::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 {
 	TYPE type{ typeof(obj) };
 
@@ -141,7 +147,7 @@ Error ism::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 		{
 			if (!(dict = *dictptr)) { dict = DICT::new_(); }
 
-			return (DICT(dict)[name] = value), Error_None;
+			return (((DICT &)dict)[name] = value), Error_None;
 		}
 		else
 		{
@@ -150,7 +156,7 @@ Error ism::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 	}
 	else
 	{
-		return (DICT(dict)[name] = value), Error_None;
+		return (((DICT &)dict)[name] = value), Error_None;
 	}
 }
 

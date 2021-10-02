@@ -11,10 +11,11 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorNode, Node);
 
-		ImGuiContext * m_imgui_ctx{};
+		ImGuiContext * m_imgui_context{};
 
 	public:
 		EditorNode();
+
 		~EditorNode();
 	};
 }

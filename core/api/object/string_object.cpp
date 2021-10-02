@@ -5,33 +5,30 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(StringObject, t, TypeFlags_Str_Subclass)
+EMBEDDED_CLASS_TYPE(StringObject, t, TypeFlags_Str_Subclass)
 {
-	t.tp_hash = (hashfunc)[](OBJ self) { return ism::hash((String)STR(self)); };
+	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return ism::hash(***(STR &)self); };
 
-	t.tp_len = (lenfunc)[](OBJ self) { return (ssize_t)STR(self).size(); };
+	t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)((STR &)self).size(); };
 
-	t.tp_repr = (reprfunc)[](OBJ self) { return STR(self); };
+	t.tp_repr = (reprfunc)[](OBJ self) -> STR { return (STR &)self; };
 
-	t.tp_str = (reprfunc)[](OBJ self) { return STR(self); };
+	t.tp_str = (reprfunc)[](OBJ self) -> STR { return (STR &)self; };
 
-	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other)
+	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> int32_t
 	{
-		if (STR::check_(other))
-		{
-			return util::compare((String)STR(self), (String)STR(other));
+		if (self.is(other)) {
+			return 0;
 		}
-		else if (STR s{ { other } })
-		{
-			return util::compare((String)STR(self), (String)s);
+		else if (STR::check_(self) && STR::check_(other)) {
+			return util::compare(***(STR &)self, ***(STR &)other);
 		}
-		else
-		{
-			return util::compare(*self, *other);
+		else {
+			return util::compare((intptr_t)*self, (intptr_t)*other);
 		}
 	};
 
-	t.tp_bind = CLASS_BINDFUNC(StringObject, t)
+	t.tp_bind = CLASS_BINDER(StringObject, t)
 	{
 		return t
 

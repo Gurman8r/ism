@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(StringObject, Object);
 
+		friend class STR;
+
 	public:
 		String m_string{};
 
@@ -46,7 +48,7 @@ namespace ism
 			{
 				m_string = (storage_type)(STR)value;
 			}
-			else if (TYPE t{ ism::typeof(value) }; t->tp_str)
+			else if (TYPE t{ typeof(value) }; t->tp_str)
 			{
 				m_string = (storage_type)t->tp_str(value);
 			}
@@ -110,6 +112,14 @@ namespace ism
 		NODISCARD auto end() -> iterator { return m_ptr->end(); }
 
 		NODISCARD auto end() const -> const_iterator { return m_ptr->end(); }
+
+		template <class T, class = std::enable_if_t<mpl::is_string_v<T>> // std::is_convertible_v<T, storage_type>
+		> STR & operator=(T && other) noexcept
+		{
+			if (m_ptr) { m_ptr->m_string = FWD(value); }
+			else { instance(FWD(value)); }
+			return (*this);
+		}
 	};
 }
 

@@ -9,7 +9,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(Window, t, TypeFlags_BaseType) {}
+EMBEDDED_CLASS_TYPE(Window, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

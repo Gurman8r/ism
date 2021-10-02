@@ -4,7 +4,7 @@ using namespace ism;
 
 MEMBER_IMPL(RenderingDevice::singleton) {};
 
-OBJECT_EMBED(RenderingDevice, t, TypeFlags_BaseType | TypeFlags_IsAbstract) {}
+EMBEDDED_CLASS_TYPE(RenderingDevice, t, TypeFlags_IsAbstract) {}
 
 RenderingDevice::RenderingDevice() : Object{}
 {

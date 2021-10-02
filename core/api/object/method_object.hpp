@@ -11,16 +11,22 @@ namespace ism
 	{
 		OBJECT_COMMON(MethodObject, FunctionObject);
 
+		friend class METHOD;
+
 	public:
 		OBJ m_func{}, m_self{};
 
 		MethodObject() noexcept : FunctionObject{} {}
 
-		MethodObject(OBJ const & func, OBJ const & self, vectorcallfunc vectorcall) : FunctionObject{ vectorcall }
+		MethodObject(OBJ const & func, OBJ const & self, vectorcallfunc vectorcall = &method_vectorcall)
+			: FunctionObject{ vectorcall }
+			, m_func		{ func }
+			, m_self		{ self }
 		{
-			m_func = func;
-			m_self = self;
 		}
+
+	public:
+		static OBJ method_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
 	};
 
 	// method delete
@@ -34,12 +40,6 @@ namespace ism
 	{
 		REF_COMMON(METHOD, OBJECT_CHECK_METHOD);
 	};
-}
-
-// functions
-namespace ism
-{
-	ISM_API_FUNC(OBJ) method_vectorcall(OBJ callable, OBJ const * argv, size_t argc);
 }
 
 #endif // !_ISM_METHOD_OBJECT_HPP_

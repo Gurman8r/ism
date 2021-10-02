@@ -11,8 +11,10 @@ namespace ism
 	{
 		OBJECT_COMMON(FunctionObject, Object);
 
+		friend class FUNCTION;
+
 	public:
-		OBJ m_dict{}, m_module{};
+		OBJ m_dict{};
 
 		vectorcallfunc m_vectorcall{};
 

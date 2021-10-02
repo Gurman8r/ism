@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+EMBEDDED_CLASS_TYPE(CppFunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
@@ -13,11 +13,12 @@ OBJECT_EMBED(CppFunctionObject, t, TypeFlags_BaseType | TypeFlags_HaveVectorCall
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ
 	{
-		return !obj ? self : METHOD({ self, obj, ism::method_vectorcall });
+		return !obj ? self : METHOD({ self, obj });
 	};
 
-	t.tp_bind = CLASS_BINDFUNC(CppFunctionObject, t)
+	t.tp_bind = CLASS_BINDER(CppFunctionObject, t)
 	{
+		// this needs to be added manually before anything else because CLASS_ depends on it to work properly
 		t.add_object("__name__", PROPERTY({
 			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(t) }),
 			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(t) }),
@@ -45,10 +46,6 @@ CppFunctionObject::~CppFunctionObject()
 	}
 }
 
-CppFunctionObject::CppFunctionObject() noexcept : FunctionObject{ ism::cppfunction_vectorcall }
-{
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void CppFunctionObject::initialize_generic(ism::FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in, bool prepend)
@@ -63,59 +60,54 @@ void CppFunctionObject::initialize_generic(ism::FunctionRecord * rec, std::type_
 
 	for (size_t i = 0; i < argc_in; ++i)
 	{
+		// TODO: generate argument info
+
 		String const arg_str{ "arg" + util::to_string(i) };
 
-		rec->args.push_back(ism::ArgumentRecord{ arg_str, nullptr, false, false });
+		rec->args.push_back(ArgumentRecord{ arg_str, nullptr, false, false });
 	}
 
 	// overload chaining
 	if (CPP_FUNCTION::check_(rec->sibling))
 	{
-		ism::FunctionRecord *& chain{ ((CppFunctionObject *)(rec->sibling))->m_record };
+		FunctionRecord *& existing{ ((CppFunctionObject *)(rec->sibling))->m_record };
 
-		if (rec->scope == chain->scope)
+		if (rec->scope == existing->scope)
 		{
 			if (prepend)
 			{
-				rec->next = chain;
-				chain = nullptr;
+				rec->next = existing;
+				existing = nullptr;
 			}
 			else
 			{
-				ism::FunctionRecord * it{ chain };
+				FunctionRecord * it{ existing };
 				while (it->next) { it = it->next; }
 				it->next = rec;
-				m_record = chain;
-				chain = nullptr;
+				m_record = existing;
+				existing = nullptr;
 			}
 		}
-	}
-
-	if (!rec->next && rec->scope)
-	{
-		if (STR_IDENTIFIER(__module__); ism::hasattr(rec->scope, &ID___module__)) { m_module = ism::getattr(rec->scope, &ID___module__); }
-
-		else if (STR_IDENTIFIER(__name__); ism::hasattr(rec->scope, &ID___name__)) { m_module = ism::getattr(rec->scope, &ID___name__); }
 	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ ism::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
+OBJ CppFunctionObject::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 {
 	if (!CPP_FUNCTION::check_(callable)) { return nullptr; }
 
 	OBJ parent{ 0 < argc ? argv[0] : nullptr };
 
-	ism::FunctionRecord const * overloads{ &***CPP_FUNCTION(callable) }, * it{ overloads };
+	FunctionRecord const * overloads{ &***(CPP_FUNCTION &)callable }, * it{ overloads };
 
 	for (; it; it = it->next)
 	{
 		bool const overloaded{ it && it->next };
 
-		ism::FunctionRecord const & func{ *it };
+		FunctionRecord const & func{ *it };
 
-		ism::FunctionCall call{ func, parent };
+		FunctionCall call{ func, parent };
 
 		size_t
 			num_args	{ func.argument_count },
@@ -125,7 +117,7 @@ OBJ ism::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 		// copy positional arguments
 		for (; num_copied < num_to_copy; ++num_copied)
 		{
-			ism::ArgumentRecord const * arg{};
+			ArgumentRecord const * arg{};
 
 			if (num_copied < func.args.size()) { arg = &func.args[num_copied]; }
 
@@ -137,7 +129,7 @@ OBJ ism::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 		{
 			for (; num_copied < num_args; ++num_copied)
 			{
-				ism::ArgumentRecord const & arg{ func.args[num_copied] };
+				ArgumentRecord const & arg{ func.args[num_copied] };
 
 				if (!arg.value) { break; }
 

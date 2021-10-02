@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(Sky, t) {}
+EMBEDDED_CLASS_TYPE(Sky, t) {}
 
 Sky::Sky() : Resource{}
 {

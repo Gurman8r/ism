@@ -12,11 +12,11 @@ namespace ism
 	class ISM_API TypeObject : public Object
 	{
 	private:
-		friend class ism::Internals;
+		friend class TYPE;
+		friend class Internals;
+		friend class EmbedClassHelper<TypeObject>;
 
-		friend class ism::EmbedClassHelper<TypeObject>;
-
-		static TypeObject g_class_type;
+		static TypeObject __class_type;
 
 	protected:
 		static void initialize_class();
@@ -28,29 +28,37 @@ namespace ism
 	public:
 		NODISCARD static TYPE get_type_static() noexcept;
 
-		TypeObject() noexcept;
+		TypeObject() noexcept : Object{} {}
 
 		template <class T
-		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags = TypeFlags_Default) : TypeObject{}
+		> TypeObject(mpl::type_tag<T>, cstring name, TypeFlags flags = TypeFlags_None) : TypeObject{}
 		{
 			tp_name = name;
 			tp_size = sizeof(T);
 			tp_flags = flags;
 			tp_base = ism::baseof<T>();
-			tp_bind = (bindfunc)[](TYPE t) { return t; };
-			tp_del = (delfunc)memdelete<T>;
-			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) { return util::compare(*a, *b); };
+			tp_del = (delfunc)ism::memdelete<T>;
+			tp_bind = (bindfunc)[](TYPE t) -> TYPE { return t; };
+			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return ism::Hasher<intptr_t>{}((intptr_t)*o); };
+			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> int32_t { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
 			if constexpr (std::is_default_constructible_v<T>)
 			{
 				tp_new = (newfunc)[](TYPE, OBJ) -> OBJ { return memnew(T); };
 			}
+
+			if constexpr (std::is_base_of_v<TypeObject, T>) { tp_flags |= TypeFlags_Type_Subclass; }
+			else if constexpr (std::is_base_of_v<IntObject, T>) { tp_flags |= TypeFlags_Int_Subclass; }
+			else if constexpr (std::is_base_of_v<FloatObject, T>) { tp_flags |= TypeFlags_Float_Subclass; }
+			else if constexpr (std::is_base_of_v<StringObject, T>) { tp_flags |= TypeFlags_Str_Subclass; }
+			else if constexpr (std::is_base_of_v<ListObject, T>) { tp_flags |= TypeFlags_List_Subclass; }
+			else if constexpr (std::is_base_of_v<DictObject, T>) { tp_flags |= TypeFlags_Dict_Subclass; }
 		}
 
 	public:
 		String				tp_name				{};
 		ssize_t				tp_size				{};
-		int32_t				tp_flags			{};
+		TypeFlags			tp_flags			{};
 		bindfunc			tp_bind				{};
 
 		ssize_t				tp_dictoffset		{};
@@ -77,45 +85,46 @@ namespace ism
 		OBJ					tp_bases			{ /* LIST */ };
 		OBJ					tp_dict				{ /* DICT */ };
 		OBJ					tp_mro				{ /* LIST */ };
-		OBJ					tp_subclasses		{ /* LIST */ };
+		OBJ					tp_subclasses		{ /* DICT */ };
 
 	public:
 		NODISCARD bool ready();
 
-		NODISCARD OBJ lookup(OBJ name) const;
+		NODISCARD OBJ lookup(OBJ const & name) const;
 
-		NODISCARD bool is_subtype(TYPE value) const;
-
-		bool check_consistency() const;
-
-		void modified();
-
-		Error update_slot(STR name);
+		NODISCARD bool is_subtype(TYPE const & value) const;
 
 	protected:
-		bool add_subclass(TypeObject * type);
-
-		bool mro_internal(OBJ * old_mro);
-
-		void inherit_special(TypeObject * base);
+		bool check_consistency() const;
 
 		void inherit_slots(TypeObject * base);
 
+		void modified();
+
+		bool mro_internal(OBJ * old_mro);
+
+		Error update_slot(STR const & name);
+
 	protected:
-		template <class Slot> bool slot_defined(TypeObject * base, Slot ism::TypeObject:: * slot) const
+		template <class Slot> bool slot_defined(TypeObject * base, Slot TypeObject:: * slot) const
 		{
 			return (this->*slot) && (!base || (this->*slot) != (base->*slot));
 		}
 
-		template <class Slot> void copy_val(TypeObject * base, Slot ism::TypeObject:: * slot)
+		template <class Slot> void copy_val(TypeObject * base, Slot TypeObject:: * slot)
 		{
 			if (!(this->*slot) && base) { (this->*slot) = (base->*slot); }
 		}
 
-		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot ism::TypeObject:: * slot)
+		template <class Slot> void copy_slot(TypeObject * base, TypeObject * basebase, Slot TypeObject:: * slot)
 		{
 			if (!(this->*slot) && base && base->slot_defined(basebase, slot)) { (this->*slot) = (base->*slot); }
 		}
+
+	public:
+		NODISCARD static OBJ type_getattro(TYPE type, OBJ name);
+
+		static Error type_setattro(TYPE type, OBJ name, OBJ value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -138,13 +147,11 @@ namespace ism
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
 
-		NODISCARD bool has_feature(int32_t flag) const { return flag_read(m_ptr->tp_flags, flag); }
+		NODISCARD bool has_feature(TypeFlags flag) const { return flag_read(m_ptr->tp_flags, flag); }
 
 		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
 
 		NODISCARD OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
-
-		NODISCARD auto name() const { return attr("__name__"); }
 
 		template <class Name = cstring, class Value = OBJ
 		> void add_object(Name && name, Value && value) noexcept
@@ -153,7 +160,7 @@ namespace ism
 
 			STR str_name{ FWD(name) };
 
-			DICT(m_ptr->tp_dict)[str_name] = FWD(value);
+			((DICT &)m_ptr->tp_dict)[str_name] = FWD(value); // modify tp_dict directly
 
 			m_ptr->modified();
 
@@ -224,12 +231,6 @@ namespace ism
 	{
 		return get_vectorcall_func(typeof(o), o);
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_FUNC(OBJ) type_getattro(TYPE type, OBJ name);
-
-	ISM_API_FUNC(Error) type_setattro(TYPE type, OBJ name, OBJ value);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

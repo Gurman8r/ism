@@ -5,27 +5,28 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(FloatObject, t, TypeFlags_Float_Subclass)
+EMBEDDED_CLASS_TYPE(FloatObject, t, TypeFlags_Float_Subclass)
 {
-	t.tp_hash = (hashfunc)[](OBJ self) { return Hasher<double_t>()(***FLT(self)); };
+	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<double_t>()(***(FLT &)self); };
 
-	t.tp_repr = (reprfunc)[](OBJ self) { return STR(util::to_string(***FLT(self))); };
+	t.tp_repr = (reprfunc)[](OBJ self) -> STR { return STR(util::to_string(***(FLT &)self)); };
 
-	t.tp_str = (reprfunc)[](OBJ self) { return STR(util::to_string(***FLT(self))); };
+	t.tp_str = (reprfunc)[](OBJ self) -> STR { return STR(util::to_string(***(FLT &)self)); };
 
-	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other)
+	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> int32_t
 	{
-		if (FLT::check_(other))
-		{
-			return util::compare(***FLT(self), ***FLT(other));
+		if (self.is(other)) {
+			return 0;
 		}
-		else
-		{
-			return util::compare(*self, *other);
+		else if (FLT::check_(self) && FLT::check_(other)) {
+			return util::compare(***(FLT &)self, ***(FLT &)other);
+		}
+		else {
+			return util::compare((intptr_t)*self, (intptr_t)*other);
 		}
 	};
 
-	t.tp_bind = CLASS_BINDFUNC(FloatObject, t)
+	t.tp_bind = CLASS_BINDER(FloatObject, t)
 	{
 		return t;
 	};
