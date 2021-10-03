@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(CppFunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+EMBEDDED_CLASS_TYPE(CppFunctionObject, t)
 {
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
@@ -26,7 +26,9 @@ EMBEDDED_CLASS_TYPE(CppFunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_M
 
 		return t
 
-			.def_property("__text_signature__", [](CppFunctionObject const & self) { return self->signature; }, [](CppFunctionObject & self, String const & value) { self->signature = value; })
+			.def_property("__text_signature__",
+				[](CppFunctionObject const & self) { return self->signature; },
+				[](CppFunctionObject & self, String const & value) { self->signature = value; })
 
 			;
 	};
@@ -38,7 +40,7 @@ CppFunctionObject::~CppFunctionObject()
 {
 	while (m_record)
 	{
-		ism::FunctionRecord * next{ m_record->next };
+		FunctionRecord * next{ m_record->next };
 
 		memdelete(m_record);
 
@@ -48,7 +50,7 @@ CppFunctionObject::~CppFunctionObject()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void CppFunctionObject::initialize_generic(ism::FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in, bool prepend)
+void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in, bool prepend)
 {
 	VERIFY("BAD FUNCTION RECORD" && rec && !rec->next);
 
@@ -95,6 +97,8 @@ void CppFunctionObject::initialize_generic(ism::FunctionRecord * rec, std::type_
 
 OBJ CppFunctionObject::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 {
+	VERIFY(argc < MAX_ARGUMENTS);
+
 	if (!CPP_FUNCTION::check_(callable)) { return nullptr; }
 
 	OBJ parent{ 0 < argc ? argv[0] : nullptr };

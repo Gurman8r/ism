@@ -2,6 +2,7 @@
 
 #include <main/main.hpp>
 #include <scene/main/scene_tree.hpp>
+#include <scene/gui/imgui_node.hpp>
 
 #ifdef TOOLS_ENABLED
 #include <editor/editor_node.hpp>
@@ -122,7 +123,7 @@ bool Main::start()
 	{
 		VERIFY(TYPE::check_(main_loop_type));
 
-		main_loop = call_object(main_loop_type);
+		main_loop = main_loop_type();
 
 		VERIFY(main_loop);
 	}
@@ -131,9 +132,11 @@ bool Main::start()
 	{
 		Ref<SceneTree> tree{ main_loop };
 
-#ifdef TOOLS_ENABLED
-		if (editor) { tree->get_root()->add_child(memnew(EditorNode)); }
-#endif // TOOLS_ENABLED
+		NODE root{ tree->get_root() };
+
+		root->add_node<ImGuiNode>();
+
+		root->add_node<EditorNode>();
 	}
 
 	get_os().set_main_loop(main_loop);
@@ -145,14 +148,16 @@ bool Main::iteration()
 {
 	++g_iterating;
 
+	static Duration delta_time{ 16_ms };
+	Timer const loop_timer{ true };
+	SCOPE_EXIT(&) { delta_time = loop_timer.elapsed(); };
+
 	bool should_exit{ false };
 
-	if (get_os().get_main_loop()->process(16_ms)) {
-		should_exit = true;
-	}
+	if (get_os().get_main_loop()->process(delta_time)) { should_exit = true; }
 
 	++g_frame_count;
-
+	
 	--g_iterating;
 
 	return should_exit;

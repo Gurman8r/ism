@@ -88,10 +88,10 @@ namespace ism
 		virtual void set_opacity(float_t value);
 		virtual void set_position(Vec2 const & value);
 		virtual void set_monitor(MonitorID monitor, Rect const & bounds);
+		virtual void set_title(String const & value);
 		virtual void set_resizable(bool value);
 		virtual void set_should_close(bool value);
 		virtual void set_size(Vec2 const & value);
-		virtual void set_title(String const & value);
 		virtual void set_user_pointer(void * value);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(MethodObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+EMBEDDED_CLASS_TYPE(MethodObject, t)
 {
 	t.tp_dictoffset = offsetof(MethodObject, m_dict);
 
@@ -23,7 +23,7 @@ EMBEDDED_CLASS_TYPE(MethodObject, t, TypeFlags_HaveVectorCall | TypeFlags_Method
 
 OBJ MethodObject::method_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 {
-	VERIFY(METHOD::check_(callable));
+	if (!METHOD::check_(callable)) { return nullptr; }
 	OBJ & self{ ((METHOD &)callable)->m_self };
 	OBJ & func{ ((METHOD &)callable)->m_func };
 	vectorcallfunc vcall{ get_vectorcall_func(func) };

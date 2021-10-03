@@ -23,7 +23,7 @@ TYPE TypeObject::get_type_static() noexcept { return &__class_type; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(TypeObject, t, TypeFlags_HaveVectorCall | TypeFlags_Type_Subclass)
+EMBEDDED_CLASS_TYPE(TypeObject, t, TypeFlags_HaveVectorCall)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -57,6 +57,8 @@ EMBEDDED_CLASS_TYPE(TypeObject, t, TypeFlags_HaveVectorCall | TypeFlags_Type_Sub
 			.def("__subclasscheck__", &TypeObject::is_subtype)
 
 			.def_readonly("__base__", &TypeObject::tp_base)
+
+			.def_readonly("__bases__", &TypeObject::tp_bases)
 
 			.def_readonly("__dict__", &TypeObject::tp_dict)
 
@@ -148,9 +150,9 @@ OBJ TypeObject::lookup(OBJ const & name) const
 
 bool TypeObject::is_subtype(TYPE const & value) const
 {
-	if (LIST mro{ tp_mro })
+	if (LIST::check_(tp_mro))
 	{
-		for (TYPE const & base : mro)
+		for (TYPE const & base : (LIST &)tp_mro)
 		{
 			if (value.is(base)) { return true; }
 		}
@@ -163,7 +165,7 @@ bool TypeObject::is_subtype(TYPE const & value) const
 
 		do {
 
-			if (value.is(base)) { return true; }
+			if (base == value) { return true; }
 
 			base = base->tp_base.ptr();
 
@@ -245,14 +247,14 @@ bool TypeObject::mro_internal(OBJ * in_old_mro)
 {
 	OBJ old_mro{ tp_mro };
 
-	OBJ new_mro{ std::invoke([&]()->OBJ
+	OBJ new_mro{ std::invoke([&]() -> OBJ
 	{
 		// mro_implementation
-		LIST bases{ tp_bases };
+		VERIFY(LIST::check_(tp_bases));
 		LIST result{ LIST::new_() };
-		result.reserve(bases.size() + 1);
-		result.append(ptr());
-		for (TYPE const & base : bases) { result.append(base); }
+		result.reserve(((LIST &)tp_bases).size() + 1);
+		result.append(this);
+		for (TYPE const & base : (LIST &)tp_bases) { result.append(base); }
 		return result;
 	}) };
 	
@@ -276,6 +278,7 @@ Error TypeObject::update_slot(STR const & name)
 	{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// do nothing
 	case hash("__getattr__"):
 	case hash("__setattr__"):
 	case hash("__delattr__"):

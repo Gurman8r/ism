@@ -24,13 +24,13 @@ namespace ism
 
 	public:
 		template <class ... Args, class ... Extra
-		> CLASS_ & def(ism::Constructor<Args...> && init, Extra && ... extra)
+		> CLASS_ & def(initimpl::Constructor<Args...> && init, Extra && ... extra)
 		{
 			return FWD(init).execute(*this, FWD(extra)...); // init.hpp
 		}
 
 		template <class ... Args, class ... Extra
-		> CLASS_ & def(ism::Factory<Args...> && init, Extra && ... extra)
+		> CLASS_ & def(initimpl::Factory<Args...> && init, Extra && ... extra)
 		{
 			return FWD(init).execute(*this, FWD(extra)...); // init.hpp
 		}
@@ -39,10 +39,10 @@ namespace ism
 		> CLASS_ & def(cstring name, Func && func, Extra && ... extra)
 		{
 			CPP_FUNCTION cf({
-				ism::method_adaptor<type>(FWD(func)),
+				method_adaptor<type>(FWD(func)),
 				attr::name(name),
 				attr::is_method(*this),
-				attr::sibling(ism::getattr(*this, name, nullptr)),
+				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
 			return add_object(cf.name(), cf), (*this);
 		}
@@ -54,7 +54,7 @@ namespace ism
 				FWD(func),
 				attr::name(name),
 				attr::scope(*this),
-				attr::sibling(ism::getattr(*this, name, nullptr)),
+				attr::sibling(getattr(*this, name, nullptr)),
 				FWD(extra)... });
 			return add_object(cf.name(), cf), (*this);
 		}
@@ -94,7 +94,7 @@ namespace ism
 		template <class Getter, class ... Extra
 		> CLASS_ & def_property_readonly(cstring name, Getter const & fget, Extra && ... extra)
 		{
-			return def_property_readonly(name, CPP_FUNCTION({ ism::method_adaptor<type>(fget) }), ReturnValuePolicy_ReferenceInternal, FWD(extra)...);
+			return def_property_readonly(name, CPP_FUNCTION({ method_adaptor<type>(fget) }), ReturnValuePolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class ... Extra
@@ -118,13 +118,13 @@ namespace ism
 		template <class Getter, class Setter, class ... Extra
 		> CLASS_ & def_property(cstring name, Getter const & fget, Setter const & fset, Extra && ... extra)
 		{
-			return def_property(name, fget, CPP_FUNCTION({ ism::method_adaptor<type>(fset) }), FWD(extra)...);
+			return def_property(name, fget, CPP_FUNCTION({ method_adaptor<type>(fset) }), FWD(extra)...);
 		}
 
 		template <class Getter, class ... Extra
 		> CLASS_ & def_property(cstring name, Getter const & fget, CPP_FUNCTION const & fset, Extra && ... extra)
 		{
-			return def_property(name, CPP_FUNCTION({ ism::method_adaptor<type>(fget) }), fset, ReturnValuePolicy_ReferenceInternal, FWD(extra)...);
+			return def_property(name, CPP_FUNCTION({ method_adaptor<type>(fget) }), fset, ReturnValuePolicy_ReferenceInternal, FWD(extra)...);
 		}
 
 		template <class ... Extra
@@ -166,7 +166,7 @@ namespace ism
 	}
 
 #define CLASS_BINDER(m_class, m_var) \
-	(ism::impl::ClassBinderHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
+	(impl::ClassBinderHelper<m_class>{}) + [](CLASS_<m_class> m_var) -> CLASS_<m_class>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

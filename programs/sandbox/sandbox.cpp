@@ -1,7 +1,6 @@
 #include <main/main.hpp>
-#include <scene/main/scene_tree.hpp>
+#include <editor/editor_node.hpp>
 #include <drivers/opengl/opengl.hpp>
-#include <scene/gui/imgui.hpp>
 
 using namespace ism;
 
@@ -22,7 +21,7 @@ namespace ism
 	auto get_float() { return 7.89f; }
 	auto get_string() { return "abc"; }
 
-	void test_main()
+	void test_api()
 	{
 		VALIDATE(create_extension_module("__main__"))
 			.def("hello", hello)
@@ -67,81 +66,13 @@ namespace ism
 
 	void test_scene()
 	{
-		Ref<SceneTree> scene{ get_os().get_main_loop() };
-		scene->initialize(); SCOPE_EXIT(&) { scene->finalize(); };
-		
-		Window * window{ scene->get_root() };
-		while (window->is_open())
+		Ref<SceneTree> tree{ get_os().get_main_loop() };
+		tree->initialize(); SCOPE_EXIT(&) { tree->finalize(); };
+		while (SUCCEEDED(Main::iteration()))
 		{
-			static FPS_Tracker fps_tracker{ 120 };
-			static Duration delta_time{ 16.f / 1000.f };
-			Timer const loop_timer{ true };
-			fps_tracker.update(delta_time);
-
 			char window_title[32]{};
-			std::sprintf(window_title, "ism @ %.01f fps", fps_tracker.value);
-			window->set_title(window_title);
-
-			window->poll_events();
-			
-			scene->process(delta_time);
-
-			ImGuiContext * im_context{ ImGui::GetCurrentContext() };
-			ImGuiViewportP * im_viewport{ im_context->Viewports[0] };
-			ImGui_NewFrame();
-			ImGui::NewFrame();
-			ImGuizmo::BeginFrame();
-			if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-				constexpr auto dockspace_name{ "##MainDockspace" };
-				ImGuiID const dockspace_id{ ImGui::GetID(dockspace_name) };
-				ImGui::SetNextWindowPos(im_viewport->Pos);
-				ImGui::SetNextWindowSize(im_viewport->Size);
-				ImGui::SetNextWindowViewport(im_viewport->ID);
-				ImGui::SetNextWindowBgAlpha(0.f);
-				ImGui::PushStyleVar(ImGuiStyleVarType_WindowRounding, 0.f);
-				ImGui::PushStyleVar(ImGuiStyleVarType_WindowBorderSize, 0.f);
-				ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, Vec2{ 0.f, 0.f });
-				bool const dockspace_open{ ImGui::Begin(dockspace_name, nullptr,
-					ImGuiWindowFlags_NoTitleBar |
-					ImGuiWindowFlags_NoCollapse |
-					ImGuiWindowFlags_NoResize |
-					ImGuiWindowFlags_NoMove |
-					ImGuiWindowFlags_NoBringToFrontOnFocus |
-					ImGuiWindowFlags_NoNavFocus |
-					ImGuiWindowFlags_NoDocking |
-					ImGuiWindowFlags_NoBackground
-				) };
-				ImGui::PopStyleVar(3);
-				if (dockspace_open) {
-					if (!ImGui::DockBuilderGetNode(dockspace_id)) {
-						ImGui::DockBuilderRemoveNode(dockspace_id);
-						ImGui::DockBuilderAddNode(dockspace_id);
-						// BUILD DOCKSPACE HERE
-						ImGui::DockBuilderFinish(dockspace_id);
-					}
-					ImGui::DockSpace(dockspace_id);
-				}
-				ImGui::End();
-			}
-			// GUI GOES HERE
-			ImGui::ShowDemoWindow();
-			ImGui::Render();
-
-			Vec2 const window_size{ window->get_size() };
-			glViewport(0, 0, (int32_t)window_size[0], (int32_t)window_size[1]);
-			glClearColor(0.f, 0.f, 0.f, 1.f);
-			glClear(GL_COLOR_BUFFER_BIT);
-			ImGui_RenderDrawData(&im_viewport->DrawDataP);
-			if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-				WindowID const backup{ get_display_server().get_context_current() };
-				ImGui::UpdatePlatformWindows();
-				ImGui::RenderPlatformWindowsDefault();
-				get_display_server().make_context_current(backup);
-			}
-			
-			window->swap_buffers();
-
-			delta_time = loop_timer.elapsed();
+			std::sprintf(window_title, "ism @ %.1f fps", tree->get_framerate());
+			tree->get_root()->set_title(window_title);
 		}
 	}
 }
@@ -162,7 +93,7 @@ int main(int argc, char * argv[])
 
 	VERIFY(Main::start());
 
-	test_main();
+	test_api();
 	test_scene();
 	//MAIN_PAUSE();
 

@@ -482,6 +482,22 @@ namespace ism
 
 	/* RENDER PIPELINE */
 
+	MAKE_ENUM(RenderPrimitive)
+	{
+		RenderPrimitive_Points,
+		RenderPrimitive_Lines,
+		RenderPrimitive_LinesWithAdjacency,
+		RenderPrimitive_Linestrips,
+		RenderPrimitive_LinestripsWithAdjacency,
+		RenderPrimitive_Triangles,
+		RenderPrimitive_TrianglesWithAdjacency,
+		RenderPrimitive_TriangleStrips,
+		RenderPrimitive_TriangleStripsWithAdjacency,
+		RenderPrimitive_TriangleStripsWithRestartIndex,
+		RenderPrimitive_TesselationPatch,
+		RenderPrimitive_MAX
+	};
+
 	MAKE_ENUM(PolygonCullMode)
 	{
 		PolygonCullMode_Disabled,
@@ -668,7 +684,15 @@ namespace ism
 		virtual void finalize() = 0;
 
 	public:
-		// LOW LEVEL RENDERING API GOES HERE
+		virtual void clear(Color const & color) = 0;
+
+		virtual void draw_arrays(RenderPrimitive primitive, size_t first, size_t count) = 0;
+
+		virtual void draw_indexed(RenderPrimitive primitive, size_t count) = 0;
+
+		virtual void flush() = 0;
+		
+		virtual void set_viewport(Rect const & rect) = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

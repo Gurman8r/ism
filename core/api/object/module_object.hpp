@@ -22,6 +22,32 @@ namespace ism
 
 		ModuleObject(STR const & name) : Object{}, m_dict{ DICT::new_() }, m_name{ name } {}
 
+		template <class Value = OBJ
+		> void add_object(cstring name, Value && value, bool overwrite = false)
+		{
+			STR str_name{ name };
+
+			VERIFY(overwrite || !ism::hasattr(this, str_name));
+
+			m_dict[str_name] = FWD(value);
+		}
+
+		template <class Func, class ... Extra
+		> ModuleObject & def(cstring name, Func && func, Extra && ... extra)
+		{
+			CPP_FUNCTION cf({
+				FWD(func),
+				attr::name(name),
+				attr::scope(this),
+				attr::sibling(ism::getattr(this, name, nullptr)),
+				FWD(extra)... });
+			return add_object(name, cf, true), (*this);
+		}
+
+		MODULE def_submodule(cstring name);
+
+		void reload();
+
 	public:
 		static OBJ module_getattro(MODULE m, OBJ name);
 	};
@@ -38,36 +64,19 @@ namespace ism
 		REF_COMMON(MODULE, OBJECT_CHECK_MODULE);
 
 	public:
-		template <class Func, class ... Extra
-		> MODULE & def(cstring name, Func && func, Extra && ... extra)
-		{
-			CPP_FUNCTION cf({
-				FWD(func),
-				attr::name(name),
-				attr::scope(*this),
-				attr::sibling(ism::getattr(*this, name, nullptr)),
-				FWD(extra)... });
-			return add_object(name, cf, true), (*this);
-		}
-
 		template <class Value = OBJ
-		> void add_object(cstring name, Value && value, bool overwrite = false)
-		{
-			STR str_name{ name };
-
-			VERIFY(overwrite || !ism::hasattr(*this, str_name));
-
-			m_ptr->m_dict[str_name] = FWD(value);
+		> void add_object(cstring name, Value && value, bool overwrite = false) {
+			m_ptr->add_object(name, FWD(value), overwrite);
 		}
 
-		MODULE def_submodule(cstring name)
-		{
-			return nullptr;
+		template <class Func, class ... Extra
+		> MODULE & def(cstring name, Func && func, Extra && ... extra) {
+			return m_ptr->def(name, FWD(func), FWD(extra)...), (*this);
 		}
 
-		void reload()
-		{
-		}
+		MODULE def_submodule(cstring name) { return m_ptr->def_submodule(name); }
+
+		void reload() { m_ptr->reload(); }
 	};
 }
 
@@ -87,26 +96,25 @@ namespace ism
 	}
 
 	template <class Name = cstring
-	> NODISCARD MODULE import(Name && name) noexcept
+	> NODISCARD MODULE import_module(Name && name) noexcept
 	{
 		DICT modules{ get_internals().modules };
 
 		STR str_name{ FWD_OBJ(name) };
 
-		return modules.lookup(name, MODULE{});
+		return modules.lookup(name);
 	}
 
 	NODISCARD inline DICT globals() noexcept
 	{
 		STR_IDENTIFIER(__main__);
-		MODULE m{ ism::import(&ID___main__) };
+		STR_IDENTIFIER(__dict__);
+
+		MODULE m{ import_module(&ID___main__) };
+		
 		if (!m) { return nullptr; }
 		
-		STR_IDENTIFIER(__dict__);
-		DICT d{ m.attr(&ID___dict__) };
-		if (!d) { return nullptr; }
-
-		return d;
+		return getattr(m, &ID___dict__);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

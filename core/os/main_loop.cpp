@@ -6,6 +6,20 @@ using namespace ism;
 
 EMBEDDED_CLASS_TYPE(MainLoop, t)
 {
+	t.tp_bind = CLASS_BINDER(MainLoop, t)
+	{
+		return t
+
+			.def("_initialize", &MainLoop::initialize)
+			
+			.def("_process", &MainLoop::process)
+			
+			.def("_finalize", &MainLoop::finalize)
+
+			.def("set_startup_script", &MainLoop::set_startup_script)
+
+			;
+	};
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

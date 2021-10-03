@@ -14,7 +14,7 @@ namespace ism
 		friend class CAPSULE;
 
 	public:
-		void * m_pointer{}, * m_context{};
+		void const * m_pointer{}, * m_context{};
 
 		delfunc m_closure{};
 
@@ -22,42 +22,37 @@ namespace ism
 
 		CapsuleObject() noexcept : Object{} {}
 
-		CapsuleObject(nullptr_t) : CapsuleObject{}
-		{
-			m_pointer = nullptr;
-			m_context = nullptr;
-			m_closure = nullptr;
-		}
+		CapsuleObject(nullptr_t) noexcept : Object{} {}
 
-		CapsuleObject(void const * value, delfunc closure = nullptr) : CapsuleObject{}
+		CapsuleObject(void const * value, delfunc closure = nullptr) : Object{}
 		{
-			m_pointer = (void *)value;
+			m_pointer = value;
 			m_context = nullptr;
 			m_closure = closure;
 		}
 
-		CapsuleObject(void const * value, void(*closure)(void *)) : CapsuleObject{}
+		CapsuleObject(void const * value, void(*closure)(void *)) : Object{}
 		{
-			m_pointer = (void *)value;
-			m_context = (void *)closure;
-			m_closure = (delfunc)[](Object * o)
+			m_pointer = value;
+			m_context = closure;
+			m_closure = [](Object * obj)
 			{
-				if (auto self{ dynamic_cast<CapsuleObject *>(o) })
+				if (auto self{ dynamic_cast<CapsuleObject *>(obj) })
 				{
 					auto closure{ reinterpret_cast<void(*)(void *)>(self->m_context) };
 
-					closure(self->m_pointer);
+					closure((void *)self->m_pointer);
 				}
 			};
 		}
 
-		CapsuleObject(void(*closure)()) : CapsuleObject{}
+		CapsuleObject(void(*closure)()) : Object{}
 		{
-			m_pointer = (void *)closure;
+			m_pointer = closure;
 			m_context = nullptr;
-			m_closure = (delfunc)[](Object * o)
+			m_closure = (delfunc)[](Object * obj)
 			{
-				if (auto self{ dynamic_cast<CapsuleObject *>(o) })
+				if (auto self{ dynamic_cast<CapsuleObject *>(obj) })
 				{
 					auto closure{ reinterpret_cast<void(*)()>(self->m_pointer) };
 
@@ -83,9 +78,9 @@ namespace ism
 		> NODISCARD operator T * () const { return get_pointer<T>(); }
 
 		template <class T = void
-		> NODISCARD auto get_pointer() const { return static_cast<T *>(m_ptr->m_pointer); }
+		> NODISCARD auto get_pointer() const { return static_cast<T *>((void *)m_ptr->m_pointer); }
 
-		void set_pointer(void const * value) { m_ptr->m_pointer = (void *)value; }
+		void set_pointer(void const * value) const { m_ptr->m_pointer = value; }
 	};
 }
 

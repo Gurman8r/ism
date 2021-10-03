@@ -15,7 +15,7 @@
 
 using namespace ism;
 
-static WindowID g_main_window{};
+MEMBER_IMPL(DisplayServerWindows::g_main_window) {};
 
 EMBEDDED_CLASS_TYPE(DisplayServerWindows, t) {}
 
@@ -86,6 +86,11 @@ DisplayServerWindows::~DisplayServerWindows()
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+WindowID DisplayServerWindows::get_context_main() const
+{
+	return g_main_window;
+}
 
 WindowID DisplayServerWindows::get_context_current() const
 {

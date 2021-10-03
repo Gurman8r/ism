@@ -53,65 +53,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// run time type info
-	namespace rtti
-	{
-		inline String & filter(String name)
-		{
-			mpl::for_args([&name](auto search)
-			{
-				for (size_t pos = 0;;)
-				{
-					pos = name.find(name, pos);
-					if (pos == String::npos) { break; }
-					name.erase(pos, name.length());
-				}
-			}
-			, "class ", "struct ", "enum ");
-			return name;
-		}
-
-		template <class T> NODISCARD String type() noexcept
-		{
-			return rtti::filter(typeid(T).name());
-		}
-
-		template <class T> NODISCARD hash_t hash() noexcept
-		{
-			return ism::hash(rtti::type<T>());
-		}
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	inline bool same_type(std::type_info const & lhs, std::type_info const & rhs)
-	{
-		return lhs.name() == rhs.name() || std::strcmp(lhs.name(), rhs.name()) == 0;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class T> NODISCARD constexpr hash_t hash() noexcept { return ctti::hash<T>(); }
 
-	template <class T> constexpr hash_t hashof_v{ ism::hash<T>() };
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <> struct ism::EqualTo<std::type_index>
-	{
-		bool operator()(std::type_index const & lhs, std::type_index const & rhs) const
-		{
-			return lhs.name() == rhs.name() || std::strcmp(lhs.name(), rhs.name()) == 0;
-		}
-	};
-
-	template <> struct ism::Hasher<std::type_index>
-	{
-		hash_t operator()(std::type_index const & t) const
-		{
-			return ism::Hasher<String>()(t.name());
-		}
-	};
+	template <class T> constexpr hash_t hash_v{ ism::hash<T>() };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

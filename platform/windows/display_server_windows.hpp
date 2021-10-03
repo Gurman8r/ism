@@ -15,6 +15,8 @@ namespace ism
 
 		OBJECT_COMMON(DisplayServerWindows, DisplayServer);
 
+		static WindowID g_main_window;
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	public:
@@ -24,6 +26,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		virtual WindowID get_context_main() const override;
 		virtual WindowID get_context_current() const override;
 		virtual void make_context_current(WindowID id) override;
 		virtual void poll_events() override;

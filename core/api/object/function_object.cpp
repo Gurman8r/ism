@@ -16,9 +16,20 @@ EMBEDDED_CLASS_TYPE(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_Meth
 		return t
 
 			.def_readwrite("__dict__", &FunctionObject::m_dict)
-
+			
 			;
 	};
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+FunctionObject::FunctionObject(vectorcallfunc vectorcall) : Object{}, m_dict{ DICT::new_() }, m_vectorcall{ vectorcall }
+{
+}
+
+OBJ FunctionObject::cpp_function() const
+{
+	return CPP_FUNCTION::check_((Object *)this) ? CPP_FUNCTION((CppFunctionObject *)this) : nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

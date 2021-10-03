@@ -25,16 +25,9 @@ namespace ism
 		OBJECT_COMMON(SceneTree, MainLoop);
 
 		friend class Main;
-		friend class Node;
 		friend class Entity;
 
 		static SceneTree * singleton;
-
-		Window * m_root{};
-
-		bool m_initialized{};
-
-		entt::registry m_entt{};
 
 	public:
 		SceneTree(SceneSettings const & settings = {});
@@ -51,12 +44,34 @@ namespace ism
 		virtual void finalize() override;
 
 	public:
-		NODISCARD auto get_root() const noexcept -> Window * const { return const_cast<Window *>(m_root); }
+		NODISCARD Ref<Window> get_root() const noexcept { return m_root; }
+
+		NODISCARD Duration get_time() const noexcept { return m_main_timer.elapsed(); }
+
+		NODISCARD float_t get_framerate() const noexcept { return m_fps.value; }
+
+	public:
+		template <class Fn = void(*)(NODE &)
+		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false)
+		{
+			if (!m_root) { return; }
+			fn((NODE &)m_root);
+			m_root->for_nodes(fn, recursive, reverse);
+		}
 
 	protected:
 		template <class T> void on_component_added(Node &, T &) {}
 		
 	private:
+		bool m_initialized{};
+
+		Ref<Window> m_root{};
+
+		Timer const m_main_timer{ true };
+
+		FPS_Tracker m_fps{ 120 };
+
+		entt::registry m_entt{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

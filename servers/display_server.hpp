@@ -172,6 +172,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		NODISCARD virtual WindowID get_context_main() const;
 		NODISCARD virtual WindowID get_context_current() const;
 		virtual void make_context_current(WindowID id);
 		virtual void poll_events();

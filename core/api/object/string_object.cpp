@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(StringObject, t, TypeFlags_Str_Subclass)
+EMBEDDED_CLASS_TYPE(StringObject, t)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return ism::hash(***(STR &)self); };
 

@@ -23,7 +23,15 @@ namespace ism
 		virtual void finalize() override;
 
 	public:
-		// LOW LEVEL RENDERING API GOES HERE
+		virtual void clear(Color const & color) override;
+
+		virtual void draw_arrays(RenderPrimitive primitive, size_t first, size_t count) override;
+
+		virtual void draw_indexed(RenderPrimitive primitive, size_t count) override;
+
+		virtual void flush() override;
+
+		virtual void set_viewport(Rect const & rect) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

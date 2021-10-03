@@ -11,7 +11,7 @@ EMBEDDED_CLASS_TYPE(Entity, t) {}
 
 Entity::Entity() : Node{}
 {
-	m_entity_id = m_tree->m_entt.create();
+	m_entity_id = get_tree()->m_entt.create();
 }
 
 Entity::~Entity()

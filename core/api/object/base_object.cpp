@@ -66,8 +66,6 @@ EMBEDDED_CLASS_TYPE(Object, t, TypeFlags_IsAbstract)
 
 	t.tp_setattro = (setattrofunc)&Object::generic_setattr;
 
-	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<void *>{}(self.ptr()); };
-
 	t.tp_bind = CLASS_BINDER(Object, t)
 	{
 		return t;

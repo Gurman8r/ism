@@ -3,6 +3,8 @@
 
 #include <core/api/call.hpp>
 
+// i want to get rid of this system, but don't currently have any better ideas
+
 namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -12,7 +14,7 @@ namespace ism::attr
 	template <class T> struct process_attribute_default
 	{
 		using type = typename T;
-		static void init(T &&, FunctionRecord &) {}
+		static void init(FunctionRecord &, T &&) {}
 		static void precall(FunctionCall &) {}
 		static void postcall(FunctionCall &, OBJ) {}
 	};

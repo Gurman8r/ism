@@ -1,5 +1,6 @@
 #include <scene/main/scene_tree.hpp>
 #include <scene/components/all_components.hpp>
+#include <scene/gui/imgui.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -15,12 +16,12 @@ SceneTree::SceneTree(SceneSettings const & settings) : MainLoop{}
 {
 	if (!singleton) { singleton = this; }
 
-	m_root = memnew(Window);
+	m_root.instance();
 }
 
 SceneTree::~SceneTree()
 {
-	if (m_root) { memdelete(m_root); m_root = nullptr; }
+	m_root = nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -28,7 +29,7 @@ SceneTree::~SceneTree()
 void SceneTree::initialize()
 {
 	m_initialized = true;
-	m_root->set_tree(this);
+	for_nodes([&](NODE & node) { node->m_tree = this; });
 	MainLoop::initialize();
 }
 
@@ -36,7 +37,18 @@ bool SceneTree::process(Duration const & delta_time)
 {
 	bool should_exit{ false };
 
+	m_fps.update(delta_time);
+
+	m_root->poll_events();
+
+	// placeholder
+	for_nodes([&](NODE & node) { node->begin_step(); });
+	for_nodes([&](NODE & node) { node->step(delta_time); });
+	for_nodes([&](NODE & node) { node->end_step(); });
+
 	MainLoop::process(delta_time);
+
+	m_root->swap_buffers();
 
 	if (!m_root->is_open()) { should_exit = true; }
 
@@ -46,10 +58,8 @@ bool SceneTree::process(Duration const & delta_time)
 void SceneTree::finalize()
 {
 	m_initialized = false;
-
 	MainLoop::finalize();
-
-	if (m_root) { memdelete(m_root); m_root = nullptr; }
+	m_root = nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

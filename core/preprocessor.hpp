@@ -53,6 +53,11 @@
 #define MEMBER_IMPL(expr) \
 	decltype(expr) expr
 
+// check success
+#ifndef SUCCEEDED
+#define SUCCEEDED(expr) ((expr) == EXIT_SUCCESS)
+#endif
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // make anonymous

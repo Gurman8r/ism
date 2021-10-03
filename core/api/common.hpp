@@ -464,9 +464,7 @@ namespace ism
 		NODISCARD operator bool() const noexcept { return m_ptr != nullptr; }
 		NODISCARD bool is_null() const noexcept { return m_ptr == nullptr; }
 		NODISCARD bool is_valid() const noexcept { return m_ptr != nullptr; }
-
-		NODISCARD auto ptr() noexcept { return m_ptr; }
-		NODISCARD auto ptr() const noexcept { return m_ptr; }
+		NODISCARD auto ptr() const noexcept { return const_cast<value_type *>(m_ptr); }
 
 		NODISCARD auto operator*() noexcept { return m_ptr; }
 		NODISCARD auto operator*() const noexcept { return m_ptr; }
@@ -500,8 +498,6 @@ public:																									\
 																										\
 	NODISCARD static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }		\
 																										\
-	NODISCARD bool check() const { return m_ptr && (bool)(m_check(m_ptr)); }							\
-																										\
 	~m_class() noexcept = default;																		\
 																										\
 	m_class() noexcept = default;																		\
@@ -527,14 +523,21 @@ public:																									\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define IMPLEMENT_DEFAULT_REF_TRAITS(m_class)												\
-	template <> struct Hasher<m_class> : Hasher<Ref<m_class::value_type>> {};				\
-	template <> struct EqualTo<m_class> : EqualTo<Ref<m_class::value_type>> {};				\
-	template <> struct NotEqualTo<m_class> : NotEqualTo<Ref<m_class::value_type>> {};		\
-	template <> struct Less<m_class> : Less<Ref<m_class::value_type>> {};					\
-	template <> struct Greater<m_class> : Greater<Ref<m_class::value_type>> {};				\
-	template <> struct LessEqual<m_class> : LessEqual<Ref<m_class::value_type>> {};			\
-	template <> struct GreaterEqual<m_class> : GreaterEqual<Ref<m_class::value_type>> {};	\
+	// ref traits
+#define IMPLEMENT_DEFAULT_REF_TRAITS(m_class)																\
+	template <> struct ism::Hasher<m_class> : ism::Hasher<ism::Ref<m_class::value_type>> {};				\
+																											\
+	template <> struct ism::EqualTo<m_class> : ism::EqualTo<ism::Ref<m_class::value_type>> {};				\
+																											\
+	template <> struct ism::NotEqualTo<m_class> : ism::NotEqualTo<ism::Ref<m_class::value_type>> {};		\
+																											\
+	template <> struct ism::Less<m_class> : ism::Less<ism::Ref<m_class::value_type>> {};					\
+																											\
+	template <> struct ism::Greater<m_class> : ism::Greater<ism::Ref<m_class::value_type>> {};				\
+																											\
+	template <> struct ism::LessEqual<m_class> : ism::LessEqual<ism::Ref<m_class::value_type>> {};			\
+																											\
+	template <> struct ism::GreaterEqual<m_class> : ism::GreaterEqual<ism::Ref<m_class::value_type>> {};	\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

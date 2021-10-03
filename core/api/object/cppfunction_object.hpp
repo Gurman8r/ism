@@ -14,11 +14,11 @@ namespace ism
 		friend class CPP_FUNCTION;
 
 	public:
-		ism::FunctionRecord * m_record{};
+		FunctionRecord * m_record{};
 
-		NODISCARD auto & operator*() const { return const_cast<ism::FunctionRecord &>(*m_record); }
+		NODISCARD auto & operator*() const { return const_cast<FunctionRecord &>(*m_record); }
 
-		NODISCARD auto * operator->() const { return const_cast<ism::FunctionRecord *>(m_record); }
+		NODISCARD auto * operator->() const { return const_cast<FunctionRecord *>(m_record); }
 
 		virtual ~CppFunctionObject() override;
 
@@ -69,12 +69,14 @@ namespace ism
 		}
 
 	protected:
-		void initialize_generic(ism::FunctionRecord * record_in, std::type_info const * const * info_in, size_t argc_in, bool prepend = false);
+		void initialize_generic(FunctionRecord * record_in, std::type_info const * const * info_in, size_t argc_in, bool prepend = false);
 
 		template <class Func, class Return, class ... Args, class ... Extra
 		> void initialize(Func && func, Return(*)(Args...), Extra && ... extra)
 		{
-			ism::FunctionRecord * rec{ memnew(ism::FunctionRecord{}) };
+			static_assert(sizeof...(Args) < MAX_ARGUMENTS, "TOO MANY ARGUMENTS");
+
+			FunctionRecord * rec{ memnew(FunctionRecord{}) };
 
 			struct Capture { std::remove_reference_t<Func> value; };
 
@@ -84,20 +86,20 @@ namespace ism
 
 				if constexpr (!std::is_trivially_destructible_v<Func>)
 				{
-					rec->free_data = [](ism::FunctionRecord * f) { ((Capture *)&f->data)->~Capture(); };
+					rec->free_data = [](FunctionRecord * f) { ((Capture *)&f->data)->~Capture(); };
 				}
 			}
 			else
 			{
 				rec->data[0] = memnew(Capture{ FWD(func) });
 
-				rec->free_data = [](ism::FunctionRecord * f) { memdelete((Capture *)f->data[0]); };
+				rec->free_data = [](FunctionRecord * f) { memdelete((Capture *)f->data[0]); };
 			}
 
 			// convert function arguments and perform the actual function call
-			rec->impl = [](ism::FunctionCall & call) -> OBJ
+			rec->impl = [](FunctionCall & call) -> OBJ
 			{
-				ism::ArgumentLoader<Args...> args{};
+				ArgumentLoader<Args...> args{};
 
 				if (!args.load_args(call.args)) { call.try_next_overload = true; return nullptr; }
 
@@ -107,11 +109,11 @@ namespace ism
 
 				auto capture{ const_cast<Capture *>(reinterpret_cast<Capture const *>(data)) };
 
-				ReturnValuePolicy_ policy{ ism::return_policy_override<Return>::policy(call.record.policy) };
+				ReturnValuePolicy_ policy{ return_policy_override<Return>::policy(call.record.policy) };
 
 				using Guard = attr::extract_guard_t<Extra...>;
 
-				using Yield = ism::make_caster<std::conditional_t<std::is_void_v<Return>, void_type, Return>>;
+				using Yield = make_caster<std::conditional_t<std::is_void_v<Return>, void_type, Return>>;
 
 				OBJ result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
 
@@ -163,11 +165,5 @@ namespace ism
 		NODISCARD auto signature() const { return attr("__text_signature__"); }
 	};
 }
-
-NODISCARD inline ism::OBJ ism::FUNCTION::cpp_function() const
-{
-	return ism::CPP_FUNCTION::check_(*this) ? ism::CPP_FUNCTION(*this) : nullptr;
-}
-
 
 #endif // !_ISM_CPPFUNCTION_OBJECT_HPP_

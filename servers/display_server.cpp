@@ -8,6 +8,12 @@ EMBEDDED_CLASS_TYPE(DisplayServer, t, TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+WindowID DisplayServer::get_context_main() const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
 WindowID DisplayServer::get_context_current() const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");

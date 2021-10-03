@@ -28,27 +28,31 @@ namespace ism
 		template <class Component, class ... Args
 		> Component & add_component(Args && ... args) noexcept
 		{
-			Component & c{ m_scene->m_entt.emplace<Component>(m_entity_id, FWD(args)...) };
-			m_scene->on_component_added<Component>(*this, c);
+			auto & tree{ *VALIDATE(get_tree()) };
+			Component & c{ tree.m_entt.emplace<Component>(m_entity_id, FWD(args)...) };
+			tree.on_component_added<Component>(*this, c);
 			return c;
 		}
 
 		template <class ... Component
 		> NODISCARD decltype(auto) get_component()
 		{
-			return m_scene->m_entt.get<Component...>(m_entity_id);
+			auto & tree{ *VALIDATE(get_tree()) };
+			return tree.m_entt.get<Component...>(m_entity_id);
 		}
 
 		template <class ... Component
 		> NODISCARD bool has_component() const
 		{
-			return m_scene->m_entt.has<Component...>(m_entity_id);
+			auto & tree{ *VALIDATE(get_tree()) };
+			return tree.m_entt.has<Component...>(m_entity_id);
 		}
 
 		template <class ... Component
 		> void remove_component()
 		{
-			m_scene->m_entt.remove<Component...>(m_entity_id);
+			auto & tree{ *VALIDATE(get_tree()) };
+			return tree.m_entt.remove<Component...>(m_entity_id);
 		}
 	};
 

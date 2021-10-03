@@ -50,7 +50,7 @@ private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// embed object class
+// object embedder
 #define EMBEDDED_CLASS_TYPE(m_class, m_var, ...)												\
 																								\
 	/* declare binder */																		\
@@ -137,13 +137,13 @@ namespace ism
 		template <class T> NODISCARD T cast() &&; // cast.hpp
 
 	public:
-		NODISCARD static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
-
 		NODISCARD static OBJ generic_getattr(OBJ obj, OBJ name) noexcept;
 
-		static Error generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
+		NODISCARD static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
 
 		static Error generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept;
+
+		static Error generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -157,11 +157,11 @@ namespace ism
 
 			Object * obj{ (Object *)ptr };
 
-			TYPE type{ ism::typeof(obj) };
+			TYPE type{ typeof(obj) };
 
 			if (type && type->tp_del) { type->tp_del(obj); }
 			
-			else { memdelete((Object *)ptr); }
+			else { memdelete(obj); }
 		}
 	};
 

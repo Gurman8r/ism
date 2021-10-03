@@ -3,7 +3,7 @@
 
 #include <scene/main/node.hpp>
 #include <servers/display_server.hpp>
-#include <servers/rendering_server.hpp>
+#include <servers/rendering/rendering_command.hpp>
 
 namespace ism
 {

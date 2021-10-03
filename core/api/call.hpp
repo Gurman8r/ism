@@ -7,68 +7,97 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline OBJ call_object(OBJ callable, LIST args = nullptr)
+	inline OBJ call_object(OBJ callable)
 	{
 		if (!callable) { return nullptr; }
-		else
+
+		TYPE type{ typeof(callable) };
+
+		if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
 		{
-			TYPE type{ typeof(callable) };
+			return vcall(callable, nullptr, 0);
+		}
+		else if (binaryfunc tcall{ type->tp_call })
+		{
+			return tcall(callable, nullptr);
+		}
 
-			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
-			{
-				if (args) { return vcall(callable, args.data(), args.size()); }
+		return nullptr;
+	}
 
-				else { return vcall(callable, nullptr, 0); }
-			}
-			else if (binaryfunc tcall{ type->tp_call })
+	inline OBJ call_object(OBJ callable, LIST args)
+	{
+		if (!callable) { return nullptr; }
+
+		TYPE type{ typeof(callable) };
+
+		if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+		{
+			if (args)
 			{
-				return tcall(callable, args);
+				return vcall(callable, args.data(), args.size());
 			}
 			else
 			{
-				return nullptr;
+				return vcall(callable, nullptr, 0);
 			}
 		}
+		else if (binaryfunc tcall{ type->tp_call })
+		{
+			return tcall(callable, args);
+		}
+
+		return nullptr;
+	}
+
+	inline OBJ call_object(OBJ callable, OBJ const * argv, size_t argc)
+	{
+		if (!callable) { return nullptr; }
+
+		TYPE type{ typeof(callable) };
+
+		if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+		{
+			return vcall(callable, argv, argc);
+		}
+		else if (binaryfunc tcall{ type->tp_call })
+		{
+			ListObject args{ argv, argv + argc };
+
+			return tcall(callable, &args);
+		}
+
+		return nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// argument collector
-	template <ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference
+	template <ReturnValuePolicy_ Policy = ReturnValuePolicy_AutomaticReference
 	> struct NODISCARD ArgumentCollector final
 	{
 		template <class ... Args
-		> explicit ArgumentCollector(Args && ... values) noexcept : m_args{}
+		> explicit ArgumentCollector(Args && ... args) noexcept : m_argc{ sizeof...(Args) }
 		{
-			if constexpr (0 < sizeof...(values))
+			static_assert(sizeof...(Args) < MAX_ARGUMENTS, "TOO MANY ARGUMENTS");
+
+			mpl::for_args_i([&](size_t i, auto && arg) noexcept
 			{
-				m_args = LIST::new_();
-
-				m_args.reserve(sizeof...(Args));
-
-				mpl::for_args([&](auto && e) noexcept
-				{
-					m_args.append(make_caster<decltype(e)>::cast(FWD(e), policy, nullptr));
-				}
-				, FWD(values)...);
+				m_argv[i] = make_caster<decltype(arg)>::cast(FWD(arg), Policy, nullptr);
 			}
+			, FWD(args)...);
 		}
 
-		NODISCARD LIST const & args() const & { return m_args; }
+		NODISCARD OBJ const * argv() const { return m_argv; }
 
-		NODISCARD LIST args() && { return std::move(m_args); }
+		NODISCARD size_t argc() const { return m_argc; }
 
-		NODISCARD OBJ call(OBJ const & callable) { return call_object(callable, m_args); }
+		NODISCARD OBJ call(OBJ const & callable) noexcept { return call_object(callable, m_argv, m_argc); }
 
-	private: LIST m_args;
+	private:
+		OBJ m_argv[MAX_ARGUMENTS]{};
+		size_t m_argc{};
 	};
-
-	// collect arguments
-	template <ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference, class ... Args
-	> NODISCARD auto collect_arguments(Args && ... args) noexcept
-	{
-		return ArgumentCollector<policy>{ FWD(args)... };
-	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -152,9 +181,9 @@ namespace ism
 
 		Object * scope{}, * sibling{};
 
-		bool is_stateless : 1, is_constructor : 1, is_operator : 1, is_method : 1;
-
 		FunctionRecord * next{};
+
+		bool is_stateless : 1, is_constructor : 1, is_operator : 1, is_method : 1;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -170,7 +199,7 @@ namespace ism
 
 		bool try_next_overload : 1;
 
-		OBJ invoke() noexcept
+		OBJ invoke()
 		{
 			OBJ result{};
 			{
@@ -206,17 +235,12 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Derived
-	> template <ReturnValuePolicy_ policy, class ...Args
+	> template <ReturnValuePolicy_ Policy, class ...Args
 	> inline OBJ ObjectAPI<Derived>::operator()(Args && ... args) const
 	{
-		return ism::collect_arguments<policy>(FWD(args)...).call(derived().ptr());
+		return ArgumentCollector<Policy>(FWD(args)...).call(derived().ptr());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

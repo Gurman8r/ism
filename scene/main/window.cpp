@@ -15,7 +15,7 @@ EMBEDDED_CLASS_TYPE(Window, t) {}
 
 Window::Window() : Viewport{}
 {
-	m_window_id = get_display_server().get_context_current();
+	m_window_id = get_display_server().get_context_main();
 
 	if (m_window_id) { set_user_pointer(this); }
 }

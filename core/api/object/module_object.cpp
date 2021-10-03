@@ -44,6 +44,17 @@ EMBEDDED_CLASS_TYPE(ModuleObject, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+MODULE ModuleObject::def_submodule(cstring name)
+{
+	return nullptr;
+}
+
+void ModuleObject::reload()
+{
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 OBJ ModuleObject::module_getattro(MODULE m, OBJ name)
 {
 	return generic_getattr(m, name);

@@ -21,7 +21,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr Color(float_t x = 0.f, float_t y = 0.f, float_t z = 0.f, float_t w = 0.f) noexcept : m_data{ x, y, z, w } {}
+		constexpr Color(float_t r = 0.f, float_t g = 0.f, float_t b = 0.f, float_t a = 1.f) noexcept : m_data{ r, g, b, a } {}
 
 		constexpr Color(Vec4 const & value) : m_data{ value } {}
 
