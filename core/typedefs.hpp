@@ -34,13 +34,15 @@ public:																											\
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // declare enum
-#define MAKE_ENUM_EX(m_name, m_base) \
+#define MAKE_ENUM(m_name, m_base) \
 	ALIAS(m_name) m_base; \
 	enum CAT(m_name, _) : m_name
 
-// declare enum default
-#define MAKE_ENUM(m_name) \
-	MAKE_ENUM_EX(m_name, int32_t)
+// default signed enum
+#define ENUM_INT(m_name) MAKE_ENUM(m_name, int32_t)
+
+// default unsigned enum
+#define ENUM_UINT(m_name) MAKE_ENUM(m_name, uint32_t)
 
 // declare opaque handle type
 #define MAKE_OPAQUE(m_name) \

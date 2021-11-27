@@ -35,7 +35,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window hints
-	MAKE_ENUM(WindowHints)
+	ENUM_INT(WindowHints)
 	{
 		WindowHints_None			= 0		, // none
 		WindowHints_AutoIconify		= 1 << 0, // auto iconify
@@ -71,7 +71,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// renderer api
-	MAKE_ENUM(RendererAPI)
+	ENUM_INT(RendererAPI)
 	{
 		RendererAPI_Unknown		, // unknown
 		RendererAPI_OpenGL		, // opengl
@@ -80,7 +80,7 @@ namespace ism
 	};
 
 	// renderer profile
-	MAKE_ENUM(RendererProfile)
+	ENUM_INT(RendererProfile)
 	{
 		RendererProfile_Any		, // any
 		RendererProfile_Core	, // core
@@ -203,38 +203,35 @@ namespace ism
 		NODISCARD virtual Vec2 window_get_size(WindowID id) const;
 		NODISCARD virtual void * window_get_user_pointer(WindowID id) const;
 		NODISCARD virtual Rect window_get_frame_size(WindowID id) const;
+		NODISCARD virtual bool window_get_is_auto_iconify(WindowID id) const;
+		NODISCARD virtual bool window_get_is_decorated(WindowID id) const;
+		NODISCARD virtual bool window_get_is_floating(WindowID id) const;
+		NODISCARD virtual bool window_get_is_focused(WindowID id) const;
+		NODISCARD virtual bool window_get_is_focus_on_show(WindowID id) const;
+		NODISCARD virtual bool window_get_is_hovered(WindowID id) const;
+		NODISCARD virtual bool window_get_is_iconified(WindowID id) const;
+		NODISCARD virtual bool window_get_is_maximized(WindowID id) const;
+		NODISCARD virtual bool window_get_is_resizable(WindowID id) const;
+		NODISCARD virtual bool window_get_is_transparent(WindowID id) const;
+		NODISCARD virtual bool window_get_is_visible(WindowID id) const;
+		NODISCARD virtual bool window_get_should_close(WindowID id) const;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD virtual bool window_is_auto_iconify(WindowID id) const;
-		NODISCARD virtual bool window_is_decorated(WindowID id) const;
-		NODISCARD virtual bool window_is_floating(WindowID id) const;
-		NODISCARD virtual bool window_is_focused(WindowID id) const;
-		NODISCARD virtual bool window_is_focus_on_show(WindowID id) const;
-		NODISCARD virtual bool window_is_hovered(WindowID id) const;
-		NODISCARD virtual bool window_is_iconified(WindowID id) const;
-		NODISCARD virtual bool window_is_maximized(WindowID id) const;
-		NODISCARD virtual bool window_is_open(WindowID id) const;
-		NODISCARD virtual bool window_is_resizable(WindowID id) const;
-		NODISCARD virtual bool window_is_transparent(WindowID id) const;
-		NODISCARD virtual bool window_is_visible(WindowID id) const;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		virtual void window_set_auto_iconify(WindowID id, bool value);
+		virtual void window_set_is_auto_iconify(WindowID id, bool value);
 		virtual void window_set_clipboard(WindowID id, String const & value);
 		virtual void window_set_cursor(WindowID id, CursorID value);
 		virtual void window_set_cursor_mode(WindowID id, int32_t value);
 		virtual void window_set_mouse_pos(WindowID id, Vec2 const & value);
-		virtual void window_set_decorated(WindowID id, bool value);
-		virtual void window_set_floating(WindowID id, bool value);
-		virtual void window_set_focus_on_show(WindowID id, bool value);
+		virtual void window_set_is_decorated(WindowID id, bool value);
+		virtual void window_set_is_floating(WindowID id, bool value);
+		virtual void window_set_is_focus_on_show(WindowID id, bool value);
 		virtual void window_set_icons(WindowID id, int32_t width, int32_t height, uint8_t * pixels, int32_t count = 1);
 		virtual void window_set_input_mode(WindowID id, int32_t mode, int32_t value);
 		virtual void window_set_opacity(WindowID id, float_t value);
 		virtual void window_set_position(WindowID id, Vec2 const & value);
 		virtual void window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds);
-		virtual void window_set_resizable(WindowID id, bool value);
+		virtual void window_set_is_resizable(WindowID id, bool value);
 		virtual void window_set_should_close(WindowID id, bool value);
 		virtual void window_set_size(WindowID id, Vec2 const & value);
 		virtual void window_set_title(WindowID id, String const & value);

@@ -24,11 +24,6 @@ namespace ism
 		virtual void end_step() override;
 
 	public:
-		void begin_gui_frame();
-
-		void end_gui_frame();
-
-	public:
 		NODISCARD auto get_context() const noexcept -> ImGuiContext & { return *VALIDATE(m_imgui_context); }
 
 		NODISCARD auto get_io() const noexcept -> ImGuiIO & { return get_context().IO; }

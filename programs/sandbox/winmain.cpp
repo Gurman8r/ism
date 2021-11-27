@@ -6,10 +6,7 @@
 
 extern int main(int, char * []);
 
-OS_IMPL(void * user)
-{
-	RETURN_STATIC(ism::OS_Windows{ user ? (HINSTANCE)user : GetModuleHandle(NULL) });
-}
+OS_SPECIAL(void * user, ism::OS_Windows{ user ? (HINSTANCE)user : GetModuleHandle(NULL) });
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine, int nCmdShow)
 {

@@ -62,11 +62,12 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 
 	for (size_t i = 0; i < argc_in; ++i)
 	{
-		// TODO: generate argument info
+		rec->args.push_back(COMPOSE(ArgumentRecord, arg)
+		{
+			// TODO: generate argument info
 
-		String const arg_str{ "arg" + util::to_string(i) };
-
-		rec->args.push_back(ArgumentRecord{ arg_str, nullptr, false, false });
+			arg.name = ("arg" + util::to_string(i));
+		});
 	}
 
 	// overload chaining
@@ -151,7 +152,7 @@ OBJ CppFunctionObject::cppfunction_vectorcall(OBJ callable, OBJ const * argv, si
 		}
 
 		// execute call
-		if (OBJ result{ call.invoke() }; !call.try_next_overload)
+		if (OBJ result{ call() }; !call.try_next_overload)
 		{
 			return result;
 		}

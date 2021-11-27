@@ -151,7 +151,7 @@ namespace ism
 
 	template <class T> void call_default_delete(T * value) noexcept
 	{
-		DefaultDelete<T>{}(value);
+		DefaultDelete<mpl::intrinsic_t<decltype(value)>>{}(value);
 	}
 
 	// No Delete

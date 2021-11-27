@@ -8,7 +8,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// key codes
-	MAKE_ENUM(KeyCode)
+	ENUM_INT(KeyCode)
 	{
 		KeyCode_Space			= 32,	// space
 		KeyCode_Apostrophe		= 39,	// apostrophe
@@ -137,7 +137,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// key modifiers
-	MAKE_ENUM(KeyMods)
+	ENUM_INT(KeyMods)
 	{
 		KeyMods_None	= 0 << 0,	// nullptr
 		KeyMods_Shift	= 0 << 1,	// shift

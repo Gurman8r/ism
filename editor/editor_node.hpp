@@ -9,10 +9,18 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorNode, Node);
 
+		Ref<ImGuiNode> m_gui{};
+
 	public:
 		EditorNode();
 
 		~EditorNode();
+
+		virtual void initialize() override;
+
+		virtual void finalize() override;
+
+		virtual void step(Duration const & delta_time) override;
 	};
 }
 

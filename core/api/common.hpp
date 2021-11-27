@@ -129,7 +129,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MAKE_ENUM(TypeFlags)
+	ENUM_INT(TypeFlags)
 	{
 		TypeFlags_None,
 
@@ -150,7 +150,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MAKE_ENUM(ReturnValuePolicy)
+	ENUM_INT(ReturnValuePolicy)
 	{
 		ReturnValuePolicy_Automatic,
 		ReturnValuePolicy_AutomaticReference,
@@ -163,7 +163,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MAKE_ENUM(DataType)
+	ENUM_INT(DataType)
 	{
 		DataType_Invalid = -1,
 		DataType_I8, DataType_I16, DataType_I32, DataType_I64,
@@ -184,7 +184,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MAKE_ENUM(LogicOperation)
+	ENUM_INT(LogicOperation)
 	{
 		LogicOperation_Clear,
 		LogicOperation_And,
@@ -207,7 +207,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MAKE_ENUM(CompareOperator)
+	ENUM_INT(CompareOperator)
 	{
 		CompareOperator_Never,
 		CompareOperator_Less,

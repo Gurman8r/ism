@@ -29,7 +29,8 @@ SceneTree::~SceneTree()
 void SceneTree::initialize()
 {
 	m_initialized = true;
-	for_nodes([&](NODE & node) { node->m_tree = this; });
+	for_nodes([&](NODE & node) { node->m_tree = this; }); // placeholder
+	for_nodes([&](NODE & node) { node->initialize(); }); // placeholder
 	MainLoop::initialize();
 }
 
@@ -41,16 +42,15 @@ bool SceneTree::process(Duration const & delta_time)
 
 	m_root->poll_events();
 
-	// placeholder
-	for_nodes([&](NODE & node) { node->begin_step(); });
-	for_nodes([&](NODE & node) { node->step(delta_time); });
-	for_nodes([&](NODE & node) { node->end_step(); });
+	for_nodes([&](NODE & node) { node->begin_step(); }); // placeholder
+	for_nodes([&](NODE & node) { node->step(delta_time); }); // placeholder
+	for_nodes([&](NODE & node) { node->end_step(); }); // placeholder
 
 	MainLoop::process(delta_time);
 
 	m_root->swap_buffers();
 
-	if (!m_root->is_open()) { should_exit = true; }
+	should_exit |= m_root->get_should_close();
 
 	return should_exit;
 }
@@ -59,24 +59,25 @@ void SceneTree::finalize()
 {
 	m_initialized = false;
 	MainLoop::finalize();
+	for_nodes([&](NODE & node) { node->finalize(); }, true, true); // placeholder
 	m_root = nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-template <> void SceneTree::on_component_added<CameraComponent>(Node & e, CameraComponent & c)
+template <> void SceneTree::on_component_added<CameraComponent>(Entity & e, CameraComponent & c)
 {
 }
 
-template <> void SceneTree::on_component_added<ScriptComponent>(Node & e, ScriptComponent & c)
+template <> void SceneTree::on_component_added<ScriptComponent>(Entity & e, ScriptComponent & c)
 {
 }
 
-template <> void SceneTree::on_component_added<TagComponent>(Node & e, TagComponent & c)
+template <> void SceneTree::on_component_added<TagComponent>(Entity & e, TagComponent & c)
 {
 }
 
-template <> void SceneTree::on_component_added<TransformComponent>(Node & e, TransformComponent & c)
+template <> void SceneTree::on_component_added<TransformComponent>(Entity & e, TransformComponent & c)
 {
 }
 

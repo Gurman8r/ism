@@ -55,11 +55,12 @@ g_memory{};
 
 void * Memory::alloc_static(size_t size, cstring desc)
 {
-	std::pmr::memory_resource * const mres{ std::pmr::get_default_resource() };
-
 	return std::get<ID_addr>(g_memory.records.push_back
 	(
-		++g_memory.index, size, mres->allocate(size), desc
+		++g_memory.index,
+		size,
+		std::pmr::get_default_resource()->allocate(size),
+		desc
 	));
 }
 
@@ -94,12 +95,12 @@ void * Memory::realloc_static(void * ptr, size_t oldsz, size_t newsz)
 
 void Memory::free_static(void * ptr)
 {
-	std::pmr::memory_resource * const mres{ std::pmr::get_default_resource() };
-
 	if (size_t const i{ g_memory.records.index_of<ID_addr>(ptr) }
 	; i != g_memory.records.npos)
 	{
-		mres->deallocate(ptr, g_memory.records.get<ID_size>(i));
+		size_t const size{ g_memory.records.get<ID_size>(i) };
+
+		std::pmr::get_default_resource()->deallocate(ptr, size);
 
 		g_memory.records.erase(i);
 	}

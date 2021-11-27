@@ -38,6 +38,8 @@
 
 using namespace ism;
 
+static bool editor{ true };
+
 MEMBER_IMPL(Main::g_frame_count) {};
 MEMBER_IMPL(Main::g_frame_index) {};
 MEMBER_IMPL(Main::g_iterating) {};
@@ -46,8 +48,6 @@ static Internals *			g_internals{};
 static Input *				g_input{};
 static DisplayServer *		g_display_server{};
 static RenderingServer *	g_rendering_server{};
-
-static bool editor{ true };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -97,7 +97,7 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 		"ism",
 		{ { 1280, 720 }, { 8, 8, 8, 8 }, -1 },
 		{ RendererAPI_OpenGL, 4, 6, RendererProfile_Compat, 24, 8, true, false },
-		WindowHints_Default_Maximized & ~(WindowHints_Doublebuffer)
+		WindowHints_Default_Maximized & (~WindowHints_Doublebuffer)
 		}));
 
 	g_rendering_server = memnew(RenderingServerDefault());
@@ -132,11 +132,13 @@ bool Main::start()
 	{
 		Ref<SceneTree> tree{ main_loop };
 
-		NODE root{ tree->get_root() };
+		Ref<Window> root{ tree->get_root() };
 
 		root->add_node<ImGuiNode>();
 
-		root->add_node<EditorNode>();
+#ifdef TOOLS_ENABLED
+		if (editor) { root->add_node<EditorNode>(); }
+#endif
 	}
 
 	get_os().set_main_loop(main_loop);
@@ -146,11 +148,11 @@ bool Main::start()
 
 bool Main::iteration()
 {
-	++g_iterating;
-
 	static Duration delta_time{ 16_ms };
 	Timer const loop_timer{ true };
 	SCOPE_EXIT(&) { delta_time = loop_timer.elapsed(); };
+
+	++g_iterating;
 
 	bool should_exit{ false };
 

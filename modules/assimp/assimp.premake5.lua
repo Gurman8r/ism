@@ -18,7 +18,7 @@ files{
 }
 
 prebuildcommands{
-	COPYFILE("%{wks.location}misc/%{_TARGET_OS}/%{cfg.platform}/%{cfg.buildcfg}/assimp%{DLL}", "%{wks.location}bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+	COPY_FILE("%{wks.location}misc/%{_TARGET_OS}/%{cfg.platform}/%{cfg.buildcfg}/assimp%{DLL}", "%{wks.location}bin/%{cfg.platform}/%{cfg.buildcfg}/"),
 }
 	
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

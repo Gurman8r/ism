@@ -19,12 +19,12 @@ files{
 
 filter{ "configurations:Debug" }
 	prebuildcommands{
-		COPYFILE("%{wks.location}misc/%{_TARGET_OS}/%{cfg.platform}/%{cfg.buildcfg}/glew32d%{DLL}", "%{wks.location}bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+		COPY_FILE("%{wks.location}misc/%{_TARGET_OS}/%{cfg.platform}/%{cfg.buildcfg}/glew32d%{DLL}", "%{wks.location}bin/%{cfg.platform}/%{cfg.buildcfg}/"),
 	}
 	
 filter{ "configurations:Release" }
 	prebuildcommands{
-		COPYFILE("%{wks.location}misc/%{_TARGET_OS}/%{cfg.platform}/%{cfg.buildcfg}/glew32%{DLL}", "%{wks.location}bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+		COPY_FILE("%{wks.location}misc/%{_TARGET_OS}/%{cfg.platform}/%{cfg.buildcfg}/glew32%{DLL}", "%{wks.location}bin/%{cfg.platform}/%{cfg.buildcfg}/"),
 	}
 	
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

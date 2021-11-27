@@ -237,38 +237,6 @@
 #	define UNLIKELY(expr) ((expr))
 #endif
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-// DISABLE ANNOYING COMPILER WARNINGS
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#if SYSTEM_WINDOWS
-#	pragma warning(disable: 4031)	// second formal parameter list longer than the first list
-#	pragma warning(disable: 4067)	// unexpected tokens following preprocessor directive - expected a newline
-#	pragma warning(disable: 4251)	// type1 needs to have dll-interface to be used by type2
-#	pragma warning(disable: 4307)	// integral constant overflow
-#	pragma warning(disable: 4308)	// negative integral constant converted to unsigned t
-#	pragma warning(disable: 4309)	// truncation of constant value
-#	pragma warning(disable: 4312)	// conversion to greater size
-#	pragma warning(disable: 4723)	// potential divide by zero
-#	pragma warning(disable: 6011)	// dereferencing NULL pointer
-#	pragma warning(disable: 6282)	// incorrect operator
-#	pragma warning(disable: 26437)	// do not slice
-#	pragma warning(disable: 26444)	// avoid unnamed objecs with custom construction and destruction
-#	pragma warning(disable: 26451)	// arithmetic overflow
-#	pragma warning(disable: 26495)	// value may be uninitialized
-#	pragma warning(disable: 26812)	// unscoped enum
-#	pragma warning(disable: 28251)	// inconsistent annotations
-#endif
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-// STL FEATURES
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#ifndef _HAS_FUNCTION_ALLOCATOR_SUPPORT
-#define _HAS_FUNCTION_ALLOCATOR_SUPPORT 1
-#endif // !_HAS_FUNCTION_ALLOCATOR_SUPPORT
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 // API
@@ -302,5 +270,38 @@
 #define ISM_API_FUNC(rtype) ISM_API rtype
 
 #define ISM_API_DATA(rtype) ISM_API extern rtype
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// STL FEATURES
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#ifndef _HAS_FUNCTION_ALLOCATOR_SUPPORT
+#define _HAS_FUNCTION_ALLOCATOR_SUPPORT 1
+#endif // !_HAS_FUNCTION_ALLOCATOR_SUPPORT
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// DISABLE ANNOYING COMPILER WARNINGS
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#if SYSTEM_WINDOWS
+#	pragma warning(disable: 4031)	// second formal parameter list longer than the first list
+#	pragma warning(disable: 4067)	// unexpected tokens following preprocessor directive - expected a newline
+#	pragma warning(disable: 4251)	// type1 needs to have dll-interface to be used by type2
+#	pragma warning(disable: 4307)	// integral constant overflow
+#	pragma warning(disable: 4308)	// negative integral constant converted to unsigned t
+#	pragma warning(disable: 4309)	// truncation of constant value
+#	pragma warning(disable: 4312)	// conversion to greater size
+#	pragma warning(disable: 4723)	// potential divide by zero
+#	pragma warning(disable: 6011)	// dereferencing NULL pointer
+#	pragma warning(disable: 6282)	// incorrect operator
+#	pragma warning(disable: 26437)	// do not slice
+#	pragma warning(disable: 26444)	// avoid unnamed objecs with custom construction and destruction
+#	pragma warning(disable: 26451)	// arithmetic overflow
+#	pragma warning(disable: 26495)	// value may be uninitialized
+#	pragma warning(disable: 26812)	// unscoped enum
+#	pragma warning(disable: 28251)	// inconsistent annotations
+#endif
 
 #endif // !_ISM_LANGUAGE_FEATURES_HPP_

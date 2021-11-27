@@ -5,15 +5,21 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class First, class ... Rest
-	> static void render_immediate(RenderingDevice & device, First && first, Rest && ... rest)
+	> static void render_immediate(RenderingDevice * device, First && first, Rest && ... rest)
 	{
-		mpl::for_args([&device](auto const & command) noexcept
+		VERIFY(device);
+
+		mpl::for_args([device](auto && command) noexcept
 		{
-			std::invoke(command, &device);
+			std::invoke(FWD(command), device);
 		}
 		, FWD(first), FWD(rest)...);
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct RenderingCommand : public std::function<void(RenderingDevice *)>
 	{
@@ -24,31 +30,34 @@ namespace ism
 		using base_type::operator();
 
 	public:
-		static RenderingCommand clear(Color const & color) noexcept
-		{
-			return std::bind(&RenderingDevice::clear, std::placeholders::_1, color);
+		template <class First, class ... Rest
+		> static auto render_immediate(First && first, Rest && ... rest) -> RenderingCommand {
+			return std::bind(ism::render_immediate, std::placeholders::_1, FWD(first), FWD(rest)...);
 		}
 
-		static RenderingCommand draw_arrays(RenderPrimitive primitive, size_t first, size_t count) noexcept
-		{
+	public:
+		static auto clear(Color const & color, bool depth_stencil = true) noexcept -> RenderingCommand {
+			return std::bind(&RenderingDevice::clear, std::placeholders::_1, color, depth_stencil);
+		}
+
+		static auto draw_arrays(RenderPrimitive primitive, size_t first, size_t count) noexcept -> RenderingCommand {
 			return std::bind(&RenderingDevice::draw_arrays, std::placeholders::_1, primitive, first, count);
 		}
 
-		static RenderingCommand draw_indexed(RenderPrimitive primitive, size_t count) noexcept
-		{
+		static auto draw_indexed(RenderPrimitive primitive, size_t count) noexcept -> RenderingCommand {
 			return std::bind(&RenderingDevice::draw_indexed, std::placeholders::_1, primitive, count);
 		}
 
-		static RenderingCommand flush() noexcept
-		{
+		static auto flush() noexcept -> RenderingCommand {
 			return std::bind(&RenderingDevice::flush, std::placeholders::_1);
 		}
 
-		static RenderingCommand set_viewport(Rect const & rect) noexcept
-		{
+		static auto set_viewport(Rect const & rect) noexcept -> RenderingCommand {
 			return std::bind(&RenderingDevice::set_viewport, std::placeholders::_1, rect);
 		}
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_RENDERING_COMMAND_HPP_

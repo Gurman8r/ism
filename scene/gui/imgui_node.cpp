@@ -26,6 +26,8 @@ void ImGuiNode::begin_step()
 	ImGui_NewFrame();
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
+
+	bool const has_main_menu_bar{/* TODO */};
 	
 	if (get_io().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
 		constexpr auto dockspace_name{ "##MainDockspace" };
@@ -46,7 +48,8 @@ void ImGuiNode::begin_step()
 			ImGuiWindowFlags_NoBringToFrontOnFocus |
 			ImGuiWindowFlags_NoNavFocus |
 			ImGuiWindowFlags_NoDocking |
-			ImGuiWindowFlags_NoBackground
+			ImGuiWindowFlags_NoBackground |
+			(has_main_menu_bar ? ImGuiWindowFlags_MenuBar : ImGuiWindowFlags_None)
 		) };
 		ImGui::PopStyleVar(3);
 		if (dockspace_open) {
@@ -64,14 +67,13 @@ void ImGuiNode::begin_step()
 
 void ImGuiNode::step(Duration const &)
 {
-	ImGui::ShowDemoWindow();
 }
 
 void ImGuiNode::end_step()
 {
 	ImGui::Render();
 
-	render_immediate(get_rendering_device()
+	render_immediate(RenderingDevice::get_singleton()
 	, RenderingCommand::set_viewport(get_tree()->get_root()->get_bounds())
 	, RenderingCommand::clear(Color{})
 	);

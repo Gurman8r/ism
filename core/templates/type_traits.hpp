@@ -434,7 +434,7 @@ namespace ism::mpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// DETAIL STRUCTURES
+// META STRUCTURES
 namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

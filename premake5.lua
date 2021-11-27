@@ -6,7 +6,7 @@ include "./misc/solution_items.lua"
 
 DLL = ".dll"
 EXE = ".exe"
-function COPYFILE(src, dst)
+function COPY_FILE(src, dst)
 	if _TARGET_OS == "windows" then
 		return "xcopy /y " .. path.translate(src, "\\") .. " " .. path.translate(dst, "\\") .. "*"
 	else

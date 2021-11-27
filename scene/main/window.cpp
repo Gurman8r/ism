@@ -143,73 +143,71 @@ Rect Window::get_frame_size() const
 	return get_display_server().window_get_frame_size(m_window_id);
 }
 
+bool Window::get_is_auto_iconify() const
+{
+	return get_display_server().window_get_is_auto_iconify(m_window_id);
+}
+
+bool Window::get_is_decorated() const
+{
+	return get_display_server().window_get_is_decorated(m_window_id);
+}
+
+bool Window::get_is_floating() const
+{
+	return get_display_server().window_get_is_floating(m_window_id);
+}
+
+bool Window::get_is_focused() const
+{
+	return get_display_server().window_get_is_focused(m_window_id);
+}
+
+bool Window::get_is_focus_on_show() const
+{
+	return get_display_server().window_get_is_focus_on_show(m_window_id);
+}
+
+bool Window::get_is_hovered() const
+{
+	return get_display_server().window_get_is_hovered(m_window_id);
+}
+
+bool Window::get_is_iconified() const
+{
+	return get_display_server().window_get_is_iconified(m_window_id);
+}
+
+bool Window::get_is_maximized() const
+{
+	return get_display_server().window_get_is_maximized(m_window_id);
+}
+
+bool Window::get_is_resizable() const
+{
+	return get_display_server().window_get_is_resizable(m_window_id);
+}
+
+bool Window::get_is_transparent() const
+{
+	return get_display_server().window_get_is_transparent(m_window_id);
+}
+
+bool Window::get_is_visible() const
+{
+	return get_display_server().window_get_is_visible(m_window_id);
+}
+
+bool Window::get_should_close() const
+{
+	return get_display_server().window_get_should_close(m_window_id);
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-bool Window::is_auto_iconify() const
+void Window::set_is_auto_iconify(bool value)
 {
-	return get_display_server().window_is_auto_iconify(m_window_id);
-}
-
-bool Window::is_decorated() const
-{
-	return get_display_server().window_is_decorated(m_window_id);
-}
-
-bool Window::is_floating() const
-{
-	return get_display_server().window_is_floating(m_window_id);
-}
-
-bool Window::is_focused() const
-{
-	return get_display_server().window_is_focused(m_window_id);
-}
-
-bool Window::is_focus_on_show() const
-{
-	return get_display_server().window_is_focus_on_show(m_window_id);
-}
-
-bool Window::is_hovered() const
-{
-	return get_display_server().window_is_hovered(m_window_id);
-}
-
-bool Window::is_iconified() const
-{
-	return get_display_server().window_is_iconified(m_window_id);
-}
-
-bool Window::is_maximized() const
-{
-	return get_display_server().window_is_maximized(m_window_id);
-}
-
-bool Window::is_open() const
-{
-	return get_display_server().window_is_open(m_window_id);
-}
-
-bool Window::is_resizable() const
-{
-	return get_display_server().window_is_resizable(m_window_id);
-}
-
-bool Window::is_transparent() const
-{
-	return get_display_server().window_is_transparent(m_window_id);
-}
-
-bool Window::is_visible() const
-{
-	return get_display_server().window_is_visible(m_window_id);
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void Window::set_auto_iconify(bool value)
-{
-	get_display_server().window_set_auto_iconify(m_window_id, value);
+	get_display_server().window_set_is_auto_iconify(m_window_id, value);
 }
 
 void Window::set_clipboard(String const & value)
@@ -227,24 +225,29 @@ void Window::set_cursor_mode(int32_t value)
 	get_display_server().window_set_cursor_mode(m_window_id, value);
 }
 
+void Window::set_is_decorated(bool value)
+{
+	get_display_server().window_set_is_decorated(m_window_id, value);
+}
+
+void Window::set_is_floating(bool value)
+{
+	get_display_server().window_set_is_floating(m_window_id, value);
+}
+
+void Window::set_is_focus_on_show(bool value)
+{
+	get_display_server().window_set_is_focus_on_show(m_window_id, value);
+}
+
+void Window::set_is_resizable(bool value)
+{
+	get_display_server().window_set_is_resizable(m_window_id, value);
+}
+
 void Window::set_mouse_pos(Vec2 const & value)
 {
 	get_display_server().window_set_mouse_pos(m_window_id, value);
-}
-
-void Window::set_decorated(bool value)
-{
-	get_display_server().window_set_decorated(m_window_id, value);
-}
-
-void Window::set_floating(bool value)
-{
-	get_display_server().window_set_floating(m_window_id, value);
-}
-
-void Window::set_focus_on_show(bool value)
-{
-	get_display_server().window_set_focus_on_show(m_window_id, value);
 }
 
 void Window::set_icons(int32_t width, int32_t height, uint8_t * pixels, int32_t count)
@@ -270,11 +273,6 @@ void Window::set_position(Vec2 const & value)
 void Window::set_monitor(MonitorID monitor, Rect const & bounds)
 {
 	get_display_server().window_set_monitor(m_window_id, monitor, bounds);
-}
-
-void Window::set_resizable(bool value)
-{
-	get_display_server().window_set_resizable(m_window_id, value);
 }
 
 void Window::set_should_close(bool value)

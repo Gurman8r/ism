@@ -1,5 +1,5 @@
-#ifndef _ISM_INIT_HPP_
-#define _ISM_INIT_HPP_
+#ifndef _ISM_CTOR_HPP_
+#define _ISM_CTOR_HPP_
 
 #include <core/api/attr.hpp>
 
@@ -81,4 +81,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_INIT_HPP_
+#endif // !_ISM_CTOR_HPP_

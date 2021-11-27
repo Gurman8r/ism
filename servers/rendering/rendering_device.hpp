@@ -9,7 +9,7 @@ namespace ism
 
 	/* GENERIC */
 
-	MAKE_ENUM(PixelFormat)
+	ENUM_INT(PixelFormat)
 	{
 		PixelFormat_R4G4_UNORM_PACK8,
 		PixelFormat_R4G4B4A4_UNORM_PACK16,
@@ -244,7 +244,7 @@ namespace ism
 
 	/* TEXTURE */
 
-	MAKE_ENUM(TextureType)
+	ENUM_INT(TextureType)
 	{
 		TextureType_1D,
 		TextureType_2D,
@@ -256,7 +256,7 @@ namespace ism
 		TextureType_MAX
 	};
 
-	MAKE_ENUM(TextureSamples)
+	ENUM_INT(TextureSamples)
 	{
 		TextureSamples_1,
 		TextureSamples_2,
@@ -268,7 +268,7 @@ namespace ism
 		TextureSamples_MAX
 	};
 
-	MAKE_ENUM(TextureUsage)
+	ENUM_INT(TextureUsage)
 	{
 		TextureUsage_Sampling				= 1 << 0,
 		TextureUsage_ColorAttachment		= 1 << 1,
@@ -282,7 +282,7 @@ namespace ism
 		TextureUsage_ResolveAttachment		= 1 << 9,
 	};
 
-	MAKE_ENUM(TextureSwizzle)
+	ENUM_INT(TextureSwizzle)
 	{
 		TextureSwizzle_Identity,
 		TextureSwizzle_Zero,
@@ -318,7 +318,7 @@ namespace ism
 		TextureSwizzle swizzle_a{ TextureSwizzle_A };
 	};
 
-	MAKE_ENUM(TextureSliceType)
+	ENUM_INT(TextureSliceType)
 	{
 		TextureSliceType_2D,
 		TextureSliceType_Cube,
@@ -344,13 +344,13 @@ namespace ism
 
 	/* SAMPLER */
 
-	MAKE_ENUM(SamplerFilter)
+	ENUM_INT(SamplerFilter)
 	{
 		SamplerFilter_Nearest,
 		SamplerFilter_Linear,
 	};
 
-	MAKE_ENUM(SamplerRepeatMode)
+	ENUM_INT(SamplerRepeatMode)
 	{
 		SamplerRepeatMode_Repeat,
 		SamplerRepeatMode_MirroredRepeat,
@@ -360,7 +360,7 @@ namespace ism
 		SamplerRepeatMode_MAX
 	};
 
-	MAKE_ENUM(SamplerBorderColor)
+	ENUM_INT(SamplerBorderColor)
 	{
 		SamplerBorderColor_Float_Transparent_Black,
 		SamplerBorderColor_Int_Transparent_Black,
@@ -395,7 +395,7 @@ namespace ism
 
 	/* BUFFER */
 
-	MAKE_ENUM(VertexFrequency)
+	ENUM_INT(VertexFrequency)
 	{
 		VertexFrequency_Vertex,
 		VertexFrequency_Instance,
@@ -413,7 +413,7 @@ namespace ism
 
 	ALIAS(VertexFormatID) int64_t;
 
-	MAKE_ENUM(IndexBufferFormat)
+	ENUM_INT(IndexBufferFormat)
 	{
 		IndexBufferFormat_U16,
 		IndexBufferFormat_U32,
@@ -423,7 +423,7 @@ namespace ism
 
 	/* SHADER */
 
-	MAKE_ENUM(ShaderStage)
+	ENUM_INT(ShaderStage)
 	{
 		ShaderStage_Vertex,
 		ShaderStage_Fragment,
@@ -438,7 +438,7 @@ namespace ism
 		ShaderStage_Compute_Bit					= 1 << ShaderStage_Compute,
 	};
 
-	MAKE_ENUM(ShaderLanguage)
+	ENUM_INT(ShaderLanguage)
 	{
 		ShaderLanguage_GLSL,
 		ShaderLanguage_HLSL,
@@ -455,7 +455,7 @@ namespace ism
 
 	/* UNIFORMS */
 
-	MAKE_ENUM(UniformType)
+	ENUM_INT(UniformType)
 	{
 		UniformType_Sampler,
 		UniformType_SamplerWithTexture,
@@ -482,7 +482,7 @@ namespace ism
 
 	/* RENDER PIPELINE */
 
-	MAKE_ENUM(RenderPrimitive)
+	ENUM_INT(RenderPrimitive)
 	{
 		RenderPrimitive_Points,
 		RenderPrimitive_Lines,
@@ -498,20 +498,20 @@ namespace ism
 		RenderPrimitive_MAX
 	};
 
-	MAKE_ENUM(PolygonCullMode)
+	ENUM_INT(PolygonCullMode)
 	{
 		PolygonCullMode_Disabled,
 		PolygonCullMode_Front,
 		PolygonCullMode_Back,
 	};
 
-	MAKE_ENUM(PolygonFrontFace)
+	ENUM_INT(PolygonFrontFace)
 	{
 		PolygonFrontFace_Clockwise,
 		PolygonFrontFace_CounterClockwise,
 	};
 
-	MAKE_ENUM(StencilOperation)
+	ENUM_INT(StencilOperation)
 	{
 		StencilOperation_Keep,
 		StencilOperation_Zero,
@@ -524,7 +524,7 @@ namespace ism
 		StencilOperation_MAX
 	};
 
-	MAKE_ENUM(BlendFactor)
+	ENUM_INT(BlendFactor)
 	{
 		BlendFactor_Zero,
 		BlendFactor_One,
@@ -548,7 +548,7 @@ namespace ism
 		BlendFactor_MAX
 	};
 
-	MAKE_ENUM(BlendOperation)
+	ENUM_INT(BlendOperation)
 	{
 		BlendOperation_Add,
 		BlendOperation_Subtract,
@@ -684,7 +684,7 @@ namespace ism
 		virtual void finalize() = 0;
 
 	public:
-		virtual void clear(Color const & color) = 0;
+		virtual void clear(Color const & color, bool depth_stencil = true) = 0;
 
 		virtual void draw_arrays(RenderPrimitive primitive, size_t first, size_t count) = 0;
 

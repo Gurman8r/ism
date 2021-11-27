@@ -10,64 +10,76 @@ namespace ism
 	inline OBJ call_object(OBJ callable)
 	{
 		if (!callable) { return nullptr; }
-
-		TYPE type{ typeof(callable) };
-
-		if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+		else
 		{
-			return vcall(callable, nullptr, 0);
-		}
-		else if (binaryfunc tcall{ type->tp_call })
-		{
-			return tcall(callable, nullptr);
-		}
+			TYPE type{ typeof(callable) };
 
-		return nullptr;
+			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+			{
+				return vcall(callable, nullptr, 0);
+			}
+			else if (binaryfunc tcall{ type->tp_call })
+			{
+				return tcall(callable, nullptr);
+			}
+			else
+			{
+				return nullptr;
+			}
+		}
 	}
 
 	inline OBJ call_object(OBJ callable, LIST args)
 	{
 		if (!callable) { return nullptr; }
-
-		TYPE type{ typeof(callable) };
-
-		if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+		else
 		{
-			if (args)
+			TYPE type{ typeof(callable) };
+
+			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
 			{
-				return vcall(callable, args.data(), args.size());
+				if (args)
+				{
+					return vcall(callable, args.data(), args.size());
+				}
+				else
+				{
+					return vcall(callable, nullptr, 0);
+				}
+			}
+			else if (binaryfunc tcall{ type->tp_call })
+			{
+				return tcall(callable, args);
 			}
 			else
 			{
-				return vcall(callable, nullptr, 0);
+				return nullptr;
 			}
 		}
-		else if (binaryfunc tcall{ type->tp_call })
-		{
-			return tcall(callable, args);
-		}
-
-		return nullptr;
 	}
 
 	inline OBJ call_object(OBJ callable, OBJ const * argv, size_t argc)
 	{
 		if (!callable) { return nullptr; }
-
-		TYPE type{ typeof(callable) };
-
-		if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+		else
 		{
-			return vcall(callable, argv, argc);
-		}
-		else if (binaryfunc tcall{ type->tp_call })
-		{
-			ListObject args{ argv, argv + argc };
+			TYPE type{ typeof(callable) };
 
-			return tcall(callable, &args);
-		}
+			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+			{
+				return vcall(callable, argv, argc);
+			}
+			else if (binaryfunc tcall{ type->tp_call })
+			{
+				ListObject args{ argv, argv + argc };
 
-		return nullptr;
+				return tcall(callable, &args);
+			}
+			else
+			{
+				return nullptr;
+			}
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -199,7 +211,7 @@ namespace ism
 
 		bool try_next_overload : 1;
 
-		OBJ invoke()
+		OBJ operator()()
 		{
 			OBJ result{};
 			{

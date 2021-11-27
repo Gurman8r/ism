@@ -1,6 +1,4 @@
-function overloading (kind of works)
-
-global type database (map cpptype to typeobject)
+expand global type database
 
 generic types
 

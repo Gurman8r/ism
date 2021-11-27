@@ -5,13 +5,25 @@
 #include <core/os/main_loop.hpp>
 #include <iostream>
 
-// os implementation
-#define OS_IMPL(user) \
+// os function signature
+#define OS_FUNC(user) \
 	ism::OS & __os_impl__(user)
 
 // os main
 #define OS_MAIN(user) \
 	static ism::OS & ANON{ __os_impl__(user) }
+
+// os implementation
+#define OS_SPECIAL(user, decl)		\
+	OS_FUNC(user)				\
+	{							\
+		RETURN_STATIC(decl);	\
+	}							\
+
+// os main default
+#define OS_DEFAULT()			\
+	extern OS_FUNC(void *);		\
+	OS_MAIN(nullptr);			\
 
 namespace ism
 {

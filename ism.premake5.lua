@@ -17,9 +17,9 @@ dependson{ "assimp", "glew", "glfw", "imgui", }
 links{ "assimp", "glew", "glfw", "imgui" }
 
 defines{
-	"TOOLS_ENABLED",
-	"OPENGL_ENABLED",
-	"OPENGL_LOADER_GLEW",
+	"TOOLS_ENABLED=1",
+	"OPENGL_ENABLED=1",
+	"OPENGL_LOADER_GLEW=1",
 	"ISM_API=ISM_API_EXPORT",
 	"IMGUI_API=ISM_API_IMPORT",
 }
@@ -44,5 +44,5 @@ files{
 }
 
 postbuildcommands{
-	COPYFILE("%{wks.location}bin-lib/%{cfg.platform}/%{cfg.buildcfg}/%{prj.targetname}%{DLL}", "%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+	COPY_FILE("%{wks.location}bin-lib/%{cfg.platform}/%{cfg.buildcfg}/%{prj.targetname}%{DLL}", "%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"),
 }

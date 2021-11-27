@@ -3,6 +3,8 @@
 
 #include <scene/main/window.hpp>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #ifndef IM_VEC2_CLASS_EXTRA
 #define IM_VEC2_CLASS_EXTRA								\
 	constexpr ImVec2(ism::Vec2 const & v) noexcept		\
@@ -49,10 +51,10 @@
 #include <imgui-node-editor/imgui_node_editor.h>
 #endif
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	ISM_API_FUNC(bool) ImGui_Init(WindowID window, bool install_callbacks = true);
 
 	ISM_API_FUNC(void) ImGui_Shutdown();
@@ -60,8 +62,8 @@ namespace ism
 	ISM_API_FUNC(void) ImGui_NewFrame();
 
 	ISM_API_FUNC(void) ImGui_RenderDrawData(ImDrawData * draw_data);
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #endif // !_ISM_IMGUI_HPP_

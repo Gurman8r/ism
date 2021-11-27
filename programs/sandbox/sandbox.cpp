@@ -58,32 +58,16 @@ namespace ism
 		MAIN_PRINT("%d\n", d["ABC"].cast<int>());
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
 		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<String>().c_str());
-		typeof(d).attr("__name__") = "changed";
-		MAIN_PRINT("%s\n", STR(typeof(d).attr("__name__")).c_str());
 
 		MAIN_PRINT("\n");
-	}
-
-	void test_scene()
-	{
-		Ref<SceneTree> tree{ get_os().get_main_loop() };
-		tree->initialize(); SCOPE_EXIT(&) { tree->finalize(); };
-		while (SUCCEEDED(Main::iteration()))
-		{
-			char window_title[32]{};
-			std::sprintf(window_title, "ism @ %.1f fps", tree->get_framerate());
-			tree->get_root()->set_title(window_title);
-		}
 	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-extern OS_IMPL(void *);
-
 int main(int argc, char * argv[])
 {
-	OS_MAIN(nullptr);
+	OS_DEFAULT();
 
 	switch (Main::setup(argv[0], argc, argv))
 	{
@@ -94,7 +78,11 @@ int main(int argc, char * argv[])
 	VERIFY(Main::start());
 
 	test_api();
-	test_scene();
+
+	get_os().get_main_loop()->initialize();
+	while (Main::iteration() == 0);
+	get_os().get_main_loop()->finalize();
+
 	//MAIN_PAUSE();
 
 	Main::cleanup();

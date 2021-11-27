@@ -13,7 +13,7 @@ namespace ism
 	MAKE_OPAQUE(CursorID);
 
 	// cursor mode
-	MAKE_ENUM(CursorMode)
+	ENUM_INT(CursorMode)
 	{
 		CursorMode_Normal		, // normal
 		CursorMode_Hidden		, // hidden
@@ -21,7 +21,7 @@ namespace ism
 	};
 
 	// cursor shape
-	MAKE_ENUM(CursorShape)
+	ENUM_INT(CursorShape)
 	{
 		CursorShape_Arrow			, // arrow
 		CursorShape_IBeam			, // ibeam

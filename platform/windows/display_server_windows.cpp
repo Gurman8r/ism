@@ -227,71 +227,69 @@ Rect DisplayServerWindows::window_get_frame_size(WindowID id) const
 	return { l, t, r - l, b - t };
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-bool DisplayServerWindows::window_is_auto_iconify(WindowID id) const
+bool DisplayServerWindows::window_get_is_auto_iconify(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_AUTO_ICONIFY);
 }
 
-bool DisplayServerWindows::window_is_decorated(WindowID id) const
+bool DisplayServerWindows::window_get_is_decorated(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED);
 }
 
-bool DisplayServerWindows::window_is_floating(WindowID id) const
+bool DisplayServerWindows::window_get_is_floating(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING);
 }
 
-bool DisplayServerWindows::window_is_focused(WindowID id) const
+bool DisplayServerWindows::window_get_is_focused(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FOCUS_ON_SHOW);
 }
 
-bool DisplayServerWindows::window_is_focus_on_show(WindowID id) const
+bool DisplayServerWindows::window_get_is_focus_on_show(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FOCUSED);
 }
 
-bool DisplayServerWindows::window_is_hovered(WindowID id) const
+bool DisplayServerWindows::window_get_is_hovered(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_HOVERED);
 }
 
-bool DisplayServerWindows::window_is_iconified(WindowID id) const
+bool DisplayServerWindows::window_get_is_iconified(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_ICONIFIED);
 }
 
-bool DisplayServerWindows::window_is_maximized(WindowID id) const
+bool DisplayServerWindows::window_get_is_maximized(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_MAXIMIZED);
 }
 
-bool DisplayServerWindows::window_is_open(WindowID id) const
-{
-	return id && !glfwWindowShouldClose((GLFWwindow *)id);
-}
-
-bool DisplayServerWindows::window_is_resizable(WindowID id) const
+bool DisplayServerWindows::window_get_is_resizable(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_RESIZABLE);
 }
 
-bool DisplayServerWindows::window_is_transparent(WindowID id) const
+bool DisplayServerWindows::window_get_is_transparent(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_TRANSPARENT_FRAMEBUFFER);
 }
 
-bool DisplayServerWindows::window_is_visible(WindowID id) const
+bool DisplayServerWindows::window_get_is_visible(WindowID id) const
 {
 	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_VISIBLE);
 }
 
+bool DisplayServerWindows::window_get_should_close(WindowID id) const
+{
+	return id && glfwWindowShouldClose((GLFWwindow *)id);
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void DisplayServerWindows::window_set_auto_iconify(WindowID id, bool value)
+void DisplayServerWindows::window_set_is_auto_iconify(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_AUTO_ICONIFY, value);
 }
@@ -325,17 +323,17 @@ void DisplayServerWindows::window_set_mouse_pos(WindowID id, Vec2 const & value)
 	glfwSetCursorPos((GLFWwindow *)id, value[0], value[1]);
 }
 
-void DisplayServerWindows::window_set_decorated(WindowID id, bool value)
+void DisplayServerWindows::window_set_is_decorated(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED, value);
 }
 
-void DisplayServerWindows::window_set_floating(WindowID id, bool value)
+void DisplayServerWindows::window_set_is_floating(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING, value);
 }
 
-void DisplayServerWindows::window_set_focus_on_show(WindowID id, bool value)
+void DisplayServerWindows::window_set_is_focus_on_show(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_FOCUS_ON_SHOW, value);
 }
@@ -366,7 +364,7 @@ void DisplayServerWindows::window_set_monitor(WindowID id, MonitorID monitor, Re
 {
 }
 
-void DisplayServerWindows::window_set_resizable(WindowID id, bool value)
+void DisplayServerWindows::window_set_is_resizable(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_RESIZABLE, value);
 }

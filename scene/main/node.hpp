@@ -32,6 +32,10 @@ namespace ism
 
 		virtual ~Node() override;
 
+		virtual void initialize() {}
+		
+		virtual void finalize() {}
+
 		virtual void begin_step() {}
 		
 		virtual void step(Duration const &) {}
@@ -64,11 +68,11 @@ namespace ism
 
 	public:
 		template <class T, class ... Args
-		> bool add_node(Args && ... args) noexcept { return add_node(memnew(T(FWD(args)...))); }
+		> NODE add_node(Args && ... args) noexcept { return add_node(memnew(T(FWD(args)...))); }
 
-		bool add_node(Node * value) noexcept { return value && value->set_owner(this); }
+		NODE add_node(Node * value) noexcept { return (value && value->set_owner(this)) ? value : nullptr; }
 
-		bool add_node(NODE const & value) noexcept { return add_node(value.ptr()); }
+		NODE add_node(NODE const & value) noexcept { return add_node(value.ptr()); }
 
 		void delete_node(size_t const i);
 

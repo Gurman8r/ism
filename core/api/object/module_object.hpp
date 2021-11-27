@@ -26,9 +26,7 @@ namespace ism
 		> void add_object(cstring name, Value && value, bool overwrite = false)
 		{
 			STR str_name{ name };
-
 			VERIFY(overwrite || !ism::hasattr(this, str_name));
-
 			m_dict[str_name] = FWD(value);
 		}
 

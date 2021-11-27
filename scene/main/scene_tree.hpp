@@ -60,7 +60,7 @@ namespace ism
 		}
 
 	protected:
-		template <class T> void on_component_added(Node &, T &) {}
+		template <class T> void on_component_added(Entity &, T &) {}
 		
 	private:
 		bool m_initialized{};

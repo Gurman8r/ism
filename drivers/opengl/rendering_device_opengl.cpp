@@ -1,4 +1,4 @@
-#ifdef OPENGL_ENABLED
+#if OPENGL_ENABLED
 
 #include <drivers/opengl/rendering_device_opengl.hpp>
 
@@ -33,10 +33,15 @@ void RenderingDeviceOpenGL::finalize()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void RenderingDeviceOpenGL::clear(Color const & color)
+void RenderingDeviceOpenGL::clear(Color const & color, bool depth_stencil)
 {
 	glClearColor(color[0], color[1], color[2], color[3]);
-	glClear(GL_COLOR_BUFFER_BIT);
+
+	uint32_t mask{ GL_COLOR_BUFFER_BIT };
+
+	if LIKELY(depth_stencil) { mask |= (GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); }
+
+	glClear(mask);
 }
 
 void RenderingDeviceOpenGL::draw_arrays(RenderPrimitive primitive, size_t first, size_t count)

@@ -6,67 +6,22 @@
 #include <cassert>
 #include <stdexcept>
 
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class BuiltinException : public std::runtime_error {
-	public:
-		using std::runtime_error::runtime_error;
-		virtual void set_error() const = 0;
-	};
-
-#define ISM_RUNTIME_EXCEPTION(name, type) \
-	class name : public BuiltinException { public: \
-		using BuiltinException::BuiltinException; \
-		name() : name{ "" } { } \
-		void set_error() const override { _err_set_string(type, what()); } \
-	};
-
-	ISM_API_FUNC(void *) _err_occurred();
-	ISM_API_FUNC(void) _err_set_string(void * exception, cstring message);
-	ISM_API_FUNC(void) _err_format(void * exception, cstring message, ...);
-	ISM_API_FUNC(void) _err_fetch(void ** type, void ** value, void ** trace);
-	ISM_API_FUNC(void) _err_restore(void * type, void * value, void * trace);
-
-	struct ErrorScope final
-	{
-		void * type, * value, * trace;
-		ErrorScope() { ism::_err_fetch(&type, &value, &trace); }
-		~ErrorScope() { ism::_err_restore(type, value, trace); }
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum ErrorHandlerType
-	{
-		ERR_HANDLER_ERROR,
-		ERR_HANDLER_WARNING,
-	};
-
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // generate trap
 #if defined(COMPILER_MSVC)
-#	define DEBUG_BREAK		(_CSTD __debugbreak)
-
+#	define DEBUG_BREAK			(_CSTD __debugbreak)
 #elif defined(COMPILER_CLANG)
-#	define DEBUG_BREAK		(_CSTD __builtin_debugtrap)
-
+#	define DEBUG_BREAK			(_CSTD __builtin_debugtrap)
 #else
-#	define DEBUG_BREAK()	(_CSTD raise(SIGTRAP))
+#	define DEBUG_BREAK()		(_CSTD raise(SIGTRAP))
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 namespace ism
 {
+	// wide assert implementation
 	inline void _ism_wassert(cwstring message, cwstring file, uint32_t line) noexcept
 	{
 #if defined(COMPILER_MSVC)
@@ -79,15 +34,15 @@ namespace ism
 #		error "wassert is unavailable"
 #endif
 	}
-
-// wide assert
-#define WIDE_ASSERT(message, file, line) \
-	(ism::_ism_wassert)(message, file, line)
 }
 
-// assert
+// wide assert
+#define WASSERT(message, file, line) \
+	(ism::_ism_wassert)(message, file, line)
+
+// narrow assert
 #define ASSERT(message, file, line) \
-	WIDE_ASSERT(WIDE(message), WIDE(file), (unsigned)line)
+	WASSERT(WIDE(message), WIDE(file), (unsigned)line)
 
 // fatal
 #define FATAL(message) \
@@ -99,11 +54,13 @@ namespace ism
 
 namespace ism
 {
+	// validate implementation
 	template <class T
 	> auto _ism_validate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
 	{
-		return ((void)((!!(expr)) || (WIDE_ASSERT(message, file, line), 0))), FWD(expr);
+		return ((void)((!!(expr)) || (WASSERT(message, file, line), 0))), FWD(expr);
 	}
+}
 
 // validate message
 #define VALIDATE_MSG(expr, msg) \
@@ -112,6 +69,19 @@ namespace ism
 // validate
 #define VALIDATE(expr) \
 	(ism::_ism_validate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+namespace ism
+{
+	enum ErrorHandlerType
+	{
+		ERR_HANDLER_ERROR,
+		ERR_HANDLER_WARNING,
+	};
+
+	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
+	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

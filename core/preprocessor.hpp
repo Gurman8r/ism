@@ -53,11 +53,6 @@
 #define MEMBER_IMPL(expr) \
 	decltype(expr) expr
 
-// check success
-#ifndef SUCCEEDED
-#define SUCCEEDED(expr) ((expr) == EXIT_SUCCESS)
-#endif
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // make anonymous
@@ -123,7 +118,7 @@ namespace ism::impl
 
 // return static
 #define RETURN_STATIC(expr) \
-	_RETURN_STATIC(ANON, expr)
+	_RETURN_STATIC(ANON, (expr))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
