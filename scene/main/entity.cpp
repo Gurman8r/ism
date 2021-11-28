@@ -5,7 +5,7 @@
 
 using namespace ism;
 
-EMBEDDED_CLASS_TYPE(Entity, t) {}
+EMBED_CLASS(Entity, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -16,6 +16,7 @@ Entity::Entity() : Node{}
 
 Entity::~Entity()
 {
+	get_tree()->m_entt.destroy(m_entity_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

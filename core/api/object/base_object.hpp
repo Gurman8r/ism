@@ -50,8 +50,8 @@ private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object embedder
-#define EMBEDDED_CLASS_TYPE(m_class, m_var, ...)												\
+// class embedding utility
+#define EMBED_CLASS(m_class, m_var, ...)														\
 																								\
 	/* declare binder */																		\
 	template <> class ism::EmbedClassHelper<m_class> final										\
@@ -352,9 +352,9 @@ namespace ism
 
 		if (!obj) { return nullptr; }
 
-		else if (DICT::check_(obj)) { return DICT(obj)[FWD(index)]; }
+		else if (DICT::check_(obj)) { return ((DICT &)obj)[FWD(index)]; }
 
-		else if (LIST::check_(obj)) { return LIST(obj)[FWD(index)]; }
+		else if (LIST::check_(obj)) { return ((LIST &)obj)[FWD(index)]; }
 
 		else if (OBJ get{ typeof(obj).lookup(&ID___getitem__) }) { return get(obj, FWD_OBJ(index)); }
 
@@ -369,9 +369,9 @@ namespace ism
 
 		if (!obj) { return Error_Unknown; }
 
-		else if (DICT::check_(obj)) { return (DICT(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
+		else if (DICT::check_(obj)) { return (((DICT &)obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
 
-		else if (LIST::check_(obj)) { return (LIST(obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
+		else if (LIST::check_(obj)) { return (((LIST &)obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
 
 		else if (OBJ set{ typeof(obj).lookup(&ID___setitem__) }) { return set(obj, FWD_OBJ(index), FWD_OBJ(value)), Error_None; }
 

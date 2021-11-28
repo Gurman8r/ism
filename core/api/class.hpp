@@ -168,6 +168,9 @@ namespace ism
 #define CLASS_BINDER(m_class, m_var) \
 	(impl::ClassBinderHelper<m_class>{}) + [](CLASS_<m_class> m_var) -> CLASS_<m_class>
 
+#define CLASS_DEFINITION(m_class, m_var) \
+	m_var.tp_bind = CLASS_BINDER(m_class, m_var)
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 

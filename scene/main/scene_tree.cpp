@@ -8,7 +8,7 @@ using namespace ism;
 
 MEMBER_IMPL(SceneTree::singleton) {};
 
-EMBEDDED_CLASS_TYPE(SceneTree, t) {}
+EMBED_CLASS(SceneTree, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -17,6 +17,7 @@ SceneTree::SceneTree(SceneSettings const & settings) : MainLoop{}
 	if (!singleton) { singleton = this; }
 
 	m_root.instance();
+	m_root->m_tree = this;
 }
 
 SceneTree::~SceneTree()
@@ -29,8 +30,7 @@ SceneTree::~SceneTree()
 void SceneTree::initialize()
 {
 	m_initialized = true;
-	for_nodes([&](NODE & node) { node->m_tree = this; }); // placeholder
-	for_nodes([&](NODE & node) { node->initialize(); }); // placeholder
+	for_nodes([&](NODE & node) { node->m_tree = this; node->initialize(); });
 	MainLoop::initialize();
 }
 
@@ -42,9 +42,9 @@ bool SceneTree::process(Duration const & delta_time)
 
 	m_root->poll_events();
 
-	for_nodes([&](NODE & node) { node->begin_step(); }); // placeholder
-	for_nodes([&](NODE & node) { node->step(delta_time); }); // placeholder
-	for_nodes([&](NODE & node) { node->end_step(); }); // placeholder
+	for_nodes([&](NODE & node) { node->begin_step(); });
+	for_nodes([&](NODE & node) { node->step(delta_time); });
+	for_nodes([&](NODE & node) { node->end_step(); });
 
 	MainLoop::process(delta_time);
 
@@ -59,7 +59,7 @@ void SceneTree::finalize()
 {
 	m_initialized = false;
 	MainLoop::finalize();
-	for_nodes([&](NODE & node) { node->finalize(); }, true, true); // placeholder
+	for_nodes([&](NODE & node) { node->finalize(); }, true, true);
 	m_root = nullptr;
 }
 

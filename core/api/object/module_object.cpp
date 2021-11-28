@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(ModuleObject, t)
+EMBED_CLASS(ModuleObject, t)
 {
 	t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 
@@ -28,7 +28,7 @@ EMBEDDED_CLASS_TYPE(ModuleObject, t)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(ModuleObject, t)
+	CLASS_DEFINITION(ModuleObject, t)
 	{
 		return t
 

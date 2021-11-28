@@ -11,7 +11,7 @@ namespace ism
 
 	ALIAS(RES) Ref<Resource>;
 
-	MAKE_OPAQUE(RID);
+	OPAQUE_TYPE(RID);
 
 	class ISM_API Resource : public Object
 	{

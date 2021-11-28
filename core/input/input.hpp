@@ -10,7 +10,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// cursor handle
-	MAKE_OPAQUE(CursorID);
+	OPAQUE_TYPE(CursorID);
 
 	// cursor mode
 	ENUM_INT(CursorMode)
@@ -61,10 +61,6 @@ namespace ism
 
 		NODISCARD bool get_key_down(int32_t) const { return false; }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	NODISCARD inline Input & get_input() noexcept { return *VALIDATE(Input::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

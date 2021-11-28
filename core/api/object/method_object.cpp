@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(MethodObject, t)
+EMBED_CLASS(MethodObject, t)
 {
 	t.tp_dictoffset = offsetof(MethodObject, m_dict);
 
@@ -13,7 +13,7 @@ EMBEDDED_CLASS_TYPE(MethodObject, t)
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
 
-	t.tp_bind = CLASS_BINDER(MethodObject, t)
+	CLASS_DEFINITION(MethodObject, t)
 	{
 		return t;
 	};

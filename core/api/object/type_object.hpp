@@ -31,7 +31,7 @@ namespace ism
 		TypeObject() noexcept : Object{} {}
 
 		template <class T
-		> TypeObject(mpl::type_tag<T>, cstring name, TypeFlags flags = TypeFlags_None) : TypeObject{}
+		> TypeObject(mpl::type_tag<T>, cstring name, TypeFlags flags = TypeFlags_None) noexcept : TypeObject{}
 		{
 			tp_name = name;
 			tp_size = sizeof(T);
@@ -42,8 +42,7 @@ namespace ism
 			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return ism::Hasher<intptr_t>{}((intptr_t)*o); };
 			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> int32_t { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
-			if constexpr (std::is_default_constructible_v<T>)
-			{
+			if constexpr (std::is_default_constructible_v<T>) {
 				tp_new = (newfunc)[](TYPE, OBJ) -> OBJ { return memnew(T); };
 			}
 

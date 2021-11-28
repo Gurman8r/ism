@@ -4,7 +4,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(Texture, t) {}
+EMBED_CLASS(Texture, t) {}
 
 Texture::Texture() : Resource{}
 {
@@ -16,7 +16,7 @@ Texture::~Texture()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(Texture2D, t) {}
+EMBED_CLASS(Texture2D, t) {}
 
 Texture2D::Texture2D() : Texture{}
 {
@@ -28,7 +28,7 @@ Texture2D::~Texture2D()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(Texture3D, t) {}
+EMBED_CLASS(Texture3D, t) {}
 
 Texture3D::Texture3D() : Texture{}
 {
@@ -40,7 +40,7 @@ Texture3D::~Texture3D()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(TextureCube, t) {}
+EMBED_CLASS(TextureCube, t) {}
 
 TextureCube::TextureCube() : Texture{}
 {

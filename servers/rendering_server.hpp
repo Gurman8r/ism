@@ -27,16 +27,12 @@ namespace ism
 		static RenderingServer * singleton;
 
 	protected:
-		static RenderingServer * (*create_func)();
-
 		explicit RenderingServer() noexcept : Object{} { singleton = this; }
 
 	public:
 		virtual ~RenderingServer() override {}
 
 		NODISCARD static RenderingServer * get_singleton() noexcept { return singleton; }
-
-		NODISCARD static RenderingServer * create() { return create_func ? create_func() : nullptr; }
 
 		virtual void initialize() = 0;
 

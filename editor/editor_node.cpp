@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBEDDED_CLASS_TYPE(EditorNode, t) {}
+EMBED_CLASS(EditorNode, t) {}
 
 EditorNode::EditorNode() : Node{}
 {

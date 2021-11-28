@@ -60,13 +60,13 @@ void Object::set_type(TYPE const & value) noexcept { m_type = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(Object, t, TypeFlags_IsAbstract)
+EMBED_CLASS(Object, t, TypeFlags_IsAbstract)
 {
 	t.tp_getattro = (getattrofunc)&Object::generic_getattr;
 
 	t.tp_setattro = (setattrofunc)&Object::generic_setattr;
 
-	t.tp_bind = CLASS_BINDER(Object, t)
+	CLASS_DEFINITION(Object, t)
 	{
 		return t;
 	};

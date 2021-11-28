@@ -23,7 +23,7 @@ TYPE TypeObject::get_type_static() noexcept { return &__class_type; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(TypeObject, t, TypeFlags_HaveVectorCall)
+EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -46,7 +46,7 @@ EMBEDDED_CLASS_TYPE(TypeObject, t, TypeFlags_HaveVectorCall)
 		return fn ? fn(self, args) : nullptr;
 	};
 
-	t.tp_bind = CLASS_BINDER(TypeObject, t)
+	CLASS_DEFINITION(TypeObject, t)
 	{
 		return t
 
@@ -336,32 +336,32 @@ Error TypeObject::update_slot(STR const & name)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	case hash("__eq__"): {} break;
-	case hash("__ne__"): {} break;
-	case hash("__lt__"): {} break;
-	case hash("__le__"): {} break;
-	case hash("__gt__"): {} break;
-	case hash("__ge__"): {} break;
+	//case hash("__eq__"): {} break;
+	//case hash("__ne__"): {} break;
+	//case hash("__lt__"): {} break;
+	//case hash("__le__"): {} break;
+	//case hash("__gt__"): {} break;
+	//case hash("__ge__"): {} break;
 
-	case hash("__add__"): {} break;
-	case hash("__sub__"): {} break;
-	case hash("__div__"): {} break;
-	case hash("__mul__"): {} break;
-	case hash("__mod__"): {} break;
-	case hash("__pow__"): {} break;
-	case hash("__pos__"): {} break;
-	case hash("__neg__"): {} break;
+	//case hash("__add__"): {} break;
+	//case hash("__sub__"): {} break;
+	//case hash("__div__"): {} break;
+	//case hash("__mul__"): {} break;
+	//case hash("__mod__"): {} break;
+	//case hash("__pow__"): {} break;
+	//case hash("__pos__"): {} break;
+	//case hash("__neg__"): {} break;
 
-	case hash("__invert__"): {} break;
-	case hash("__lshift__"): {} break;
-	case hash("__rshift__"): {} break;
-	case hash("__and__"): {} break;
-	case hash("__or__"): {} break;
-	case hash("__xor__"): {} break;
+	//case hash("__invert__"): {} break;
+	//case hash("__lshift__"): {} break;
+	//case hash("__rshift__"): {} break;
+	//case hash("__and__"): {} break;
+	//case hash("__or__"): {} break;
+	//case hash("__xor__"): {} break;
 
-	case hash("__int__"): {} break;
-	case hash("__float__"): {} break;
-	case hash("__bool__"): {} break;
+	//case hash("__int__"): {} break;
+	//case hash("__float__"): {} break;
+	//case hash("__bool__"): {} break;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	}

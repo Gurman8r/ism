@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(CppFunctionObject, t)
+EMBED_CLASS(CppFunctionObject, t)
 {
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
@@ -16,9 +16,9 @@ EMBEDDED_CLASS_TYPE(CppFunctionObject, t)
 		return !obj ? self : METHOD({ self, obj });
 	};
 
-	t.tp_bind = CLASS_BINDER(CppFunctionObject, t)
+	CLASS_DEFINITION(CppFunctionObject, t)
 	{
-		// this needs to be added manually before anything else because CLASS_ depends on it to work properly
+		// manually add this first because it's used by CLASS_
 		t.add_object("__name__", PROPERTY({
 			CPP_FUNCTION({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(t) }),
 			CPP_FUNCTION({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(t) }),

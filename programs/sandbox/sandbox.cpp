@@ -59,6 +59,23 @@ namespace ism
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
 		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<String>().c_str());
 
+		EventSystem bus{};
+		bus.add_dummy_listener<InputEvent>([](Event const & ev)
+		{
+			if ((EventID)ev == InputEvent::ID)
+			{
+				MAIN_PRINT("Hello from Dummy!\n");
+			}
+		});
+		bus.get_delegate<InputEvent>() += [](Event const & ev)
+		{
+			if ((EventID)ev == InputEvent::ID)
+			{
+				MAIN_PRINT("Hello from Delegate!\n");
+			}
+		};
+		bus.fire_event(InputEvent{});
+
 		MAIN_PRINT("\n");
 	}
 }

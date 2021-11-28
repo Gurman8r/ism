@@ -9,13 +9,13 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(Window, t) {}
+EMBED_CLASS(Window, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 Window::Window() : Viewport{}
 {
-	m_window_id = get_display_server().get_context_main();
+	m_window_id = get_display_server().get_context_current();
 
 	if (m_window_id) { set_user_pointer(this); }
 }

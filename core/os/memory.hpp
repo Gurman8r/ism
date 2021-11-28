@@ -62,9 +62,9 @@ namespace ism
 		return value;
 	}
 
-#define memnew(T) ::ism::_post_initialize(new ("") T)
+#define memnew(T) (::ism::_post_initialize(new ("") T))
 
-#define memnew_placement(ptr, T) ::ism::_post_initialize(new (ptr, sizeof(T), "") T)
+#define memnew_placement(ptr, T) (::ism::_post_initialize(new (ptr, sizeof(T), "") T))
 
 	template <class T, class ... Args
 	> NODISCARD auto construct_or_initialize(Args && ... args) -> T *

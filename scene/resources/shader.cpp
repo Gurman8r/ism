@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBEDDED_CLASS_TYPE(Shader, t) {}
+EMBED_CLASS(Shader, t) {}
 
 Shader::Shader() : Resource{}
 {

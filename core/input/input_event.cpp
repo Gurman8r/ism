@@ -2,10 +2,6 @@
 
 using namespace ism;
 
-EMBEDDED_CLASS_TYPE(InputEvent, t)
-{
-}
-
-InputEvent::~InputEvent()
+EMBED_CLASS(InputEvent, t)
 {
 }

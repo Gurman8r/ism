@@ -12,17 +12,17 @@ namespace ism
 		String m_text{}, m_path{};
 
 	public:
-		virtual bool has_text() const { return !m_text.empty(); }
-
 		virtual String const & get_text() const { return m_text; }
 
-		virtual void set_text(String const & value) { m_text = value; }
+		virtual bool has_text() const { return !m_text.empty(); }
+
+		Error load_text(String const & path);
 
 		virtual void reload_from_file() override;
 
-		void set_file_path(String const & value) noexcept { m_path = value; }
+		virtual void set_text(String const & value) { m_text = value; }
 
-		Error load_text(String const & path);
+		void set_file_path(String const & value) noexcept { m_path = value; }
 	};
 }
 

@@ -4,9 +4,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDDED_CLASS_TYPE(MainLoop, t)
+EMBED_CLASS(MainLoop, t)
 {
-	t.tp_bind = CLASS_BINDER(MainLoop, t)
+	CLASS_DEFINITION(MainLoop, t)
 	{
 		return t
 

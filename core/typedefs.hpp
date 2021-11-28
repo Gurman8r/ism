@@ -45,7 +45,7 @@ public:																											\
 #define ENUM_UINT(m_name) MAKE_ENUM(m_name, uint32_t)
 
 // declare opaque handle type
-#define MAKE_OPAQUE(m_name) \
+#define OPAQUE_TYPE(m_name) \
 	struct CAT(__, m_name) { int unused; }; \
 	ALIAS(m_name) CAT(__, m_name) *
 

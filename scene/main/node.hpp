@@ -32,15 +32,19 @@ namespace ism
 
 		virtual ~Node() override;
 
-		virtual void initialize() {}
+	public:
+		virtual void initialize() {} // placeholder
 		
-		virtual void finalize() {}
+		virtual void process(Duration const &) {} // placeholder
 
-		virtual void begin_step() {}
+		virtual void finalize() {} // placeholder
+
+	public:
+		virtual void begin_step() {} // placeholder
 		
-		virtual void step(Duration const &) {}
+		virtual void step(Duration const &) {} // placeholder
 		
-		virtual void end_step() {}
+		virtual void end_step() {} // placeholder
 
 	public:
 		NODISCARD SceneTree * get_tree() const noexcept { return m_tree; }

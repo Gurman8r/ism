@@ -52,8 +52,7 @@ namespace ism
 
 	public:
 		template <class Fn = void(*)(NODE &)
-		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false)
-		{
+		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false) noexcept {
 			if (!m_root) { return; }
 			fn((NODE &)m_root);
 			m_root->for_nodes(fn, recursive, reverse);

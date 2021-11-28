@@ -5,7 +5,7 @@
 
 using namespace ism;
 
-EMBEDDED_CLASS_TYPE(Node, t, TypeFlags_IsAbstract) {}
+EMBED_CLASS(Node, t, TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -57,6 +57,8 @@ bool Node::set_owner(Node * value)
 	if (m_owner) { m_owner->delete_node(get_sibling_index()); }
 
 	m_owner = value;
+
+	m_tree = value->m_tree;
 
 	return true;
 }

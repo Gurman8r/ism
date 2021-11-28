@@ -11,8 +11,8 @@ namespace ism
 	class Viewport;
 	class Window;
 
-	MAKE_OPAQUE(MonitorID);
-	MAKE_OPAQUE(WindowID);
+	OPAQUE_TYPE(MonitorID);
+	OPAQUE_TYPE(WindowID);
 
 	ALIAS(WindowCharCallback)				void(*)(WindowID, uint32_t);
 	ALIAS(WindowCharModsCallback)			void(*)(WindowID, uint32_t, int32_t);
@@ -109,8 +109,10 @@ namespace ism
 		NODISCARD int32_t compare(VideoMode const & other) const noexcept
 		{
 			if (this == std::addressof(other)) { return 0; }
-
-			return util::compare(size, other.size);
+			if (auto cmp{ CMP(size, other.size) }; cmp != 0) { return cmp; }
+			if (auto cmp{ CMP(bits_per_pixel, other.bits_per_pixel) }; cmp != 0) { return cmp; }
+			if (auto cmp{ CMP(refresh_rate, other.refresh_rate) }; cmp != 0) { return cmp; }
+			return 0;
 		}
 	};
 

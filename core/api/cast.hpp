@@ -23,12 +23,12 @@ namespace ism
 	{
 		LoaderLifeSupport() noexcept
 		{
-			get_internals().loader_stack.push_back(nullptr);
+			get_internals().loader_life_support_stack.push_back(nullptr);
 		}
 
 		~LoaderLifeSupport() noexcept
 		{
-			Vector<OBJ> & stack{ get_internals().loader_stack };
+			Vector<OBJ> & stack{ get_internals().loader_life_support_stack };
 			VERIFY(!stack.empty());
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
@@ -38,7 +38,7 @@ namespace ism
 
 	inline void add_to_life_support(OBJ const & value) noexcept
 	{
-		Vector<OBJ> & stack{ get_internals().loader_stack };
+		Vector<OBJ> & stack{ get_internals().loader_life_support_stack };
 		VERIFY(!stack.empty());
 		LIST & list{ (LIST &)stack.back() };
 		if (!list) { list = LIST::new_(); }

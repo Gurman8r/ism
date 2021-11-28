@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBEDDED_CLASS_TYPE(ImGuiNode, t) {}
+EMBED_CLASS(ImGuiNode, t) {}
 
 ImGuiNode::ImGuiNode(cstring log_filename, cstring ini_filename) : Node{}
 {

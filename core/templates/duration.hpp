@@ -132,15 +132,21 @@ namespace ism
 
 		using time_point = std::chrono::high_resolution_clock::time_point;
 
+		NODISCARD static time_point now() noexcept { return std::chrono::high_resolution_clock::now(); }
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		explicit Timer(bool running) noexcept
-			: m_running{ running }
-			, m_start_time{ std::chrono::high_resolution_clock::now() }
-			, m_stop_time{ m_start_time }
-			, m_elapsed{}
+			: m_running		{ running }
+			, m_start_time	{ now() }
+			, m_stop_time	{ m_start_time }
+			, m_elapsed		{}
 		{
 		}
 
 		Timer() noexcept = default;
+
+		NON_COPYABLE(Timer);
 
 		Timer(Timer && other) noexcept : Timer{} { swap(std::move(other)); }
 
@@ -167,7 +173,7 @@ namespace ism
 
 		NODISCARD Duration elapsed() const noexcept
 		{
-			if (m_running) { return std::chrono::high_resolution_clock::now() - m_start_time; }
+			if (m_running) { return now() - m_start_time; }
 
 			else { return m_elapsed; }
 		}
@@ -185,7 +191,7 @@ namespace ism
 		{
 			m_running = true;
 
-			m_start_time = m_stop_time = std::chrono::high_resolution_clock::now();
+			m_start_time = m_stop_time = now();
 
 			m_elapsed = {};
 
@@ -198,7 +204,7 @@ namespace ism
 
 			m_running = false;
 
-			m_stop_time = std::chrono::high_resolution_clock::now();
+			m_stop_time = now();
 
 			m_elapsed = (m_stop_time - m_start_time);
 
