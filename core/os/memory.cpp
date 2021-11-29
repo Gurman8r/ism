@@ -28,17 +28,17 @@ static struct NODISCARD MemoryTracker final
 #if ISM_MEMORY_LEAK_DISPLAY
 		if (!records.empty())
 		{
-			get_os().print("\n\nMEMORY LEAKS DETECTED:");
+			SINGLETON(OS)->print("\n\nMEMORY LEAKS DETECTED:");
 
 			for (size_t i = 0; i < records.size(); ++i)
 			{
 				records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
 				{
-					get_os().print("\nindex:%zu, size:%zu, addr:%p, desc: %s", index, size, addr, desc);
+					SINGLETON(OS)->print("\nindex:%zu, size:%zu, addr:%p, desc: %s", index, size, addr, desc);
 				});
 			}
 
-			get_os().pause();
+			SINGLETON(OS)->pause();
 		}
 #endif
 

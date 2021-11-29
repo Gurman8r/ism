@@ -1,7 +1,7 @@
 #ifndef _ISM_MAIN_LOOP_HPP_
 #define _ISM_MAIN_LOOP_HPP_
 
-#include <core/api/class.hpp>
+#include <core/io/event.hpp>
 
 namespace ism
 {
@@ -14,14 +14,14 @@ namespace ism
 		OBJ m_script{};
 
 	protected:
-		MainLoop() noexcept : Object{} {}
+		MainLoop() noexcept {}
 
 	public:
-		virtual ~MainLoop();
+		virtual ~MainLoop() noexcept override = default;
 
 		virtual void initialize();
 
-		virtual bool process(Duration const & delta_time);
+		virtual bool process(Duration const & dt);
 
 		virtual void finalize();
 

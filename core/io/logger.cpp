@@ -13,11 +13,11 @@ void Logger::log_error(cstring func, cstring file, uint32_t line, cstring desc, 
 		err_type = "ERROR";
 	} break;
 
-	case ism::Logger::ERR_ERROR: {
+	case Logger::ERR_ERROR: {
 		err_type = "ERROR";
 	} break;
 
-	case ism::Logger::ERR_WARNING: {
+	case Logger::ERR_WARNING: {
 		err_type = "WARNING";
 	} break;
 	}

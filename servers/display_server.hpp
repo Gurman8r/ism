@@ -9,6 +9,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class Viewport;
+	class SubViewport;
 	class Window;
 
 	OPAQUE_TYPE(MonitorID);
@@ -261,10 +262,6 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	NODISCARD inline DisplayServer & get_display_server() noexcept { return *VALIDATE(DisplayServer::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

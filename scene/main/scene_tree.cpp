@@ -8,16 +8,15 @@ using namespace ism;
 
 MEMBER_IMPL(SceneTree::singleton) {};
 
-EMBED_CLASS(SceneTree, t) {}
+EMBEDED_CLASS(SceneTree, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 SceneTree::SceneTree(SceneSettings const & settings) : MainLoop{}
 {
-	if (!singleton) { singleton = this; }
+	singleton = this;
 
 	m_root.instance();
-	m_root->m_tree = this;
 }
 
 SceneTree::~SceneTree()
@@ -30,37 +29,40 @@ SceneTree::~SceneTree()
 void SceneTree::initialize()
 {
 	m_initialized = true;
-	for_nodes([&](NODE & node) { node->m_tree = this; node->initialize(); });
+
+	//m_root->set_tree(this);
+
 	MainLoop::initialize();
 }
 
-bool SceneTree::process(Duration const & delta_time)
+void SceneTree::finalize()
 {
-	bool should_exit{ false };
+	m_initialized = false;
 
-	m_fps.update(delta_time);
+	MainLoop::finalize();
+}
+
+bool SceneTree::process(Duration const & dt)
+{
+	MainLoop::process(dt);
+
+	bool should_exit{};
+
+	m_fps.update(dt);
 
 	m_root->poll_events();
 
-	for_nodes([&](NODE & node) { node->begin_step(); });
-	for_nodes([&](NODE & node) { node->step(delta_time); });
-	for_nodes([&](NODE & node) { node->end_step(); });
+	ImGui_NewFrame();
 
-	MainLoop::process(delta_time);
+	m_root->process(dt);
+
+	ImGui_RenderFrame();
 
 	m_root->swap_buffers();
 
 	should_exit |= m_root->get_should_close();
 
 	return should_exit;
-}
-
-void SceneTree::finalize()
-{
-	m_initialized = false;
-	MainLoop::finalize();
-	for_nodes([&](NODE & node) { node->finalize(); }, true, true);
-	m_root = nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

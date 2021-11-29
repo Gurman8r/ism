@@ -6,52 +6,52 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object common
-#define OBJECT_COMMON(m_class, m_inherits)									\
-private:																	\
-	friend class ism::Internals;											\
-																			\
-	friend class ism::EmbedClassHelper<m_class>;							\
-																			\
-	static ism::TypeObject __class_type;									\
-																			\
-protected:																	\
-	static void initialize_class()											\
-	{																		\
-		if (static bool once{}; !once && (once = true))						\
-		{																	\
-			ism::get_internals().add_class(&m_class::__class_type);			\
-																			\
-			if (m_class::__class_type.tp_bind)								\
-			{																\
-				m_class::__class_type.tp_bind(&m_class::__class_type);		\
-			}																\
-		};																	\
-	}																		\
-																			\
-	virtual void _initialize_classv() override								\
-	{																		\
-		m_class::initialize_class();										\
-	}																		\
-																			\
-	FORCE_INLINE virtual ism::TYPE _get_typev() const override				\
-	{																		\
-		return m_class::get_type_static();									\
-	}																		\
-																			\
-public:																		\
-	using base_type = typename m_inherits;									\
-																			\
-	FORCE_INLINE static ism::TYPE get_type_static() noexcept				\
-	{																		\
-		return &m_class::__class_type;										\
-	}																		\
-																			\
+#define OBJECT_COMMON(m_class, m_inherits)										\
+private:																		\
+	friend class ism::Internals;												\
+																				\
+	friend class ism::EmbedClassHelper<m_class>;								\
+																				\
+	static ism::TypeObject __class_type;										\
+																				\
+protected:																		\
+	static void initialize_class()												\
+	{																			\
+		if (static bool once{}; !once && (once = true))							\
+		{																		\
+			SINGLETON(ism::Internals)->add_class(&m_class::__class_type);		\
+																				\
+			if (m_class::__class_type.tp_bind)									\
+			{																	\
+				m_class::__class_type.tp_bind(&m_class::__class_type);			\
+			}																	\
+		};																		\
+	}																			\
+																				\
+	virtual void _initialize_classv() override									\
+	{																			\
+		m_class::initialize_class();											\
+	}																			\
+																				\
+	FORCE_INLINE virtual ism::TYPE _get_typev() const override					\
+	{																			\
+		return m_class::get_type_static();										\
+	}																			\
+																				\
+public:																			\
+	using base_type = typename m_inherits;										\
+																				\
+	FORCE_INLINE static ism::TYPE get_type_static() noexcept					\
+	{																			\
+		return &m_class::__class_type;											\
+	}																			\
+																				\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // class embedding utility
-#define EMBED_CLASS(m_class, m_var, ...)														\
+#define EMBEDED_CLASS(m_class, m_var, ...)														\
 																								\
 	/* declare binder */																		\
 	template <> class ism::EmbedClassHelper<m_class> final										\

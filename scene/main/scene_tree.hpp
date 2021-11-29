@@ -39,18 +39,19 @@ namespace ism
 	public:
 		virtual void initialize() override;
 
-		virtual bool process(Duration const & delta_time) override;
-
 		virtual void finalize() override;
 
-	public:
-		NODISCARD Ref<Window> get_root() const noexcept { return m_root; }
-
-		NODISCARD Duration get_time() const noexcept { return m_main_timer.elapsed(); }
-
-		NODISCARD float_t get_framerate() const noexcept { return m_fps.value; }
+		virtual bool process(Duration const & dt) override;
 
 	public:
+		NODISCARD auto get_registry() const noexcept -> entt::registry * { return const_cast<entt::registry *>(&m_entt); }
+
+		NODISCARD auto get_root() const noexcept -> Ref<Window> { return m_root; }
+
+		NODISCARD auto get_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
+
+		NODISCARD auto get_framerate() const noexcept -> float_t { return m_fps.value; }
+
 		template <class Fn = void(*)(NODE &)
 		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false) noexcept {
 			if (!m_root) { return; }

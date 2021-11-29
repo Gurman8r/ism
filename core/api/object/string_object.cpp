@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(StringObject, t)
+EMBEDED_CLASS(StringObject, t)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return ism::hash(***(STR &)self); };
 
@@ -28,7 +28,7 @@ EMBED_CLASS(StringObject, t)
 		}
 	};
 
-	CLASS_DEFINITION(StringObject, t)
+	CLASS_DEF(StringObject, t)
 	{
 		return t
 

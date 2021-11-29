@@ -21,10 +21,14 @@ namespace ism
 	public:
 		virtual ~Entity() override;
 
+		virtual void process(Duration const & dt) override;
+
+	public:
 		NODISCARD operator entt::entity() const noexcept { return m_entity_id; }
 
 		NODISCARD auto get_entity_id() const noexcept -> entt::entity { return m_entity_id; }
 
+	public:
 		template <class Component, class ... Args
 		> Component & add_component(Args && ... args) noexcept
 		{

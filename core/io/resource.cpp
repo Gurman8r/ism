@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(Resource, t, TypeFlags_IsAbstract)
+EMBEDED_CLASS(Resource, t, TypeFlags_IsAbstract)
 {
 }
 

@@ -5,8 +5,10 @@
 
 namespace ism
 {
-	class ISM_API EditorInterface
+	class ISM_API EditorInterface : public Object
 	{
+		OBJECT_COMMON(EditorInterface, Object);
+
 	public:
 		virtual ~EditorInterface();
 	};

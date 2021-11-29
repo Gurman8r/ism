@@ -1,18 +1,18 @@
 #ifndef _ISM_INPUT_EVENT_HPP_
 #define _ISM_INPUT_EVENT_HPP_
 
-#include <core/io/event_system.hpp>
+#include <core/io/event.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EVENT_CLASS(InputEvent)
+	class ISM_API InputEvent : public EventClass<InputEvent>
 	{
 		OBJECT_COMMON(InputEvent, Event);
 
 	public:
-		explicit InputEvent() noexcept = default;
+		InputEvent() noexcept {}
 
 		virtual ~InputEvent() noexcept override = default;
 	};

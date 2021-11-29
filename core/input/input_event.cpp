@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_CLASS(InputEvent, t)
+EMBEDED_CLASS(InputEvent, t)
 {
 }

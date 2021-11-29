@@ -4,9 +4,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(MainLoop, t)
+EMBEDED_CLASS(MainLoop, t)
 {
-	CLASS_DEFINITION(MainLoop, t)
+	CLASS_DEF(MainLoop, t)
 	{
 		return t
 
@@ -24,10 +24,6 @@ EMBED_CLASS(MainLoop, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MainLoop::~MainLoop()
-{
-}
-
 void MainLoop::initialize()
 {
 	// _initialize
@@ -37,14 +33,14 @@ void MainLoop::initialize()
 	}
 }
 
-bool MainLoop::process(Duration const & delta_time)
+bool MainLoop::process(Duration const & dt)
 {
 	bool should_close{};
 
 	// _process
 	STR_IDENTIFIER(_process);
 	if (OBJ callback{ getattr(m_script, &ID__process) }) {
-		static FloatObject arg0; arg0 = delta_time.count();
+		static FloatObject arg0; arg0 = dt.count();
 		static ListObject args{ &arg0, };
 		OBJ result{ call_object(callback, &args) };
 		if (result && result.cast<bool>()) {

@@ -17,7 +17,7 @@ using namespace ism;
 
 MEMBER_IMPL(DisplayServerWindows::g_main_window) {};
 
-EMBED_CLASS(DisplayServerWindows, t) {}
+EMBEDED_CLASS(DisplayServerWindows, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

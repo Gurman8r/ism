@@ -36,7 +36,7 @@ namespace ism
 		}
 
 	public:
-		static auto clear(Color const & color, bool depth_stencil = true) noexcept -> RenderingCommand {
+		static auto clear(Color const & color = {}, bool depth_stencil = true) noexcept -> RenderingCommand {
 			return std::bind(&RenderingDevice::clear, std::placeholders::_1, color, depth_stencil);
 		}
 

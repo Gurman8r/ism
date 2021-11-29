@@ -686,7 +686,7 @@ namespace ism
 	public:
 		// LOW LEVEL RENDERING API GOES HERE
 
-		virtual void clear(Color const & color, bool depth_stencil = true) = 0;
+		virtual void clear(Color const & color = {}, bool depth_stencil = true) = 0;
 
 		virtual void draw_arrays(RenderPrimitive primitive, size_t first, size_t count) = 0;
 

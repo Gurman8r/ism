@@ -5,11 +5,11 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(DictObject, t)
+EMBEDED_CLASS(DictObject, t)
 {
 	t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)DICT(self).size(); };
 
-	CLASS_DEFINITION(DictObject, t)
+	CLASS_DEF(DictObject, t)
 	{
 		return t
 

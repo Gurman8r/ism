@@ -5,69 +5,94 @@
 
 using namespace ism;
 
-EMBED_CLASS(Node, t, TypeFlags_IsAbstract) {}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+EMBEDED_CLASS(Node, t, TypeFlags_IsAbstract)
+{
+	CLASS_DEF(Node, t)
+	{
+		return t
+			.def("_process", &Node::process)
+			;
+	};
+}
+
+Node::Node() noexcept { if (!m_tree) { m_tree = VALIDATE(SINGLETON(SceneTree)); } }
+
+Node::~Node() noexcept { while (!m_children.empty()) { m_children.pop_back(); } }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Node::~Node()
+void Node::process(Duration const & dt)
 {
-	while (!m_nodes.empty())
+	for (NODE & n : m_children)
 	{
-		m_nodes.pop_back();
+		n->process(dt);
 	}
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void Node::delete_node(size_t const i)
+void Node::handle_event(Event const & ev)
 {
-	VERIFY(i < get_node_count());
-
-	m_nodes.erase(m_nodes.begin() + i);
 }
 
-void Node::detach_nodes()
-{
-	if (m_owner)
-	{
-		for (NODE const & node : m_nodes)
-		{
-			node->m_owner = m_owner;
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-			m_owner->m_nodes.push_back(node);
+void Node::detach_children()
+{
+	if (m_parent)
+	{
+		for (NODE const & node : m_children)
+		{
+			node->m_parent = m_parent;
+
+			m_parent->m_children.push_back(node);
 		}
 	}
 	else
 	{
-		for (NODE const & node : m_nodes)
+		for (NODE const & node : m_children)
 		{
-			node->m_owner = nullptr;
+			node->m_parent = nullptr;
 		}
 	}
 
-	m_nodes.clear();
+	m_children.clear();
 }
 
-bool Node::set_owner(Node * value)
+bool Node::set_parent(Node * value)
 {
-	if (!value || (this == value) || m_owner == value) { return false; }
+	if (!value || (this == value) || m_parent == value) { return false; }
 
-	value->m_nodes.push_back(this);
+	value->m_children.push_back(this);
 
-	if (m_owner) { m_owner->delete_node(get_sibling_index()); }
+	if (m_parent) { m_parent->delete_child(get_sibling_index()); }
 
-	m_owner = value;
+	m_parent = value;
 
 	m_tree = value->m_tree;
 
 	return true;
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+size_t Node::get_sibling_index() const noexcept
+{
+	return !m_parent
+		? npos
+		: (size_t)std::distance(
+			m_parent->m_children.begin(),
+			std::find(
+				m_parent->m_children.begin(),
+				m_parent->m_children.end(),
+				this));
+}
+
 void Node::set_sibling_index(size_t const i)
 {
-	if (!m_owner) { return; }
+	if (!m_parent) { return; }
 
-	auto & siblings{ m_owner->m_nodes };
+	auto & siblings{ m_parent->m_children };
 
 	VERIFY(i < siblings.size());
 
@@ -76,6 +101,43 @@ void Node::set_sibling_index(size_t const i)
 	siblings.erase(siblings.begin() + get_sibling_index());
 
 	siblings.insert(siblings.begin() + i, self);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+bool Node::is_child_of(Node const * other, bool recursive) const noexcept
+{
+	if (!m_parent || !other || (this == other)) { return false; }
+	else if (m_parent == other) { return true; }
+	else if (recursive)
+	{
+		Node * it{ m_parent->m_parent };
+		while (it)
+		{
+			if (it == other) {
+				return true;
+			}
+			it = it->m_parent;
+		}
+	}
+	return false;
+}
+
+bool Node::is_parent_of(Node const * other, bool recursive) const noexcept
+{
+	if (!other || (this == other)) { return false; }
+	else if (this == other->m_parent) { return true; }
+	else if (recursive)
+	{
+		for (NODE const & node : m_children)
+		{
+			if (node->is_parent_of(other, true))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

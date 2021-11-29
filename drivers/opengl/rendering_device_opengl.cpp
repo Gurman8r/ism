@@ -6,7 +6,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(RenderingDeviceOpenGL, t)
+EMBEDED_CLASS(RenderingDeviceOpenGL, t)
 {
 }
 

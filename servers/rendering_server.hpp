@@ -43,10 +43,6 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	NODISCARD inline RenderingServer & get_rendering_server() noexcept { return *VALIDATE(RenderingServer::get_singleton()); }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_RENDERING_SERVER_HPP_

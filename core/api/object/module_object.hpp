@@ -86,7 +86,7 @@ namespace ism
 	template <class Name = cstring
 	> MODULE create_extension_module(Name && name) noexcept
 	{
-		DICT modules{ get_internals().modules };
+		DICT modules{ SINGLETON(Internals)->modules };
 
 		STR str_name{ FWD_OBJ(name) };
 
@@ -96,7 +96,7 @@ namespace ism
 	template <class Name = cstring
 	> NODISCARD MODULE import_module(Name && name) noexcept
 	{
-		DICT modules{ get_internals().modules };
+		DICT modules{ SINGLETON(Internals)->modules };
 
 		STR str_name{ FWD_OBJ(name) };
 

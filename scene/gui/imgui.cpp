@@ -1,4 +1,5 @@
 #include <scene/gui/imgui.hpp>
+#include <scene/main/scene_tree.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -38,11 +39,34 @@ void ism::ImGui_NewFrame()
 {
 	IMGUI_RENDERER_NEWFRAME();
 	IMGUI_PLATFORM_NEWFRAME();
+
+	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 }
 
 void ism::ImGui_RenderDrawData(ImDrawData * draw_data)
 {
 	IMGUI_RENDER_DRAW_DATA(draw_data);
+}
+
+void ism::ImGui_RenderFrame()
+{
+	ImGui::Render();
+
+	render_immediate(RenderingDevice::get_singleton()
+	, RenderingCommand::set_viewport(SINGLETON(SceneTree)->get_root()->get_bounds())
+	, RenderingCommand::clear()
+	);
+
+	ImGui_RenderDrawData(&ImGui::GetCurrentContext()->Viewports[0]->DrawDataP);
+
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
+	{
+		WindowID backup{ SINGLETON(DisplayServer)->get_context_current() };
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		SINGLETON(DisplayServer)->make_context_current(backup);
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

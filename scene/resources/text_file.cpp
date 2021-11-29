@@ -2,9 +2,9 @@
 
 using namespace ism;
 
-EMBED_CLASS(TextFile, t)
+EMBEDED_CLASS(TextFile, t)
 {
-	CLASS_DEFINITION(TextFile, t)
+	CLASS_DEF(TextFile, t)
 	{
 		return t
 			.def("get_text", &TextFile::get_text)

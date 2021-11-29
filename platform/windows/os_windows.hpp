@@ -1,9 +1,9 @@
 #ifndef _SYSTEM_WINDOWS_HPP_
 #define _SYSTEM_WINDOWS_HPP_
 
-#include <platform/windows/windows.hpp>
-
 #include <core/os/os.hpp>
+
+#include <platform/windows/windows.hpp>
 
 static_assert(SYSTEM_WINDOWS);
 

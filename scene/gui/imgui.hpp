@@ -62,6 +62,8 @@ namespace ism
 	ISM_API_FUNC(void) ImGui_NewFrame();
 
 	ISM_API_FUNC(void) ImGui_RenderDrawData(ImDrawData * draw_data);
+
+	ISM_API_FUNC(void) ImGui_RenderFrame();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

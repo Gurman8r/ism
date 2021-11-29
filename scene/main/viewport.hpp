@@ -20,7 +20,34 @@ namespace ism
 	public:
 		virtual ~Viewport() override;
 
+		virtual void process(Duration const & dt) override;
+
 		NODISCARD inline Rect get_bounds() const noexcept { return Rect{ get_position(), get_size() }; }
+
+		NODISCARD virtual Vec2 get_position() const = 0;
+
+		NODISCARD virtual Vec2 get_size() const = 0;
+
+		virtual void set_position(Vec2 const & value) = 0;
+
+		virtual void set_size(Vec2 const & value) = 0;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// sub-viewport
+	class ISM_API SubViewport : public Viewport
+	{
+		OBJECT_COMMON(SubViewport, Viewport);
+
+	public:
+		SubViewport();
+
+		virtual ~SubViewport() override;
+
+		virtual void process(Duration const & dt) override;
+
+		using Viewport::get_bounds;
 
 		NODISCARD virtual Vec2 get_position() const = 0;
 

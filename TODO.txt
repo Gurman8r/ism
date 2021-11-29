@@ -5,3 +5,5 @@ generic types
 iterator objects
 
 function objects are an absolute nightmare
+
+redo math structures (templated)

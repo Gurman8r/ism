@@ -23,8 +23,12 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		Window();
-
 		virtual ~Window() override;
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		NODISCARD operator WindowID() const noexcept { return m_window_id; }
+		NODISCARD auto get_window_id() const noexcept -> WindowID { return m_window_id; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -56,7 +60,6 @@ namespace ism
 		NODISCARD virtual Vec2 get_size() const override;
 		NODISCARD virtual void * get_user_pointer() const;
 		NODISCARD virtual Rect get_frame_size() const;
-		NODISCARD inline WindowID get_window_id() const { return m_window_id; }
 		NODISCARD virtual bool get_is_auto_iconify() const;
 		NODISCARD virtual bool get_is_decorated() const;
 		NODISCARD virtual bool get_is_floating() const;

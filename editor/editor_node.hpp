@@ -1,7 +1,7 @@
 #ifndef _ISM_EDITOR_NODE_HPP_
 #define _ISM_EDITOR_NODE_HPP_
 
-#include <scene/gui/imgui_node.hpp>
+#include <scene/main/scene_tree.hpp>
 
 namespace ism
 {
@@ -9,18 +9,12 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorNode, Node);
 
-		Ref<ImGuiNode> m_gui{};
-
 	public:
 		EditorNode();
 
 		~EditorNode();
 
-		virtual void initialize() override;
-
-		virtual void finalize() override;
-
-		virtual void step(Duration const & delta_time) override;
+		virtual void process(Duration const & dt) override;
 	};
 }
 

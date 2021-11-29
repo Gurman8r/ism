@@ -2,7 +2,7 @@
 
 #include <main/main.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/gui/imgui_node.hpp>
+#include <scene/gui/imgui.hpp>
 
 #ifdef TOOLS_ENABLED
 #include <editor/editor_node.hpp>
@@ -40,20 +40,19 @@ using namespace ism;
 
 static bool editor{ true };
 
-MEMBER_IMPL(Main::g_frame_count) {};
-MEMBER_IMPL(Main::g_frame_index) {};
 MEMBER_IMPL(Main::g_iterating) {};
 
 static Internals *			g_internals{};
+static EventBus *			g_bus{};
 static Input *				g_input{};
-static DisplayServer *		g_display_server{};
-static RenderingServer *	g_rendering_server{};
+static DisplayServer *		g_display{};
+static RenderingServer *	g_renderer{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	get_os().initialize();
+	SINGLETON(OS)->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -89,18 +88,30 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_server_singletons();
 	
-	get_os().set_cmdline(exepath, { argv, argv + argc });
+	SINGLETON(OS)->set_cmdline(exepath, { argv, argv + argc });
+
+	g_bus = memnew(EventBus);
 
 	g_input = memnew(Input);
 
-	g_display_server = memnew(DISPLAY_SERVER_DEFAULT({
+	g_display = memnew(DISPLAY_SERVER_DEFAULT({
 		"ism",
 		{ { 1280, 720 }, { 8, 8, 8, 8 }, -1 },
 		{ RendererAPI_OpenGL, 4, 6, RendererProfile_Compat, 24, 8, true, false },
 		WindowHints_Default_Maximized & ~(WindowHints_Doublebuffer)
 		}));
 
-	g_rendering_server = memnew(RenderingServerDefault());
+	g_renderer = memnew(RenderingServerDefault());
+
+	if (!ImGui::GetCurrentContext()) {
+		auto ctx{ ImGui::CreateContext() };
+		ctx->IO.LogFilename = nullptr;
+		ctx->IO.IniFilename = nullptr;
+		ctx->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		ctx->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		ctx->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		VERIFY(ImGui_Init(g_display->get_context_main()));
+	}
 
 	return Error_None;
 }
@@ -115,7 +126,7 @@ bool Main::start()
 
 	TYPE main_loop_type{};
 
-	if (script != "") {}
+	if (script != "") { /* TODO */ }
 
 	if (!main_loop && !main_loop_type) { main_loop_type = typeof<SceneTree>(); }
 
@@ -134,35 +145,35 @@ bool Main::start()
 
 		Ref<Window> root{ tree->get_root() };
 
-		root->add_node<ImGuiNode>();
-
 #ifdef TOOLS_ENABLED
-		if (editor) { root->add_node<EditorNode>(); }
+		if (editor) { root->add_child<EditorNode>(); }
 #endif
 	}
 
-	get_os().set_main_loop(main_loop);
+	SINGLETON(OS)->set_main_loop(main_loop);
 
 	return true;
 }
 
 bool Main::iteration()
 {
-	static Duration delta_time{ 16_ms };
-	Timer const loop_timer{ true };
-	SCOPE_EXIT(&) { delta_time = loop_timer.elapsed(); };
-
 	++g_iterating;
 
-	bool should_exit{ false };
+	Timer const loop_timer{ true };
+	static Duration delta_time{ 16_ms };
+	SCOPE_EXIT(&) { delta_time = loop_timer.elapsed(); };
 
-	if (get_os().get_main_loop()->process(delta_time)) { should_exit = true; }
+	bool should_close{ false };
 
-	++g_frame_count;
-	
+	// physics here
+
+	if (SINGLETON(OS)->get_main_loop()->process(delta_time)) { should_close = true; }
+
+	// rendering here
+
 	--g_iterating;
 
-	return should_exit;
+	return should_close;
 }
 
 void Main::cleanup()
@@ -170,7 +181,7 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	get_os().delete_main_loop();
+	SINGLETON(OS)->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -187,19 +198,23 @@ void Main::cleanup()
 	//memdelete(g_audio_server);
 	//memdelete(g_camera_server);
 
-	get_os().finalize();
+	SINGLETON(OS)->finalize();
 
-	g_rendering_server->finalize();
-	memdelete(g_rendering_server);
-	memdelete(g_display_server);
+	ImGui_Shutdown();
+	ImGui::DestroyContext();
+
+	g_renderer->finalize();
+	memdelete(g_renderer);
+	memdelete(g_display);
 	
 	memdelete(g_input);
+	memdelete(g_bus);
 
 	unregister_core_driver_types();
 	unregister_core_types();
 
 	memdelete(g_internals);
-	get_os().finalize_core();
+	SINGLETON(OS)->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

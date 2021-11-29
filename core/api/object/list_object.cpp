@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(ListObject, t)
+EMBEDED_CLASS(ListObject, t)
 {
 	t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)LIST(self).size(); };
 
@@ -22,7 +22,7 @@ EMBED_CLASS(ListObject, t)
 		}
 	};
 
-	CLASS_DEFINITION(ListObject, t)
+	CLASS_DEF(ListObject, t)
 	{
 		return t
 

@@ -26,6 +26,16 @@ namespace ism
 		return l.end() != std::find(l.begin(), l.end(), FWD(value));
 	}
 
+	template <class _Ty, class T
+	> NODISCARD auto getptr(Vector<_Ty> const & l, T && value)
+	{
+		if (auto const it{ std::find(l.begin(), l.end(), FWD(value)) }; it != l.end())
+		{
+			return (_Ty *)(void *)std::addressof(*it);
+		}
+		else { return nullptr; }
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 

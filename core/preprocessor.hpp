@@ -53,6 +53,10 @@
 #define MEMBER_IMPL(expr) \
 	decltype(expr) expr
 
+// singleton getter
+#define SINGLETON(m_class) \
+	(m_class::get_singleton())
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // make anonymous

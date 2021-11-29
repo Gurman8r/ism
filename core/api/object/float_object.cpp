@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(FloatObject, t)
+EMBEDED_CLASS(FloatObject, t)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<double_t>()(***(FLT &)self); };
 
@@ -26,7 +26,7 @@ EMBED_CLASS(FloatObject, t)
 		}
 	};
 
-	CLASS_DEFINITION(FloatObject, t)
+	CLASS_DEF(FloatObject, t)
 	{
 		return t;
 	};

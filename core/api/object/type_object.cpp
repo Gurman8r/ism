@@ -9,7 +9,7 @@ void TypeObject::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		get_internals().add_class(&__class_type);
+		SINGLETON(Internals)->add_class(&__class_type);
 
 		VALIDATE(__class_type.tp_bind)(&__class_type);
 	};
@@ -23,7 +23,7 @@ TYPE TypeObject::get_type_static() noexcept { return &__class_type; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
+EMBEDED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -46,7 +46,7 @@ EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 		return fn ? fn(self, args) : nullptr;
 	};
 
-	CLASS_DEFINITION(TypeObject, t)
+	CLASS_DEF(TypeObject, t)
 	{
 		return t
 

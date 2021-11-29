@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(Mesh, t) {}
+EMBEDED_CLASS(Mesh, t) {}
 
 Mesh::Mesh() : Resource{}
 {

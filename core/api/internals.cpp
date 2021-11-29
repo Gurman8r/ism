@@ -31,12 +31,9 @@ void Internals::add_class(TYPE const & type)
 
 TYPE Internals::get_class(StringName const & name) const
 {
-	hash_t const id{ hash(name) };
-
-	if (TYPE const * item{ class_db.map<hash_t, TYPE>(id) })
-	{
-		return *item;
-	}
-
+	hash_t const i{ hash(name) };
+	
+	if (TYPE const * e{ class_db.map<hash_t, TYPE>(i) }) { return *e; }
+	
 	return nullptr;
 }

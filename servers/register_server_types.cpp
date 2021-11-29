@@ -6,10 +6,10 @@ using namespace ism;
 
 void ism::register_server_types()
 {
-	get_internals()
-		.bind_class<DisplayServer>()
-		.bind_class<RenderingServer>()
-		;
+	SINGLETON(Internals)->bind_class<
+		DisplayServer,
+		RenderingServer
+	>();
 }
 
 void ism::unregister_server_types()

@@ -6,9 +6,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define MAIN_PRINT (ism::get_os().print)
+#define MAIN_PRINT (SINGLETON(OS)->print)
 
-#define MAIN_PAUSE (ism::get_os().pause)
+#define MAIN_PAUSE (SINGLETON(OS)->pause)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -21,7 +21,7 @@ namespace ism
 	auto get_float() { return 7.89f; }
 	auto get_string() { return "abc"; }
 
-	void test_api()
+	void test_apis()
 	{
 		VALIDATE(create_extension_module("__main__"))
 			.def("hello", hello)
@@ -59,23 +59,6 @@ namespace ism
 		MAIN_PRINT("%s\n", d["DEF"].cast<String>().c_str());
 		MAIN_PRINT("%s\n", typeof(d).attr("__name__").cast<String>().c_str());
 
-		EventSystem bus{};
-		bus.add_dummy_listener<InputEvent>([](Event const & ev)
-		{
-			if ((EventID)ev == InputEvent::ID)
-			{
-				MAIN_PRINT("Hello from Dummy!\n");
-			}
-		});
-		bus.get_delegate<InputEvent>() += [](Event const & ev)
-		{
-			if ((EventID)ev == InputEvent::ID)
-			{
-				MAIN_PRINT("Hello from Delegate!\n");
-			}
-		};
-		bus.fire_event(InputEvent{});
-
 		MAIN_PRINT("\n");
 	}
 }
@@ -94,13 +77,9 @@ int main(int argc, char * argv[])
 
 	VERIFY(Main::start());
 
-	test_api();
+	test_apis();
 
-	get_os().get_main_loop()->initialize();
 	while (Main::iteration() == 0);
-	get_os().get_main_loop()->finalize();
-
-	//MAIN_PAUSE();
 
 	Main::cleanup();
 

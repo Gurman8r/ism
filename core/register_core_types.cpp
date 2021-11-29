@@ -23,33 +23,39 @@ void ism::register_core_types()
 	VERIFY(typeof<PropertyObject>().ready());
 	VERIFY(typeof<ModuleObject>().ready());
 
-	get_internals()
+	SINGLETON(Internals)->bind_class
+	<
+		CppFunctionObject, // <- cppfunction MUST go first
+		Object,
+		TypeObject,
+		IntObject,
+		FloatObject,
+		StringObject,
+		ListObject,
+		DictObject,
+		CapsuleObject,
+		FunctionObject,
+		MethodObject,
+		PropertyObject,
+		ModuleObject,
 
-		.bind_class<CppFunctionObject>() // <- cppfunction MUST go first
-		.bind_class<Object>()
-		.bind_class<TypeObject>()
-		.bind_class<IntObject>()
-		.bind_class<FloatObject>()
-		.bind_class<StringObject>()
-		.bind_class<ListObject>()
-		.bind_class<DictObject>()
-		.bind_class<CapsuleObject>()
-		.bind_class<FunctionObject>()
-		.bind_class<MethodObject>()
-		.bind_class<PropertyObject>()
-		.bind_class<ModuleObject>()
+		Resource,
+		ConfigFile,
+		Image,
 
-		.bind_class<Resource>()
-		.bind_class<ConfigFile>()
-		.bind_class<Image>()
+		Input,
+		InputEvent,
+		InputMap,
 
-		.bind_class<Input>()
-		.bind_class<InputEvent>()
-		.bind_class<InputMap>()
+		Event,
+		EventHandler,
+		DummyHandler,
+		EventDelegate<void>,
+		EventBus,
 
-		.bind_class<MainLoop>()
+		MainLoop
 
-		;
+	>();
 }
 
 void ism::register_core_driver_types()
@@ -70,7 +76,7 @@ void ism::unregister_core_driver_types()
 
 void ism::unregister_core_types()
 {
-	auto & db{ ism::get_internals().class_db };
+	auto & db{ SINGLETON(Internals)->class_db };
 
 	for (size_t i = 0; i < db.size(); ++i)
 	{

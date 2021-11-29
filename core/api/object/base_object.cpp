@@ -9,7 +9,7 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		get_internals().add_class(&__class_type);
+		SINGLETON(Internals)->add_class(&__class_type);
 
 		VALIDATE(__class_type.tp_bind)(&__class_type);
 	}
@@ -60,13 +60,13 @@ void Object::set_type(TYPE const & value) noexcept { m_type = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Object, t, TypeFlags_IsAbstract)
+EMBEDED_CLASS(Object, t, TypeFlags_IsAbstract)
 {
 	t.tp_getattro = (getattrofunc)&Object::generic_getattr;
 
 	t.tp_setattro = (setattrofunc)&Object::generic_setattr;
 
-	CLASS_DEFINITION(Object, t)
+	CLASS_DEF(Object, t)
 	{
 		return t;
 	};
