@@ -2,7 +2,6 @@
 #define _ISM_NODE_HPP_
 
 #include <core/input/input.hpp>
-#include <core/io/event.hpp>
 #include <entt/entt.hpp>
 
 namespace ism
@@ -14,6 +13,12 @@ namespace ism
 	class Node;
 
 	ALIAS(NODE) Ref<Node>;
+
+	ALIAS(EntityID) entt::entity;
+
+	ALIAS(EntityRegistry) entt::registry;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API Node : public EventHandler
 	{
@@ -33,37 +38,36 @@ namespace ism
 
 		virtual ~Node() noexcept override;
 
-	public:
 		virtual void process(Duration const & dt);
 
 		virtual void handle_event(Event const & ev) override;
 
 	public:
-		NODISCARD auto get_child(size_t const i) const -> NODE { return m_children[i]; }
+		NODISCARD auto get_node(size_t const i) const -> NODE { return m_children[i]; }
 
-		NODISCARD auto get_child_count() const noexcept -> size_t { return m_children.size(); }
+		NODISCARD auto get_node_count() const noexcept -> size_t { return m_children.size(); }
 		
-		NODISCARD auto get_children() const noexcept -> Vector<NODE> const & { return m_children; }
+		NODISCARD auto get_nodes() const noexcept -> Vector<NODE> const & { return m_children; }
 
-		NODISCARD auto get_parent() const noexcept -> Node * { return m_parent; }
+		NODISCARD auto get_owner() const noexcept -> Node * { return m_parent; }
 
 		NODISCARD auto get_tree() const noexcept -> SceneTree * { return m_tree; }
 
 	public:
-		NODE add_child(Node * value) noexcept { return (value && value->set_parent(this)) ? value : nullptr; }
+		NODE add_node(Node * value) noexcept { return (value && value->set_owner(this)) ? value : nullptr; }
 
-		NODE add_child(NODE const & value) noexcept { return add_child(*value); }
+		NODE add_node(NODE const & value) noexcept { return add_node(*value); }
 
 		template <class T, class ... Args
-		> NODE add_child(Args && ... args) noexcept { return add_child(memnew(T(FWD(args)...))); }
+		> NODE add_node(Args && ... args) noexcept { return add_node(memnew(T(FWD(args)...))); }
 
-		void delete_child(size_t const i) { m_children.erase(m_children.begin() + i); }
+		void delete_node(size_t const i) { m_children.erase(m_children.begin() + i); }
 
-		void detach_children();
+		void detach_nodes();
 
-		bool set_parent(Node * value);
+		bool set_owner(Node * value);
 
-		bool set_parent(NODE const & value) noexcept { return set_parent(*value); }
+		bool set_owner(NODE const & value) noexcept { return set_owner(*value); }
 
 	public:
 		NODISCARD size_t get_sibling_index() const noexcept;
@@ -71,13 +75,13 @@ namespace ism
 		void set_sibling_index(size_t const i);
 
 	public:
-		NODISCARD bool is_child_of(Node const * other, bool recursive = false) const noexcept;
+		NODISCARD bool is_owned_by(Node const * other, bool recursive = false) const noexcept;
 
-		NODISCARD bool is_child_of(NODE const & other, bool recursive = false) const noexcept { return is_child_of(*other, recursive); }
+		NODISCARD bool is_owned_by(NODE const & other, bool recursive = false) const noexcept { return is_owned_by(*other, recursive); }
 
-		NODISCARD bool is_parent_of(Node const * other, bool recursive = false) const noexcept;
+		NODISCARD bool is_owner_of(Node const * other, bool recursive = false) const noexcept;
 
-		NODISCARD bool is_parent_of(NODE const & other, bool recursive = false) const noexcept { return is_parent_of(*other, recursive); }
+		NODISCARD bool is_owner_of(NODE const & other, bool recursive = false) const noexcept { return is_owner_of(*other, recursive); }
 
 	public:
 		template <class Fn = void(*)(NODE &)

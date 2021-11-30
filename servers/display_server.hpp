@@ -4,6 +4,7 @@
 #include <core/os/os.hpp>
 #include <core/input/input.hpp>
 
+// display api
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -14,6 +15,8 @@ namespace ism
 
 	OPAQUE_TYPE(MonitorID);
 	OPAQUE_TYPE(WindowID);
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(WindowCharCallback)				void(*)(WindowID, uint32_t);
 	ALIAS(WindowCharModsCallback)			void(*)(WindowID, uint32_t, int32_t);
@@ -27,11 +30,11 @@ namespace ism
 	ALIAS(WindowMaximizeCallback)			void(*)(WindowID, int32_t);
 	ALIAS(WindowMouseButtonCallback)		void(*)(WindowID, int32_t, int32_t, int32_t);
 	ALIAS(WindowMouseEnterCallback)			void(*)(WindowID, int32_t);
-	ALIAS(WindowMousePosCallback)			void(*)(WindowID, double_t, double_t);
-	ALIAS(WindowMouseScrollCallback)		void(*)(WindowID, double_t, double_t);
+	ALIAS(WindowMousePositionCallback)		void(*)(WindowID, double_t, double_t);
 	ALIAS(WindowPositionCallback)			void(*)(WindowID, int32_t, int32_t);
 	ALIAS(WindowRefreshCallback)			void(*)(WindowID);
-	ALIAS(WindowResizeCallback)				void(*)(WindowID, int32_t, int32_t);
+	ALIAS(WindowSizeCallback)				void(*)(WindowID, int32_t, int32_t);
+	ALIAS(WindowScrollCallback)				void(*)(WindowID, double_t, double_t);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -152,11 +155,197 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
+// display events
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// display server
+	class ISM_API WindowCharEvent : public EventClass<WindowCharEvent>
+	{
+		OBJECT_COMMON(WindowCharEvent, Event);
+
+	public:
+		WindowCharEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowCharModsEvent : public EventClass<WindowCharModsEvent>
+	{
+		OBJECT_COMMON(WindowCharModsEvent, Event);
+
+	public:
+		WindowCharModsEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowCloseEvent : public EventClass<WindowCloseEvent>
+	{
+		OBJECT_COMMON(WindowCloseEvent, Event);
+
+	public:
+		WindowCloseEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowContentScaleEvent : public EventClass<WindowContentScaleEvent>
+	{
+		OBJECT_COMMON(WindowContentScaleEvent, Event);
+
+	public:
+		WindowContentScaleEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowDropEvent : public EventClass<WindowDropEvent>
+	{
+		OBJECT_COMMON(WindowDropEvent, Event);
+
+	public:
+		WindowDropEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowFocusEvent : public EventClass<WindowFocusEvent>
+	{
+		OBJECT_COMMON(WindowFocusEvent, Event);
+
+	public:
+		WindowFocusEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowFramebufferResizeEvent : public EventClass<WindowFramebufferResizeEvent>
+	{
+		OBJECT_COMMON(WindowFramebufferResizeEvent, Event);
+
+	public:
+		WindowFramebufferResizeEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowIconifyEvent : public EventClass<WindowIconifyEvent>
+	{
+		OBJECT_COMMON(WindowIconifyEvent, Event);
+
+	public:
+		WindowIconifyEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowKeyEvent : public EventClass<WindowKeyEvent>
+	{
+		OBJECT_COMMON(WindowKeyEvent, Event);
+
+	public:
+		WindowKeyEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowMaximizeEvent : public EventClass<WindowMaximizeEvent>
+	{
+		OBJECT_COMMON(WindowMaximizeEvent, Event);
+
+	public:
+		WindowMaximizeEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowMouseButtonEvent : public EventClass<WindowMouseButtonEvent>
+	{
+		OBJECT_COMMON(WindowMouseButtonEvent, Event);
+
+	public:
+		WindowMouseButtonEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowMouseEnterEvent : public EventClass<WindowMouseEnterEvent>
+	{
+		OBJECT_COMMON(WindowMouseEnterEvent, Event);
+
+	public:
+		WindowMouseEnterEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowMouseExitEvent : public EventClass<WindowMouseExitEvent>
+	{
+		OBJECT_COMMON(WindowMouseExitEvent, Event);
+
+	public:
+		WindowMouseExitEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowMousePositionEvent : public EventClass<WindowMousePositionEvent>
+	{
+		OBJECT_COMMON(WindowMousePositionEvent, Event);
+
+	public:
+		WindowMousePositionEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowScrollEvent : public EventClass<WindowScrollEvent>
+	{
+		OBJECT_COMMON(WindowScrollEvent, Event);
+
+	public:
+		WindowScrollEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowPositionEvent : public EventClass<WindowPositionEvent>
+	{
+		OBJECT_COMMON(WindowPositionEvent, Event);
+
+	public:
+		WindowPositionEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowRefreshEvent : public EventClass<WindowRefreshEvent>
+	{
+		OBJECT_COMMON(WindowRefreshEvent, Event);
+
+	public:
+		WindowRefreshEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API WindowSizeEvent : public EventClass<WindowSizeEvent>
+	{
+		OBJECT_COMMON(WindowSizeEvent, Event);
+
+	public:
+		WindowSizeEvent(...) noexcept {}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// display server
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API DisplayServer : public Object
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -254,11 +443,11 @@ namespace ism
 		virtual WindowMaximizeCallback window_set_maximize_callback(WindowID id, WindowMaximizeCallback value);
 		virtual WindowMouseButtonCallback window_set_mouse_button_callback(WindowID id, WindowMouseButtonCallback value);
 		virtual WindowMouseEnterCallback window_set_mouse_enter_callback(WindowID id, WindowMouseEnterCallback value);
-		virtual WindowMousePosCallback window_set_mouse_pos_callback(WindowID id, WindowMousePosCallback value);
-		virtual WindowMouseScrollCallback window_set_mouse_scroll_callback(WindowID id, WindowMouseScrollCallback value);
+		virtual WindowMousePositionCallback window_set_mouse_position_callback(WindowID id, WindowMousePositionCallback value);
 		virtual WindowPositionCallback window_set_position_callback(WindowID id, WindowPositionCallback value);
 		virtual WindowRefreshCallback window_set_refresh_callback(WindowID id, WindowRefreshCallback value);
-		virtual WindowResizeCallback window_set_resize_callback(WindowID id, WindowResizeCallback value);
+		virtual WindowScrollCallback window_set_scroll_callback(WindowID id, WindowScrollCallback value);
+		virtual WindowSizeCallback window_set_size_callback(WindowID id, WindowSizeCallback value);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

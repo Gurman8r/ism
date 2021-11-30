@@ -5,11 +5,11 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// typedef
+// alias
 #define ALIAS(type)	using type = typename
 
 // strong typedef
-#define STRONG_ALIAS(m_to, m_from)																				\
+#define STRONG_TYPEDEF(m_to, m_from)																			\
 class m_to final {																								\
 private:																										\
 	m_from value;																								\

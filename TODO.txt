@@ -7,3 +7,5 @@ iterator objects
 function objects are an absolute nightmare
 
 redo math structures (templated)
+
+low level object types would benefit greatly from optimization & custom implementations

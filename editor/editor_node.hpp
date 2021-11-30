@@ -15,6 +15,9 @@ namespace ism
 		~EditorNode();
 
 		virtual void process(Duration const & dt) override;
+
+	protected:
+		virtual void _show_dockspace();
 	};
 }
 

@@ -68,7 +68,22 @@ EMBEDED_CLASS(Object, t, TypeFlags_IsAbstract)
 
 	CLASS_DEF(Object, t)
 	{
-		return t;
+		return t
+			.def("init_ref", &Object::init_ref)
+			.def("reference", &Object::reference)
+			.def("unreference", &Object::unreference)
+			.def("get_ref_count", &Object::get_ref_count)
+			.def("has_references", &Object::has_references)
+
+			.def("get_type", &Object::get_type)
+			.def("set_type", &Object::set_type)
+
+			.def_static("get_type_static", &Object::get_type_static)
+			.def_static("generic_getattr", &Object::generic_getattr)
+			.def_static("generic_setattr", &Object::generic_setattr)
+			.def_static("generic_getattr_with_dict", &Object::generic_getattr_with_dict)
+			.def_static("generic_setattr_with_dict", &Object::generic_setattr_with_dict)
+			;
 	};
 }
 

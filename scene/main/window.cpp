@@ -2,7 +2,7 @@
 #include <scene/main/scene_tree.hpp>
 #include <scene/gui/imgui.hpp>
 
-#ifdef SYSTEM_WINDOWS
+#if SYSTEM_WINDOWS
 #include <platform/windows/display_server_windows.hpp>
 #define WINDOW_IMPL ism::DisplayServerWindows
 #endif
@@ -15,15 +15,9 @@ EMBEDED_CLASS(Window, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window::Window()
-{
-	m_window_id = SINGLETON(DisplayServer)->get_context_main();
-}
+Window::Window(WindowID id) : m_window_id{ id ? id : VALIDATE(SINGLETON(DisplayServer))->get_context_current() } {}
 
-Window::~Window()
-{
-	m_window_id = nullptr;
-}
+Window::~Window() { m_window_id = nullptr; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -355,14 +349,9 @@ WindowMouseEnterCallback Window::set_mouse_enter_callback(WindowMouseEnterCallba
 	return SINGLETON(DisplayServer)->window_set_mouse_enter_callback(m_window_id, value);
 }
 
-WindowMousePosCallback Window::set_mouse_pos_callback(WindowMousePosCallback value)
+WindowMousePositionCallback Window::set_mouse_position_callback(WindowMousePositionCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_mouse_pos_callback(m_window_id, value);
-}
-
-WindowMouseScrollCallback Window::set_mouse_scroll_callback(WindowMouseScrollCallback value)
-{
-	return SINGLETON(DisplayServer)->window_set_mouse_scroll_callback(m_window_id, value);
+	return SINGLETON(DisplayServer)->window_set_mouse_position_callback(m_window_id, value);
 }
 
 WindowPositionCallback Window::set_position_callback(WindowPositionCallback value)
@@ -375,9 +364,14 @@ WindowRefreshCallback Window::set_refresh_callback(WindowRefreshCallback value)
 	return SINGLETON(DisplayServer)->window_set_refresh_callback(m_window_id, value);
 }
 
-WindowResizeCallback Window::set_resize_callback(WindowResizeCallback value)
+WindowScrollCallback Window::set_scroll_callback(WindowScrollCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_resize_callback(m_window_id, value);
+	return SINGLETON(DisplayServer)->window_set_scroll_callback(m_window_id, value);
+}
+
+WindowSizeCallback Window::set_size_callback(WindowSizeCallback value)
+{
+	return SINGLETON(DisplayServer)->window_set_size_callback(m_window_id, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -57,26 +57,30 @@ EMBEDED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 			.def("__subclasscheck__", &TypeObject::is_subtype)
 
 			.def_readonly("__base__", &TypeObject::tp_base)
-
+			
 			.def_readonly("__bases__", &TypeObject::tp_bases)
-
+			
 			.def_readonly("__dict__", &TypeObject::tp_dict)
-
+			
 			.def_readonly("__dictoffset__", &TypeObject::tp_dictoffset)
-
+			
 			.def_readonly("__flags__", &TypeObject::tp_flags)
-
+			
 			.def_readonly("__mro__", &TypeObject::tp_mro)
-
+			
 			.def_readwrite("__name__", &TypeObject::tp_name)
-
+			
 			.def_readonly("__size__", &TypeObject::tp_size)
-
+			
 			.def_readonly("__vectorcalloffset__", &TypeObject::tp_vectorcalloffset)
-
+			
 			.def_property_readonly("__text_signature__", [](TypeObject const & self) { return STR(/* TODO */); })
-
+			
 			.def_property_readonly("__qualname__", [](TypeObject const & self) { return STR(/* TODO */); })
+
+			.def_static("type_getattro", &TypeObject::type_getattro)
+			
+			.def_static("type_setattro", &TypeObject::type_setattro)
 
 			;
 	};

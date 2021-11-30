@@ -4,7 +4,7 @@
 #include <scene/main/scene_tree.hpp>
 #include <scene/gui/imgui.hpp>
 
-#ifdef TOOLS_ENABLED
+#if TOOLS_ENABLED
 #include <editor/editor_node.hpp>
 #endif
 
@@ -18,16 +18,16 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifdef TOOLS_ENABLED
+#if TOOLS_ENABLED
 #include <editor/register_editor_types.hpp>
 #endif
 
-#ifdef OPENGL_ENABLED
+#if OPENGL_ENABLED
 #include <drivers/opengl/rendering_device_opengl.hpp>
 #define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
 #endif
 
-#ifdef SYSTEM_WINDOWS
+#if SYSTEM_WINDOWS
 #include <platform/windows/display_server_windows.hpp>
 #define DISPLAY_SERVER_DEFAULT DisplayServerWindows
 #endif
@@ -100,6 +100,24 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 		{ RendererAPI_OpenGL, 4, 6, RendererProfile_Compat, 24, 8, true, false },
 		WindowHints_Default_Maximized & ~(WindowHints_Doublebuffer)
 		}));
+	WindowID main_window{ g_display->get_context_main() };
+	g_display->window_set_char_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowCharEvent{ FWD(x)... }); });
+	g_display->window_set_char_mods_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowCharModsEvent{ FWD(x)... }); });
+	g_display->window_set_close_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowCloseEvent{ FWD(x)... }); });
+	g_display->window_set_content_scale_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowContentScaleEvent{ FWD(x)... }); });
+	g_display->window_set_drop_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowDropEvent{ FWD(x)... }); });
+	g_display->window_set_focus_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowFocusEvent{ FWD(x)... }); });
+	g_display->window_set_framebuffer_resize_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowFramebufferResizeEvent{ FWD(x)... }); });
+	g_display->window_set_iconify_callback(main_window, [](auto w, auto ... x)  { g_bus->fire_event(WindowIconifyEvent{ FWD(x)... }); });
+	g_display->window_set_key_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowKeyEvent{ FWD(x)... }); });
+	g_display->window_set_maximize_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowMaximizeEvent{ FWD(x)... }); });
+	g_display->window_set_mouse_button_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowMouseEnterEvent{ FWD(x)... }); });
+	g_display->window_set_mouse_enter_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowMouseExitEvent{ FWD(x)... }); });
+	g_display->window_set_mouse_position_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowMousePositionEvent{ FWD(x)... }); });
+	g_display->window_set_position_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowPositionEvent{ FWD(x)... }); });
+	g_display->window_set_refresh_callback(main_window, [](auto w, auto ... x)  { g_bus->fire_event(WindowRefreshEvent{ FWD(x)... }); });
+	g_display->window_set_scroll_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowScrollEvent{ FWD(x)... }); });
+	g_display->window_set_size_callback(main_window, [](auto w, auto ... x)   { g_bus->fire_event(WindowSizeEvent{ FWD(x)... }); });
 
 	g_renderer = memnew(RenderingServerDefault());
 
@@ -110,7 +128,7 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-		VERIFY(ImGui_Init(g_display->get_context_main()));
+		VERIFY(ImGui_Init(main_window));
 	}
 
 	return Error_None;
@@ -126,7 +144,7 @@ bool Main::start()
 
 	TYPE main_loop_type{};
 
-	if (script != "") { /* TODO */ }
+	if (script != "") { /* TODO: load main loop from script */ }
 
 	if (!main_loop && !main_loop_type) { main_loop_type = typeof<SceneTree>(); }
 
@@ -145,8 +163,8 @@ bool Main::start()
 
 		Ref<Window> root{ tree->get_root() };
 
-#ifdef TOOLS_ENABLED
-		if (editor) { root->add_child<EditorNode>(); }
+#if TOOLS_ENABLED
+		if (editor) { root->add_node<EditorNode>(); }
 #endif
 	}
 
@@ -165,11 +183,17 @@ bool Main::iteration()
 
 	bool should_close{ false };
 
-	// physics here
+	// process physics here
+
+	SINGLETON(DisplayServer)->poll_events();
+
+	ImGui_NewFrame();
 
 	if (SINGLETON(OS)->get_main_loop()->process(delta_time)) { should_close = true; }
 
-	// rendering here
+	ImGui_RenderFrame();
+
+	SINGLETON(DisplayServer)->swap_buffers(SINGLETON(DisplayServer)->get_context_main());
 
 	--g_iterating;
 
@@ -185,7 +209,7 @@ void Main::cleanup()
 
 	//ScriptServer::finish_languages();
 
-#ifdef TOOLS_ENABLED
+#if TOOLS_ENABLED
 	unregister_editor_types();
 #endif
 

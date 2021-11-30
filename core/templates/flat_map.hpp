@@ -319,6 +319,11 @@ namespace ism
 			return { m_pair.first.erase(first, last), result };
 		}
 
+		iterator_pair erase(optl_iterator_pair const & iter)
+		{
+			return this->erase(VALIDATE(iter)->first);
+		}
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Key = key_type

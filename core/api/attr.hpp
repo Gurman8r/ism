@@ -3,8 +3,6 @@
 
 #include <core/api/call.hpp>
 
-// i want to get rid of this system, but don't currently have any better ideas
-
 namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

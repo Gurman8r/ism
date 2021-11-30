@@ -104,11 +104,11 @@ namespace ism
 		virtual WindowMaximizeCallback window_set_maximize_callback(WindowID id, WindowMaximizeCallback value) override;
 		virtual WindowMouseButtonCallback window_set_mouse_button_callback(WindowID id, WindowMouseButtonCallback value) override;
 		virtual WindowMouseEnterCallback window_set_mouse_enter_callback(WindowID id, WindowMouseEnterCallback value) override;
-		virtual WindowMousePosCallback window_set_mouse_pos_callback(WindowID id, WindowMousePosCallback value) override;
+		virtual WindowMousePositionCallback window_set_mouse_position_callback(WindowID id, WindowMousePositionCallback value) override;
 		virtual WindowPositionCallback window_set_position_callback(WindowID id, WindowPositionCallback value) override;
 		virtual WindowRefreshCallback window_set_refresh_callback(WindowID id, WindowRefreshCallback value) override;
-		virtual WindowResizeCallback window_set_resize_callback(WindowID id, WindowResizeCallback value) override;
-		virtual WindowMouseScrollCallback window_set_mouse_scroll_callback(WindowID id, WindowMouseScrollCallback value) override;
+		virtual WindowScrollCallback window_set_scroll_callback(WindowID id, WindowScrollCallback value) override;
+		virtual WindowSizeCallback window_set_size_callback(WindowID id, WindowSizeCallback value) override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

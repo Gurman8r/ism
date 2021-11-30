@@ -3,15 +3,7 @@
 
 using namespace ism;
 
-EMBEDED_CLASS(EditorNode, t)
-{
-	CLASS_DEF(EditorNode, t)
-	{
-		return t
-			.def("_process", &EditorNode::process)
-			;
-	};
-}
+EMBEDED_CLASS(EditorNode, t) {}
 
 EditorNode::EditorNode()
 {
@@ -27,8 +19,16 @@ void EditorNode::process(Duration const & dt)
 	std::sprintf(window_title, "ism @ %.1f fps", get_tree()->get_framerate());
 	get_tree()->get_root()->set_title(window_title);
 
-	bool const has_main_menu_bar{/* TODO */ };
+	_show_dockspace();
+	
+	ImGui::ShowDemoWindow();
 
+	Node::process(dt);
+}
+
+void EditorNode::_show_dockspace()
+{
+	bool const has_main_menu_bar{ /* TODO */ };
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
 		constexpr auto dockspace_name{ "##MainDockspace" };
 		ImGuiID const dockspace_id{ ImGui::GetID(dockspace_name) };
@@ -63,8 +63,4 @@ void EditorNode::process(Duration const & dt)
 		}
 		ImGui::End();
 	}
-
-	ImGui::ShowDemoWindow();
-
-	Node::process(dt);
 }

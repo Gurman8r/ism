@@ -21,12 +21,6 @@ EMBEDED_CLASS(Event, t, TypeFlags_IsAbstract)
 
 EMBEDED_CLASS(EventHandler, t, TypeFlags_IsAbstract) {}
 
-EventHandler::EventHandler(EventBus * bus) noexcept
-	: m_bus{ bus ? bus : VALIDATE(EventBus::get_singleton()) }
-	, m_order{ get_bus()->next_id() }
-{
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 EMBEDED_CLASS(DummyHandler, t) {}

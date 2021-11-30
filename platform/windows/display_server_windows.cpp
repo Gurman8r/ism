@@ -189,7 +189,7 @@ Vec2 DisplayServerWindows::window_get_mouse_pos(WindowID id) const
 
 WindowID DisplayServerWindows::window_get_native_handle(WindowID id) const
 {
-#ifdef SYSTEM_WINDOWS
+#if SYSTEM_WINDOWS
 	return (WindowID)glfwGetWin32Window((GLFWwindow *)id);
 #else
 	return (WindowID)(GLFWwindow *)id;
@@ -475,18 +475,11 @@ WindowMouseEnterCallback DisplayServerWindows::window_set_mouse_enter_callback(W
 			reinterpret_cast<GLFWcursorenterfun>(value)));
 }
 
-WindowMousePosCallback DisplayServerWindows::window_set_mouse_pos_callback(WindowID id, WindowMousePosCallback value)
+WindowMousePositionCallback DisplayServerWindows::window_set_mouse_position_callback(WindowID id, WindowMousePositionCallback value)
 {
-	return reinterpret_cast<WindowMousePosCallback>(
+	return reinterpret_cast<WindowMousePositionCallback>(
 		glfwSetCursorPosCallback((GLFWwindow *)id,
 			reinterpret_cast<GLFWcursorposfun>(value)));
-}
-
-WindowMouseScrollCallback DisplayServerWindows::window_set_mouse_scroll_callback(WindowID id, WindowMouseScrollCallback value)
-{
-	return reinterpret_cast<WindowMouseScrollCallback>(
-		glfwSetScrollCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWscrollfun>(value)));
 }
 
 WindowPositionCallback DisplayServerWindows::window_set_position_callback(WindowID id, WindowPositionCallback value)
@@ -503,9 +496,16 @@ WindowRefreshCallback DisplayServerWindows::window_set_refresh_callback(WindowID
 			reinterpret_cast<GLFWwindowrefreshfun>(value)));
 }
 
-WindowResizeCallback DisplayServerWindows::window_set_resize_callback(WindowID id, WindowResizeCallback value)
+WindowScrollCallback DisplayServerWindows::window_set_scroll_callback(WindowID id, WindowScrollCallback value)
 {
-	return reinterpret_cast<WindowResizeCallback>(
+	return reinterpret_cast<WindowScrollCallback>(
+		glfwSetScrollCallback((GLFWwindow *)id,
+			reinterpret_cast<GLFWscrollfun>(value)));
+}
+
+WindowSizeCallback DisplayServerWindows::window_set_size_callback(WindowID id, WindowSizeCallback value)
+{
+	return reinterpret_cast<WindowSizeCallback>(
 		glfwSetWindowSizeCallback((GLFWwindow *)id,
 			reinterpret_cast<GLFWwindowposfun>(value)));
 }

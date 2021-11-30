@@ -484,7 +484,7 @@ namespace ism::mpl
 	template <class Fn, class ... Args
 	> constexpr void impl_for_args(Fn && fn, Args && ... args) noexcept
 	{
-		if constexpr (0 < sizeof...(args))
+		if constexpr (0 < sizeof...(args)) // sanity check
 		{
 			(void)std::initializer_list<int>{ (fn(FWD(args)), 0)... };
 		}
@@ -681,7 +681,7 @@ namespace ism::mpl
 	template <class Ls, class Fn
 	> constexpr void for_type_list(Fn && fn) noexcept
 	{
-		if constexpr (0 < mpl::size<Ls>())
+		if constexpr (0 < mpl::size<Ls>()) // sanity check
 		{
 			mpl::for_tuple(mpl::tag_tuple<Ls>{}, fn);
 		}

@@ -22,7 +22,7 @@ namespace ism
 	public:
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		Window();
+		explicit Window(WindowID id = nullptr);
 		virtual ~Window() override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -108,11 +108,11 @@ namespace ism
 		virtual WindowMaximizeCallback set_maximize_callback(WindowMaximizeCallback value);
 		virtual WindowMouseButtonCallback set_mouse_button_callback(WindowMouseButtonCallback value);
 		virtual WindowMouseEnterCallback set_mouse_enter_callback(WindowMouseEnterCallback value);
-		virtual WindowMousePosCallback set_mouse_pos_callback(WindowMousePosCallback value);
-		virtual WindowMouseScrollCallback set_mouse_scroll_callback(WindowMouseScrollCallback value);
+		virtual WindowMousePositionCallback set_mouse_position_callback(WindowMousePositionCallback value);
 		virtual WindowPositionCallback set_position_callback(WindowPositionCallback value);
 		virtual WindowRefreshCallback set_refresh_callback(WindowRefreshCallback value);
-		virtual WindowResizeCallback set_resize_callback(WindowResizeCallback value);
+		virtual WindowScrollCallback set_scroll_callback(WindowScrollCallback value);
+		virtual WindowSizeCallback set_size_callback(WindowSizeCallback value);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

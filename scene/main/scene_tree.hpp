@@ -44,7 +44,7 @@ namespace ism
 		virtual bool process(Duration const & dt) override;
 
 	public:
-		NODISCARD auto get_registry() const noexcept -> entt::registry * { return const_cast<entt::registry *>(&m_entt); }
+		NODISCARD auto get_registry() const noexcept -> EntityRegistry * { return const_cast<EntityRegistry *>(&m_entt); }
 
 		NODISCARD auto get_root() const noexcept -> Ref<Window> { return m_root; }
 
@@ -71,7 +71,7 @@ namespace ism
 
 		FPS_Tracker m_fps{ 120 };
 
-		entt::registry m_entt{};
+		EntityRegistry m_entt{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

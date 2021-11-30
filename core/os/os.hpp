@@ -14,7 +14,7 @@
 	static ism::OS & ANON{ __os_impl__(user) }
 
 // os implementation
-#define OS_SPECIAL(user, decl)		\
+#define OS_SPECIAL(user, decl)	\
 	OS_FUNC(user)				\
 	{							\
 		RETURN_STATIC(decl);	\

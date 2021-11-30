@@ -14,7 +14,7 @@ namespace ism
 	protected:
 		friend class SceneTree;
 
-		entt::entity m_entity_id{}; // entity
+		EntityID m_entity_id{ entt::null }; // entity
 
 		Entity();
 
@@ -24,9 +24,9 @@ namespace ism
 		virtual void process(Duration const & dt) override;
 
 	public:
-		NODISCARD operator entt::entity() const noexcept { return m_entity_id; }
+		NODISCARD operator EntityID() const noexcept { return m_entity_id; }
 
-		NODISCARD auto get_entity_id() const noexcept -> entt::entity { return m_entity_id; }
+		NODISCARD auto get_entity_id() const noexcept -> EntityID { return m_entity_id; }
 
 	public:
 		template <class Component, class ... Args

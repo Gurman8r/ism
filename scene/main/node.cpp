@@ -17,11 +17,11 @@ EMBEDED_CLASS(Node, t, TypeFlags_IsAbstract)
 	};
 }
 
-Node::Node() noexcept { if (!m_tree) { m_tree = VALIDATE(SINGLETON(SceneTree)); } }
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+Node::Node() noexcept : m_tree{ VALIDATE(SINGLETON(SceneTree)) } {}
 
 Node::~Node() noexcept { while (!m_children.empty()) { m_children.pop_back(); } }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void Node::process(Duration const & dt)
 {
@@ -37,7 +37,7 @@ void Node::handle_event(Event const & ev)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void Node::detach_children()
+void Node::detach_nodes()
 {
 	if (m_parent)
 	{
@@ -59,13 +59,13 @@ void Node::detach_children()
 	m_children.clear();
 }
 
-bool Node::set_parent(Node * value)
+bool Node::set_owner(Node * value)
 {
 	if (!value || (this == value) || m_parent == value) { return false; }
 
 	value->m_children.push_back(this);
 
-	if (m_parent) { m_parent->delete_child(get_sibling_index()); }
+	if (m_parent) { m_parent->delete_node(get_sibling_index()); }
 
 	m_parent = value;
 
@@ -105,7 +105,7 @@ void Node::set_sibling_index(size_t const i)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-bool Node::is_child_of(Node const * other, bool recursive) const noexcept
+bool Node::is_owned_by(Node const * other, bool recursive) const noexcept
 {
 	if (!m_parent || !other || (this == other)) { return false; }
 	else if (m_parent == other) { return true; }
@@ -123,7 +123,7 @@ bool Node::is_child_of(Node const * other, bool recursive) const noexcept
 	return false;
 }
 
-bool Node::is_parent_of(Node const * other, bool recursive) const noexcept
+bool Node::is_owner_of(Node const * other, bool recursive) const noexcept
 {
 	if (!other || (this == other)) { return false; }
 	else if (this == other->m_parent) { return true; }
@@ -131,7 +131,7 @@ bool Node::is_parent_of(Node const * other, bool recursive) const noexcept
 	{
 		for (NODE const & node : m_children)
 		{
-			if (node->is_parent_of(other, true))
+			if (node->is_owner_of(other, true))
 			{
 				return true;
 			}

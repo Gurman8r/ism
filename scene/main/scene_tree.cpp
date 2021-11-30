@@ -46,23 +46,15 @@ bool SceneTree::process(Duration const & dt)
 {
 	MainLoop::process(dt);
 
-	bool should_exit{};
+	bool should_close{};
 
 	m_fps.update(dt);
 
-	m_root->poll_events();
-
-	ImGui_NewFrame();
-
 	m_root->process(dt);
 
-	ImGui_RenderFrame();
+	should_close |= m_root->get_should_close();
 
-	m_root->swap_buffers();
-
-	should_exit |= m_root->get_should_close();
-
-	return should_exit;
+	return should_close;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,4 +1,4 @@
-#ifdef OPENGL_ENABLED
+#if OPENGL_ENABLED
 #ifndef _ISM_OPENGL_HPP_
 #define _ISM_OPENGL_HPP_
 

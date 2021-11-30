@@ -2,6 +2,46 @@
 
 using namespace ism;
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+EMBEDED_CLASS(WindowCharEvent, t) {}
+
+EMBEDED_CLASS(WindowCharModsEvent, t) {}
+
+EMBEDED_CLASS(WindowCloseEvent, t) {}
+
+EMBEDED_CLASS(WindowContentScaleEvent, t) {}
+
+EMBEDED_CLASS(WindowDropEvent, t) {}
+
+EMBEDED_CLASS(WindowFocusEvent, t) {}
+
+EMBEDED_CLASS(WindowFramebufferResizeEvent, t) {}
+
+EMBEDED_CLASS(WindowIconifyEvent, t) {}
+
+EMBEDED_CLASS(WindowKeyEvent, t) {}
+
+EMBEDED_CLASS(WindowMaximizeEvent, t) {}
+
+EMBEDED_CLASS(WindowMouseButtonEvent, t) {}
+
+EMBEDED_CLASS(WindowMouseEnterEvent, t) {}
+
+EMBEDED_CLASS(WindowMouseExitEvent, t) {}
+
+EMBEDED_CLASS(WindowMousePositionEvent, t) {}
+
+EMBEDED_CLASS(WindowScrollEvent, t) {}
+
+EMBEDED_CLASS(WindowPositionEvent, t) {}
+
+EMBEDED_CLASS(WindowRefreshEvent, t) {}
+
+EMBEDED_CLASS(WindowSizeEvent, t) {}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 MEMBER_IMPL(DisplayServer::singleton) {};
 
 EMBEDED_CLASS(DisplayServer, t, TypeFlags_IsAbstract) {}
@@ -385,13 +425,7 @@ WindowMouseEnterCallback DisplayServer::window_set_mouse_enter_callback(WindowID
 	return {};
 }
 
-WindowMousePosCallback DisplayServer::window_set_mouse_pos_callback(WindowID id, WindowMousePosCallback value)
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-WindowMouseScrollCallback DisplayServer::window_set_mouse_scroll_callback(WindowID id, WindowMouseScrollCallback value)
+WindowMousePositionCallback DisplayServer::window_set_mouse_position_callback(WindowID id, WindowMousePositionCallback value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
@@ -409,7 +443,13 @@ WindowRefreshCallback DisplayServer::window_set_refresh_callback(WindowID id, Wi
 	return {};
 }
 
-WindowResizeCallback DisplayServer::window_set_resize_callback(WindowID id, WindowResizeCallback value)
+WindowScrollCallback DisplayServer::window_set_scroll_callback(WindowID id, WindowScrollCallback value)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+WindowSizeCallback DisplayServer::window_set_size_callback(WindowID id, WindowSizeCallback value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};

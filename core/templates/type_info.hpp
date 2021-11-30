@@ -15,35 +15,35 @@ namespace ism
 	{
 #if defined(COMPILER_MSVC)
 #	define PRETTY_FUNCTION		__FUNCSIG__
-#	define PRETTY_TYPE_PREFIX	"class ism::StringView __cdecl ism::ctti::type<"
+#	define PRETTY_TYPE_PREFIX	"class ism::StringView __cdecl ism::ctti::name<"
 #	define PRETTY_TYPE_SUFFIX	">(void)"
 
 #elif defined(COMPILER_CLANG)
 #	define PRETTY_FUNCTION		__PRETTY_FUNCTION__
-#	define PRETTY_TYPE_PREFIX	"ism::StringView ism::ctti::type() [T = "
+#	define PRETTY_TYPE_PREFIX	"ism::StringView ism::ctti::name() [T = "
 #	define PRETTY_TYPE_SUFFIX	"]"
 
 #elif defined(COMPILER_GCC)
 #	define PRETTY_FUNCTION		__PRETTY_FUNCTION__
-#	define PRETTY_TYPE_PREFIX	"constexpr ism::StringView ism::ctti::type() [with T = "
+#	define PRETTY_TYPE_PREFIX	"constexpr ism::StringView ism::ctti::name() [with T = "
 #	define PRETTY_TYPE_SUFFIX	"]"
 
 #else
-#	error type information is unavailable
+#	error "Type information is not available."
 #endif
-		template <class T> NODISCARD constexpr StringView type()
+		template <class T> constexpr StringView name()
 		{
 			return StringView{ PRETTY_FUNCTION }
 				.remove_prefix(sizeof(PRETTY_TYPE_PREFIX) - 1)
 				.remove_suffix(sizeof(PRETTY_TYPE_SUFFIX) - 1);
 		}
 
-		template <class T> constexpr StringView type_v{ ctti::type<T>() };
+		template <class T> constexpr StringView name_v{ ctti::name<T>() };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD constexpr hash_t hash() noexcept { return ism::hash(ctti::type_v<T>); }
+	template <class T> NODISCARD constexpr hash_t hash() noexcept { return ism::hash(ctti::name_v<T>); }
 
 	template <class T> constexpr hash_t hash_v{ ism::hash<T>() };
 
