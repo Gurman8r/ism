@@ -43,40 +43,40 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		NODISCARD auto get_node(size_t const i) const -> NODE { return m_nodes[i]; }
+		NODISCARD auto get_child(size_t const i) const -> NODE { return m_nodes[i]; }
 
-		NODISCARD auto get_node_count() const noexcept -> size_t { return m_nodes.size(); }
+		NODISCARD auto get_child_count() const noexcept -> size_t { return m_nodes.size(); }
 
-		NODISCARD auto get_owner() const noexcept -> Node * { return m_owner; }
+		NODISCARD auto get_parent() const noexcept -> Node * { return m_owner; }
 
 		NODISCARD auto get_tree() const noexcept -> SceneTree * { return m_tree; }
 
-		NODE add_node(Node * value) noexcept { return (value && value->set_owner(this)) ? value : nullptr; }
+		NODE add_child(Node * value) noexcept { return (value && value->set_parent(this)) ? value : nullptr; }
 
-		NODE add_node(NODE const & value) noexcept { return add_node(*value); }
+		NODE add_child(NODE const & value) noexcept { return add_child(*value); }
 
 		template <class T, class ... Args
-		> NODE add_node(Args && ... args) noexcept { return add_node(memnew(T(FWD(args)...))); }
+		> NODE add_child(Args && ... args) noexcept { return add_child(memnew(T(FWD(args)...))); }
 
-		void delete_node(size_t const i) { m_nodes.erase(m_nodes.begin() + i); }
+		void destroy_child(size_t const i) { m_nodes.erase(m_nodes.begin() + i); }
 
-		void detach_nodes();
+		void detach_children();
 
-		bool set_owner(Node * value);
+		bool set_parent(Node * value);
 
-		bool set_owner(NODE const & value) noexcept { return set_owner(*value); }
+		bool set_parent(NODE const & value) noexcept { return set_parent(*value); }
 
-		NODISCARD size_t get_subindex() const noexcept;
+		NODISCARD size_t get_sibling_index() const noexcept;
 
-		void set_subindex(size_t const i);
+		void set_sibling_index(size_t const i);
 
-		NODISCARD bool is_owned_by(Node const * other, bool recursive = false) const noexcept;
+		NODISCARD bool is_child_of(Node const * other, bool recursive = false) const noexcept;
 
-		NODISCARD bool is_owned_by(NODE const & other, bool recursive = false) const noexcept { return is_owned_by(*other, recursive); }
+		NODISCARD bool is_child_of(NODE const & other, bool recursive = false) const noexcept { return is_child_of(*other, recursive); }
 
-		NODISCARD bool is_owner_of(Node const * other, bool recursive = false) const noexcept;
+		NODISCARD bool is_parent_of(Node const * other, bool recursive = false) const noexcept;
 
-		NODISCARD bool is_owner_of(NODE const & other, bool recursive = false) const noexcept { return is_owner_of(*other, recursive); }
+		NODISCARD bool is_parent_of(NODE const & other, bool recursive = false) const noexcept { return is_parent_of(*other, recursive); }
 
 	public:
 		template <class Fn = void(*)(NODE &)

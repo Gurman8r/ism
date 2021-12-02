@@ -36,23 +36,23 @@ namespace ism
 		}
 
 	public:
-		static auto clear(Color const & color = {}, bool depth_stencil = true) noexcept -> RenderingCommand {
+		static auto clear(Color const & color = {}, bool depth_stencil = true) noexcept {
 			return bind(&RenderingDevice::clear, color, depth_stencil);
 		}
 
-		static auto draw_arrays(RenderPrimitive primitive, size_t first, size_t count) noexcept -> RenderingCommand {
+		static auto draw_arrays(RenderPrimitive primitive, size_t first, size_t count) noexcept {
 			return bind(&RenderingDevice::draw_arrays, primitive, first, count);
 		}
 
-		static auto draw_indexed(RenderPrimitive primitive, size_t count) noexcept -> RenderingCommand {
+		static auto draw_indexed(RenderPrimitive primitive, size_t count) noexcept {
 			return bind(&RenderingDevice::draw_indexed, primitive, count);
 		}
 
-		static auto flush() noexcept -> RenderingCommand {
+		static auto flush() noexcept {
 			return bind(&RenderingDevice::flush);
 		}
 
-		static auto set_viewport(Rect const & rect) noexcept -> RenderingCommand {
+		static auto set_viewport(IntRect const & rect) noexcept {
 			return bind(&RenderingDevice::set_viewport, rect);
 		}
 	};

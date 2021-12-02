@@ -3,12 +3,12 @@
 #include <core/templates/batch.hpp>
 #include <core/error/error_macros.hpp>
 
-#ifndef ISM_MEMORY_LEAK_DISPLAY
-#define ISM_MEMORY_LEAK_DISPLAY 1
+#ifndef LEAK_DISPLAY_ENABLED
+#define LEAK_DISPLAY_ENABLED 1
 #endif
 
-#ifndef ISM_MEMORY_LEAK_CLEANUP
-#define ISM_MEMORY_LEAK_CLEANUP 0
+#ifndef LEAK_CLEANUP_ENABLED
+#define LEAK_CLEANUP_ENABLED 0
 #endif
 
 using namespace ism;
@@ -25,7 +25,7 @@ static struct NODISCARD MemoryTracker final
 
 	~MemoryTracker()
 	{
-#if ISM_MEMORY_LEAK_DISPLAY
+#if LEAK_DISPLAY_ENABLED
 		if (!records.empty())
 		{
 			SINGLETON(OS)->print("\n\nMEMORY LEAKS DETECTED:");
@@ -42,22 +42,22 @@ static struct NODISCARD MemoryTracker final
 		}
 #endif
 
-#if ISM_MEMORY_LEAK_CLEANUP
+#if LEAK_CLEANUP_ENABLED
 		while (!records.empty()) { memfree(records.back<ID_addr>()); }
 #else
-		VERIFY("MEMORY LEAKS DETECTED" && g_memory.records.empty());
+		VERIFY("MEMORY LEAKS DETECTED" && g_memory_tracker.records.empty());
 #endif
 	}
 }
-g_memory{};
+g_memory_tracker{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void * Memory::alloc_static(size_t size, cstring desc)
 {
-	return std::get<ID_addr>(g_memory.records.push_back
+	return std::get<ID_addr>(g_memory_tracker.records.push_back
 	(
-		++g_memory.index,
+		++g_memory_tracker.index,
 		size,
 		std::pmr::get_default_resource()->allocate(size),
 		desc
@@ -95,20 +95,20 @@ void * Memory::realloc_static(void * ptr, size_t oldsz, size_t newsz)
 
 void Memory::free_static(void * ptr)
 {
-	if (size_t const i{ g_memory.records.index_of<ID_addr>(ptr) }
-	; i != g_memory.records.npos)
+	if (size_t const i{ g_memory_tracker.records.index_of<ID_addr>(ptr) }
+	; i != g_memory_tracker.records.npos)
 	{
-		size_t const size{ g_memory.records.get<ID_size>(i) };
+		size_t const size{ g_memory_tracker.records.get<ID_size>(i) };
 
 		std::pmr::get_default_resource()->deallocate(ptr, size);
 
-		g_memory.records.erase(i);
+		g_memory_tracker.records.erase(i);
 	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void * operator new(size_t size, ism::cstring desc)
+void * operator new(size_t size, char const * desc)
 {
 	return ism::Memory::alloc_static(size, desc);
 }
@@ -118,7 +118,7 @@ void * operator new(size_t size, void * (*alloc_fn)(size_t))
 	return alloc_fn(size);
 }
 
-void operator delete(void * ptr, ism::cstring desc)
+void operator delete(void * ptr, char const * desc)
 {
 	FATAL("this should never be called");
 }

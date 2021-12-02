@@ -59,7 +59,7 @@ void RenderingDeviceOpenGL::flush()
 	glFlush();
 }
 
-void RenderingDeviceOpenGL::set_viewport(Rect const & rect)
+void RenderingDeviceOpenGL::set_viewport(IntRect const & rect)
 {
 	glViewport((int32_t)rect[0], (int32_t)rect[1], (int32_t)rect[2], (int32_t)rect[3]);
 }

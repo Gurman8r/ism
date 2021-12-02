@@ -164,7 +164,7 @@ bool Main::start()
 		Ref<Window> root{ tree->get_root() };
 
 #if TOOLS_ENABLED
-		if (editor) { root->add_node<EditorNode>(); }
+		if (editor) { root->add_child<EditorNode>(); }
 #endif
 	}
 

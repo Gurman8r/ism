@@ -123,6 +123,8 @@ namespace ism
 
 	enum class byte : uint8_t {};
 
+	constexpr byte operator"" _byte(uint64_t n) noexcept { return static_cast<byte>(n); }
+
 	constexpr byte operator+(byte a) noexcept { return static_cast<byte>(+static_cast<uint8_t>(a)); }
 	constexpr byte operator-(byte a) noexcept { return static_cast<byte>(-static_cast<uint8_t>(a)); }
 	constexpr byte operator~(byte a) noexcept { return static_cast<byte>(~static_cast<uint8_t>(a)); }

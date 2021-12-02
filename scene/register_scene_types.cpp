@@ -1,6 +1,7 @@
 #include <scene/register_scene_types.hpp>
 #include <scene/main/window.hpp>
 #include <scene/main/scene_tree.hpp>
+#include <scene/components/mono_behavior.hpp>
 
 #include <scene/resources/font.hpp>
 #include <scene/resources/material.hpp>
@@ -14,11 +15,16 @@ using namespace ism;
 
 void ism::register_scene_types()
 {
-	SINGLETON(Internals)->bind_class<
-
+	SINGLETON(Internals)->bind_class
+	<
 		SceneTree,
 		Node,
 		Window,
+		Entity,
+
+		Component,
+		Behavior,
+		MonoBehavior,
 
 		Font,
 		Material,

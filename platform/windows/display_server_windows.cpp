@@ -192,25 +192,25 @@ String DisplayServerWindows::window_get_clipboard(WindowID id) const
 	return glfwGetClipboardString((GLFWwindow *)id);
 }
 
-Vec2 DisplayServerWindows::window_get_content_scale(WindowID id) const
+Vec2f DisplayServerWindows::window_get_content_scale(WindowID id) const
 {
 	float_t x, y;
 	glfwGetWindowContentScale((GLFWwindow *)id, &x, &y);
-	return Vec2{ x, y };
+	return { x, y };
 }
 
-Rect DisplayServerWindows::window_get_frame_size(WindowID id) const
+IntRect DisplayServerWindows::window_get_frame_size(WindowID id) const
 {
 	int32_t l, r, t, b;
 	glfwGetWindowFrameSize((GLFWwindow *)id, &l, &r, &t, &b);
-	return Rect{ l, t, r - l, b - t };
+	return { l, t, r, b };
 }
 
-Vec2 DisplayServerWindows::window_get_framebuffer_size(WindowID id) const
+Vec2i DisplayServerWindows::window_get_framebuffer_size(WindowID id) const
 {
 	int32_t x, y;
 	glfwGetFramebufferSize((GLFWwindow *)id, &x, &y);
-	return Vec2{ x, y };
+	return { x, y };
 }
 
 int32_t DisplayServerWindows::window_get_input_mode(WindowID id, InputMode value) const
@@ -228,11 +228,11 @@ InputAction DisplayServerWindows::window_get_mouse_button(WindowID id, MouseButt
 	return glfwGetMouseButton((GLFWwindow *)id, value);
 }
 
-Vec2 DisplayServerWindows::window_get_mouse_position(WindowID id) const
+Vec2d DisplayServerWindows::window_get_mouse_position(WindowID id) const
 {
 	double_t x, y;
 	glfwGetCursorPos((GLFWwindow *)id, &x, &y);
-	return Vec2{ x, y };
+	return { x, y };
 }
 
 void * DisplayServerWindows::window_get_native_handle(WindowID id) const
@@ -249,73 +249,18 @@ float_t DisplayServerWindows::window_get_opacity(WindowID id) const
 	return glfwGetWindowOpacity((GLFWwindow *)id);
 }
 
-Vec2 DisplayServerWindows::window_get_position(WindowID id) const
+Vec2i DisplayServerWindows::window_get_position(WindowID id) const
 {
 	int32_t x, y;
 	glfwGetWindowPos((GLFWwindow *)id, &x, &y);
-	return Vec2{ x, y };
+	return { x, y };
 }
 
-Vec2 DisplayServerWindows::window_get_size(WindowID id) const
+Vec2i DisplayServerWindows::window_get_size(WindowID id) const
 {
 	int32_t x, y;
 	glfwGetWindowSize((GLFWwindow *)id, &x, &y);
-	return Vec2{ x, y };
-}
-
-bool DisplayServerWindows::window_get_is_auto_iconify(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_AUTO_ICONIFY);
-}
-
-bool DisplayServerWindows::window_get_is_decorated(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED);
-}
-
-bool DisplayServerWindows::window_get_is_floating(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING);
-}
-
-bool DisplayServerWindows::window_get_is_focused(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FOCUS_ON_SHOW);
-}
-
-bool DisplayServerWindows::window_get_is_focus_on_show(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FOCUSED);
-}
-
-bool DisplayServerWindows::window_get_is_hovered(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_HOVERED);
-}
-
-bool DisplayServerWindows::window_get_is_iconified(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_ICONIFIED);
-}
-
-bool DisplayServerWindows::window_get_is_maximized(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_MAXIMIZED);
-}
-
-bool DisplayServerWindows::window_get_is_resizable(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_RESIZABLE);
-}
-
-bool DisplayServerWindows::window_get_is_transparent(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_TRANSPARENT_FRAMEBUFFER);
-}
-
-bool DisplayServerWindows::window_get_is_visible(WindowID id) const
-{
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_VISIBLE);
+	return { x, y };
 }
 
 bool DisplayServerWindows::window_get_should_close(WindowID id) const
@@ -330,10 +275,52 @@ void * DisplayServerWindows::window_get_user_pointer(WindowID id) const
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void DisplayServerWindows::window_set_is_auto_iconify(WindowID id, bool value)
+bool DisplayServerWindows::window_is_decorated(WindowID id) const
 {
-	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_AUTO_ICONIFY, value);
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED);
 }
+
+bool DisplayServerWindows::window_is_floating(WindowID id) const
+{
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING);
+}
+
+bool DisplayServerWindows::window_is_focused(WindowID id) const
+{
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FOCUS_ON_SHOW);
+}
+
+bool DisplayServerWindows::window_is_hovered(WindowID id) const
+{
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_HOVERED);
+}
+
+bool DisplayServerWindows::window_is_iconified(WindowID id) const
+{
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_ICONIFIED);
+}
+
+bool DisplayServerWindows::window_is_maximized(WindowID id) const
+{
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_MAXIMIZED);
+}
+
+bool DisplayServerWindows::window_is_resizable(WindowID id) const
+{
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_RESIZABLE);
+}
+
+bool DisplayServerWindows::window_is_transparent(WindowID id) const
+{
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_TRANSPARENT_FRAMEBUFFER);
+}
+
+bool DisplayServerWindows::window_is_visible(WindowID id) const
+{
+	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_VISIBLE);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void DisplayServerWindows::window_set_clipboard(WindowID id, String const & value)
 {
@@ -359,21 +346,6 @@ void DisplayServerWindows::window_set_cursor_mode(WindowID id, int32_t value)
 	}));
 }
 
-void DisplayServerWindows::window_set_is_decorated(WindowID id, bool value)
-{
-	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED, value);
-}
-
-void DisplayServerWindows::window_set_is_floating(WindowID id, bool value)
-{
-	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING, value);
-}
-
-void DisplayServerWindows::window_set_is_focus_on_show(WindowID id, bool value)
-{
-	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_FOCUS_ON_SHOW, value);
-}
-
 void DisplayServerWindows::window_set_icons(WindowID id, int32_t width, int32_t height, uint8_t * pixels, int32_t count)
 {
 	GLFWimage img{ width, height, pixels };
@@ -386,11 +358,11 @@ void DisplayServerWindows::window_set_input_mode(WindowID id, int32_t mode, int3
 	glfwSetInputMode((GLFWwindow *)id, mode, value);
 }
 
-void DisplayServerWindows::window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds)
+void DisplayServerWindows::window_set_monitor(WindowID id, MonitorID monitor, IntRect const & bounds)
 {
 }
 
-void DisplayServerWindows::window_set_mouse_position(WindowID id, Vec2 const & value)
+void DisplayServerWindows::window_set_mouse_position(WindowID id, Vec2d const & value)
 {
 	glfwSetCursorPos((GLFWwindow *)id, value[0], value[1]);
 }
@@ -400,7 +372,7 @@ void DisplayServerWindows::window_set_opacity(WindowID id, float_t value)
 	glfwSetWindowOpacity((GLFWwindow *)id, value);
 }
 
-void DisplayServerWindows::window_set_position(WindowID id, Vec2 const & value)
+void DisplayServerWindows::window_set_position(WindowID id, Vec2i const & value)
 {
 	glfwSetWindowPos((GLFWwindow *)id, (int32_t)value[0], (int32_t)value[1]);
 }
@@ -415,7 +387,7 @@ void DisplayServerWindows::window_set_should_close(WindowID id, bool value)
 	glfwSetWindowShouldClose((GLFWwindow *)id, value);
 }
 
-void DisplayServerWindows::window_set_size(WindowID id, Vec2 const & value)
+void DisplayServerWindows::window_set_size(WindowID id, Vec2i const & value)
 {
 	glfwSetWindowSize((GLFWwindow *)id, (int32_t)value[0], (int32_t)value[1]);
 }
@@ -428,6 +400,18 @@ void DisplayServerWindows::window_set_title(WindowID id, String const & value)
 void DisplayServerWindows::window_set_user_pointer(WindowID id, void * value)
 {
 	glfwSetWindowUserPointer((GLFWwindow *)id, value);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void DisplayServerWindows::window_set_is_decorated(WindowID id, bool value)
+{
+	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED, value);
+}
+
+void DisplayServerWindows::window_set_is_floating(WindowID id, bool value)
+{
+	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

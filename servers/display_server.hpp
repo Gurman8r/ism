@@ -4,7 +4,7 @@
 #include <core/os/os.hpp>
 #include <core/input/input.hpp>
 
-// display api
+// types
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -99,8 +99,8 @@ namespace ism
 	{
 		DEFAULT_COPYABLE_MOVABLE(VideoMode);
 
-		Vec2	size			{ 1280, 720 };
-		Vec4	bits_per_pixel	{ 8, 8, 8, 8 };
+		Vec2i	size			{ 1280, 720 };
+		Vec4b	bits_per_pixel	{ 8, 8, 8, 8 };
 		int32_t	refresh_rate	{ -1 };
 
 		NODISCARD bool operator==(VideoMode const & other) const noexcept { return compare(other) == 0; }
@@ -155,7 +155,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// display events
+// events
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -168,7 +168,7 @@ namespace ism
 		WindowID window;
 		uint32_t codepoint;
 
-		explicit WindowCharEvent(WindowID window, uint32_t codepoint) noexcept
+		WindowCharEvent(WindowID window, uint32_t codepoint) noexcept
 			: window{ window }, codepoint{ codepoint } {}
 	};
 
@@ -183,7 +183,7 @@ namespace ism
 		uint32_t codepoint;
 		int32_t mods;
 
-		explicit WindowCharModsEvent(WindowID window, uint32_t codepoint, int32_t mods) noexcept
+		WindowCharModsEvent(WindowID window, uint32_t codepoint, int32_t mods) noexcept
 			: window{ window }, codepoint{ codepoint }, mods{ mods } {}
 	};
 
@@ -196,7 +196,7 @@ namespace ism
 	public:
 		WindowID window;
 
-		explicit WindowCloseEvent(WindowID window) noexcept
+		WindowCloseEvent(WindowID window) noexcept
 			: window{ window } {}
 	};
 
@@ -211,7 +211,7 @@ namespace ism
 		float_t xscale;
 		float_t yscale;
 
-		explicit WindowContentScaleEvent(WindowID window, float_t xscale, float_t yscale) noexcept
+		WindowContentScaleEvent(WindowID window, float_t xscale, float_t yscale) noexcept
 			: window{ window }, xscale{ xscale }, yscale{ yscale } {}
 	};
 
@@ -226,7 +226,7 @@ namespace ism
 		int32_t path_count;
 		cstring * paths;
 
-		explicit WindowDropEvent(WindowID window, int32_t path_count, cstring paths[]) noexcept
+		WindowDropEvent(WindowID window, int32_t path_count, cstring paths[]) noexcept
 			: window{ window }, path_count{ path_count }, paths{ paths } {}
 	};
 
@@ -240,7 +240,7 @@ namespace ism
 		WindowID window;
 		int32_t focused;
 
-		explicit WindowFocusEvent(WindowID window, int32_t focused) noexcept
+		WindowFocusEvent(WindowID window, int32_t focused) noexcept
 			: window{ window }, focused{ focused } {}
 	};
 
@@ -255,7 +255,7 @@ namespace ism
 		int32_t width;
 		int32_t height;
 
-		explicit WindowFramebufferResizeEvent(WindowID window, int32_t width, int32_t height) noexcept
+		WindowFramebufferResizeEvent(WindowID window, int32_t width, int32_t height) noexcept
 			: window{ window }, width{ width }, height{ height } {}
 	};
 
@@ -269,7 +269,7 @@ namespace ism
 		WindowID window;
 		int32_t iconified;
 
-		explicit WindowIconifyEvent(WindowID window, int32_t iconified) noexcept
+		WindowIconifyEvent(WindowID window, int32_t iconified) noexcept
 			: window{ window }, iconified{ iconified } {}
 	};
 
@@ -286,7 +286,7 @@ namespace ism
 		int32_t action;
 		int32_t mods;
 
-		explicit WindowKeyEvent(WindowID window, int32_t key, int32_t scancode, int32_t action, int32_t mods) noexcept
+		WindowKeyEvent(WindowID window, int32_t key, int32_t scancode, int32_t action, int32_t mods) noexcept
 			: window{ window }, key{ key }, scancode{ scancode }, action{ action }, mods{ mods } {}
 	};
 
@@ -300,7 +300,7 @@ namespace ism
 		WindowID window;
 		int32_t maximized;
 
-		explicit WindowMaximizeEvent(WindowID window, int32_t maximized) noexcept
+		WindowMaximizeEvent(WindowID window, int32_t maximized) noexcept
 			: window{ window }, maximized{ maximized } {}
 	};
 
@@ -316,7 +316,7 @@ namespace ism
 		int32_t action;
 		int32_t mods;
 
-		explicit WindowMouseButtonEvent(WindowID window, int32_t button, int32_t action, int32_t mods) noexcept
+		WindowMouseButtonEvent(WindowID window, int32_t button, int32_t action, int32_t mods) noexcept
 			: window{ window }, button{ button }, action{ action }, mods{ mods } {}
 	};
 
@@ -330,7 +330,7 @@ namespace ism
 		WindowID window;
 		int32_t entered;
 
-		explicit WindowMouseEnterEvent(WindowID window, int32_t entered) noexcept
+		WindowMouseEnterEvent(WindowID window, int32_t entered) noexcept
 			: window{ window }, entered{ entered } {}
 	};
 
@@ -345,7 +345,7 @@ namespace ism
 		double_t xpos;
 		double_t ypos;
 
-		explicit WindowMousePositionEvent(WindowID window, double_t xpos, double_t ypos) noexcept
+		WindowMousePositionEvent(WindowID window, double_t xpos, double_t ypos) noexcept
 			: window{ window }, xpos{ xpos }, ypos{ ypos } {}
 	};
 
@@ -360,7 +360,7 @@ namespace ism
 		double_t xoffset;
 		double_t yoffset;
 
-		explicit WindowScrollEvent(WindowID window, double_t xoffset, double_t yoffset) noexcept
+		WindowScrollEvent(WindowID window, double_t xoffset, double_t yoffset) noexcept
 			: window{ window }, xoffset{ xoffset }, yoffset{ yoffset } {}
 	};
 
@@ -375,7 +375,7 @@ namespace ism
 		int32_t xpos;
 		int32_t ypos;
 
-		explicit WindowPositionEvent(WindowID window, int32_t xpos, int32_t ypos) noexcept
+		WindowPositionEvent(WindowID window, int32_t xpos, int32_t ypos) noexcept
 			: window{ window }, xpos{ xpos }, ypos{ ypos } {}
 	};
 
@@ -388,7 +388,7 @@ namespace ism
 	public:
 		WindowID window;
 
-		explicit WindowRefreshEvent(WindowID window) noexcept
+		WindowRefreshEvent(WindowID window) noexcept
 			: window{ window } {}
 	};
 
@@ -403,7 +403,7 @@ namespace ism
 		int32_t width;
 		int32_t height;
 
-		explicit WindowSizeEvent(WindowID window, int32_t width, int32_t height) noexcept
+		WindowSizeEvent(WindowID window, int32_t width, int32_t height) noexcept
 			: window{ window }, width{ width }, height{ height } {}
 	};
 
@@ -456,53 +456,55 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD inline Rect window_get_bounds(WindowID id) const { return Rect{ window_get_position(id), window_get_size(id) }; }
+		NODISCARD inline IntRect window_get_bounds(WindowID id) const { return { window_get_position(id), window_get_size(id) }; }
 		NODISCARD virtual String window_get_clipboard(WindowID id) const;
-		NODISCARD virtual Vec2 window_get_content_scale(WindowID id) const;
-		NODISCARD virtual Rect window_get_frame_size(WindowID id) const;
-		NODISCARD virtual Vec2 window_get_framebuffer_size(WindowID id) const;
+		NODISCARD virtual Vec2f window_get_content_scale(WindowID id) const;
+		NODISCARD virtual IntRect window_get_frame_size(WindowID id) const;
+		NODISCARD virtual Vec2i window_get_framebuffer_size(WindowID id) const;
 		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode value) const;
 		NODISCARD virtual InputAction window_get_key(WindowID id, KeyCode value) const;
 		NODISCARD virtual InputAction window_get_mouse_button(WindowID id, MouseButton value) const;
-		NODISCARD virtual Vec2 window_get_mouse_position(WindowID id) const;
+		NODISCARD virtual Vec2d window_get_mouse_position(WindowID id) const;
 		NODISCARD virtual void * window_get_native_handle(WindowID id) const;
 		NODISCARD virtual float_t window_get_opacity(WindowID id) const;
-		NODISCARD virtual Vec2 window_get_position(WindowID id) const;
-		NODISCARD virtual Vec2 window_get_size(WindowID id) const;
-		NODISCARD virtual bool window_get_is_auto_iconify(WindowID id) const;
-		NODISCARD virtual bool window_get_is_decorated(WindowID id) const;
-		NODISCARD virtual bool window_get_is_floating(WindowID id) const;
-		NODISCARD virtual bool window_get_is_focused(WindowID id) const;
-		NODISCARD virtual bool window_get_is_focus_on_show(WindowID id) const;
-		NODISCARD virtual bool window_get_is_hovered(WindowID id) const;
-		NODISCARD virtual bool window_get_is_iconified(WindowID id) const;
-		NODISCARD virtual bool window_get_is_maximized(WindowID id) const;
-		NODISCARD virtual bool window_get_is_resizable(WindowID id) const;
-		NODISCARD virtual bool window_get_is_transparent(WindowID id) const;
-		NODISCARD virtual bool window_get_is_visible(WindowID id) const;
+		NODISCARD virtual Vec2i window_get_position(WindowID id) const;
+		NODISCARD virtual Vec2i window_get_size(WindowID id) const;
 		NODISCARD virtual bool window_get_should_close(WindowID id) const;
 		NODISCARD virtual void * window_get_user_pointer(WindowID id) const;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		virtual void window_set_is_auto_iconify(WindowID id, bool value);
+		NODISCARD virtual bool window_is_decorated(WindowID id) const;
+		NODISCARD virtual bool window_is_floating(WindowID id) const;
+		NODISCARD virtual bool window_is_focused(WindowID id) const;
+		NODISCARD virtual bool window_is_hovered(WindowID id) const;
+		NODISCARD virtual bool window_is_iconified(WindowID id) const;
+		NODISCARD virtual bool window_is_maximized(WindowID id) const;
+		NODISCARD virtual bool window_is_resizable(WindowID id) const;
+		NODISCARD virtual bool window_is_transparent(WindowID id) const;
+		NODISCARD virtual bool window_is_visible(WindowID id) const;
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		virtual void window_set_clipboard(WindowID id, String const & value);
 		virtual void window_set_cursor(WindowID id, CursorID value);
 		virtual void window_set_cursor_mode(WindowID id, int32_t value);
-		virtual void window_set_is_decorated(WindowID id, bool value);
-		virtual void window_set_is_floating(WindowID id, bool value);
-		virtual void window_set_is_focus_on_show(WindowID id, bool value);
 		virtual void window_set_icons(WindowID id, int32_t width, int32_t height, uint8_t * pixels, int32_t count = 1);
 		virtual void window_set_input_mode(WindowID id, int32_t mode, int32_t value);
-		virtual void window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds);
-		virtual void window_set_mouse_position(WindowID id, Vec2 const & value);
+		virtual void window_set_monitor(WindowID id, MonitorID monitor, IntRect const & bounds);
+		virtual void window_set_mouse_position(WindowID id, Vec2d const & value);
 		virtual void window_set_opacity(WindowID id, float_t value);
-		virtual void window_set_position(WindowID id, Vec2 const & value);
-		virtual void window_set_is_resizable(WindowID id, bool value);
+		virtual void window_set_position(WindowID id, Vec2i const & value);
 		virtual void window_set_should_close(WindowID id, bool value);
-		virtual void window_set_size(WindowID id, Vec2 const & value);
+		virtual void window_set_size(WindowID id, Vec2i const & value);
 		virtual void window_set_title(WindowID id, String const & value);
 		virtual void window_set_user_pointer(WindowID id, void * value);
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		virtual void window_set_is_decorated(WindowID id, bool value);
+		virtual void window_set_is_floating(WindowID id, bool value);
+		virtual void window_set_is_resizable(WindowID id, bool value);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

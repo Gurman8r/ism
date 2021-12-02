@@ -7,10 +7,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(Color32) uint32_t;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	class ISM_API Image : public Resource
 	{
 		OBJECT_COMMON(Image, Resource);

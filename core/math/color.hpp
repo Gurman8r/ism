@@ -5,48 +5,98 @@
 
 namespace ism
 {
-	struct Color
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	namespace util
+	{
+		template <class To, class From
+		> NODISCARD constexpr TVec4f<To> color_cast(const TVec4f<From> & value) noexcept
+		{
+			return (TVec4f<To>)value;
+		}
+
+		NODISCARD constexpr Vec4b color_cast(Vec4f const & value) noexcept
+		{
+			return (Vec4b)(value * 255.f);
+		}
+
+		NODISCARD constexpr Vec4f color_cast(Vec4b const & value) noexcept
+		{
+			return ((Vec4f)value) / 255.f;
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	template <class _T> struct NODISCARD basic_color final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using value_type				= typename Vec4::value_type;
-		using pointer					= typename Vec4::pointer;
-		using const_pointer				= typename Vec4::const_pointer;
-		using reference					= typename Vec4::reference;
-		using const_reference			= typename Vec4::const_reference;
-		using iterator					= typename Vec4::iterator;
-		using const_iterator			= typename Vec4::const_iterator;
-		using reverse_iterator			= typename Vec4::reverse_iterator;
-		using const_reverse_iterator	= typename Vec4::const_reverse_iterator;
+		using self_type					= typename basic_color<_T>;
+		using value_type				= typename _T;
+		using rgb_type					= typename TVec3f<value_type>;
+		using rgba_type					= typename TVec4f<value_type>;
+		using size_type					= typename rgba_type::size_type;
+		using difference_type			= typename rgba_type::difference_type;
+		using pointer					= typename rgba_type::pointer;
+		using reference					= typename rgba_type::reference;
+		using const_pointer				= typename rgba_type::const_pointer;
+		using const_reference			= typename rgba_type::const_reference;
+		using iterator					= typename rgba_type::iterator;
+		using const_iterator			= typename rgba_type::const_iterator;
+		using reverse_iterator			= typename rgba_type::reverse_iterator;
+		using const_reverse_iterator	= typename rgba_type::const_reverse_iterator;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr Color(float_t r = 0.f, float_t g = 0.f, float_t b = 0.f, float_t a = 1.f) noexcept : m_data{ r, g, b, a } {}
+		constexpr basic_color(rgba_type const & value)
+			: m_data{ value }
+		{
+		}
 
-		constexpr Color(Vec4 const & value) : m_data{ value } {}
+		constexpr basic_color(rgb_type const & rgb, value_type a)
+			: self_type{ rgb[0], rgb[1], rgb[2], a }
+		{
+		}
 
-		constexpr Color(Vec4 && value) noexcept : m_data{ std::move(value) } {}
+		constexpr basic_color(value_type rgba)
+			: m_data{ rgba, rgba, rgba, rgba }
+		{
+		}
 
-		constexpr Color(Color const & other) : m_data{ other.m_data } {}
+		template <class R, class G, class B, class A
+		> constexpr basic_color(R r, G g, B b, A a) : m_data{
+			static_cast<value_type>(r),
+			static_cast<value_type>(g),
+			static_cast<value_type>(b),
+			static_cast<value_type>(a)
+		}
+		{
+		}
 
-		constexpr Color(Color && other) noexcept : m_data{} { this->swap(std::move(other)); }
+		template <class R, class G, class B
+		> constexpr basic_color(R r, G g, B b) : self_type{ r, g, b, 1 }
+		{
+		}
+
+		template <class U> constexpr basic_color(TVec4f<U> const & value)
+			: m_data{ util::color_cast(value) }
+		{
+		}
+
+		template <class U> constexpr basic_color(basic_color<U> const & value)
+			: m_data{ util::color_cast(value.rgba()) }
+		{
+		}
+
+		constexpr basic_color()
+			: m_data{ 0 }
+		{
+		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr Color & operator=(Color const & other)
-		{
-			Color temp{ other };
-			this->swap(temp);
-			return (*this);
-		}
-
-		constexpr Color & operator=(Color && other) noexcept
-		{
-			this->swap(std::move(other));
-			return (*this);
-		}
-
-		constexpr void swap(Color & other) noexcept
+		constexpr void swap(self_type & other) noexcept
 		{
 			if (this != std::addressof(other))
 			{
@@ -56,76 +106,99 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr auto data() noexcept -> pointer { return m_data.data(); }
+		operator rgba_type & () & noexcept { return m_data; }
 
-		NODISCARD constexpr auto data() const noexcept -> const_pointer { return m_data.data(); }
+		constexpr operator rgba_type const & () const & noexcept { return m_data; }
 
-		NODISCARD constexpr bool empty() const noexcept { return m_data.empty(); }
-
-		NODISCARD constexpr auto max_size() const noexcept -> size_t { return m_data.max_size(); }
-
-		NODISCARD constexpr auto size() const noexcept -> size_t { return m_data.size(); }
+		operator rgba_type && () && noexcept { return std::move(m_data); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr operator pointer() noexcept { return m_data.operator pointer(); }
+		constexpr operator pointer() noexcept { return m_data; }
 
-		NODISCARD constexpr operator const_pointer() const noexcept { return m_data.operator const_pointer(); }
-
-		NODISCARD constexpr auto operator*() & noexcept -> reference { return m_data.operator*(); }
-
-		NODISCARD constexpr auto operator*() const & noexcept -> const_reference { return m_data.operator*(); }
-
-		NODISCARD constexpr auto operator*() && noexcept -> float_t && { return std::move(m_data.operator*()); }
+		constexpr operator const_pointer() const noexcept { return m_data; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr auto at(size_t const i) & noexcept -> reference { return m_data[i]; }
+		constexpr auto r() const  noexcept-> value_type const & { return m_data[0]; }
+		
+		constexpr auto g() const  noexcept-> value_type const & { return m_data[1]; }
+		
+		constexpr auto b() const  noexcept-> value_type const & { return m_data[2]; }
+		
+		constexpr auto a() const  noexcept-> value_type const & { return m_data[3]; }
+		
+		constexpr auto rgb() const  noexcept-> rgb_type { return (rgb_type)m_data; }
 
-		NODISCARD constexpr auto at(size_t const i) const & noexcept -> const_reference { return m_data[i]; }
-
-		NODISCARD constexpr auto at(size_t const i) && noexcept -> value_type && { return std::move(m_data[i]); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
-
-		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
-
-		NODISCARD constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-
-		NODISCARD constexpr auto end() noexcept -> iterator { return m_data.end(); }
-
-		NODISCARD constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
-
-		NODISCARD constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-
-		NODISCARD constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
-
-		NODISCARD constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
-
-		NODISCARD constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-
-		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
-
-		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
-
-		NODISCARD constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
+		constexpr auto rgba() & noexcept-> rgba_type & { return m_data; }
+		
+		constexpr auto rgba() const & noexcept-> rgba_type const & { return m_data; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		
+		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
 
-		// define additional code
-#ifdef ISM_COLOR_EXTRA
-		ISM_COLOR_EXTRA
-#endif // ISM_COLOR_EXTRA
+		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
+
+		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
+
+		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
+
+		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
+
+		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
+
+		constexpr auto end() noexcept -> iterator { return m_data.end(); }
+
+		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
+
+		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
+
+		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
+
+		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
+
+		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	private:
-		Vec4 m_data;
+		rgba_type m_data;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ALIAS(Color) basic_color<float_t>;
+	
+	ALIAS(Color32) uint32_t;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class Colors final
+	{
+	public:
+		static constexpr Color clear	{ 0.0f, 0.0f, 0.0f, 0.0f };
+		static constexpr Color white	{ 1.0f, 1.0f, 1.0f, 1.0f };
+		static constexpr Color gray		{ 0.5f, 0.5f, 0.5f, 1.0f };
+		static constexpr Color black	{ 0.0f, 0.0f, 0.0f, 1.0f };
+
+		static constexpr Color red		{ 1.0f, 0.0f, 0.0f, 1.0f };
+		static constexpr Color green	{ 0.0f, 1.0f, 0.0f, 1.0f };
+		static constexpr Color blue		{ 0.0f, 0.0f, 1.0f, 1.0f };
+		static constexpr Color cyan		{ 0.0f, 1.0f, 1.0f, 1.0f };
+		static constexpr Color yellow	{ 1.0f, 1.0f, 0.0f, 1.0f };
+		static constexpr Color magenta	{ 1.0f, 0.0f, 1.0f, 1.0f };
+		static constexpr Color violet	{ 0.5f, 0.0f, 1.0f, 1.0f };
+		static constexpr Color lime		{ 0.5f, 1.0f, 0.0f, 1.0f };
+		static constexpr Color orange	{ 1.0f, 0.5f, 0.0f, 1.0f };
+		static constexpr Color fuchsia	{ 1.0f, 0.0f, 0.5f, 1.0f };
+		static constexpr Color aqua		{ 0.0f, 1.0f, 0.5f, 1.0f };
+		static constexpr Color azure	{ 0.0f, 0.5f, 1.0f, 1.0f };
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_COLOR_HPP_

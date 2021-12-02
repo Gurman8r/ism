@@ -33,9 +33,9 @@ void Node::process(Duration const & dt)
 {
 	Vector<size_t> to_remove{};
 
-	for (size_t i = 0, imax = get_node_count(); i < imax; ++i)
+	for (size_t i = 0, imax = get_child_count(); i < imax; ++i)
 	{
-		if (NODE node{ get_node(i) })
+		if (NODE node{ get_child(i) })
 		{
 			node->process(dt);
 		}
@@ -47,7 +47,7 @@ void Node::process(Duration const & dt)
 
 	while (!to_remove.empty())
 	{
-		delete_node(to_remove.back());
+		destroy_child(to_remove.back());
 
 		to_remove.pop_back();
 	}
@@ -59,7 +59,7 @@ void Node::handle_event(Event const & event)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void Node::detach_nodes()
+void Node::detach_children()
 {
 	if (m_owner)
 	{
@@ -81,13 +81,13 @@ void Node::detach_nodes()
 	m_nodes.clear();
 }
 
-bool Node::set_owner(Node * value)
+bool Node::set_parent(Node * value)
 {
 	if (!value || (this == value) || m_owner == value) { return false; }
 
 	value->m_nodes.push_back(this);
 
-	if (m_owner) { m_owner->delete_node(get_subindex()); }
+	if (m_owner) { m_owner->destroy_child(get_sibling_index()); }
 
 	m_owner = value;
 
@@ -96,7 +96,7 @@ bool Node::set_owner(Node * value)
 	return true;
 }
 
-size_t Node::get_subindex() const noexcept
+size_t Node::get_sibling_index() const noexcept
 {
 	return !m_owner
 		? npos
@@ -108,7 +108,7 @@ size_t Node::get_subindex() const noexcept
 				this));
 }
 
-void Node::set_subindex(size_t const i)
+void Node::set_sibling_index(size_t const i)
 {
 	if (!m_owner) { return; }
 
@@ -118,12 +118,12 @@ void Node::set_subindex(size_t const i)
 
 	NODE self{ this };
 
-	siblings.erase(siblings.begin() + get_subindex());
+	siblings.erase(siblings.begin() + get_sibling_index());
 
 	siblings.insert(siblings.begin() + i, self);
 }
 
-bool Node::is_owned_by(Node const * other, bool recursive) const noexcept
+bool Node::is_child_of(Node const * other, bool recursive) const noexcept
 {
 	if (!m_owner || !other || (this == other)) { return false; }
 	else if (m_owner == other) { return true; }
@@ -141,7 +141,7 @@ bool Node::is_owned_by(Node const * other, bool recursive) const noexcept
 	return false;
 }
 
-bool Node::is_owner_of(Node const * other, bool recursive) const noexcept
+bool Node::is_parent_of(Node const * other, bool recursive) const noexcept
 {
 	if (!other || (this == other)) { return false; }
 	else if (this == other->m_owner) { return true; }
@@ -149,7 +149,7 @@ bool Node::is_owner_of(Node const * other, bool recursive) const noexcept
 	{
 		for (NODE const & node : m_nodes)
 		{
-			if (node->is_owner_of(other, true))
+			if (node->is_parent_of(other, true))
 			{
 				return true;
 			}

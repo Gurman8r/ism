@@ -14,7 +14,7 @@ namespace ism
 	protected:
 		friend class SceneTree;
 
-		EntityID m_entity_id{ entt::null }; // entity
+		EntityID m_entity_id{ entt::null };
 
 		Entity();
 
@@ -26,35 +26,34 @@ namespace ism
 
 		NODISCARD auto get_entity_id() const noexcept -> EntityID { return m_entity_id; }
 
-	public:
-		template <class Component, class ... Args
-		> Component & add_component(Args && ... args) noexcept
+		template <class T, class ... Args
+		> T & add_component(Args && ... args) noexcept
 		{
-			auto & tree{ *VALIDATE(get_tree()) };
-			Component & c{ tree.m_entt.emplace<Component>(m_entity_id, FWD(args)...) };
-			tree.on_component_added<Component>(*this, c);
+			auto & tree{ *VALIDATE(m_tree) };
+			T & c{ tree.m_entt.emplace<T>(m_entity_id, FWD(args)...) };
+			tree.on_component_added<T>(*this, c);
 			return c;
 		}
 
-		template <class ... Component
+		template <class ... T
 		> NODISCARD decltype(auto) get_component()
 		{
-			auto & tree{ *VALIDATE(get_tree()) };
-			return tree.m_entt.get<Component...>(m_entity_id);
+			auto & tree{ *VALIDATE(m_tree) };
+			return tree.m_entt.get<T...>(m_entity_id);
 		}
 
-		template <class ... Component
+		template <class ... T
 		> NODISCARD bool has_component() const
 		{
-			auto & tree{ *VALIDATE(get_tree()) };
-			return tree.m_entt.has<Component...>(m_entity_id);
+			auto & tree{ *VALIDATE(m_tree) };
+			return tree.m_entt.has<T...>(m_entity_id);
 		}
 
-		template <class ... Component
+		template <class ... T
 		> void remove_component()
 		{
-			auto & tree{ *VALIDATE(get_tree()) };
-			return tree.m_entt.remove<Component...>(m_entity_id);
+			auto & tree{ *VALIDATE(m_tree) };
+			tree.m_entt.remove<T...>(m_entity_id);
 		}
 	};
 

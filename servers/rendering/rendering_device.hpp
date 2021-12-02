@@ -694,7 +694,7 @@ namespace ism
 
 		virtual void flush() = 0;
 		
-		virtual void set_viewport(Rect const & rect) = 0;
+		virtual void set_viewport(IntRect const & rect) = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

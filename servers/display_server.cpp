@@ -131,19 +131,19 @@ String DisplayServer::window_get_clipboard(WindowID id) const
 	return {};
 }
 
-Vec2 DisplayServer::window_get_content_scale(WindowID id) const
+Vec2f DisplayServer::window_get_content_scale(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-Rect DisplayServer::window_get_frame_size(WindowID id) const
+IntRect DisplayServer::window_get_frame_size(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-Vec2 DisplayServer::window_get_framebuffer_size(WindowID id) const
+Vec2i DisplayServer::window_get_framebuffer_size(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
@@ -167,7 +167,7 @@ InputAction DisplayServer::window_get_mouse_button(WindowID id, MouseButton valu
 	return {};
 }
 
-Vec2 DisplayServer::window_get_mouse_position(WindowID id) const
+Vec2d DisplayServer::window_get_mouse_position(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
@@ -185,79 +185,13 @@ float_t DisplayServer::window_get_opacity(WindowID id) const
 	return {};
 }
 
-Vec2 DisplayServer::window_get_position(WindowID id) const
+Vec2i DisplayServer::window_get_position(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-Vec2 DisplayServer::window_get_size(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_auto_iconify(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_decorated(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_floating(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_focused(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_focus_on_show(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_hovered(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_iconified(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_maximized(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_resizable(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_transparent(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-bool DisplayServer::window_get_is_visible(WindowID id) const
+Vec2i DisplayServer::window_get_size(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
@@ -277,10 +211,61 @@ void * DisplayServer::window_get_user_pointer(WindowID id) const
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void DisplayServer::window_set_is_auto_iconify(WindowID id, bool value)
+bool DisplayServer::window_is_decorated(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
 }
+
+bool DisplayServer::window_is_floating(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+bool DisplayServer::window_is_focused(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+bool DisplayServer::window_is_hovered(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+bool DisplayServer::window_is_iconified(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+bool DisplayServer::window_is_maximized(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+bool DisplayServer::window_is_resizable(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+bool DisplayServer::window_is_transparent(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+bool DisplayServer::window_is_visible(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void DisplayServer::window_set_clipboard(WindowID id, String const & value)
 {
@@ -297,21 +282,6 @@ void DisplayServer::window_set_cursor_mode(WindowID id, int32_t value)
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
 
-void DisplayServer::window_set_is_decorated(WindowID id, bool value)
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-}
-
-void DisplayServer::window_set_is_floating(WindowID id, bool value)
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-}
-
-void DisplayServer::window_set_is_focus_on_show(WindowID id, bool value)
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-}
-
 void DisplayServer::window_set_icons(WindowID id, int32_t width, int32_t height, uint8_t * pixels, int32_t count)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
@@ -322,12 +292,12 @@ void DisplayServer::window_set_input_mode(WindowID id, int32_t mode, int32_t val
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
 
-void DisplayServer::window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds)
+void DisplayServer::window_set_monitor(WindowID id, MonitorID monitor, IntRect const & bounds)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
 
-void DisplayServer::window_set_mouse_position(WindowID id, Vec2 const & value)
+void DisplayServer::window_set_mouse_position(WindowID id, Vec2d const & value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
@@ -337,12 +307,7 @@ void DisplayServer::window_set_opacity(WindowID id, float_t value)
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
 
-void DisplayServer::window_set_position(WindowID id, Vec2 const & value)
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-}
-
-void DisplayServer::window_set_is_resizable(WindowID id, bool value)
+void DisplayServer::window_set_position(WindowID id, Vec2i const & value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
@@ -352,7 +317,7 @@ void DisplayServer::window_set_should_close(WindowID id, bool value)
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
 
-void DisplayServer::window_set_size(WindowID id, Vec2 const & value)
+void DisplayServer::window_set_size(WindowID id, Vec2i const & value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
@@ -363,6 +328,23 @@ void DisplayServer::window_set_title(WindowID id, String const & value)
 }
 
 void DisplayServer::window_set_user_pointer(WindowID id, void * value)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void DisplayServer::window_set_is_decorated(WindowID id, bool value)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+}
+
+void DisplayServer::window_set_is_floating(WindowID id, bool value)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+}
+
+void DisplayServer::window_set_is_resizable(WindowID id, bool value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }

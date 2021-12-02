@@ -33,19 +33,19 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_API_FUNC(void *) operator new(size_t size, ism::cstring desc);
+ISM_API_FUNC(void *) operator new(size_t size, char const * desc);
 
 ISM_API_FUNC(void *) operator new(size_t size, void * (*alloc_fn)(size_t));
 
-FORCE_INLINE void * operator new(size_t size, void * ptr, size_t check, ism::cstring desc) { return ptr; }
+FORCE_INLINE void * operator new(size_t size, void * ptr, size_t check, char const * desc) { return ptr; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_API_FUNC(void) operator delete(void * ptr, ism::cstring desc);
+ISM_API_FUNC(void) operator delete(void * ptr, char const * desc);
 
 ISM_API_FUNC(void) operator delete(void * ptr, void * (*alloc_fn)(size_t));
 
-FORCE_INLINE void operator delete(void * placement, void * ptr, size_t check, ism::cstring desc) {}
+FORCE_INLINE void operator delete(void * placement, void * ptr, size_t check, char const * desc) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

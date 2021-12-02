@@ -10,7 +10,7 @@ namespace ism
 	struct NODISCARD Glyph
 	{
 		Ref<Texture2D> graphic{};
-		Rect bounds{};
+		FloatRect bounds{};
 		uint32_t advance{};
 	};
 

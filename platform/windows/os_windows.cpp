@@ -127,11 +127,10 @@ VideoMode const & OS_Windows::get_desktop_video_mode() const
 		dm.dmSize = sizeof(dm);
 		EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm);
 
-		uint32_t const width{ dm.dmPelsWidth };
-		uint32_t const height{ dm.dmPelsHeight };
-		byte const * bpp{ static_cast<byte *>(static_cast<void *>(&dm.dmBitsPerPel)) };
-		int32_t const refresh_rate{ -1 };
-		result = { { width, height }, { bpp[0], bpp[1], bpp[2], bpp[3] }, refresh_rate };
+		int32_t const width{ (int32_t)dm.dmPelsWidth };
+		int32_t const height{ (int32_t)dm.dmPelsHeight };
+		uint8_t const * bpp{ static_cast<uint8_t *>(static_cast<void *>(&dm.dmBitsPerPel)) };
+		result = { { width, height }, { bpp[0], bpp[1], bpp[2], bpp[3] }, -1 };
 	}
 	return result;
 }
@@ -145,11 +144,10 @@ Vector<VideoMode> const & OS_Windows::get_fullscreen_video_modes() const
 		dm.dmSize = sizeof(dm);
 		for (int32_t count = 0; EnumDisplaySettings(nullptr, count, &dm); ++count)
 		{
-			uint32_t const width{ dm.dmPelsWidth };
-			uint32_t const height{ dm.dmPelsHeight };
-			byte const * bpp{ static_cast<byte *>(static_cast<void *>(&dm.dmBitsPerPel)) };
-			int32_t const refresh_rate{ -1 };
-			VideoMode mode{ { width, height }, { bpp[0], bpp[1], bpp[2], bpp[3] }, refresh_rate };
+			int32_t const width{ (int32_t)dm.dmPelsWidth };
+			int32_t const height{ (int32_t)dm.dmPelsHeight };
+			uint8_t const * bpp{ static_cast<uint8_t *>(static_cast<void *>(&dm.dmBitsPerPel)) };
+			VideoMode mode{ { width, height }, { bpp[0], bpp[1], bpp[2], bpp[3] }, -1 };
 			if (!ism::has(result, mode)) { result.push_back(mode); }
 		}
 	}

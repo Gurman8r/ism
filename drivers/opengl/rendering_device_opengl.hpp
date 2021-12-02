@@ -33,7 +33,7 @@ namespace ism
 
 		virtual void flush() override;
 
-		virtual void set_viewport(Rect const & rect) override;
+		virtual void set_viewport(IntRect const & rect) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -3,8 +3,8 @@
 
 #include <core/os/main_loop.hpp>
 #include <core/templates/duration.hpp>
-#include <scene/main/window.hpp>
 #include <main/performance.hpp>
+#include <scene/main/window.hpp>
 
 // scene
 namespace ism
@@ -25,12 +25,13 @@ namespace ism
 		OBJECT_COMMON(SceneTree, MainLoop);
 
 		friend class Main;
+		friend class Node;
 		friend class Entity;
 
 		static SceneTree * singleton;
 
 	public:
-		SceneTree(SceneSettings const & settings = {});
+		explicit SceneTree(SceneSettings const & settings = {});
 
 		virtual ~SceneTree() override;
 
@@ -46,9 +47,9 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		NODISCARD auto get_entt() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
-
 		NODISCARD auto get_fps() const noexcept -> FrameRateTracker const & { return m_fps; }
+
+		NODISCARD auto get_registry() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
 
 		NODISCARD auto get_root() const noexcept -> Ref<Window> { return m_root; }
 
@@ -65,13 +66,13 @@ namespace ism
 	private:
 		bool m_initialized{};
 
+		Timer const m_main_timer{ true };
+
+		FrameRateTracker m_fps{ 120 };
+
 		Ref<Window> m_root{};
 
 		EntityRegistry m_entt{};
-
-		Timer const m_main_timer{ true };
-
-		FrameRateTracker m_fps{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

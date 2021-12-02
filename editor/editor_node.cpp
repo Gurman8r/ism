@@ -16,14 +16,18 @@ EditorNode::~EditorNode()
 void EditorNode::process(Duration const & dt)
 {
 	char window_title[32]{};
-	std::sprintf(window_title, "ism @ %.1f fps", get_tree()->get_fps().value);
+	std::sprintf(window_title, "ism @ %.1f fps", (float_t)get_tree()->get_fps());
 	get_tree()->get_root()->set_title(window_title);
 
-	_show_dockspace("##EditorDockspace", true);
+	_show_dockspace("##EditorDockspace");
 	
 	ImGui::ShowDemoWindow();
 
 	Node::process(dt);
+}
+
+void EditorNode::_edit_node(NODE node, int32_t tree_node_flags)
+{
 }
 
 void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
@@ -37,7 +41,7 @@ void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
 		ImGui::SetNextWindowBgAlpha(0.f);
 		ImGui::PushStyleVar(ImGuiStyleVarType_WindowRounding, 0.f);
 		ImGui::PushStyleVar(ImGuiStyleVarType_WindowBorderSize, 0.f);
-		ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, Vec2{ 0.f, 0.f });
+		ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, Vec2f{ 0.f, 0.f });
 		bool const dockspace_open{ ImGui::Begin(label, nullptr,
 			ImGuiWindowFlags_NoTitleBar |
 			ImGuiWindowFlags_NoCollapse |

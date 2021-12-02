@@ -9,7 +9,7 @@ namespace ism
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using storage_type				= typename Array<float_t, 16>;
+		using storage_type				= typename Mat4f;
 		using value_type				= typename storage_type::value_type;
 		using pointer					= typename storage_type::pointer;
 		using const_pointer				= typename storage_type::const_pointer;

@@ -7,11 +7,11 @@
 
 #ifndef IM_VEC2_CLASS_EXTRA
 #define IM_VEC2_CLASS_EXTRA								\
-	constexpr ImVec2(ism::Vec2 const & v) noexcept		\
+	constexpr ImVec2(ism::Vec2f const & v) noexcept		\
 		: x{ v[0] }, y{ v[1] }							\
 	{}													\
-	constexpr operator ism::Vec2() const noexcept {		\
-		return *(ism::Vec2 *)&x;						\
+	constexpr operator ism::Vec2f() const noexcept {	\
+		return *(ism::Vec2f *)&x;						\
 	}													\
 	ImVec2 operator-(ImVec2 const & v) const noexcept {	\
 		return ImVec2{ x - v.x, y - v.y };				\
@@ -22,14 +22,14 @@
 
 #ifndef IM_VEC4_CLASS_EXTRA
 #define IM_VEC4_CLASS_EXTRA								\
-	constexpr ImVec4(ism::Vec4 const & v) noexcept		\
+	constexpr ImVec4(ism::Vec4f const & v) noexcept		\
 		: x{ v[0] }, y{ v[1] }, z{ v[2] }, w{ v[3] }	\
 	{}													\
 	constexpr ImVec4(ism::Color const & c) noexcept		\
 		: x{ c[0] }, y{ c[1] }, z{ c[2] }, w{ c[3] }	\
 	{}													\
-	constexpr operator ism::Vec4() const noexcept {		\
-		return *(ism::Vec4 *)&x;						\
+	constexpr operator ism::Vec4f() const noexcept {	\
+		return *(ism::Vec4f *)&x;						\
 	}													\
 	constexpr operator ism::Color() const noexcept {	\
 		return *(ism::Color *)&x;						\
