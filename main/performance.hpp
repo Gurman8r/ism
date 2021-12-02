@@ -6,14 +6,16 @@
 
 namespace ism
 {
-	struct FPS_Tracker final
+	struct FrameRateTracker final
 	{
 		float_t			value{};
 		float_t			accum{};
 		size_t			index{};
 		Vector<float_t>	times{};
 
-		FPS_Tracker(size_t count = 0, PolymorphicAllocator<byte> alloc = {}) noexcept
+		NODISCARD operator float_t() const noexcept { return value; }
+
+		FrameRateTracker(size_t count = 120, PolymorphicAllocator<byte> alloc = {}) noexcept
 			: value{}, accum{}, index{}, times{ count, 0.f, alloc }
 		{
 		}

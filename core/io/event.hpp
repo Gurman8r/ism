@@ -74,11 +74,6 @@ private:
 		
 		int32_t const m_handler_index;
 
-	protected:
-		friend class EventBus;
-
-		explicit EventHandler(EventBus * bus = nullptr) noexcept;
-
 	public:
 		virtual ~EventHandler() noexcept override { unsubscribe(); }
 
@@ -87,6 +82,11 @@ private:
 		NODISCARD auto get_event_bus() const noexcept -> EventBus * { return m_event_bus; }
 
 		NODISCARD auto get_handler_index() const noexcept -> int32_t { return m_handler_index; }
+
+	protected:
+		friend class EventBus;
+
+		explicit EventHandler(EventBus * bus = nullptr) noexcept;
 
 		template <class Ev0, class ... Evs
 		> void subscribe() noexcept
@@ -151,6 +151,10 @@ private:
 		NODISCARD auto get_callback() const noexcept -> EventCallback const & { return m_callback; }
 
 		template <class Fn> void set_callback(Fn && fn) noexcept { m_callback = FWD(fn); }
+
+		using EventHandler::subscribe;
+
+		using EventHandler::unsubscribe;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -203,9 +207,9 @@ private:
 
 		void clear() noexcept { m_callbacks.clear(); }
 
-		void erase(size_t i, size_t n = 1) noexcept { m_callbacks.erase(m_callbacks.begin() + i, m_callbacks.begin() + i + n); }
+		void erase(size_t i, size_t n = 1) { m_callbacks.erase(m_callbacks.begin() + i, m_callbacks.begin() + i + n); }
 
-		void reserve(size_t count) noexcept { m_callbacks.reserve(count); }
+		void reserve(size_t count) { m_callbacks.reserve(count); }
 		
 		template <class Fn
 		> auto add(Fn && fn) noexcept -> Callback & { return m_callbacks.emplace_back(VALIDATE(Callback{ FWD(fn) })); }

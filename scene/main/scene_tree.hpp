@@ -46,7 +46,9 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		NODISCARD auto get_framerate() const noexcept -> float_t { return m_fps.value; }
+		NODISCARD auto get_entt() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
+
+		NODISCARD auto get_fps() const noexcept -> FrameRateTracker const & { return m_fps; }
 
 		NODISCARD auto get_root() const noexcept -> Ref<Window> { return m_root; }
 
@@ -65,9 +67,11 @@ namespace ism
 
 		Ref<Window> m_root{};
 
+		EntityRegistry m_entt{};
+
 		Timer const m_main_timer{ true };
 
-		FPS_Tracker m_fps{ 120 };
+		FrameRateTracker m_fps{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

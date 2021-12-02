@@ -20,7 +20,7 @@ EMBEDED_CLASS(Node, t, TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Node::Node() noexcept : m_tree{ VALIDATE(SINGLETON(SceneTree)) }
+Node::Node(SceneTree * tree) noexcept : m_tree{ tree ? tree : VALIDATE(SINGLETON(SceneTree)) }
 {
 }
 
@@ -31,9 +31,25 @@ Node::~Node() noexcept
 
 void Node::process(Duration const & dt)
 {
+	Vector<size_t> to_remove{};
+
 	for (size_t i = 0, imax = get_node_count(); i < imax; ++i)
 	{
-		get_node(i)->process(dt);
+		if (NODE node{ get_node(i) })
+		{
+			node->process(dt);
+		}
+		else
+		{
+			to_remove.push_back(i);
+		}
+	}
+
+	while (!to_remove.empty())
+	{
+		delete_node(to_remove.back());
+
+		to_remove.pop_back();
 	}
 }
 

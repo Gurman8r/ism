@@ -89,11 +89,6 @@ DisplayServerWindows::~DisplayServerWindows()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-WindowID DisplayServerWindows::get_context_main() const
-{
-	return (WindowID)m_glfw_window;
-}
-
 WindowID DisplayServerWindows::get_context_current() const
 {
 	return (WindowID)glfwGetCurrentContext();
@@ -129,7 +124,28 @@ CursorID DisplayServerWindows::create_custom_cursor(int32_t w, int32_t h, byte c
 
 CursorID DisplayServerWindows::create_standard_cursor(CursorShape shape)
 {
-	return (CursorID)glfwCreateStandardCursor(shape);
+	return (CursorID)glfwCreateStandardCursor(std::invoke([shape]() noexcept
+	{
+		switch (shape)
+		{
+		default							: return 0;
+		case CursorShape_Arrow			: return GLFW_ARROW_CURSOR;
+		case CursorShape_IBeam			: return GLFW_IBEAM_CURSOR;
+		case CursorShape_Crosshair		: return GLFW_CROSSHAIR_CURSOR;
+		case CursorShape_PointingHand	: return GLFW_POINTING_HAND_CURSOR;
+		case CursorShape_EW				: return GLFW_RESIZE_EW_CURSOR;
+		case CursorShape_NS				: return GLFW_RESIZE_NS_CURSOR;
+		case CursorShape_NESW			: return GLFW_RESIZE_NESW_CURSOR;
+		case CursorShape_NWSE			: return GLFW_RESIZE_NWSE_CURSOR;
+		case CursorShape_ResizeAll		: return GLFW_RESIZE_ALL_CURSOR;
+		case CursorShape_NotAllowed		: return GLFW_NOT_ALLOWED_CURSOR;
+
+		// glfw doesn't have these
+		case CursorShape_HResize		: return GLFW_HRESIZE_CURSOR;
+		case CursorShape_VResize		: return GLFW_VRESIZE_CURSOR;
+		case CursorShape_Hand			: return GLFW_HAND_CURSOR;
+		}
+	}));
 }
 
 void DisplayServerWindows::destroy_cursor(CursorID value)
@@ -181,6 +197,13 @@ Vec2 DisplayServerWindows::window_get_content_scale(WindowID id) const
 	float_t x, y;
 	glfwGetWindowContentScale((GLFWwindow *)id, &x, &y);
 	return Vec2{ x, y };
+}
+
+Rect DisplayServerWindows::window_get_frame_size(WindowID id) const
+{
+	int32_t l, r, t, b;
+	glfwGetWindowFrameSize((GLFWwindow *)id, &l, &r, &t, &b);
+	return Rect{ l, t, r - l, b - t };
 }
 
 Vec2 DisplayServerWindows::window_get_framebuffer_size(WindowID id) const
@@ -238,13 +261,6 @@ Vec2 DisplayServerWindows::window_get_size(WindowID id) const
 	int32_t x, y;
 	glfwGetWindowSize((GLFWwindow *)id, &x, &y);
 	return Vec2{ x, y };
-}
-
-Rect DisplayServerWindows::window_get_frame_size(WindowID id) const
-{
-	int32_t l, t, r, b;
-	glfwGetWindowFrameSize((GLFWwindow *)id, &l, &r, &t, &b);
-	return { l, t, r - l, b - t };
 }
 
 bool DisplayServerWindows::window_get_is_auto_iconify(WindowID id) const

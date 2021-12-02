@@ -101,24 +101,24 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 		WindowHints_Default_Maximized & ~(WindowHints_Doublebuffer)
 		}));
 	
-	WindowID main_window{ g_display->get_context_main() };
-	g_display->window_set_char_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharEvent(FWD(x)...)); });
-	g_display->window_set_char_mods_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharModsEvent(FWD(x)...)); });
-	g_display->window_set_close_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCloseEvent(FWD(x)...)); });
-	g_display->window_set_content_scale_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowContentScaleEvent(FWD(x)...)); });
-	g_display->window_set_drop_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowDropEvent(FWD(x)...)); });
-	g_display->window_set_focus_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFocusEvent(FWD(x)...)); });
-	g_display->window_set_framebuffer_resize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFramebufferResizeEvent(FWD(x)...)); });
-	g_display->window_set_iconify_callback(main_window, [](auto ... x)  { g_bus->fire_event(WindowIconifyEvent(FWD(x)...)); });
-	g_display->window_set_key_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowKeyEvent(FWD(x)...)); });
-	g_display->window_set_maximize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMaximizeEvent(FWD(x)...)); });
-	g_display->window_set_mouse_button_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseButtonEvent(FWD(x)...)); });
-	g_display->window_set_mouse_enter_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseEnterEvent(FWD(x)...)); });
-	g_display->window_set_mouse_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMousePositionEvent(FWD(x)...)); });
-	g_display->window_set_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowPositionEvent(FWD(x)...)); });
-	g_display->window_set_refresh_callback(main_window, [](auto ... x)  { g_bus->fire_event(WindowRefreshEvent(FWD(x)...)); });
-	g_display->window_set_scroll_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowScrollEvent(FWD(x)...)); });
-	g_display->window_set_size_callback(main_window, [](auto ... x)   { g_bus->fire_event(WindowSizeEvent(FWD(x)...)); });
+	WindowID main_window{ g_display->get_context_current() };
+	g_display->window_set_char_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharEvent(x...)); });
+	g_display->window_set_char_mods_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharModsEvent(x...)); });
+	g_display->window_set_close_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCloseEvent(x...)); });
+	g_display->window_set_content_scale_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowContentScaleEvent(x...)); });
+	g_display->window_set_drop_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowDropEvent(x...)); });
+	g_display->window_set_focus_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFocusEvent(x...)); });
+	g_display->window_set_framebuffer_resize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFramebufferResizeEvent(x...)); });
+	g_display->window_set_iconify_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowIconifyEvent(x...)); });
+	g_display->window_set_key_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowKeyEvent(x...)); });
+	g_display->window_set_maximize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMaximizeEvent(x...)); });
+	g_display->window_set_mouse_button_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseButtonEvent(x...)); });
+	g_display->window_set_mouse_enter_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseEnterEvent(x...)); });
+	g_display->window_set_mouse_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMousePositionEvent(x...)); });
+	g_display->window_set_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowPositionEvent(x...)); });
+	g_display->window_set_refresh_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowRefreshEvent(x...)); });
+	g_display->window_set_scroll_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowScrollEvent(x...)); });
+	g_display->window_set_size_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowSizeEvent(x...)); });
 
 	g_renderer = memnew(RenderingServerDefault());
 

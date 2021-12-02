@@ -1,18 +1,20 @@
 #ifndef _ISM_WINDOW_HPP_
 #define _ISM_WINDOW_HPP_
 
-#include <scene/main/viewport.hpp>
+#include <scene/main/node.hpp>
+#include <servers/display_server.hpp>
+#include <servers/rendering/rendering_command.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window
-	class ISM_API Window : public Viewport
+	class ISM_API Window : public Node
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		OBJECT_COMMON(Window, Viewport);
+		OBJECT_COMMON(Window, Node);
 
 	protected:
 		friend class SceneTree;
@@ -23,7 +25,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		explicit Window() noexcept;
-		virtual ~Window() override;
+		virtual ~Window();
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -47,8 +49,10 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		NODISCARD inline Rect get_bounds() const noexcept { return Rect{ get_position(), get_size() }; }
 		NODISCARD virtual String get_clipboard() const;
 		NODISCARD virtual Vec2 get_content_scale() const;
+		NODISCARD virtual Rect get_frame_size() const;
 		NODISCARD virtual Vec2 get_framebuffer_size() const;
 		NODISCARD virtual int32_t get_input_mode(InputMode value) const;
 		NODISCARD virtual InputAction get_key(KeyCode value) const;
@@ -56,9 +60,8 @@ namespace ism
 		NODISCARD virtual Vec2 get_mouse_position() const;
 		NODISCARD virtual void * get_native_handle() const;
 		NODISCARD virtual float_t get_opacity() const;
-		NODISCARD virtual Vec2 get_position() const override;
-		NODISCARD virtual Vec2 get_size() const override;
-		NODISCARD virtual Rect get_frame_size() const;
+		NODISCARD virtual Vec2 get_position() const;
+		NODISCARD virtual Vec2 get_size() const;
 		NODISCARD virtual bool get_is_auto_iconify() const;
 		NODISCARD virtual bool get_is_decorated() const;
 		NODISCARD virtual bool get_is_floating() const;
@@ -88,10 +91,10 @@ namespace ism
 		virtual void set_monitor(MonitorID monitor, Rect const & bounds);
 		virtual void set_mouse_position(Vec2 const & value);
 		virtual void set_opacity(float_t value);
-		virtual void set_position(Vec2 const & value) override;
+		virtual void set_position(Vec2 const & value);
 		virtual void set_title(String const & value);
 		virtual void set_should_close(bool value);
-		virtual void set_size(Vec2 const & value) override;
+		virtual void set_size(Vec2 const & value);
 		virtual void set_user_pointer(void * value);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

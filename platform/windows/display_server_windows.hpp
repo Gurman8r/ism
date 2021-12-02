@@ -26,17 +26,16 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		virtual WindowID get_context_main() const override;
-		virtual WindowID get_context_current() const override;
+		NODISCARD virtual WindowID get_context_current() const override;
 		virtual void make_context_current(WindowID id) override;
 		virtual void poll_events() override;
 		virtual void swap_buffers(WindowID id) override;
 		virtual void swap_interval(int32_t value) override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
-		virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
-		virtual CursorID create_standard_cursor(CursorShape shape) override;
+
+		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
+		NODISCARD virtual CursorID create_standard_cursor(CursorShape shape) override;
 		virtual void destroy_cursor(CursorID value) override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -52,6 +51,7 @@ namespace ism
 
 		NODISCARD virtual String window_get_clipboard(WindowID id) const override;
 		NODISCARD virtual Vec2 window_get_content_scale(WindowID id) const override;
+		NODISCARD virtual Rect window_get_frame_size(WindowID id) const override;
 		NODISCARD virtual Vec2 window_get_framebuffer_size(WindowID id) const override;
 		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode value) const override;
 		NODISCARD virtual InputAction window_get_key(WindowID id, KeyCode value) const override;
@@ -61,7 +61,6 @@ namespace ism
 		NODISCARD virtual float_t window_get_opacity(WindowID id) const override;
 		NODISCARD virtual Vec2 window_get_position(WindowID id) const override;
 		NODISCARD virtual Vec2 window_get_size(WindowID id) const override;
-		NODISCARD virtual Rect window_get_frame_size(WindowID id) const override;
 		NODISCARD virtual bool window_get_is_auto_iconify(WindowID id) const override;
 		NODISCARD virtual bool window_get_is_decorated(WindowID id) const override;
 		NODISCARD virtual bool window_get_is_floating(WindowID id) const override;

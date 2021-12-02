@@ -16,12 +16,14 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// has
 	template <class _Ty, class T
 	> NODISCARD bool has(Vector<_Ty> const & l, T && value)
 	{
 		return l.end() != std::find(l.begin(), l.end(), FWD(value));
 	}
 
+	// get pointer
 	template <class _Ty, class T
 	> NODISCARD auto getptr(Vector<_Ty> const & l, T && value)
 	{
@@ -33,6 +35,15 @@ namespace ism
 		{
 			return nullptr;
 		}
+	}
+
+	// buffer copy
+	template <class Elem = byte
+	> Vector<byte> bufcpy(size_t count, void const * data, PolymorphicAllocator<> alloc = {}) noexcept
+	{
+		return (data
+			? Vector<byte>{ (byte *)data, (byte *)data + count * sizeof(Elem), alloc }
+			: Vector<byte>{ count * sizeof(Elem), (byte)0, alloc });
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

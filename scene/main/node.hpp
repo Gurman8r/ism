@@ -2,6 +2,7 @@
 #define _ISM_NODE_HPP_
 
 #include <core/input/input.hpp>
+#include <entt/entt.hpp>
 
 namespace ism
 {
@@ -12,6 +13,10 @@ namespace ism
 	class Node;
 
 	ALIAS(NODE) Ref<Node>;
+
+	ALIAS(EntityID) entt::entity;
+
+	ALIAS(EntityRegistry) entt::registry;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -26,7 +31,7 @@ namespace ism
 		Node *			m_owner	{};
 		Vector<NODE>	m_nodes	{};
 
-		Node() noexcept;
+		Node(SceneTree * tree = nullptr) noexcept;
 
 	public:
 		static constexpr size_t npos{ static_cast<size_t>(-1) };

@@ -46,12 +46,6 @@ EMBEDED_CLASS(DisplayServer, t, TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-WindowID DisplayServer::get_context_main() const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
 WindowID DisplayServer::get_context_current() const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
@@ -143,6 +137,12 @@ Vec2 DisplayServer::window_get_content_scale(WindowID id) const
 	return {};
 }
 
+Rect DisplayServer::window_get_frame_size(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
 Vec2 DisplayServer::window_get_framebuffer_size(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
@@ -192,12 +192,6 @@ Vec2 DisplayServer::window_get_position(WindowID id) const
 }
 
 Vec2 DisplayServer::window_get_size(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-Rect DisplayServer::window_get_frame_size(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};

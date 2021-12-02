@@ -16,10 +16,10 @@ EditorNode::~EditorNode()
 void EditorNode::process(Duration const & dt)
 {
 	char window_title[32]{};
-	std::sprintf(window_title, "ism @ %.1f fps", get_tree()->get_framerate());
+	std::sprintf(window_title, "ism @ %.1f fps", get_tree()->get_fps().value);
 	get_tree()->get_root()->set_title(window_title);
 
-	_show_dockspace("##EditorDockspace");
+	_show_dockspace("##EditorDockspace", true);
 	
 	ImGui::ShowDemoWindow();
 

@@ -21,7 +21,7 @@ EMBEDED_CLASS(Window, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window::Window() noexcept : m_window_id{ SINGLETON(DisplayServer)->get_context_main() }
+Window::Window() noexcept : m_window_id{ VALIDATE(VALIDATE(SINGLETON(DisplayServer))->get_context_current()) }
 {
 }
 
@@ -91,6 +91,11 @@ Vec2 Window::get_content_scale() const
 	return SINGLETON(DisplayServer)->window_get_content_scale(m_window_id);
 }
 
+Rect Window::get_frame_size() const
+{
+	return SINGLETON(DisplayServer)->window_get_frame_size(m_window_id);
+}
+
 Vec2 Window::get_framebuffer_size() const
 {
 	return SINGLETON(DisplayServer)->window_get_framebuffer_size(m_window_id);
@@ -134,11 +139,6 @@ Vec2 Window::get_position() const
 Vec2 Window::get_size() const
 {
 	return SINGLETON(DisplayServer)->window_get_size(m_window_id);
-}
-
-Rect Window::get_frame_size() const
-{
-	return SINGLETON(DisplayServer)->window_get_frame_size(m_window_id);
 }
 
 bool Window::get_is_auto_iconify() const

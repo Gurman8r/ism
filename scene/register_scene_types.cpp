@@ -18,8 +18,6 @@ void ism::register_scene_types()
 
 		SceneTree,
 		Node,
-		Viewport,
-		SubViewport,
 		Window,
 
 		Font,
