@@ -100,36 +100,36 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 		{ RendererAPI_OpenGL, 4, 6, RendererProfile_Compat, 24, 8, true, false },
 		WindowHints_Default_Maximized & ~(WindowHints_Doublebuffer)
 		}));
+	
 	WindowID main_window{ g_display->get_context_main() };
-	g_display->window_set_char_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowCharEvent{ FWD(x)... }); });
-	g_display->window_set_char_mods_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowCharModsEvent{ FWD(x)... }); });
-	g_display->window_set_close_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowCloseEvent{ FWD(x)... }); });
-	g_display->window_set_content_scale_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowContentScaleEvent{ FWD(x)... }); });
-	g_display->window_set_drop_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowDropEvent{ FWD(x)... }); });
-	g_display->window_set_focus_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowFocusEvent{ FWD(x)... }); });
-	g_display->window_set_framebuffer_resize_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowFramebufferResizeEvent{ FWD(x)... }); });
-	g_display->window_set_iconify_callback(main_window, [](auto w, auto ... x)  { g_bus->fire_event(WindowIconifyEvent{ FWD(x)... }); });
-	g_display->window_set_key_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowKeyEvent{ FWD(x)... }); });
-	g_display->window_set_maximize_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowMaximizeEvent{ FWD(x)... }); });
-	g_display->window_set_mouse_button_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowMouseEnterEvent{ FWD(x)... }); });
-	g_display->window_set_mouse_enter_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowMouseExitEvent{ FWD(x)... }); });
-	g_display->window_set_mouse_position_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowMousePositionEvent{ FWD(x)... }); });
-	g_display->window_set_position_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowPositionEvent{ FWD(x)... }); });
-	g_display->window_set_refresh_callback(main_window, [](auto w, auto ... x)  { g_bus->fire_event(WindowRefreshEvent{ FWD(x)... }); });
-	g_display->window_set_scroll_callback(main_window, [](auto w, auto ... x) { g_bus->fire_event(WindowScrollEvent{ FWD(x)... }); });
-	g_display->window_set_size_callback(main_window, [](auto w, auto ... x)   { g_bus->fire_event(WindowSizeEvent{ FWD(x)... }); });
+	g_display->window_set_char_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharEvent(FWD(x)...)); });
+	g_display->window_set_char_mods_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharModsEvent(FWD(x)...)); });
+	g_display->window_set_close_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCloseEvent(FWD(x)...)); });
+	g_display->window_set_content_scale_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowContentScaleEvent(FWD(x)...)); });
+	g_display->window_set_drop_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowDropEvent(FWD(x)...)); });
+	g_display->window_set_focus_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFocusEvent(FWD(x)...)); });
+	g_display->window_set_framebuffer_resize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFramebufferResizeEvent(FWD(x)...)); });
+	g_display->window_set_iconify_callback(main_window, [](auto ... x)  { g_bus->fire_event(WindowIconifyEvent(FWD(x)...)); });
+	g_display->window_set_key_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowKeyEvent(FWD(x)...)); });
+	g_display->window_set_maximize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMaximizeEvent(FWD(x)...)); });
+	g_display->window_set_mouse_button_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseButtonEvent(FWD(x)...)); });
+	g_display->window_set_mouse_enter_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseEnterEvent(FWD(x)...)); });
+	g_display->window_set_mouse_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMousePositionEvent(FWD(x)...)); });
+	g_display->window_set_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowPositionEvent(FWD(x)...)); });
+	g_display->window_set_refresh_callback(main_window, [](auto ... x)  { g_bus->fire_event(WindowRefreshEvent(FWD(x)...)); });
+	g_display->window_set_scroll_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowScrollEvent(FWD(x)...)); });
+	g_display->window_set_size_callback(main_window, [](auto ... x)   { g_bus->fire_event(WindowSizeEvent(FWD(x)...)); });
 
 	g_renderer = memnew(RenderingServerDefault());
 
-	if (!ImGui::GetCurrentContext()) {
-		auto ctx{ ImGui::CreateContext() };
+	if (auto ctx{ ImGui::CreateContext() }) {
 		ctx->IO.LogFilename = nullptr;
 		ctx->IO.IniFilename = nullptr;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-		VERIFY(ImGui_Init(main_window));
 	}
+	VERIFY(ImGui_Init(main_window));
 
 	return Error_None;
 }
@@ -144,7 +144,7 @@ bool Main::start()
 
 	TYPE main_loop_type{};
 
-	if (script != "") { /* TODO: load main loop from script */ }
+	if (script != "") { /* TODO */ }
 
 	if (!main_loop && !main_loop_type) { main_loop_type = typeof<SceneTree>(); }
 
@@ -192,8 +192,6 @@ bool Main::iteration()
 	if (SINGLETON(OS)->get_main_loop()->process(delta_time)) { should_close = true; }
 
 	ImGui_RenderFrame();
-
-	SINGLETON(DisplayServer)->swap_buffers(SINGLETON(DisplayServer)->get_context_main());
 
 	--g_iterating;
 

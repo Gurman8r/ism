@@ -6,11 +6,11 @@ EMBEDED_CLASS(Resource, t, TypeFlags_IsAbstract)
 {
 }
 
-static RID g_resource_id{};
+Resource::Resource() noexcept { static RID next_rid{}; m_rid = ++next_rid; }
 
-Resource::Resource() noexcept : Object{} { m_resource_id = ++g_resource_id; }
-
-Resource::~Resource() {}
+Resource::~Resource()
+{
+}
 
 void Resource::reload_from_file()
 {
@@ -18,5 +18,7 @@ void Resource::reload_from_file()
 
 void Resource::set_path(String const & value, bool take_over)
 {
+	if (m_path_cache == value) { return; }
+
 	m_path_cache = value;
 }

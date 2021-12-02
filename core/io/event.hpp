@@ -30,41 +30,38 @@ namespace ism
 	{
 		OBJECT_COMMON(Event, Resource);
 
-		EventID m_event_id;
-
 	protected:
-		explicit Event(EventID const id) noexcept : m_event_id{ id } {}
+		DEFAULT_COPYABLE_MOVABLE(Event);
 
 	public:
+		enum : EventID { ID = static_cast<EventID>(-1) };
+
 		virtual ~Event() noexcept override = default;
 
-		COPYABLE_MOVABLE(Event);
+		NODISCARD virtual EventID get_event_id() const = 0;
 
-		NODISCARD EventID get_event_id() const { return m_event_id; }
+		NODISCARD operator EventID() const { return get_event_id(); }
 
-		NODISCARD operator EventID() const { return m_event_id; }
+		NODISCARD bool operator==(EventID const id) const noexcept { return id == get_event_id(); }
 
-		NODISCARD bool operator==(EventID const id) const noexcept { return id == m_event_id; }
-
-		NODISCARD bool operator!=(EventID const id) const noexcept { return id != m_event_id; }
+		NODISCARD bool operator!=(EventID const id) const noexcept { return id != get_event_id(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event class helper
-	template <class Derived
-	> class EventClass : public Event
-	{
-	protected:
-		explicit EventClass() noexcept : Event{ ID } {}
-
-	public:
-		enum : EventID { ID = hash_v<Derived> };
-
-		virtual ~EventClass() noexcept override = default;
-
-		COPYABLE_MOVABLE(EventClass);
-	};
+	// event common
+#define EVENT_COMMON(m_class, m_inherits)													\
+private:																					\
+	static_assert(std::is_base_of_v<ism::Event, m_inherits>);								\
+																							\
+	OBJECT_COMMON(m_class, m_inherits);														\
+																							\
+public:																						\
+	enum : ism::EventID { ID = ism::hash(m_class::__class_static) };						\
+																							\
+	NODISCARD virtual ism::EventID get_event_id() const override { return m_class::ID; }	\
+																							\
+private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -75,23 +72,22 @@ namespace ism
 
 		EventBus * const m_event_bus;
 		
-		int32_t const m_handler_id;
+		int32_t const m_handler_index;
 
 	protected:
 		friend class EventBus;
 
 		explicit EventHandler(EventBus * bus = nullptr) noexcept;
 
-		virtual void handle_event(Event const &) = 0;
-
 	public:
 		virtual ~EventHandler() noexcept override { unsubscribe(); }
 
+		virtual void handle_event(Event const &) = 0; // <- HANDLE EVENT
+
 		NODISCARD auto get_event_bus() const noexcept -> EventBus * { return m_event_bus; }
 
-		NODISCARD auto get_handler_id() const noexcept -> int32_t { return m_handler_id; }
+		NODISCARD auto get_handler_index() const noexcept -> int32_t { return m_handler_index; }
 
-	public:
 		template <class Ev0, class ... Evs
 		> void subscribe() noexcept
 		{
@@ -133,7 +129,7 @@ namespace ism
 
 			else if (!a || !b) { return CMP((intptr_t)a, (intptr_t)b); }
 			
-			else { return util::compare(a->get_handler_id(), b->get_handler_id()) < 0; }
+			else { return util::compare(a->get_handler_index(), b->get_handler_index()) < 0; }
 		}
 	};
 
@@ -150,7 +146,7 @@ namespace ism
 		template <class Fn
 		> DummyHandler(EventBus * bus, Fn && fn) noexcept : EventHandler{ bus }, m_callback{ FWD(fn) } {}
 
-		void handle_event(Event const & ev) final { VALIDATE(m_callback)(ev); }
+		void handle_event(Event const & event) final { m_callback(event); }
 
 		NODISCARD auto get_callback() const noexcept -> EventCallback const & { return m_callback; }
 
@@ -160,27 +156,27 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event delegate base
-	template <> class ISM_API EventDelegate<void> : public EventHandler
+	template <> class ISM_API EventDelegate<Event> : public EventHandler
 	{
-		OBJECT_COMMON(EventDelegate<void>, EventHandler);
+		OBJECT_COMMON(EventDelegate<Event>, EventHandler);
 
 	protected:
 		explicit EventDelegate(EventBus * bus) noexcept : EventHandler{ bus } {}
 
 	public:
-		enum : EventID { ID = static_cast<EventID>(-1) };
+		enum : EventID { ID = Event::ID };
 
 		using Callback = typename void;
 
 		virtual ~EventDelegate() noexcept override = default;
 
-		virtual void handle_event(Event const & ev) override = 0;
+		virtual void handle_event(Event const & event) override = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event delegate
-	template <class Ev> class EventDelegate final : public EventDelegate<void>
+	template <class Ev> class EventDelegate final : public EventDelegate<Event>
 	{
 		Vector<std::function<void(Ev const &)>> m_callbacks{};
 
@@ -189,9 +185,17 @@ namespace ism
 
 		using Callback = typename decltype(m_callbacks)::value_type;
 
-		explicit EventDelegate(EventBus * bus) noexcept : EventDelegate<void>{ bus } { this->subscribe<Ev>(); }
+		explicit EventDelegate(EventBus * bus) noexcept : EventDelegate<Event>{ bus } { this->subscribe<Ev>(); }
 
-		template <class Ev> void dispatch(Ev && value) noexcept { this->handle_event(FWD(value)); }
+		void handle_event(Event const & event) final
+		{
+			VERIFY((EventID)event == ID);
+
+			for (Callback const & callback : m_callbacks)
+			{
+				callback(static_cast<Ev const &>(ev));
+			}
+		}
 
 		NODISCARD auto operator[](size_t i) noexcept -> Callback & { return m_callbacks[i]; }
 
@@ -211,17 +215,6 @@ namespace ism
 
 		template <class Fn
 		> auto operator+=(Fn && fn) noexcept -> EventDelegate & { return this->add(FWD(fn)), (*this); }
-
-	protected:
-		void handle_event(Event const & ev) final
-		{
-			VERIFY((EventID)ev == ID);
-
-			for (Callback const & callback : m_callbacks)
-			{
-				callback(static_cast<Ev const &>(ev));
-			}
-		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -235,7 +228,7 @@ namespace ism
 
 		int32_t m_next_handler_id{};
 		FlatMap<EventID, FlatSet<EventHandler *>> m_event_handlers{};
-		FlatMap<EventID, Ref<EventDelegate<void>>> m_event_delegates{};
+		FlatMap<EventID, Ref<EventDelegate<Event>>> m_event_delegates{};
 		Vector<Ref<DummyHandler>> m_dummy_handlers{};
 
 	protected:
@@ -257,9 +250,9 @@ namespace ism
 		{
 			if (auto const group{ m_event_handlers.find((EventID)value) })
 			{
-				for (auto const e : (*group->second))
+				for (EventHandler * const h : (*group->second))
 				{
-					VALIDATE(e)->handle_event(value);
+					VALIDATE(h)->handle_event(value);
 				}
 			}
 		}
@@ -269,16 +262,16 @@ namespace ism
 
 		template <class Ev> bool add_event_handler(EventHandler * value) noexcept
 		{
-			return m_event_handlers[Ev::ID].insert(value).second;
+			return value && m_event_handlers[Ev::ID].insert(value).second;
 		}
 
 		template <class Ev> void remove_event_handler(EventHandler * value) noexcept
 		{
 			if (auto const group{ m_event_handlers.find(Ev::ID) })
 			{
-				if (auto const e{ group->second->find(value) }; e != group->second->end())
+				if (auto const it{ group->second->find(value) }; it != group->second->end())
 				{
-					group->second->erase(e);
+					group->second->erase(it);
 				}
 			}
 		}
@@ -287,9 +280,9 @@ namespace ism
 		{
 			m_event_handlers.for_each([&](auto, FlatSet<EventHandler *> & group) noexcept
 			{
-				if (auto const e{ group.find(value) }; e != group.end())
+				if (auto const it{ group.find(value) }; it != group.end())
 				{
-					group.erase(e);
+					group.erase(it);
 				}
 			});
 		}
@@ -311,14 +304,11 @@ namespace ism
 
 		auto remove_dummy_handler(Ref<DummyHandler> const & value) noexcept
 		{
-			if (auto it{ std::find(m_dummy_handlers.begin(), m_dummy_handlers.end(), value) }; it == m_dummy_handlers.end())
-			{
-				return it;
-			}
-			else
-			{
-				return m_dummy_handlers.erase(it);
-			}
+			if (auto const it{ std::find(m_dummy_handlers.begin(), m_dummy_handlers.end(), value) }
+			
+			; it == m_dummy_handlers.end()) { return it; }
+			
+			else { return m_dummy_handlers.erase(it); }
 		}
 
 		void remove_all_dummy_handlers() noexcept
@@ -363,10 +353,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event handler constructor
 	inline EventHandler::EventHandler(EventBus * bus) noexcept
 		: m_event_bus{ bus ? bus : SINGLETON(EventBus) }
-		, m_handler_id{ VALIDATE(get_event_bus())->next_handler_id() }
+		, m_handler_index{ VALIDATE(get_event_bus())->next_handler_id() }
 	{
 	}
 

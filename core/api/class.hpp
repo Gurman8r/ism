@@ -165,9 +165,11 @@ namespace ism
 		};
 	}
 
+	// class binder helper
 #define CLASS_BINDER(m_class, m_var) \
 	(impl::ClassBinderHelper<m_class>{}) + [](CLASS_<m_class> m_var) -> CLASS_<m_class>
 
+	// class binder shorthand
 #define CLASS_DEF(m_class, m_var) \
 	m_var.tp_bind = CLASS_BINDER(m_class, m_var)
 

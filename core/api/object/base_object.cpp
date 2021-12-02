@@ -9,9 +9,9 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		SINGLETON(Internals)->add_class(&__class_type);
+		SINGLETON(Internals)->add_class(&__type_static);
 
-		VALIDATE(__class_type.tp_bind)(&__class_type);
+		VERIFY(VALIDATE(__type_static.tp_bind)(&__type_static));
 	}
 }
 
@@ -50,9 +50,9 @@ bool Object::unreference()
 	return die;
 }
 
-TYPE Object::get_type_static() noexcept { return &__class_type; }
+TYPE Object::_get_typev() const noexcept { return get_type_static(); }
 
-TYPE Object::_get_typev() const { return get_type_static(); }
+TYPE Object::get_type_static() noexcept { return &__type_static; }
 
 TYPE Object::get_type() const noexcept { return ((!!m_type) || (m_type = _get_typev())), m_type; }
 
@@ -74,15 +74,6 @@ EMBEDED_CLASS(Object, t, TypeFlags_IsAbstract)
 			.def("unreference", &Object::unreference)
 			.def("get_ref_count", &Object::get_ref_count)
 			.def("has_references", &Object::has_references)
-
-			.def("get_type", &Object::get_type)
-			.def("set_type", &Object::set_type)
-
-			.def_static("get_type_static", &Object::get_type_static)
-			.def_static("generic_getattr", &Object::generic_getattr)
-			.def_static("generic_setattr", &Object::generic_setattr)
-			.def_static("generic_getattr_with_dict", &Object::generic_getattr_with_dict)
-			.def_static("generic_setattr_with_dict", &Object::generic_setattr_with_dict)
 			;
 	};
 }

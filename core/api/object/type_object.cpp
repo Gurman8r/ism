@@ -9,9 +9,9 @@ void TypeObject::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		SINGLETON(Internals)->add_class(&__class_type);
+		SINGLETON(Internals)->add_class(&__type_static);
 
-		VALIDATE(__class_type.tp_bind)(&__class_type);
+		VERIFY(VALIDATE(__type_static.tp_bind)(&__type_static));
 	};
 }
 
@@ -19,7 +19,7 @@ void TypeObject::_initialize_classv() { TypeObject::initialize_class(); }
 
 TYPE TypeObject::_get_typev() const noexcept { return get_type_static(); }
 
-TYPE TypeObject::get_type_static() noexcept { return &__class_type; }
+TYPE TypeObject::get_type_static() noexcept { return &__type_static; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -128,7 +128,7 @@ bool TypeObject::ready()
 	{
 		if (!base->tp_subclasses) { base->tp_subclasses = DICT::new_(); }
 
-		((DICT &)base->tp_subclasses)[this] = TYPE(this);
+		((DICT &)base->tp_subclasses)[this] = (TYPE)this;
 	}
 
 	tp_flags = (tp_flags & ~TypeFlags_Readying) | TypeFlags_Ready;
@@ -160,7 +160,6 @@ bool TypeObject::is_subtype(TYPE const & value) const
 		{
 			if (value.is(base)) { return true; }
 		}
-
 		return false;
 	}
 	else
@@ -277,8 +276,8 @@ bool TypeObject::mro_internal(OBJ * in_old_mro)
 
 Error TypeObject::update_slot(STR const & name)
 {
-	if (!name) { return Error_Unknown; }
-	switch (hash((String)name))
+	if (!name || name.empty()) { return Error_Unknown; }
+	switch (hash(name.data(), name.size()))
 	{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -296,9 +295,7 @@ Error TypeObject::update_slot(STR const & name)
 	}; } break;
 
 	case hash("__del__"): { tp_del = (delfunc)[](Object * obj) -> void {
-		if (STR_IDENTIFIER(__del__); OBJ f{ typeof(obj).lookup(&ID___del__) })
-		{
-		}
+		if (STR_IDENTIFIER(__del__); OBJ f{ typeof(obj).lookup(&ID___del__) }) { /* TODO */ }
 	}; } break;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

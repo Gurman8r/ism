@@ -22,7 +22,7 @@ namespace ism
 
 		virtual void set_text(String const & value) { m_text = value; }
 
-		void set_file_path(String const & value) noexcept { m_path = value; }
+		void set_file_path(String const & value) { m_path = value; }
 	};
 }
 

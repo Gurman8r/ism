@@ -35,6 +35,7 @@ namespace ism
 			template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 			> static Class & execute(Class & c, Extra && ... extra)
 			{
+				static_assert(!"NOT IMPLEMENTED");
 				return c; // TODO
 			}
 		};
@@ -65,6 +66,7 @@ namespace ism
 			template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
 			> Class & execute(Class & c, Extra && ... extra)
 			{
+				static_assert(!"NOT IMPLEMENTED");
 				return c; // TODO
 			}
 		};

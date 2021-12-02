@@ -30,30 +30,30 @@ namespace ism
 		using base_type::operator();
 
 	public:
-		template <class First, class ... Rest
-		> static auto render_immediate(First && first, Rest && ... rest) -> RenderingCommand {
-			return std::bind(ism::render_immediate, std::placeholders::_1, FWD(first), FWD(rest)...);
+		template <class Fn, class ... Args
+		> static auto bind(Fn && fn, Args && ... args) noexcept -> RenderingCommand {
+			return std::bind(FWD(fn), std::placeholders::_1, FWD(args)...);
 		}
 
 	public:
 		static auto clear(Color const & color = {}, bool depth_stencil = true) noexcept -> RenderingCommand {
-			return std::bind(&RenderingDevice::clear, std::placeholders::_1, color, depth_stencil);
+			return bind(&RenderingDevice::clear, color, depth_stencil);
 		}
 
 		static auto draw_arrays(RenderPrimitive primitive, size_t first, size_t count) noexcept -> RenderingCommand {
-			return std::bind(&RenderingDevice::draw_arrays, std::placeholders::_1, primitive, first, count);
+			return bind(&RenderingDevice::draw_arrays, primitive, first, count);
 		}
 
 		static auto draw_indexed(RenderPrimitive primitive, size_t count) noexcept -> RenderingCommand {
-			return std::bind(&RenderingDevice::draw_indexed, std::placeholders::_1, primitive, count);
+			return bind(&RenderingDevice::draw_indexed, primitive, count);
 		}
 
 		static auto flush() noexcept -> RenderingCommand {
-			return std::bind(&RenderingDevice::flush, std::placeholders::_1);
+			return bind(&RenderingDevice::flush);
 		}
 
 		static auto set_viewport(Rect const & rect) noexcept -> RenderingCommand {
-			return std::bind(&RenderingDevice::set_viewport, std::placeholders::_1, rect);
+			return bind(&RenderingDevice::set_viewport, rect);
 		}
 	};
 

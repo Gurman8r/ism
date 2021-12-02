@@ -39,19 +39,20 @@ namespace ism
 	public:
 		virtual void initialize() override;
 
-		virtual void finalize() override;
-
 		virtual bool process(Duration const & dt) override;
 
+		virtual void finalize() override;
+
+		virtual void handle_event(Event const & event) override;
+
 	public:
-		NODISCARD auto get_registry() const noexcept -> EntityRegistry * { return const_cast<EntityRegistry *>(&m_entt); }
+		NODISCARD auto get_framerate() const noexcept -> float_t { return m_fps.value; }
 
 		NODISCARD auto get_root() const noexcept -> Ref<Window> { return m_root; }
 
 		NODISCARD auto get_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
 
-		NODISCARD auto get_framerate() const noexcept -> float_t { return m_fps.value; }
-
+	public:
 		template <class Fn = void(*)(NODE &)
 		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false) noexcept {
 			if (!m_root) { return; }
@@ -59,9 +60,6 @@ namespace ism
 			m_root->for_nodes(fn, recursive, reverse);
 		}
 
-	protected:
-		template <class T> void on_component_added(Entity &, T &) {}
-		
 	private:
 		bool m_initialized{};
 
@@ -70,8 +68,6 @@ namespace ism
 		Timer const m_main_timer{ true };
 
 		FPS_Tracker m_fps{ 120 };
-
-		EntityRegistry m_entt{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

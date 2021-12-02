@@ -4,6 +4,13 @@ using namespace ism;
 
 EMBEDED_CLASS(Image, t)
 {
+	CLASS_DEF(Image, t)
+	{
+		return t
+			.def(init<>())
+			.def(init([]() { return Image{}; }))
+			;
+	};
 }
 
 void Image::flip_vertically()

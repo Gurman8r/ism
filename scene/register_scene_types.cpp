@@ -1,5 +1,4 @@
 #include <scene/register_scene_types.hpp>
-#include <scene/main/entity.hpp>
 #include <scene/main/window.hpp>
 #include <scene/main/scene_tree.hpp>
 
@@ -19,7 +18,6 @@ void ism::register_scene_types()
 
 		SceneTree,
 		Node,
-		Entity,
 		Viewport,
 		SubViewport,
 		Window,

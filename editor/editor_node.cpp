@@ -19,19 +19,17 @@ void EditorNode::process(Duration const & dt)
 	std::sprintf(window_title, "ism @ %.1f fps", get_tree()->get_framerate());
 	get_tree()->get_root()->set_title(window_title);
 
-	_show_dockspace();
+	_show_dockspace("##EditorDockspace");
 	
 	ImGui::ShowDemoWindow();
 
 	Node::process(dt);
 }
 
-void EditorNode::_show_dockspace()
+void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
 {
-	bool const has_main_menu_bar{ /* TODO */ };
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-		constexpr auto dockspace_name{ "##MainDockspace" };
-		ImGuiID const dockspace_id{ ImGui::GetID(dockspace_name) };
+		ImGuiID const dockspace_id{ ImGui::GetID(label) };
 		ImGuiViewportP * dockspace_vp{ ImGui::GetCurrentContext()->Viewports[0] };
 		ImGui::SetNextWindowPos(dockspace_vp->Pos);
 		ImGui::SetNextWindowSize(dockspace_vp->Size);
@@ -40,7 +38,7 @@ void EditorNode::_show_dockspace()
 		ImGui::PushStyleVar(ImGuiStyleVarType_WindowRounding, 0.f);
 		ImGui::PushStyleVar(ImGuiStyleVarType_WindowBorderSize, 0.f);
 		ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, Vec2{ 0.f, 0.f });
-		bool const dockspace_open{ ImGui::Begin(dockspace_name, nullptr,
+		bool const dockspace_open{ ImGui::Begin(label, nullptr,
 			ImGuiWindowFlags_NoTitleBar |
 			ImGuiWindowFlags_NoCollapse |
 			ImGuiWindowFlags_NoResize |

@@ -62,10 +62,10 @@ void ism::ImGui_RenderFrame()
 
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
-		WindowID backup{ SINGLETON(DisplayServer)->get_context_current() };
+		WindowID window{ SINGLETON(DisplayServer)->get_context_current() };
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		SINGLETON(DisplayServer)->make_context_current(backup);
+		SINGLETON(DisplayServer)->make_context_current(window);
 	}
 }
 

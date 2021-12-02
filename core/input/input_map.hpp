@@ -12,7 +12,7 @@ namespace ism
 	public:
 		virtual ~InputMap() override;
 
-		InputMap() noexcept : Object{} {}
+		InputMap() noexcept {}
 	};
 }
 

@@ -271,30 +271,27 @@ namespace ism
 	private:
 		NODISCARD auto compare(ObjectAPI const & o) const
 		{
-			if (auto * p_self{ derived().ptr() }, * p_other{ o.derived().ptr() }; p_self == p_other)
+			Object * self{ derived().ptr() }, * other{ o.derived().ptr() };
+			
+			if (self == other)
 			{
 				return 0;
 			}
-			else if (!p_self || !p_other)
+			else if (self && other)
 			{
-				return util::compare((intptr_t)p_self, (intptr_t)p_other);
+				TYPE type{ typeof(self) };
+
+				if (cmpfunc cf{ type->tp_cmp })
+				{
+					return cf(self, other);
+				}
+				else if (hashfunc hf{ type->tp_hash })
+				{
+					return util::compare(hf(self), hf(other));
+				}
 			}
-			else if (TYPE t_self{ typeof(p_self) }; t_self->tp_cmp)
-			{
-				return t_self->tp_cmp(p_self, p_other);
-			}
-			else if (TYPE t_other{ typeof(p_other) }; t_other->tp_cmp)
-			{
-				return t_other->tp_cmp(p_other, p_self);
-			}
-			else if (t_self->tp_hash && t_other->tp_hash)
-			{
-				return util::compare(t_self->tp_hash(p_self), t_other->tp_hash(p_other));
-			}
-			else
-			{
-				return util::compare((intptr_t)p_self, (intptr_t)p_other);
-			}
+			
+			return CMP((intptr_t)self, (intptr_t)other);
 		}
 	};
 

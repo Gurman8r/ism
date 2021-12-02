@@ -34,16 +34,16 @@ namespace ism
 			stack.pop_back();
 			ptr = nullptr;
 		}
-	};
 
-	inline void add_to_life_support(OBJ const & value) noexcept
-	{
-		Vector<OBJ> & stack{ SINGLETON(Internals)->loader_stack };
-		VERIFY(!stack.empty());
-		LIST & list{ (LIST &)stack.back() };
-		if (!list) { list = LIST::new_(); }
-		list.append(value);
-	}
+		static void add(OBJ const & value) noexcept
+		{
+			Vector<OBJ> & stack{ SINGLETON(Internals)->loader_stack };
+			VERIFY(!stack.empty());
+			LIST & list{ (LIST &)stack.back() };
+			if (!list) { list = LIST::new_(); }
+			list.append(value);
+		}
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -305,6 +305,9 @@ public:																								\
 	> struct TypeCaster<std::basic_string<Ch, Tr, Al>, std::enable_if_t<mpl::is_char_v<Ch>>>
 		: StringCaster<std::basic_string<Ch, Tr, Al>> {};
 
+	template <> struct TypeCaster<StringView>
+		: StringCaster<String> {};
+
 	template <class T> struct TypeCaster<T, std::enable_if_t<mpl::is_char_v<T>>> : TypeCaster<BasicString<T>>
 	{
 		TypeCaster<BasicString<T>> str_caster;
@@ -346,7 +349,7 @@ public:																								\
 			if (!isinstance<T>(src)) { return false; }
 			else
 			{
-				add_to_life_support(src);
+				LoaderLifeSupport::add(src);
 
 				return (value = src), true;
 			}

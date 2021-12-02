@@ -9,7 +9,7 @@ EMBEDED_CLASS(Viewport, t)
 	CLASS_DEF(Viewport, t)
 	{
 		return t
-			.def("_process", &Viewport::process)
+			.def("process", &Viewport::process)
 			;
 	};
 }
@@ -30,7 +30,7 @@ EMBEDED_CLASS(SubViewport, t)
 	CLASS_DEF(SubViewport, t)
 	{
 		return t
-			.def("_process", &SubViewport::process)
+			.def("process", &SubViewport::process)
 			;
 	};
 }

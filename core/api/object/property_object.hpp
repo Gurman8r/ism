@@ -16,7 +16,7 @@ namespace ism
 	public:
 		OBJ m_get{}, m_set{};
 
-		PropertyObject() : Object{} {}
+		PropertyObject() {}
 
 		PropertyObject(OBJ const & fget, OBJ const & fset) : PropertyObject{} { m_get = fget; m_set = fset; }
 

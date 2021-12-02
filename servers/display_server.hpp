@@ -160,182 +160,251 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowCharEvent : public EventClass<WindowCharEvent>
+	class ISM_API WindowCharEvent : public Event
 	{
-		OBJECT_COMMON(WindowCharEvent, Event);
+		EVENT_COMMON(WindowCharEvent, Event);
 
 	public:
-		WindowCharEvent(...) noexcept {}
+		WindowID window;
+		uint32_t codepoint;
+
+		explicit WindowCharEvent(WindowID window, uint32_t codepoint) noexcept
+			: window{ window }, codepoint{ codepoint } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowCharModsEvent : public EventClass<WindowCharModsEvent>
+	class ISM_API WindowCharModsEvent : public Event
 	{
-		OBJECT_COMMON(WindowCharModsEvent, Event);
+		EVENT_COMMON(WindowCharModsEvent, Event);
 
 	public:
-		WindowCharModsEvent(...) noexcept {}
+		WindowID window;
+		uint32_t codepoint;
+		int32_t mods;
+
+		explicit WindowCharModsEvent(WindowID window, uint32_t codepoint, int32_t mods) noexcept
+			: window{ window }, codepoint{ codepoint }, mods{ mods } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowCloseEvent : public EventClass<WindowCloseEvent>
+	class ISM_API WindowCloseEvent : public Event
 	{
-		OBJECT_COMMON(WindowCloseEvent, Event);
+		EVENT_COMMON(WindowCloseEvent, Event);
 
 	public:
-		WindowCloseEvent(...) noexcept {}
+		WindowID window;
+
+		explicit WindowCloseEvent(WindowID window) noexcept
+			: window{ window } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowContentScaleEvent : public EventClass<WindowContentScaleEvent>
+	class ISM_API WindowContentScaleEvent : public Event
 	{
-		OBJECT_COMMON(WindowContentScaleEvent, Event);
+		EVENT_COMMON(WindowContentScaleEvent, Event);
 
 	public:
-		WindowContentScaleEvent(...) noexcept {}
+		WindowID window;
+		float_t xscale;
+		float_t yscale;
+
+		explicit WindowContentScaleEvent(WindowID window, float_t xscale, float_t yscale) noexcept
+			: window{ window }, xscale{ xscale }, yscale{ yscale } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowDropEvent : public EventClass<WindowDropEvent>
+	class ISM_API WindowDropEvent : public Event
 	{
-		OBJECT_COMMON(WindowDropEvent, Event);
+		EVENT_COMMON(WindowDropEvent, Event);
 
 	public:
-		WindowDropEvent(...) noexcept {}
+		WindowID window;
+		int32_t path_count;
+		cstring * paths;
+
+		explicit WindowDropEvent(WindowID window, int32_t path_count, cstring paths[]) noexcept
+			: window{ window }, path_count{ path_count }, paths{ paths } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowFocusEvent : public EventClass<WindowFocusEvent>
+	class ISM_API WindowFocusEvent : public Event
 	{
-		OBJECT_COMMON(WindowFocusEvent, Event);
+		EVENT_COMMON(WindowFocusEvent, Event);
 
 	public:
-		WindowFocusEvent(...) noexcept {}
+		WindowID window;
+		int32_t focused;
+
+		explicit WindowFocusEvent(WindowID window, int32_t focused) noexcept
+			: window{ window }, focused{ focused } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowFramebufferResizeEvent : public EventClass<WindowFramebufferResizeEvent>
+	class ISM_API WindowFramebufferResizeEvent : public Event
 	{
-		OBJECT_COMMON(WindowFramebufferResizeEvent, Event);
+		EVENT_COMMON(WindowFramebufferResizeEvent, Event);
 
 	public:
-		WindowFramebufferResizeEvent(...) noexcept {}
+		WindowID window;
+		int32_t width;
+		int32_t height;
+
+		explicit WindowFramebufferResizeEvent(WindowID window, int32_t width, int32_t height) noexcept
+			: window{ window }, width{ width }, height{ height } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowIconifyEvent : public EventClass<WindowIconifyEvent>
+	class ISM_API WindowIconifyEvent : public Event
 	{
-		OBJECT_COMMON(WindowIconifyEvent, Event);
+		EVENT_COMMON(WindowIconifyEvent, Event);
 
 	public:
-		WindowIconifyEvent(...) noexcept {}
+		WindowID window;
+		int32_t iconified;
+
+		explicit WindowIconifyEvent(WindowID window, int32_t iconified) noexcept
+			: window{ window }, iconified{ iconified } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowKeyEvent : public EventClass<WindowKeyEvent>
+	class ISM_API WindowKeyEvent : public Event
 	{
-		OBJECT_COMMON(WindowKeyEvent, Event);
+		EVENT_COMMON(WindowKeyEvent, Event);
 
 	public:
-		WindowKeyEvent(...) noexcept {}
+		WindowID window;
+		int32_t key;
+		int32_t scancode;
+		int32_t action;
+		int32_t mods;
+
+		explicit WindowKeyEvent(WindowID window, int32_t key, int32_t scancode, int32_t action, int32_t mods) noexcept
+			: window{ window }, key{ key }, scancode{ scancode }, action{ action }, mods{ mods } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowMaximizeEvent : public EventClass<WindowMaximizeEvent>
+	class ISM_API WindowMaximizeEvent : public Event
 	{
-		OBJECT_COMMON(WindowMaximizeEvent, Event);
+		EVENT_COMMON(WindowMaximizeEvent, Event);
 
 	public:
-		WindowMaximizeEvent(...) noexcept {}
+		WindowID window;
+		int32_t maximized;
+
+		explicit WindowMaximizeEvent(WindowID window, int32_t maximized) noexcept
+			: window{ window }, maximized{ maximized } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowMouseButtonEvent : public EventClass<WindowMouseButtonEvent>
+	class ISM_API WindowMouseButtonEvent : public Event
 	{
-		OBJECT_COMMON(WindowMouseButtonEvent, Event);
+		EVENT_COMMON(WindowMouseButtonEvent, Event);
 
 	public:
-		WindowMouseButtonEvent(...) noexcept {}
+		WindowID window;
+		int32_t button;
+		int32_t action;
+		int32_t mods;
+
+		explicit WindowMouseButtonEvent(WindowID window, int32_t button, int32_t action, int32_t mods) noexcept
+			: window{ window }, button{ button }, action{ action }, mods{ mods } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowMouseEnterEvent : public EventClass<WindowMouseEnterEvent>
+	class ISM_API WindowMouseEnterEvent : public Event
 	{
-		OBJECT_COMMON(WindowMouseEnterEvent, Event);
+		EVENT_COMMON(WindowMouseEnterEvent, Event);
 
 	public:
-		WindowMouseEnterEvent(...) noexcept {}
+		WindowID window;
+		int32_t entered;
+
+		explicit WindowMouseEnterEvent(WindowID window, int32_t entered) noexcept
+			: window{ window }, entered{ entered } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowMouseExitEvent : public EventClass<WindowMouseExitEvent>
+	class ISM_API WindowMousePositionEvent : public Event
 	{
-		OBJECT_COMMON(WindowMouseExitEvent, Event);
+		EVENT_COMMON(WindowMousePositionEvent, Event);
 
 	public:
-		WindowMouseExitEvent(...) noexcept {}
+		WindowID window;
+		double_t xpos;
+		double_t ypos;
+
+		explicit WindowMousePositionEvent(WindowID window, double_t xpos, double_t ypos) noexcept
+			: window{ window }, xpos{ xpos }, ypos{ ypos } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowMousePositionEvent : public EventClass<WindowMousePositionEvent>
+	class ISM_API WindowScrollEvent : public Event
 	{
-		OBJECT_COMMON(WindowMousePositionEvent, Event);
+		EVENT_COMMON(WindowScrollEvent, Event);
 
 	public:
-		WindowMousePositionEvent(...) noexcept {}
+		WindowID window;
+		double_t xoffset;
+		double_t yoffset;
+
+		explicit WindowScrollEvent(WindowID window, double_t xoffset, double_t yoffset) noexcept
+			: window{ window }, xoffset{ xoffset }, yoffset{ yoffset } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowScrollEvent : public EventClass<WindowScrollEvent>
+	class ISM_API WindowPositionEvent : public Event
 	{
-		OBJECT_COMMON(WindowScrollEvent, Event);
+		EVENT_COMMON(WindowPositionEvent, Event);
 
 	public:
-		WindowScrollEvent(...) noexcept {}
+		WindowID window;
+		int32_t xpos;
+		int32_t ypos;
+
+		explicit WindowPositionEvent(WindowID window, int32_t xpos, int32_t ypos) noexcept
+			: window{ window }, xpos{ xpos }, ypos{ ypos } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowPositionEvent : public EventClass<WindowPositionEvent>
+	class ISM_API WindowRefreshEvent : public Event
 	{
-		OBJECT_COMMON(WindowPositionEvent, Event);
+		EVENT_COMMON(WindowRefreshEvent, Event);
 
 	public:
-		WindowPositionEvent(...) noexcept {}
+		WindowID window;
+
+		explicit WindowRefreshEvent(WindowID window) noexcept
+			: window{ window } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API WindowRefreshEvent : public EventClass<WindowRefreshEvent>
+	class ISM_API WindowSizeEvent : public Event
 	{
-		OBJECT_COMMON(WindowRefreshEvent, Event);
+		EVENT_COMMON(WindowSizeEvent, Event);
 
 	public:
-		WindowRefreshEvent(...) noexcept {}
-	};
+		WindowID window;
+		int32_t width;
+		int32_t height;
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class ISM_API WindowSizeEvent : public EventClass<WindowSizeEvent>
-	{
-		OBJECT_COMMON(WindowSizeEvent, Event);
-
-	public:
-		WindowSizeEvent(...) noexcept {}
+		explicit WindowSizeEvent(WindowID window, int32_t width, int32_t height) noexcept
+			: window{ window }, width{ width }, height{ height } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -355,7 +424,7 @@ namespace ism
 		static DisplayServer * singleton;
 
 	protected:
-		explicit DisplayServer() noexcept : Object{} { singleton = this; }
+		explicit DisplayServer() noexcept { singleton = this; }
 		
 	public:
 		virtual ~DisplayServer() override {}
@@ -369,6 +438,13 @@ namespace ism
 		virtual void make_context_current(WindowID id);
 		virtual void poll_events();
 		virtual void swap_buffers(WindowID id);
+		virtual void swap_interval(int32_t value);
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		
+		virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y);
+		virtual CursorID create_standard_cursor(CursorShape shape);
+		virtual void destroy_cursor(CursorID value);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -381,19 +457,18 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD virtual Rect window_get_bounds(WindowID id) const { return Rect{ window_get_position(id), window_get_size(id) }; }
+		NODISCARD inline Rect window_get_bounds(WindowID id) const { return Rect{ window_get_position(id), window_get_size(id) }; }
 		NODISCARD virtual String window_get_clipboard(WindowID id) const;
 		NODISCARD virtual Vec2 window_get_content_scale(WindowID id) const;
 		NODISCARD virtual Vec2 window_get_framebuffer_size(WindowID id) const;
-		NODISCARD virtual int32_t window_get_input_mode(WindowID id, int32_t value) const;
-		NODISCARD virtual int32_t window_get_key(WindowID id, int32_t value) const;
-		NODISCARD virtual int32_t window_get_mouse_button(WindowID id, int32_t value) const;
-		NODISCARD virtual Vec2 window_get_mouse_pos(WindowID id) const;
-		NODISCARD virtual WindowID window_get_native_handle(WindowID id) const;
+		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode value) const;
+		NODISCARD virtual InputAction window_get_key(WindowID id, KeyCode value) const;
+		NODISCARD virtual InputAction window_get_mouse_button(WindowID id, MouseButton value) const;
+		NODISCARD virtual Vec2 window_get_mouse_position(WindowID id) const;
+		NODISCARD virtual void * window_get_native_handle(WindowID id) const;
 		NODISCARD virtual float_t window_get_opacity(WindowID id) const;
 		NODISCARD virtual Vec2 window_get_position(WindowID id) const;
 		NODISCARD virtual Vec2 window_get_size(WindowID id) const;
-		NODISCARD virtual void * window_get_user_pointer(WindowID id) const;
 		NODISCARD virtual Rect window_get_frame_size(WindowID id) const;
 		NODISCARD virtual bool window_get_is_auto_iconify(WindowID id) const;
 		NODISCARD virtual bool window_get_is_decorated(WindowID id) const;
@@ -407,6 +482,7 @@ namespace ism
 		NODISCARD virtual bool window_get_is_transparent(WindowID id) const;
 		NODISCARD virtual bool window_get_is_visible(WindowID id) const;
 		NODISCARD virtual bool window_get_should_close(WindowID id) const;
+		NODISCARD virtual void * window_get_user_pointer(WindowID id) const;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -414,15 +490,15 @@ namespace ism
 		virtual void window_set_clipboard(WindowID id, String const & value);
 		virtual void window_set_cursor(WindowID id, CursorID value);
 		virtual void window_set_cursor_mode(WindowID id, int32_t value);
-		virtual void window_set_mouse_pos(WindowID id, Vec2 const & value);
 		virtual void window_set_is_decorated(WindowID id, bool value);
 		virtual void window_set_is_floating(WindowID id, bool value);
 		virtual void window_set_is_focus_on_show(WindowID id, bool value);
 		virtual void window_set_icons(WindowID id, int32_t width, int32_t height, uint8_t * pixels, int32_t count = 1);
 		virtual void window_set_input_mode(WindowID id, int32_t mode, int32_t value);
+		virtual void window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds);
+		virtual void window_set_mouse_position(WindowID id, Vec2 const & value);
 		virtual void window_set_opacity(WindowID id, float_t value);
 		virtual void window_set_position(WindowID id, Vec2 const & value);
-		virtual void window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds);
 		virtual void window_set_is_resizable(WindowID id, bool value);
 		virtual void window_set_should_close(WindowID id, bool value);
 		virtual void window_set_size(WindowID id, Vec2 const & value);

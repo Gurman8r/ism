@@ -13,15 +13,17 @@ namespace ism
 
 	OPAQUE_TYPE(RID);
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// resource
 	class ISM_API Resource : public Object
 	{
 		OBJECT_COMMON(Resource, Object);
 
-		RID m_resource_id{};
-
-		String m_name{}, m_path_cache{};
-
-		int32_t m_subindex{};
+		RID		m_rid{};
+		int32_t	m_index{};
+		String	m_name{};
+		String	m_path_cache{};
 
 	protected:
 		explicit Resource() noexcept;
@@ -31,20 +33,19 @@ namespace ism
 
 		virtual void reload_from_file();
 
-	public:
-		NODISCARD auto get_id() const -> RID { return m_resource_id; }
+		NODISCARD auto get_id() const -> RID { return m_rid; }
+
+		NODISCARD auto get_index() const -> int32_t { return m_index; }
 		
 		NODISCARD auto get_name() const -> String const & { return m_name; }
 		
 		NODISCARD auto get_path() const -> String const & { return m_path_cache; }
-		
-		NODISCARD auto get_subindex() const -> int32_t { return m_subindex; }
+
+		void set_index(int32_t value) { m_index = value; }
 
 		void set_name(String const & value) { m_name = value; }
 
-		virtual void set_path(String const & value, bool take_over = false);
-
-		void set_subindex(int32_t value) { m_subindex = value; }
+		virtual void set_path(String const & value, bool take_over = true);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

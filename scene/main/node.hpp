@@ -2,7 +2,6 @@
 #define _ISM_NODE_HPP_
 
 #include <core/input/input.hpp>
-#include <entt/entt.hpp>
 
 namespace ism
 {
@@ -14,10 +13,6 @@ namespace ism
 
 	ALIAS(NODE) Ref<Node>;
 
-	ALIAS(EntityID) entt::entity;
-
-	ALIAS(EntityRegistry) entt::registry;
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API Node : public EventHandler
@@ -27,9 +22,9 @@ namespace ism
 		friend class SceneTree;
 
 	protected:
-		SceneTree *		m_tree		{};
-		Node *			m_parent	{};
-		Vector<NODE>	m_children	{};
+		SceneTree *		m_tree	{};
+		Node *			m_owner	{};
+		Vector<NODE>	m_nodes	{};
 
 		Node() noexcept;
 
@@ -40,20 +35,17 @@ namespace ism
 
 		virtual void process(Duration const & dt);
 
-		virtual void handle_event(Event const & ev) override;
+		virtual void handle_event(Event const & event) override;
 
 	public:
-		NODISCARD auto get_node(size_t const i) const -> NODE { return m_children[i]; }
+		NODISCARD auto get_node(size_t const i) const -> NODE { return m_nodes[i]; }
 
-		NODISCARD auto get_node_count() const noexcept -> size_t { return m_children.size(); }
-		
-		NODISCARD auto get_nodes() const noexcept -> Vector<NODE> const & { return m_children; }
+		NODISCARD auto get_node_count() const noexcept -> size_t { return m_nodes.size(); }
 
-		NODISCARD auto get_owner() const noexcept -> Node * { return m_parent; }
+		NODISCARD auto get_owner() const noexcept -> Node * { return m_owner; }
 
 		NODISCARD auto get_tree() const noexcept -> SceneTree * { return m_tree; }
 
-	public:
 		NODE add_node(Node * value) noexcept { return (value && value->set_owner(this)) ? value : nullptr; }
 
 		NODE add_node(NODE const & value) noexcept { return add_node(*value); }
@@ -61,7 +53,7 @@ namespace ism
 		template <class T, class ... Args
 		> NODE add_node(Args && ... args) noexcept { return add_node(memnew(T(FWD(args)...))); }
 
-		void delete_node(size_t const i) { m_children.erase(m_children.begin() + i); }
+		void delete_node(size_t const i) { m_nodes.erase(m_nodes.begin() + i); }
 
 		void detach_nodes();
 
@@ -69,12 +61,10 @@ namespace ism
 
 		bool set_owner(NODE const & value) noexcept { return set_owner(*value); }
 
-	public:
-		NODISCARD size_t get_sibling_index() const noexcept;
+		NODISCARD size_t get_subindex() const noexcept;
 
-		void set_sibling_index(size_t const i);
+		void set_subindex(size_t const i);
 
-	public:
 		NODISCARD bool is_owned_by(Node const * other, bool recursive = false) const noexcept;
 
 		NODISCARD bool is_owned_by(NODE const & other, bool recursive = false) const noexcept { return is_owned_by(*other, recursive); }
@@ -102,16 +92,17 @@ namespace ism
 
 			if (!reverse)
 			{
-				_for_nodes(m_children.begin(), m_children.end(), FWD(fn), recursive, reverse);
+				_for_nodes(m_nodes.begin(), m_nodes.end(), FWD(fn), recursive, reverse);
 			}
 			else
 			{
-				_for_nodes(m_children.rbegin(), m_children.rend(), FWD(fn), recursive, reverse);
+				_for_nodes(m_nodes.rbegin(), m_nodes.rend(), FWD(fn), recursive, reverse);
 			}
 		}
 
+	public:
 		template <class Pr = bool(*)(NODE const &)
-		> NODISCARD NODE find_node_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
+		> NODISCARD NODE find_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
 		{
 			auto _find_node_if = [](auto first, auto last, auto pr, bool recursive, bool reverse) noexcept -> NODE
 			{
@@ -134,28 +125,18 @@ namespace ism
 
 			if (!reverse)
 			{
-				return _find_node_if(m_children.begin(), m_children.end(), FWD(pr), recursive, reverse);
+				return _find_node_if(m_nodes.begin(), m_nodes.end(), FWD(pr), recursive, reverse);
 			}
 			else
 			{
-				return _find_node_if(m_children.rbegin(), m_children.rend(), FWD(pr), recursive, reverse);
+				return _find_node_if(m_nodes.rbegin(), m_nodes.rend(), FWD(pr), recursive, reverse);
 			}
 		}
 
 		template <class T
-		> NODISCARD Ref<T> find_instance(bool recursive = true, bool reverse = false) const noexcept
+		> NODISCARD Ref<T> find(bool recursive = true, bool reverse = false) const noexcept
 		{
-			return find_node_if([](NODE const & node) noexcept { return Ref<T>(node).is_valid(); }, recursive, reverse);
-		}
-
-		NODISCARD NODE find_node(Node const * value, bool recursive = true, bool reverse = false) const noexcept
-		{
-			return find_node_if([value](NODE const & node) noexcept { return node == value; }, recursive, reverse);
-		}
-
-		NODISCARD NODE find_node(NODE const & value, bool recursive = true, bool reverse = false) const noexcept
-		{
-			return find_node(*value, recursive, reverse);
+			return find_if([](NODE const & node) noexcept { return Ref<T>(node).is_valid(); }, recursive, reverse);
 		}
 	};
 

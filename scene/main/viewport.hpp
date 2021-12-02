@@ -49,13 +49,13 @@ namespace ism
 
 		using Viewport::get_bounds;
 
-		NODISCARD virtual Vec2 get_position() const = 0;
+		using Viewport::get_position;
 
-		NODISCARD virtual Vec2 get_size() const = 0;
+		using Viewport::get_size;
 
-		virtual void set_position(Vec2 const & value) = 0;
+		using Viewport::set_position;
 
-		virtual void set_size(Vec2 const & value) = 0;
+		using Viewport::set_size;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

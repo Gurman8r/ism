@@ -16,19 +16,25 @@ namespace ism
 		friend class Internals;
 		friend class EmbedClassHelper<TypeObject>;
 
-		static TypeObject __class_type;
+		static constexpr StringView __class_static{ "TypeObject" };
+
+		static TypeObject __type_static;
 
 	protected:
 		static void initialize_class();
 
 		virtual void _initialize_classv() override;
 
+		virtual StringView _get_classv() const noexcept override { return get_class_static(); }
+
 		virtual TYPE _get_typev() const noexcept override;
 
 	public:
+		NODISCARD static constexpr StringView get_class_static() noexcept { return __class_static; }
+
 		NODISCARD static TYPE get_type_static() noexcept;
 
-		TypeObject() noexcept : Object{} {}
+		DEFAULT_COPYABLE_MOVABLE(TypeObject);
 
 		template <class T
 		> TypeObject(mpl::type_tag<T>, cstring name, TypeFlags flags = TypeFlags_None) noexcept : TypeObject{}
@@ -59,7 +65,6 @@ namespace ism
 		ssize_t				tp_size				{};
 		TypeFlags			tp_flags			{};
 		bindfunc			tp_bind				{};
-
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
 

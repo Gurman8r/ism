@@ -38,6 +38,39 @@ namespace ism
 		CursorShape_Hand			, // hand
 	};
 
+	// input action
+	ENUM_INT(InputAction)
+	{
+		InputAction_Press,
+		InputAction_Release,
+		InputAction_Repeat,
+	};
+
+	// input mode
+	ENUM_INT(InputMode)
+	{
+		InputMode_Cursor,
+		InputMode_StickyKeys,
+		InputMode_StickyMouseButtons,
+		InputMode_LockKeyMods,
+		InputMode_RawMouseMotion,
+	};
+
+	// mouse button
+	ENUM_INT(MouseButton)
+	{
+		MouseButton_0,
+		MouseButton_1,
+		MouseButton_2,
+		MouseButton_3,
+		MouseButton_4,
+		MouseButton_5,
+		MouseButton_6,
+		MouseButton_7,
+
+		MouseButton_MAX
+	};
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
@@ -52,7 +85,7 @@ namespace ism
 		static Input * singleton;
 
 	public:
-		explicit Input() noexcept : Object{} { singleton = this; }
+		explicit Input() noexcept { singleton = this; }
 
 	public:
 		virtual ~Input() override {}

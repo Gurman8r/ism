@@ -19,7 +19,15 @@ EMBEDED_CLASS(Event, t, TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(EventHandler, t, TypeFlags_IsAbstract) {}
+EMBEDED_CLASS(EventHandler, t, TypeFlags_IsAbstract)
+{
+	CLASS_DEF(EventHandler, t)
+	{
+		return t
+			.def("handle_event", &EventHandler::handle_event)
+			;
+	};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -27,7 +35,7 @@ EMBEDED_CLASS(DummyHandler, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(EventDelegate<void>, t) {}
+EMBEDED_CLASS(EventDelegate<Event>, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

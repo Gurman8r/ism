@@ -22,7 +22,7 @@ namespace ism
 	public:
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		explicit Window(WindowID id = nullptr);
+		explicit Window() noexcept;
 		virtual ~Window() override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -50,15 +50,14 @@ namespace ism
 		NODISCARD virtual String get_clipboard() const;
 		NODISCARD virtual Vec2 get_content_scale() const;
 		NODISCARD virtual Vec2 get_framebuffer_size() const;
-		NODISCARD virtual int32_t get_input_mode(int32_t value) const;
-		NODISCARD virtual int32_t get_key(int32_t value) const;
-		NODISCARD virtual int32_t get_mouse_button(int32_t value) const;
-		NODISCARD virtual Vec2 get_mouse_pos() const;
-		NODISCARD virtual WindowID get_native_handle() const;
+		NODISCARD virtual int32_t get_input_mode(InputMode value) const;
+		NODISCARD virtual InputAction get_key(KeyCode value) const;
+		NODISCARD virtual InputAction get_mouse_button(MouseButton value) const;
+		NODISCARD virtual Vec2 get_mouse_position() const;
+		NODISCARD virtual void * get_native_handle() const;
 		NODISCARD virtual float_t get_opacity() const;
 		NODISCARD virtual Vec2 get_position() const override;
 		NODISCARD virtual Vec2 get_size() const override;
-		NODISCARD virtual void * get_user_pointer() const;
 		NODISCARD virtual Rect get_frame_size() const;
 		NODISCARD virtual bool get_is_auto_iconify() const;
 		NODISCARD virtual bool get_is_decorated() const;
@@ -72,23 +71,24 @@ namespace ism
 		NODISCARD virtual bool get_is_transparent() const;
 		NODISCARD virtual bool get_is_visible() const;
 		NODISCARD virtual bool get_should_close() const;
+		NODISCARD virtual void * get_user_pointer() const;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		virtual void set_clipboard(String const & value);
 		virtual void set_cursor(CursorID value);
-		virtual void set_cursor_mode(int32_t value);
+		virtual void set_input_mode(InputMode value);
 		virtual void set_is_auto_iconify(bool value);
 		virtual void set_is_decorated(bool value);
 		virtual void set_is_floating(bool value);
 		virtual void set_is_focus_on_show(bool value);
 		virtual void set_is_resizable(bool value);
-		virtual void set_mouse_pos(Vec2 const & value);
 		virtual void set_icons(int32_t width, int32_t height, uint8_t * pixels, int32_t count = 1);
 		virtual void set_input_mode(int32_t mode, int32_t value);
+		virtual void set_monitor(MonitorID monitor, Rect const & bounds);
+		virtual void set_mouse_position(Vec2 const & value);
 		virtual void set_opacity(float_t value);
 		virtual void set_position(Vec2 const & value) override;
-		virtual void set_monitor(MonitorID monitor, Rect const & bounds);
 		virtual void set_title(String const & value);
 		virtual void set_should_close(bool value);
 		virtual void set_size(Vec2 const & value) override;

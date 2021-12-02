@@ -6,46 +6,58 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // object common
-#define OBJECT_COMMON(m_class, m_inherits)										\
-private:																		\
-	friend class ism::Internals;												\
-																				\
-	friend class ism::EmbedClassHelper<m_class>;								\
-																				\
-	static ism::TypeObject __class_type;										\
-																				\
-protected:																		\
-	static void initialize_class()												\
-	{																			\
-		if (static bool once{}; !once && (once = true))							\
-		{																		\
-			SINGLETON(ism::Internals)->add_class(&m_class::__class_type);		\
-																				\
-			if (m_class::__class_type.tp_bind)									\
-			{																	\
-				m_class::__class_type.tp_bind(&m_class::__class_type);			\
-			}																	\
-		};																		\
-	}																			\
-																				\
-	virtual void _initialize_classv() override									\
-	{																			\
-		m_class::initialize_class();											\
-	}																			\
-																				\
-	FORCE_INLINE virtual ism::TYPE _get_typev() const override					\
-	{																			\
-		return m_class::get_type_static();										\
-	}																			\
-																				\
-public:																			\
-	using base_type = typename m_inherits;										\
-																				\
-	FORCE_INLINE static ism::TYPE get_type_static() noexcept					\
-	{																			\
-		return &m_class::__class_type;											\
-	}																			\
-																				\
+#define OBJECT_COMMON(m_class, m_inherits)											\
+private:																			\
+	friend class ism::Internals;													\
+																					\
+	friend class ism::EmbedClassHelper<m_class>;									\
+																					\
+	static constexpr ism::StringView __class_static{ TOSTR(m_class) };				\
+																					\
+	static ism::TypeObject __type_static;											\
+																					\
+protected:																			\
+	static void initialize_class()													\
+	{																				\
+		if (static bool once{}; !once && (once = true))								\
+		{																			\
+			SINGLETON(ism::Internals)->add_class(&m_class::__type_static);			\
+																					\
+			if (m_class::__type_static.tp_bind)										\
+			{																		\
+				VERIFY(m_class::__type_static.tp_bind(&m_class::__type_static));	\
+			}																		\
+		};																			\
+	}																				\
+																					\
+	virtual void _initialize_classv() override										\
+	{																				\
+		m_class::initialize_class();												\
+	}																				\
+																					\
+	FORCE_INLINE virtual ism::StringView _get_classv() const noexcept override		\
+	{																				\
+		return m_class::get_class_static();											\
+	}																				\
+																					\
+	FORCE_INLINE virtual ism::TYPE _get_typev() const noexcept override				\
+	{																				\
+		return m_class::get_type_static();											\
+	}																				\
+																					\
+public:																				\
+	using base_type = typename m_inherits;											\
+																					\
+	FORCE_INLINE static constexpr ism::StringView get_class_static() noexcept		\
+	{																				\
+		return m_class::__class_static;												\
+	}																				\
+																					\
+	FORCE_INLINE static ism::TYPE get_type_static() noexcept						\
+	{																				\
+		return &m_class::__type_static;												\
+	}																				\
+																					\
 private:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -61,7 +73,7 @@ private:
 	};																							\
 																								\
 	/* construct type object */																	\
-	MEMBER_IMPL(m_class::__class_type) =														\
+	MEMBER_IMPL(m_class::__type_static) =														\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
 	+ ism::EmbedClassHelper<m_class>::bind;														\
 																								\
@@ -86,7 +98,9 @@ namespace ism
 		friend bool predelete_handler(Object *);
 		friend void postinitialize_handler(Object *);
 
-		static TypeObject __class_type;
+		static constexpr StringView __class_static{ "Object" };
+
+		static TypeObject __type_static;
 
 		SafeRefCount m_refcount{}, m_refcount_init{};
 
@@ -97,7 +111,9 @@ namespace ism
 
 		virtual void _initialize_classv();
 
-		FORCE_INLINE virtual TYPE _get_typev() const;
+		FORCE_INLINE virtual StringView _get_classv() const noexcept { return get_class_static(); }
+
+		FORCE_INLINE virtual TYPE _get_typev() const noexcept;
 
 		explicit Object() noexcept;
 
@@ -124,17 +140,21 @@ namespace ism
 
 		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
 
+		NODISCARD static constexpr StringView get_class_static() noexcept { return __class_static; }
+
 		NODISCARD static TYPE get_type_static() noexcept;
+
+		NODISCARD StringView get_class() const noexcept { return _get_classv(); }
 
 		NODISCARD TYPE get_type() const noexcept;
 
 		void set_type(TYPE const & value) noexcept;
 
-		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); }
-
 		template <class T> NODISCARD T cast() const &; // cast.hpp
 
 		template <class T> NODISCARD T cast() &&; // cast.hpp
+
+		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); } // <3
 
 	public:
 		NODISCARD static OBJ generic_getattr(OBJ obj, OBJ name) noexcept;
@@ -224,6 +244,12 @@ namespace ism
 		using Base = typename T::base_type;
 		if constexpr (std::is_void_v<Base>) { return nullptr; }
 		else { return typeof<Base>(); }
+	}
+
+	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
+	> NODISCARD constexpr StringView nameof() noexcept
+	{
+		return T::get_class_static();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -673,9 +673,9 @@ namespace ism
 		static RenderingDevice * singleton;
 
 	public:
-		RenderingDevice();
+		RenderingDevice() noexcept { singleton = this; }
 
-		virtual ~RenderingDevice() override;
+		virtual ~RenderingDevice() noexcept override = default;
 
 		NODISCARD static RenderingDevice * get_singleton() noexcept { return singleton; }
 
@@ -696,10 +696,6 @@ namespace ism
 		
 		virtual void set_viewport(Rect const & rect) = 0;
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	NODISCARD inline RenderingDevice & get_rendering_device() noexcept { return *VALIDATE(RenderingDevice::get_singleton()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

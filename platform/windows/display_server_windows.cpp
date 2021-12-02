@@ -15,8 +15,6 @@
 
 using namespace ism;
 
-MEMBER_IMPL(DisplayServerWindows::g_main_window) {};
-
 EMBEDED_CLASS(DisplayServerWindows, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -67,21 +65,25 @@ DisplayServerWindows::DisplayServerWindows(DisplayServerSettings const & setting
 	glfwWindowHint(GLFW_STENCIL_BITS, settings.context.stencil_bits);
 	glfwWindowHint(GLFW_SRGB_CAPABLE, settings.context.srgb_capable);
 
-	g_main_window = (WindowID)glfwCreateWindow(
+	m_glfw_window = glfwCreateWindow(
 		(int32_t)settings.video.size[0],
 		(int32_t)settings.video.size[1],
 		(cstring)settings.title.c_str(),
 		(GLFWmonitor *)settings.monitor,
 		(GLFWwindow *)settings.share);
 
-	make_context_current(g_main_window);
+	if (!m_glfw_window) {
+		FATAL("FAILED CREATING GLFW WINDOW");
+	}
+
+	make_context_current((WindowID)m_glfw_window);
 	
-	if (settings.hints & WindowHints_Maximized) { maximize_window(g_main_window); }
+	if (settings.hints & WindowHints_Maximized) { maximize_window((WindowID)m_glfw_window); }
 }
 
 DisplayServerWindows::~DisplayServerWindows()
 {
-	glfwDestroyWindow((GLFWwindow *)g_main_window);
+	glfwDestroyWindow(m_glfw_window);
 	glfwTerminate();
 }
 
@@ -89,7 +91,7 @@ DisplayServerWindows::~DisplayServerWindows()
 
 WindowID DisplayServerWindows::get_context_main() const
 {
-	return g_main_window;
+	return (WindowID)m_glfw_window;
 }
 
 WindowID DisplayServerWindows::get_context_current() const
@@ -110,6 +112,29 @@ void DisplayServerWindows::poll_events()
 void DisplayServerWindows::swap_buffers(WindowID id)
 {
 	glfwSwapBuffers((GLFWwindow *)id);
+}
+
+void DisplayServerWindows::swap_interval(int32_t value)
+{
+	glfwSwapInterval(value);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+CursorID DisplayServerWindows::create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y)
+{
+	GLFWimage img{ w, h, (uint8_t *)p };
+	return (CursorID)glfwCreateCursor(&img, x, y);
+}
+
+CursorID DisplayServerWindows::create_standard_cursor(CursorShape shape)
+{
+	return (CursorID)glfwCreateStandardCursor(shape);
+}
+
+void DisplayServerWindows::destroy_cursor(CursorID value)
+{
+	glfwDestroyCursor((GLFWcursor *)value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -165,29 +190,29 @@ Vec2 DisplayServerWindows::window_get_framebuffer_size(WindowID id) const
 	return Vec2{ x, y };
 }
 
-int32_t DisplayServerWindows::window_get_input_mode(WindowID id, int32_t value) const
+int32_t DisplayServerWindows::window_get_input_mode(WindowID id, InputMode value) const
 {
 	return glfwGetInputMode((GLFWwindow *)id, value);
 }
 
-int32_t DisplayServerWindows::window_get_key(WindowID id, int32_t value) const
+InputAction DisplayServerWindows::window_get_key(WindowID id, KeyCode value) const
 {
 	return glfwGetKey((GLFWwindow *)id, value);
 }
 
-int32_t DisplayServerWindows::window_get_mouse_button(WindowID id, int32_t value) const
+InputAction DisplayServerWindows::window_get_mouse_button(WindowID id, MouseButton value) const
 {
 	return glfwGetMouseButton((GLFWwindow *)id, value);
 }
 
-Vec2 DisplayServerWindows::window_get_mouse_pos(WindowID id) const
+Vec2 DisplayServerWindows::window_get_mouse_position(WindowID id) const
 {
 	double_t x, y;
 	glfwGetCursorPos((GLFWwindow *)id, &x, &y);
 	return Vec2{ x, y };
 }
 
-WindowID DisplayServerWindows::window_get_native_handle(WindowID id) const
+void * DisplayServerWindows::window_get_native_handle(WindowID id) const
 {
 #if SYSTEM_WINDOWS
 	return (WindowID)glfwGetWin32Window((GLFWwindow *)id);
@@ -213,11 +238,6 @@ Vec2 DisplayServerWindows::window_get_size(WindowID id) const
 	int32_t x, y;
 	glfwGetWindowSize((GLFWwindow *)id, &x, &y);
 	return Vec2{ x, y };
-}
-
-void * DisplayServerWindows::window_get_user_pointer(WindowID id) const
-{
-	return glfwGetWindowUserPointer((GLFWwindow *)id);
 }
 
 Rect DisplayServerWindows::window_get_frame_size(WindowID id) const
@@ -287,6 +307,11 @@ bool DisplayServerWindows::window_get_should_close(WindowID id) const
 	return id && glfwWindowShouldClose((GLFWwindow *)id);
 }
 
+void * DisplayServerWindows::window_get_user_pointer(WindowID id) const
+{
+	return glfwGetWindowUserPointer((GLFWwindow *)id);
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void DisplayServerWindows::window_set_is_auto_iconify(WindowID id, bool value)
@@ -318,11 +343,6 @@ void DisplayServerWindows::window_set_cursor_mode(WindowID id, int32_t value)
 	}));
 }
 
-void DisplayServerWindows::window_set_mouse_pos(WindowID id, Vec2 const & value)
-{
-	glfwSetCursorPos((GLFWwindow *)id, value[0], value[1]);
-}
-
 void DisplayServerWindows::window_set_is_decorated(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED, value);
@@ -350,6 +370,15 @@ void DisplayServerWindows::window_set_input_mode(WindowID id, int32_t mode, int3
 	glfwSetInputMode((GLFWwindow *)id, mode, value);
 }
 
+void DisplayServerWindows::window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds)
+{
+}
+
+void DisplayServerWindows::window_set_mouse_position(WindowID id, Vec2 const & value)
+{
+	glfwSetCursorPos((GLFWwindow *)id, value[0], value[1]);
+}
+
 void DisplayServerWindows::window_set_opacity(WindowID id, float_t value)
 {
 	glfwSetWindowOpacity((GLFWwindow *)id, value);
@@ -358,10 +387,6 @@ void DisplayServerWindows::window_set_opacity(WindowID id, float_t value)
 void DisplayServerWindows::window_set_position(WindowID id, Vec2 const & value)
 {
 	glfwSetWindowPos((GLFWwindow *)id, (int32_t)value[0], (int32_t)value[1]);
-}
-
-void DisplayServerWindows::window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds)
-{
 }
 
 void DisplayServerWindows::window_set_is_resizable(WindowID id, bool value)

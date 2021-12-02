@@ -25,7 +25,7 @@ void ism::register_core_types()
 
 	SINGLETON(Internals)->bind_class
 	<
-		CppFunctionObject, // <- cppfunction MUST go first
+		CppFunctionObject, // <- cppfunction must go first
 		Object,
 		TypeObject,
 		IntObject,
@@ -50,7 +50,7 @@ void ism::register_core_types()
 		Event,
 		EventHandler,
 		DummyHandler,
-		EventDelegate<void>,
+		EventDelegate<Event>,
 		EventBus,
 
 		MainLoop

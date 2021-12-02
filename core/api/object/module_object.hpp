@@ -18,9 +18,9 @@ namespace ism
 
 		STR m_name{};
 
-		ModuleObject() noexcept : Object{} {}
+		ModuleObject() noexcept {}
 
-		ModuleObject(STR const & name) : Object{}, m_dict{ DICT::new_() }, m_name{ name } {}
+		ModuleObject(STR const & name) : m_dict{ DICT::new_() }, m_name{ name } {}
 
 		template <class Value = OBJ
 		> void add_object(cstring name, Value && value, bool overwrite = false)

@@ -28,8 +28,6 @@ EMBEDED_CLASS(WindowMouseButtonEvent, t) {}
 
 EMBEDED_CLASS(WindowMouseEnterEvent, t) {}
 
-EMBEDED_CLASS(WindowMouseExitEvent, t) {}
-
 EMBEDED_CLASS(WindowMousePositionEvent, t) {}
 
 EMBEDED_CLASS(WindowScrollEvent, t) {}
@@ -71,6 +69,30 @@ void DisplayServer::poll_events()
 }
 
 void DisplayServer::swap_buffers(WindowID id)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+}
+
+void DisplayServer::swap_interval(int32_t value)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+CursorID DisplayServer::create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+CursorID DisplayServer::create_standard_cursor(CursorShape shape)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
+void DisplayServer::destroy_cursor(CursorID value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
@@ -127,31 +149,31 @@ Vec2 DisplayServer::window_get_framebuffer_size(WindowID id) const
 	return {};
 }
 
-int32_t DisplayServer::window_get_input_mode(WindowID id, int32_t value) const
+int32_t DisplayServer::window_get_input_mode(WindowID id, InputMode value) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-int32_t DisplayServer::window_get_key(WindowID id, int32_t value) const
+InputAction DisplayServer::window_get_key(WindowID id, KeyCode value) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-int32_t DisplayServer::window_get_mouse_button(WindowID id, int32_t value) const
+InputAction DisplayServer::window_get_mouse_button(WindowID id, MouseButton value) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-Vec2 DisplayServer::window_get_mouse_pos(WindowID id) const
+Vec2 DisplayServer::window_get_mouse_position(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-WindowID DisplayServer::window_get_native_handle(WindowID id) const
+void * DisplayServer::window_get_native_handle(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
@@ -170,12 +192,6 @@ Vec2 DisplayServer::window_get_position(WindowID id) const
 }
 
 Vec2 DisplayServer::window_get_size(WindowID id) const
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-	return {};
-}
-
-void * DisplayServer::window_get_user_pointer(WindowID id) const
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
@@ -259,6 +275,12 @@ bool DisplayServer::window_get_should_close(WindowID id) const
 	return {};
 }
 
+void * DisplayServer::window_get_user_pointer(WindowID id) const
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+	return {};
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void DisplayServer::window_set_is_auto_iconify(WindowID id, bool value)
@@ -277,11 +299,6 @@ void DisplayServer::window_set_cursor(WindowID id, CursorID value)
 }
 
 void DisplayServer::window_set_cursor_mode(WindowID id, int32_t value)
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-}
-
-void DisplayServer::window_set_mouse_pos(WindowID id, Vec2 const & value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
@@ -311,17 +328,22 @@ void DisplayServer::window_set_input_mode(WindowID id, int32_t mode, int32_t val
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
 
+void DisplayServer::window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+}
+
+void DisplayServer::window_set_mouse_position(WindowID id, Vec2 const & value)
+{
+	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
+}
+
 void DisplayServer::window_set_opacity(WindowID id, float_t value)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }
 
 void DisplayServer::window_set_position(WindowID id, Vec2 const & value)
-{
-	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
-}
-
-void DisplayServer::window_set_monitor(WindowID id, MonitorID monitor, Rect const & bounds)
 {
 	FATAL("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }

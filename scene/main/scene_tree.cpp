@@ -1,5 +1,4 @@
 #include <scene/main/scene_tree.hpp>
-#include <scene/components/all_components.hpp>
 #include <scene/gui/imgui.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -8,7 +7,18 @@ using namespace ism;
 
 MEMBER_IMPL(SceneTree::singleton) {};
 
-EMBEDED_CLASS(SceneTree, t) {}
+EMBEDED_CLASS(SceneTree, t)
+{
+	CLASS_DEF(SceneTree, t)
+	{
+		return t
+			.def("initialize", &SceneTree::initialize)
+			.def("process", &SceneTree::process)
+			.def("finalize", &SceneTree::finalize)
+			.def("handle_event", &SceneTree::handle_event)
+			;
+	};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -35,13 +45,6 @@ void SceneTree::initialize()
 	MainLoop::initialize();
 }
 
-void SceneTree::finalize()
-{
-	m_initialized = false;
-
-	MainLoop::finalize();
-}
-
 bool SceneTree::process(Duration const & dt)
 {
 	MainLoop::process(dt);
@@ -57,22 +60,16 @@ bool SceneTree::process(Duration const & dt)
 	return should_close;
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-template <> void SceneTree::on_component_added<CameraComponent>(Entity & e, CameraComponent & c)
+void SceneTree::finalize()
 {
+	m_initialized = false;
+
+	MainLoop::finalize();
 }
 
-template <> void SceneTree::on_component_added<ScriptComponent>(Entity & e, ScriptComponent & c)
+void SceneTree::handle_event(Event const & event)
 {
-}
-
-template <> void SceneTree::on_component_added<TagComponent>(Entity & e, TagComponent & c)
-{
-}
-
-template <> void SceneTree::on_component_added<TransformComponent>(Entity & e, TransformComponent & c)
-{
+	MainLoop::handle_event(event);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

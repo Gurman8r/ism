@@ -27,7 +27,7 @@ namespace ism
 		static RenderingServer * singleton;
 
 	protected:
-		explicit RenderingServer() noexcept : Object{} { singleton = this; }
+		explicit RenderingServer() noexcept { singleton = this; }
 
 	public:
 		virtual ~RenderingServer() override {}

@@ -99,19 +99,19 @@ namespace ism
 }
 
 // byte literals
-namespace ism::byte_literals
+namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// kibibyte
 	NODISCARD constexpr uint64_t operator"" _KiB(uint64_t n) noexcept
 	{
-		return ism::power_of_2(ism::ratio_cast(n, std::kilo{}));
+		return power_of_2(ratio_cast(n, std::kilo{}));
 	}
 
 	NODISCARD constexpr uint64_t operator"" _KiB(float80_t n) noexcept
 	{
-		return static_cast<uint64_t>(ism::power_of_2(ism::ratio_cast(n, std::kilo{})));
+		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::kilo{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -119,12 +119,12 @@ namespace ism::byte_literals
 	// mebibyte
 	NODISCARD constexpr uint64_t operator"" _MiB(uint64_t n) noexcept
 	{
-		return ism::power_of_2(ism::ratio_cast(n, std::mega{}));
+		return power_of_2(ratio_cast(n, std::mega{}));
 	}
 
 	NODISCARD constexpr uint64_t operator"" _MiB(float80_t n) noexcept
 	{
-		return static_cast<uint64_t>(ism::power_of_2(ism::ratio_cast(n, std::mega{})));
+		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::mega{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -132,12 +132,12 @@ namespace ism::byte_literals
 	// gibibyte
 	NODISCARD constexpr uint64_t operator"" _GiB(uint64_t n) noexcept
 	{
-		return ism::power_of_2(ism::ratio_cast(n, std::giga{}));
+		return power_of_2(ratio_cast(n, std::giga{}));
 	}
 
 	NODISCARD constexpr uint64_t operator"" _GiB(float80_t n) noexcept
 	{
-		return static_cast<uint64_t>(ism::power_of_2(ism::ratio_cast(n, std::giga{})));
+		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::giga{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -145,12 +145,12 @@ namespace ism::byte_literals
 	// tebibyte
 	NODISCARD constexpr uint64_t operator"" _TiB(uint64_t n) noexcept
 	{
-		return ism::power_of_2(ism::ratio_cast(n, std::tera{}));
+		return power_of_2(ratio_cast(n, std::tera{}));
 	}
 
 	NODISCARD constexpr uint64_t operator"" _TiB(float80_t n) noexcept
 	{
-		return static_cast<uint64_t>(ism::power_of_2(ism::ratio_cast(n, std::tera{})));
+		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::tera{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -158,12 +158,12 @@ namespace ism::byte_literals
 	// pebibyte
 	NODISCARD constexpr uint64_t operator"" _PiB(uint64_t n) noexcept
 	{
-		return ism::power_of_2(ism::ratio_cast(n, std::peta{}));
+		return power_of_2(ratio_cast(n, std::peta{}));
 	}
 
 	NODISCARD constexpr uint64_t operator"" _PiB(float80_t n) noexcept
 	{
-		return static_cast<uint64_t>(ism::power_of_2(ism::ratio_cast(n, std::peta{})));
+		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::peta{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -171,12 +171,12 @@ namespace ism::byte_literals
 	// exbibyte
 	NODISCARD constexpr uint64_t operator"" _EiB(uint64_t n) noexcept
 	{
-		return ism::power_of_2(ism::ratio_cast(n, std::exa{}));
+		return power_of_2(ratio_cast(n, std::exa{}));
 	}
 
 	NODISCARD constexpr uint64_t operator"" _EiB(float80_t n) noexcept
 	{
-		return static_cast<uint64_t>(ism::power_of_2(ism::ratio_cast(n, std::exa{})));
+		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::exa{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -7,14 +7,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API InputEvent : public EventClass<InputEvent>
+	class ISM_API InputEvent : public Event
 	{
-		OBJECT_COMMON(InputEvent, Event);
+		EVENT_COMMON(InputEvent, Event);
 
 	public:
 		InputEvent() noexcept {}
-
-		virtual ~InputEvent() noexcept override = default;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

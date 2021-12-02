@@ -23,7 +23,7 @@ EMBEDED_CLASS(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDesc
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-FunctionObject::FunctionObject(vectorcallfunc vectorcall) : Object{}, m_dict{ DICT::new_() }, m_vectorcall{ vectorcall }
+FunctionObject::FunctionObject(vectorcallfunc vectorcall) : m_dict{ DICT::new_() }, m_vectorcall{ vectorcall }
 {
 }
 

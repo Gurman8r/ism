@@ -17,7 +17,7 @@ namespace ism
 		virtual void process(Duration const & dt) override;
 
 	protected:
-		virtual void _show_dockspace();
+		virtual void _show_dockspace(cstring label, bool has_main_menu_bar = false);
 	};
 }
 

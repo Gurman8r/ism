@@ -108,7 +108,7 @@ namespace ism
 
 	// Polymorphic Allocator
 	template <class T = byte
-	> ALIAS(PolymorphicAllocator) _STD pmr::polymorphic_allocator<T>;
+	> ALIAS(PolymorphicAllocator) std::pmr::polymorphic_allocator<T>;
 
 	// Default Allocator
 	class DefaultAllocator final
@@ -212,6 +212,120 @@ namespace ism
 	template <class T> using is_shared_ptr = mpl::is_instantiation<std::shared_ptr, T>;
 
 	template <class T> constexpr bool is_shared_ptr_v{ is_shared_ptr<T>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class TestResource : public std::pmr::memory_resource
+	{
+	public:
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		using pointer					= typename byte *;
+		using const_pointer				= typename byte const *;
+		using reference					= typename byte &;
+		using const_reference			= typename byte const &;
+		using iterator					= typename pointer;
+		using const_iterator			= typename const_pointer;
+		using reverse_iterator			= typename std::reverse_iterator<iterator>;
+		using const_reverse_iterator	= typename std::reverse_iterator<const_iterator>;
+		using size_type					= typename size_t;
+		using difference_type			= typename ptrdiff_t;
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		
+		TestResource(std::pmr::memory_resource * mres, void * data, size_t size) noexcept
+			: m_resource	{ mres }
+			, m_buffer_data	{ (byte *)data }
+			, m_buffer_size	{ size }
+		{
+		}
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		NODISCARD bool is_default() const noexcept { return this == std::pmr::get_default_resource(); }
+
+		NODISCARD auto get_resource() const noexcept -> std::pmr::memory_resource * const { return m_resource; }
+
+		NODISCARD auto num_allocations() const noexcept -> size_t { return m_num_allocations; }
+
+		NODISCARD auto data() const noexcept -> pointer { return m_buffer_data; }
+
+		NODISCARD auto size() const noexcept -> size_t { return m_buffer_size; }
+
+		NODISCARD auto bytes_used() const noexcept -> size_t { return m_buffer_used; }
+
+		NODISCARD auto bytes_free() const noexcept -> size_t { return m_buffer_size - m_buffer_used; }
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		NODISCARD auto front() & noexcept -> reference { return *begin(); }
+
+		NODISCARD auto front() const & noexcept -> const_reference { return *cbegin(); }
+
+		NODISCARD auto back() & noexcept -> reference { return *(end() - 1); }
+
+		NODISCARD auto back() const & noexcept -> const_reference { return *(cend() - 1); }
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		NODISCARD auto begin() noexcept -> iterator { return m_buffer_data; }
+
+		NODISCARD auto begin() const noexcept -> const_iterator { return m_buffer_data; }
+
+		NODISCARD auto cbegin() const noexcept -> const_iterator { return begin(); }
+
+		NODISCARD auto end() noexcept -> iterator { return m_buffer_data + m_buffer_size; }
+
+		NODISCARD auto end() const noexcept -> const_iterator { return m_buffer_data + m_buffer_size; }
+
+		NODISCARD auto cend() const noexcept -> const_iterator { return end(); }
+
+		NODISCARD auto rbegin() noexcept -> reverse_iterator { return std::make_reverse_iterator(end()); }
+
+		NODISCARD auto rbegin() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(end()); }
+
+		NODISCARD auto crbegin() const noexcept -> const_reverse_iterator { return rbegin(); }
+
+		NODISCARD auto rend() noexcept -> reverse_iterator { return std::make_reverse_iterator(begin()); }
+
+		NODISCARD auto rend() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(begin()); }
+
+		NODISCARD auto crend() const noexcept -> const_reverse_iterator { return crend(); }
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	private:
+		void * do_allocate(size_t bytes, size_t align) override
+		{
+			++m_num_allocations;
+			m_buffer_used += bytes;
+			return m_resource->allocate(bytes, align);
+		}
+
+		void do_deallocate(void * ptr, size_t bytes, size_t align) override
+		{
+			--m_num_allocations;
+			m_buffer_used -= bytes;
+			return m_resource->deallocate(ptr, bytes, align);
+		}
+
+		bool do_is_equal(std::pmr::memory_resource const & value) const noexcept override
+		{
+			return m_resource->is_equal(value);
+		}
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	private:
+		std::pmr::memory_resource * m_resource;
+		pointer const m_buffer_data;
+		size_t const m_buffer_size;
+
+		size_t m_num_allocations{};
+		size_t m_buffer_used{};
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

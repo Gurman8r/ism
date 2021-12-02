@@ -248,6 +248,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// object call operator
 	template <class Derived
 	> template <ReturnValuePolicy_ Policy, class ...Args
 	> inline OBJ ObjectAPI<Derived>::operator()(Args && ... args) const

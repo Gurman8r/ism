@@ -11,13 +11,24 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(Window, t) {}
+EMBEDED_CLASS(Window, t)
+{
+	CLASS_DEF(Window, t)
+	{
+		return t;
+	};
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window::Window(WindowID id) : m_window_id{ id ? id : VALIDATE(SINGLETON(DisplayServer))->get_context_current() } {}
+Window::Window() noexcept : m_window_id{ SINGLETON(DisplayServer)->get_context_main() }
+{
+}
 
-Window::~Window() { m_window_id = nullptr; }
+Window::~Window()
+{
+	m_window_id = nullptr;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -85,27 +96,27 @@ Vec2 Window::get_framebuffer_size() const
 	return SINGLETON(DisplayServer)->window_get_framebuffer_size(m_window_id);
 }
 
-int32_t Window::get_input_mode(int32_t value) const
+int32_t Window::get_input_mode(InputMode value) const
 {
 	return SINGLETON(DisplayServer)->window_get_input_mode(m_window_id, value);
 }
 
-int32_t Window::get_key(int32_t value) const
+InputAction Window::get_key(KeyCode value) const
 {
 	return SINGLETON(DisplayServer)->window_get_key(m_window_id, value);
 }
 
-int32_t Window::get_mouse_button(int32_t value) const
+InputAction Window::get_mouse_button(MouseButton value) const
 {
 	return SINGLETON(DisplayServer)->window_get_mouse_button(m_window_id, value);
 }
 
-Vec2 Window::get_mouse_pos() const
+Vec2 Window::get_mouse_position() const
 {
-	return SINGLETON(DisplayServer)->window_get_mouse_pos(m_window_id);
+	return SINGLETON(DisplayServer)->window_get_mouse_position(m_window_id);
 }
 
-WindowID Window::get_native_handle() const
+void * Window::get_native_handle() const
 {
 	return SINGLETON(DisplayServer)->window_get_native_handle(m_window_id);
 }
@@ -123,11 +134,6 @@ Vec2 Window::get_position() const
 Vec2 Window::get_size() const
 {
 	return SINGLETON(DisplayServer)->window_get_size(m_window_id);
-}
-
-void * Window::get_user_pointer() const
-{
-	return SINGLETON(DisplayServer)->window_get_user_pointer(m_window_id);
 }
 
 Rect Window::get_frame_size() const
@@ -195,6 +201,11 @@ bool Window::get_should_close() const
 	return SINGLETON(DisplayServer)->window_get_should_close(m_window_id);
 }
 
+void * Window::get_user_pointer() const
+{
+	return SINGLETON(DisplayServer)->window_get_user_pointer(m_window_id);
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void Window::set_is_auto_iconify(bool value)
@@ -212,7 +223,7 @@ void Window::set_cursor(CursorID value)
 	SINGLETON(DisplayServer)->window_set_cursor(m_window_id, value);
 }
 
-void Window::set_cursor_mode(int32_t value)
+void Window::set_input_mode(InputMode value)
 {
 	SINGLETON(DisplayServer)->window_set_cursor_mode(m_window_id, value);
 }
@@ -237,11 +248,6 @@ void Window::set_is_resizable(bool value)
 	SINGLETON(DisplayServer)->window_set_is_resizable(m_window_id, value);
 }
 
-void Window::set_mouse_pos(Vec2 const & value)
-{
-	SINGLETON(DisplayServer)->window_set_mouse_pos(m_window_id, value);
-}
-
 void Window::set_icons(int32_t width, int32_t height, uint8_t * pixels, int32_t count)
 {
 	SINGLETON(DisplayServer)->window_set_icons(m_window_id, width, height, pixels, count);
@@ -252,6 +258,16 @@ void Window::set_input_mode(int32_t mode, int32_t value)
 	SINGLETON(DisplayServer)->window_set_input_mode(m_window_id, mode, value);
 }
 
+void Window::set_monitor(MonitorID monitor, Rect const & bounds)
+{
+	SINGLETON(DisplayServer)->window_set_monitor(m_window_id, monitor, bounds);
+}
+
+void Window::set_mouse_position(Vec2 const & value)
+{
+	SINGLETON(DisplayServer)->window_set_mouse_position(m_window_id, value);
+}
+
 void Window::set_opacity(float_t value)
 {
 	SINGLETON(DisplayServer)->window_set_opacity(m_window_id, value);
@@ -260,11 +276,6 @@ void Window::set_opacity(float_t value)
 void Window::set_position(Vec2 const & value)
 {
 	SINGLETON(DisplayServer)->window_set_position(m_window_id, value);
-}
-
-void Window::set_monitor(MonitorID monitor, Rect const & bounds)
-{
-	SINGLETON(DisplayServer)->window_set_monitor(m_window_id, monitor, bounds);
 }
 
 void Window::set_should_close(bool value)

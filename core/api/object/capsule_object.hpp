@@ -20,18 +20,18 @@ namespace ism
 
 		virtual ~CapsuleObject() override { if (m_closure) { m_closure(this); } }
 
-		CapsuleObject() noexcept : Object{} {}
+		CapsuleObject() noexcept {}
 
-		CapsuleObject(nullptr_t) noexcept : Object{} {}
+		CapsuleObject(nullptr_t) noexcept {}
 
-		CapsuleObject(void const * value, delfunc closure = nullptr) : Object{}
+		CapsuleObject(void const * value, delfunc closure = nullptr)
 		{
 			m_pointer = value;
 			m_context = nullptr;
 			m_closure = closure;
 		}
 
-		CapsuleObject(void const * value, void(*closure)(void *)) : Object{}
+		CapsuleObject(void const * value, void(*closure)(void *))
 		{
 			m_pointer = value;
 			m_context = closure;
@@ -46,7 +46,7 @@ namespace ism
 			};
 		}
 
-		CapsuleObject(void(*closure)()) : Object{}
+		CapsuleObject(void(*closure)())
 		{
 			m_pointer = closure;
 			m_context = nullptr;
