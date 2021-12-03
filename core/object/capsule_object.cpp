@@ -5,9 +5,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(CapsuleObject, t)
+EMBED_CLASS(CapsuleObject, t)
 {
-	CLASS_DEF(CapsuleObject, t)
+	t.tp_bind = CLASS_BINDER(CapsuleObject, t)
 	{
 		return t;
 	};

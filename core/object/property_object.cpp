@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(PropertyObject, t, TypeFlags_MethodDescriptor)
+EMBED_CLASS(PropertyObject, t, TypeFlags_MethodDescriptor)
 {
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ
 	{
@@ -17,7 +17,7 @@ EMBEDED_CLASS(PropertyObject, t, TypeFlags_MethodDescriptor)
 		return ((PROPERTY &)self).set(obj, value);
 	};
 
-	CLASS_DEF(PropertyObject, t)
+	t.tp_bind = CLASS_BINDER(PropertyObject, t)
 	{
 		return t;
 	};

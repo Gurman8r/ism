@@ -11,9 +11,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(Window, t)
+EMBED_CLASS(Window, t)
 {
-	CLASS_DEF(Window, t)
+	t.tp_bind = CLASS_BINDER(Window, t)
 	{
 		return t;
 	};

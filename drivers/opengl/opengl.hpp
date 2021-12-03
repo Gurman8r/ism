@@ -38,7 +38,7 @@
 #	define OPENGL_INIT() (gladLoadGL())
 
 #else
-#	error "Can't find OpenGL'"
+#	error "Can't find OpenGL"
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

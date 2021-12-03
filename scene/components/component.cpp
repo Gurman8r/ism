@@ -2,17 +2,7 @@
 
 using namespace ism;
 
-EMBEDED_CLASS(Component, t)
-{
-	t.tp_dictoffset = offsetof(Component, m_dict);
-
-	CLASS_DEF(Component, t)
-	{
-		return t
-			.def_readonly("__dict__", &Component::m_dict)
-			;
-	};
-}
+EMBED_CLASS(Component, t) {}
 
 Component::Component(Entity * entity) noexcept : m_entity{ VALIDATE(entity) }
 {

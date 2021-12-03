@@ -10,9 +10,9 @@ namespace ism
 	namespace util
 	{
 		template <class To, class From
-		> NODISCARD constexpr TVec4f<To> color_cast(const TVec4f<From> & value) noexcept
+		> NODISCARD constexpr TVec4<To> color_cast(const TVec4<From> & value) noexcept
 		{
-			return (TVec4f<To>)value;
+			return (TVec4<To>)value;
 		}
 
 		NODISCARD constexpr Vec4b color_cast(Vec4f const & value) noexcept
@@ -34,8 +34,8 @@ namespace ism
 
 		using self_type					= typename basic_color<_T>;
 		using value_type				= typename _T;
-		using rgb_type					= typename TVec3f<value_type>;
-		using rgba_type					= typename TVec4f<value_type>;
+		using rgb_type					= typename TVec3<value_type>;
+		using rgba_type					= typename TVec4<value_type>;
 		using size_type					= typename rgba_type::size_type;
 		using difference_type			= typename rgba_type::difference_type;
 		using pointer					= typename rgba_type::pointer;
@@ -79,7 +79,7 @@ namespace ism
 		{
 		}
 
-		template <class U> constexpr basic_color(TVec4f<U> const & value)
+		template <class U> constexpr basic_color(TVec4<U> const & value)
 			: m_data{ util::color_cast(value) }
 		{
 		}

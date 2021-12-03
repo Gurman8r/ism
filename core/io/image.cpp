@@ -2,9 +2,9 @@
 
 using namespace ism;
 
-EMBEDED_CLASS(Image, t)
+EMBED_CLASS(Image, t)
 {
-	CLASS_DEF(Image, t)
+	t.tp_bind = CLASS_BINDER(Image, t)
 	{
 		return t
 			.def(init<>())

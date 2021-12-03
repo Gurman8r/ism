@@ -1,7 +1,7 @@
 #include <scene/register_scene_types.hpp>
 #include <scene/main/window.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/components/mono_behavior.hpp>
+#include <scene/components/script_component.hpp>
 
 #include <scene/resources/font.hpp>
 #include <scene/resources/material.hpp>
@@ -23,8 +23,8 @@ void ism::register_scene_types()
 		Entity,
 
 		Component,
-		Behavior,
-		MonoBehavior,
+		BehaviorComponent,
+		ScriptComponent,
 
 		Font,
 		Material,

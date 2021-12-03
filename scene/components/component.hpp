@@ -13,8 +13,6 @@ namespace ism
 
 		Entity * m_entity{};
 
-		DICT m_dict{};
-
 	protected:
 		Component(Entity * entity) noexcept;
 

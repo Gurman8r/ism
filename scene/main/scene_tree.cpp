@@ -7,9 +7,9 @@ using namespace ism;
 
 MEMBER_IMPL(SceneTree::singleton) {};
 
-EMBEDED_CLASS(SceneTree, t)
+EMBED_CLASS(SceneTree, t)
 {
-	CLASS_DEF(SceneTree, t)
+	t.tp_bind = CLASS_BINDER(SceneTree, t)
 	{
 		return t
 			.def("initialize", &SceneTree::initialize)

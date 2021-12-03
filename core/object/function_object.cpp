@@ -5,13 +5,13 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+EMBED_CLASS(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 {
 	t.tp_dictoffset = offsetof(FunctionObject, m_dict);
 
 	t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-	CLASS_DEF(FunctionObject, t)
+	t.tp_bind = CLASS_BINDER(FunctionObject, t)
 	{
 		return t
 

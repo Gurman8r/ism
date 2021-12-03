@@ -4,9 +4,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(Event, t, TypeFlags_IsAbstract)
+EMBED_CLASS(Event, t, TypeFlags_IsAbstract)
 {
-	CLASS_DEF(Event, t)
+	t.tp_bind = CLASS_BINDER(Event, t)
 	{
 		return t
 			.def("get_event_id", &Event::get_event_id)
@@ -19,9 +19,9 @@ EMBEDED_CLASS(Event, t, TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(EventHandler, t, TypeFlags_IsAbstract)
+EMBED_CLASS(EventHandler, t, TypeFlags_IsAbstract)
 {
-	CLASS_DEF(EventHandler, t)
+	t.tp_bind = CLASS_BINDER(EventHandler, t)
 	{
 		return t
 			.def("handle_event", &EventHandler::handle_event)
@@ -31,16 +31,16 @@ EMBEDED_CLASS(EventHandler, t, TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(DummyHandler, t) {}
+EMBED_CLASS(DummyHandler, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(EventDelegate<Event>, t) {}
+EMBED_CLASS(EventDelegate<Event>, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 MEMBER_IMPL(EventBus::singleton) {};
 
-EMBEDED_CLASS(EventBus, t) {}
+EMBED_CLASS(EventBus, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

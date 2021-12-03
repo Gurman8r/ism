@@ -1,10 +1,10 @@
 #include <scene/main/entity.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/components/mono_behavior.hpp>
+#include <scene/components/script_component.hpp>
 
 using namespace ism;
 
-EMBEDED_CLASS(Entity, t) {}
+EMBED_CLASS(Entity, t) {}
 
 Entity::Entity()
 {

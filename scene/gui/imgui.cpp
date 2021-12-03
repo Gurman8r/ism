@@ -53,10 +53,8 @@ void ism::ImGui_RenderFrame()
 {
 	ImGui::Render();
 
-	render_immediate(SINGLETON(RenderingDevice)
-	, RenderingCommand::set_viewport(SINGLETON(SceneTree)->get_root()->get_bounds())
-	, RenderingCommand::clear()
-	);
+	SINGLETON(RenderingDevice)->set_viewport(SINGLETON(SceneTree)->get_root()->get_bounds());
+	SINGLETON(RenderingDevice)->clear();
 
 	ImGui_RenderDrawData(&ImGui::GetCurrentContext()->Viewports[0]->DrawDataP);
 

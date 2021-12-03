@@ -17,6 +17,14 @@ namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <class T, class ... Ts
+	> constexpr bool is_any_of_v
+	{
+		std::disjunction_v<std::is_same<T, Ts>...>
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class To, class From
 	> constexpr bool is_trivially_convertible_v
 	{

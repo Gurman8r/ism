@@ -63,22 +63,22 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // class embedding utility
-#define EMBEDED_CLASS(m_class, m_var, ...)														\
+#define EMBED_CLASS(m_class, m_var, ...)														\
 																								\
 	/* declare binder */																		\
 	template <> class ism::EmbedClassHelper<m_class> final										\
 	{																							\
 	public:																						\
-		static void bind(ism::TypeObject & m_var);												\
+		static void embed(ism::TypeObject & m_var);												\
 	};																							\
 																								\
 	/* construct type object */																	\
 	MEMBER_IMPL(m_class::__type_static) =														\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
-	+ ism::EmbedClassHelper<m_class>::bind;														\
+	+ ism::EmbedClassHelper<m_class>::embed;													\
 																								\
 	/* implement binder function */																\
-	void ism::EmbedClassHelper<m_class>::bind(ism::TypeObject & m_var)							\
+	void ism::EmbedClassHelper<m_class>::embed(ism::TypeObject & m_var)							\
 																								\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

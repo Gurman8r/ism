@@ -9,7 +9,7 @@
 
 using namespace ism;
 
-EMBEDED_CLASS(RenderingServerDefault, t) {}
+EMBED_CLASS(RenderingServerDefault, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

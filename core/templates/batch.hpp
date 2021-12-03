@@ -1030,7 +1030,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t From, size_t To
-		> NODISCARD auto map_unchecked(element_i<From> const & from) -> element_i<To>
+		> NODISCARD auto map_unchecked(element_i<From> const & from) -> element_i<To> &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}

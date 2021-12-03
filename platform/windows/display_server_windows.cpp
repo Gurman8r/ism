@@ -15,7 +15,7 @@
 
 using namespace ism;
 
-EMBEDED_CLASS(DisplayServerWindows, t) {}
+EMBED_CLASS(DisplayServerWindows, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

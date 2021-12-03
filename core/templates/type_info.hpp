@@ -37,15 +37,13 @@ namespace ism
 				.remove_prefix(sizeof(PRETTY_TYPE_PREFIX) - 1)
 				.remove_suffix(sizeof(PRETTY_TYPE_SUFFIX) - 1);
 		}
-
-		template <class T> constexpr StringView name_v{ ctti::name<T>() };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD constexpr hash_t hash() noexcept { return ism::hash(ctti::name_v<T>); }
+	template <class T> constexpr hash_t hash_v{ hash(ctti::name<T>()) };
 
-	template <class T> constexpr hash_t hash_v{ ism::hash<T>() };
+	template <class T> NODISCARD constexpr hash_t hash() noexcept { return hash_v<T>; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

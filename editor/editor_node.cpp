@@ -3,7 +3,7 @@
 
 using namespace ism;
 
-EMBEDED_CLASS(EditorNode, t) {}
+EMBED_CLASS(EditorNode, t) {}
 
 EditorNode::EditorNode()
 {

@@ -580,7 +580,7 @@ namespace ism
 		TextureSamples sample_count{ TextureSamples_1 };
 		bool enable_sample_shading{ false };
 		float_t min_sample_shading{ 0.f };
-		Vector<uint32_t> sample_mask{};
+		Vector<byte> sample_mask{};
 		bool enable_alpha_to_coverage{ false };
 		bool enable_alpha_to_one{ false };
 	};
@@ -665,6 +665,165 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	NODISCARD constexpr hash_t get_element_base_type(hash_t type) noexcept
+	{
+		switch (type)
+		{
+		default					: return 0;
+		case hash_v<bool>		: return hash_v<bool>;
+		case hash_v<int32_t>	:
+		case hash_v<Vec2i>		:
+		case hash_v<Vec3i>		:
+		case hash_v<Vec4i>		:
+		case hash_v<Mat2i>		:
+		case hash_v<Mat3i>		:
+		case hash_v<Mat4i>		: return hash_v<int32_t>;
+		case hash_v<float32_t>	:
+		case hash_v<Vec2f>		:
+		case hash_v<Vec3f>		:
+		case hash_v<Vec4f>		:
+		case hash_v<Mat2f>		:
+		case hash_v<Mat3f>		:
+		case hash_v<Mat4f>		: return hash_v<float32_t>;
+		}
+	}
+
+	template <class T> NODISCARD constexpr hash_t get_element_base_type() noexcept
+	{
+		return get_element_base_type(hash_v<T>);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr uint32_t get_element_component_count(hash_t type) noexcept
+	{
+		switch (type)
+		{
+		default					: return 0;
+		case hash_v<int32_t>	:
+		case hash_v<float32_t>	: return 1;
+		case hash_v<Vec2i>		:
+		case hash_v<Vec2f>		: return 2;
+		case hash_v<Vec3i>		:
+		case hash_v<Vec3f>		: return 3;
+		case hash_v<Vec4i>		:
+		case hash_v<Vec4f>		: return 4;
+		case hash_v<Mat2i>		:
+		case hash_v<Mat2f>		: return 2 * 2;
+		case hash_v<Mat3i>		:
+		case hash_v<Mat3f>		: return 3 * 3;
+		case hash_v<Mat4i>		:
+		case hash_v<Mat4f>		: return 4 * 4;
+		}
+	}
+
+	template <class T> NODISCARD constexpr uint32_t get_element_component_count() noexcept
+	{
+		return get_element_component_count(hash_v<T>);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct VertexLayout
+	{
+		struct Element
+		{
+			template <class T
+			> static constexpr bool is_valid_type
+			{
+				util::is_any_of_v<T,
+					bool,
+					int32_t, Vec2i, Vec3i, Vec4i, Mat2i, Mat3i, Mat4i,
+					float32_t, Vec2f, Vec3f, Vec4f, Mat2f, Mat3f, Mat4f
+				>
+			};
+
+			String		name{};
+			hash_t		type{};
+			uint32_t	size{};
+			bool		normalized{};
+			uint32_t	offset{};
+
+			Element(String const & name, hash_t type, uint32_t size, bool normalized) noexcept
+				: name{ name }, type{ type }, size{ size }, normalized{ normalized }, offset{}
+			{
+			}
+
+			template <class Elem
+			> Element(Elem, cstring name, bool normalized = false) noexcept
+				: Element{ name, hash_v<Elem>, sizeof(Elem), normalized }
+			{
+				static_assert(is_valid_type<Elem>);
+			}
+
+			NODISCARD auto get_base_type() const noexcept -> hash_t { return get_element_base_type(type); }
+
+			NODISCARD auto get_component_count() const noexcept -> uint32_t { return get_element_component_count(type); }
+		};
+
+		using storage_type				= typename Vector<Element>;
+		using iterator					= typename storage_type::iterator;
+		using const_iterator			= typename storage_type::const_iterator;
+		using reverse_iterator			= typename storage_type::reverse_iterator;
+		using const_reverse_iterator	= typename storage_type::const_reverse_iterator;
+
+		template <class It
+		> VertexLayout(It first, It last) noexcept
+			: m_elements{ first, last }
+		{
+			uint32_t offset{};
+			for (auto & e : m_elements)
+			{
+				e.offset = offset;
+				offset += e.size;
+				m_stride += e.size;
+			}
+		}
+
+		VertexLayout(std::initializer_list<Element> init) noexcept
+			: VertexLayout{ init.begin(), init.end() }
+		{
+		}
+
+		template <size_t N
+		> VertexLayout(const Element(&arr)[N]) noexcept
+			: VertexLayout{ &arr[0], &arr[N] }
+		{
+		}
+
+		VertexLayout() noexcept : VertexLayout{ {
+			{ Vec3f{}, "a_position"	},
+			{ Vec3f{}, "a_normal"	},
+			{ Vec2f{}, "a_texcoord"	},
+		} }
+		{
+		}
+
+		NODISCARD auto get_elements() const noexcept -> storage_type const & { return m_elements; }
+
+		NODISCARD auto get_stride() const noexcept -> uint32_t { return m_stride; }
+
+	private:
+		uint32_t		m_stride	{}; // stride
+		storage_type	m_elements	{}; // elements
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ENUM_INT(BufferUsage)
+	{
+		BufferUsage_Stream,
+		BufferUsage_Static,
+		BufferUsage_Dynamic
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// rendering device
 	class ISM_API RenderingDevice : public Object
 	{
@@ -672,9 +831,10 @@ namespace ism
 
 		static RenderingDevice * singleton;
 
-	public:
-		RenderingDevice() noexcept { singleton = this; }
+	protected:
+		explicit RenderingDevice() noexcept { singleton = this; }
 
+	public:
 		virtual ~RenderingDevice() noexcept override = default;
 
 		NODISCARD static RenderingDevice * get_singleton() noexcept { return singleton; }
@@ -684,17 +844,37 @@ namespace ism
 		virtual void finalize() = 0;
 
 	public:
-		// LOW LEVEL RENDERING API GOES HERE
-
 		virtual void clear(Color const & color = {}, bool depth_stencil = true) = 0;
-
-		virtual void draw_arrays(RenderPrimitive primitive, size_t first, size_t count) = 0;
-
-		virtual void draw_indexed(RenderPrimitive primitive, size_t count) = 0;
-
-		virtual void flush() = 0;
 		
 		virtual void set_viewport(IntRect const & rect) = 0;
+
+	public:
+		virtual RID vertexarray_create(RenderPrimitive_ primitive) { return {}; }
+		virtual void vertexarray_destroy(RID rid) {}
+		virtual void vertexarray_update(RID rid, VertexLayout const & layout, RID indices, Vector<RID> const & vertices) {}
+		
+	public:
+		virtual RID vertexbuffer_create(BufferUsage_ usage, Vector<byte> const & data) { return {}; }
+		virtual void vertexbuffer_destroy(RID rid) {}
+		virtual void vertexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) {}
+
+	public:
+		virtual RID indexbuffer_create(BufferUsage_ usage, Vector<byte> const & data) { return {}; }
+		virtual void indexbuffer_destroy(RID rid) {}
+		virtual void indexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) {}
+
+	public:
+		virtual RID framebuffer_create(Vector<RID> const & attachments) { return {}; }
+		virtual void framebuffer_destroy(RID rid) {}
+
+	public:
+		virtual RID texture_create(TextureFormat const & format, TextureView const & view, Vector<byte> const & data) { return {}; }
+		virtual void texture_destroy(RID rid) {}
+		virtual void texture_update(RID rid, Vector<byte> const & data) {}
+
+	public:
+		virtual RID shader_create(Vector<ShaderStageData> const & stages) { return {}; }
+		virtual void shader_destroy(RID rid) {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

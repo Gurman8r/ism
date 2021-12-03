@@ -21,7 +21,6 @@ namespace ism
 	public:
 		virtual ~Entity() override;
 
-	public:
 		NODISCARD operator EntityID() const noexcept { return m_entity_id; }
 
 		NODISCARD auto get_entity_id() const noexcept -> EntityID { return m_entity_id; }

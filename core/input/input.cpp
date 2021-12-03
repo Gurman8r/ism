@@ -4,6 +4,6 @@ using namespace ism;
 
 MEMBER_IMPL(Input::singleton) {};
 
-EMBEDED_CLASS(Input, t)
+EMBED_CLASS(Input, t)
 {
 }

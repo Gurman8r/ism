@@ -312,37 +312,37 @@ namespace ism
 
 	// Matrix<T, 2, 1>
 	template <class T
-	> ALIAS(TVec2f) TVec<T, 2>;
-	ALIAS(Vec2b) TVec2f<uint8_t>;
-	ALIAS(Vec2i) TVec2f<int32_t>;
-	ALIAS(Vec2u) TVec2f<uint32_t>;
-	ALIAS(Vec2f) TVec2f<float32_t>;
-	ALIAS(Vec2d) TVec2f<float64_t>;
-	ALIAS(Vec2s) TVec2f<size_t>;
+	> ALIAS(TVec2) TVec<T, 2>;
+	ALIAS(Vec2b) TVec2<uint8_t>;
+	ALIAS(Vec2i) TVec2<int32_t>;
+	ALIAS(Vec2u) TVec2<uint32_t>;
+	ALIAS(Vec2f) TVec2<float32_t>;
+	ALIAS(Vec2d) TVec2<float64_t>;
+	ALIAS(Vec2s) TVec2<size_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Matrix<T, 3, 1>
 	template <class T
-	> ALIAS(TVec3f) TVec<T, 3>;
-	ALIAS(Vec3b) TVec3f<uint8_t>;
-	ALIAS(Vec3i) TVec3f<int32_t>;
-	ALIAS(Vec3u) TVec3f<uint32_t>;
-	ALIAS(Vec3f) TVec3f<float32_t>;
-	ALIAS(Vec3d) TVec3f<float64_t>;
-	ALIAS(Vec3s) TVec3f<size_t>;
+	> ALIAS(TVec3) TVec<T, 3>;
+	ALIAS(Vec3b) TVec3<uint8_t>;
+	ALIAS(Vec3i) TVec3<int32_t>;
+	ALIAS(Vec3u) TVec3<uint32_t>;
+	ALIAS(Vec3f) TVec3<float32_t>;
+	ALIAS(Vec3d) TVec3<float64_t>;
+	ALIAS(Vec3s) TVec3<size_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Matrix<T, 4, 1>
 	template <class T
-	> ALIAS(TVec4f) TVec<T, 4>;
-	ALIAS(Vec4b) TVec4f<uint8_t>;
-	ALIAS(Vec4i) TVec4f<int32_t>;
-	ALIAS(Vec4u) TVec4f<uint32_t>;
-	ALIAS(Vec4f) TVec4f<float32_t>;
-	ALIAS(Vec4d) TVec4f<float64_t>;
-	ALIAS(Vec4s) TVec4f<size_t>;
+	> ALIAS(TVec4) TVec<T, 4>;
+	ALIAS(Vec4b) TVec4<uint8_t>;
+	ALIAS(Vec4i) TVec4<int32_t>;
+	ALIAS(Vec4u) TVec4<uint32_t>;
+	ALIAS(Vec4f) TVec4<float32_t>;
+	ALIAS(Vec4d) TVec4<float64_t>;
+	ALIAS(Vec4s) TVec4<size_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

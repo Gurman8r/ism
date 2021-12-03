@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(IntObject, t)
+EMBED_CLASS(IntObject, t)
 {
 	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<int64_t>()(***(INT &)self); };
 
@@ -26,7 +26,7 @@ EMBEDED_CLASS(IntObject, t)
 		}
 	};
 
-	CLASS_DEF(IntObject, t)
+	t.tp_bind = CLASS_BINDER(IntObject, t)
 	{
 		return t;
 	};

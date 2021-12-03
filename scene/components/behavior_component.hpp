@@ -1,5 +1,5 @@
-#ifndef _ISM_BEHAVIOR_HPP_
-#define _ISM_BEHAVIOR_HPP_
+#ifndef _ISM_BEHAVIOR_COMPONENT_HPP_
+#define _ISM_BEHAVIOR_COMPONENT_HPP_
 
 #include <scene/components/component.hpp>
 
@@ -7,17 +7,17 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Behavior : public Component
+	class ISM_API BehaviorComponent : public Component
 	{
-		OBJECT_COMMON(Behavior, Component);
+		OBJECT_COMMON(BehaviorComponent, Component);
 
 		bool m_is_enabled{ true };
 
 	protected:
-		Behavior(Entity * entity) noexcept;
+		BehaviorComponent(Entity * entity) noexcept;
 
 	public:
-		virtual ~Behavior() noexcept override;
+		virtual ~BehaviorComponent() noexcept override;
 
 		bool is_enabled() const noexcept { return m_is_enabled; }
 
@@ -27,4 +27,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_BEHAVIOR_HPP_
+#endif // !_ISM_BEHAVIOR_COMPONENT_HPP_

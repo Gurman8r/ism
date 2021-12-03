@@ -23,7 +23,7 @@ TYPE TypeObject::get_type_static() noexcept { return &__type_static; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
+EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -46,7 +46,7 @@ EMBEDED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 		return fn ? fn(self, args) : nullptr;
 	};
 
-	CLASS_DEF(TypeObject, t)
+	t.tp_bind = CLASS_BINDER(TypeObject, t)
 	{
 		return t
 

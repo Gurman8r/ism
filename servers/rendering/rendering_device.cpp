@@ -4,4 +4,4 @@ using namespace ism;
 
 MEMBER_IMPL(RenderingDevice::singleton) {};
 
-EMBEDED_CLASS(RenderingDevice, t, TypeFlags_IsAbstract) {}
+EMBED_CLASS(RenderingDevice, t, TypeFlags_IsAbstract) {}

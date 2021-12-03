@@ -7,9 +7,9 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBEDED_CLASS(Node, t, TypeFlags_IsAbstract)
+EMBED_CLASS(Node, t, TypeFlags_IsAbstract)
 {
-	CLASS_DEF(Node, t)
+	t.tp_bind = CLASS_BINDER(Node, t)
 	{
 		return t
 			.def("process", &Node::process)

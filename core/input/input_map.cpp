@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBEDED_CLASS(InputMap, t) {}
+EMBED_CLASS(InputMap, t) {}
 
 InputMap::~InputMap()
 {

@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBEDED_CLASS(EditorInterface, t) {}
+EMBED_CLASS(EditorInterface, t) {}
 
 EditorInterface::~EditorInterface() {}
