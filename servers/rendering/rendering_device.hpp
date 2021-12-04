@@ -268,18 +268,18 @@ namespace ism
 		TextureSamples_MAX
 	};
 
-	ENUM_INT(TextureFlags)
+	ENUM_INT(TextureUsage)
 	{
-		TextureFlags_Sampling				= 1 << 0,
-		TextureFlags_ColorAttachment		= 1 << 1,
-		TextureFlags_DepthStencilAttachment = 1 << 2,
-		TextureFlags_Storage				= 1 << 3,
-		TextureFlags_Storage_Atomic			= 1 << 4,
-		TextureFlags_CpuRead				= 1 << 5,
-		TextureFlags_CanUpdate				= 1 << 6,
-		TextureFlags_CanCopyFrom			= 1 << 7,
-		TextureFlags_CanCopyTo				= 1 << 8,
-		TextureFlags_ResolveAttachment		= 1 << 9,
+		TextureUsage_Sampling				= 1 << 0,
+		TextureUsage_ColorAttachment		= 1 << 1,
+		TextureUsage_DepthStencilAttachment = 1 << 2,
+		TextureUsage_Storage				= 1 << 3,
+		TextureUsage_Storage_Atomic			= 1 << 4,
+		TextureUsage_CpuRead				= 1 << 5,
+		TextureUsage_CanUpdate				= 1 << 6,
+		TextureUsage_CanCopyFrom			= 1 << 7,
+		TextureUsage_CanCopyTo				= 1 << 8,
+		TextureUsage_ResolveAttachment		= 1 << 9,
 	};
 
 	ENUM_INT(TextureSwizzle)
@@ -297,25 +297,21 @@ namespace ism
 	struct NODISCARD TextureFormat final
 	{
 		DEFAULT_COPYABLE_MOVABLE(TextureFormat);
-		DataFormat format{ DataFormat_R8_UNORM };
-		uint32_t width{ 1 };
-		uint32_t height{ 1 };
-		uint32_t depth{ 1 };
-		uint32_t array_layers{ 1 };
-		uint32_t mipmaps{ 1 };
-		TextureType texture_type{ TextureType_2D };
-		TextureSamples samples{ TextureSamples_1 };
-		uint32_t usage_bits{ 0 };
+		DataFormat_		format{ DataFormat_R8_UNORM };
+		int32_t			width{}, height{}, mipmaps{};
+		TextureType_	texture_type{ TextureType_2D };
+		TextureSamples_ samples{ TextureSamples_1 };
+		uint32_t		usage_bits{};
 	};
 
 	struct NODISCARD TextureView final
 	{
 		DEFAULT_COPYABLE_MOVABLE(TextureView);
-		DataFormat format_override{ DataFormat_MAX };
-		TextureSwizzle swizzle_r{ TextureSwizzle_R };
-		TextureSwizzle swizzle_g{ TextureSwizzle_G };
-		TextureSwizzle swizzle_b{ TextureSwizzle_B };
-		TextureSwizzle swizzle_a{ TextureSwizzle_A };
+		DataFormat_ format_override{ DataFormat_MAX };
+		TextureSwizzle_ swizzle_r{ TextureSwizzle_R };
+		TextureSwizzle_ swizzle_g{ TextureSwizzle_G };
+		TextureSwizzle_ swizzle_b{ TextureSwizzle_B };
+		TextureSwizzle_ swizzle_a{ TextureSwizzle_A };
 	};
 
 	ENUM_INT(TextureSliceType)
@@ -333,8 +329,8 @@ namespace ism
 	struct NODISCARD AttachmentFormat final
 	{
 		DEFAULT_COPYABLE_MOVABLE(AttachmentFormat);
-		DataFormat format{ DataFormat_R8G8B8A8_UNORM };
-		TextureSamples samples{ TextureSamples_1 };
+		DataFormat_ format{ DataFormat_R8G8B8A8_UNORM };
+		TextureSamples_ samples{ TextureSamples_1 };
 		uint32_t usage_flags{ 0 };
 	};
 
@@ -374,20 +370,20 @@ namespace ism
 	struct NODISCARD SamplerState final
 	{
 		DEFAULT_COPYABLE_MOVABLE(SamplerState);
-		SamplerFilter mag_filter{ SamplerFilter_Nearest };
-		SamplerFilter min_filter{ SamplerFilter_Nearest };
-		SamplerFilter mip_filter{ SamplerFilter_Nearest };
-		SamplerRepeatMode repeat_u{ SamplerRepeatMode_ClampToEdge };
-		SamplerRepeatMode repeat_v{ SamplerRepeatMode_ClampToEdge };
-		SamplerRepeatMode repeat_w{ SamplerRepeatMode_ClampToEdge };
+		SamplerFilter_ mag_filter{ SamplerFilter_Nearest };
+		SamplerFilter_ min_filter{ SamplerFilter_Nearest };
+		SamplerFilter_ mip_filter{ SamplerFilter_Nearest };
+		SamplerRepeatMode_ repeat_u{ SamplerRepeatMode_ClampToEdge };
+		SamplerRepeatMode_ repeat_v{ SamplerRepeatMode_ClampToEdge };
+		SamplerRepeatMode_ repeat_w{ SamplerRepeatMode_ClampToEdge };
 		float_t lod_bias{ 0 };
 		bool use_anisotropy{ false };
 		float_t anisotropy_max{ 1.f };
 		bool enable_compare{};
-		CompareOperator compare_op{ CompareOperator_Always };
+		CompareOperator_ compare_op{ CompareOperator_Always };
 		float_t min_lod{ 0 };
 		float_t max_lod{ 1e20f }; //something very large should do
-		SamplerBorderColor border_color{ SamplerBorderColor_Float_Opaque_Black };
+		SamplerBorderColor_ border_color{ SamplerBorderColor_Float_Opaque_Black };
 		bool unnormalized_uvw{ false };
 	};
 
@@ -407,8 +403,8 @@ namespace ism
 		uint32_t location{ 0 };
 		uint32_t offset{ 0 };
 		uint32_t stride{ 0 };
-		DataFormat format{ DataFormat_MAX };
-		VertexFrequency frequency{ VertexFrequency_Vertex };
+		DataFormat_ format{ DataFormat_MAX };
+		VertexFrequency_ frequency{ VertexFrequency_Vertex };
 	};
 
 	ALIAS(VertexFormatID) int64_t;
@@ -447,8 +443,8 @@ namespace ism
 	struct NODISCARD ShaderStageData final
 	{
 		DEFAULT_COPYABLE_MOVABLE(ShaderStageData);
-		ShaderStage shader_stage{ ShaderStage_Vertex };
-		Vector<byte> spir_v{};
+		ShaderStage_ shader_stage{ ShaderStage_Vertex };
+		Vector<byte> source_code{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -473,7 +469,7 @@ namespace ism
 	struct NODISCARD Uniform final
 	{
 		DEFAULT_COPYABLE_MOVABLE(Uniform);
-		UniformType uniform_type{ UniformType_Image };
+		UniformType_ uniform_type{ UniformType_Image };
 		int32_t binding{ 0 };
 		Vector<RID> ids{};
 	};
@@ -564,8 +560,8 @@ namespace ism
 		bool enable_depth_clamp{ false };
 		bool discard_primitives{ false };
 		bool wireframe{ false };
-		PolygonCullMode cull_mode{ PolygonCullMode_Disabled };
-		PolygonFrontFace front_face{ PolygonFrontFace_Clockwise };
+		PolygonCullMode_ cull_mode{ PolygonCullMode_Disabled };
+		PolygonFrontFace_ front_face{ PolygonFrontFace_Clockwise };
 		bool depth_bias_enable{ false };
 		float_t depth_bias_constant_factor{ 0.f };
 		float_t depth_bias_clamp{ 0.f };
@@ -577,7 +573,7 @@ namespace ism
 	struct NODISCARD PipelineMultisampleState final
 	{
 		DEFAULT_COPYABLE_MOVABLE(PipelineMultisampleState);
-		TextureSamples sample_count{ TextureSamples_1 };
+		TextureSamples_ sample_count{ TextureSamples_1 };
 		bool enable_sample_shading{ false };
 		float_t min_sample_shading{ 0.f };
 		Vector<byte> sample_mask{};
@@ -590,10 +586,10 @@ namespace ism
 		struct NODISCARD StencilOperationState final
 		{
 			DEFAULT_COPYABLE_MOVABLE(StencilOperationState);
-			StencilOperation fail{ StencilOperation_Zero };
-			StencilOperation pass{ StencilOperation_Zero };
-			StencilOperation depth_fail{ StencilOperation_Zero };
-			CompareOperator compare{ CompareOperator_Always };
+			StencilOperation_ fail{ StencilOperation_Zero };
+			StencilOperation_ pass{ StencilOperation_Zero };
+			StencilOperation_ depth_fail{ StencilOperation_Zero };
+			CompareOperator_ compare{ CompareOperator_Always };
 			uint32_t compare_mask{ 0 };
 			uint32_t write_mask{ 0 };
 			uint32_t reference{ 0 };
@@ -602,7 +598,7 @@ namespace ism
 		DEFAULT_COPYABLE_MOVABLE(PipelineDepthStencilState);
 		bool enable_depth_test{ false };
 		bool enable_depth_write{ false };
-		CompareOperator depth_compare_operator{ CompareOperator_Always };
+		CompareOperator_ depth_compare_operator{ CompareOperator_Always };
 		bool enable_depth_range{ false };
 		float_t depth_range_min{ 0.f };
 		float_t depth_range_max{ 0.f };
@@ -617,12 +613,12 @@ namespace ism
 		{
 			DEFAULT_COPYABLE_MOVABLE(Attachment);
 			bool enable_blend{ false };
-			BlendFactor src_color_blend_factor{ BlendFactor_Zero };
-			BlendFactor dst_color_blend_factor{ BlendFactor_Zero };
-			BlendOperation color_blend_op{ BlendOperation_Add };
-			BlendFactor src_alpha_blend_factor{ BlendFactor_Zero };
-			BlendFactor dst_alpha_blend_factor{ BlendFactor_Zero };
-			BlendOperation alpha_blend_op{ BlendOperation_Add };
+			BlendFactor_ src_color_blend_factor{ BlendFactor_Zero };
+			BlendFactor_ dst_color_blend_factor{ BlendFactor_Zero };
+			BlendOperation_ color_blend_op{ BlendOperation_Add };
+			BlendFactor_ src_alpha_blend_factor{ BlendFactor_Zero };
+			BlendFactor_ dst_alpha_blend_factor{ BlendFactor_Zero };
+			BlendOperation_ alpha_blend_op{ BlendOperation_Add };
 			bool write_r{ true };
 			bool write_g{ true };
 			bool write_b{ true };
@@ -631,7 +627,7 @@ namespace ism
 
 		DEFAULT_COPYABLE_MOVABLE(PipelineColorBlendState);
 		bool enable_logic_op{ false };
-		LogicOperation logic_op{ LogicOperation_Clear };
+		LogicOperation_ logic_op{ LogicOperation_Clear };
 		Vector<Attachment> attachments{};
 		Color blend_constant{};
 
@@ -750,32 +746,44 @@ namespace ism
 		virtual void set_viewport(IntRect const & rect) = 0;
 
 	public:
+		/* VERTEXARRAY */
 		virtual RID vertexarray_create() = 0;
 		virtual void vertexarray_destroy(RID rid) = 0;
 		virtual void vertexarray_update(RID rid, VertexLayout const & layout, RID indices, Vector<RID> const & vertices) = 0;
 		
 	public:
+		/* VERTEXBUFFER */
 		virtual RID vertexbuffer_create(Vector<byte> const & data) = 0;
 		virtual void vertexbuffer_destroy(RID rid) = 0;
 		virtual void vertexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) = 0;
 		
 	public:
+		/* INDEXBUFFER */
 		virtual RID indexbuffer_create(Vector<byte> const & data) = 0;
 		virtual void indexbuffer_destroy(RID rid) = 0;
 		virtual void indexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) = 0;
 
 	public:
+		/* TEXTURE */
+		virtual RID texture_create(TextureFormat const & format, TextureView const & view, Vector<byte> const & data) = 0;
+		virtual void texture_destroy(RID rid) = 0;
+		virtual void texture_update(RID rid, Vector<byte> const & data) = 0;
+		virtual void texture_set_size_override(RID rid, int32_t width, int32_t height) = 0;
+
+	public:
+		/* FRAMEBUFFER */
 		virtual RID framebuffer_create(Vector<RID> const & attachments) = 0;
 		virtual void framebuffer_destroy(RID rid) = 0;
 
 	public:
-		virtual RID texture_create(TextureFormat const & format, TextureView const & view, Vector<byte> const & data) = 0;
-		virtual void texture_destroy(RID rid) = 0;
-		virtual void texture_update(RID rid, Vector<byte> const & data) = 0;
+		/* SHADER */
+		//virtual Vector<byte> shader_compile_from_source(ShaderStage_ stage, String const & source_code, ShaderLanguage_ language = ShaderLanguage_GLSL, String * error = nullptr);
+		virtual RID shader_create(Vector<ShaderStageData> const & stage_data) = 0;
+		virtual void shader_destroy(RID rid) = 0;
 
 	public:
-		virtual RID shader_create(Vector<ShaderStageData> const & stages) = 0;
-		virtual void shader_destroy(RID rid) = 0;
+		/* UNIFORM */
+
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

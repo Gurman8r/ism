@@ -34,3 +34,20 @@ void RenderingServerDefault::finalize()
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+RID RenderingServerDefault::texture_replace(RID old_texture, RID new_texture)
+{
+	return {};
+}
+
+RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
+{
+	return {};
+}
+
+Ref<Image> RenderingServerDefault::texture_2d_get(RID texture)
+{
+	return {};
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

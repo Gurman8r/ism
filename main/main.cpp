@@ -34,6 +34,8 @@
 
 #include <servers/rendering/rendering_server_default.hpp>
 
+#include <servers/text_server.hpp>
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 using namespace ism;
@@ -47,6 +49,7 @@ static EventBus *			g_bus{};
 static Input *				g_input{};
 static DisplayServer *		g_display{};
 static RenderingServer *	g_renderer{};
+static TextServer *			g_text{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -91,6 +94,8 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 	SINGLETON(OS)->set_cmdline(exepath, { argv, argv + argc });
 
 	g_bus = memnew(EventBus);
+
+	g_text = memnew(TextServer);
 
 	g_input = memnew(Input);
 
@@ -230,6 +235,7 @@ void Main::cleanup()
 	memdelete(g_display);
 	
 	memdelete(g_input);
+	memdelete(g_text);
 	memdelete(g_bus);
 
 	unregister_core_driver_types();

@@ -7,7 +7,6 @@
 #include <scene/resources/material.hpp>
 #include <scene/resources/mesh.hpp>
 #include <scene/resources/shader.hpp>
-#include <scene/resources/sky.hpp>
 #include <scene/resources/text_file.hpp>
 #include <scene/resources/texture.hpp>
 
@@ -30,7 +29,6 @@ void ism::register_scene_types()
 		Material,
 		Mesh,
 		Shader,
-		Sky,
 		TextFile,
 		Texture,
 		Texture2D,

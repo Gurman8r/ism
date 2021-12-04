@@ -1,5 +1,5 @@
-#ifndef _SYSTEM_HPP_
-#define _SYSTEM_HPP_
+#ifndef _ISM_OS_HPP_
+#define _ISM_OS_HPP_
 
 #include <core/io/logger.hpp>
 #include <core/os/main_loop.hpp>
@@ -116,4 +116,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_SYSTEM_HPP_
+#endif // !_ISM_OS_HPP_
