@@ -1,4 +1,5 @@
 #include <scene/resources/texture.hpp>
+#include <servers/rendering_server.hpp>
 
 using namespace ism;
 
@@ -6,48 +7,67 @@ using namespace ism;
 
 EMBED_CLASS(Texture, t) {}
 
-Texture::Texture() : Resource{}
-{
-}
-
-Texture::~Texture()
-{
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 EMBED_CLASS(Texture2D, t) {}
 
-Texture2D::Texture2D() : Texture{}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+EMBED_CLASS(ImageTexture, t) {}
+
+ImageTexture::ImageTexture(Ref<Image> const & image)
 {
+	VERIFY(image);
+	m_width = image->get_width();
+	m_height = image->get_height();
+	m_format = image->get_format();
+	m_has_mipmaps = image->has_mipmaps();
+	if (!m_texture)
+	{
+		m_texture = SINGLETON(RenderingServer)->texture2d_create(image);
+	}
+	else
+	{
+		RID new_texture{ SINGLETON(RenderingServer)->texture2d_create(image) };
+		SINGLETON(RenderingServer)->texture_replace(m_texture, new_texture);
+	}
+	m_image_stored = true;
 }
 
-Texture2D::~Texture2D()
+ImageTexture::~ImageTexture()
 {
+	if (m_texture)
+	{
+		SINGLETON(RenderingDevice)->texture_destroy(m_texture);
+	}
+}
+
+Ref<Image> ImageTexture::get_data() const
+{
+	if (m_image_stored)
+	{
+		return SINGLETON(RenderingServer)->texture_2d_get(m_texture);
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 EMBED_CLASS(Texture3D, t) {}
 
-Texture3D::Texture3D() : Texture{}
-{
-}
+Texture3D::Texture3D() {}
 
-Texture3D::~Texture3D()
-{
-}
+Texture3D::~Texture3D() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 EMBED_CLASS(TextureCube, t) {}
 
-TextureCube::TextureCube() : Texture{}
-{
-}
+TextureCube::TextureCube() {}
 
-TextureCube::~TextureCube()
-{
-}
+TextureCube::~TextureCube() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

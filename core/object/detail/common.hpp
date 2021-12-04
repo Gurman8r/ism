@@ -182,6 +182,33 @@ namespace ism
 #endif
 	};
 
+	NODISCARD constexpr size_t get_data_type_size(DataType_ type) noexcept
+	{
+		switch (type)
+		{
+		case DataType_I8:
+		case DataType_U8:
+		case DataType_Char:
+		case DataType_Byte:
+		case DataType_Bool: return 1;
+
+		case DataType_I16:
+		case DataType_U16: return 2;
+
+		case DataType_I32:
+		case DataType_U32:
+		case DataType_F32: return 4;
+
+		case DataType_I64:
+		case DataType_U64:
+		case DataType_F64: return 8;
+
+		case DataType_Object: return sizeof(void *);
+		case DataType_String: return sizeof(String);
+		}
+		return 0;
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ENUM_INT(LogicOperation)

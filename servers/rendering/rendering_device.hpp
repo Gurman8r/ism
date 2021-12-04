@@ -9,235 +9,235 @@ namespace ism
 
 	/* GENERIC */
 
-	ENUM_INT(PixelFormat)
+	ENUM_INT(DataFormat)
 	{
-		PixelFormat_R4G4_UNORM_PACK8,
-		PixelFormat_R4G4B4A4_UNORM_PACK16,
-		PixelFormat_B4G4R4A4_UNORM_PACK16,
-		PixelFormat_R5G6B5_UNORM_PACK16,
-		PixelFormat_B5G6R5_UNORM_PACK16,
-		PixelFormat_R5G5B5A1_UNORM_PACK16,
-		PixelFormat_B5G5R5A1_UNORM_PACK16,
-		PixelFormat_A1R5G5B5_UNORM_PACK16,
-		PixelFormat_R8_UNORM,
-		PixelFormat_R8_SNORM,
-		PixelFormat_R8_USCALED,
-		PixelFormat_R8_SSCALED,
-		PixelFormat_R8_UINT,
-		PixelFormat_R8_SINT,
-		PixelFormat_R8_SRGB,
-		PixelFormat_R8G8_UNORM,
-		PixelFormat_R8G8_SNORM,
-		PixelFormat_R8G8_USCALED,
-		PixelFormat_R8G8_SSCALED,
-		PixelFormat_R8G8_UINT,
-		PixelFormat_R8G8_SINT,
-		PixelFormat_R8G8_SRGB,
-		PixelFormat_R8G8B8_UNORM,
-		PixelFormat_R8G8B8_SNORM,
-		PixelFormat_R8G8B8_USCALED,
-		PixelFormat_R8G8B8_SSCALED,
-		PixelFormat_R8G8B8_UINT,
-		PixelFormat_R8G8B8_SINT,
-		PixelFormat_R8G8B8_SRGB,
-		PixelFormat_B8G8R8_UNORM,
-		PixelFormat_B8G8R8_SNORM,
-		PixelFormat_B8G8R8_USCALED,
-		PixelFormat_B8G8R8_SSCALED,
-		PixelFormat_B8G8R8_UINT,
-		PixelFormat_B8G8R8_SINT,
-		PixelFormat_B8G8R8_SRGB,
-		PixelFormat_R8G8B8A8_UNORM,
-		PixelFormat_R8G8B8A8_SNORM,
-		PixelFormat_R8G8B8A8_USCALED,
-		PixelFormat_R8G8B8A8_SSCALED,
-		PixelFormat_R8G8B8A8_UINT,
-		PixelFormat_R8G8B8A8_SINT,
-		PixelFormat_R8G8B8A8_SRGB,
-		PixelFormat_B8G8R8A8_UNORM,
-		PixelFormat_B8G8R8A8_SNORM,
-		PixelFormat_B8G8R8A8_USCALED,
-		PixelFormat_B8G8R8A8_SSCALED,
-		PixelFormat_B8G8R8A8_UINT,
-		PixelFormat_B8G8R8A8_SINT,
-		PixelFormat_B8G8R8A8_SRGB,
-		PixelFormat_A8B8G8R8_UNORM_PACK32,
-		PixelFormat_A8B8G8R8_SNORM_PACK32,
-		PixelFormat_A8B8G8R8_USCALED_PACK32,
-		PixelFormat_A8B8G8R8_SSCALED_PACK32,
-		PixelFormat_A8B8G8R8_UINT_PACK32,
-		PixelFormat_A8B8G8R8_SINT_PACK32,
-		PixelFormat_A8B8G8R8_SRGB_PACK32,
-		PixelFormat_A2R10G10B10_UNORM_PACK32,
-		PixelFormat_A2R10G10B10_SNORM_PACK32,
-		PixelFormat_A2R10G10B10_USCALED_PACK32,
-		PixelFormat_A2R10G10B10_SSCALED_PACK32,
-		PixelFormat_A2R10G10B10_UINT_PACK32,
-		PixelFormat_A2R10G10B10_SINT_PACK32,
-		PixelFormat_A2B10G10R10_UNORM_PACK32,
-		PixelFormat_A2B10G10R10_SNORM_PACK32,
-		PixelFormat_A2B10G10R10_USCALED_PACK32,
-		PixelFormat_A2B10G10R10_SSCALED_PACK32,
-		PixelFormat_A2B10G10R10_UINT_PACK32,
-		PixelFormat_A2B10G10R10_SINT_PACK32,
-		PixelFormat_R16_UNORM,
-		PixelFormat_R16_SNORM,
-		PixelFormat_R16_USCALED,
-		PixelFormat_R16_SSCALED,
-		PixelFormat_R16_UINT,
-		PixelFormat_R16_SINT,
-		PixelFormat_R16_SFLOAT,
-		PixelFormat_R16G16_UNORM,
-		PixelFormat_R16G16_SNORM,
-		PixelFormat_R16G16_USCALED,
-		PixelFormat_R16G16_SSCALED,
-		PixelFormat_R16G16_UINT,
-		PixelFormat_R16G16_SINT,
-		PixelFormat_R16G16_SFLOAT,
-		PixelFormat_R16G16B16_UNORM,
-		PixelFormat_R16G16B16_SNORM,
-		PixelFormat_R16G16B16_USCALED,
-		PixelFormat_R16G16B16_SSCALED,
-		PixelFormat_R16G16B16_UINT,
-		PixelFormat_R16G16B16_SINT,
-		PixelFormat_R16G16B16_SFLOAT,
-		PixelFormat_R16G16B16A16_UNORM,
-		PixelFormat_R16G16B16A16_SNORM,
-		PixelFormat_R16G16B16A16_USCALED,
-		PixelFormat_R16G16B16A16_SSCALED,
-		PixelFormat_R16G16B16A16_UINT,
-		PixelFormat_R16G16B16A16_SINT,
-		PixelFormat_R16G16B16A16_SFLOAT,
-		PixelFormat_R32_UINT,
-		PixelFormat_R32_SINT,
-		PixelFormat_R32_SFLOAT,
-		PixelFormat_R32G32_UINT,
-		PixelFormat_R32G32_SINT,
-		PixelFormat_R32G32_SFLOAT,
-		PixelFormat_R32G32B32_UINT,
-		PixelFormat_R32G32B32_SINT,
-		PixelFormat_R32G32B32_SFLOAT,
-		PixelFormat_R32G32B32A32_UINT,
-		PixelFormat_R32G32B32A32_SINT,
-		PixelFormat_R32G32B32A32_SFLOAT,
-		PixelFormat_R64_UINT,
-		PixelFormat_R64_SINT,
-		PixelFormat_R64_SFLOAT,
-		PixelFormat_R64G64_UINT,
-		PixelFormat_R64G64_SINT,
-		PixelFormat_R64G64_SFLOAT,
-		PixelFormat_R64G64B64_UINT,
-		PixelFormat_R64G64B64_SINT,
-		PixelFormat_R64G64B64_SFLOAT,
-		PixelFormat_R64G64B64A64_UINT,
-		PixelFormat_R64G64B64A64_SINT,
-		PixelFormat_R64G64B64A64_SFLOAT,
-		PixelFormat_B10G11R11_UFLOAT_PACK32,
-		PixelFormat_E5B9G9R9_UFLOAT_PACK32,
-		PixelFormat_D16_UNORM,
-		PixelFormat_X8_D24_UNORM_PACK32,
-		PixelFormat_D32_SFLOAT,
-		PixelFormat_S8_UINT,
-		PixelFormat_D16_UNORM_S8_UINT,
-		PixelFormat_D24_UNORM_S8_UINT,
-		PixelFormat_D32_SFLOAT_S8_UINT,
-		PixelFormat_BC1_RGB_UNORM_BLOCK,
-		PixelFormat_BC1_RGB_SRGB_BLOCK,
-		PixelFormat_BC1_RGBA_UNORM_BLOCK,
-		PixelFormat_BC1_RGBA_SRGB_BLOCK,
-		PixelFormat_BC2_UNORM_BLOCK,
-		PixelFormat_BC2_SRGB_BLOCK,
-		PixelFormat_BC3_UNORM_BLOCK,
-		PixelFormat_BC3_SRGB_BLOCK,
-		PixelFormat_BC4_UNORM_BLOCK,
-		PixelFormat_BC4_SNORM_BLOCK,
-		PixelFormat_BC5_UNORM_BLOCK,
-		PixelFormat_BC5_SNORM_BLOCK,
-		PixelFormat_BC6H_UFLOAT_BLOCK,
-		PixelFormat_BC6H_SFLOAT_BLOCK,
-		PixelFormat_BC7_UNORM_BLOCK,
-		PixelFormat_BC7_SRGB_BLOCK,
-		PixelFormat_ETC2_R8G8B8_UNORM_BLOCK,
-		PixelFormat_ETC2_R8G8B8_SRGB_BLOCK,
-		PixelFormat_ETC2_R8G8B8A1_UNORM_BLOCK,
-		PixelFormat_ETC2_R8G8B8A1_SRGB_BLOCK,
-		PixelFormat_ETC2_R8G8B8A8_UNORM_BLOCK,
-		PixelFormat_ETC2_R8G8B8A8_SRGB_BLOCK,
-		PixelFormat_EAC_R11_UNORM_BLOCK,
-		PixelFormat_EAC_R11_SNORM_BLOCK,
-		PixelFormat_EAC_R11G11_UNORM_BLOCK,
-		PixelFormat_EAC_R11G11_SNORM_BLOCK,
-		PixelFormat_ASTC_4x4_UNORM_BLOCK,
-		PixelFormat_ASTC_4x4_SRGB_BLOCK,
-		PixelFormat_ASTC_5x4_UNORM_BLOCK,
-		PixelFormat_ASTC_5x4_SRGB_BLOCK,
-		PixelFormat_ASTC_5x5_UNORM_BLOCK,
-		PixelFormat_ASTC_5x5_SRGB_BLOCK,
-		PixelFormat_ASTC_6x5_UNORM_BLOCK,
-		PixelFormat_ASTC_6x5_SRGB_BLOCK,
-		PixelFormat_ASTC_6x6_UNORM_BLOCK,
-		PixelFormat_ASTC_6x6_SRGB_BLOCK,
-		PixelFormat_ASTC_8x5_UNORM_BLOCK,
-		PixelFormat_ASTC_8x5_SRGB_BLOCK,
-		PixelFormat_ASTC_8x6_UNORM_BLOCK,
-		PixelFormat_ASTC_8x6_SRGB_BLOCK,
-		PixelFormat_ASTC_8x8_UNORM_BLOCK,
-		PixelFormat_ASTC_8x8_SRGB_BLOCK,
-		PixelFormat_ASTC_10x5_UNORM_BLOCK,
-		PixelFormat_ASTC_10x5_SRGB_BLOCK,
-		PixelFormat_ASTC_10x6_UNORM_BLOCK,
-		PixelFormat_ASTC_10x6_SRGB_BLOCK,
-		PixelFormat_ASTC_10x8_UNORM_BLOCK,
-		PixelFormat_ASTC_10x8_SRGB_BLOCK,
-		PixelFormat_ASTC_10x10_UNORM_BLOCK,
-		PixelFormat_ASTC_10x10_SRGB_BLOCK,
-		PixelFormat_ASTC_12x10_UNORM_BLOCK,
-		PixelFormat_ASTC_12x10_SRGB_BLOCK,
-		PixelFormat_ASTC_12x12_UNORM_BLOCK,
-		PixelFormat_ASTC_12x12_SRGB_BLOCK,
-		PixelFormat_G8B8G8R8_422_UNORM,
-		PixelFormat_B8G8R8G8_422_UNORM,
-		PixelFormat_G8_B8_R8_3PLANE_420_UNORM,
-		PixelFormat_G8_B8R8_2PLANE_420_UNORM,
-		PixelFormat_G8_B8_R8_3PLANE_422_UNORM,
-		PixelFormat_G8_B8R8_2PLANE_422_UNORM,
-		PixelFormat_G8_B8_R8_3PLANE_444_UNORM,
-		PixelFormat_R10X6_UNORM_PACK16,
-		PixelFormat_R10X6G10X6_UNORM_2PACK16,
-		PixelFormat_R10X6G10X6B10X6A10X6_UNORM_4PACK16,
-		PixelFormat_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16,
-		PixelFormat_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16,
-		PixelFormat_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16,
-		PixelFormat_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16,
-		PixelFormat_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16,
-		PixelFormat_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16,
-		PixelFormat_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16,
-		PixelFormat_R12X4_UNORM_PACK16,
-		PixelFormat_R12X4G12X4_UNORM_2PACK16,
-		PixelFormat_R12X4G12X4B12X4A12X4_UNORM_4PACK16,
-		PixelFormat_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16,
-		PixelFormat_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16,
-		PixelFormat_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16,
-		PixelFormat_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16,
-		PixelFormat_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16,
-		PixelFormat_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16,
-		PixelFormat_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16,
-		PixelFormat_G16B16G16R16_422_UNORM,
-		PixelFormat_B16G16R16G16_422_UNORM,
-		PixelFormat_G16_B16_R16_3PLANE_420_UNORM,
-		PixelFormat_G16_B16R16_2PLANE_420_UNORM,
-		PixelFormat_G16_B16_R16_3PLANE_422_UNORM,
-		PixelFormat_G16_B16R16_2PLANE_422_UNORM,
-		PixelFormat_G16_B16_R16_3PLANE_444_UNORM,
-		PixelFormat_PVRTC1_2BPP_UNORM_BLOCK_IMG,
-		PixelFormat_PVRTC1_4BPP_UNORM_BLOCK_IMG,
-		PixelFormat_PVRTC2_2BPP_UNORM_BLOCK_IMG,
-		PixelFormat_PVRTC2_4BPP_UNORM_BLOCK_IMG,
-		PixelFormat_PVRTC1_2BPP_SRGB_BLOCK_IMG,
-		PixelFormat_PVRTC1_4BPP_SRGB_BLOCK_IMG,
-		PixelFormat_PVRTC2_2BPP_SRGB_BLOCK_IMG,
-		PixelFormat_PVRTC2_4BPP_SRGB_BLOCK_IMG,
-		PixelFormat_MAX
+		DataFormat_R4G4_UNORM_PACK8,
+		DataFormat_R4G4B4A4_UNORM_PACK16,
+		DataFormat_B4G4R4A4_UNORM_PACK16,
+		DataFormat_R5G6B5_UNORM_PACK16,
+		DataFormat_B5G6R5_UNORM_PACK16,
+		DataFormat_R5G5B5A1_UNORM_PACK16,
+		DataFormat_B5G5R5A1_UNORM_PACK16,
+		DataFormat_A1R5G5B5_UNORM_PACK16,
+		DataFormat_R8_UNORM,
+		DataFormat_R8_SNORM,
+		DataFormat_R8_USCALED,
+		DataFormat_R8_SSCALED,
+		DataFormat_R8_UINT,
+		DataFormat_R8_SINT,
+		DataFormat_R8_SRGB,
+		DataFormat_R8G8_UNORM,
+		DataFormat_R8G8_SNORM,
+		DataFormat_R8G8_USCALED,
+		DataFormat_R8G8_SSCALED,
+		DataFormat_R8G8_UINT,
+		DataFormat_R8G8_SINT,
+		DataFormat_R8G8_SRGB,
+		DataFormat_R8G8B8_UNORM,
+		DataFormat_R8G8B8_SNORM,
+		DataFormat_R8G8B8_USCALED,
+		DataFormat_R8G8B8_SSCALED,
+		DataFormat_R8G8B8_UINT,
+		DataFormat_R8G8B8_SINT,
+		DataFormat_R8G8B8_SRGB,
+		DataFormat_B8G8R8_UNORM,
+		DataFormat_B8G8R8_SNORM,
+		DataFormat_B8G8R8_USCALED,
+		DataFormat_B8G8R8_SSCALED,
+		DataFormat_B8G8R8_UINT,
+		DataFormat_B8G8R8_SINT,
+		DataFormat_B8G8R8_SRGB,
+		DataFormat_R8G8B8A8_UNORM,
+		DataFormat_R8G8B8A8_SNORM,
+		DataFormat_R8G8B8A8_USCALED,
+		DataFormat_R8G8B8A8_SSCALED,
+		DataFormat_R8G8B8A8_UINT,
+		DataFormat_R8G8B8A8_SINT,
+		DataFormat_R8G8B8A8_SRGB,
+		DataFormat_B8G8R8A8_UNORM,
+		DataFormat_B8G8R8A8_SNORM,
+		DataFormat_B8G8R8A8_USCALED,
+		DataFormat_B8G8R8A8_SSCALED,
+		DataFormat_B8G8R8A8_UINT,
+		DataFormat_B8G8R8A8_SINT,
+		DataFormat_B8G8R8A8_SRGB,
+		DataFormat_A8B8G8R8_UNORM_PACK32,
+		DataFormat_A8B8G8R8_SNORM_PACK32,
+		DataFormat_A8B8G8R8_USCALED_PACK32,
+		DataFormat_A8B8G8R8_SSCALED_PACK32,
+		DataFormat_A8B8G8R8_UINT_PACK32,
+		DataFormat_A8B8G8R8_SINT_PACK32,
+		DataFormat_A8B8G8R8_SRGB_PACK32,
+		DataFormat_A2R10G10B10_UNORM_PACK32,
+		DataFormat_A2R10G10B10_SNORM_PACK32,
+		DataFormat_A2R10G10B10_USCALED_PACK32,
+		DataFormat_A2R10G10B10_SSCALED_PACK32,
+		DataFormat_A2R10G10B10_UINT_PACK32,
+		DataFormat_A2R10G10B10_SINT_PACK32,
+		DataFormat_A2B10G10R10_UNORM_PACK32,
+		DataFormat_A2B10G10R10_SNORM_PACK32,
+		DataFormat_A2B10G10R10_USCALED_PACK32,
+		DataFormat_A2B10G10R10_SSCALED_PACK32,
+		DataFormat_A2B10G10R10_UINT_PACK32,
+		DataFormat_A2B10G10R10_SINT_PACK32,
+		DataFormat_R16_UNORM,
+		DataFormat_R16_SNORM,
+		DataFormat_R16_USCALED,
+		DataFormat_R16_SSCALED,
+		DataFormat_R16_UINT,
+		DataFormat_R16_SINT,
+		DataFormat_R16_SFLOAT,
+		DataFormat_R16G16_UNORM,
+		DataFormat_R16G16_SNORM,
+		DataFormat_R16G16_USCALED,
+		DataFormat_R16G16_SSCALED,
+		DataFormat_R16G16_UINT,
+		DataFormat_R16G16_SINT,
+		DataFormat_R16G16_SFLOAT,
+		DataFormat_R16G16B16_UNORM,
+		DataFormat_R16G16B16_SNORM,
+		DataFormat_R16G16B16_USCALED,
+		DataFormat_R16G16B16_SSCALED,
+		DataFormat_R16G16B16_UINT,
+		DataFormat_R16G16B16_SINT,
+		DataFormat_R16G16B16_SFLOAT,
+		DataFormat_R16G16B16A16_UNORM,
+		DataFormat_R16G16B16A16_SNORM,
+		DataFormat_R16G16B16A16_USCALED,
+		DataFormat_R16G16B16A16_SSCALED,
+		DataFormat_R16G16B16A16_UINT,
+		DataFormat_R16G16B16A16_SINT,
+		DataFormat_R16G16B16A16_SFLOAT,
+		DataFormat_R32_UINT,
+		DataFormat_R32_SINT,
+		DataFormat_R32_SFLOAT,
+		DataFormat_R32G32_UINT,
+		DataFormat_R32G32_SINT,
+		DataFormat_R32G32_SFLOAT,
+		DataFormat_R32G32B32_UINT,
+		DataFormat_R32G32B32_SINT,
+		DataFormat_R32G32B32_SFLOAT,
+		DataFormat_R32G32B32A32_UINT,
+		DataFormat_R32G32B32A32_SINT,
+		DataFormat_R32G32B32A32_SFLOAT,
+		DataFormat_R64_UINT,
+		DataFormat_R64_SINT,
+		DataFormat_R64_SFLOAT,
+		DataFormat_R64G64_UINT,
+		DataFormat_R64G64_SINT,
+		DataFormat_R64G64_SFLOAT,
+		DataFormat_R64G64B64_UINT,
+		DataFormat_R64G64B64_SINT,
+		DataFormat_R64G64B64_SFLOAT,
+		DataFormat_R64G64B64A64_UINT,
+		DataFormat_R64G64B64A64_SINT,
+		DataFormat_R64G64B64A64_SFLOAT,
+		DataFormat_B10G11R11_UFLOAT_PACK32,
+		DataFormat_E5B9G9R9_UFLOAT_PACK32,
+		DataFormat_D16_UNORM,
+		DataFormat_X8_D24_UNORM_PACK32,
+		DataFormat_D32_SFLOAT,
+		DataFormat_S8_UINT,
+		DataFormat_D16_UNORM_S8_UINT,
+		DataFormat_D24_UNORM_S8_UINT,
+		DataFormat_D32_SFLOAT_S8_UINT,
+		DataFormat_BC1_RGB_UNORM_BLOCK,
+		DataFormat_BC1_RGB_SRGB_BLOCK,
+		DataFormat_BC1_RGBA_UNORM_BLOCK,
+		DataFormat_BC1_RGBA_SRGB_BLOCK,
+		DataFormat_BC2_UNORM_BLOCK,
+		DataFormat_BC2_SRGB_BLOCK,
+		DataFormat_BC3_UNORM_BLOCK,
+		DataFormat_BC3_SRGB_BLOCK,
+		DataFormat_BC4_UNORM_BLOCK,
+		DataFormat_BC4_SNORM_BLOCK,
+		DataFormat_BC5_UNORM_BLOCK,
+		DataFormat_BC5_SNORM_BLOCK,
+		DataFormat_BC6H_UFLOAT_BLOCK,
+		DataFormat_BC6H_SFLOAT_BLOCK,
+		DataFormat_BC7_UNORM_BLOCK,
+		DataFormat_BC7_SRGB_BLOCK,
+		DataFormat_ETC2_R8G8B8_UNORM_BLOCK,
+		DataFormat_ETC2_R8G8B8_SRGB_BLOCK,
+		DataFormat_ETC2_R8G8B8A1_UNORM_BLOCK,
+		DataFormat_ETC2_R8G8B8A1_SRGB_BLOCK,
+		DataFormat_ETC2_R8G8B8A8_UNORM_BLOCK,
+		DataFormat_ETC2_R8G8B8A8_SRGB_BLOCK,
+		DataFormat_EAC_R11_UNORM_BLOCK,
+		DataFormat_EAC_R11_SNORM_BLOCK,
+		DataFormat_EAC_R11G11_UNORM_BLOCK,
+		DataFormat_EAC_R11G11_SNORM_BLOCK,
+		DataFormat_ASTC_4x4_UNORM_BLOCK,
+		DataFormat_ASTC_4x4_SRGB_BLOCK,
+		DataFormat_ASTC_5x4_UNORM_BLOCK,
+		DataFormat_ASTC_5x4_SRGB_BLOCK,
+		DataFormat_ASTC_5x5_UNORM_BLOCK,
+		DataFormat_ASTC_5x5_SRGB_BLOCK,
+		DataFormat_ASTC_6x5_UNORM_BLOCK,
+		DataFormat_ASTC_6x5_SRGB_BLOCK,
+		DataFormat_ASTC_6x6_UNORM_BLOCK,
+		DataFormat_ASTC_6x6_SRGB_BLOCK,
+		DataFormat_ASTC_8x5_UNORM_BLOCK,
+		DataFormat_ASTC_8x5_SRGB_BLOCK,
+		DataFormat_ASTC_8x6_UNORM_BLOCK,
+		DataFormat_ASTC_8x6_SRGB_BLOCK,
+		DataFormat_ASTC_8x8_UNORM_BLOCK,
+		DataFormat_ASTC_8x8_SRGB_BLOCK,
+		DataFormat_ASTC_10x5_UNORM_BLOCK,
+		DataFormat_ASTC_10x5_SRGB_BLOCK,
+		DataFormat_ASTC_10x6_UNORM_BLOCK,
+		DataFormat_ASTC_10x6_SRGB_BLOCK,
+		DataFormat_ASTC_10x8_UNORM_BLOCK,
+		DataFormat_ASTC_10x8_SRGB_BLOCK,
+		DataFormat_ASTC_10x10_UNORM_BLOCK,
+		DataFormat_ASTC_10x10_SRGB_BLOCK,
+		DataFormat_ASTC_12x10_UNORM_BLOCK,
+		DataFormat_ASTC_12x10_SRGB_BLOCK,
+		DataFormat_ASTC_12x12_UNORM_BLOCK,
+		DataFormat_ASTC_12x12_SRGB_BLOCK,
+		DataFormat_G8B8G8R8_422_UNORM,
+		DataFormat_B8G8R8G8_422_UNORM,
+		DataFormat_G8_B8_R8_3PLANE_420_UNORM,
+		DataFormat_G8_B8R8_2PLANE_420_UNORM,
+		DataFormat_G8_B8_R8_3PLANE_422_UNORM,
+		DataFormat_G8_B8R8_2PLANE_422_UNORM,
+		DataFormat_G8_B8_R8_3PLANE_444_UNORM,
+		DataFormat_R10X6_UNORM_PACK16,
+		DataFormat_R10X6G10X6_UNORM_2PACK16,
+		DataFormat_R10X6G10X6B10X6A10X6_UNORM_4PACK16,
+		DataFormat_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16,
+		DataFormat_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16,
+		DataFormat_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16,
+		DataFormat_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16,
+		DataFormat_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16,
+		DataFormat_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16,
+		DataFormat_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16,
+		DataFormat_R12X4_UNORM_PACK16,
+		DataFormat_R12X4G12X4_UNORM_2PACK16,
+		DataFormat_R12X4G12X4B12X4A12X4_UNORM_4PACK16,
+		DataFormat_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16,
+		DataFormat_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16,
+		DataFormat_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16,
+		DataFormat_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16,
+		DataFormat_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16,
+		DataFormat_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16,
+		DataFormat_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16,
+		DataFormat_G16B16G16R16_422_UNORM,
+		DataFormat_B16G16R16G16_422_UNORM,
+		DataFormat_G16_B16_R16_3PLANE_420_UNORM,
+		DataFormat_G16_B16R16_2PLANE_420_UNORM,
+		DataFormat_G16_B16_R16_3PLANE_422_UNORM,
+		DataFormat_G16_B16R16_2PLANE_422_UNORM,
+		DataFormat_G16_B16_R16_3PLANE_444_UNORM,
+		DataFormat_PVRTC1_2BPP_UNORM_BLOCK_IMG,
+		DataFormat_PVRTC1_4BPP_UNORM_BLOCK_IMG,
+		DataFormat_PVRTC2_2BPP_UNORM_BLOCK_IMG,
+		DataFormat_PVRTC2_4BPP_UNORM_BLOCK_IMG,
+		DataFormat_PVRTC1_2BPP_SRGB_BLOCK_IMG,
+		DataFormat_PVRTC1_4BPP_SRGB_BLOCK_IMG,
+		DataFormat_PVRTC2_2BPP_SRGB_BLOCK_IMG,
+		DataFormat_PVRTC2_4BPP_SRGB_BLOCK_IMG,
+		DataFormat_MAX
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -268,18 +268,18 @@ namespace ism
 		TextureSamples_MAX
 	};
 
-	ENUM_INT(TextureUsage)
+	ENUM_INT(TextureFlags)
 	{
-		TextureUsage_Sampling				= 1 << 0,
-		TextureUsage_ColorAttachment		= 1 << 1,
-		TextureUsage_DepthStencilAttachment = 1 << 2,
-		TextureUsage_Storage				= 1 << 3,
-		TextureUsage_Storage_Atomic			= 1 << 4,
-		TextureUsage_CpuRead				= 1 << 5,
-		TextureUsage_CanUpdate				= 1 << 6,
-		TextureUsage_CanCopyFrom			= 1 << 7,
-		TextureUsage_CanCopyTo				= 1 << 8,
-		TextureUsage_ResolveAttachment		= 1 << 9,
+		TextureFlags_Sampling				= 1 << 0,
+		TextureFlags_ColorAttachment		= 1 << 1,
+		TextureFlags_DepthStencilAttachment = 1 << 2,
+		TextureFlags_Storage				= 1 << 3,
+		TextureFlags_Storage_Atomic			= 1 << 4,
+		TextureFlags_CpuRead				= 1 << 5,
+		TextureFlags_CanUpdate				= 1 << 6,
+		TextureFlags_CanCopyFrom			= 1 << 7,
+		TextureFlags_CanCopyTo				= 1 << 8,
+		TextureFlags_ResolveAttachment		= 1 << 9,
 	};
 
 	ENUM_INT(TextureSwizzle)
@@ -297,7 +297,7 @@ namespace ism
 	struct NODISCARD TextureFormat final
 	{
 		DEFAULT_COPYABLE_MOVABLE(TextureFormat);
-		PixelFormat format{ PixelFormat_R8_UNORM };
+		DataFormat format{ DataFormat_R8_UNORM };
 		uint32_t width{ 1 };
 		uint32_t height{ 1 };
 		uint32_t depth{ 1 };
@@ -311,7 +311,7 @@ namespace ism
 	struct NODISCARD TextureView final
 	{
 		DEFAULT_COPYABLE_MOVABLE(TextureView);
-		PixelFormat format_override{ PixelFormat_MAX };
+		DataFormat format_override{ DataFormat_MAX };
 		TextureSwizzle swizzle_r{ TextureSwizzle_R };
 		TextureSwizzle swizzle_g{ TextureSwizzle_G };
 		TextureSwizzle swizzle_b{ TextureSwizzle_B };
@@ -333,7 +333,7 @@ namespace ism
 	struct NODISCARD AttachmentFormat final
 	{
 		DEFAULT_COPYABLE_MOVABLE(AttachmentFormat);
-		PixelFormat format{ PixelFormat_R8G8B8A8_UNORM };
+		DataFormat format{ DataFormat_R8G8B8A8_UNORM };
 		TextureSamples samples{ TextureSamples_1 };
 		uint32_t usage_flags{ 0 };
 	};
@@ -407,7 +407,7 @@ namespace ism
 		uint32_t location{ 0 };
 		uint32_t offset{ 0 };
 		uint32_t stride{ 0 };
-		PixelFormat format{ PixelFormat_MAX };
+		DataFormat format{ DataFormat_MAX };
 		VertexFrequency frequency{ VertexFrequency_Vertex };
 	};
 
@@ -665,147 +665,58 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr hash_t get_element_base_type(hash_t type) noexcept
-	{
-		switch (type)
-		{
-		default					: return 0;
-		case hash_v<bool>		: return hash_v<bool>;
-		case hash_v<int32_t>	:
-		case hash_v<Vec2i>		:
-		case hash_v<Vec3i>		:
-		case hash_v<Vec4i>		:
-		case hash_v<Mat2i>		:
-		case hash_v<Mat3i>		:
-		case hash_v<Mat4i>		: return hash_v<int32_t>;
-		case hash_v<float32_t>	:
-		case hash_v<Vec2f>		:
-		case hash_v<Vec3f>		:
-		case hash_v<Vec4f>		:
-		case hash_v<Mat2f>		:
-		case hash_v<Mat3f>		:
-		case hash_v<Mat4f>		: return hash_v<float32_t>;
-		}
-	}
-
-	template <class T> NODISCARD constexpr hash_t get_element_base_type() noexcept
-	{
-		return get_element_base_type(hash_v<T>);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	NODISCARD constexpr uint32_t get_element_component_count(hash_t type) noexcept
-	{
-		switch (type)
-		{
-		default					: return 0;
-		case hash_v<int32_t>	:
-		case hash_v<float32_t>	: return 1;
-		case hash_v<Vec2i>		:
-		case hash_v<Vec2f>		: return 2;
-		case hash_v<Vec3i>		:
-		case hash_v<Vec3f>		: return 3;
-		case hash_v<Vec4i>		:
-		case hash_v<Vec4f>		: return 4;
-		case hash_v<Mat2i>		:
-		case hash_v<Mat2f>		: return 2 * 2;
-		case hash_v<Mat3i>		:
-		case hash_v<Mat3f>		: return 3 * 3;
-		case hash_v<Mat4i>		:
-		case hash_v<Mat4f>		: return 4 * 4;
-		}
-	}
-
-	template <class T> NODISCARD constexpr uint32_t get_element_component_count() noexcept
-	{
-		return get_element_component_count(hash_v<T>);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	struct VertexLayout
 	{
 		struct Element
 		{
-			template <class T
-			> static constexpr bool is_valid_type
-			{
-				util::is_any_of_v<T,
-					bool,
-					int32_t, Vec2i, Vec3i, Vec4i, Mat2i, Mat3i, Mat4i,
-					float32_t, Vec2f, Vec3f, Vec4f, Mat2f, Mat3f, Mat4f
-				>
-			};
-
 			String		name{};
-			hash_t		type{};
+			DataType_	type{};
 			uint32_t	size{};
+			uint32_t	count{};
 			bool		normalized{};
 			uint32_t	offset{};
 
-			Element(String const & name, hash_t type, uint32_t size, bool normalized) noexcept
-				: name{ name }, type{ type }, size{ size }, normalized{ normalized }, offset{}
+			Element(String const & name, DataType_ type, uint32_t count, bool normalized = false) noexcept
+				: name		{ name }
+				, type		{ type }
+				, size		{ ism::get_data_type_size(type) }
+				, count		{ count }
+				, normalized{ normalized }
+				, offset	{}
 			{
+				VERIFY(type == DataType_Bool || type == DataType_I32 || type == DataType_F32);
 			}
-
-			template <class Elem
-			> Element(Elem, cstring name, bool normalized = false) noexcept
-				: Element{ name, hash_v<Elem>, sizeof(Elem), normalized }
-			{
-				static_assert(is_valid_type<Elem>);
-			}
-
-			NODISCARD auto get_base_type() const noexcept -> hash_t { return get_element_base_type(type); }
-
-			NODISCARD auto get_component_count() const noexcept -> uint32_t { return get_element_component_count(type); }
 		};
 
-		using storage_type				= typename Vector<Element>;
-		using iterator					= typename storage_type::iterator;
-		using const_iterator			= typename storage_type::const_iterator;
-		using reverse_iterator			= typename storage_type::reverse_iterator;
-		using const_reverse_iterator	= typename storage_type::const_reverse_iterator;
+		uint32_t stride{};
 
-		template <class It
-		> VertexLayout(It first, It last) noexcept
-			: m_elements{ first, last }
+		Vector<Element> elements{};
+
+		template <class It> VertexLayout(It first, It last) noexcept : elements{ first, last }
 		{
 			uint32_t offset{};
-			for (auto & e : m_elements)
+			for (auto & e : elements)
 			{
 				e.offset = offset;
 				offset += e.size;
-				m_stride += e.size;
+				stride += e.size;
 			}
 		}
 
-		VertexLayout(std::initializer_list<Element> init) noexcept
-			: VertexLayout{ init.begin(), init.end() }
+		VertexLayout(std::initializer_list<Element> init) noexcept : VertexLayout{ init.begin(), init.end() } {}
+
+		template <size_t N> VertexLayout(Element const (&arr)[N]) noexcept : VertexLayout{ &arr[0], &arr[N] } {}
+
+		VertexLayout() noexcept : VertexLayout{
+			{ "Position", DataType_F32, 3 },
+			{ "Normal"	, DataType_F32, 3 },
+			{ "Texcoord", DataType_F32, 2 },
+		}
 		{
 		}
 
-		template <size_t N
-		> VertexLayout(const Element(&arr)[N]) noexcept
-			: VertexLayout{ &arr[0], &arr[N] }
-		{
-		}
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		VertexLayout() noexcept : VertexLayout{ {
-			{ Vec3f{}, "a_position"	},
-			{ Vec3f{}, "a_normal"	},
-			{ Vec2f{}, "a_texcoord"	},
-		} }
-		{
-		}
-
-		NODISCARD auto get_elements() const noexcept -> storage_type const & { return m_elements; }
-
-		NODISCARD auto get_stride() const noexcept -> uint32_t { return m_stride; }
-
-	private:
-		uint32_t		m_stride	{}; // stride
-		storage_type	m_elements	{}; // elements
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -813,15 +724,6 @@ namespace ism
 
 namespace ism
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ENUM_INT(BufferUsage)
-	{
-		BufferUsage_Stream,
-		BufferUsage_Static,
-		BufferUsage_Dynamic
-	};
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// rendering device
@@ -839,42 +741,41 @@ namespace ism
 
 		NODISCARD static RenderingDevice * get_singleton() noexcept { return singleton; }
 
+	public:
 		virtual void initialize() = 0;
-
 		virtual void finalize() = 0;
 
 	public:
 		virtual void clear(Color const & color = {}, bool depth_stencil = true) = 0;
-		
 		virtual void set_viewport(IntRect const & rect) = 0;
 
 	public:
-		virtual RID vertexarray_create(RenderPrimitive_ primitive) { return {}; }
-		virtual void vertexarray_destroy(RID rid) {}
-		virtual void vertexarray_update(RID rid, VertexLayout const & layout, RID indices, Vector<RID> const & vertices) {}
+		virtual RID vertexarray_create() = 0;
+		virtual void vertexarray_destroy(RID rid) = 0;
+		virtual void vertexarray_update(RID rid, VertexLayout const & layout, RID indices, Vector<RID> const & vertices) = 0;
 		
 	public:
-		virtual RID vertexbuffer_create(BufferUsage_ usage, Vector<byte> const & data) { return {}; }
-		virtual void vertexbuffer_destroy(RID rid) {}
-		virtual void vertexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) {}
+		virtual RID vertexbuffer_create(Vector<byte> const & data) = 0;
+		virtual void vertexbuffer_destroy(RID rid) = 0;
+		virtual void vertexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) = 0;
+		
+	public:
+		virtual RID indexbuffer_create(Vector<byte> const & data) = 0;
+		virtual void indexbuffer_destroy(RID rid) = 0;
+		virtual void indexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) = 0;
 
 	public:
-		virtual RID indexbuffer_create(BufferUsage_ usage, Vector<byte> const & data) { return {}; }
-		virtual void indexbuffer_destroy(RID rid) {}
-		virtual void indexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) {}
+		virtual RID framebuffer_create(Vector<RID> const & attachments) = 0;
+		virtual void framebuffer_destroy(RID rid) = 0;
 
 	public:
-		virtual RID framebuffer_create(Vector<RID> const & attachments) { return {}; }
-		virtual void framebuffer_destroy(RID rid) {}
+		virtual RID texture_create(TextureFormat const & format, TextureView const & view, Vector<byte> const & data) = 0;
+		virtual void texture_destroy(RID rid) = 0;
+		virtual void texture_update(RID rid, Vector<byte> const & data) = 0;
 
 	public:
-		virtual RID texture_create(TextureFormat const & format, TextureView const & view, Vector<byte> const & data) { return {}; }
-		virtual void texture_destroy(RID rid) {}
-		virtual void texture_update(RID rid, Vector<byte> const & data) {}
-
-	public:
-		virtual RID shader_create(Vector<ShaderStageData> const & stages) { return {}; }
-		virtual void shader_destroy(RID rid) {}
+		virtual RID shader_create(Vector<ShaderStageData> const & stages) = 0;
+		virtual void shader_destroy(RID rid) = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

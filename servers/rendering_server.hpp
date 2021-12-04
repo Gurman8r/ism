@@ -39,7 +39,11 @@ namespace ism
 		virtual void finalize() = 0;
 
 	public:
-		// HIGH LEVEL RENDERING API GOES HERE
+		/* TEXTURE */
+
+		virtual RID texture_replace(RID old_texture, RID new_texture) = 0;
+		virtual RID texture2d_create(Ref<Image> const & image) = 0;
+		virtual Ref<Image> texture_2d_get(RID texture) = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

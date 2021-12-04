@@ -23,7 +23,11 @@ namespace ism
 		virtual void finalize() override;
 
 	public:
-		// HIGH LEVEL RENDERING API GOES HERE
+		/* TEXTURE */
+
+		virtual RID texture_replace(RID old_texture, RID new_texture) override { return {}; }
+		virtual RID texture2d_create(Ref<Image> const & image) override { return {}; }
+		virtual Ref<Image> texture_2d_get(RID texture) override { return {}; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

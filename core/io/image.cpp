@@ -48,26 +48,6 @@ void Image::flip_horizontally()
 	}
 }
 
-int32_t Image::get_width() const
-{
-	return m_width;
-}
-
-int32_t Image::get_height() const
-{
-	return m_height;
-}
-
-int32_t Image::get_channels() const
-{
-	return m_channels;
-}
-
-Vector<byte> const & Image::get_pixels() const
-{
-	return m_pixels;
-}
-
 Color32 Image::get_pixel(size_t i) const
 {
 	auto it{ m_pixels.begin() + i };
@@ -95,8 +75,4 @@ void Image::set_pixel(size_t i, Color32 value)
 void Image::set_pixel(size_t x, size_t y, Color32 value)
 {
 	set_pixel(((x + y * m_width) * m_channels), value);
-}
-
-Image::~Image()
-{
 }
