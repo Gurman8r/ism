@@ -6,7 +6,7 @@ EMBED_CLASS(Resource, t, TypeFlags_IsAbstract)
 {
 }
 
-Resource::Resource() noexcept { static RID next_rid{}; m_rid = ++next_rid; }
+Resource::Resource() noexcept {}
 
 Resource::~Resource()
 {

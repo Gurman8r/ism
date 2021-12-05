@@ -14,7 +14,7 @@ namespace ism
 		Ref<RenderingDevice> m_device{};
 
 	public:
-		RenderingServerDefault(RenderingServerSettings const & settings = {});
+		RenderingServerDefault();
 
 		virtual ~RenderingServerDefault() override;
 
@@ -24,10 +24,9 @@ namespace ism
 
 	public:
 		/* TEXTURE */
-
 		virtual RID texture_replace(RID old_texture, RID new_texture) override;
 		virtual RID texture2d_create(Ref<Image> const & image) override;
-		virtual Ref<Image> texture_2d_get(RID texture) override;
+		virtual Ref<Image> texture2d_get(RID texture) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

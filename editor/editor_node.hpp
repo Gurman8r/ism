@@ -3,6 +3,8 @@
 
 #include <scene/main/scene_tree.hpp>
 
+#include <scene/resources/texture.hpp>
+
 namespace ism
 {
 	class ISM_API EditorNode : public Node
@@ -15,6 +17,9 @@ namespace ism
 		~EditorNode();
 
 		virtual void process(Duration const & dt) override;
+
+		Ref<Image> test_image;
+		Ref<ImageTexture> test_texture;
 
 	protected:
 		void _edit_node(NODE node, int32_t tree_node_flags);

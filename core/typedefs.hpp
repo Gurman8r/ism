@@ -35,24 +35,28 @@ public:																											\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// declare enum
-#define MAKE_ENUM(m_name, m_base) \
+// declare an enum and an additional lenient type
+#define DECL_ENUM(m_name, m_base) \
 	ALIAS(m_name) m_base; \
 	enum CAT(m_name, _) : m_name
 
-// default signed enum
-#define ENUM_INT(m_name) MAKE_ENUM(m_name, int32_t)
+// declare signed enum
+#define ENUM_INT(m_name) DECL_ENUM(m_name, int32_t)
 
-// default unsigned enum
-#define ENUM_UINT(m_name) MAKE_ENUM(m_name, uint32_t)
+// declare unsigned enum
+#define ENUM_UINT(m_name) DECL_ENUM(m_name, uint32_t)
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // declare opaque handle type
-#define OPAQUE_TYPE(m_name) \
+#define DECL_HANDLE(m_name) \
 	struct CAT(__, m_name) { int unused; }; \
 	ALIAS(m_name) CAT(__, m_name) *
 
-// declare tag
-#define MAKE_TAG(m_type, m_var) \
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// declare tag object type
+#define DECL_TAG(m_type, m_var) \
 	struct m_type { struct _Tag {}; constexpr explicit m_type(_Tag) {} }; \
 	inline constexpr m_type m_var{ m_type::_Tag{} }; \
 

@@ -9,12 +9,8 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class Viewport;
-	class SubViewport;
-	class Window;
-
-	OPAQUE_TYPE(MonitorID);
-	OPAQUE_TYPE(WindowID);
+	DECL_HANDLE(MonitorID);
+	DECL_HANDLE(WindowID);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -430,6 +426,11 @@ namespace ism
 		virtual ~DisplayServer() override {}
 
 		NODISCARD static DisplayServer * get_singleton() noexcept { return singleton; }
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		NODISCARD virtual VideoMode const & get_desktop_video_mode() const = 0;
+		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

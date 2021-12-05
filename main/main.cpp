@@ -134,7 +134,7 @@ Error Main::setup(cstring exepath, int32_t argc, char * argv[])
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	}
-	VERIFY(ImGui_Init(main_window));
+	ASSERT(ImGui_Init(main_window));
 
 	return Error_None;
 }
@@ -155,11 +155,11 @@ bool Main::start()
 
 	if (!main_loop)
 	{
-		VERIFY(TYPE::check_(main_loop_type));
+		ASSERT(TYPE::check_(main_loop_type));
 
 		main_loop = main_loop_type();
 
-		VERIFY(main_loop);
+		ASSERT(main_loop);
 	}
 
 	if (isinstance<SceneTree>(main_loop))
@@ -172,8 +172,9 @@ bool Main::start()
 		if (editor) { root->add_child<EditorNode>(); }
 #endif
 	}
-
+	
 	SINGLETON(OS)->set_main_loop(main_loop);
+	SINGLETON(OS)->get_main_loop()->initialize();
 
 	return true;
 }
@@ -208,6 +209,7 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
+	SINGLETON(OS)->get_main_loop()->finalize();
 	SINGLETON(OS)->delete_main_loop();
 
 	//ScriptServer::finish_languages();

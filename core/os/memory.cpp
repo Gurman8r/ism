@@ -45,7 +45,7 @@ static struct NODISCARD MemoryTracker final
 #if LEAK_CLEANUP_ENABLED
 		while (!records.empty()) { memfree(records.back<ID_addr>()); }
 #else
-		VERIFY("MEMORY LEAKS DETECTED" && g_memory_tracker.records.empty());
+		ASSERT("MEMORY LEAKS DETECTED" && g_memory_tracker.records.empty());
 #endif
 	}
 }
@@ -120,12 +120,12 @@ void * operator new(size_t size, void * (*alloc_fn)(size_t))
 
 void operator delete(void * ptr, char const * desc)
 {
-	FATAL("this should never be called");
+	CRASH("this should never be called");
 }
 
 void operator delete(void * ptr, void * (*alloc_fn)(size_t))
 {
-	FATAL("this should never be called");
+	CRASH("this should never be called");
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

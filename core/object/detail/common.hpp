@@ -211,6 +211,21 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	ENUM_INT(CompareOperator)
+	{
+		CompareOperator_Never,
+		CompareOperator_Less,
+		CompareOperator_Equal,
+		CompareOperator_LessOrEqual,
+		CompareOperator_Greater,
+		CompareOperator_NotEqual,
+		CompareOperator_GreaterOrEqual,
+		CompareOperator_Always,
+		CompareOperator_MAX
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ENUM_INT(LogicOperation)
 	{
 		LogicOperation_Clear,
@@ -230,21 +245,6 @@ namespace ism
 		LogicOperation_Nand,
 		LogicOperation_Set,
 		LogicOperation_MAX
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ENUM_INT(CompareOperator)
-	{
-		CompareOperator_Never,
-		CompareOperator_Less,
-		CompareOperator_Equal,
-		CompareOperator_LessOrEqual,
-		CompareOperator_Greater,
-		CompareOperator_NotEqual,
-		CompareOperator_GreaterOrEqual,
-		CompareOperator_Always,
-		CompareOperator_MAX
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -406,7 +406,7 @@ namespace ism
 
 		void ref_pointer(value_type * value)
 		{
-			VERIFY("INVALID POINTER" && value);
+			ASSERT("INVALID POINTER" && value);
 
 			if (value->init_ref()) { m_ptr = value; }
 		}

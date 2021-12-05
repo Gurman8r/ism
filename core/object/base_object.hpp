@@ -25,7 +25,7 @@ protected:																			\
 																					\
 			if (m_class::__type_static.tp_bind)										\
 			{																		\
-				VERIFY(m_class::__type_static.tp_bind(&m_class::__type_static));	\
+				ASSERT(m_class::__type_static.tp_bind(&m_class::__type_static));	\
 			}																		\
 		};																			\
 	}																				\

@@ -17,11 +17,10 @@ EMBED_CLASS(ImageTexture, t) {}
 
 ImageTexture::ImageTexture(Ref<Image> const & image)
 {
-	VERIFY(image);
+	ASSERT(image);
 	m_width = image->get_width();
 	m_height = image->get_height();
 	m_format = image->get_format();
-	m_has_mipmaps = image->has_mipmaps();
 	if (!m_texture)
 	{
 		m_texture = SINGLETON(RenderingServer)->texture2d_create(image);
@@ -46,12 +45,16 @@ Ref<Image> ImageTexture::get_data() const
 {
 	if (m_image_stored)
 	{
-		return SINGLETON(RenderingServer)->texture_2d_get(m_texture);
+		return SINGLETON(RenderingServer)->texture2d_get(m_texture);
 	}
 	else
 	{
 		return nullptr;
 	}
+}
+
+void ImageTexture::update(Ref<Image> const & image, bool immediate)
+{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

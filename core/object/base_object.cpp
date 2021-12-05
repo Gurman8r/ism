@@ -11,7 +11,7 @@ void Object::initialize_class()
 	{
 		SINGLETON(Internals)->add_class(&__type_static);
 
-		VERIFY(VALIDATE(__type_static.tp_bind)(&__type_static));
+		ASSERT(VALIDATE(__type_static.tp_bind)(&__type_static));
 	}
 }
 

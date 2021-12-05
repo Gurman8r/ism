@@ -11,7 +11,7 @@ namespace ism
 
 	ALIAS(RES) Ref<Resource>;
 
-	OPAQUE_TYPE(RID);
+	DECL_HANDLE(RID);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -20,7 +20,6 @@ namespace ism
 	{
 		OBJECT_COMMON(Resource, Object);
 
-		RID		m_rid{};
 		int32_t	m_index{};
 		String	m_name{};
 		String	m_path_cache{};
@@ -33,13 +32,13 @@ namespace ism
 
 		virtual void reload_from_file();
 
-		NODISCARD auto get_id() const -> RID { return m_rid; }
+		NODISCARD virtual RID get_rid() const { return {}; }
 
-		NODISCARD auto get_index() const -> int32_t { return m_index; }
+		NODISCARD int32_t get_index() const { return m_index; }
 		
-		NODISCARD auto get_name() const -> String const & { return m_name; }
-		
-		NODISCARD auto get_path() const -> String const & { return m_path_cache; }
+		NODISCARD String const & get_name() const { return m_name; }
+
+		NODISCARD String const & get_path() const { return m_path_cache; }
 
 		void set_index(int32_t value) { m_index = value; }
 

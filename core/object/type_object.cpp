@@ -11,7 +11,7 @@ void TypeObject::initialize_class()
 	{
 		SINGLETON(Internals)->add_class(&__type_static);
 
-		VERIFY(VALIDATE(__type_static.tp_bind)(&__type_static));
+		ASSERT(VALIDATE(__type_static.tp_bind)(&__type_static));
 	};
 }
 
@@ -41,7 +41,7 @@ EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 
 	t.tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ
 	{
-		VERIFY(TYPE::check_(self));
+		ASSERT(TYPE::check_(self));
 		newfunc fn{ TYPE(self)->tp_new };
 		return fn ? fn(self, args) : nullptr;
 	};
@@ -90,15 +90,15 @@ EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 
 bool TypeObject::ready()
 {
-	if (tp_flags & TypeFlags_Ready) { VERIFY(check_consistency()); return true; }
+	if (tp_flags & TypeFlags_Ready) { ASSERT(check_consistency()); return true; }
 	
-	VERIFY(!(tp_flags & TypeFlags_Readying));
+	ASSERT(!(tp_flags & TypeFlags_Readying));
 
 	tp_flags |= TypeFlags_Readying;
 
 	if (!tp_base && this != typeof<OBJ>()) { tp_base = typeof<OBJ>(); }
 	
-	if (tp_base && !tp_base->tp_dict) { VERIFY(tp_base->ready()); }
+	if (tp_base && !tp_base->tp_dict) { ASSERT(tp_base->ready()); }
 	
 	if (!get_type() && tp_base) { set_type(tp_base->get_type()); }
 	
@@ -108,7 +108,7 @@ bool TypeObject::ready()
 
 	if (!tp_dict) { tp_dict = DICT::new_(); }
 
-	VERIFY(mro_internal(nullptr));
+	ASSERT(mro_internal(nullptr));
 	
 	if (tp_base)
 	{
@@ -185,11 +185,11 @@ bool TypeObject::check_consistency() const
 	// don't check static types before ready()
 	if (!(tp_flags & TypeFlags_Ready)) { return true; }
 
-	VERIFY(TYPE::check_(ptr()));
+	ASSERT(TYPE::check_(ptr()));
 
-	VERIFY(!(tp_flags & TypeFlags_Readying));
+	ASSERT(!(tp_flags & TypeFlags_Readying));
 
-	VERIFY(DICT::check_(tp_dict));
+	ASSERT(DICT::check_(tp_dict));
 
 	return true;
 }
@@ -253,7 +253,7 @@ bool TypeObject::mro_internal(OBJ * in_old_mro)
 	OBJ new_mro{ std::invoke([&]() -> OBJ
 	{
 		// mro_implementation
-		VERIFY(LIST::check_(tp_bases));
+		ASSERT(LIST::check_(tp_bases));
 		LIST result{ LIST::new_() };
 		result.reserve(((LIST &)tp_bases).size() + 1);
 		result.append(this);
@@ -378,7 +378,7 @@ OBJ TypeObject::type_getattro(TYPE type, OBJ name)
 
 Error TypeObject::type_setattro(TYPE type, OBJ name, OBJ value)
 {
-	VERIFY(STR::check_(name));
+	ASSERT(STR::check_(name));
 
 	Error err{ generic_setattr_with_dict(type, name, value, nullptr) };
 
@@ -391,7 +391,7 @@ Error TypeObject::type_setattro(TYPE type, OBJ name, OBJ value)
 			err = type->update_slot(name);
 		}
 
-		VERIFY(type->check_consistency());
+		ASSERT(type->check_consistency());
 	}
 
 	return err;

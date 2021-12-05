@@ -29,7 +29,7 @@ namespace ism
 		~LoaderLifeSupport() noexcept
 		{
 			Vector<OBJ> & stack{ SINGLETON(Internals)->loader_stack };
-			VERIFY(!stack.empty());
+			ASSERT(!stack.empty());
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
 			ptr = nullptr;
@@ -38,7 +38,7 @@ namespace ism
 		static void add(OBJ const & value) noexcept
 		{
 			Vector<OBJ> & stack{ SINGLETON(Internals)->loader_stack };
-			VERIFY(!stack.empty());
+			ASSERT(!stack.empty());
 			LIST & list{ (LIST &)stack.back() };
 			if (!list) { list = LIST::new_(); }
 			list.append(value);
@@ -355,13 +355,27 @@ public:																								\
 			}
 		}
 
-		template <class U> static OBJ cast(U & src, ReturnValuePolicy_, OBJ const &) { return Ref<U>(std::addressof(src)); }
+		static OBJ cast(T && src, ReturnValuePolicy_, OBJ const &) noexcept { return Ref<T>{ std::move(src) }; }
+		static OBJ cast(T const * src, ReturnValuePolicy_, OBJ const &) { return Ref<T>{ (T *)src }; }
+		static OBJ cast(T const & src, ReturnValuePolicy_, OBJ const &) { return Ref<T>{ (T *)&src }; }
 
-		template <class U> static OBJ cast(U && src, ReturnValuePolicy_, OBJ const &) noexcept { return Ref<U>(std::move(src)); }
+		template <class U> operator U ()
+		{
+			using I = mpl::intrinsic_t<U>;
 
-		template <class U> operator U & () { return static_cast<U &>(**value); }
+			if constexpr (std::is_pointer_v<U>)
+			{
+				if constexpr (std::is_same_v<I, Object>) { return *value; } // no cast
 
-		template <class U> operator U * () { return static_cast<U *>(*value); }
+				else { return dynamic_cast<I *>(*value); }
+			}
+			else
+			{
+				if constexpr (std::is_same_v<I, Object>) { return *VALIDATE(*value); } // no cast
+
+				else { return *VALIDATE(dynamic_cast<I *>(*value)); }
+			}
+		}
 
 		template <class U> using cast_op_type = ism::cast_op_type<U>;
 
@@ -429,7 +443,7 @@ namespace ism
 	> auto load_type(TypeCaster<T, SFINAE> & convt, OBJ const & o) -> TypeCaster<T, SFINAE> &
 	{
 		if (!convt.load(o, true)) {
-			FATAL("TYPE CONVERSION FAILED");
+			CRASH("TYPE CONVERSION FAILED");
 		}
 		return convt;
 	}
@@ -454,22 +468,7 @@ namespace ism
 	{
 		if constexpr (is_base_object_v<T>)
 		{
-			Object * ptr{ ism::pointerof(o) };
-
-			using Intrinsic = mpl::intrinsic_t<T>;
-
-			if constexpr (std::is_pointer_v<T>)
-			{
-				if constexpr (std::is_same_v<Intrinsic, Object>) { return ptr; } // no cast
-
-				else { return dynamic_cast<Intrinsic *>(ptr); }
-			}
-			else
-			{
-				if constexpr (std::is_same_v<Intrinsic, Object>) { return *VALIDATE(ptr); } // no cast
-
-				else { return *VALIDATE(dynamic_cast<Intrinsic *>(ptr)); }
-			}
+			return cast_op<T>(load_type<T>(FWD(o)));
 		}
 		else
 		{
@@ -504,7 +503,7 @@ namespace ism
 	> auto move(OBJ && o) -> std::enable_if_t<!move_never_v<T>, T>
 	{
 		if (o && o->get_ref_count() > 1) {
-			VERIFY(!"Unable to cast Core instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
+			ASSERT(!"Unable to cast Core instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
 		}
 		T ret{ std::move(load_type<T>(o).operator T & ()) };
 		return ret;

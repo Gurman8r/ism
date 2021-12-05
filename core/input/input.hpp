@@ -10,7 +10,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// cursor handle
-	OPAQUE_TYPE(CursorID);
+	DECL_HANDLE(CursorID);
 
 	// cursor mode
 	ENUM_INT(CursorMode)

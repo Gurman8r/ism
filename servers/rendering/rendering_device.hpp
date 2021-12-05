@@ -253,6 +253,9 @@ namespace ism
 		TextureType_1D_Array,
 		TextureType_2D_Array,
 		TextureType_Cube_Array,
+		TextureType_Proxy_2D,
+		TextureType_Proxy_1D_Array,
+		TextureType_Proxy_Cubemap,
 		TextureType_MAX
 	};
 
@@ -268,18 +271,19 @@ namespace ism
 		TextureSamples_MAX
 	};
 
-	ENUM_INT(TextureUsage)
+	ENUM_INT(TextureFlags)
 	{
-		TextureUsage_Sampling				= 1 << 0,
-		TextureUsage_ColorAttachment		= 1 << 1,
-		TextureUsage_DepthStencilAttachment = 1 << 2,
-		TextureUsage_Storage				= 1 << 3,
-		TextureUsage_Storage_Atomic			= 1 << 4,
-		TextureUsage_CpuRead				= 1 << 5,
-		TextureUsage_CanUpdate				= 1 << 6,
-		TextureUsage_CanCopyFrom			= 1 << 7,
-		TextureUsage_CanCopyTo				= 1 << 8,
-		TextureUsage_ResolveAttachment		= 1 << 9,
+		TextureFlags_None,
+		TextureFlags_Sampling				= 1 << 0,
+		TextureFlags_ColorAttachment		= 1 << 1,
+		TextureFlags_DepthStencilAttachment = 1 << 2,
+		TextureFlags_Storage				= 1 << 3,
+		TextureFlags_Storage_Atomic			= 1 << 4,
+		TextureFlags_CpuRead				= 1 << 5,
+		TextureFlags_CanUpdate				= 1 << 6,
+		TextureFlags_CanCopyFrom			= 1 << 7,
+		TextureFlags_CanCopyTo				= 1 << 8,
+		TextureFlags_ResolveAttachment		= 1 << 9,
 	};
 
 	ENUM_INT(TextureSwizzle)
@@ -297,17 +301,21 @@ namespace ism
 	struct NODISCARD TextureFormat final
 	{
 		DEFAULT_COPYABLE_MOVABLE(TextureFormat);
-		DataFormat_		format{ DataFormat_R8_UNORM };
-		int32_t			width{}, height{}, mipmaps{};
-		TextureType_	texture_type{ TextureType_2D };
-		TextureSamples_ samples{ TextureSamples_1 };
-		uint32_t		usage_bits{};
+		DataFormat_			format{ DataFormat_R8G8B8_UNORM };
+		uint32_t			width{ 1 };
+		uint32_t			height{ 1 };
+		uint32_t			depth{ 1 };
+		uint32_t			layers{ 1 };
+		uint32_t			mipmaps{ 1 };
+		TextureType_		texture_type{ TextureType_2D };
+		TextureSamples_		samples{ TextureSamples_1 };
+		TextureFlags		usage_flags{ TextureFlags_None };
 	};
 
 	struct NODISCARD TextureView final
 	{
 		DEFAULT_COPYABLE_MOVABLE(TextureView);
-		DataFormat_ format_override{ DataFormat_MAX };
+		DataFormat_		format_override{ DataFormat_MAX };
 		TextureSwizzle_ swizzle_r{ TextureSwizzle_R };
 		TextureSwizzle_ swizzle_g{ TextureSwizzle_G };
 		TextureSwizzle_ swizzle_b{ TextureSwizzle_B };
@@ -680,7 +688,7 @@ namespace ism
 				, normalized{ normalized }
 				, offset	{}
 			{
-				VERIFY(type == DataType_Bool || type == DataType_I32 || type == DataType_F32);
+				ASSERT(type == DataType_Bool || type == DataType_I32 || type == DataType_F32);
 			}
 		};
 
@@ -777,13 +785,8 @@ namespace ism
 
 	public:
 		/* SHADER */
-		//virtual Vector<byte> shader_compile_from_source(ShaderStage_ stage, String const & source_code, ShaderLanguage_ language = ShaderLanguage_GLSL, String * error = nullptr);
 		virtual RID shader_create(Vector<ShaderStageData> const & stage_data) = 0;
 		virtual void shader_destroy(RID rid) = 0;
-
-	public:
-		/* UNIFORM */
-
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

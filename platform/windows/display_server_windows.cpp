@@ -21,7 +21,7 @@ EMBED_CLASS(DisplayServerWindows, t) {}
 
 DisplayServerWindows::DisplayServerWindows(DisplayServerSettings const & settings)
 {
-	VERIFY(glfwInit() == GLFW_TRUE);
+	ASSERT(glfwInit() == GLFW_TRUE);
 
 	// context hints
 	glfwWindowHint(GLFW_CLIENT_API, std::invoke([&]() noexcept {
@@ -73,7 +73,7 @@ DisplayServerWindows::DisplayServerWindows(DisplayServerSettings const & setting
 		(GLFWwindow *)settings.share);
 
 	if (!m_glfw_window) {
-		FATAL("FAILED CREATING GLFW WINDOW");
+		CRASH("FAILED CREATING GLFW WINDOW");
 	}
 
 	make_context_current((WindowID)m_glfw_window);
@@ -85,6 +85,42 @@ DisplayServerWindows::~DisplayServerWindows()
 {
 	glfwDestroyWindow(m_glfw_window);
 	glfwTerminate();
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+VideoMode const & DisplayServerWindows::get_desktop_video_mode() const
+{
+	static VideoMode result{};
+	if (static bool once{}; !once && (once = true))
+	{
+		DEVMODE dm;
+		dm.dmSize = sizeof(dm);
+		EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm);
+
+		int32_t const width{ (int32_t)dm.dmPelsWidth };
+		int32_t const height{ (int32_t)dm.dmPelsHeight };
+		result = { { width, height }, util::bit_cast<Vec4b>(dm.dmBitsPerPel), -1 };
+	}
+	return result;
+}
+
+Vector<VideoMode> const & DisplayServerWindows::get_fullscreen_video_modes() const
+{
+	static Vector<VideoMode> result{};
+	if (static bool once{}; !once && (once = true))
+	{
+		DEVMODE dm;
+		dm.dmSize = sizeof(dm);
+		for (int32_t count = 0; EnumDisplaySettings(nullptr, count, &dm); ++count)
+		{
+			int32_t const width{ (int32_t)dm.dmPelsWidth };
+			int32_t const height{ (int32_t)dm.dmPelsHeight };
+			VideoMode mode{ { width, height }, util::bit_cast<Vec4b>(dm.dmBitsPerPel), -1 };
+			if (!ism::has(result, mode)) { result.push_back(mode); }
+		}
+	}
+	return result;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

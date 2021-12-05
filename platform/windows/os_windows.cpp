@@ -1,5 +1,4 @@
 #include <platform/windows/os_windows.hpp>
-#include <servers/display_server.hpp>
 #include <filesystem>
 
 using namespace ism;
@@ -114,45 +113,6 @@ Error OS_Windows::get_dynamic_library_symbol_handle(void * instance, String cons
 	symbol = GetProcAddress((HMODULE)instance, name.c_str());
 	if (!symbol && !is_optional) { return Error_Unknown; }
 	return Error_None;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-VideoMode const & OS_Windows::get_desktop_video_mode() const
-{
-	static VideoMode result{};
-	if (static bool once{}; !once && (once = true))
-	{
-		DEVMODE dm;
-		dm.dmSize = sizeof(dm);
-		EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm);
-
-		int32_t const width{ (int32_t)dm.dmPelsWidth };
-		int32_t const height{ (int32_t)dm.dmPelsHeight };
-		uint8_t const * bpp{ static_cast<uint8_t *>(static_cast<void *>(&dm.dmBitsPerPel)) };
-		result = { { width, height }, { bpp[0], bpp[1], bpp[2], bpp[3] }, -1 };
-	}
-	return result;
-}
-
-Vector<VideoMode> const & OS_Windows::get_fullscreen_video_modes() const
-{
-	static Vector<VideoMode> result{};
-	if (static bool once{}; !once && (once = true))
-	{
-		DEVMODE dm;
-		dm.dmSize = sizeof(dm);
-		for (int32_t count = 0; EnumDisplaySettings(nullptr, count, &dm); ++count)
-		{
-			int32_t const width{ (int32_t)dm.dmPelsWidth };
-			int32_t const height{ (int32_t)dm.dmPelsHeight };
-			uint8_t const * bpp{ static_cast<uint8_t *>(static_cast<void *>(&dm.dmBitsPerPel)) };
-			VideoMode mode{ { width, height }, { bpp[0], bpp[1], bpp[2], bpp[3] }, -1 };
-			if (!ism::has(result, mode)) { result.push_back(mode); }
-		}
-	}
-
-	return result;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

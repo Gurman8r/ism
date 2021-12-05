@@ -91,7 +91,7 @@ private:
 		template <class Ev0, class ... Evs
 		> void subscribe() noexcept
 		{
-			VERIFY(m_event_bus);
+			ASSERT(m_event_bus);
 
 			mpl::for_types<Ev0, Evs...>([&](auto tag) noexcept
 			{
@@ -102,7 +102,7 @@ private:
 		template <class ... Evs
 		> void unsubscribe() noexcept
 		{
-			VERIFY(m_event_bus);
+			ASSERT(m_event_bus);
 
 			if constexpr (0 < sizeof...(Evs))
 			{
@@ -193,7 +193,7 @@ private:
 
 		void handle_event(Event const & event) final
 		{
-			VERIFY((EventID)event == ID);
+			ASSERT((EventID)event == ID);
 
 			for (Callback const & callback : m_callbacks)
 			{

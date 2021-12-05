@@ -1,20 +1,8 @@
 #ifndef _ISM_RENDERING_SERVER_HPP_
 #define _ISM_RENDERING_SERVER_HPP_
 
-#include <core/io/image.hpp>
-#include <servers/rendering/rendering_device.hpp>
-
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct NODISCARD RenderingServerSettings final
-	{
-		DEFAULT_COPYABLE_MOVABLE(RenderingServerSettings);
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
+#include <core/io/image_loader.hpp>
+#include <servers/rendering/renderer_storage.hpp>
 
 namespace ism
 {
@@ -40,10 +28,9 @@ namespace ism
 
 	public:
 		/* TEXTURE */
-
 		virtual RID texture_replace(RID old_texture, RID new_texture) = 0;
 		virtual RID texture2d_create(Ref<Image> const & image) = 0;
-		virtual Ref<Image> texture_2d_get(RID texture) = 0;
+		virtual Ref<Image> texture2d_get(RID texture) = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

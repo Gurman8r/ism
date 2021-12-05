@@ -62,11 +62,6 @@ namespace ism
 		virtual Error close_dynamic_library(void * instance) override;
 
 		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) override;
-
-	public:
-		NODISCARD virtual VideoMode const & get_desktop_video_mode() const override;
-
-		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -10,12 +10,12 @@ int main(int argc, char * argv[])
 	switch (Main::setup(argv[0], argc, argv))
 	{
 	case Error_None: break;
-	default: FATAL("An unknown error occurred during setup. The program was unable to start.");
+	default: CRASH("An unknown error occurred during setup. The program was unable to start.");
 	}
 
-	VERIFY(Main::start());
+	ASSERT(Main::start());
 
-	while (Main::iteration() == 0);
+	while (Main::iteration() == EXIT_SUCCESS);
 
 	Main::cleanup();
 

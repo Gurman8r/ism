@@ -9,19 +9,19 @@ using namespace ism;
 
 void ism::register_core_types()
 {
-	VERIFY(typeof<Object>().ready());
-	VERIFY(typeof<TypeObject>().ready());
-	VERIFY(typeof<IntObject>().ready());
-	VERIFY(typeof<FloatObject>().ready());
-	VERIFY(typeof<StringObject>().ready());
-	VERIFY(typeof<ListObject>().ready());
-	VERIFY(typeof<DictObject>().ready());
-	VERIFY(typeof<CapsuleObject>().ready());
-	VERIFY(typeof<FunctionObject>().ready());
-	VERIFY(typeof<MethodObject>().ready());
-	VERIFY(typeof<CppFunctionObject>().ready());
-	VERIFY(typeof<PropertyObject>().ready());
-	VERIFY(typeof<ModuleObject>().ready());
+	ASSERT(typeof<Object>().ready());
+	ASSERT(typeof<TypeObject>().ready());
+	ASSERT(typeof<IntObject>().ready());
+	ASSERT(typeof<FloatObject>().ready());
+	ASSERT(typeof<StringObject>().ready());
+	ASSERT(typeof<ListObject>().ready());
+	ASSERT(typeof<DictObject>().ready());
+	ASSERT(typeof<CapsuleObject>().ready());
+	ASSERT(typeof<FunctionObject>().ready());
+	ASSERT(typeof<MethodObject>().ready());
+	ASSERT(typeof<CppFunctionObject>().ready());
+	ASSERT(typeof<PropertyObject>().ready());
+	ASSERT(typeof<ModuleObject>().ready());
 
 	SINGLETON(Internals)->bind_class
 	<

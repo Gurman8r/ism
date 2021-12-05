@@ -114,7 +114,7 @@ void Node::set_sibling_index(size_t const i)
 
 	auto & siblings{ m_owner->m_nodes };
 
-	VERIFY(i < siblings.size());
+	ASSERT(i < siblings.size());
 
 	NODE self{ this };
 

@@ -170,7 +170,7 @@ namespace ism
 
 			if (ism::is_dunder_name(str_name)) { m_ptr->update_slot(str_name); }
 
-			VERIFY(m_ptr->check_consistency());
+			ASSERT(m_ptr->check_consistency());
 		}
 	};
 

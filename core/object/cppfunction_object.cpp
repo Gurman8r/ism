@@ -52,7 +52,7 @@ CppFunctionObject::~CppFunctionObject()
 
 void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in, bool prepend)
 {
-	VERIFY("BAD FUNCTION RECORD" && rec && !rec->next);
+	ASSERT("BAD FUNCTION RECORD" && rec && !rec->next);
 
 	m_record = rec;
 
@@ -98,7 +98,7 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 
 OBJ CppFunctionObject::cppfunction_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 {
-	VERIFY(argc < MAX_ARGUMENTS);
+	ASSERT(argc < MAX_ARGUMENTS);
 
 	if (!CPP_FUNCTION::check_(callable)) { return nullptr; }
 
@@ -146,7 +146,7 @@ OBJ CppFunctionObject::cppfunction_vectorcall(OBJ callable, OBJ const * argv, si
 				if (overloaded) { continue; }
 				else
 				{
-					FATAL("NOT ENOUGH ARGUMENTS");
+					CRASH("NOT ENOUGH ARGUMENTS");
 				}
 			}
 		}

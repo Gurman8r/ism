@@ -26,6 +26,11 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		NODISCARD virtual VideoMode const & get_desktop_video_mode() const override;
+		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		NODISCARD virtual WindowID get_context_current() const override;
 		virtual void make_context_current(WindowID id) override;
 		virtual void poll_events() override;

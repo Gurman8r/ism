@@ -21,11 +21,11 @@
 
 namespace ism
 {
-	// wide assert implementation
-	inline void _ism_wassert(cwstring message, cwstring file, uint32_t line) noexcept
+	// fatal error implementation (wide)
+	inline void _ism_wfatal(cwstring message, cwstring file, uint32_t line) noexcept
 	{
 #if defined(COMPILER_MSVC)
-		_CSTD _wassert(message, file, line);
+		_wassert(message, file, line);
 
 #elif defined(assert)
 		assert(message);
@@ -34,41 +34,38 @@ namespace ism
 #		error "wassert is unavailable"
 #endif
 	}
-}
 
-// wide assert
-#define WASSERT(message, file, line) \
-	(ism::_ism_wassert)(message, file, line)
+	// fatal error (wide)
+#	define WFATAL(message, file, line) \
+	(ism::_ism_wfatal)(message, file, (uint32_t)line)
 
-// narrow assert
-#define ASSERT(message, file, line) \
-	WASSERT(WIDE(message), WIDE(file), (unsigned)line)
+	// fatal error
+#	define FATAL(message, file, line) \
+	WFATAL(WIDE(message), WIDE(file), line)
 
-// fatal
-#define FATAL(message) \
-	ASSERT(message, __FILE__, __LINE__)
+	// crash (wide)
+#	define WCRASH(message) \
+	WFATAL(message, __FILE__, __LINE__)
 
-// verify
-#define VERIFY(expr) \
-	((void)((!!(expr)) || (FATAL(TOSTR(expr)), 0)))
+	// crash
+#	define CRASH(message) \
+	FATAL(message, __FILE__, __LINE__)
 
-namespace ism
-{
-	// validate implementation
+	// assert
+#	define ASSERT(expr) \
+	((void)((!!(expr)) || (CRASH(TOSTR(expr)), 0)))
+
+	// validate implementation (wide)
 	template <class T
-	> auto _ism_validate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
+	> auto _ism_wvalidate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
 	{
-		return ((void)((!!(expr)) || (WASSERT(message, file, line), 0))), FWD(expr);
+		return ((void)((!!(expr)) || (WFATAL(message, file, line), 0))), FWD(expr);
 	}
+
+	// validate
+#	define VALIDATE(expr) \
+	(ism::_ism_wvalidate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), __LINE__)
 }
-
-// validate message
-#define VALIDATE_MSG(expr, msg) \
-	(ism::_ism_validate)(expr, WIDE(msg), WIDE(__FILE__), (unsigned)__LINE__)
-
-// validate
-#define VALIDATE(expr) \
-	(ism::_ism_validate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), (unsigned)__LINE__)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

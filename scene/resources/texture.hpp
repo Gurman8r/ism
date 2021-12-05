@@ -13,6 +13,7 @@ namespace ism
 
 	public:
 		Texture() noexcept {}
+
 		virtual ~Texture() noexcept override = default;
 	};
 
@@ -51,6 +52,9 @@ namespace ism
 		NODISCARD virtual int32_t get_width() const override { return m_width; }
 		NODISCARD virtual int32_t get_height() const override { return m_height; }
 		NODISCARD virtual Ref<Image> get_data() const override;
+		NODISCARD virtual RID get_rid() const override { return m_texture; }
+
+		void update(Ref<Image> const & image, bool immediate = false);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

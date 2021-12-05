@@ -29,10 +29,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct VideoMode;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// operating system
 	class ISM_API OS
 	{
@@ -106,11 +102,6 @@ namespace ism
 		virtual Error close_dynamic_library(void * instance) { return Error_Unknown; }
 		
 		virtual Error get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) { return Error_Unknown; }
-
-	public:
-		NODISCARD virtual VideoMode const & get_desktop_video_mode() const = 0;
-
-		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

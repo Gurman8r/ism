@@ -7,6 +7,18 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	ENUM_INT(ColorChannel)
+	{
+		ColorChannel_L,
+		ColorChannel_LA,
+		ColorChannel_R,
+		ColorChannel_RG,
+		ColorChannel_RGB,
+		ColorChannel_RGBA,
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ENUM_INT(ImageFormat)
 	{
 		ImageFormat_L8, //luminance
@@ -64,18 +76,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(ColorChannel)
-	{
-		ColorChannel_L,
-		ColorChannel_LA,
-		ColorChannel_R,
-		ColorChannel_RG,
-		ColorChannel_RGB,
-		ColorChannel_RGBA,
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	class ISM_API Image : public Resource
 	{
 		OBJECT_COMMON(Image, Resource);
@@ -87,8 +87,6 @@ namespace ism
 		int32_t m_width{}, m_height{}, m_channels{};
 
 		ImageFormat_ m_format{};
-
-		bool m_has_mipmaps{};
 
 	public:
 		Image() noexcept {}
@@ -102,12 +100,11 @@ namespace ism
 		void set_pixel(size_t i, Color32 value);
 		void set_pixel(size_t x, size_t y, Color32 value);
 
-		NODISCARD int32_t get_width() const noexcept { return m_width; }
-		NODISCARD int32_t get_height() const noexcept { return m_height; }
-		NODISCARD int32_t get_channels() const noexcept { return m_channels; }
-		NODISCARD ImageFormat_ get_format() const noexcept { return m_format; }
-		NODISCARD Vector<byte> const & get_data() const noexcept { return m_pixels; }
-		NODISCARD bool has_mipmaps() const noexcept { return m_has_mipmaps; }
+		NODISCARD auto get_width() const noexcept -> int32_t { return m_width; }
+		NODISCARD auto get_height() const noexcept -> int32_t { return m_height; }
+		NODISCARD auto get_channel_count() const noexcept -> int32_t { return m_channels; }
+		NODISCARD auto get_format() const noexcept -> ImageFormat_ { return m_format; }
+		NODISCARD auto get_data() const noexcept -> Vector<byte> const & { return m_pixels; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

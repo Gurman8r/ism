@@ -42,9 +42,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define _WIN32_WINNT 0x0601 // target Windows 7 or later
-
 #include <sdkddkver.h>
-
 #include <Windows.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

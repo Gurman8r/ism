@@ -434,7 +434,7 @@ namespace ism::ecs
 
 			NODISCARD operator bool() const noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->is_valid_handle(*this);
 			}
 
@@ -442,13 +442,13 @@ namespace ism::ecs
 
 			NODISCARD bool is_alive() const noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->is_alive(*this);
 			}
 
 			handle & kill() noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				m_manager->kill(*this);
 				return (*this);
 			}
@@ -458,7 +458,7 @@ namespace ism::ecs
 			template <class T
 			> handle & add_tag() noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				m_manager->template add_tag<T>(*this);
 				return (*this);
 			}
@@ -466,7 +466,7 @@ namespace ism::ecs
 			template <class T
 			> handle & del_tag() noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				m_manager->template del_tag<T>(*this);
 				return (*this);
 			}
@@ -474,7 +474,7 @@ namespace ism::ecs
 			template <class T
 			> bool has_tag() noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->template has_tag<T>(*this);
 			}
 
@@ -483,21 +483,21 @@ namespace ism::ecs
 			template <class C, class ... Args
 			> auto & add_component(Args && ... args) noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->template add_component<C>(*this, FWD(args)...);
 			}
 
 			template <class C
 			> auto & add_component() noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->template add_component<C>(*this);
 			}
 
 			template <class C
 			> handle & del_component() noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				m_manager->template del_component<C>(*this);
 				return (*this);
 			}
@@ -505,21 +505,21 @@ namespace ism::ecs
 			template <class C
 			> NODISCARD auto & get_component() noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->template get_component<C>(*this);
 			}
 
 			template <class C
 			> NODISCARD auto const & get_component() const noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->template get_component<C>(*this);
 			}
 
 			template <class C
 			> NODISCARD bool has_component() const noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->template has_component<C>(*this);
 			}
 
@@ -528,14 +528,14 @@ namespace ism::ecs
 			template <class S
 			> NODISCARD bool matches_signature() const noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->template matches_signature<S>(*this);
 			}
 
 			template <template <class> class X
 			> NODISCARD bool matches_system() const noexcept
 			{
-				VERIFY(m_manager);
+				ASSERT(m_manager);
 				return m_manager->template matches_system<X>();
 			}
 
@@ -675,8 +675,8 @@ namespace ism::ecs
 					}
 
 					// found two entities that need to be swapped
-					VERIFY(m_entities.get<id_alive>(alive));
-					VERIFY(!m_entities.get<id_alive>(dead));
+					ASSERT(m_entities.get<id_alive>(alive));
+					ASSERT(!m_entities.get<id_alive>(dead));
 					
 					// swap the entities
 					m_entities.swap(alive, dead);
@@ -786,7 +786,7 @@ namespace ism::ecs
 			temp.m_entity	= h.m_entity = i;
 			temp.m_self		= e;
 			temp.m_counter	= h.m_counter;
-			VERIFY(temp);
+			ASSERT(temp);
 			return temp;
 		}
 
