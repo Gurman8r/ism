@@ -25,6 +25,8 @@ namespace ism
 		void _edit_node(NODE node, int32_t tree_node_flags);
 
 		void _show_dockspace(cstring label, bool has_main_menu_bar = false);
+
+		void _show_viewport(cstring label);
 	};
 }
 

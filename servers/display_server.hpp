@@ -277,13 +277,13 @@ namespace ism
 
 	public:
 		WindowID window;
-		int32_t key;
+		KeyCode_ key;
 		int32_t scancode;
-		int32_t action;
+		InputAction_ action;
 		int32_t mods;
 
-		WindowKeyEvent(WindowID window, int32_t key, int32_t scancode, int32_t action, int32_t mods) noexcept
-			: window{ window }, key{ key }, scancode{ scancode }, action{ action }, mods{ mods } {}
+		WindowKeyEvent(WindowID window, KeyCode key, int32_t scancode, InputAction action, int32_t mods) noexcept
+			: window{ window }, key{ (KeyCode_)key }, scancode{ scancode }, action{ (InputAction_)action }, mods{ mods } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -308,12 +308,12 @@ namespace ism
 
 	public:
 		WindowID window;
-		int32_t button;
-		int32_t action;
+		MouseButton_ button;
+		InputAction_ action;
 		int32_t mods;
 
-		WindowMouseButtonEvent(WindowID window, int32_t button, int32_t action, int32_t mods) noexcept
-			: window{ window }, button{ button }, action{ action }, mods{ mods } {}
+		WindowMouseButtonEvent(WindowID window, MouseButton button, InputAction action, int32_t mods) noexcept
+			: window{ window }, button{ (MouseButton_)button }, action{ (InputAction_)action }, mods{ mods } {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

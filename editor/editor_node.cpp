@@ -27,25 +27,7 @@ void EditorNode::process(Duration const & dt)
 	
 	//ImGui::ShowDemoWindow();
 
-	// VIEWPORT
-	ImGuiViewport * main_viewport{ ImGui::GetMainViewport() };
-	ImGui::SetNextWindowPos(ImVec2(main_viewport->GetWorkPos().x + 650, main_viewport->GetWorkPos().y + 20), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
-	ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, { 0, 0 });
-	bool const viewport_is_open{ ImGui::Begin("Viewport", 0, ImGuiWindowFlags_NoScrollbar) };
-	ImGui::PopStyleVar(1);
-	if (viewport_is_open)
-	{
-		ImGuiWindow * current_window{ ImGui::GetCurrentContext()->CurrentWindow };
-		if (ImGui::ItemAdd(current_window->InnerRect, NULL)) {
-			current_window->DrawList->AddImage(
-				*((RID *)test_texture->get_rid()),
-				current_window->InnerRect.Min,
-				current_window->InnerRect.Max,
-				{ 0, 1 }, { 1, 0 }, 0xffffffff);
-		}
-	}
-	ImGui::End();
+	_show_viewport("Viewport");
 
 	Node::process(dt);
 }
@@ -89,4 +71,26 @@ void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
 		}
 		ImGui::End();
 	}
+}
+
+void EditorNode::_show_viewport(cstring label)
+{
+	ImGuiViewport * main_viewport{ ImGui::GetMainViewport() };
+	ImGui::SetNextWindowPos(ImVec2(main_viewport->GetWorkPos().x + 650, main_viewport->GetWorkPos().y + 20), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
+	ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, { 0, 0 });
+	bool const viewport_is_open{ ImGui::Begin(label, 0, ImGuiWindowFlags_NoScrollbar) };
+	ImGui::PopStyleVar(1);
+	if (viewport_is_open)
+	{
+		ImGuiWindow * current_window{ ImGui::GetCurrentContext()->CurrentWindow };
+		if (ImGui::ItemAdd(current_window->InnerRect, NULL)) {
+			current_window->DrawList->AddImage(
+				*((RID *)test_texture->get_rid()),
+				current_window->InnerRect.Min,
+				current_window->InnerRect.Max,
+				{ 0, 1 }, { 1, 0 }, 0xffffffff);
+		}
+	}
+	ImGui::End();
 }

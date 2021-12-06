@@ -317,26 +317,30 @@ RID RenderingDeviceOpenGL::texture_create(TextureFormat const & format, TextureV
 	texture.layers = format.layers;
 	texture.mipmaps = format.mipmaps;
 
-	uint32_t pixel_data_format{}, pixel_data_type{};
+	uint32_t color_composition{}, pixel_data_format{}, pixel_data_type{};
 	switch (texture.data_format)
 	{
 	case DataFormat_R8_UNORM: {
 		texture.image_format = ImageFormat_R8;
+		color_composition = GL_RGBA;
 		pixel_data_format = GL_R;
 		pixel_data_type = GL_UNSIGNED_BYTE;
 	} break;
 	case DataFormat_R8G8_UNORM: {
 		texture.image_format = ImageFormat_RG8;
+		color_composition = GL_RGBA;
 		pixel_data_format = GL_RG;
 		pixel_data_type = GL_UNSIGNED_BYTE;
 	} break;
 	case DataFormat_R8G8B8_UNORM: {
 		texture.image_format = ImageFormat_RGB8;
+		color_composition = GL_RGBA;
 		pixel_data_format = GL_RGB;
 		pixel_data_type = GL_UNSIGNED_BYTE;
 	} break;
 	case DataFormat_R8G8B8A8_UNORM: {
 		texture.image_format = ImageFormat_RGBA8;
+		color_composition = GL_RGBA;
 		pixel_data_format = GL_RGBA;
 		pixel_data_type = GL_UNSIGNED_BYTE;
 	} break;
@@ -347,14 +351,14 @@ RID RenderingDeviceOpenGL::texture_create(TextureFormat const & format, TextureV
 	glBindTexture(sampler_type, GL_RID(texture.handle));
 	
 	if (texture.texture_type == TextureType_2D) {
-		glTexImage2D(sampler_type, 0, GL_RGBA, texture.width, texture.height, 0, pixel_data_format, pixel_data_type, data.data());
+		glTexImage2D(sampler_type, 0, color_composition, texture.width, texture.height, 0, pixel_data_format, pixel_data_type, data.data());
 	}
 
 	if (0 < texture.mipmaps) {
 		glGenerateMipmap(sampler_type);
 	}
 
-	// TODO: I think this should go into a sampler object
+	// TODO: I think this should go into a sampler object or something
 
 	bool const repeated{};
 	int32_t const wrap_mode{ repeated ? GL_REPEAT : GL_CLAMP_TO_EDGE };
@@ -427,11 +431,12 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 	depth_stencil.view = {};
 	depth_stencil.width_2d = depth_stencil.width = framebuffer.size[0];
 	depth_stencil.height_2d = depth_stencil.height = framebuffer.size[1];
-	depth_stencil.mipmaps = 0;
+	depth_stencil.mipmaps = 1;
 	depth_stencil.usage_flags = TextureFlags_DepthStencilAttachment;
 	glGenTextures(1, &GL_RID(depth_stencil.handle));
 	glBindTexture(GL_TEXTURE_2D, GL_RID(depth_stencil.handle));
-	glTexImage2D(GL_TEXTURE_2D,
+	glTexImage2D(
+		GL_TEXTURE_2D,
 		0,
 		GL_DEPTH24_STENCIL8,
 		depth_stencil.width,
@@ -447,6 +452,8 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 		GL_TEXTURE_2D,
 		GL_RID(depth_stencil.handle),
 		0);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 

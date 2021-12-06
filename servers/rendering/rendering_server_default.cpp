@@ -102,7 +102,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 		(uint32_t)image->get_height(),
 		1, // depth
 		1, // layers
-		1, // mipmaps
+		0, // mipmaps
 		TextureType_2D,
 		TextureSamples_1,
 		TextureFlags_Sampling | TextureFlags_CanUpdate | TextureFlags_CanCopyFrom,
