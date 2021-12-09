@@ -14,7 +14,7 @@ location		"%{wks.location}/workspace/%{_ACTION}/%{prj.name}"
 
 dependson{ "assimp", "glew", "glfw", "imgui", }
 
-links{ "assimp", "glew", "glfw", "imgui" }
+links{ "assimp.lib", "IrrXML", "zlibstatic", "glew", "glfw", "imgui" }
 
 defines{
 	"TOOLS_ENABLED=1",

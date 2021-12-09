@@ -15,6 +15,7 @@ namespace ism
 		friend class TYPE;
 		friend class Internals;
 		friend class EmbedClassHelper<TypeObject>;
+		friend struct DefaultDelete<TypeObject>;
 
 		static constexpr StringView __class_static{ "TypeObject" };
 
@@ -107,7 +108,7 @@ namespace ism
 
 		bool mro_internal(OBJ * old_mro);
 
-		Error update_slot(STR const & name);
+		Error_ update_slot(STR const & name);
 
 	protected:
 		template <class Slot> bool slot_defined(TypeObject * base, Slot TypeObject:: * slot) const
@@ -128,7 +129,7 @@ namespace ism
 	public:
 		NODISCARD static OBJ type_getattro(TYPE type, OBJ name);
 
-		static Error type_setattro(TYPE type, OBJ name, OBJ value);
+		static Error_ type_setattro(TYPE type, OBJ name, OBJ value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -151,7 +152,7 @@ namespace ism
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
 
-		NODISCARD bool has_feature(TypeFlags flag) const { return flag_read(m_ptr->tp_flags, flag); }
+		NODISCARD bool has_feature(TypeFlags flag) const { return FLAG_READ(m_ptr->tp_flags, flag); }
 
 		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
 

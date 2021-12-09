@@ -53,7 +53,7 @@ static TextServer *			g_text{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error Main::setup(cstring exepath, int32_t argc, char * argv[])
+Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
 	SINGLETON(OS)->initialize();
 	
@@ -174,7 +174,8 @@ bool Main::start()
 	}
 	
 	SINGLETON(OS)->set_main_loop(main_loop);
-	SINGLETON(OS)->get_main_loop()->initialize();
+
+	main_loop->initialize();
 
 	return true;
 }

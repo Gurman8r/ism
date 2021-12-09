@@ -24,21 +24,29 @@ namespace ism
 
 		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 
-		NODISCARD operator storage_type & () const { return const_cast<storage_type &>(m_string); }
+		NODISCARD operator storage_type & () const & noexcept { return const_cast<storage_type &>(m_string); }
 
 		StringObject() noexcept : m_string{} {}
-
-		StringObject(storage_type const & value) : m_string{ value } {}
-
-		StringObject(storage_type && value) noexcept : m_string{ std::move(value) } {}
 
 		StringObject(cstring value) : m_string{ value } {}
 
 		StringObject(cstring value, size_t n) : m_string{ value, n } {}
 
+		StringObject(cwstring value) : m_string{ util::narrow(WideString{ value }) } {}
+
+		StringObject(cwstring value, size_t n) : m_string{ util::narrow(WideString{ value, n }) } {}
+
+		StringObject(storage_type const & value) : m_string{ value } {}
+
+		StringObject(storage_type && value) noexcept : m_string{ std::move(value) } {}
+
+		StringObject(WideString const & value) : m_string{ util::narrow(value) } {}
+
 		StringObject(StringName const & value) : m_string{ value.string() } {}
 
 		StringObject(Path const & value) : m_string{ value.string() } {}
+
+		StringObject(StringView const & value) : m_string{ (String)value } {}
 
 		StringObject(std::initializer_list<char> init) : m_string{ init } {}
 
@@ -57,6 +65,8 @@ namespace ism
 		void reserve(size_t count) { m_string.reserve(count); }
 
 		void resize(size_t count) { m_string.resize(count); }
+
+		NODISCARD auto & string() const { return const_cast<storage_type &>(m_string); }
 
 		NODISCARD auto c_str() const { return m_string.c_str(); }
 
@@ -96,6 +106,8 @@ namespace ism
 		void reserve(size_t count) { m_ptr->reserve(count); }
 
 		void resize(size_t count) { m_ptr->resize(count); }
+
+		NODISCARD auto & string() const { return m_ptr->string(); }
 
 		NODISCARD auto c_str() const { return m_ptr->c_str(); }
 

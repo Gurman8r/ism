@@ -98,9 +98,11 @@ VideoMode const & DisplayServerWindows::get_desktop_video_mode() const
 		dm.dmSize = sizeof(dm);
 		EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm);
 
-		int32_t const width{ (int32_t)dm.dmPelsWidth };
-		int32_t const height{ (int32_t)dm.dmPelsHeight };
-		result = { { width, height }, util::bit_cast<Vec4b>(dm.dmBitsPerPel), -1 };
+		result = {
+			{ (int32_t)dm.dmPelsWidth, (int32_t)dm.dmPelsHeight },
+			util::bit_cast<Vec4b>(dm.dmBitsPerPel),
+			-1
+		};
 	}
 	return result;
 }
@@ -114,9 +116,11 @@ Vector<VideoMode> const & DisplayServerWindows::get_fullscreen_video_modes() con
 		dm.dmSize = sizeof(dm);
 		for (int32_t count = 0; EnumDisplaySettings(nullptr, count, &dm); ++count)
 		{
-			int32_t const width{ (int32_t)dm.dmPelsWidth };
-			int32_t const height{ (int32_t)dm.dmPelsHeight };
-			VideoMode mode{ { width, height }, util::bit_cast<Vec4b>(dm.dmBitsPerPel), -1 };
+			VideoMode mode{
+				{ (int32_t)dm.dmPelsWidth, (int32_t)dm.dmPelsHeight },
+				util::bit_cast<Vec4b>(dm.dmBitsPerPel),
+				-1
+			};
 			if (!ism::has(result, mode)) { result.push_back(mode); }
 		}
 	}

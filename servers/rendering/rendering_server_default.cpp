@@ -44,41 +44,41 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 {
 	if (!image) { return nullptr; }
 	
-	DataFormat_ data_format{}, data_format_srgb{};
+	ColorFormat_ color_format{}, color_format_srgb{};
 	TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
 	switch (image->get_format())
 	{
 	case ImageFormat_L8: {
-		data_format = DataFormat_R8_UNORM;
+		color_format = ColorFormat_R8_UNORM;
 		swizzle_r = TextureSwizzle_R;
 		swizzle_g = TextureSwizzle_R;
 		swizzle_b = TextureSwizzle_R;
 		swizzle_a = TextureSwizzle_One;
 	} break;
 	case ImageFormat_LA8: {
-		data_format = DataFormat_R8G8_UNORM;
+		color_format = ColorFormat_R8G8_UNORM;
 		swizzle_r = TextureSwizzle_R;
 		swizzle_g = TextureSwizzle_R;
 		swizzle_b = TextureSwizzle_R;
 		swizzle_a = TextureSwizzle_G;
 	} break;
 	case ImageFormat_R8: {
-		data_format = DataFormat_R8_UNORM;
+		color_format = ColorFormat_R8_UNORM;
 		swizzle_r = TextureSwizzle_R;
 		swizzle_g = TextureSwizzle_Zero;
 		swizzle_b = TextureSwizzle_Zero;
 		swizzle_a = TextureSwizzle_One;
 	} break;
 	case ImageFormat_RG8: {
-		data_format = DataFormat_R8G8_UNORM;
+		color_format = ColorFormat_R8G8_UNORM;
 		swizzle_r = TextureSwizzle_R;
 		swizzle_g = TextureSwizzle_G;
 		swizzle_b = TextureSwizzle_Zero;
 		swizzle_a = TextureSwizzle_One;
 	} break;
 	case ImageFormat_RGB8: {
-		data_format = DataFormat_R8G8B8_UNORM;
-		data_format_srgb = DataFormat_R8G8B8_SRGB;
+		color_format = ColorFormat_R8G8B8_UNORM;
+		color_format_srgb = ColorFormat_R8G8B8_SRGB;
 		swizzle_r = TextureSwizzle_R;
 		swizzle_g = TextureSwizzle_G;
 		swizzle_b = TextureSwizzle_B;
@@ -86,8 +86,8 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 
 	} break;
 	case ImageFormat_RGBA8: {
-		data_format = DataFormat_R8G8B8A8_UNORM;
-		data_format_srgb = DataFormat_R8G8B8A8_SRGB;
+		color_format = ColorFormat_R8G8B8A8_UNORM;
+		color_format_srgb = ColorFormat_R8G8B8A8_SRGB;
 		swizzle_r = TextureSwizzle_R;
 		swizzle_g = TextureSwizzle_G;
 		swizzle_b = TextureSwizzle_B;
@@ -97,27 +97,27 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 
 	TextureFormat format
 	{
-		data_format,
+		TextureType_2D,
+		color_format,
 		(uint32_t)image->get_width(),
 		(uint32_t)image->get_height(),
 		1, // depth
 		1, // layers
-		0, // mipmaps
-		TextureType_2D,
+		1, // mipmaps
+		SamplerFilter_Linear,
+		SamplerFilter_Linear,
+		SamplerRepeatMode_ClampToEdge,
+		SamplerRepeatMode_ClampToEdge,
 		TextureSamples_1,
-		TextureFlags_Sampling | TextureFlags_CanUpdate | TextureFlags_CanCopyFrom,
-	};
-
-	TextureView view
-	{
-		data_format_srgb,
+		TextureFlags_Default,
+		color_format_srgb,
 		swizzle_r,
 		swizzle_g,
 		swizzle_b,
-		swizzle_a
+		swizzle_a,
 	};
 
-	return SINGLETON(RenderingDevice)->texture_create(format, view, image->get_data());
+	return SINGLETON(RenderingDevice)->texture_create(format, image->get_data());
 }
 
 Ref<Image> RenderingServerDefault::texture2d_get(RID texture)

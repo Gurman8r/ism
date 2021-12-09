@@ -189,4 +189,6 @@ namespace ism
 	};
 }
 
+template <> constexpr bool ism::mpl::is_string_v<ism::StringView>{ true };
+
 #endif // !_ISM_STRING_VIEW_HPP_

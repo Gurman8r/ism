@@ -82,15 +82,17 @@ namespace ism
 
 		friend class ImageLoader;
 
-		Vector<byte> m_pixels{};
+		Buffer m_pixels{};
 
 		int32_t m_width{}, m_height{}, m_channels{};
 
 		ImageFormat_ m_format{};
 
 	public:
-		Image() noexcept {}
 		virtual ~Image() noexcept override = default;
+		Image() noexcept {}
+		Image(int32_t width, int32_t height, ImageFormat_ format);
+		Image(int32_t width, int32_t height, ImageFormat_ format, Buffer const & data);
 
 		void flip_vertically();
 		void flip_horizontally();
@@ -104,7 +106,7 @@ namespace ism
 		NODISCARD auto get_height() const noexcept -> int32_t { return m_height; }
 		NODISCARD auto get_channel_count() const noexcept -> int32_t { return m_channels; }
 		NODISCARD auto get_format() const noexcept -> ImageFormat_ { return m_format; }
-		NODISCARD auto get_data() const noexcept -> Vector<byte> const & { return m_pixels; }
+		NODISCARD auto get_data() const noexcept -> Buffer const & { return m_pixels; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

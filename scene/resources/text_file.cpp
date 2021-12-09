@@ -21,7 +21,7 @@ void TextFile::reload_from_file()
 {
 }
 
-Error TextFile::load_text(String const & path)
+Error_ TextFile::load_text(Path const & path)
 {
 	return Error_None;
 }

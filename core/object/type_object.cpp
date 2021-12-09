@@ -274,7 +274,7 @@ bool TypeObject::mro_internal(OBJ * in_old_mro)
 	return true;
 }
 
-Error TypeObject::update_slot(STR const & name)
+Error_ TypeObject::update_slot(STR const & name)
 {
 	if (!name || name.empty()) { return Error_Unknown; }
 	switch (hash(name.data(), name.size()))
@@ -330,7 +330,7 @@ Error TypeObject::update_slot(STR const & name)
 		return nullptr;
 	}; } break;
 
-	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ type) -> Error {
+	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ type) -> Error_ {
 		if (STR_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
 		return Error_Unknown;
 	}; } break;
@@ -376,11 +376,11 @@ OBJ TypeObject::type_getattro(TYPE type, OBJ name)
 	return generic_getattr_with_dict(type, name, nullptr);
 }
 
-Error TypeObject::type_setattro(TYPE type, OBJ name, OBJ value)
+Error_ TypeObject::type_setattro(TYPE type, OBJ name, OBJ value)
 {
 	ASSERT(STR::check_(name));
 
-	Error err{ generic_setattr_with_dict(type, name, value, nullptr) };
+	Error_ err{ generic_setattr_with_dict(type, name, value, nullptr) };
 
 	if (err == Error_None)
 	{

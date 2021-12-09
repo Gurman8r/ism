@@ -1,26 +1,15 @@
-#shader vertex
 #version 460 core
 
-layout(location = 0) in vec3 a_position;
-layout(location = 1) in vec3 a_normal;
-layout(location = 2) in vec2 a_texcoord;
+layout(location = 0) in vec3 a_Position;
+layout(location = 1) in vec3 a_Normal;
+layout(location = 2) in vec2 a_Texcoord;
 
-out Vertex { vec3 position; vec3 normal; vec2 texcoord; } V;
+out _Vertex { vec3 Position; vec3 Normal; vec2 Texcoord; } Vertex;
 
-uniform struct Camera
-{
-    vec3    pos;    // Camera Position
-    vec3    dir;    // Camera Direction
-    float   fov;    // Field of View
-    float   near;   // Near Clipping Distance
-    float   far;    // Far Clipping Distance
-    vec2    view;   // Display Size
-} u_camera;
-
-uniform float   u_time;     // Total Time
-uniform vec3    u_position; // Model Position
-uniform vec3    u_scale;    // Model Scale
-uniform vec4    u_rotation; // Model Rotation
+uniform float Time;
+uniform float DeltaTime;
+uniform struct _Transform { vec3 Position; Vec3 Scale; Vec4 Rotation; } Transform;
+uniform struct _Camera { vec3 Position; vec3 Direction; float Fov; float Near; float Far; vec2 View; } Camera;
 
 mat4 transform(vec3 pos, vec4 rot)
 {
@@ -63,20 +52,11 @@ mat4 perspective(float fov, float aspect, float near, float far)
 
 void main()
 {
-    // Model Matrix
-    mat4 m = transform(u_position, vec4(u_rotation.xyz, u_rotation.w * u_time));
-
-    // View Matrix
-    mat4 v = look_at(u_camera.pos, u_camera.dir);
-
-    // Projection Matrix
-    mat4 p = perspective(
-        u_camera.fov, (u_camera.view.x / u_camera.view.y), u_camera.near, u_camera.far
-    );
-
-    // Output
-    gl_Position = (p * v * m) * vec4(a_position * u_scale, 1.0);
-    V.position  = gl_Position.xyz;
-    V.normal    = (transpose(inverse(m)) * vec4(a_normal, 1.0)).xyz;
-    V.texcoord  = a_texcoord;
+    mat4 m = transform(Transform.Position, vec4(Transform.Rotation.xyz, Transform.Rotation.w * Time));
+    mat4 v = look_at(Camera.Position, Camera.Direction);
+    mat4 p = perspective(Camera.Fov, (Camera.View.x / Camera.View.y), Camera.Near, Camera.Far);
+    gl_Position = (p * v * m) * vec4(a_Position * Transform.Scale, 1.0);
+    Vertex.Position = gl_Position.xyz;
+    Vertex.Normal = (transpose(inverse(m)) * vec4(a_Normal, 1.0)).xyz;
+    Vertex.Texcoord = a_Texcoord;
 }

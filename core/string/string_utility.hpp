@@ -1,41 +1,12 @@
 #ifndef _ISM_STRING_UTILITY_HPP_
 #define _ISM_STRING_UTILITY_HPP_
 
-#include <core/string/string_name.hpp>
+#include <core/string/path.hpp>
 
 #include <core/templates/optional.hpp>
 
 namespace ism::util
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, class SFINAE = void> struct format_descriptor {};
-
-	template <class T, class SFINAE = void> struct is_format_numeric { static constexpr bool value{}; };
-
-	template <class T> struct is_format_numeric<T, std::enable_if_t<std::is_arithmetic_v<T>>>
-	{
-		static constexpr bool value{ true };
-
-		static constexpr int32_t index
-		{
-			(std::is_same_v<T, bool>
-			? 0
-			: 1 + (std::is_integral_v<T>
-				? log2(sizeof(T)) * 2 + std::is_unsigned_v<T>
-				: 8 + (std::is_same_v<T, float64_t>
-					? 1 : std::is_same_v<T, float80_t>
-					? 2 : 0)))
-		};
-	};
-
-	template <class T> struct format_descriptor<T, std::enable_if_t<std::is_arithmetic_v<T>>>
-	{
-		static constexpr char const c{ "?bBhHiIqQfdg"[is_format_numeric<T>::index] };
-		static constexpr char const value[2] = { c, '\0' };
-		static String format() { return String{ 1, c }; }
-	};
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ch = char

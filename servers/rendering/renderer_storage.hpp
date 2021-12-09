@@ -1,81 +1,90 @@
 #ifndef _ISM_RENDERER_STORAGE_HPP_
-#define _ISM_RENDERER_STORAGE_HPP_
+#define _ISM_RENDERER_STORAGE_HPP_VertexArray
 
 #include <servers/rendering/rendering_device.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// rendering device structure
-#define RD_STRUCT(m_struct)													\
-public:																		\
-	DEFAULT_COPYABLE_MOVABLE(m_struct);										\
-																			\
-	NODISCARD operator RID() const noexcept { return (RID)(void *)this; }	\
-																			\
-	NODISCARD bool operator==(m_struct const & other) const noexcept {		\
-		return this == std::addressof(other);								\
-	}																		\
-public:
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 namespace ism
 {
-	struct NODISCARD NOVTABLE RD_Base
+	struct NODISCARD RD_Vertexarray final
 	{
-	protected:
-		DEFAULT_COPYABLE_MOVABLE(RD_Base);
+		DEFAULT_COPYABLE_MOVABLE(RD_Vertexarray);
 
-	public:
 		RID handle{};
+
+		RenderPrimitive_ primitive{};
+
+		RID indices{};
+
+		Vector<RID> vertices{};
 	};
 
-	struct NODISCARD RD_VertexArray final : RD_Base
+	struct NODISCARD RD_Vertexbuffer final
 	{
-		RD_STRUCT(RD_VertexArray);
+		DEFAULT_COPYABLE_MOVABLE(RD_Vertexbuffer);
+
+		RID handle{};
+
+		Buffer buffer{};
 	};
 
-	struct NODISCARD RD_VertexBuffer final : RD_Base
+	struct NODISCARD RD_Indexbuffer final
 	{
-		RD_STRUCT(RD_VertexBuffer);
+		DEFAULT_COPYABLE_MOVABLE(RD_Indexbuffer);
+
+		RID handle{};
+
+		Buffer buffer{};
 	};
 
-	struct NODISCARD RD_IndexBuffer final : RD_Base
+	struct NODISCARD RD_Texture final
 	{
-		RD_STRUCT(RD_IndexBuffer);
-	};
+		DEFAULT_COPYABLE_MOVABLE(RD_Texture);
 
-	struct NODISCARD RD_Texture final : RD_Base
-	{
-		RD_STRUCT(RD_Texture);
+		RID handle{};
 
 		TextureType_ texture_type{};
 		
-		DataFormat_ data_format{}, data_format_srgb{};
-		
-		TextureView view{};
+		ColorFormat_ color_format{}, color_format_srgb{};
 		
 		ImageFormat_ image_format{};
-
+		
 		int32_t width{}, height{}, depth{}, layers{}, mipmaps{};
+		
+		SamplerFilter_ min_filter{}, mag_filter{};
 
-		int32_t width_2d{ width }, height_2d{ height }; // size override
+		SamplerRepeatMode_ repeat_s{}, repeat_t{};
+
+		TextureSamples_ samples{};
+		
+		TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
 
 		TextureFlags usage_flags{};
+
+		int32_t width_2d{ width }, height_2d{ height }; // size override
 	};
 
-	struct NODISCARD RD_FrameBuffer final : RD_Base
+	struct NODISCARD RD_Framebuffer final
 	{
-		RD_STRUCT(RD_FrameBuffer);
+		DEFAULT_COPYABLE_MOVABLE(RD_Framebuffer);
 
-		Vector<RID> textures{};
+		RID handle{};
 
-		Vec2i size{};
+		int32_t width{}, height{};
+		
+		Vector<RID> texture_attachments{};
 	};
 
-	struct NODISCARD RD_Shader final : RD_Base
+	struct NODISCARD RD_Shader final
 	{
-		RD_STRUCT(RD_Shader);
+		DEFAULT_COPYABLE_MOVABLE(RD_Shader);
+
+		RID handle{};
+
+		FlatMap<hash_t, int32_t> bindings{};
+
+		Vector<ShaderStageData> stage_data{};
 	};
 }
 

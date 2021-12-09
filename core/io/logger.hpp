@@ -1,7 +1,7 @@
 #ifndef _ISM_LOGGER_HPP_
 #define _ISM_LOGGER_HPP_
 
-#include <core/string/string_utility.hpp>
+#include <core/error/error_macros.hpp>
 #include <core/templates/vector.hpp>
 
 namespace ism
@@ -11,15 +11,9 @@ namespace ism
 	class ISM_API Logger
 	{
 	public:
-		enum Error
-		{
-			ERR_ERROR,
-			ERR_WARNING,
-		};
-
 		virtual void logv(cstring fmt, va_list args, bool is_error = false) = 0;
 
-		virtual void log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Error type = ERR_ERROR);
+		virtual void log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
 
 		void logf(cstring fmt, ...);
 

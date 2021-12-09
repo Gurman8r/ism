@@ -1,9 +1,7 @@
 #ifndef _ISM_MEMORY_HPP_
 #define _ISM_MEMORY_HPP_
 
-#include <core/os/copymem.hpp>
-
-#include <core/templates/utility.hpp>
+#include <core/templates/type_traits.hpp>
 
 #include <memory>
 #include <memory_resource>
@@ -62,26 +60,11 @@ namespace ism
 		return value;
 	}
 
-#define memnew(T) (::ism::_post_initialize(new ("") T))
+#ifndef MEMNEW_DESC
+#define MEMNEW_DESC(T) TOSTR(T)
+#endif
 
-#define memnew_placement(ptr, T) (::ism::_post_initialize(new (ptr, sizeof(T), "") T))
-
-	template <class T, class ... Args
-	> NODISCARD auto construct_or_initialize(Args && ... args) -> T *
-	{
-		if constexpr (0 == sizeof...(Args))
-		{
-			return memnew(T);
-		}
-		else if constexpr (std::is_constructible_v<T>)
-		{
-			return memnew(T(FWD(args)...));
-		}
-		else
-		{
-			return memnew(T{ FWD(args)... });
-		}
-	}
+#define memnew(T) (::ism::_post_initialize(new (MEMNEW_DESC(T)) T))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -111,11 +94,8 @@ namespace ism
 	> ALIAS(PolymorphicAllocator) std::pmr::polymorphic_allocator<T>;
 
 	// Default Allocator
-	class DefaultAllocator final
+	struct DefaultAllocator final
 	{
-	public:
-		constexpr DefaultAllocator() noexcept = default;
-
 		static void * allocate(size_t size) { return memalloc(size); }
 
 		static void deallocate(void * ptr) { memfree(ptr); }
@@ -123,7 +103,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// Global Delete
+	// global delete
 	struct GlobalDelete final
 	{
 		void operator()(void * const ptr) const
@@ -132,7 +112,7 @@ namespace ism
 		}
 	};
 
-	// Default Delete
+	// default delete
 	template <class T> struct DefaultDelete
 	{
 		template <class U> void operator()(U * value) const
@@ -141,6 +121,7 @@ namespace ism
 		}
 	};
 
+	// default delete (void)
 	template <> struct DefaultDelete<void>
 	{
 		void operator()(void * value) const
@@ -157,69 +138,15 @@ namespace ism
 	// No Delete
 	struct NoDelete final
 	{
-		constexpr NoDelete() = default;
-
 		template <class U> void operator()(U *) const {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T
-	> ALIAS(Shared) std::shared_ptr<T>;
-
-	template <class T, class ... Args
-	> NODISCARD auto make_shared(Args && ... args)
-	{
-		return std::make_shared<T>(FWD(args)...);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, class Dx = DefaultDelete<T>
-	> ALIAS(Unique) std::unique_ptr<T, Dx>; // unique pointer
-
-	template <class T, class Dx = DefaultDelete<T>
-	> NODISCARD auto make_scope() -> Unique<T, Dx>
-	{
-		return { memnew(T), Dx{} };
-	}
-
-	template <class T, class Dx = DefaultDelete<T>
-	> NODISCARD auto make_scope(T * ptr) -> Unique<T, Dx>
-	{
-		return { ptr, Dx{} };
-	}
-
-	template <class T, class Dx
-	> NODISCARD auto make_scope(T * ptr, Dx && dx) -> Unique<T, Dx>
-	{
-		return { ptr, FWD(dx) };
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T
-	> ALIAS(Scary) std::unique_ptr<T, NoDelete>; // non-deleting unique-pointer
-
-	template <class T, class ... Args
-	> NODISCARD auto make_scary(Args && ... args) -> Scary<T>
-	{
-		return { memnew((T)(FWD(args)...)), NoDelete{} };
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T> using is_shared_ptr = mpl::is_instantiation<std::shared_ptr, T>;
-
-	template <class T> constexpr bool is_shared_ptr_v{ is_shared_ptr<T>::value };
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class TestResource : public std::pmr::memory_resource
+	// used to 'test' an upstream memory resource
+	class MemoryResourceView : public std::pmr::memory_resource
 	{
 	public:
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		using pointer					= typename byte *;
 		using const_pointer				= typename byte const *;
 		using reference					= typename byte &;
@@ -231,101 +158,95 @@ namespace ism
 		using size_type					= typename size_t;
 		using difference_type			= typename ptrdiff_t;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
-		TestResource(std::pmr::memory_resource * mres, void * data, size_t size) noexcept
-			: m_resource	{ mres }
-			, m_buffer_data	{ (byte *)data }
-			, m_buffer_size	{ size }
+		MemoryResourceView(std::pmr::memory_resource * mres, void const * data, size_t const size) noexcept
+			: m_upstream_resource{ mres }
+			, m_buffer_data{ (byte *)data }
+			, m_buffer_size{ size }
 		{
 		}
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD bool is_default() const noexcept { return this == std::pmr::get_default_resource(); }
-
-		NODISCARD auto get_resource() const noexcept -> std::pmr::memory_resource * const { return m_resource; }
-
-		NODISCARD auto num_allocations() const noexcept -> size_t { return m_num_allocations; }
-
+		NODISCARD bool is_default_resource() const noexcept { return this == std::pmr::get_default_resource(); }
+		NODISCARD auto upstream_resource() const noexcept -> std::pmr::memory_resource * const { return m_upstream_resource; }
 		NODISCARD auto data() const noexcept -> pointer { return m_buffer_data; }
-
 		NODISCARD auto size() const noexcept -> size_t { return m_buffer_size; }
-
-		NODISCARD auto bytes_used() const noexcept -> size_t { return m_buffer_used; }
-
-		NODISCARD auto bytes_free() const noexcept -> size_t { return m_buffer_size - m_buffer_used; }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD auto front() & noexcept -> reference { return *begin(); }
-
-		NODISCARD auto front() const & noexcept -> const_reference { return *cbegin(); }
-
-		NODISCARD auto back() & noexcept -> reference { return *(end() - 1); }
-
-		NODISCARD auto back() const & noexcept -> const_reference { return *(cend() - 1); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		NODISCARD auto num_allocations() const noexcept -> size_t { return m_num_allocations; }
+		NODISCARD auto bytes_used() const noexcept -> size_t { return m_bytes_used; }
+		NODISCARD auto bytes_free() const noexcept -> size_t { return m_buffer_size - m_bytes_used; }
 
 		NODISCARD auto begin() noexcept -> iterator { return m_buffer_data; }
-
 		NODISCARD auto begin() const noexcept -> const_iterator { return m_buffer_data; }
-
 		NODISCARD auto cbegin() const noexcept -> const_iterator { return begin(); }
-
 		NODISCARD auto end() noexcept -> iterator { return m_buffer_data + m_buffer_size; }
-
 		NODISCARD auto end() const noexcept -> const_iterator { return m_buffer_data + m_buffer_size; }
-
 		NODISCARD auto cend() const noexcept -> const_iterator { return end(); }
-
 		NODISCARD auto rbegin() noexcept -> reverse_iterator { return std::make_reverse_iterator(end()); }
-
 		NODISCARD auto rbegin() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(end()); }
-
 		NODISCARD auto crbegin() const noexcept -> const_reverse_iterator { return rbegin(); }
-
 		NODISCARD auto rend() noexcept -> reverse_iterator { return std::make_reverse_iterator(begin()); }
-
 		NODISCARD auto rend() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(begin()); }
-
 		NODISCARD auto crend() const noexcept -> const_reverse_iterator { return crend(); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	private:
 		void * do_allocate(size_t bytes, size_t align) override
 		{
 			++m_num_allocations;
-			m_buffer_used += bytes;
-			return m_resource->allocate(bytes, align);
+			m_bytes_used += bytes;
+			return m_upstream_resource->allocate(bytes, align);
 		}
 
 		void do_deallocate(void * ptr, size_t bytes, size_t align) override
 		{
 			--m_num_allocations;
-			m_buffer_used -= bytes;
-			return m_resource->deallocate(ptr, bytes, align);
+			m_bytes_used -= bytes;
+			return m_upstream_resource->deallocate(ptr, bytes, align);
 		}
 
 		bool do_is_equal(std::pmr::memory_resource const & value) const noexcept override
 		{
-			return m_resource->is_equal(value);
+			return m_upstream_resource->is_equal(value);
 		}
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	private:
-		std::pmr::memory_resource * m_resource;
+		std::pmr::memory_resource * const m_upstream_resource;
 		pointer const m_buffer_data;
 		size_t const m_buffer_size;
 
 		size_t m_num_allocations{};
-		size_t m_buffer_used{};
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		size_t m_bytes_used{};
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API MemoryArena final
+	{
+		std::vector<byte> m_data;
+		std::pmr::monotonic_buffer_resource m_buffer;
+		std::pmr::unsynchronized_pool_resource m_pool;
+		MemoryResourceView m_view;
+		std::pmr::memory_resource * m_prev;
+
+	public:
+		NON_COPYABLE(MemoryArena);
+		NON_MOVABLE(MemoryArena);
+
+		MemoryArena(size_t const size);
+
+		~MemoryArena();
+
+		NODISCARD auto operator*() const noexcept -> MemoryResourceView & {
+			return const_cast<MemoryResourceView &>(m_view);
+		}
+
+		NODISCARD auto operator->() const noexcept -> MemoryResourceView * {
+			return const_cast<MemoryResourceView *>(&m_view);
+		}
+	};
+
+	ISM_API_FUNC(MemoryArena *) get_current_memory_arena();
+
+	ISM_API_FUNC(MemoryArena *) push_memory_arena(size_t const size);
+
+	ISM_API_FUNC(void) pop_memory_arena();
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

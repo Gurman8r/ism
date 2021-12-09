@@ -1,14 +1,14 @@
 #ifndef _ISM_PATH_HPP_
 #define _ISM_PATH_HPP_
 
-#include <core/string/string_utility.hpp>
+#include <core/string/string_name.hpp>
 
 namespace ism
 {
 	class ISM_API Path
 	{
 	private:
-		WideString m_text{};
+		String m_text;
 
 	public:
 		~Path() {}
@@ -17,37 +17,37 @@ namespace ism
 
 		Path(nullptr_t) : m_text{} {}
 
-		Path(cwstring value) : m_text{ value } {}
+		Path(cstring value) : m_text{ value } {}
 
-		Path(cstring value) : m_text{ util::widen((String)value) } {}
+		Path(Path const & value) : m_text{ value } {}
 
-		Path(Path const & value) : m_text{ value.m_text } {}
+		Path(Path && value) noexcept : m_text{} { swap(std::move(value)); }
 
-		Path(WideString const & value) : m_text{ value } {}
+		Path(String const & value) : m_text{ value } {}
 
-		Path(String const & value) : m_text{ util::widen(value) } {}
+		Path(String && value) noexcept : m_text{ std::move(value) } {}
 
-		Path(StringView const & value) : m_text{ util::widen((String)value) } {}
+		Path(StringName const & value) : m_text{ value } {}
 
-	public:
+		Path(StringName && value) noexcept : m_text{ std::move(value).string() } {}
+
+		Path(StringView const & value) : m_text{ value } {}
+
+		Path & swap(Path & value) noexcept { return m_text.swap(value.m_text), (*this); }
+
+		Path & operator=(Path const & value) { Path temp{ value }; return swap(temp); }
+
+		Path & operator=(Path && value) noexcept { return swap(std::move(value)); }
+
 		void clear() noexcept { m_text.clear(); }
 
-		void assign(Path const & value) { m_text.assign(value.m_text); }
-
-		void swap(Path & value) noexcept { m_text.swap(value.m_text); }
-
-		void operator=(Path const & value) { assign(value); }
-
-		void operator=(Path && value) noexcept { this->swap(std::move(value)); }
-
-	public:
 		NODISCARD operator void * () const noexcept { return !m_text.empty() ? (void *)1 : nullptr; }
 
-		NODISCARD bool operator==(WideString const & value) { return m_text == value; }
+		NODISCARD bool operator==(String const & value) { return m_text == value; }
 
-		NODISCARD bool operator==(cwstring value) { return m_text == value; }
+		NODISCARD bool operator==(cstring value) { return m_text == value; }
 
-		NODISCARD bool operator!=(WideString const & value) { return m_text != value; }
+		NODISCARD bool operator!=(String const & value) { return m_text != value; }
 
 		NODISCARD bool operator<(Path const & value) { return m_text < value.m_text; }
 
@@ -55,13 +55,9 @@ namespace ism
 
 		NODISCARD bool operator==(Path const & value) { return m_text == value.m_text; }
 
-		NODISCARD auto native() noexcept -> WideString & { return m_text; }
+		NODISCARD auto data() const noexcept -> cstring { return m_text.data(); }
 
-		NODISCARD auto native() const noexcept -> WideString const & { return m_text; }
-
-		NODISCARD auto c_str() const noexcept -> cwstring { return m_text.c_str(); }
-
-		NODISCARD auto data() const noexcept -> cwstring { return m_text.data(); }
+		NODISCARD auto c_str() const noexcept -> cstring { return m_text.data(); }
 
 		NODISCARD auto length() const noexcept -> size_t { return m_text.size(); }
 
@@ -71,41 +67,52 @@ namespace ism
 
 		NODISCARD bool empty() const noexcept { return m_text.empty(); }
 
-		NODISCARD auto wstring() const noexcept -> WideString { return m_text; }
+		NODISCARD auto string() const & noexcept -> String & { return const_cast<String &>(m_text); }
 
-		NODISCARD auto string() const noexcept -> String { return util::narrow(m_text); }
+		NODISCARD auto string() && noexcept -> String && { return std::move(m_text); }
 
-		NODISCARD operator WideString() const noexcept { return m_text; }
-
-		NODISCARD operator String() const noexcept { return util::narrow(m_text); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		NODISCARD operator String() const noexcept { return m_text; }
 	};
+
+	inline void to_json(JSON & json, Path const & value)
+	{
+		json = (String const &)value;
+	}
+
+	inline void from_json(JSON const & json, Path & value)
+	{
+		json.get_to((String &)value);
+	}
 
 	template <> struct ism::Hasher<Path>
 	{
-		Hasher() = default;
 		hash_t operator()(Path const & value) const
 		{
 			return value.hash_code();
 		}
 	};
 
-	inline bool operator==(WideString const & lhs, Path const & rhs) { return lhs == rhs.wstring(); }
+	inline bool operator==(String const & lhs, Path const & rhs)
+	{
+		return lhs == rhs.string();
+	}
 
-	inline bool operator==(cwstring lhs, Path const & rhs) { return lhs == rhs.wstring(); }
+	inline bool operator!=(String const & lhs, Path const & rhs)
+	{
+		return lhs != rhs.string();
+	}
 
-	inline bool operator==(String const & lhs, Path const & rhs) { return lhs == rhs.string(); }
+	inline bool operator==(cstring lhs, Path const & rhs)
+	{
+		return lhs == rhs.string();
+	}
 
-	inline bool operator==(cstring lhs, Path const & rhs) { return lhs == rhs.string(); }
-
-	inline bool operator!=(WideString const & lhs, Path const & rhs) { return lhs != rhs.wstring(); }
-
-	inline bool operator!=(cwstring lhs, Path const & rhs) { return lhs != rhs.wstring(); }
-
-	inline bool operator!=(String const & lhs, Path const & rhs) { return lhs != rhs.string(); }
-
-	inline bool operator!=(cstring lhs, Path const & rhs) { return lhs != rhs.string(); }
+	inline bool operator!=(cstring lhs, Path const & rhs)
+	{
+		return lhs != rhs.string();
+	}
 }
+
+template <> constexpr bool ism::mpl::is_string_v<ism::Path>{ true };
 
 #endif // !_ISM_PATH_HPP_

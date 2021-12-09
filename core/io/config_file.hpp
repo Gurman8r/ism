@@ -14,11 +14,11 @@ namespace ism
 	public:
 		ConfigFile() noexcept {}
 
-		ConfigFile(String const & path) noexcept { open(path); }
+		ConfigFile(Path const & path) noexcept { open(path); }
 
 		virtual ~ConfigFile() { close(); }
 
-		virtual bool open(String const & path);
+		virtual bool open(Path const & path);
 
 		virtual void close();
 

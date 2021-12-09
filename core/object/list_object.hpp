@@ -49,7 +49,7 @@ namespace ism
 		> void resize(size_t count, Value && value) { m_list.resize(count, FWD_OBJ(value)); }
 
 		template <class Index = OBJ
-		> auto del(Index && i) -> Error
+		> auto del(Index && i) -> Error_
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
@@ -143,7 +143,7 @@ namespace ism
 		NODISCARD operator storage_type & () const { return m_ptr->operator storage_type & (); }
 
 		template <class Index = OBJ
-		> auto del(Index && i) const -> Error { return m_ptr->del(FWD(i)); }
+		> auto del(Index && i) const -> Error_ { return m_ptr->del(FWD(i)); }
 
 		void clear() const { m_ptr->clear(); }
 

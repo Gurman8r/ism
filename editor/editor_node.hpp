@@ -3,6 +3,8 @@
 
 #include <scene/main/scene_tree.hpp>
 
+#include <scene/resources/mesh.hpp>
+#include <scene/resources/shader.hpp>
 #include <scene/resources/texture.hpp>
 
 namespace ism
@@ -18,12 +20,14 @@ namespace ism
 
 		virtual void process(Duration const & dt) override;
 
-		Ref<Image> test_image;
-		Ref<ImageTexture> test_texture;
+		HashMap<String, Ref<Image>> images{};
+		HashMap<String, Ref<Texture>> textures{};
+		HashMap<String, Ref<Shader>> shaders{};
+		HashMap<String, Ref<Mesh>> meshes{};
+		RID color_buffer{}, depth_stencil_buffer{};
+		RID framebuffer{};
 
 	protected:
-		void _edit_node(NODE node, int32_t tree_node_flags);
-
 		void _show_dockspace(cstring label, bool has_main_menu_bar = false);
 
 		void _show_viewport(cstring label);

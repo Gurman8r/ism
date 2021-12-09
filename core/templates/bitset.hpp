@@ -6,36 +6,36 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // read flag at index
-#define flag_read(value, index)				(((index) & (value)) == (index))
+#define FLAG_READ(value, index)				(((index) & (value)) == (index))
 
 // set flag at index
-#define flag_set(value, index)				((value) |= (index))
+#define FLAG_SET(value, index)				((value) |= (index))
 
 // clear flag at index
-#define flag_clear(value, index)			((value) &= ~(index))
+#define FLAG_CLEAR(value, index)			((value) &= ~(index))
 
 // conditional set or clear flag
-#define flag_write(value, index, boolean)	((boolean) ? flag_set(value, index) : flag_clear(value, index))
+#define FLAG_WRITE(value, index, boolean)	((boolean) ? FLAG_SET(value, index) : FLAG_CLEAR(value, index))
 
 // map between flag bits
-#define flag_map(dst, dindex, src, sindex)	flag_write(dst, dindex, flag_read(src, sindex))
+#define FLAG_MAP(dst, dindex, src, sindex)	FLAG_WRITE(dst, dindex, FLAG_READ(src, sindex))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // read bit at index
-#define bit_read(value, index)				flag_read(value >> index, 1)
+#define BIT_READ(value, index)				FLAG_READ(value >> index, 1)
 
 // set bit at index
-#define bit_set(value, index)				flag_set(value, 1 << index)
+#define BIT_SET(value, index)				FLAG_SET(value, 1 << index)
 
 // clear bit at index
-#define bit_clear(value, index)				flag_clear(value, 1 << index)
+#define BIT_CLEAR(value, index)				FLAG_CLEAR(value, 1 << index)
 
 // conditional set or clear bit
-#define bit_write(value, index, boolean)	flag_write(value, 1 << index, boolean)
+#define BIT_WRITE(value, index, boolean)	FLAG_WRITE(value, 1 << index, boolean)
 
 // map between bits
-#define bit_map(dst, dindex, src, sindex)	bit_write(dst, dindex, bit_read(src, sindex))
+#define BIT_MAP(dst, dindex, src, sindex)	BIT_WRITE(dst, dindex, BIT_READ(src, sindex))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -158,14 +158,14 @@ namespace ism
 
 		NODISCARD constexpr bool read(size_t const i) const noexcept
 		{
-			return bit_read(m_words[i / bits_per_word], i % bits_per_word);
+			return BIT_READ(m_words[i / bits_per_word], i % bits_per_word);
 		}
 
 		constexpr bool clear(size_t const i) noexcept
 		{
 			bool const temp{ this->read(i) };
 			
-			bit_clear(m_words[i / bits_per_word], i % bits_per_word);
+			BIT_CLEAR(m_words[i / bits_per_word], i % bits_per_word);
 			
 			return temp;
 		}
@@ -174,7 +174,7 @@ namespace ism
 		{
 			bool const temp{ !this->read(i) };
 			
-			bit_set(m_words[i / bits_per_word], i % bits_per_word);
+			BIT_SET(m_words[i / bits_per_word], i % bits_per_word);
 			
 			return temp;
 		}

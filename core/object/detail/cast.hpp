@@ -289,9 +289,13 @@ public:																								\
 
 		static OBJ cast(T const & src, ReturnValuePolicy_, OBJ const &) { return STR({ src }); }
 
-		template <class U> operator U & () { return static_cast<U &>(***value); }
+		static OBJ cast(T && src, ReturnValuePolicy_, OBJ const &) noexcept { return STR({ std::move(src) }); }
 
-		template <class U> operator U * () { return static_cast<U *>(&***value); }
+		template <class U> operator U * () { return (U *)(&***value); }
+
+		template <class U> operator U & () { return (U &)(***value); }
+
+		template <class U> operator U && () { return (U &&)std::move(***value); }
 
 		template <class U> using cast_op_type = ism::cast_op_type<U>;
 
@@ -305,8 +309,11 @@ public:																								\
 	> struct TypeCaster<std::basic_string<Ch, Tr, Al>, std::enable_if_t<mpl::is_char_v<Ch>>>
 		: StringCaster<std::basic_string<Ch, Tr, Al>> {};
 
-	template <> struct TypeCaster<StringView>
-		: StringCaster<String> {};
+	template <> struct TypeCaster<Path> : StringCaster<String> {};
+
+	template <> struct TypeCaster<StringName> : StringCaster<String> {};
+
+	template <> struct TypeCaster<StringView> : StringCaster<String> {};
 
 	template <class T> struct TypeCaster<T, std::enable_if_t<mpl::is_char_v<T>>> : TypeCaster<BasicString<T>>
 	{

@@ -2,6 +2,7 @@
 #define _ISM_VECTOR_HPP_
 
 #include <core/os/memory.hpp>
+#include <core/io/json.hpp>
 
 #include <forward_list>
 #include <vector>
@@ -11,8 +12,22 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// vector
-	template <class _Ty
-	> ALIAS(Vector) std::vector<_Ty, PolymorphicAllocator<_Ty>>;
+	template <class T
+	> ALIAS(Vector) std::pmr::vector<T>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T
+	> void to_json(JSON & json, Vector<T> const & value)
+	{
+		json = (std::pmr::vector<T> const &)value;
+	}
+
+	template <class T
+	> void from_json(JSON const & json, Vector<T> & value)
+	{
+		json.get_to((std::pmr::vector<T> &)value);
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

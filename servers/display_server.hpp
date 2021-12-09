@@ -9,6 +9,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	DECL_HANDLE(CursorID);
 	DECL_HANDLE(MonitorID);
 	DECL_HANDLE(WindowID);
 
@@ -22,15 +23,43 @@ namespace ism
 	ALIAS(WindowFocusCallback)				void(*)(WindowID, int32_t);
 	ALIAS(WindowFramebufferResizeCallback)	void(*)(WindowID, int32_t, int32_t);
 	ALIAS(WindowIconifyCallback)			void(*)(WindowID, int32_t);
-	ALIAS(WindowKeyCallback)				void(*)(WindowID, int32_t, int32_t, int32_t, int32_t);
+	ALIAS(WindowKeyCallback)				void(*)(WindowID, KeyCode, int32_t, InputAction, int32_t);
 	ALIAS(WindowMaximizeCallback)			void(*)(WindowID, int32_t);
-	ALIAS(WindowMouseButtonCallback)		void(*)(WindowID, int32_t, int32_t, int32_t);
+	ALIAS(WindowMouseButtonCallback)		void(*)(WindowID, MouseButton, InputAction, int32_t);
 	ALIAS(WindowMouseEnterCallback)			void(*)(WindowID, int32_t);
 	ALIAS(WindowMousePositionCallback)		void(*)(WindowID, double_t, double_t);
 	ALIAS(WindowPositionCallback)			void(*)(WindowID, int32_t, int32_t);
 	ALIAS(WindowRefreshCallback)			void(*)(WindowID);
 	ALIAS(WindowSizeCallback)				void(*)(WindowID, int32_t, int32_t);
 	ALIAS(WindowScrollCallback)				void(*)(WindowID, double_t, double_t);
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// cursor mode
+	ENUM_INT(CursorMode)
+	{
+		CursorMode_Normal		, // normal
+		CursorMode_Hidden		, // hidden
+		CursorMode_Disabled		, // disabled
+	};
+
+	// cursor shape
+	ENUM_INT(CursorShape)
+	{
+		CursorShape_Arrow			, // arrow
+		CursorShape_IBeam			, // ibeam
+		CursorShape_Crosshair		, // crosshair
+		CursorShape_PointingHand	, // pointing hand
+		CursorShape_EW				, // ew
+		CursorShape_NS				, // ns
+		CursorShape_NESW			, // nesw
+		CursorShape_NWSE			, // nwse
+		CursorShape_ResizeAll		, // resize all
+		CursorShape_NotAllowed		, // not allowed
+		CursorShape_HResize			, // hresize
+		CursorShape_VResize			, // vresize
+		CursorShape_Hand			, // hand
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -99,21 +128,20 @@ namespace ism
 		Vec4b	bits_per_pixel	{ 8, 8, 8, 8 };
 		int32_t	refresh_rate	{ -1 };
 
-		NODISCARD bool operator==(VideoMode const & other) const noexcept { return compare(other) == 0; }
-		NODISCARD bool operator!=(VideoMode const & other) const noexcept { return compare(other) != 0; }
-		NODISCARD bool operator< (VideoMode const & other) const noexcept { return compare(other) < 0; }
-		NODISCARD bool operator> (VideoMode const & other) const noexcept { return compare(other) > 0; }
-		NODISCARD bool operator<=(VideoMode const & other) const noexcept { return compare(other) <= 0; }
-		NODISCARD bool operator>=(VideoMode const & other) const noexcept { return compare(other) >= 0; }
-
-		NODISCARD int32_t compare(VideoMode const & other) const noexcept
-		{
+		NODISCARD int32_t compare(VideoMode const & other) const noexcept {
 			if (this == std::addressof(other)) { return 0; }
 			if (auto cmp{ CMP(size, other.size) }; cmp != 0) { return cmp; }
 			if (auto cmp{ CMP(bits_per_pixel, other.bits_per_pixel) }; cmp != 0) { return cmp; }
 			if (auto cmp{ CMP(refresh_rate, other.refresh_rate) }; cmp != 0) { return cmp; }
 			return 0;
 		}
+
+		NODISCARD bool operator==(VideoMode const & other) const noexcept { return compare(other) == 0; }
+		NODISCARD bool operator!=(VideoMode const & other) const noexcept { return compare(other) != 0; }
+		NODISCARD bool operator< (VideoMode const & other) const noexcept { return compare(other) < 0; }
+		NODISCARD bool operator> (VideoMode const & other) const noexcept { return compare(other) > 0; }
+		NODISCARD bool operator<=(VideoMode const & other) const noexcept { return compare(other) <= 0; }
+		NODISCARD bool operator>=(VideoMode const & other) const noexcept { return compare(other) >= 0; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

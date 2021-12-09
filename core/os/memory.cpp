@@ -28,13 +28,13 @@ static struct NODISCARD MemoryTracker final
 #if LEAK_DISPLAY_ENABLED
 		if (!records.empty())
 		{
-			SINGLETON(OS)->print("\n\nMEMORY LEAKS DETECTED:");
+			std::cerr << "\nMEMORY LEAKS DETECTED:\n";
 
 			for (size_t i = 0; i < records.size(); ++i)
 			{
 				records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
 				{
-					SINGLETON(OS)->print("\nindex:%zu, size:%zu, addr:%p, desc: %s", index, size, addr, desc);
+					std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr << " | desc:\"" << desc << "\"\n";
 				});
 			}
 
@@ -126,6 +126,65 @@ void operator delete(void * ptr, char const * desc)
 void operator delete(void * ptr, void * (*alloc_fn)(size_t))
 {
 	CRASH("this should never be called");
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+MemoryArena::MemoryArena(size_t const size)
+	: m_data	{ size, byte{}, std::allocator<byte>{} }
+	, m_buffer	{ m_data.data(), size }
+	, m_pool	{ &m_buffer }
+	, m_view	{ &m_pool, m_data.data(), size }
+	, m_prev	{ std::pmr::get_default_resource() }
+{
+	std::pmr::set_default_resource(&m_view);
+}
+
+MemoryArena::~MemoryArena()
+{
+	m_pool.release();
+	m_buffer.release();
+	std::pmr::set_default_resource(m_prev);
+}
+
+static struct MemoryArenaStack final
+{
+	std::vector<MemoryArena *> data{};
+
+	~MemoryArenaStack() { ASSERT(data.empty()); }
+}
+g_arena_stack{};
+
+MemoryArena * ism::get_current_memory_arena()
+{
+	if (g_arena_stack.data.empty())
+	{
+		return nullptr;
+	}
+	else
+	{
+		return g_arena_stack.data.back();
+	}
+}
+
+MemoryArena * ism::push_memory_arena(size_t const size)
+{
+	void * ptr{ std::pmr::new_delete_resource()->allocate(sizeof(MemoryArena)) };
+
+	return g_arena_stack.data.emplace_back(::new(ptr) MemoryArena{ size });
+}
+
+void ism::pop_memory_arena()
+{
+	ASSERT(!g_arena_stack.data.empty());
+
+	MemoryArena * ptr{ g_arena_stack.data.back() };
+	
+	ptr->~MemoryArena();
+	
+	std::pmr::new_delete_resource()->deallocate(ptr, sizeof(MemoryArena));
+	
+	g_arena_stack.data.pop_back();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

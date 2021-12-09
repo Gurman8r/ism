@@ -20,8 +20,6 @@ OS::OS()
 OS::~OS()
 {
 	memdelete(m_logger);
-
-	singleton = nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -65,25 +63,45 @@ void OS::pause()
 #endif
 }
 
-void OS::print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Logger::Error type)
+void OS::print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
 {
 	m_logger->log_error(func, file, line, desc, message, type);
+}
+
+void OS::print(String const & s)
+{
+	print("%s", s.c_str());
 }
 
 void OS::print(cstring fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	m_logger->logv(fmt, args, false);
+	printv(fmt, args);
 	va_end(args);
+}
+
+void OS::printv(cstring fmt, va_list args)
+{
+	m_logger->logv(fmt, args, false);
+}
+
+void OS::printerr(String const & s)
+{
+	printerr("%s", s.c_str());
 }
 
 void OS::printerr(cstring fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	m_logger->logv(fmt, args, true);
+	printerrv(fmt, args);
 	va_end(args);
+}
+
+void OS::printerrv(cstring fmt, va_list args)
+{
+	m_logger->logv(fmt, args, true);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

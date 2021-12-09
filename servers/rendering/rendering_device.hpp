@@ -7,242 +7,238 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	/* GENERIC */
-
-	ENUM_INT(DataFormat)
+	ENUM_INT(ColorFormat)
 	{
-		DataFormat_R4G4_UNORM_PACK8,
-		DataFormat_R4G4B4A4_UNORM_PACK16,
-		DataFormat_B4G4R4A4_UNORM_PACK16,
-		DataFormat_R5G6B5_UNORM_PACK16,
-		DataFormat_B5G6R5_UNORM_PACK16,
-		DataFormat_R5G5B5A1_UNORM_PACK16,
-		DataFormat_B5G5R5A1_UNORM_PACK16,
-		DataFormat_A1R5G5B5_UNORM_PACK16,
-		DataFormat_R8_UNORM,
-		DataFormat_R8_SNORM,
-		DataFormat_R8_USCALED,
-		DataFormat_R8_SSCALED,
-		DataFormat_R8_UINT,
-		DataFormat_R8_SINT,
-		DataFormat_R8_SRGB,
-		DataFormat_R8G8_UNORM,
-		DataFormat_R8G8_SNORM,
-		DataFormat_R8G8_USCALED,
-		DataFormat_R8G8_SSCALED,
-		DataFormat_R8G8_UINT,
-		DataFormat_R8G8_SINT,
-		DataFormat_R8G8_SRGB,
-		DataFormat_R8G8B8_UNORM,
-		DataFormat_R8G8B8_SNORM,
-		DataFormat_R8G8B8_USCALED,
-		DataFormat_R8G8B8_SSCALED,
-		DataFormat_R8G8B8_UINT,
-		DataFormat_R8G8B8_SINT,
-		DataFormat_R8G8B8_SRGB,
-		DataFormat_B8G8R8_UNORM,
-		DataFormat_B8G8R8_SNORM,
-		DataFormat_B8G8R8_USCALED,
-		DataFormat_B8G8R8_SSCALED,
-		DataFormat_B8G8R8_UINT,
-		DataFormat_B8G8R8_SINT,
-		DataFormat_B8G8R8_SRGB,
-		DataFormat_R8G8B8A8_UNORM,
-		DataFormat_R8G8B8A8_SNORM,
-		DataFormat_R8G8B8A8_USCALED,
-		DataFormat_R8G8B8A8_SSCALED,
-		DataFormat_R8G8B8A8_UINT,
-		DataFormat_R8G8B8A8_SINT,
-		DataFormat_R8G8B8A8_SRGB,
-		DataFormat_B8G8R8A8_UNORM,
-		DataFormat_B8G8R8A8_SNORM,
-		DataFormat_B8G8R8A8_USCALED,
-		DataFormat_B8G8R8A8_SSCALED,
-		DataFormat_B8G8R8A8_UINT,
-		DataFormat_B8G8R8A8_SINT,
-		DataFormat_B8G8R8A8_SRGB,
-		DataFormat_A8B8G8R8_UNORM_PACK32,
-		DataFormat_A8B8G8R8_SNORM_PACK32,
-		DataFormat_A8B8G8R8_USCALED_PACK32,
-		DataFormat_A8B8G8R8_SSCALED_PACK32,
-		DataFormat_A8B8G8R8_UINT_PACK32,
-		DataFormat_A8B8G8R8_SINT_PACK32,
-		DataFormat_A8B8G8R8_SRGB_PACK32,
-		DataFormat_A2R10G10B10_UNORM_PACK32,
-		DataFormat_A2R10G10B10_SNORM_PACK32,
-		DataFormat_A2R10G10B10_USCALED_PACK32,
-		DataFormat_A2R10G10B10_SSCALED_PACK32,
-		DataFormat_A2R10G10B10_UINT_PACK32,
-		DataFormat_A2R10G10B10_SINT_PACK32,
-		DataFormat_A2B10G10R10_UNORM_PACK32,
-		DataFormat_A2B10G10R10_SNORM_PACK32,
-		DataFormat_A2B10G10R10_USCALED_PACK32,
-		DataFormat_A2B10G10R10_SSCALED_PACK32,
-		DataFormat_A2B10G10R10_UINT_PACK32,
-		DataFormat_A2B10G10R10_SINT_PACK32,
-		DataFormat_R16_UNORM,
-		DataFormat_R16_SNORM,
-		DataFormat_R16_USCALED,
-		DataFormat_R16_SSCALED,
-		DataFormat_R16_UINT,
-		DataFormat_R16_SINT,
-		DataFormat_R16_SFLOAT,
-		DataFormat_R16G16_UNORM,
-		DataFormat_R16G16_SNORM,
-		DataFormat_R16G16_USCALED,
-		DataFormat_R16G16_SSCALED,
-		DataFormat_R16G16_UINT,
-		DataFormat_R16G16_SINT,
-		DataFormat_R16G16_SFLOAT,
-		DataFormat_R16G16B16_UNORM,
-		DataFormat_R16G16B16_SNORM,
-		DataFormat_R16G16B16_USCALED,
-		DataFormat_R16G16B16_SSCALED,
-		DataFormat_R16G16B16_UINT,
-		DataFormat_R16G16B16_SINT,
-		DataFormat_R16G16B16_SFLOAT,
-		DataFormat_R16G16B16A16_UNORM,
-		DataFormat_R16G16B16A16_SNORM,
-		DataFormat_R16G16B16A16_USCALED,
-		DataFormat_R16G16B16A16_SSCALED,
-		DataFormat_R16G16B16A16_UINT,
-		DataFormat_R16G16B16A16_SINT,
-		DataFormat_R16G16B16A16_SFLOAT,
-		DataFormat_R32_UINT,
-		DataFormat_R32_SINT,
-		DataFormat_R32_SFLOAT,
-		DataFormat_R32G32_UINT,
-		DataFormat_R32G32_SINT,
-		DataFormat_R32G32_SFLOAT,
-		DataFormat_R32G32B32_UINT,
-		DataFormat_R32G32B32_SINT,
-		DataFormat_R32G32B32_SFLOAT,
-		DataFormat_R32G32B32A32_UINT,
-		DataFormat_R32G32B32A32_SINT,
-		DataFormat_R32G32B32A32_SFLOAT,
-		DataFormat_R64_UINT,
-		DataFormat_R64_SINT,
-		DataFormat_R64_SFLOAT,
-		DataFormat_R64G64_UINT,
-		DataFormat_R64G64_SINT,
-		DataFormat_R64G64_SFLOAT,
-		DataFormat_R64G64B64_UINT,
-		DataFormat_R64G64B64_SINT,
-		DataFormat_R64G64B64_SFLOAT,
-		DataFormat_R64G64B64A64_UINT,
-		DataFormat_R64G64B64A64_SINT,
-		DataFormat_R64G64B64A64_SFLOAT,
-		DataFormat_B10G11R11_UFLOAT_PACK32,
-		DataFormat_E5B9G9R9_UFLOAT_PACK32,
-		DataFormat_D16_UNORM,
-		DataFormat_X8_D24_UNORM_PACK32,
-		DataFormat_D32_SFLOAT,
-		DataFormat_S8_UINT,
-		DataFormat_D16_UNORM_S8_UINT,
-		DataFormat_D24_UNORM_S8_UINT,
-		DataFormat_D32_SFLOAT_S8_UINT,
-		DataFormat_BC1_RGB_UNORM_BLOCK,
-		DataFormat_BC1_RGB_SRGB_BLOCK,
-		DataFormat_BC1_RGBA_UNORM_BLOCK,
-		DataFormat_BC1_RGBA_SRGB_BLOCK,
-		DataFormat_BC2_UNORM_BLOCK,
-		DataFormat_BC2_SRGB_BLOCK,
-		DataFormat_BC3_UNORM_BLOCK,
-		DataFormat_BC3_SRGB_BLOCK,
-		DataFormat_BC4_UNORM_BLOCK,
-		DataFormat_BC4_SNORM_BLOCK,
-		DataFormat_BC5_UNORM_BLOCK,
-		DataFormat_BC5_SNORM_BLOCK,
-		DataFormat_BC6H_UFLOAT_BLOCK,
-		DataFormat_BC6H_SFLOAT_BLOCK,
-		DataFormat_BC7_UNORM_BLOCK,
-		DataFormat_BC7_SRGB_BLOCK,
-		DataFormat_ETC2_R8G8B8_UNORM_BLOCK,
-		DataFormat_ETC2_R8G8B8_SRGB_BLOCK,
-		DataFormat_ETC2_R8G8B8A1_UNORM_BLOCK,
-		DataFormat_ETC2_R8G8B8A1_SRGB_BLOCK,
-		DataFormat_ETC2_R8G8B8A8_UNORM_BLOCK,
-		DataFormat_ETC2_R8G8B8A8_SRGB_BLOCK,
-		DataFormat_EAC_R11_UNORM_BLOCK,
-		DataFormat_EAC_R11_SNORM_BLOCK,
-		DataFormat_EAC_R11G11_UNORM_BLOCK,
-		DataFormat_EAC_R11G11_SNORM_BLOCK,
-		DataFormat_ASTC_4x4_UNORM_BLOCK,
-		DataFormat_ASTC_4x4_SRGB_BLOCK,
-		DataFormat_ASTC_5x4_UNORM_BLOCK,
-		DataFormat_ASTC_5x4_SRGB_BLOCK,
-		DataFormat_ASTC_5x5_UNORM_BLOCK,
-		DataFormat_ASTC_5x5_SRGB_BLOCK,
-		DataFormat_ASTC_6x5_UNORM_BLOCK,
-		DataFormat_ASTC_6x5_SRGB_BLOCK,
-		DataFormat_ASTC_6x6_UNORM_BLOCK,
-		DataFormat_ASTC_6x6_SRGB_BLOCK,
-		DataFormat_ASTC_8x5_UNORM_BLOCK,
-		DataFormat_ASTC_8x5_SRGB_BLOCK,
-		DataFormat_ASTC_8x6_UNORM_BLOCK,
-		DataFormat_ASTC_8x6_SRGB_BLOCK,
-		DataFormat_ASTC_8x8_UNORM_BLOCK,
-		DataFormat_ASTC_8x8_SRGB_BLOCK,
-		DataFormat_ASTC_10x5_UNORM_BLOCK,
-		DataFormat_ASTC_10x5_SRGB_BLOCK,
-		DataFormat_ASTC_10x6_UNORM_BLOCK,
-		DataFormat_ASTC_10x6_SRGB_BLOCK,
-		DataFormat_ASTC_10x8_UNORM_BLOCK,
-		DataFormat_ASTC_10x8_SRGB_BLOCK,
-		DataFormat_ASTC_10x10_UNORM_BLOCK,
-		DataFormat_ASTC_10x10_SRGB_BLOCK,
-		DataFormat_ASTC_12x10_UNORM_BLOCK,
-		DataFormat_ASTC_12x10_SRGB_BLOCK,
-		DataFormat_ASTC_12x12_UNORM_BLOCK,
-		DataFormat_ASTC_12x12_SRGB_BLOCK,
-		DataFormat_G8B8G8R8_422_UNORM,
-		DataFormat_B8G8R8G8_422_UNORM,
-		DataFormat_G8_B8_R8_3PLANE_420_UNORM,
-		DataFormat_G8_B8R8_2PLANE_420_UNORM,
-		DataFormat_G8_B8_R8_3PLANE_422_UNORM,
-		DataFormat_G8_B8R8_2PLANE_422_UNORM,
-		DataFormat_G8_B8_R8_3PLANE_444_UNORM,
-		DataFormat_R10X6_UNORM_PACK16,
-		DataFormat_R10X6G10X6_UNORM_2PACK16,
-		DataFormat_R10X6G10X6B10X6A10X6_UNORM_4PACK16,
-		DataFormat_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16,
-		DataFormat_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16,
-		DataFormat_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16,
-		DataFormat_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16,
-		DataFormat_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16,
-		DataFormat_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16,
-		DataFormat_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16,
-		DataFormat_R12X4_UNORM_PACK16,
-		DataFormat_R12X4G12X4_UNORM_2PACK16,
-		DataFormat_R12X4G12X4B12X4A12X4_UNORM_4PACK16,
-		DataFormat_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16,
-		DataFormat_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16,
-		DataFormat_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16,
-		DataFormat_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16,
-		DataFormat_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16,
-		DataFormat_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16,
-		DataFormat_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16,
-		DataFormat_G16B16G16R16_422_UNORM,
-		DataFormat_B16G16R16G16_422_UNORM,
-		DataFormat_G16_B16_R16_3PLANE_420_UNORM,
-		DataFormat_G16_B16R16_2PLANE_420_UNORM,
-		DataFormat_G16_B16_R16_3PLANE_422_UNORM,
-		DataFormat_G16_B16R16_2PLANE_422_UNORM,
-		DataFormat_G16_B16_R16_3PLANE_444_UNORM,
-		DataFormat_PVRTC1_2BPP_UNORM_BLOCK_IMG,
-		DataFormat_PVRTC1_4BPP_UNORM_BLOCK_IMG,
-		DataFormat_PVRTC2_2BPP_UNORM_BLOCK_IMG,
-		DataFormat_PVRTC2_4BPP_UNORM_BLOCK_IMG,
-		DataFormat_PVRTC1_2BPP_SRGB_BLOCK_IMG,
-		DataFormat_PVRTC1_4BPP_SRGB_BLOCK_IMG,
-		DataFormat_PVRTC2_2BPP_SRGB_BLOCK_IMG,
-		DataFormat_PVRTC2_4BPP_SRGB_BLOCK_IMG,
-		DataFormat_MAX
+		ColorFormat_R4G4_UNORM_PACK8,
+		ColorFormat_R4G4B4A4_UNORM_PACK16,
+		ColorFormat_B4G4R4A4_UNORM_PACK16,
+		ColorFormat_R5G6B5_UNORM_PACK16,
+		ColorFormat_B5G6R5_UNORM_PACK16,
+		ColorFormat_R5G5B5A1_UNORM_PACK16,
+		ColorFormat_B5G5R5A1_UNORM_PACK16,
+		ColorFormat_A1R5G5B5_UNORM_PACK16,
+		ColorFormat_R8_UNORM,
+		ColorFormat_R8_SNORM,
+		ColorFormat_R8_USCALED,
+		ColorFormat_R8_SSCALED,
+		ColorFormat_R8_UINT,
+		ColorFormat_R8_SINT,
+		ColorFormat_R8_SRGB,
+		ColorFormat_R8G8_UNORM,
+		ColorFormat_R8G8_SNORM,
+		ColorFormat_R8G8_USCALED,
+		ColorFormat_R8G8_SSCALED,
+		ColorFormat_R8G8_UINT,
+		ColorFormat_R8G8_SINT,
+		ColorFormat_R8G8_SRGB,
+		ColorFormat_R8G8B8_UNORM,
+		ColorFormat_R8G8B8_SNORM,
+		ColorFormat_R8G8B8_USCALED,
+		ColorFormat_R8G8B8_SSCALED,
+		ColorFormat_R8G8B8_UINT,
+		ColorFormat_R8G8B8_SINT,
+		ColorFormat_R8G8B8_SRGB,
+		ColorFormat_B8G8R8_UNORM,
+		ColorFormat_B8G8R8_SNORM,
+		ColorFormat_B8G8R8_USCALED,
+		ColorFormat_B8G8R8_SSCALED,
+		ColorFormat_B8G8R8_UINT,
+		ColorFormat_B8G8R8_SINT,
+		ColorFormat_B8G8R8_SRGB,
+		ColorFormat_R8G8B8A8_UNORM,
+		ColorFormat_R8G8B8A8_SNORM,
+		ColorFormat_R8G8B8A8_USCALED,
+		ColorFormat_R8G8B8A8_SSCALED,
+		ColorFormat_R8G8B8A8_UINT,
+		ColorFormat_R8G8B8A8_SINT,
+		ColorFormat_R8G8B8A8_SRGB,
+		ColorFormat_B8G8R8A8_UNORM,
+		ColorFormat_B8G8R8A8_SNORM,
+		ColorFormat_B8G8R8A8_USCALED,
+		ColorFormat_B8G8R8A8_SSCALED,
+		ColorFormat_B8G8R8A8_UINT,
+		ColorFormat_B8G8R8A8_SINT,
+		ColorFormat_B8G8R8A8_SRGB,
+		ColorFormat_A8B8G8R8_UNORM_PACK32,
+		ColorFormat_A8B8G8R8_SNORM_PACK32,
+		ColorFormat_A8B8G8R8_USCALED_PACK32,
+		ColorFormat_A8B8G8R8_SSCALED_PACK32,
+		ColorFormat_A8B8G8R8_UINT_PACK32,
+		ColorFormat_A8B8G8R8_SINT_PACK32,
+		ColorFormat_A8B8G8R8_SRGB_PACK32,
+		ColorFormat_A2R10G10B10_UNORM_PACK32,
+		ColorFormat_A2R10G10B10_SNORM_PACK32,
+		ColorFormat_A2R10G10B10_USCALED_PACK32,
+		ColorFormat_A2R10G10B10_SSCALED_PACK32,
+		ColorFormat_A2R10G10B10_UINT_PACK32,
+		ColorFormat_A2R10G10B10_SINT_PACK32,
+		ColorFormat_A2B10G10R10_UNORM_PACK32,
+		ColorFormat_A2B10G10R10_SNORM_PACK32,
+		ColorFormat_A2B10G10R10_USCALED_PACK32,
+		ColorFormat_A2B10G10R10_SSCALED_PACK32,
+		ColorFormat_A2B10G10R10_UINT_PACK32,
+		ColorFormat_A2B10G10R10_SINT_PACK32,
+		ColorFormat_R16_UNORM,
+		ColorFormat_R16_SNORM,
+		ColorFormat_R16_USCALED,
+		ColorFormat_R16_SSCALED,
+		ColorFormat_R16_UINT,
+		ColorFormat_R16_SINT,
+		ColorFormat_R16_SFLOAT,
+		ColorFormat_R16G16_UNORM,
+		ColorFormat_R16G16_SNORM,
+		ColorFormat_R16G16_USCALED,
+		ColorFormat_R16G16_SSCALED,
+		ColorFormat_R16G16_UINT,
+		ColorFormat_R16G16_SINT,
+		ColorFormat_R16G16_SFLOAT,
+		ColorFormat_R16G16B16_UNORM,
+		ColorFormat_R16G16B16_SNORM,
+		ColorFormat_R16G16B16_USCALED,
+		ColorFormat_R16G16B16_SSCALED,
+		ColorFormat_R16G16B16_UINT,
+		ColorFormat_R16G16B16_SINT,
+		ColorFormat_R16G16B16_SFLOAT,
+		ColorFormat_R16G16B16A16_UNORM,
+		ColorFormat_R16G16B16A16_SNORM,
+		ColorFormat_R16G16B16A16_USCALED,
+		ColorFormat_R16G16B16A16_SSCALED,
+		ColorFormat_R16G16B16A16_UINT,
+		ColorFormat_R16G16B16A16_SINT,
+		ColorFormat_R16G16B16A16_SFLOAT,
+		ColorFormat_R32_UINT,
+		ColorFormat_R32_SINT,
+		ColorFormat_R32_SFLOAT,
+		ColorFormat_R32G32_UINT,
+		ColorFormat_R32G32_SINT,
+		ColorFormat_R32G32_SFLOAT,
+		ColorFormat_R32G32B32_UINT,
+		ColorFormat_R32G32B32_SINT,
+		ColorFormat_R32G32B32_SFLOAT,
+		ColorFormat_R32G32B32A32_UINT,
+		ColorFormat_R32G32B32A32_SINT,
+		ColorFormat_R32G32B32A32_SFLOAT,
+		ColorFormat_R64_UINT,
+		ColorFormat_R64_SINT,
+		ColorFormat_R64_SFLOAT,
+		ColorFormat_R64G64_UINT,
+		ColorFormat_R64G64_SINT,
+		ColorFormat_R64G64_SFLOAT,
+		ColorFormat_R64G64B64_UINT,
+		ColorFormat_R64G64B64_SINT,
+		ColorFormat_R64G64B64_SFLOAT,
+		ColorFormat_R64G64B64A64_UINT,
+		ColorFormat_R64G64B64A64_SINT,
+		ColorFormat_R64G64B64A64_SFLOAT,
+		ColorFormat_B10G11R11_UFLOAT_PACK32,
+		ColorFormat_E5B9G9R9_UFLOAT_PACK32,
+		ColorFormat_D16_UNORM,
+		ColorFormat_X8_D24_UNORM_PACK32,
+		ColorFormat_D32_SFLOAT,
+		ColorFormat_S8_UINT,
+		ColorFormat_D16_UNORM_S8_UINT,
+		ColorFormat_D24_UNORM_S8_UINT,
+		ColorFormat_D32_SFLOAT_S8_UINT,
+		ColorFormat_BC1_RGB_UNORM_BLOCK,
+		ColorFormat_BC1_RGB_SRGB_BLOCK,
+		ColorFormat_BC1_RGBA_UNORM_BLOCK,
+		ColorFormat_BC1_RGBA_SRGB_BLOCK,
+		ColorFormat_BC2_UNORM_BLOCK,
+		ColorFormat_BC2_SRGB_BLOCK,
+		ColorFormat_BC3_UNORM_BLOCK,
+		ColorFormat_BC3_SRGB_BLOCK,
+		ColorFormat_BC4_UNORM_BLOCK,
+		ColorFormat_BC4_SNORM_BLOCK,
+		ColorFormat_BC5_UNORM_BLOCK,
+		ColorFormat_BC5_SNORM_BLOCK,
+		ColorFormat_BC6H_UFLOAT_BLOCK,
+		ColorFormat_BC6H_SFLOAT_BLOCK,
+		ColorFormat_BC7_UNORM_BLOCK,
+		ColorFormat_BC7_SRGB_BLOCK,
+		ColorFormat_ETC2_R8G8B8_UNORM_BLOCK,
+		ColorFormat_ETC2_R8G8B8_SRGB_BLOCK,
+		ColorFormat_ETC2_R8G8B8A1_UNORM_BLOCK,
+		ColorFormat_ETC2_R8G8B8A1_SRGB_BLOCK,
+		ColorFormat_ETC2_R8G8B8A8_UNORM_BLOCK,
+		ColorFormat_ETC2_R8G8B8A8_SRGB_BLOCK,
+		ColorFormat_EAC_R11_UNORM_BLOCK,
+		ColorFormat_EAC_R11_SNORM_BLOCK,
+		ColorFormat_EAC_R11G11_UNORM_BLOCK,
+		ColorFormat_EAC_R11G11_SNORM_BLOCK,
+		ColorFormat_ASTC_4x4_UNORM_BLOCK,
+		ColorFormat_ASTC_4x4_SRGB_BLOCK,
+		ColorFormat_ASTC_5x4_UNORM_BLOCK,
+		ColorFormat_ASTC_5x4_SRGB_BLOCK,
+		ColorFormat_ASTC_5x5_UNORM_BLOCK,
+		ColorFormat_ASTC_5x5_SRGB_BLOCK,
+		ColorFormat_ASTC_6x5_UNORM_BLOCK,
+		ColorFormat_ASTC_6x5_SRGB_BLOCK,
+		ColorFormat_ASTC_6x6_UNORM_BLOCK,
+		ColorFormat_ASTC_6x6_SRGB_BLOCK,
+		ColorFormat_ASTC_8x5_UNORM_BLOCK,
+		ColorFormat_ASTC_8x5_SRGB_BLOCK,
+		ColorFormat_ASTC_8x6_UNORM_BLOCK,
+		ColorFormat_ASTC_8x6_SRGB_BLOCK,
+		ColorFormat_ASTC_8x8_UNORM_BLOCK,
+		ColorFormat_ASTC_8x8_SRGB_BLOCK,
+		ColorFormat_ASTC_10x5_UNORM_BLOCK,
+		ColorFormat_ASTC_10x5_SRGB_BLOCK,
+		ColorFormat_ASTC_10x6_UNORM_BLOCK,
+		ColorFormat_ASTC_10x6_SRGB_BLOCK,
+		ColorFormat_ASTC_10x8_UNORM_BLOCK,
+		ColorFormat_ASTC_10x8_SRGB_BLOCK,
+		ColorFormat_ASTC_10x10_UNORM_BLOCK,
+		ColorFormat_ASTC_10x10_SRGB_BLOCK,
+		ColorFormat_ASTC_12x10_UNORM_BLOCK,
+		ColorFormat_ASTC_12x10_SRGB_BLOCK,
+		ColorFormat_ASTC_12x12_UNORM_BLOCK,
+		ColorFormat_ASTC_12x12_SRGB_BLOCK,
+		ColorFormat_G8B8G8R8_422_UNORM,
+		ColorFormat_B8G8R8G8_422_UNORM,
+		ColorFormat_G8_B8_R8_3PLANE_420_UNORM,
+		ColorFormat_G8_B8R8_2PLANE_420_UNORM,
+		ColorFormat_G8_B8_R8_3PLANE_422_UNORM,
+		ColorFormat_G8_B8R8_2PLANE_422_UNORM,
+		ColorFormat_G8_B8_R8_3PLANE_444_UNORM,
+		ColorFormat_R10X6_UNORM_PACK16,
+		ColorFormat_R10X6G10X6_UNORM_2PACK16,
+		ColorFormat_R10X6G10X6B10X6A10X6_UNORM_4PACK16,
+		ColorFormat_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16,
+		ColorFormat_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16,
+		ColorFormat_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16,
+		ColorFormat_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16,
+		ColorFormat_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16,
+		ColorFormat_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16,
+		ColorFormat_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16,
+		ColorFormat_R12X4_UNORM_PACK16,
+		ColorFormat_R12X4G12X4_UNORM_2PACK16,
+		ColorFormat_R12X4G12X4B12X4A12X4_UNORM_4PACK16,
+		ColorFormat_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16,
+		ColorFormat_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16,
+		ColorFormat_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16,
+		ColorFormat_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16,
+		ColorFormat_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16,
+		ColorFormat_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16,
+		ColorFormat_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16,
+		ColorFormat_G16B16G16R16_422_UNORM,
+		ColorFormat_B16G16R16G16_422_UNORM,
+		ColorFormat_G16_B16_R16_3PLANE_420_UNORM,
+		ColorFormat_G16_B16R16_2PLANE_420_UNORM,
+		ColorFormat_G16_B16_R16_3PLANE_422_UNORM,
+		ColorFormat_G16_B16R16_2PLANE_422_UNORM,
+		ColorFormat_G16_B16_R16_3PLANE_444_UNORM,
+		ColorFormat_PVRTC1_2BPP_UNORM_BLOCK_IMG,
+		ColorFormat_PVRTC1_4BPP_UNORM_BLOCK_IMG,
+		ColorFormat_PVRTC2_2BPP_UNORM_BLOCK_IMG,
+		ColorFormat_PVRTC2_4BPP_UNORM_BLOCK_IMG,
+		ColorFormat_PVRTC1_2BPP_SRGB_BLOCK_IMG,
+		ColorFormat_PVRTC1_4BPP_SRGB_BLOCK_IMG,
+		ColorFormat_PVRTC2_2BPP_SRGB_BLOCK_IMG,
+		ColorFormat_PVRTC2_4BPP_SRGB_BLOCK_IMG,
+		ColorFormat_MAX
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	/* TEXTURE */
 
 	ENUM_INT(TextureType)
 	{
@@ -284,6 +280,11 @@ namespace ism
 		TextureFlags_CanCopyFrom			= 1 << 7,
 		TextureFlags_CanCopyTo				= 1 << 8,
 		TextureFlags_ResolveAttachment		= 1 << 9,
+
+		TextureFlags_Default =
+			TextureFlags_Sampling |
+			TextureFlags_CanUpdate |
+			TextureFlags_CanCopyFrom
 	};
 
 	ENUM_INT(TextureSwizzle)
@@ -298,30 +299,6 @@ namespace ism
 		TextureSwizzle_MAX
 	};
 
-	struct NODISCARD TextureFormat final
-	{
-		DEFAULT_COPYABLE_MOVABLE(TextureFormat);
-		DataFormat_			format{ DataFormat_R8G8B8_UNORM };
-		uint32_t			width{ 1 };
-		uint32_t			height{ 1 };
-		uint32_t			depth{ 1 };
-		uint32_t			layers{ 1 };
-		uint32_t			mipmaps{ 1 };
-		TextureType_		texture_type{ TextureType_2D };
-		TextureSamples_		samples{ TextureSamples_1 };
-		TextureFlags		usage_flags{ TextureFlags_None };
-	};
-
-	struct NODISCARD TextureView final
-	{
-		DEFAULT_COPYABLE_MOVABLE(TextureView);
-		DataFormat_		format_override{ DataFormat_MAX };
-		TextureSwizzle_ swizzle_r{ TextureSwizzle_R };
-		TextureSwizzle_ swizzle_g{ TextureSwizzle_G };
-		TextureSwizzle_ swizzle_b{ TextureSwizzle_B };
-		TextureSwizzle_ swizzle_a{ TextureSwizzle_A };
-	};
-
 	ENUM_INT(TextureSliceType)
 	{
 		TextureSliceType_2D,
@@ -331,22 +308,6 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	/* FRAMEBUFFER */
-
-	struct NODISCARD AttachmentFormat final
-	{
-		DEFAULT_COPYABLE_MOVABLE(AttachmentFormat);
-		DataFormat_ format{ DataFormat_R8G8B8A8_UNORM };
-		TextureSamples_ samples{ TextureSamples_1 };
-		uint32_t usage_flags{ 0 };
-	};
-
-	ALIAS(FramebufferFormatID) int64_t;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	/* SAMPLER */
 
 	ENUM_INT(SamplerFilter)
 	{
@@ -375,29 +336,7 @@ namespace ism
 		SamplerBorderColor_MAX
 	};
 
-	struct NODISCARD SamplerState final
-	{
-		DEFAULT_COPYABLE_MOVABLE(SamplerState);
-		SamplerFilter_ mag_filter{ SamplerFilter_Nearest };
-		SamplerFilter_ min_filter{ SamplerFilter_Nearest };
-		SamplerFilter_ mip_filter{ SamplerFilter_Nearest };
-		SamplerRepeatMode_ repeat_u{ SamplerRepeatMode_ClampToEdge };
-		SamplerRepeatMode_ repeat_v{ SamplerRepeatMode_ClampToEdge };
-		SamplerRepeatMode_ repeat_w{ SamplerRepeatMode_ClampToEdge };
-		float_t lod_bias{ 0 };
-		bool use_anisotropy{ false };
-		float_t anisotropy_max{ 1.f };
-		bool enable_compare{};
-		CompareOperator_ compare_op{ CompareOperator_Always };
-		float_t min_lod{ 0 };
-		float_t max_lod{ 1e20f }; //something very large should do
-		SamplerBorderColor_ border_color{ SamplerBorderColor_Float_Opaque_Black };
-		bool unnormalized_uvw{ false };
-	};
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	/* BUFFER */
 
 	ENUM_INT(VertexFrequency)
 	{
@@ -405,27 +344,13 @@ namespace ism
 		VertexFrequency_Instance,
 	};
 
-	struct NODISCARD VertexAttribute final
+	ENUM_INT(IndexbufferFormat)
 	{
-		DEFAULT_COPYABLE_MOVABLE(VertexAttribute);
-		uint32_t location{ 0 };
-		uint32_t offset{ 0 };
-		uint32_t stride{ 0 };
-		DataFormat_ format{ DataFormat_MAX };
-		VertexFrequency_ frequency{ VertexFrequency_Vertex };
-	};
-
-	ALIAS(VertexFormatID) int64_t;
-
-	ENUM_INT(IndexBufferFormat)
-	{
-		IndexBufferFormat_U16,
-		IndexBufferFormat_U32,
+		IndexbufferFormat_U16,
+		IndexbufferFormat_U32,
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	/* SHADER */
 
 	ENUM_INT(ShaderStage)
 	{
@@ -448,16 +373,7 @@ namespace ism
 		ShaderLanguage_HLSL,
 	};
 
-	struct NODISCARD ShaderStageData final
-	{
-		DEFAULT_COPYABLE_MOVABLE(ShaderStageData);
-		ShaderStage_ shader_stage{ ShaderStage_Vertex };
-		Vector<byte> source_code{};
-	};
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	/* UNIFORMS */
 
 	ENUM_INT(UniformType)
 	{
@@ -474,17 +390,7 @@ namespace ism
 		UniformType_MAX
 	};
 
-	struct NODISCARD Uniform final
-	{
-		DEFAULT_COPYABLE_MOVABLE(Uniform);
-		UniformType_ uniform_type{ UniformType_Image };
-		int32_t binding{ 0 };
-		Vector<RID> ids{};
-	};
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	/* RENDER PIPELINE */
 
 	ENUM_INT(RenderPrimitive)
 	{
@@ -562,6 +468,73 @@ namespace ism
 		BlendOperation_MAX
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct NODISCARD TextureFormat final
+	{
+		DEFAULT_COPYABLE_MOVABLE(TextureFormat);
+		TextureType_		texture_type{ TextureType_2D };
+		ColorFormat_		color_format{ ColorFormat_R8G8B8_UNORM };
+		uint32_t			width{ 1 };
+		uint32_t			height{ 1 };
+		uint32_t			depth{ 1 };
+		uint32_t			layers{ 1 };
+		uint32_t			mipmaps{ 1 };
+		SamplerFilter_		min_filter{ SamplerFilter_Nearest }, mag_filter{ SamplerFilter_Nearest };
+		SamplerRepeatMode_	repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat };
+		TextureSamples_		samples{ TextureSamples_1 };
+		TextureFlags		usage_flags{ TextureFlags_Default };
+		ColorFormat_		color_format_srgb{ ColorFormat_MAX };
+		TextureSwizzle_		swizzle_r{ TextureSwizzle_R };
+		TextureSwizzle_		swizzle_g{ TextureSwizzle_G };
+		TextureSwizzle_		swizzle_b{ TextureSwizzle_B };
+		TextureSwizzle_		swizzle_a{ TextureSwizzle_A };
+	};
+
+	struct NODISCARD ShaderStageData final
+	{
+		DEFAULT_COPYABLE_MOVABLE(ShaderStageData);
+		ShaderStage_ shader_stage{ ShaderStage_Vertex };
+		Buffer source{};
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct NODISCARD Uniform final
+	{
+		DEFAULT_COPYABLE_MOVABLE(Uniform);
+		UniformType_ uniform_type{ UniformType_Image };
+		int32_t binding{ 0 };
+		Vector<RID> ids{};
+	};
+
+	struct NODISCARD SamplerState final
+	{
+		DEFAULT_COPYABLE_MOVABLE(SamplerState);
+		SamplerFilter_ mag_filter{ SamplerFilter_Nearest };
+		SamplerFilter_ min_filter{ SamplerFilter_Nearest };
+		SamplerFilter_ mip_filter{ SamplerFilter_Nearest };
+		SamplerRepeatMode_ repeat_u{ SamplerRepeatMode_ClampToEdge };
+		SamplerRepeatMode_ repeat_v{ SamplerRepeatMode_ClampToEdge };
+		SamplerRepeatMode_ repeat_w{ SamplerRepeatMode_ClampToEdge };
+		float_t lod_bias{ 0 };
+		bool use_anisotropy{ false };
+		float_t anisotropy_max{ 1.f };
+		bool enable_compare{};
+		CompareOperator_ compare_op{ CompareOperator_Always };
+		float_t min_lod{ 0 };
+		float_t max_lod{ 1e20f }; //something very large should do
+		SamplerBorderColor_ border_color{ SamplerBorderColor_Float_Opaque_Black };
+		bool unnormalized_uvw{ false };
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct NODISCARD PipelineRasterizationState final
 	{
 		DEFAULT_COPYABLE_MOVABLE(PipelineRasterizationState);
@@ -584,7 +557,7 @@ namespace ism
 		TextureSamples_ sample_count{ TextureSamples_1 };
 		bool enable_sample_shading{ false };
 		float_t min_sample_shading{ 0.f };
-		Vector<byte> sample_mask{};
+		Buffer sample_mask{};
 		bool enable_alpha_to_coverage{ false };
 		bool enable_alpha_to_one{ false };
 	};
@@ -663,32 +636,26 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct VertexLayout
+	struct NODISCARD VertexLayout final
 	{
-		struct Element
+		struct NODISCARD Element final
 		{
-			String		name{};
+			cstring		name{};
 			DataType_	type{};
 			uint32_t	size{};
 			uint32_t	count{};
 			bool		normalized{};
 			uint32_t	offset{};
 
-			Element(String const & name, DataType_ type, uint32_t count, bool normalized = false) noexcept
-				: name		{ name }
-				, type		{ type }
-				, size		{ ism::get_data_type_size(type) }
-				, count		{ count }
+			constexpr Element(cstring name, DataType_ type, uint32_t count, bool normalized = false) noexcept
+				: name{ name }
+				, type{ type }
+				, size{ ism::get_data_type_size(type) }
+				, count{ count }
 				, normalized{ normalized }
-				, offset	{}
+				, offset{}
 			{
-				ASSERT(type == DataType_Bool || type == DataType_I32 || type == DataType_F32);
 			}
 		};
 
@@ -699,7 +666,7 @@ namespace ism
 		template <class It> VertexLayout(It first, It last) noexcept : elements{ first, last }
 		{
 			uint32_t offset{};
-			for (auto & e : elements)
+			for (Element & e : elements)
 			{
 				e.offset = offset;
 				offset += e.size;
@@ -711,13 +678,7 @@ namespace ism
 
 		template <size_t N> VertexLayout(Element const (&arr)[N]) noexcept : VertexLayout{ &arr[0], &arr[N] } {}
 
-		VertexLayout() noexcept : VertexLayout{
-			{ "Position", DataType_F32, 3 },
-			{ "Normal"	, DataType_F32, 3 },
-			{ "Texcoord", DataType_F32, 2 },
-		}
-		{
-		}
+		VertexLayout() noexcept : VertexLayout{ { "Position", DataType_F32, 3 }, { "Normal"	, DataType_F32, 3 }, { "Texcoord", DataType_F32, 2 }, } {}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -755,38 +716,53 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY */
-		virtual RID vertexarray_create() = 0;
+		virtual RID vertexarray_create(VertexLayout const & layout, RID indices, Vector<RID> const & vertices) = 0;
 		virtual void vertexarray_destroy(RID rid) = 0;
+		virtual void vertexarray_bind(RID rid) = 0;
 		virtual void vertexarray_update(RID rid, VertexLayout const & layout, RID indices, Vector<RID> const & vertices) = 0;
+		virtual void vertexarray_draw(RID rid) = 0;
 		
 	public:
 		/* VERTEXBUFFER */
-		virtual RID vertexbuffer_create(Vector<byte> const & data) = 0;
+		virtual RID vertexbuffer_create(Buffer const & data) = 0;
 		virtual void vertexbuffer_destroy(RID rid) = 0;
-		virtual void vertexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) = 0;
+		virtual void vertexbuffer_bind(RID rid) = 0;
+		virtual void vertexbuffer_update(RID rid, Buffer const & data, size_t offset = 0) = 0;
 		
 	public:
 		/* INDEXBUFFER */
-		virtual RID indexbuffer_create(Vector<byte> const & data) = 0;
+		virtual RID indexbuffer_create(Buffer const & data) = 0;
 		virtual void indexbuffer_destroy(RID rid) = 0;
-		virtual void indexbuffer_update(RID rid, Vector<byte> const & data, size_t offset = 0) = 0;
+		virtual void indexbuffer_bind(RID rid) = 0;
+		virtual void indexbuffer_update(RID rid, Buffer const & data, size_t offset = 0) = 0;
 
 	public:
 		/* TEXTURE */
-		virtual RID texture_create(TextureFormat const & format, TextureView const & view, Vector<byte> const & data) = 0;
+		virtual RID texture_create(TextureFormat const & format, Buffer const & data = {}) = 0;
 		virtual void texture_destroy(RID rid) = 0;
-		virtual void texture_update(RID rid, Vector<byte> const & data) = 0;
-		virtual void texture_set_size_override(RID rid, int32_t width, int32_t height) = 0;
+		virtual void texture_bind(RID rid, size_t slot = 0) = 0;
+		virtual void texture_update(RID rid, Buffer const & data = {}) = 0;
+		virtual Buffer texture_get_data(RID rid) = 0;
 
 	public:
 		/* FRAMEBUFFER */
-		virtual RID framebuffer_create(Vector<RID> const & attachments) = 0;
+		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
 		virtual void framebuffer_destroy(RID rid) = 0;
+		virtual void framebuffer_bind(RID rid) = 0;
+		virtual void framebuffer_resize(RID rid, int32_t width, int32_t height) = 0;
 
 	public:
 		/* SHADER */
 		virtual RID shader_create(Vector<ShaderStageData> const & stage_data) = 0;
 		virtual void shader_destroy(RID rid) = 0;
+		virtual void shader_bind(RID rid) = 0;
+		virtual int32_t shader_uniform_location(RID rid, cstring name) = 0;
+		virtual void shader_set_uniform1i(RID rid, cstring name, int32_t const value) = 0;
+		virtual void shader_set_uniform1f(RID rid, cstring name, float_t const value) = 0;
+		virtual void shader_set_uniform2f(RID rid, cstring name, Vec2f const & value) = 0;
+		virtual void shader_set_uniform3f(RID rid, cstring name, Vec3f const & value) = 0;
+		virtual void shader_set_uniform4f(RID rid, cstring name, Vec4f const & value) = 0;
+		virtual void shader_set_uniform16f(RID rid, cstring name, Mat4f const & value, bool transpose = false) = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

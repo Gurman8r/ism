@@ -13,6 +13,38 @@ EMBED_CLASS(Image, t)
 	};
 }
 
+Image::Image(int32_t width, int32_t height, ImageFormat_ format)
+{
+	m_width = width;
+	m_height = height;
+	m_format = format;
+	switch (format)
+	{
+	default: { CRASH("Unsupported image format"); } break;
+	case ImageFormat_R8: { m_channels = 1; } break;
+	case ImageFormat_RG8: { m_channels = 2; } break;
+	case ImageFormat_RGB8: { m_channels = 3; } break;
+	case ImageFormat_RGBA8: { m_channels = 4; } break;
+	}
+	m_pixels.resize((size_t)(m_width * m_height * m_channels));
+}
+
+Image::Image(int32_t width, int32_t height, ImageFormat_ format, Buffer const & data)
+{
+	m_width = width;
+	m_height = height;
+	m_format = format;
+	m_pixels = data;
+	switch (format)
+	{
+	default: { CRASH("Unsupported image format"); } break;
+	case ImageFormat_R8: { m_channels = 1; } break;
+	case ImageFormat_RG8: { m_channels = 2; } break;
+	case ImageFormat_RGB8: { m_channels = 3; } break;
+	case ImageFormat_RGBA8: { m_channels = 4; } break;
+	}
+}
+
 void Image::flip_vertically()
 {
 	ptrdiff_t const columns{ m_width * m_channels };

@@ -12,7 +12,7 @@ EMBED_CLASS(PropertyObject, t, TypeFlags_MethodDescriptor)
 		return ((PROPERTY &)self).get(obj);
 	};
 
-	t.tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ value) -> Error
+	t.tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ value) -> Error_
 	{
 		return ((PROPERTY &)self).set(obj, value);
 	};

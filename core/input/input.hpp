@@ -9,35 +9,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// cursor handle
-	DECL_HANDLE(CursorID);
-
-	// cursor mode
-	ENUM_INT(CursorMode)
-	{
-		CursorMode_Normal		, // normal
-		CursorMode_Hidden		, // hidden
-		CursorMode_Disabled		, // disabled
-	};
-
-	// cursor shape
-	ENUM_INT(CursorShape)
-	{
-		CursorShape_Arrow			, // arrow
-		CursorShape_IBeam			, // ibeam
-		CursorShape_Crosshair		, // crosshair
-		CursorShape_PointingHand	, // pointing hand
-		CursorShape_EW				, // ew
-		CursorShape_NS				, // ns
-		CursorShape_NESW			, // nesw
-		CursorShape_NWSE			, // nwse
-		CursorShape_ResizeAll		, // resize all
-		CursorShape_NotAllowed		, // not allowed
-		CursorShape_HResize			, // hresize
-		CursorShape_VResize			, // vresize
-		CursorShape_Hand			, // hand
-	};
-
 	// input action
 	ENUM_INT(InputAction)
 	{

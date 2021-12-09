@@ -1,7 +1,7 @@
 #ifndef _ISM_SAFE_REFCOUNT_HPP_
 #define _ISM_SAFE_REFCOUNT_HPP_
 
-#include <core/templates/utility.hpp>
+#include <core/templates/type_traits.hpp>
 
 #include <atomic>
 

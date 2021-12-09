@@ -2,25 +2,15 @@
 
 using namespace ism;
 
+MAKE_ENUM_MAPPING(ERR_TYPE, ErrorHandlerType_, cstring,
+	"ERROR",
+	"WARNING");
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void Logger::log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, Error type)
+void Logger::log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
 {
-	cstring err_type;
-	switch (type)
-	{
-	default: {
-		err_type = "ERROR";
-	} break;
-
-	case Logger::ERR_ERROR: {
-		err_type = "ERROR";
-	} break;
-
-	case Logger::ERR_WARNING: {
-		err_type = "WARNING";
-	} break;
-	}
+	cstring const err_type{ (ErrorHandlerType_MAX <= type) ? "ERROR" : ERR_TYPE(type) };
 
 	logf("%s: %s\n", err_type, (message && *message) ? message : desc);
 

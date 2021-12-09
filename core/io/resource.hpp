@@ -20,31 +20,31 @@ namespace ism
 	{
 		OBJECT_COMMON(Resource, Object);
 
-		int32_t	m_index{};
+		int32_t	m_subindex{};
 		String	m_name{};
-		String	m_path_cache{};
+		Path	m_path_cache{};
 
 	protected:
-		explicit Resource() noexcept;
+		Resource() noexcept {}
 		
 	public:
-		virtual ~Resource();
+		virtual ~Resource() noexcept override = default;
 
 		virtual void reload_from_file();
 
 		NODISCARD virtual RID get_rid() const { return {}; }
 
-		NODISCARD int32_t get_index() const { return m_index; }
+		NODISCARD int32_t get_subindex() const { return m_subindex; }
 		
 		NODISCARD String const & get_name() const { return m_name; }
 
-		NODISCARD String const & get_path() const { return m_path_cache; }
+		NODISCARD Path const & get_path() const { return m_path_cache; }
 
-		void set_index(int32_t value) { m_index = value; }
+		void set_subindex(int32_t value) { m_subindex = value; }
 
 		void set_name(String const & value) { m_name = value; }
 
-		virtual void set_path(String const & value, bool take_over = true);
+		virtual void set_path(Path const & value, bool take_over = true);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

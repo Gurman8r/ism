@@ -9,20 +9,22 @@ namespace ism
 	{
 		OBJECT_COMMON(TextFile, Resource);
 
-		String m_text{}, m_path{};
+		String m_text{};
+
+		Path m_path{};
 
 	public:
 		virtual String const & get_text() const { return m_text; }
 
 		virtual bool has_text() const { return !m_text.empty(); }
 
-		Error load_text(String const & path);
+		Error_ load_text(Path const & path);
 
 		virtual void reload_from_file() override;
 
 		virtual void set_text(String const & value) { m_text = value; }
 
-		void set_file_path(String const & value) { m_path = value; }
+		void set_file_path(Path const & value) { m_path = value; }
 	};
 }
 

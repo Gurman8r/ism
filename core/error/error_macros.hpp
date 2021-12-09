@@ -2,6 +2,7 @@
 #define _ISM_ERROR_MACROS_HPP_
 
 #include <core/error/error.hpp>
+#include <core/templates/type_info.hpp>
 
 #include <cassert>
 #include <stdexcept>
@@ -22,7 +23,7 @@
 namespace ism
 {
 	// fatal error implementation (wide)
-	inline void _ism_wfatal(cwstring message, cwstring file, uint32_t line) noexcept
+	inline void _wide_assert(cwstring message, cwstring file, uint32_t line) noexcept
 	{
 #if defined(COMPILER_MSVC)
 		_wassert(message, file, line);
@@ -35,65 +36,54 @@ namespace ism
 #endif
 	}
 
-	// fatal error (wide)
-#	define WFATAL(message, file, line) \
-	(ism::_ism_wfatal)(message, file, (uint32_t)line)
-
-	// fatal error
-#	define FATAL(message, file, line) \
-	WFATAL(WIDE(message), WIDE(file), line)
-
-	// crash (wide)
-#	define WCRASH(message) \
-	WFATAL(message, __FILE__, __LINE__)
-
 	// crash
-#	define CRASH(message) \
-	FATAL(message, __FILE__, __LINE__)
+#define CRASH(message) \
+	(ism::_wide_assert)(WIDE(message), WIDE(__FILE__), (unsigned)__LINE__)
 
 	// assert
-#	define ASSERT(expr) \
+#define ASSERT(expr) \
 	((void)((!!(expr)) || (CRASH(TOSTR(expr)), 0)))
 
-	// validate implementation (wide)
+	// validate implementation
 	template <class T
-	> auto _ism_wvalidate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
+	> auto _wide_validate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
 	{
-		return ((void)((!!(expr)) || (WFATAL(message, file, line), 0))), FWD(expr);
+		return ((void)((!!(expr)) || (_wide_assert(message, file, line), 0))), FWD(expr);
 	}
 
 	// validate
-#	define VALIDATE(expr) \
-	(ism::_ism_wvalidate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), __LINE__)
+#define VALIDATE(expr) \
+	(ism::_wide_validate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), __LINE__)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 namespace ism
 {
-	enum ErrorHandlerType
+	ENUM_INT(ErrorHandlerType)
 	{
-		ERR_HANDLER_ERROR,
-		ERR_HANDLER_WARNING,
+		ErrorHandlerType_Error,
+		ErrorHandlerType_Warning,
+		ErrorHandlerType_MAX
 	};
 
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType log_type = ERR_HANDLER_ERROR);
+	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
+	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ERR_PRINT_ERROR(desc) \
-	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), ism::ERR_HANDLER_ERROR)
+	ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Error)
 
 #define ERR_PRINT_ERROR_MSG(desc, message) \
-	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), (message), ism::ERR_HANDLER_ERROR)
+	ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error)
 
 #define ERR_PRINT_WARNING(desc) \
-	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), ism::ERR_HANDLER_WARNING)
+	ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Warning)
 
 #define ERR_PRINT_WARNING_MSG(desc, message) \
-	ism::_err_print_error(__FUNCTION__, __FILE__, __LINE__, (desc), (message), ism::ERR_HANDLER_ERROR)
+	ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error)
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

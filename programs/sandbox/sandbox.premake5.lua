@@ -24,6 +24,7 @@ defines{
 }
 
 files{
+	"%{wks.location}/assets/**.**",
 	"%{wks.location}/programs/%{prj.name}/**.**",
 }
 

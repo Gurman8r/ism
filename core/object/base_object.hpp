@@ -12,6 +12,8 @@ private:																			\
 																					\
 	friend class ism::EmbedClassHelper<m_class>;									\
 																					\
+	friend struct ism::DefaultDelete<m_class>;										\
+																					\
 	static constexpr ism::StringView __class_static{ TOSTR(m_class) };				\
 																					\
 	static ism::TypeObject __type_static;											\
@@ -95,6 +97,7 @@ namespace ism
 		friend class OBJ;
 		friend class Internals;
 		friend class EmbedClassHelper<Object>;
+		friend struct DefaultDelete<Object>;
 		friend bool predelete_handler(Object *);
 		friend void postinitialize_handler(Object *);
 
@@ -161,9 +164,9 @@ namespace ism
 
 		NODISCARD static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
 
-		static Error generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept;
+		static Error_ generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept;
 
-		static Error generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
+		static Error_ generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -327,7 +330,7 @@ namespace ism
 
 	// setattr
 	template <class Index = OBJ, class Value = OBJ
-	> Error setattr(OBJ const & obj, Index && index, Value && value)
+	> Error_ setattr(OBJ const & obj, Index && index, Value && value)
 	{
 		if (!obj) { return Error_Unknown; }
 
@@ -402,7 +405,7 @@ namespace ism
 
 	// setitem
 	template <class Index = OBJ, class Value = OBJ
-	> Error setitem(OBJ const & obj, Index && index, Value && value)
+	> Error_ setitem(OBJ const & obj, Index && index, Value && value)
 	{
 		STR_IDENTIFIER(__setitem__);
 

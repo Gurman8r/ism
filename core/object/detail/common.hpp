@@ -3,6 +3,7 @@
 
 #include <core/typedefs.hpp>
 #include <core/string/path.hpp>
+#include <core/string/print_string.hpp>
 #include <core/math/color.hpp>
 #include <core/math/quat.hpp>
 #include <core/math/transform.hpp>
@@ -11,6 +12,7 @@
 #include <core/math/rect.hpp>
 #include <core/templates/any.hpp>
 #include <core/templates/atomic.hpp>
+#include <core/templates/buffer.hpp>
 #include <core/templates/duration.hpp>
 #include <core/templates/ecs.hpp>
 #include <core/templates/flat_map.hpp>
@@ -112,11 +114,11 @@ namespace ism
 	ALIAS(objobjproc)		int32_t(*)(OBJ lhs, OBJ rhs);
 
 	ALIAS(getattrfunc)		OBJ(*)(OBJ obj, cstring name);
-	ALIAS(setattrfunc)		Error(*)(OBJ obj, cstring name, OBJ value);
+	ALIAS(setattrfunc)		Error_(*)(OBJ obj, cstring name, OBJ value);
 	ALIAS(getattrofunc)		OBJ(*)(OBJ obj, OBJ name);
-	ALIAS(setattrofunc)		Error(*)(OBJ obj, OBJ name, OBJ value);
+	ALIAS(setattrofunc)		Error_(*)(OBJ obj, OBJ name, OBJ value);
 	ALIAS(descrgetfunc)		OBJ(*)(OBJ descr, OBJ obj, OBJ cls);
-	ALIAS(descrsetfunc)		Error(*)(OBJ descr, OBJ obj, OBJ value);
+	ALIAS(descrsetfunc)		Error_(*)(OBJ descr, OBJ obj, OBJ value);
 
 	ALIAS(bindfunc)			TYPE(*)(TYPE type);
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
@@ -444,13 +446,17 @@ namespace ism
 
 		template <class U> NODISCARD U cast() &&; // cast.hpp
 
+		NODISCARD static constexpr auto get_class_static() noexcept { return value_type::get_class_static(); }
+
 		NODISCARD static auto get_type_static() noexcept { return value_type::get_type_static(); }
 
 	public:
-		template <class ... Args
+		template <class T = value_type, class ... Args
 		> void instance(Args && ... args)
 		{
-			ref(ism::construct_or_initialize<value_type>(FWD(args)...));
+			static_assert(std::is_base_of_v<value_type, T>);
+
+			ref(memnew(T{ FWD(args)... }));
 		}
 
 		void unref()

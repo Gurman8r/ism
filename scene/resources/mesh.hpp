@@ -9,10 +9,20 @@ namespace ism
 	{
 		OBJECT_COMMON(Mesh, Resource);
 
-	public:
-		virtual ~Mesh();
+		mutable RID			m_array{};
+		mutable RID			m_indices{};
+		mutable Vector<RID>	m_vertices{};
 
-		Mesh();
+	public:
+		Mesh() noexcept {}
+
+		explicit Mesh(Path const & path) noexcept { set_path(path); reload_from_file(); }
+
+		virtual ~Mesh() override;
+
+		NODISCARD virtual RID get_rid() const override { return m_array; }
+
+		virtual void reload_from_file() override;
 
 	private:
 

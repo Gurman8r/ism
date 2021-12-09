@@ -123,9 +123,9 @@ OBJ Object::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error Object::generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept { return generic_setattr_with_dict(obj, name, value, nullptr); }
+Error_ Object::generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept { return generic_setattr_with_dict(obj, name, value, nullptr); }
 
-Error Object::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
+Error_ Object::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 {
 	TYPE type{ typeof(obj) };
 

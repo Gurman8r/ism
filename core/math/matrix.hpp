@@ -57,161 +57,75 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
 		NODISCARD constexpr auto data() noexcept -> pointer { return m_data.data(); }
-
 		NODISCARD constexpr auto data() const noexcept -> const_pointer { return m_data.data(); }
-
 		NODISCARD constexpr bool empty() const noexcept { return false; }
-
 		NODISCARD constexpr auto height() const noexcept -> size_t { return _Height; }
-
 		NODISCARD constexpr auto max_size() const noexcept -> size_t { return m_data.max_size(); }
-
 		NODISCARD constexpr auto size() const noexcept -> size_t { return m_data.size(); }
-
 		NODISCARD constexpr auto width() const noexcept -> size_t { return _Width; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr operator storage_type & () & { return m_data; }
-
 		NODISCARD constexpr operator storage_type const & () const & { return m_data; }
-
 		NODISCARD constexpr operator storage_type && () && { return std::move(m_data); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr operator pointer() noexcept { return m_data; }
-
 		NODISCARD constexpr operator const_pointer() const noexcept { return m_data; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto operator*() & noexcept -> reference { return (*m_data); }
-
 		NODISCARD constexpr auto operator*() const & noexcept -> const_reference { return (*m_data); }
-
 		NODISCARD constexpr auto operator*() && noexcept -> value_type && { return std::move(*m_data); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto at(size_t const i) & noexcept -> reference { return m_data.at(i); }
-		
 		NODISCARD constexpr auto at(size_t const i) const & noexcept -> const_reference { return m_data.at(i); }
-
 		NODISCARD constexpr auto at(size_t const i) && noexcept -> value_type && { return std::move(m_data.at(i)); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto at(size_t const x, size_t const y) & noexcept -> reference { return at(y * _Width + x); }
-
 		NODISCARD constexpr auto at(size_t const x, size_t const y) const & noexcept -> const_reference { return at(y * _Width + x); }
-
 		NODISCARD constexpr auto at(size_t const x, size_t const y) && noexcept -> value_type && { return std::move(at(y * _Width + x)); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto at(coord_type const & loc) & noexcept -> reference { return at(loc[0], loc[1]); }
-
 		NODISCARD constexpr auto at(coord_type const & loc) const & noexcept -> const_reference { return at(loc[0], loc[1]); }
-
 		NODISCARD constexpr auto at(coord_type const & loc) && noexcept -> value_type && { return std::move(at(loc[0], loc[1])); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto back() & noexcept -> reference { return m_data.back(); }
-
 		NODISCARD constexpr auto back() const & noexcept -> const_reference { return m_data.back(); }
-
 		NODISCARD constexpr auto back() && noexcept -> value_type && { return std::move(m_data.back()); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto front() & noexcept -> reference { return m_data.front(); }
-
 		NODISCARD constexpr auto front() const & noexcept -> const_reference { return m_data.front(); }
-
 		NODISCARD constexpr auto front() && noexcept -> value_type && { return std::move(m_data.front()); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
 		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
-
 		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
-
 		NODISCARD constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-
 		NODISCARD constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-
 		NODISCARD constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-
 		NODISCARD constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
-		
 		NODISCARD constexpr auto end() noexcept -> iterator { return m_data.end(); }
-
 		NODISCARD constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
-
 		NODISCARD constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
-
 		NODISCARD constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
-
 		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
-
 		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
 		
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD constexpr bool nonzero() const noexcept
-		{
-			for (auto const & e : m_data)
-				if (e != (value_type)0)
-					return true;
-			return false;
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		static constexpr auto map_coord(size_t i) noexcept -> coord_type
-		{
-			return { i % _Width, i / _Height };
-		}
-
-		static constexpr auto map_coord(size_t x, size_t y) noexcept -> size_t
-		{
-			return y * _Width + x;
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		static constexpr self_type zero() noexcept
-		{
-			return self_type{};
-		}
-
-		static constexpr self_type fill(value_type value) noexcept
-		{
-			self_type temp{};
-			for (auto & e : temp) { e = value; }
-			return temp;
-		}
-
-		static constexpr self_type one() noexcept
-		{
-			return fill((value_type)1);
-		}
-
-		static constexpr self_type identity() noexcept
-		{
-			self_type temp{};
-			for (size_t i = 0; i < (_Width * _Height); ++i)
-			{
-				if ((i / _Width) == (i % _Width))
-				{
-					temp[i] = (value_type)1;
-				}
-			}
-			return temp;
-		}
-
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class U, size_t W, size_t H
@@ -220,27 +134,40 @@ namespace ism
 			using Other = Matrix<U, W, H>;
 			if constexpr (std::is_same_v<Other, self_type>)
 			{
-				return (*this); // same type
+				return (*this);
 			}
 			else
 			{
-				Other temp{};
-				if constexpr ((W == _Width) && (H == _Height))
+				Other temp;
+				if constexpr (std::is_same_v<U, value_type>)
 				{
-					// same dimensions
+					// same value type
+					if constexpr (sizeof(temp) <= sizeof(m_data))
+					{
+						copymem(temp, m_data, sizeof(temp));
+					}
+					else
+					{
+						zeromem(temp, sizeof(temp));
+						copymem(temp, m_data, sizeof(m_data));
+					}
+				}
+				else if constexpr ((W == _Width) && (H == _Height))
+				{
+					// same dims
 					for (size_t i = 0; i < (W * H); ++i)
 					{
-						temp[i] = static_cast<U>(this->at(i));
+						temp[i] = static_cast<U>(m_data[i]);
 					}
 				}
 				else
 				{
-					// different dimensions
+					// different dims
 					for (size_t i = 0; i < (W * H); ++i)
 					{
 						if (size_t const x{ i % W }, y{ i / W }; (x < _Width && y < _Height))
 						{
-							temp[i] = static_cast<U>(this->at(x, y));
+							temp[i] = static_cast<U>(m_data[y * _Width + x]);
 						}
 					}
 				}

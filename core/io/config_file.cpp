@@ -12,11 +12,11 @@ EMBED_CLASS(ConfigFile, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-bool ConfigFile::open(String const & path)
+bool ConfigFile::open(Path const & path)
 {
 	if (m_ini) { return false; }
 
-	m_ini = memnew(INIReader((std::string const &)path));
+	m_ini = memnew(INIReader(path.string().c_str()));
 
 	return m_ini && (m_ini->ParseError() == EXIT_SUCCESS);
 }

@@ -97,7 +97,7 @@ filter{ "configurations:Debug" } links{ "glew32d", "python39_d", }
 filter{ "configurations:Release" } links{ "glew32", "python39", }
 filter{}
 
-filter{ "system:windows" } links{ "dwmapi", }
+filter{ "system:windows" } links{ "dwmapi", } buildoptions{ "/bigobj" }
 filter{ "configurations:Debug" } linkoptions{ "/NODEFAULTLIB:MSVCRT.lib", "/NODEFAULTLIB:LIBCMT.lib", "/NODEFAULTLIB:LIBCMTD.lib" }
 filter{ "configurations:Release" } linkoptions{ "/NODEFAULTLIB:LIBCMT.lib" }
 filter{}

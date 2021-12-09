@@ -5,7 +5,6 @@
 
 namespace ism
 {
-	// string name
 	class ISM_API StringName
 	{
 	private:
@@ -22,22 +21,22 @@ namespace ism
 
 		StringName(StringName const & value) : m_text{ value } {}
 
+		StringName(StringName && value) noexcept : m_text{} { swap(std::move(value)); }
+
 		StringName(String const & value) : m_text{ value } {}
+
+		StringName(String && value) noexcept : m_text{ std::move(value) } {}
 
 		StringName(StringView const & value) : m_text{ value } {}
 
-	public:
+		StringName & swap(StringName & value) noexcept { return m_text.swap(value.m_text), (*this); }
+
+		StringName & operator=(StringName const & value) { StringName temp{ value }; return swap(temp); }
+
+		StringName & operator=(StringName && value) noexcept { return swap(std::move(value)); }
+
 		void clear() noexcept { m_text.clear(); }
 
-		void assign(StringName const & value) { m_text.assign(value.m_text); }
-
-		void swap(StringName & value) noexcept { m_text.swap(value.m_text); }
-
-		void operator=(StringName const & value) { assign(value); }
-
-		void operator=(StringName && value) noexcept { this->swap(std::move(value)); }
-
-	public:
 		NODISCARD operator void * () const noexcept { return !m_text.empty() ? (void *)1 : nullptr; }
 
 		NODISCARD bool operator==(String const & value) { return m_text == value; }
@@ -52,10 +51,6 @@ namespace ism
 
 		NODISCARD bool operator==(StringName const & value) { return m_text == value.m_text; }
 
-		NODISCARD auto native() noexcept -> String & { return m_text; }
-
-		NODISCARD auto native() const noexcept -> String const & { return m_text; }
-
 		NODISCARD auto data() const noexcept -> cstring { return m_text.data(); }
 
 		NODISCARD auto c_str() const noexcept -> cstring { return m_text.data(); }
@@ -68,14 +63,27 @@ namespace ism
 
 		NODISCARD bool empty() const noexcept { return m_text.empty(); }
 
-		NODISCARD auto string() const noexcept -> String { return m_text; }
+		NODISCARD auto string() const & noexcept -> String & { return const_cast<String &>(m_text); }
 
-		NODISCARD operator String() const noexcept { return m_text; }
+		NODISCARD auto string() && noexcept -> String && { return std::move(m_text); }
+
+		NODISCARD operator String & () const noexcept { return string(); }
+
+		NODISCARD operator String && () && noexcept { return std::move(*this).string(); }
 	};
+
+	inline void to_json(JSON & json, StringName const & value)
+	{
+		json = (String const &)value;
+	}
+
+	inline void from_json(JSON const & json, StringName & value)
+	{
+		json.get_to((String &)value);
+	}
 
 	template <> struct ism::Hasher<StringName>
 	{
-		Hasher() = default;
 		hash_t operator()(StringName const & value) const
 		{
 			return value.hash_code();
@@ -103,7 +111,6 @@ namespace ism
 	}
 }
 
-template <
-> constexpr bool ism::mpl::is_string_v<ism::StringName>{ true };
+template <> constexpr bool ism::mpl::is_string_v<ism::StringName>{ true };
 
 #endif // !_ISM_STRING_NAME_HPP_

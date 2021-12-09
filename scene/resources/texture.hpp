@@ -1,7 +1,7 @@
 #ifndef _ISM_TEXTURE_HPP_
 #define _ISM_TEXTURE_HPP_
 
-#include <core/io/image.hpp>
+#include <core/io/image_loader.hpp>
 
 namespace ism
 {
@@ -39,20 +39,19 @@ namespace ism
 		OBJECT_COMMON(ImageTexture, Texture2D);
 
 		mutable RID		m_texture{};
-		ImageFormat_	m_format{};
 		int32_t			m_width{};
 		int32_t			m_height{};
-		bool			m_has_mipmaps{};
-		bool			m_image_stored{};
+		Ref<Image>		m_image{};
 
 	public:
+		ImageTexture() noexcept {}
 		ImageTexture(Ref<Image> const & image);
 		virtual ~ImageTexture() override;
 
+		NODISCARD virtual RID get_rid() const override { return m_texture; }
 		NODISCARD virtual int32_t get_width() const override { return m_width; }
 		NODISCARD virtual int32_t get_height() const override { return m_height; }
 		NODISCARD virtual Ref<Image> get_data() const override;
-		NODISCARD virtual RID get_rid() const override { return m_texture; }
 
 		void update(Ref<Image> const & image, bool immediate = false);
 	};
@@ -70,13 +69,13 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API TextureCube : public Texture
+	class ISM_API Cubemap : public Texture
 	{
-		OBJECT_COMMON(TextureCube, Texture);
+		OBJECT_COMMON(Cubemap, Texture);
 
 	public:
-		TextureCube();
-		virtual ~TextureCube() override;
+		Cubemap();
+		virtual ~Cubemap() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

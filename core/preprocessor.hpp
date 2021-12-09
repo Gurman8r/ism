@@ -57,6 +57,14 @@
 #define SINGLETON(m_class) \
 	(m_class::get_singleton())
 
+// map enum to array of constant values
+#define MAKE_ENUM_MAPPING(m_func, m_from, m_to, ...)							\
+	static constexpr m_to _MAP_##m_from##_TO_##m_to##_[] = { ##__VA_ARGS__ };	\
+	NODISCARD static constexpr m_to m_func(m_from i) noexcept					\
+	{																			\
+		return _MAP_##m_from##_TO_##m_to##_[(size_t)i];							\
+	}																			\
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // make anonymous

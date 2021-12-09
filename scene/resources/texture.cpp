@@ -18,19 +18,10 @@ EMBED_CLASS(ImageTexture, t) {}
 ImageTexture::ImageTexture(Ref<Image> const & image)
 {
 	ASSERT(image);
-	m_width = image->get_width();
-	m_height = image->get_height();
-	m_format = image->get_format();
-	if (!m_texture)
-	{
-		m_texture = SINGLETON(RenderingServer)->texture2d_create(image);
-	}
-	else
-	{
-		RID new_texture{ SINGLETON(RenderingServer)->texture2d_create(image) };
-		SINGLETON(RenderingServer)->texture_replace(m_texture, new_texture);
-	}
-	m_image_stored = true;
+	m_image = image;
+	m_width = m_image->get_width();
+	m_height = m_image->get_height();
+	m_texture = SINGLETON(RenderingServer)->texture2d_create(m_image);
 }
 
 ImageTexture::~ImageTexture()
@@ -43,7 +34,7 @@ ImageTexture::~ImageTexture()
 
 Ref<Image> ImageTexture::get_data() const
 {
-	if (m_image_stored)
+	if (m_texture)
 	{
 		return SINGLETON(RenderingServer)->texture2d_get(m_texture);
 	}
@@ -67,10 +58,10 @@ Texture3D::~Texture3D() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(TextureCube, t) {}
+EMBED_CLASS(Cubemap, t) {}
 
-TextureCube::TextureCube() {}
+Cubemap::Cubemap() {}
 
-TextureCube::~TextureCube() {}
+Cubemap::~Cubemap() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

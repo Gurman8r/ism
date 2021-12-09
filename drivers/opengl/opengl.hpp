@@ -27,7 +27,7 @@
 
 #elif defined(OPENGL_LOADER_GLEW)
 #	include <GL/glew.h>
-#	define OPENGL_INIT() ((glewExperimental = true), (glewInit() == GLEW_OK))
+#	define OPENGL_INIT() ((glewExperimental = true) && (glewInit() == GLEW_OK))
 
 #elif defined(OPENGL_LOADER_GL3W)
 #	include <GL/gl3w.h>

@@ -10,21 +10,21 @@
 
 using namespace ism;
 
-Error ImageLoader::load_image(Ref<Image> image, String const & path, bool flip_vertically, int32_t req_comp)
+Error_ ImageLoader::load_image(Ref<Image> image, Path const & path, int32_t desired_channels)
 {
 	if (!image || path.empty()) { return Error_Unknown; }
-	
-	stbi_set_flip_vertically_on_load(flip_vertically);
-	
+
+	static SCOPE_ENTER() { stbi_set_flip_vertically_on_load(true); };
+
 	int32_t width, height, channels;
-	byte * data{ (byte *)stbi_load(path.c_str(), &width, &height, &channels, req_comp) };
+	byte * data{ (byte *)stbi_load(path.string().c_str(), &width, &height, &channels, desired_channels) };
 	SCOPE_EXIT(data) { stbi_image_free(data); };
 	if (!data) { return Error_Unknown; }
 
 	image->m_width = width;
 	image->m_height = height;
 	image->m_channels = channels;
-	image->m_pixels = { data, data + width * height * channels, PolymorphicAllocator<>{} };
+	image->m_pixels.write(data, width * height * channels);
 
 	// TODO: properly deduce image format
 	switch (channels)
