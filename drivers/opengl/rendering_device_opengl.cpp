@@ -4,6 +4,8 @@
 
 using namespace ism;
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // convert RID to opengl handle
 #define GL_RID(rid) ((uint32_t &)(intptr_t &)(rid))
 
@@ -155,6 +157,7 @@ MAKE_ENUM_MAPPING(TO_GL, SamplerRepeatMode_, uint32_t,
 MAKE_ENUM_MAPPING(TO_GL, ShaderStage_, uint32_t,
 	GL_VERTEX_SHADER,
 	GL_FRAGMENT_SHADER,
+	GL_GEOMETRY_SHADER,
 	GL_TESS_CONTROL_SHADER,
 	GL_TESS_EVALUATION_SHADER,
 	GL_COMPUTE_SHADER);
@@ -261,6 +264,26 @@ EMBED_CLASS(RenderingDeviceOpenGL, t)
 RenderingDeviceOpenGL::RenderingDeviceOpenGL() : RenderingDevice{}
 {
 	ASSERT(OPENGL_INIT());
+
+	glCheck(glEnable(GL_ALPHA_TEST));
+	glCheck(glAlphaFunc(GL_GREATER, 0.001f));
+
+	glCheck(glEnable(GL_BLEND));
+	glCheck(glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	glCheck(glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD));
+
+	glCheck(glEnable(GL_CULL_FACE));
+	glCheck(glCullFace(GL_BACK));
+	glCheck(glFrontFace(GL_CCW));
+
+	glCheck(glEnable(GL_DEPTH_TEST));
+	glCheck(glDepthFunc(GL_LESS));
+	glCheck(glDepthRangef(0.f, 1.f));
+
+	glCheck(glEnable(GL_STENCIL_TEST));
+	glCheck(glStencilFuncSeparate(GL_FRONT, GL_ALWAYS, 0, 0xFFFFFFFF));
+	glCheck(glStencilFuncSeparate(GL_BACK, GL_ALWAYS, 0, 0xFFFFFFFF));
+	
 }
 
 RenderingDeviceOpenGL::~RenderingDeviceOpenGL()
@@ -285,7 +308,7 @@ void RenderingDeviceOpenGL::clear(Color const & color, bool depth_stencil)
 
 	uint32_t mask{ GL_COLOR_BUFFER_BIT };
 
-	if (depth_stencil) { mask |= (GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); }
+	if (depth_stencil) { FLAG_SET(mask, GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); }
 
 	glCheck(glClear(mask));
 }
@@ -297,50 +320,52 @@ void RenderingDeviceOpenGL::set_viewport(IntRect const & rect)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::vertexarray_create(VertexLayout const & layout, RID indices, Vector<RID> const & vertices)
+RID RenderingDeviceOpenGL::vertexarray_create(VertexLayout const & layout, RID indices, RID vertices)
 {
 	RD_Vertexarray * vertexarray{ memnew(RD_Vertexarray{}) };
 	glCheck(glGenVertexArrays(1, &GL_RID(vertexarray->handle)));
 	glCheck(glBindVertexArray(GL_RID(vertexarray->handle)));
+	vertexarray->indices = indices;
+	vertexarray->vertices = vertices;
+	vertexarray->layout = layout;
 
-	//if (RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)indices })
-	//{
-	//	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
-	//}
-	//
-	//for (RID vb : vertices)
-	//{
-	//	ASSERT(vb);
-	//	RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vb };
-	//	glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
-	//
-	//	for (size_t i = 0, imax = layout.elements.size(); i < imax; ++i)
-	//	{
-	//		VertexLayout::Element const & e{ layout.elements[i] };
-	//
-	//		if (e.type == DataType_I32)
-	//		{
-	//			glCheck(glVertexAttribIPointer(
-	//				(uint32_t)i,
-	//				e.count,
-	//				GL_INT,
-	//				layout.stride,
-	//				(void const *)(intptr_t)e.offset));
-	//		}
-	//		else
-	//		{
-	//			ASSERT(e.type == DataType_F32 || e.type == DataType_Bool);
-	//
-	//			glCheck(glVertexAttribPointer(
-	//				(uint32_t)i,
-	//				e.count,
-	//				e.type == DataType_F32 ? GL_FLOAT : GL_BOOL,
-	//				e.normalized,
-	//				layout.stride,
-	//				(void const *)(intptr_t)e.offset));
-	//		}
-	//	}
-	//}
+	if (RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)vertexarray->indices })
+	{
+		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
+	}
+
+	if (RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vertexarray->vertices })
+	{
+		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
+
+		for (size_t i = 0, imax = vertexarray->layout.elements.size(); i < imax; ++i)
+		{
+			VertexLayout::Element const & e{ vertexarray->layout.elements[i] };
+
+			ASSERT(e.type == DataType_I32 || e.type == DataType_F32 || e.type == DataType_Bool);
+
+			if (e.type == DataType_I32)
+			{
+				glCheck(glVertexAttribIPointer(
+					(uint32_t)i,
+					e.count,
+					GL_INT,
+					vertexarray->layout.stride,
+					(void const *)(intptr_t)e.offset));
+			}
+			else
+			{
+				glCheck(glVertexAttribPointer(
+					(uint32_t)i,
+					e.count,
+					e.type == DataType_F32 ? GL_FLOAT : GL_BOOL,
+					e.normalized,
+					vertexarray->layout.stride,
+					(void const *)(intptr_t)e.offset));
+			}
+			glCheck(glEnableVertexAttribArray((uint32_t)i));
+		}
+	}
 
 	return (RID)vertexarray;
 }
@@ -360,80 +385,27 @@ void RenderingDeviceOpenGL::vertexarray_bind(RID rid)
 	glCheck(glBindVertexArray(GL_RID(vertexarray->handle)));
 }
 
-void RenderingDeviceOpenGL::vertexarray_update(RID rid, VertexLayout const & layout, RID indices, Vector<RID> const & vertices)
-{
-	ASSERT(rid);
-
-	RD_Vertexarray * vertexarray{ (RD_Vertexarray *)rid };
-	glCheck(glBindVertexArray(GL_RID(vertexarray->handle)));
-	
-	if (RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)indices }) {
-		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
-		vertexarray->indices = (RID)indexbuffer;
-	}
-	
-	for (RID vb : vertices)
-	{
-		ASSERT(vb);
-		RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vb };
-		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
-		vertexarray->vertices.push_back((RID)vertexbuffer);
-	
-		for (size_t i = 0, imax = layout.elements.size(); i < imax; ++i)
-		{
-			VertexLayout::Element const & e{ layout.elements[i] };
-
-			if (e.type == DataType_I32)
-			{
-				glCheck(glVertexAttribIPointer(
-					(uint32_t)i,
-					e.count,
-					GL_INT,
-					layout.stride,
-					(void const *)(intptr_t)e.offset));
-			}
-			else
-			{
-				ASSERT(e.type == DataType_F32 || e.type == DataType_Bool);
-
-				glCheck(glVertexAttribPointer(
-					(uint32_t)i,
-					e.count,
-					e.type == DataType_F32 ? GL_FLOAT : GL_BOOL,
-					e.normalized,
-					layout.stride,
-					(void const *)(intptr_t)e.offset));
-			}
-		}
-	}
-}
-
 void RenderingDeviceOpenGL::vertexarray_draw(RID rid)
 {
 	ASSERT(rid);
 	RD_Vertexarray * vertexarray{ (RD_Vertexarray *)rid };
+	ASSERT(vertexarray->vertices);
 	glCheck(glBindVertexArray(GL_RID(vertexarray->handle)));
 
 	if (RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)vertexarray->indices })
 	{
 		// draw elements
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
-		for (RID const vb : vertexarray->vertices) {
-			ASSERT(vb);
-			RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vb };
-			glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
-			glCheck(glDrawElements(GL_TRIANGLES, indexbuffer->buffer.size() / sizeof(uint32_t), GL_UNSIGNED_INT, nullptr));
-		}
+		RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vertexarray->vertices };
+		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
+		glCheck(glDrawElements(GL_TRIANGLES, indexbuffer->data.size() / sizeof(uint32_t), GL_UNSIGNED_INT, nullptr));
 	}
 	else
 	{
 		// draw arrays
-		for (RID const vb : vertexarray->vertices) {
-			ASSERT(vb);
-			RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vb };
-			glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
-			glCheck(glDrawArrays(GL_TRIANGLES, 0, vertexbuffer->buffer.size() / sizeof(float_t)));
-		}
+		RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vertexarray->vertices };
+		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
+		glCheck(glDrawArrays(GL_TRIANGLES, 0, vertexbuffer->data.size() / sizeof(float_t)));
 	}
 }
 
@@ -442,10 +414,10 @@ void RenderingDeviceOpenGL::vertexarray_draw(RID rid)
 RID RenderingDeviceOpenGL::vertexbuffer_create(Buffer const & data)
 {
 	RD_Vertexbuffer * vertexbuffer{ memnew(RD_Vertexbuffer{}) };
-	vertexbuffer->buffer = data;
+	vertexbuffer->data = data;
 	glCheck(glGenBuffers(1, &GL_RID(vertexbuffer->handle)));
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
-	glCheck(glBufferData(GL_ARRAY_BUFFER, (uint32_t)vertexbuffer->buffer.size(), vertexbuffer->buffer.data(), vertexbuffer->buffer.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
+	glCheck(glBufferData(GL_ARRAY_BUFFER, (uint32_t)vertexbuffer->data.size(), vertexbuffer->data.data(), vertexbuffer->data.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
 	return (RID)vertexbuffer;
 }
 
@@ -472,9 +444,9 @@ void RenderingDeviceOpenGL::vertexbuffer_update(RID rid, Buffer const & data, si
 {
 	ASSERT(rid);
 	RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)rid };
-	vertexbuffer->buffer = data;
+	vertexbuffer->data = data;
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
-	glCheck(glBufferSubData(GL_ARRAY_BUFFER, (uint32_t)offset, (uint32_t)vertexbuffer->buffer.size(), vertexbuffer->buffer.data()));
+	glCheck(glBufferSubData(GL_ARRAY_BUFFER, (uint32_t)offset, (uint32_t)vertexbuffer->data.size(), vertexbuffer->data.data()));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -482,10 +454,10 @@ void RenderingDeviceOpenGL::vertexbuffer_update(RID rid, Buffer const & data, si
 RID RenderingDeviceOpenGL::indexbuffer_create(Buffer const & data)
 {
 	RD_Indexbuffer * indexbuffer{ memnew(RD_Indexbuffer{}) };
-	indexbuffer->buffer = data;
+	indexbuffer->data = data;
 	glCheck(glGenBuffers(1, &GL_RID(indexbuffer->handle)));
 	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
-	glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, (uint32_t)indexbuffer->buffer.size(), indexbuffer->buffer.data(), indexbuffer->buffer.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
+	glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, (uint32_t)indexbuffer->data.size(), indexbuffer->data.data(), indexbuffer->data.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
 	return (RID)indexbuffer;
 }
 
@@ -512,9 +484,9 @@ void RenderingDeviceOpenGL::indexbuffer_update(RID rid, Buffer const & data, siz
 {
 	ASSERT(rid);
 	RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)rid };
-	indexbuffer->buffer = data;
+	indexbuffer->data = data;
 	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
-	glCheck(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, (uint32_t)offset, (uint32_t)indexbuffer->buffer.size(), indexbuffer->buffer.data()));
+	glCheck(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, (uint32_t)offset, (uint32_t)indexbuffer->data.size(), indexbuffer->data.data()));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -651,9 +623,9 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 
 		RD_Texture * texture{ (RD_Texture *)framebuffer->texture_attachments[i] };
 
-		uint32_t & texture_handle{ GL_RID(texture->handle) };
-
 		if (i == 0) { framebuffer->width = texture->width; framebuffer->height = texture->height; }
+
+		uint32_t & texture_handle{ GL_RID(texture->handle) };
 
 		uint32_t const sampler_type{ TO_GL(texture->texture_type) };
 		
@@ -668,7 +640,7 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 			FLAG_SET(texture->usage_flags, TextureFlags_ColorAttachment);
 		}
 
-		ASSERT((!is_color && !is_depth) || (is_color && !is_depth) || (is_depth && !is_color));
+		ASSERT((is_color && !is_depth) || (is_depth && !is_color));
 
 		if (is_color)
 		{

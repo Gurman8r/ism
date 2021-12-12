@@ -63,6 +63,7 @@ void Shader::reload_from_file()
 
 	_parse_stage("vertex", ShaderStage_Vertex);
 	_parse_stage("fragment", ShaderStage_Fragment);
+	_parse_stage("geometry", ShaderStage_Geometry);
 	_parse_stage("tess_ctrl", ShaderStage_TesselationControl);
 	_parse_stage("tess_eval", ShaderStage_TesselationEvaluation);
 	_parse_stage("compute", ShaderStage_Compute);
@@ -78,6 +79,11 @@ void Shader::bind()
 void Shader::unbind()
 {
 	SINGLETON(RenderingDevice)->shader_bind(nullptr);
+}
+
+void Shader::set_uniform1i(String const & name, int32_t const value)
+{
+	SINGLETON(RenderingDevice)->shader_set_uniform1i(m_shader, name.c_str(), value);
 }
 
 void Shader::set_uniform1f(String const & name, float_t const value)

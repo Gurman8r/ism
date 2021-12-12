@@ -41,5 +41,7 @@
 #	error "Can't find OpenGL"
 #endif
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #endif // !_ISM_OPENGL_HPP_
 #endif // OPENGL_ENABLED

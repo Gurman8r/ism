@@ -15,6 +15,15 @@ EMBED_CLASS(Texture2D, t) {}
 
 EMBED_CLASS(ImageTexture, t) {}
 
+ImageTexture::ImageTexture(Path const & path)
+{
+	m_image.instance();
+	if (ImageLoader::load_image(m_image, path) != Error_None) { m_image = nullptr; return; }
+	m_width = m_image->get_width();
+	m_height = m_image->get_height();
+	m_texture = SINGLETON(RenderingServer)->texture2d_create(m_image);
+}
+
 ImageTexture::ImageTexture(Ref<Image> const & image)
 {
 	ASSERT(image);

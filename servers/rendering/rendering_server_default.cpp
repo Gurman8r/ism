@@ -43,7 +43,6 @@ RID RenderingServerDefault::texture_replace(RID old_texture, RID new_texture)
 RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 {
 	if (!image) { return nullptr; }
-	
 	ColorFormat_ color_format{}, color_format_srgb{};
 	TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
 	switch (image->get_format())
@@ -95,8 +94,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 	} break;
 	}
 
-	TextureFormat format
-	{
+	return SINGLETON(RenderingDevice)->texture_create({
 		TextureType_2D,
 		color_format,
 		(uint32_t)image->get_width(),
@@ -115,9 +113,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 		swizzle_g,
 		swizzle_b,
 		swizzle_a,
-	};
-
-	return SINGLETON(RenderingDevice)->texture_create(format, image->get_data());
+	}, image->get_data());
 }
 
 Ref<Image> RenderingServerDefault::texture2d_get(RID texture)

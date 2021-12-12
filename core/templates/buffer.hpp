@@ -14,6 +14,9 @@ namespace ism
 
 	public:
 		using storage_type		= typename decltype(m_data);
+		using allocator_type	= typename PolymorphicAllocator<>;
+		using reference			= typename byte &;
+		using const_reference	= typename byte const &;
 		using pointer			= typename byte *;
 		using const_pointer		= typename byte const *;
 		using iterator			= typename pointer;
@@ -23,23 +26,28 @@ namespace ism
 
 		~Buffer() noexcept = default;
 
-		Buffer() noexcept {}
+		Buffer(allocator_type alloc = {}) noexcept : m_data{ alloc } {}
 
-		explicit Buffer(storage_type const & data) : m_data{ data } {}
+		Buffer(storage_type const & data, allocator_type alloc = {}) : m_data{ data, alloc } {}
 
-		explicit Buffer(storage_type && data) noexcept : m_data{ std::move(data) } {}
+		Buffer(storage_type && data, allocator_type alloc = {}) noexcept : m_data{ std::move(data), alloc } {}
 
-		explicit Buffer(size_t const size_in_bytes, byte const value = null) { resize(size_in_bytes, value); }
+		Buffer(size_t const size_in_bytes, byte const value = null, allocator_type alloc = {}) : m_data{ alloc } { resize(size_in_bytes, value); }
 
-		Buffer(Buffer const & other) : m_data{ other.m_data } {}
+		Buffer(void const * src, size_t const size_in_bytes, allocator_type alloc = {}) : m_data{ alloc } { write(src, size_in_bytes); }
 
-		Buffer(Buffer && other) noexcept { swap(std::move(other)); }
+		template <class Iter = iterator
+		> Buffer(Iter first, Iter last, allocator_type alloc = {}) : m_data{ alloc } { write(first, std::distance(first, last) / sizeof(*first)); }
+
+		Buffer(Buffer const & other, allocator_type alloc = {}) : m_data{ other.m_data, alloc } {}
+
+		Buffer(Buffer && other, allocator_type alloc = {}) noexcept : m_data{ alloc } { swap(std::move(other)); }
 
 		Buffer & operator=(Buffer const & other) { Buffer temp{ other }; return swap(temp); }
 
 		Buffer & operator=(Buffer && other) noexcept { return swap(std::move(other)); }
 
-		Buffer & swap(Buffer & other) noexcept { if (this != std::addressof(other)) { m_data.swap(other.m_data); } return (*this); }
+		NODISCARD operator storage_type & () & noexcept { return m_data; }
 
 		NODISCARD operator storage_type const & () const & noexcept { return m_data; }
 
@@ -50,9 +58,9 @@ namespace ism
 
 		NODISCARD auto size() const noexcept -> size_t { return m_data.size(); }
 
-		NODISCARD auto data() noexcept -> byte * { return m_data.data(); }
+		NODISCARD auto data() noexcept -> pointer { return m_data.data(); }
 
-		NODISCARD auto data() const noexcept -> byte const * { return m_data.data(); }
+		NODISCARD auto data() const noexcept -> const_pointer { return m_data.data(); }
 
 		NODISCARD auto c_str() const noexcept -> cstring { return (cstring)data(); }
 
@@ -64,24 +72,46 @@ namespace ism
 
 		NODISCARD auto end() const noexcept -> const_iterator { return begin() + size(); }
 
-		NODISCARD auto front() noexcept -> byte & { ASSERT(!empty()); return *(begin()); }
+		NODISCARD auto front() noexcept -> reference { ASSERT(!empty()); return *(begin()); }
 
-		NODISCARD auto front() const noexcept -> byte const & { ASSERT(!empty()); return *(begin()); }
+		NODISCARD auto front() const noexcept -> const_reference { ASSERT(!empty()); return *(begin()); }
 
-		NODISCARD auto back() noexcept -> byte & { ASSERT(!empty()); return *(end() - 1); }
+		NODISCARD auto back() noexcept -> reference { ASSERT(!empty()); return *(end() - 1); }
 
-		NODISCARD auto back() const noexcept -> byte const & { ASSERT(!empty()); return *(end() - 1); }
+		NODISCARD auto back() const noexcept -> const_reference { ASSERT(!empty()); return *(end() - 1); }
 
-		NODISCARD auto operator[](size_t const i) noexcept -> byte & { ASSERT(i < size()); return m_data[i]; }
+		NODISCARD auto operator[](size_t const i) noexcept -> reference { ASSERT(i < size()); return m_data[i]; }
 
 		NODISCARD auto operator[](size_t const i) const noexcept -> byte { ASSERT(i < size()); return m_data[i]; }
 
 	public:
-		void clear() noexcept { m_data.clear(); }
+		Buffer & clear() noexcept
+		{
+			return m_data.clear(), (*this);
+		}
 
-		void reserve(size_t const size_in_bytes) { if (size() < size_in_bytes) { resize(size_in_bytes, null); } }
+		Buffer & reserve(size_t const size_in_bytes)
+		{
+			if (size() < size_in_bytes)
+			{
+				resize(size_in_bytes, null);
+			}
+			return (*this);
+		}
 
-		void resize(size_t const size_in_bytes, byte const value = null) { m_data.resize(size_in_bytes, value); }
+		Buffer & resize(size_t const size_in_bytes, byte const value = null)
+		{
+			return m_data.resize(size_in_bytes, value), (*this);
+		}
+
+		Buffer & swap(Buffer & other) noexcept
+		{
+			if (this != std::addressof(other))
+			{
+				m_data.swap(other.m_data);
+			}
+			return (*this);
+		}
 
 	public:
 		void * get_to(size_t const index, void * dst, size_t const size_in_bytes)
@@ -227,8 +257,7 @@ namespace ism
 		{
 			if constexpr (1 == sizeof(T))
 			{
-				m_data.push_back(static_cast<byte>(value));
-				return (*this);
+				return m_data.push_back(static_cast<byte>(value)), (*this);
 			}
 			else
 			{

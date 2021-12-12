@@ -17,7 +17,9 @@ namespace ism
 
 		RID indices{};
 
-		Vector<RID> vertices{};
+		RID vertices{};
+
+		VertexLayout layout{};
 	};
 
 	struct NODISCARD RD_Vertexbuffer final
@@ -26,7 +28,7 @@ namespace ism
 
 		RID handle{};
 
-		Buffer buffer{};
+		Buffer data{};
 	};
 
 	struct NODISCARD RD_Indexbuffer final
@@ -35,7 +37,7 @@ namespace ism
 
 		RID handle{};
 
-		Buffer buffer{};
+		Buffer data{};
 	};
 
 	struct NODISCARD RD_Texture final

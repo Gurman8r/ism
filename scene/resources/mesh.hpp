@@ -5,13 +5,15 @@
 
 namespace ism
 {
+	class Texture;
+
 	class ISM_API Mesh : public Resource
 	{
 		OBJECT_COMMON(Mesh, Resource);
 
-		mutable RID			m_array{};
-		mutable RID			m_indices{};
-		mutable Vector<RID>	m_vertices{};
+		enum { VAO, IBO, VBO };
+
+		mutable Batch<RID, RID, RID, Vector<Ref<Texture>>> m_data{};
 
 	public:
 		Mesh() noexcept {}
@@ -20,7 +22,9 @@ namespace ism
 
 		virtual ~Mesh() override;
 
-		NODISCARD virtual RID get_rid() const override { return m_array; }
+		void draw() const;
+
+		NODISCARD virtual RID get_rid() const override { return m_data.front<VAO>(); }
 
 		virtual void reload_from_file() override;
 

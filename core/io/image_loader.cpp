@@ -10,14 +10,14 @@
 
 using namespace ism;
 
-Error_ ImageLoader::load_image(Ref<Image> image, Path const & path, int32_t desired_channels)
+Error_ ImageLoader::load_image(Ref<Image> image, Path const & path)
 {
 	if (!image || path.empty()) { return Error_Unknown; }
 
 	static SCOPE_ENTER() { stbi_set_flip_vertically_on_load(true); };
 
 	int32_t width, height, channels;
-	byte * data{ (byte *)stbi_load(path.string().c_str(), &width, &height, &channels, desired_channels) };
+	byte * data{ (byte *)stbi_load(path.string().c_str(), &width, &height, &channels, 0) };
 	SCOPE_EXIT(data) { stbi_image_free(data); };
 	if (!data) { return Error_Unknown; }
 

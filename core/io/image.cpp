@@ -1,4 +1,4 @@
-#include <core/io/image.hpp>
+#include <core/io/image_loader.hpp>
 
 using namespace ism;
 

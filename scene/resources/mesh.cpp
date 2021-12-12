@@ -1,4 +1,5 @@
 #include <scene/resources/mesh.hpp>
+#include <scene/resources/texture.hpp>
 #include <servers/rendering_server.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -17,76 +18,133 @@ EMBED_CLASS(Mesh, t) {}
 
 Mesh::~Mesh()
 {
-	if (m_array) { SINGLETON(RenderingDevice)->vertexarray_destroy(m_array); }
-	
-	if (m_indices) { SINGLETON(RenderingDevice)->indexbuffer_destroy(m_indices); }
-	
-	for (RID vb : m_vertices) { if (vb) { SINGLETON(RenderingDevice)->vertexbuffer_destroy(vb); } }
+	for (size_t i = 0; i < m_data.size(); ++i)
+	{
+		m_data.expand<VAO, VBO, IBO>(i, [](RID vao, RID ibo, RID vbo)
+		{
+			if (vao) { SINGLETON(RenderingDevice)->vertexarray_destroy(vao); }
+			if (ibo) { SINGLETON(RenderingDevice)->indexbuffer_destroy(ibo); }
+			if (vbo) { SINGLETON(RenderingDevice)->vertexbuffer_destroy(vbo); }
+		});
+	}
+}
+
+void Mesh::draw() const
+{
+	for (size_t i = 0; i < m_data.size(); ++i)
+	{
+		m_data.expand<VAO>(i, [](RID vao)
+		{
+			SINGLETON(RenderingDevice)->vertexarray_draw(vao);
+		});
+	}
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+struct SubMesh
+{
+	VertexLayout layout{};
+
+	Buffer vertices{}, indices{};
+
+	Vector<Ref<Texture>> textures{};
+};
+
+static void _load_material_textures(Vector<Ref<Texture>> & textures, aiMaterial * mat, aiTextureType type, cstring type_name)
+{
+	for (uint32_t i = 0; i < mat->GetTextureCount(type); ++i)
+	{
+		aiString str;
+		mat->GetTexture(type, i, &str);
+		// TODO: load the texture...
+	}
+}
+
+static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
+{
+	VertexLayout layout{};
+
+	Buffer vertices{}, indices{};
+
+	for (uint32_t i = 0; i < mesh->mNumVertices; ++i)
+	{
+		vertices << mesh->mVertices[i].x << mesh->mVertices[i].y << mesh->mVertices[i].z;
+
+		if(mesh->HasNormals())
+		{
+			vertices << mesh->mNormals[i].x << mesh->mNormals[i].y << mesh->mNormals[i].z;
+		}
+		else
+		{
+			vertices << Vec3f{};
+		}
+
+		if (mesh->HasTextureCoords(0))
+		{
+			vertices << mesh->mTextureCoords[0][i].x << mesh->mTextureCoords[0][i].y;
+			//vertices << mesh->mTangents[i].x << mesh->mTangents[i].y << mesh->mTangents[i].z;
+			//vertices << mesh->mBitangents[i].x << mesh->mBitangents[i].y << mesh->mBitangents[i].z;
+		}
+		else
+		{
+			vertices << Vec2f{};
+		}
+	}
+
+	for (uint32_t i = 0; i < mesh->mNumFaces; ++i)
+	{
+		aiFace face{ mesh->mFaces[i] };
+
+		for (uint32_t j = 0; j < face.mNumIndices; ++j)
+		{
+			indices << face.mIndices[j];
+		}
+	}
+
+	Vector<Ref<Texture>> textures;
+	//aiMaterial * material{ scene->mMaterials[mesh->mMaterialIndex] };
+	//_load_material_textures(textures, material, aiTextureType_DIFFUSE, "texture_diffuse");
+	//_load_material_textures(textures, material, aiTextureType_SPECULAR, "texture_specular");
+	//_load_material_textures(textures, material, aiTextureType_HEIGHT, "texture_normal");
+	//_load_material_textures(textures, material, aiTextureType_AMBIENT, "texture_height");
+
+	return SubMesh{ std::move(layout), std::move(vertices), std::move(indices), std::move(textures)};
+}
+
+static void _process_node(Vector<SubMesh> & meshes, aiNode * node, aiScene const * scene)
+{
+	for (uint32_t i = 0; i < node->mNumMeshes; ++i)
+	{
+		meshes.push_back(_process_mesh(scene->mMeshes[node->mMeshes[i]], scene));
+	}
+	for (uint32_t i = 0; i < node->mNumChildren; ++i)
+	{
+		_process_node(meshes, node->mChildren[i], scene);
+	}
 }
 
 void Mesh::reload_from_file()
 {
 	if (get_path().empty()) { return; }
 
-	// open scene
 	Assimp::Importer _ai;
 	aiScene const * scene{ _ai.ReadFile(get_path().c_str(),
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType |
-		aiProcess_GenNormals |
+		aiProcess_GenSmoothNormals |
 		aiProcess_GenUVCoords) };
 	SCOPE_EXIT(&_ai) { _ai.FreeScene(); };
 
-	struct Vertex
+	Vector<SubMesh> meshes;
+	_process_node(meshes, scene->mRootNode, scene);
+	for (SubMesh & submesh : meshes)
 	{
-		TVec<float_t, 8> data{};
-
-		Vertex(Vec3f const & p, Vec3f const & n, Vec2f const & t) : data{ p[0], p[1], p[2], n[0], n[1], n[2], t[0], t[1] } {}
-
-		auto operator[](size_t i) const { return data[i]; }
-	};
-
-	Vector<Vertex> v{};
-
-	Buffer buffer{};
-
-	// for each mesh
-	std::for_each(&scene->mMeshes[0], &scene->mMeshes[scene->mNumMeshes], [&](aiMesh * const mesh)
-	{
-		// for each face
-		std::for_each(&mesh->mFaces[0], &mesh->mFaces[mesh->mNumFaces], [&](aiFace const & face)
-		{
-			// for each index
-			std::for_each(&face.mIndices[0], &face.mIndices[face.mNumIndices], [&](uint32_t i)
-			{
-				if (auto const vp{ mesh->mVertices ? &mesh->mVertices[i] : nullptr }) {
-					buffer << vp->x << vp->y << vp->z;
-				}
-				else {
-					buffer << Vec3f{};
-				}
-				
-				if (auto const vn{ mesh->mNormals ? &mesh->mNormals[i] : nullptr }) {
-					buffer << vn->x << vn->y << vn->z;
-				}
-				else {
-					buffer << Vec3f{ 1, 1, 1 };
-				}
-				
-				if (auto const uv{ mesh->HasTextureCoords(0) ? &mesh->mTextureCoords[0][i] : nullptr }) {
-					buffer << uv->x << uv->y;
-				}
-				else {
-					buffer << Vec2f{ 1, 1 };
-				}
-			});
-		});
-	});
-
-	m_array = SINGLETON(RenderingDevice)->vertexarray_create({}, 0, {});
-	m_indices = nullptr;
-	m_vertices.push_back(SINGLETON(RenderingDevice)->vertexbuffer_create(buffer));
-	SINGLETON(RenderingDevice)->vertexarray_update(m_array, VertexLayout{}, m_indices, m_vertices);
+		RID ibo{ SINGLETON(RenderingDevice)->indexbuffer_create(submesh.indices) };
+		RID vbo{ SINGLETON(RenderingDevice)->vertexbuffer_create(submesh.vertices) };
+		RID vao{ SINGLETON(RenderingDevice)->vertexarray_create(submesh.layout, ibo, vbo) };
+		m_data.push_back(vao, ibo, vbo, submesh.textures);
+	}
 }

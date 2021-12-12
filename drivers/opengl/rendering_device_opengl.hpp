@@ -27,10 +27,9 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY */
-		virtual RID vertexarray_create(VertexLayout const & layout, RID indices, Vector<RID> const & vertices) override;
+		virtual RID vertexarray_create(VertexLayout const & layout, RID indices, RID vertices) override;
 		virtual void vertexarray_destroy(RID rid) override;
 		virtual void vertexarray_bind(RID rid) override;
-		virtual void vertexarray_update(RID rid, VertexLayout const & layout, RID indices, Vector<RID> const & vertices) override;
 		virtual void vertexarray_draw(RID rid) override;
 
 	public:

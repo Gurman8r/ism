@@ -356,15 +356,17 @@ namespace ism
 	{
 		ShaderStage_Vertex,
 		ShaderStage_Fragment,
+		ShaderStage_Geometry,
 		ShaderStage_TesselationControl,
 		ShaderStage_TesselationEvaluation,
 		ShaderStage_Compute,
 		ShaderStage_MAX,
-		ShaderStage_Vertex_Bit					= 1 << ShaderStage_Vertex,
-		ShaderStage_Fragment_Bit				= 1 << ShaderStage_Fragment,
-		ShaderStage_TesselationControl_Bit		= 1 << ShaderStage_TesselationControl,
-		ShaderStage_TesselationEvaluation_Bit	= 1 << ShaderStage_TesselationEvaluation,
-		ShaderStage_Compute_Bit					= 1 << ShaderStage_Compute,
+		ShaderStage_Vertex_Bit					= 1 << 0,
+		ShaderStage_Fragment_Bit				= 1 << 1,
+		ShaderStage_Geometry_Bit				= 1 << 2,
+		ShaderStage_TesselationControl_Bit		= 1 << 3,
+		ShaderStage_TesselationEvaluation_Bit	= 1 << 4,
+		ShaderStage_Compute_Bit					= 1 << 5,
 	};
 
 	ENUM_INT(ShaderLanguage)
@@ -641,22 +643,14 @@ namespace ism
 	{
 		struct NODISCARD Element final
 		{
-			cstring		name{};
-			DataType_	type{};
-			uint32_t	size{};
-			uint32_t	count{};
-			bool		normalized{};
-			uint32_t	offset{};
+			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(Element);
 
-			constexpr Element(cstring name, DataType_ type, uint32_t count, bool normalized = false) noexcept
-				: name{ name }
-				, type{ type }
-				, size{ ism::get_data_type_size(type) }
-				, count{ count }
-				, normalized{ normalized }
-				, offset{}
-			{
-			}
+			cstring		name		{};
+			DataType_	type		{};
+			uint32_t	count		{};
+			bool		normalized	{};
+			uint32_t	size		{ ism::get_data_type_size(type) * count };
+			uint32_t	offset		{};
 		};
 
 		uint32_t stride{};
@@ -678,7 +672,10 @@ namespace ism
 
 		template <size_t N> VertexLayout(Element const (&arr)[N]) noexcept : VertexLayout{ &arr[0], &arr[N] } {}
 
-		VertexLayout() noexcept : VertexLayout{ { "Position", DataType_F32, 3 }, { "Normal"	, DataType_F32, 3 }, { "Texcoord", DataType_F32, 2 }, } {}
+		VertexLayout() noexcept : VertexLayout{
+			{ "a_Position",	DataType_F32, 3 },
+			{ "a_Normal",	DataType_F32, 3 },
+			{ "a_Texcoord",	DataType_F32, 2 }, } {}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -716,10 +713,9 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY */
-		virtual RID vertexarray_create(VertexLayout const & layout, RID indices, Vector<RID> const & vertices) = 0;
+		virtual RID vertexarray_create(VertexLayout const & layout, RID indices, RID vertices) = 0;
 		virtual void vertexarray_destroy(RID rid) = 0;
 		virtual void vertexarray_bind(RID rid) = 0;
-		virtual void vertexarray_update(RID rid, VertexLayout const & layout, RID indices, Vector<RID> const & vertices) = 0;
 		virtual void vertexarray_draw(RID rid) = 0;
 		
 	public:

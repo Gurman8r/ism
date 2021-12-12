@@ -24,6 +24,7 @@ namespace ism
 
 		void bind();
 		void unbind();
+		void set_uniform1i(String const & name, int32_t const value);
 		void set_uniform1f(String const & name, float_t const value);
 		void set_uniform2f(String const & name, Vec2f const & value);
 		void set_uniform3f(String const & name, Vec3f const & value);

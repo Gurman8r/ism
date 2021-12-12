@@ -36,34 +36,32 @@ EditorNode::EditorNode()
 
 	framebuffer = SINGLETON(RenderingDevice)->framebuffer_create({ color_buffer, depth_stencil_buffer });
 
-	images["sanic"].instance();
-	ImageLoader::load_image(images["sanic"], "../../../assets/textures/Sanic.png");
-	textures["sanic"].instance<ImageTexture>(images["sanic"]);
+	textures["sanic"].instance<ImageTexture>("../../../assets/textures/Sanic.png");
+	textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 
 	meshes["sphere8x6"].instance("../../../assets/meshes/sphere8x6.obj");
+	meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
+	meshes["teapot"].instance("../../../assets/meshes/teapot.obj");
 
-	//shaders["basic_2d"].instance("../../../assets/shaders/basic_2d.json");
+	shaders["basic_2d"].instance("../../../assets/shaders/basic_2d.json");
 	shaders["basic_3d"].instance("../../../assets/shaders/basic_3d.json");
 
-	static RenderingDevice * dev{ SINGLETON(RenderingDevice) };
-	static RID shader{ shaders["basic_3d"]->get_rid() };
-	static RID texture{ textures["sanic"]->get_rid() };
-	dev->shader_bind(shader);
-	dev->shader_set_uniform1f(shader, "Time", 1.f);
-	dev->shader_set_uniform1f(shader, "DeltaTime", 16_ms);
-	dev->shader_set_uniform3f(shader, "Transform.Position", { 0.f, 0.f, 0.f });
-	dev->shader_set_uniform3f(shader, "Transform.Scale", { 1.f, 1.f, 1.f });
-	dev->shader_set_uniform4f(shader, "Transform.Rotation", { 0.f, 0.1f, 0.f, 0.25f });
-	dev->shader_set_uniform3f(shader, "Camera.Position", { 0.f, 0.f, 3.f });
-	dev->shader_set_uniform3f(shader, "Camera.Direction", { 0.f, 0.f, -1.f });
-	dev->shader_set_uniform1f(shader, "Camera.Fov", 45.f);
-	dev->shader_set_uniform1f(shader, "Camera.Near", 0.001f);
-	dev->shader_set_uniform1f(shader, "Camera.Far", 1000.f);
-	dev->shader_set_uniform2f(shader, "Camera.View", { 1280, 720 });
-	dev->shader_set_uniform4f(shader, "Tint", (Vec4f)Colors::red);
-	dev->texture_bind(textures["sanic"]->get_rid(), 0);
-	dev->shader_set_uniform1i(shader, "Texture0", 0);
-	dev->shader_bind(0);
+	Shader * shader{ *shaders["basic_3d"] };
+	shader->bind();
+	shader->set_uniform1f("Time", 1.f);
+	shader->set_uniform1f("DeltaTime", 16_ms);
+	shader->set_uniform3f("Transform.Position", { 0.f, 0.f, 0.f });
+	shader->set_uniform3f("Transform.Scale", { 1.f, 1.f, 1.f });
+	shader->set_uniform4f("Transform.Rotation", { 0.f, 0.1f, 0.f, 0.25f });
+	shader->set_uniform3f("Camera.Position", { 0.f, 0.f, 5.f });
+	shader->set_uniform3f("Camera.Direction", { 0.f, 0.f, -1.f });
+	shader->set_uniform1f("Camera.Fov", 45.f);
+	shader->set_uniform1f("Camera.Near", 0.001f);
+	shader->set_uniform1f("Camera.Far", 1000.f);
+	shader->set_uniform2f("Camera.View", { 1280, 720 });
+	shader->set_uniform4f("Tint", (Vec4f)Colors::white);
+	SINGLETON(RenderingDevice)->texture_bind(textures["earth_dm_2k"]->get_rid(), 0);
+	shader->set_uniform1i("Texture0", 0);
 }
 
 EditorNode::~EditorNode()
@@ -84,13 +82,12 @@ void EditorNode::process(Duration const & dt)
 	//ImGui::ShowDemoWindow();
 
 	static RenderingDevice * dev{ SINGLETON(RenderingDevice) };
-	static RID shader{ shaders["basic_3d"]->get_rid() };
-	static RID vao{ meshes["sphere8x6"]->get_rid() };
+	static Mesh * mesh{ *meshes["sphere32x24"] };
+	static Shader * shader{ *shaders["basic_3d"] };
 	dev->framebuffer_bind(framebuffer);
 	dev->clear(Colors::magenta);
-	dev->shader_bind(shader);
-	dev->vertexarray_draw(vao);
-	dev->shader_bind(0);
+	shader->bind();
+	mesh->draw();
 	dev->framebuffer_bind(0);
 
 	_show_viewport("Viewport");
