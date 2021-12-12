@@ -79,7 +79,7 @@ namespace ism
 	public:
 		void clear() noexcept { m_data.clear(); }
 
-		void reserve(size_t const size_in_bytes) { if (size() < size_in_bytes) { m_data.resize(size_in_bytes, null); } }
+		void reserve(size_t const size_in_bytes) { if (size() < size_in_bytes) { resize(size_in_bytes, null); } }
 
 		void resize(size_t const size_in_bytes, byte const value = null) { m_data.resize(size_in_bytes, value); }
 
@@ -101,7 +101,7 @@ namespace ism
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
 		> T & get_to(T & value)
 		{
-			return get_to(0, value);
+			return get_to<T>(0, value);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
@@ -225,9 +225,17 @@ namespace ism
 		template <class T
 		> Buffer & operator<<(T const & value)
 		{
-			return write(value);
+			if constexpr (1 == sizeof(T))
+			{
+				m_data.push_back(static_cast<byte>(value));
+				return (*this);
+			}
+			else
+			{
+				return write(value);
+			}
 		}
-		
+
 		Buffer & operator<<(cstring str)
 		{
 			return print(str);

@@ -8,7 +8,7 @@ out _Vertex { vec3 Position; vec3 Normal; vec2 Texcoord; } Vertex;
 
 uniform float Time;
 uniform float DeltaTime;
-uniform struct _Transform { vec3 Position; Vec3 Scale; Vec4 Rotation; } Transform;
+uniform struct _Transform { vec3 Position; vec3 Scale; vec4 Rotation; } Transform;
 uniform struct _Camera { vec3 Position; vec3 Direction; float Fov; float Near; float Far; vec2 View; } Camera;
 
 mat4 transform(vec3 pos, vec4 rot)
@@ -21,8 +21,7 @@ mat4 transform(vec3 pos, vec4 rot)
         (o * v.x * v.x + c), (o * v.x * v.y - v.z * s), (o * v.z * v.x + v.y * s), 0.,
         (o * v.x * v.y + v.z * s), (o * v.y * v.y + c), (o * v.y * v.z - v.x * s), 0.,
         (o * v.z * v.x - v.y * s), (o * v.y * v.z + v.x * s), (o * v.z * v.z + c), 0.,
-        pos.x, pos.y, pos.z, 1.
-    );
+        pos.x, pos.y, pos.z, 1.);
 }
 
 mat4 look_at(vec3 pos, vec3 dir)
@@ -46,8 +45,7 @@ mat4 perspective(float fov, float aspect, float near, float far)
         1. / (aspect * tan(fov / 2.)), 0., 0., 0.,
         0., 1. / tan(fov / 2.), 0., 0.,
         0., 0., -(far + near) / (far - near), -1.,
-        0., 0., -(2. * far * near) / (far - near), 0.
-    );
+        0., 0., -(2. * far * near) / (far - near), 0.);
 }
 
 void main()

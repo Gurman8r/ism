@@ -732,28 +732,33 @@ void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t h
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+static uint32_t _compile_shader(ShaderStage_ shader_stage, cstring source_code)
+{
+	ASSERT(source_code && *source_code);
+	uint32_t obj{};
+	glCheck(obj = glCreateShaderObjectARB(TO_GL(shader_stage)));
+	glCheck(glShaderSourceARB(obj, 1, &source_code, nullptr));
+	glCheck(glCompileShaderARB(obj));
+	return obj;
+}
+
 RID RenderingDeviceOpenGL::shader_create(Vector<ShaderStageData> const & stage_data)
 {
 	static char log_str[1024]{};
-
 	ASSERT(!stage_data.empty());
-
 	RD_Shader * shader{ memnew(RD_Shader{}) };
-
 	uint32_t & handle{ GL_RID(shader->handle) };
-
-	shader->stage_data = stage_data;
-
 	glCheck(handle = glCreateProgramObjectARB());
+
+	for (ShaderStageData const & stage : stage_data) {
+		if (!stage.source.empty()) {
+			shader->stage_data.push_back(stage);
+		}
+	}
 
 	for (ShaderStageData & stage : shader->stage_data)
 	{
-		uint32_t obj{};
-		glCheck(obj = glCreateShaderObjectARB(TO_GL(stage.shader_stage)));
-
-		cstring text{ stage.source.c_str() };
-		glCheck(glShaderSourceARB(obj, 1, &text, nullptr));
-		glCheck(glCompileShaderARB(obj));
+		uint32_t obj{ _compile_shader(stage.shader_stage, stage.source.c_str()) };
 
 		int32_t compile_status;
 		glCheck(glGetObjectParameterivARB(obj, GL_OBJECT_COMPILE_STATUS_ARB, &compile_status));
@@ -787,7 +792,7 @@ void RenderingDeviceOpenGL::shader_destroy(RID rid)
 {
 	ASSERT(rid);
 	RD_Shader * shader{ (RD_Shader *)rid };
-	glCheck(glDeleteObjectARB(GL_RID(shader->handle)));
+	glCheck(glDeleteProgramsARB(1, &GL_RID(shader->handle)));
 	memdelete(shader);
 }
 

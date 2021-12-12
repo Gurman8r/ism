@@ -26,7 +26,7 @@ void Shader::reload_from_file()
 
 	Vector<ShaderStageData> stages{};
 
-	auto parse_stage = [&json, &stages
+	auto _parse_stage = [&json, &stages
 	](cstring stage_name, ShaderStage_ stage_index)
 	{
 		ShaderStageData data{ stage_index };
@@ -35,11 +35,11 @@ void Shader::reload_from_file()
 		{
 			if (auto glsl{ stage->find("glsl") }; glsl != stage->end())
 			{
-				Vector<String> lines;
-				glsl->get_to(lines);
-				for (String const & line : lines) {
-					data.source.printf("%s\n", line.c_str());
+				for (String const & line : glsl->get<Vector<String>>()) {
+					data.source.write(line.data(), line.size());
+					data.source << '\n';
 				}
+				data.source << '\0';
 			}
 			else if (auto path{ stage->find("path") }; path != stage->end())
 			{
@@ -49,16 +49,23 @@ void Shader::reload_from_file()
 
 				String line;
 				while (std::getline(file, line)) {
-					data.source.printf("%s\n", line.c_str());
+					data.source.write(line.data(), line.size());
+					data.source << '\n';
 				}
+				data.source << '\0';
 			}
 		}
-
-		stages.push_back(data);
+		if (!data.source.empty())
+		{
+			stages.push_back(std::move(data));
+		}
 	};
 
-	parse_stage("vertex", ShaderStage_Vertex);
-	parse_stage("fragment", ShaderStage_Fragment);
+	_parse_stage("vertex", ShaderStage_Vertex);
+	_parse_stage("fragment", ShaderStage_Fragment);
+	_parse_stage("tess_ctrl", ShaderStage_TesselationControl);
+	_parse_stage("tess_eval", ShaderStage_TesselationEvaluation);
+	_parse_stage("compute", ShaderStage_Compute);
 	m_shader = SINGLETON(RenderingDevice)->shader_create(stages);
 	ASSERT(m_shader);
 }

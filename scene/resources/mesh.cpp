@@ -79,7 +79,7 @@ void Mesh::reload_from_file()
 					buffer << uv->x << uv->y;
 				}
 				else {
-					buffer << Vec2f{ 1.f, 1.f };
+					buffer << Vec2f{ 1, 1 };
 				}
 			});
 		});
