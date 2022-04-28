@@ -755,10 +755,10 @@ namespace ism
 		virtual int32_t shader_uniform_location(RID rid, cstring name) = 0;
 		virtual void shader_set_uniform1i(RID rid, cstring name, int32_t const value) = 0;
 		virtual void shader_set_uniform1f(RID rid, cstring name, float_t const value) = 0;
-		virtual void shader_set_uniform2f(RID rid, cstring name, Vec2f const & value) = 0;
-		virtual void shader_set_uniform3f(RID rid, cstring name, Vec3f const & value) = 0;
-		virtual void shader_set_uniform4f(RID rid, cstring name, Vec4f const & value) = 0;
-		virtual void shader_set_uniform16f(RID rid, cstring name, Mat4f const & value, bool transpose = false) = 0;
+		virtual void shader_set_uniform2f(RID rid, cstring name, Vec2 const & value) = 0;
+		virtual void shader_set_uniform3f(RID rid, cstring name, Vec3 const & value) = 0;
+		virtual void shader_set_uniform4f(RID rid, cstring name, Vec4 const & value) = 0;
+		virtual void shader_set_uniform16f(RID rid, cstring name, Mat4 const & value, bool transpose = false) = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

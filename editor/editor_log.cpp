@@ -1,18 +1,18 @@
-#include <editor/editor_hierarchy.hpp>
+#include <editor/editor_log.hpp>
 
 using namespace ism;
 
-EMBED_CLASS(EditorHierarchy, t) {}
+EMBED_CLASS(EditorLog, t) {}
 
-EditorHierarchy::EditorHierarchy() : EditorPanel{ "Hierarchy" }
+EditorLog::EditorLog() : EditorPanel{ "Log" }
 {
 }
 
-EditorHierarchy::~EditorHierarchy()
+EditorLog::~EditorLog()
 {
 }
 
-void EditorHierarchy::draw()
+void EditorLog::draw()
 {
 	if (!is_open()) { return; }
 
@@ -23,5 +23,5 @@ void EditorHierarchy::draw()
 	bool open; EDITOR_PANEL_SCOPE(open);
 	if (!open) { return; }
 
-	ImGui::Text("editor hierarchy goes here");
+	ImGui::Text("editor log goes here");
 }

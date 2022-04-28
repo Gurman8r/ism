@@ -616,32 +616,27 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, handle));
 
 	uint32_t color_attachment_index{};
-
 	for (size_t i = 0; i < framebuffer->texture_attachments.size(); ++i)
 	{
 		ASSERT(framebuffer->texture_attachments[i]);
 
 		RD_Texture * texture{ (RD_Texture *)framebuffer->texture_attachments[i] };
 
-		if (i == 0) { framebuffer->width = texture->width; framebuffer->height = texture->height; }
+		if (i == 0) {
+			if (framebuffer->width <= 0) { framebuffer->width = texture->width; }
+			if (framebuffer->height <= 0) { framebuffer->height = texture->height; }
+		}
 
 		uint32_t & texture_handle{ GL_RID(texture->handle) };
-
 		uint32_t const sampler_type{ TO_GL(texture->texture_type) };
-		
 		glCheck(glBindTexture(sampler_type, texture_handle));
-
-		bool const
-			is_color{ FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment) },
-			is_depth{ FLAG_READ(texture->usage_flags, TextureFlags_DepthStencilAttachment) };
-
+		bool const is_color{ FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment) };
+		bool const is_depth{ FLAG_READ(texture->usage_flags, TextureFlags_DepthStencilAttachment) };
 		if (!is_color && !is_depth)
 		{
 			FLAG_SET(texture->usage_flags, TextureFlags_ColorAttachment);
 		}
-
 		ASSERT((is_color && !is_depth) || (is_depth && !is_color));
-
 		if (is_color)
 		{
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), sampler_type, texture_handle, 0));
@@ -686,18 +681,33 @@ void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t h
 	framebuffer->height = height;
 
 	uint32_t & handle{ GL_RID(framebuffer->handle) };
-	glCheck(glDeleteFramebuffers(1, &handle));
+	if (handle) { glCheck(glDeleteFramebuffers(1, &handle)); }
 	glCheck(glGenFramebuffers(1, &handle));
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, handle));
-
+	
+	uint32_t color_attachment_index{};
 	for (size_t i = 0; i < framebuffer->texture_attachments.size(); ++i)
 	{
 		RD_Texture * texture{ (RD_Texture *)framebuffer->texture_attachments[i] };
 		texture->width = framebuffer->width;
 		texture->height = framebuffer->height;
 		texture_update((RID)texture);
+	
+		uint32_t & texture_handle{ GL_RID(texture->handle) };
+		uint32_t const sampler_type{ TO_GL(texture->texture_type) };
+		bool const is_color{ FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment) };
+		bool const is_depth{ FLAG_READ(texture->usage_flags, TextureFlags_DepthStencilAttachment) };
+		ASSERT((is_color && !is_depth) || (is_depth && !is_color));
+		if (is_color)
+		{
+			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), sampler_type, texture_handle, 0));
+		}
+		else
+		{
+			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, sampler_type, texture_handle, 0));
+		}
 	}
-
+	
 	ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, NULL));
 }
@@ -788,8 +798,10 @@ struct UniformBinder final
 		glCheck(last = glGetHandleARB(GL_PROGRAM_OBJECT_ARB));
 
 		if (last != self) { glCheck(glUseProgramObjectARB(self)); }
+
+		hash_t const id{ hash(name, std::strlen(name)) };
 		
-		location = shader.bindings.find_or_add_fn(hash(name, std::strlen(name)), [&]()
+		location = shader.bindings.find_or_add_fn(id, [&]()
 		{
 			int32_t result;
 			glCheck(result = glGetUniformLocationARB(self, name));
@@ -824,7 +836,7 @@ void RenderingDeviceOpenGL::shader_set_uniform1f(RID rid, cstring name, float_t 
 	}
 }
 
-void RenderingDeviceOpenGL::shader_set_uniform2f(RID rid, cstring name, Vec2f const & value)
+void RenderingDeviceOpenGL::shader_set_uniform2f(RID rid, cstring name, Vec2 const & value)
 {
 	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
 	{
@@ -832,7 +844,7 @@ void RenderingDeviceOpenGL::shader_set_uniform2f(RID rid, cstring name, Vec2f co
 	}
 }
 
-void RenderingDeviceOpenGL::shader_set_uniform3f(RID rid, cstring name, Vec3f const & value)
+void RenderingDeviceOpenGL::shader_set_uniform3f(RID rid, cstring name, Vec3 const & value)
 {
 	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
 	{
@@ -840,7 +852,7 @@ void RenderingDeviceOpenGL::shader_set_uniform3f(RID rid, cstring name, Vec3f co
 	}
 }
 
-void RenderingDeviceOpenGL::shader_set_uniform4f(RID rid, cstring name, Vec4f const & value)
+void RenderingDeviceOpenGL::shader_set_uniform4f(RID rid, cstring name, Vec4 const & value)
 {
 	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
 	{
@@ -848,7 +860,7 @@ void RenderingDeviceOpenGL::shader_set_uniform4f(RID rid, cstring name, Vec4f co
 	}
 }
 
-void RenderingDeviceOpenGL::shader_set_uniform16f(RID rid, cstring name, Mat4f const & value, bool transpose)
+void RenderingDeviceOpenGL::shader_set_uniform16f(RID rid, cstring name, Mat4 const & value, bool transpose)
 {
 	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
 	{

@@ -8,26 +8,24 @@ EditorPanel::~EditorPanel() {}
 
 bool EditorPanel::begin_window()
 {
-	bool const is_open{ ImGui::Begin(m_name, &m_open, m_flags) };
+	ImGui::PushID(this);
 
-	if (is_open) { update(); }
+	bool const open{ ImGui::Begin(m_name, &m_is_open, m_flags) };
 
-	return is_open;
+	if (open)
+	{
+		if (!m_window)
+		{
+			m_window = ImGui::GetCurrentContext()->CurrentWindow;
+		}
+	}
+
+	return open;
 }
 
 void EditorPanel::end_window()
 {
 	ImGui::End();
-}
 
-void EditorPanel::update() noexcept
-{
-	ImGuiContext * const context{ VALIDATE(ImGui::GetCurrentContext()) };
-	ImGuiWindow * const window{ VALIDATE(context->CurrentWindow) };
-	do_update(window);
-}
-
-void EditorPanel::do_update(ImGuiWindow * window)
-{
-	m_window = VALIDATE(window);
+	ImGui::PopID();
 }

@@ -4,13 +4,10 @@ using namespace ism;
 
 EMBED_CLASS(EditorViewport, t) {}
 
-EditorViewport::EditorViewport(Vec2f const (&uvs)[2], Color32 const & tint)
-	: EditorPanel{ "Viewport", true, ImGuiWindowFlags_NoScrollbar }
+EditorViewport::EditorViewport()
+	: EditorPanel	{ "Viewport", true, ImGuiWindowFlags_NoScrollbar }
 	, m_main_texture{}
-	, m_uv			{}
-	, m_tint		{ tint }
 {
-	set_uvs(uvs);
 }
 
 EditorViewport::~EditorViewport()
@@ -19,19 +16,28 @@ EditorViewport::~EditorViewport()
 
 void EditorViewport::draw()
 {
+	if (!is_open()) { return; }
+
 	ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };
 	ImGui::SetNextWindowPos(main_viewport->GetWorkPos() + Vec2{ 32, 32 }, ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize({ 1280.f, 720.f }, ImGuiCond_FirstUseEver);
+	
 	ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, { 0.f, 0.f });
-	bool const is_open{ begin_window() };
+
+	bool open; EDITOR_PANEL_SCOPE(open);
+	
 	ImGui::PopStyleVar(1);
-	if (is_open)
+	
+	if (!open) { return; }
+
+	ImGuiWindow * const window{ get_window() };
+
+	ImRect const rect{ window->InnerRect };
+
+	if (ImGui::ItemAdd(rect, NULL))
 	{
-		ImRect const r{ get_inner_rect() };
-		if (ImGui::ItemAdd(r, NULL))
-		{
-			get_draw_list()->AddImage(m_main_texture, r.Min, r.Max, m_uv[0], m_uv[1], m_tint);
-		}
+		window->DrawList->AddImage(m_main_texture, rect.Min, rect.Max, { 0, 1 }, { 1, 0 });
 	}
-	end_window();
+
+	ImGui::GetForegroundDrawList(window)->AddRect(rect.Min, rect.Max, IM_COL32(255, 255, 0, 255));
 }

@@ -10,6 +10,10 @@
 #include <scene/resources/text_file.hpp>
 #include <scene/resources/texture.hpp>
 
+#define EDITOR_PANEL_SCOPE(open)						\
+	(open) = ism::EditorPanel::begin_window();			\
+	SCOPE_EXIT(&) { ism::EditorPanel::end_window(); };	\
+
 namespace ism
 {
 	// base class for editor windows
@@ -17,16 +21,15 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorPanel, Object);
 
-	protected:
 		cstring				m_name{};
-		bool				m_open{};
+		bool				m_is_open{};
 		ImGuiWindowFlags	m_flags{};
 		ImGuiWindow *		m_window{};
 
 	protected:
 		EditorPanel(cstring name, bool start_open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
 			: m_name	{ name }
-			, m_open	{ start_open }
+			, m_is_open	{ start_open }
 			, m_flags	{ flags }
 		{
 		}
@@ -38,48 +41,44 @@ namespace ism
 		virtual ~EditorPanel();
 
 	public:
-		auto get_name() const -> cstring { return m_name; }
-		void set_name(cstring value) { m_name = value; }
-
-		auto get_flags() const -> ImGuiWindowFlags { return m_flags; }
-		void set_flags(ImGuiWindowFlags value) { m_flags = value; }
+		auto get_name() const noexcept -> cstring { return m_name; }
+		void set_name(cstring value) noexcept { m_name = value; }
 		
-		bool get_is_open() const { return m_open; }
-		void set_is_open(bool value) { m_open = value; }
-		void open() { set_is_open(true); }
-		void close() noexcept { set_is_open(false); }
+		bool is_open() const noexcept { return m_is_open; }
+		void set_open(bool value) noexcept { m_is_open = value; }
+		void open() noexcept { m_is_open = true; }
+		void close() noexcept { m_is_open = false; }
+		void toggle_open() noexcept { m_is_open = !m_is_open; }
+
+		auto get_flags() const noexcept -> ImGuiWindowFlags { return m_flags; }
+		void set_flags(ImGuiWindowFlags value) noexcept { m_flags = value; }
 
 	public:
-		auto get_window() const noexcept -> ImGuiWindow & { return *VALIDATE(m_window); }
-		auto get_draw_list() const noexcept -> ImDrawList * { return get_window().DrawList; }
-		auto get_inner_rect() const noexcept -> ImRect { return get_window().InnerRect; }
+		auto get_window() const noexcept -> ImGuiWindow * { return m_window; }
+		auto operator->() const noexcept -> ImGuiWindow * { return m_window; }
 
-		auto get_id(cstring str, cstring str_end = NULL) noexcept -> ImGuiID { return get_window().GetID(str, str_end); }
-		auto get_id(void const * ptr) noexcept -> ImGuiID { return get_window().GetID(ptr); }
-		auto get_id(int32_t n) noexcept -> ImGuiID { return get_window().GetID(n); }
-		auto get_id_no_keep_alive(cstring str, cstring str_end = NULL) noexcept -> ImGuiID { return get_window().GetIDNoKeepAlive(str, str_end); }
-		auto get_id_no_keep_alive(void const * ptr) noexcept -> ImGuiID { return get_window().GetIDNoKeepAlive(ptr); }
-		auto get_id_no_keep_alive(int32_t n) noexcept -> ImGuiID { return get_window().GetIDNoKeepAlive(n); }
-		auto get_id_from_rectangle(ImRect const & r) noexcept -> ImGuiID { return get_window().GetIDFromRectangle(r); }
+		auto get_id(cstring str, cstring str_end = NULL) -> ImGuiID { return m_window->GetID(str, str_end); }
+		auto get_id(void const * ptr) -> ImGuiID { return m_window->GetID(ptr); }
+		auto get_id(int32_t n) -> ImGuiID { return m_window->GetID(n); }
+		auto get_id_no_keep_alive(cstring str, cstring str_end = NULL) -> ImGuiID { return m_window->GetIDNoKeepAlive(str, str_end); }
+		auto get_id_no_keep_alive(void const * ptr) -> ImGuiID { return m_window->GetIDNoKeepAlive(ptr); }
+		auto get_id_no_keep_alive(int32_t n) -> ImGuiID { return m_window->GetIDNoKeepAlive(n); }
+		auto get_id_from_rectangle(ImRect const & r) -> ImGuiID { return m_window->GetIDFromRectangle(r); }
 		
-		auto get_rect() const noexcept -> ImRect { return get_window().Rect(); }
-		auto get_font_size() const -> float_t { return get_window().CalcFontSize(); }
-		auto get_title_bar_height() const -> float_t { return get_window().TitleBarHeight(); }
-		auto get_title_bar_rect() const noexcept -> ImRect { return get_window().TitleBarRect(); }
-		auto get_menu_bar_height() const -> float_t { return get_window().MenuBarHeight(); }
-		auto get_menu_bar_rect() const noexcept -> ImRect { return get_window().MenuBarRect(); }
+		auto get_rect() const -> ImRect { return m_window->Rect(); }
+		auto get_font_size() const -> float_t { return m_window->CalcFontSize(); }
+		auto get_title_bar_height() const -> float_t { return m_window->TitleBarHeight(); }
+		auto get_title_bar_rect() const -> ImRect { return m_window->TitleBarRect(); }
+		auto get_menu_bar_height() const -> float_t { return m_window->MenuBarHeight(); }
+		auto get_menu_bar_rect() const -> ImRect { return m_window->MenuBarRect(); }
 		
 	public:
-		virtual void draw() {}
+		virtual void draw() = 0;
 
 	protected:
-		bool begin_window();
+		virtual bool begin_window();
 
-		void end_window();
-
-		void update() noexcept;
-
-		virtual void do_update(ImGuiWindow * window);
+		virtual void end_window();
 	};
 }
 

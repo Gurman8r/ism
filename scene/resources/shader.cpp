@@ -115,3 +115,10 @@ void Shader::set_uniform_color(cstring name, Color const & value)
 {
 	set_uniform4f(name, (Vec4f)value);
 }
+
+void Shader::set_uniform_texture(cstring name, RID const value, size_t slot)
+{
+	SINGLETON(RenderingDevice)->texture_bind(value, slot);
+
+	set_uniform1i(name, slot);
+}

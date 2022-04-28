@@ -20,7 +20,6 @@ EditorNode::EditorNode()
 		TextureSamples_1,
 		TextureFlags_Default | TextureFlags_ColorAttachment
 	});
-
 	depth_stencil_buffer = SINGLETON(RenderingDevice)->texture_create({
 		TextureType_2D,
 		ColorFormat_D24_UNORM_S8_UINT,
@@ -33,8 +32,8 @@ EditorNode::EditorNode()
 		TextureSamples_1,
 		TextureFlags_Default | TextureFlags_DepthStencilAttachment
 	});
-
 	framebuffer = SINGLETON(RenderingDevice)->framebuffer_create({ color_buffer, depth_stencil_buffer });
+	m_viewport.set_main_texture(((RD_Texture *)((RD_Framebuffer *)framebuffer)->texture_attachments[0])->handle);
 
 	textures["sanic"].instance<ImageTexture>("../../../assets/textures/Sanic.png");
 	textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
@@ -50,16 +49,16 @@ EditorNode::EditorNode()
 	shader->bind();
 	shader->set_uniform("Time", 1.f);
 	shader->set_uniform("DeltaTime", 16_ms);
-	shader->set_uniform("Transform.Position", Vec3f{ 0.f, 0.f, 0.f });
-	shader->set_uniform("Transform.Scale", Vec3f{ 1.f, 1.f, 1.f });
+	shader->set_uniform("Transform.Position", Vec3{ 0.f, 0.f, 0.f });
+	shader->set_uniform("Transform.Scale", Vec3{ 1.f, 1.f, 1.f });
 	shader->set_uniform("Transform.Rotation", Vec4f{ 0.f, 0.1f, 0.f, 0.25f });
-	shader->set_uniform("Camera.Position", Vec3f{ 0.f, 0.f, 5.f });
-	shader->set_uniform("Camera.Direction", Vec3f{ 0.f, 0.f, -1.f });
+	shader->set_uniform("Camera.Position", Vec3{ 0.f, 0.f, 5.f });
+	shader->set_uniform("Camera.Direction", Vec3{ 0.f, 0.f, -1.f });
 	shader->set_uniform("Camera.Fov", 45.f);
 	shader->set_uniform("Camera.Near", 0.001f);
 	shader->set_uniform("Camera.Far", 1000.f);
-	shader->set_uniform("Camera.View", Vec2f{ 1280, 720 });
-	shader->set_uniform("Tint", (Vec4f)Colors::white);
+	shader->set_uniform("Camera.View", Vec2{ 1280, 720 });
+	shader->set_uniform("Tint", Colors::white);
 	SINGLETON(RenderingDevice)->texture_bind(textures["earth_dm_2k"]->get_rid(), 0);
 	shader->set_uniform("Texture0", 0);
 }
@@ -77,34 +76,35 @@ void EditorNode::process(Duration const & dt)
 	std::sprintf(window_title, "ism @ %.1f fps", (float_t)get_tree()->get_fps());
 	get_tree()->get_root()->set_title(window_title);
 
-	_show_dockspace("##EditorDockspace");
-	
-	ImGui::ShowDemoWindow();
+	{
+		static RenderingDevice * dev{ SINGLETON(RenderingDevice) };
+		static Mesh * mesh{ *meshes["sphere32x24"] };
+		static Shader * shader{ *shaders["basic_3d"] };
+		
+		static Vec2 view_size{ 1280, 720 };
+		if (m_viewport.get_window()) { view_size = m_viewport->InnerRect.GetSize(); }
+		dev->framebuffer_bind(framebuffer);
+		dev->framebuffer_resize(framebuffer, (int32_t)view_size[0], (int32_t)view_size[1]);
+		dev->clear(Colors::magenta);
 
-	static RenderingDevice * dev{ SINGLETON(RenderingDevice) };
-	static Mesh * mesh{ *meshes["sphere32x24"] };
-	static Shader * shader{ *shaders["basic_3d"] };
-	dev->framebuffer_bind(framebuffer);
-	dev->clear(Colors::magenta);
-	shader->bind();
-	mesh->draw();
-	dev->framebuffer_bind(0);
+		shader->bind();
+		shader->set_uniform("Camera.View", view_size);
+		shader->set_uniform("Texture0", textures["earth_dm_2k"]->get_rid());
+		mesh->draw();
 
-	m_hierarchy.draw();
-
-	if (!m_viewport.get_main_texture()) {
-		RID texture{ ((RD_Texture *)((RD_Framebuffer *)framebuffer)->texture_attachments[0])->handle };
-		m_viewport.set_main_texture(texture);
+		dev->framebuffer_bind(0);
 	}
-	m_viewport.draw();
+
+	on_gui();
 
 	Node::process(dt);
 }
 
-void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
+void EditorNode::on_gui()
 {
+	// dockspace
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-		ImGuiID const dockspace_id{ ImGui::GetID(label) };
+		ImGuiID const dockspace_id{ ImGui::GetID("##EditorDockspace") };
 		ImGuiViewportP * dockspace_vp{ ImGui::GetCurrentContext()->Viewports[0] };
 		ImGui::SetNextWindowPos(dockspace_vp->Pos);
 		ImGui::SetNextWindowSize(dockspace_vp->Size);
@@ -113,7 +113,7 @@ void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
 		ImGui::PushStyleVar(ImGuiStyleVarType_WindowRounding, 0.f);
 		ImGui::PushStyleVar(ImGuiStyleVarType_WindowBorderSize, 0.f);
 		ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, { 0.f, 0.f });
-		bool const dockspace_open{ ImGui::Begin(label, nullptr,
+		bool const dockspace_open{ ImGui::Begin("##EditorDockspace", nullptr,
 			ImGuiWindowFlags_NoTitleBar |
 			ImGuiWindowFlags_NoCollapse |
 			ImGuiWindowFlags_NoResize |
@@ -122,7 +122,7 @@ void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
 			ImGuiWindowFlags_NoNavFocus |
 			ImGuiWindowFlags_NoDocking |
 			ImGuiWindowFlags_NoBackground |
-			(has_main_menu_bar ? ImGuiWindowFlags_MenuBar : ImGuiWindowFlags_None)
+			(m_show_main_menu_bar ? ImGuiWindowFlags_MenuBar : ImGuiWindowFlags_None)
 		) };
 		ImGui::PopStyleVar(3);
 		if (dockspace_open) {
@@ -136,4 +136,32 @@ void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
 		}
 		ImGui::End();
 	}
+
+	// main menu bar
+	if (m_show_main_menu_bar && ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Exit", "Alt+F4"))
+			{
+				get_tree()->get_root()->set_should_close(true);
+			}
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("ImGui Demo")) { m_show_imgui_demo = !m_show_imgui_demo; }
+			if (ImGui::MenuItem(m_hierarchy.get_name(), "", m_hierarchy.is_open())) { m_hierarchy.toggle_open(); }
+			if (ImGui::MenuItem(m_log.get_name(), "", m_log.is_open())) { m_log.toggle_open(); }
+			if (ImGui::MenuItem(m_viewport.get_name(), "", m_viewport.is_open())) { m_viewport.toggle_open(); }
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	// panels
+	if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
+	m_hierarchy.draw();
+	m_log.draw();
+	m_viewport.draw();
 }
