@@ -24,7 +24,7 @@ namespace ism
 	public:
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		explicit Window() noexcept;
+		explicit Window(WindowID const window_id) noexcept;
 		virtual ~Window();
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -3,10 +3,10 @@
 
 #include <servers/rendering/rendering_device.hpp>
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct NODISCARD RD_Vertexarray final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Vertexarray);
@@ -22,6 +22,8 @@ namespace ism
 		VertexLayout layout{};
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct NODISCARD RD_Vertexbuffer final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Vertexbuffer);
@@ -31,6 +33,8 @@ namespace ism
 		Buffer data{};
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct NODISCARD RD_Indexbuffer final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Indexbuffer);
@@ -39,6 +43,8 @@ namespace ism
 
 		Buffer data{};
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct NODISCARD RD_Texture final
 	{
@@ -67,6 +73,8 @@ namespace ism
 		int32_t width_2d{ width }, height_2d{ height }; // size override
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct NODISCARD RD_Framebuffer final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Framebuffer);
@@ -78,6 +86,8 @@ namespace ism
 		Vector<RID> texture_attachments{};
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct NODISCARD RD_Shader final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Shader);
@@ -88,6 +98,8 @@ namespace ism
 
 		Vector<ShaderStageData> stage_data{};
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_RENDERER_STORAGE_HPP_

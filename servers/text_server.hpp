@@ -14,8 +14,6 @@ namespace ism
 	public:
 		TextServer();
 		~TextServer();
-
-		// font loading and junk goes here
 	};
 }
 

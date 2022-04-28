@@ -93,12 +93,16 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	SINGLETON(OS)->set_cmdline(exepath, { argv, argv + argc });
 
+	// event system
 	g_bus = memnew(EventBus);
 
+	// text server
 	g_text = memnew(TextServer);
 
+	// input server
 	g_input = memnew(Input);
 
+	// display server
 	g_display = memnew(DISPLAY_SERVER_DEFAULT({
 		"ism",
 		{ { 1280, 720 }, { 8, 8, 8, 8 }, -1 },
@@ -125,16 +129,18 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	g_display->window_set_scroll_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowScrollEvent(x...)); });
 	g_display->window_set_size_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowSizeEvent(x...)); });
 
+	// rendering server
 	g_renderer = memnew(RenderingServerDefault());
 
+	// initialize imgui
 	if (auto ctx{ ImGui::CreateContext() }) {
 		ctx->IO.LogFilename = nullptr;
 		ctx->IO.IniFilename = nullptr;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		ctx->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		ASSERT(ImGui_Init(main_window));
 	}
-	ASSERT(ImGui_Init(main_window));
 
 	return Error_None;
 }
@@ -149,7 +155,10 @@ bool Main::start()
 
 	TYPE main_loop_type{};
 
-	if (script != "") { /* TODO */ }
+	if (script != "")
+	{
+		/* TODO */
+	}
 
 	if (!main_loop && !main_loop_type) { main_loop_type = typeof<SceneTree>(); }
 

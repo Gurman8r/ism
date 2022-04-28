@@ -79,7 +79,7 @@ private:
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
 	+ ism::EmbedClassHelper<m_class>::embed;													\
 																								\
-	/* implement binder function */																\
+	/* implement binder function body */														\
 	void ism::EmbedClassHelper<m_class>::embed(ism::TypeObject & m_var)							\
 																								\
 

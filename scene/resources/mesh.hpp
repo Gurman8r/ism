@@ -11,7 +11,7 @@ namespace ism
 	{
 		OBJECT_COMMON(Mesh, Resource);
 
-		enum { VAO, IBO, VBO };
+		enum { VAO, IBO, VBO, TEX };
 
 		mutable Batch<RID, RID, RID, Vector<Ref<Texture>>> m_data{};
 

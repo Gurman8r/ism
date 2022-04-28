@@ -6,7 +6,7 @@
 
 namespace ism
 {
-	struct FrameRateTracker final
+	struct NODISCARD FrameRateTracker final
 	{
 		float_t			value{};
 		float_t			accum{};

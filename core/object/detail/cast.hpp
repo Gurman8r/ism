@@ -547,7 +547,8 @@ namespace ism
 	> NODISCARD OBJ object_or_cast(T && o) { return ism::cast(FWD(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	
+	// ref cast
 	template <class O> template <class T> inline T Ref<O>::cast() const &
 	{
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(*this); }
@@ -558,6 +559,7 @@ namespace ism
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(std::move(*this)); }
 	}
 
+	// object cast
 	template <class T> inline T Object::cast() const &
 	{
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(ptr()); }

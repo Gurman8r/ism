@@ -21,7 +21,7 @@ EMBED_CLASS(Window, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window::Window() noexcept : m_window_id{ SINGLETON(DisplayServer)->get_context_current() }
+Window::Window(WindowID const window_id) noexcept : m_window_id{ window_id }
 {
 }
 

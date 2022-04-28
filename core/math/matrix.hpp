@@ -210,6 +210,7 @@ namespace ism
 	ALIAS(Mat2f) TMat2<float32_t>;
 	ALIAS(Mat2d) TMat2<float64_t>;
 	ALIAS(Mat2s) TMat2<size_t>;
+	ALIAS(Mat2) Mat2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -222,6 +223,7 @@ namespace ism
 	ALIAS(Mat3f) TMat3<float32_t>;
 	ALIAS(Mat3d) TMat3<float64_t>;
 	ALIAS(Mat3s) TMat3<size_t>;
+	ALIAS(Mat3) Mat3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -234,6 +236,7 @@ namespace ism
 	ALIAS(Mat4f) TMat4<float32_t>;
 	ALIAS(Mat4d) TMat4<float64_t>;
 	ALIAS(Mat4s) TMat4<size_t>;
+	ALIAS(Mat4) Mat4f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -246,6 +249,7 @@ namespace ism
 	ALIAS(Vec2f) TVec2<float32_t>;
 	ALIAS(Vec2d) TVec2<float64_t>;
 	ALIAS(Vec2s) TVec2<size_t>;
+	ALIAS(Vec2) Vec2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -258,6 +262,7 @@ namespace ism
 	ALIAS(Vec3f) TVec3<float32_t>;
 	ALIAS(Vec3d) TVec3<float64_t>;
 	ALIAS(Vec3s) TVec3<size_t>;
+	ALIAS(Vec3) Vec3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -270,6 +275,7 @@ namespace ism
 	ALIAS(Vec4f) TVec4<float32_t>;
 	ALIAS(Vec4d) TVec4<float64_t>;
 	ALIAS(Vec4s) TVec4<size_t>;
+	ALIAS(Vec4) Vec4f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

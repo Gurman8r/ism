@@ -9,7 +9,7 @@ int _main()
 {
 	using namespace ism;
 
-	OS_Windows os{ nullptr };
+	OS_Windows os{ (HINSTANCE)nullptr };
 
 	switch (Main::setup(__argv[0], __argc, __argv))
 	{

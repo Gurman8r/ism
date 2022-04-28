@@ -8,6 +8,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// high-level graphics api
 	class ISM_API RenderingServer : public Object
 	{
 		OBJECT_COMMON(RenderingServer, Object);

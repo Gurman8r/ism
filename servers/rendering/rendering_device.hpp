@@ -688,7 +688,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// rendering device
+	// low-level graphics api
 	class ISM_API RenderingDevice : public Object
 	{
 		OBJECT_COMMON(RenderingDevice, Object);

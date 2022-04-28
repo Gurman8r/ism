@@ -389,6 +389,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// Ref<Object> 
 	template <class _Type
 	> class NOVTABLE Ref : public _Ref_Tag, public ObjectAPI<Ref<_Type>>
 	{

@@ -81,32 +81,37 @@ void Shader::unbind()
 	SINGLETON(RenderingDevice)->shader_bind(nullptr);
 }
 
-void Shader::set_uniform1i(String const & name, int32_t const value)
+void Shader::set_uniform1i(cstring name, int32_t const value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform1i(m_shader, name.c_str(), value);
+	SINGLETON(RenderingDevice)->shader_set_uniform1i(m_shader, name, value);
 }
 
-void Shader::set_uniform1f(String const & name, float_t const value)
+void Shader::set_uniform1f(cstring name, float_t const value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform1f(m_shader, name.c_str(), value);
+	SINGLETON(RenderingDevice)->shader_set_uniform1f(m_shader, name, value);
 }
 
-void Shader::set_uniform2f(String const & name, Vec2f const & value)
+void Shader::set_uniform2f(cstring name, Vec2f const & value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform2f(m_shader, name.c_str(), value);
+	SINGLETON(RenderingDevice)->shader_set_uniform2f(m_shader, name, value);
 }
 
-void Shader::set_uniform3f(String const & name, Vec3f const & value)
+void Shader::set_uniform3f(cstring name, Vec3f const & value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform3f(m_shader, name.c_str(), value);
+	SINGLETON(RenderingDevice)->shader_set_uniform3f(m_shader, name, value);
 }
 
-void Shader::set_uniform4f(String const & name, Vec4f const & value)
+void Shader::set_uniform4f(cstring name, Vec4f const & value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform4f(m_shader, name.c_str(), value);
+	SINGLETON(RenderingDevice)->shader_set_uniform4f(m_shader, name, value);
 }
 
-void Shader::set_uniform16f(String const & name, Mat4f const & value, bool transpose)
+void Shader::set_uniform16f(cstring name, Mat4f const & value, bool transpose)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform16f(m_shader, name.c_str(), value, transpose);
+	SINGLETON(RenderingDevice)->shader_set_uniform16f(m_shader, name, value, transpose);
+}
+
+void Shader::set_uniform_color(cstring name, Color const & value)
+{
+	set_uniform4f(name, (Vec4f)value);
 }

@@ -8,7 +8,12 @@
 #define IMGUI_PLATFORM_INIT(window, install_callbacks) ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *)window, install_callbacks)
 #define IMGUI_PLATFORM_SHUTDOWN() ImGui_ImplGlfw_Shutdown()
 #define IMGUI_PLATFORM_NEWFRAME() ImGui_ImplGlfw_NewFrame()
+
+#else
+#error "imgui platform implementation undefined"
 #endif
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #if OPENGL_ENABLED
 #include <imgui/backends/imgui_impl_opengl3.h>
@@ -16,6 +21,9 @@
 #define IMGUI_RENDERER_SHUTDOWN() ImGui_ImplOpenGL3_Shutdown()
 #define IMGUI_RENDERER_NEWFRAME() ImGui_ImplOpenGL3_NewFrame()
 #define IMGUI_RENDER_DRAW_DATA(draw_data) ImGui_ImplOpenGL3_RenderDrawData(draw_data)
+
+#else
+#error "imgui renderer implementation undefined"
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

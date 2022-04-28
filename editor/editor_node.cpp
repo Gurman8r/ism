@@ -41,27 +41,27 @@ EditorNode::EditorNode()
 
 	meshes["sphere8x6"].instance("../../../assets/meshes/sphere8x6.obj");
 	meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-	meshes["teapot"].instance("../../../assets/meshes/teapot.obj");
+	//meshes["teapot"].instance("../../../assets/meshes/teapot.obj");
 
 	shaders["basic_2d"].instance("../../../assets/shaders/basic_2d.json");
 	shaders["basic_3d"].instance("../../../assets/shaders/basic_3d.json");
 
 	Shader * shader{ *shaders["basic_3d"] };
 	shader->bind();
-	shader->set_uniform1f("Time", 1.f);
-	shader->set_uniform1f("DeltaTime", 16_ms);
-	shader->set_uniform3f("Transform.Position", { 0.f, 0.f, 0.f });
-	shader->set_uniform3f("Transform.Scale", { 1.f, 1.f, 1.f });
-	shader->set_uniform4f("Transform.Rotation", { 0.f, 0.1f, 0.f, 0.25f });
-	shader->set_uniform3f("Camera.Position", { 0.f, 0.f, 5.f });
-	shader->set_uniform3f("Camera.Direction", { 0.f, 0.f, -1.f });
-	shader->set_uniform1f("Camera.Fov", 45.f);
-	shader->set_uniform1f("Camera.Near", 0.001f);
-	shader->set_uniform1f("Camera.Far", 1000.f);
-	shader->set_uniform2f("Camera.View", { 1280, 720 });
-	shader->set_uniform4f("Tint", (Vec4f)Colors::white);
+	shader->set_uniform("Time", 1.f);
+	shader->set_uniform("DeltaTime", 16_ms);
+	shader->set_uniform("Transform.Position", Vec3f{ 0.f, 0.f, 0.f });
+	shader->set_uniform("Transform.Scale", Vec3f{ 1.f, 1.f, 1.f });
+	shader->set_uniform("Transform.Rotation", Vec4f{ 0.f, 0.1f, 0.f, 0.25f });
+	shader->set_uniform("Camera.Position", Vec3f{ 0.f, 0.f, 5.f });
+	shader->set_uniform("Camera.Direction", Vec3f{ 0.f, 0.f, -1.f });
+	shader->set_uniform("Camera.Fov", 45.f);
+	shader->set_uniform("Camera.Near", 0.001f);
+	shader->set_uniform("Camera.Far", 1000.f);
+	shader->set_uniform("Camera.View", Vec2f{ 1280, 720 });
+	shader->set_uniform("Tint", (Vec4f)Colors::white);
 	SINGLETON(RenderingDevice)->texture_bind(textures["earth_dm_2k"]->get_rid(), 0);
-	shader->set_uniform1i("Texture0", 0);
+	shader->set_uniform("Texture0", 0);
 }
 
 EditorNode::~EditorNode()
@@ -79,7 +79,7 @@ void EditorNode::process(Duration const & dt)
 
 	_show_dockspace("##EditorDockspace");
 	
-	//ImGui::ShowDemoWindow();
+	ImGui::ShowDemoWindow();
 
 	static RenderingDevice * dev{ SINGLETON(RenderingDevice) };
 	static Mesh * mesh{ *meshes["sphere32x24"] };
@@ -90,7 +90,13 @@ void EditorNode::process(Duration const & dt)
 	mesh->draw();
 	dev->framebuffer_bind(0);
 
-	_show_viewport("Viewport");
+	m_hierarchy.draw();
+
+	if (!m_viewport.get_main_texture()) {
+		RID texture{ ((RD_Texture *)((RD_Framebuffer *)framebuffer)->texture_attachments[0])->handle };
+		m_viewport.set_main_texture(texture);
+	}
+	m_viewport.draw();
 
 	Node::process(dt);
 }
@@ -130,28 +136,4 @@ void EditorNode::_show_dockspace(cstring label, bool has_main_menu_bar)
 		}
 		ImGui::End();
 	}
-}
-
-void EditorNode::_show_viewport(cstring label)
-{
-	ImGuiViewport * main_viewport{ ImGui::GetMainViewport() };
-	ImGui::SetNextWindowPos(ImVec2(main_viewport->GetWorkPos().x + 32, main_viewport->GetWorkPos().y + 32), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(1280, 720), ImGuiCond_FirstUseEver);
-	ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, { 0, 0 });
-	bool const viewport_is_open{ ImGui::Begin(label, 0, ImGuiWindowFlags_NoScrollbar) };
-	ImGui::PopStyleVar(1);
-	if (viewport_is_open)
-	{
-		RID tex{ ((RD_Texture *)((RD_Framebuffer *)framebuffer)->texture_attachments[0])->handle };
-
-		ImGuiWindow * current_window{ ImGui::GetCurrentContext()->CurrentWindow };
-		if (ImGui::ItemAdd(current_window->InnerRect, NULL)) {
-			current_window->DrawList->AddImage(
-				tex,
-				current_window->InnerRect.Min,
-				current_window->InnerRect.Max,
-				{ 0, 1 }, { 1, 0 }, 0xffffffff);
-		}
-	}
-	ImGui::End();
 }
