@@ -14,7 +14,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(Mesh, t) {}
+EMBED_OBJECT_CLASS(Mesh, t) {}
 
 Mesh::~Mesh()
 {
@@ -22,9 +22,9 @@ Mesh::~Mesh()
 	{
 		m_data.expand<VAO, VBO, IBO>(i, [](RID vao, RID ibo, RID vbo)
 		{
-			if (vao) { SINGLETON(RenderingDevice)->vertexarray_destroy(vao); }
-			if (ibo) { SINGLETON(RenderingDevice)->indexbuffer_destroy(ibo); }
-			if (vbo) { SINGLETON(RenderingDevice)->vertexbuffer_destroy(vbo); }
+			if (vao) { GFX->vertexarray_destroy(vao); }
+			if (ibo) { GFX->indexbuffer_destroy(ibo); }
+			if (vbo) { GFX->vertexbuffer_destroy(vbo); }
 		});
 	}
 }
@@ -35,7 +35,7 @@ void Mesh::draw() const
 	{
 		m_data.expand<VAO>(i, [](RID vao)
 		{
-			SINGLETON(RenderingDevice)->vertexarray_draw(vao);
+			GFX->vertexarray_draw(vao);
 		});
 	}
 }
@@ -142,9 +142,9 @@ void Mesh::reload_from_file()
 	_process_node(meshes, scene->mRootNode, scene);
 	for (SubMesh & submesh : meshes)
 	{
-		RID ibo{ SINGLETON(RenderingDevice)->indexbuffer_create(submesh.indices) };
-		RID vbo{ SINGLETON(RenderingDevice)->vertexbuffer_create(submesh.vertices) };
-		RID vao{ SINGLETON(RenderingDevice)->vertexarray_create(submesh.layout, ibo, vbo) };
+		RID ibo{ GFX->indexbuffer_create(submesh.indices) };
+		RID vbo{ GFX->vertexbuffer_create(submesh.vertices) };
+		RID vao{ GFX->vertexarray_create(submesh.layout, ibo, vbo) };
 		m_data.push_back(vao, ibo, vbo, submesh.textures);
 	}
 }

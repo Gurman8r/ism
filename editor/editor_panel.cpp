@@ -2,7 +2,15 @@
 
 using namespace ism;
 
-EMBED_CLASS(EditorPanel, t) {}
+EMBED_OBJECT_CLASS(EditorPanel, t) {}
+
+EditorPanel::EditorPanel(cstring name, bool start_open, ImGuiWindowFlags flags)
+	: m_name	{ name }
+	, m_is_open	{ start_open }
+	, m_flags	{ flags }
+	, m_window	{}
+{
+}
 
 EditorPanel::~EditorPanel() {}
 

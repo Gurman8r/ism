@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(TextFile, t)
+EMBED_OBJECT_CLASS(TextFile, t)
 {
 	t.tp_bind = CLASS_BINDER(TextFile, t)
 	{

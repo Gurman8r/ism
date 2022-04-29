@@ -7,7 +7,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Node, t, TypeFlags_IsAbstract)
+EMBED_OBJECT_CLASS(Node, t, TypeFlags_IsAbstract)
 {
 	t.tp_bind = CLASS_BINDER(Node, t)
 	{
@@ -20,7 +20,7 @@ EMBED_CLASS(Node, t, TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Node::Node(SceneTree * tree) noexcept : m_tree{ tree ? tree : VALIDATE(SINGLETON(SceneTree)) }
+Node::Node(SceneTree * tree) noexcept : m_tree{ tree ? tree : VALIDATE(SceneTree::get_singleton()) }
 {
 }
 

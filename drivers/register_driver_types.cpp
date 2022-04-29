@@ -7,7 +7,10 @@
 
 void ism::register_driver_types()
 {
-	SINGLETON(Internals)->bind_class<RENDERING_DEVICE_DEFAULT>();
+	INIT_OBJECT_CLASS
+	(
+		RENDERING_DEVICE_DEFAULT
+	);
 }
 
 void ism::unregister_driver_types()

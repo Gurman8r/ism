@@ -53,6 +53,7 @@ namespace ism
 		virtual void texture_bind(RID rid, size_t slot = 0) override;
 		virtual void texture_update(RID rid, Buffer const & data = {}) override;
 		virtual Buffer texture_get_data(RID rid) override;
+		void _texture_update(RID rid, void const * data);
 
 	public:
 		/* FRAMEBUFFER */
@@ -74,8 +75,6 @@ namespace ism
 		virtual void shader_set_uniform4f(RID rid, cstring name, Vec4 const & value) override;
 		virtual void shader_set_uniform16f(RID rid, cstring name, Mat4 const & value, bool transpose = false) override;
 
-	protected:
-		void _texture_update(RID rid, void const * data);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

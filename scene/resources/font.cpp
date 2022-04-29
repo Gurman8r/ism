@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(Font, t) {}
+EMBED_OBJECT_CLASS(Font, t) {}
 
 Font::Font() : Resource{}
 {

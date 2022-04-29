@@ -1,6 +1,7 @@
 #ifndef _ISM_EDITOR_NODE_HPP_
 #define _ISM_EDITOR_NODE_HPP_
 
+#include <editor/editor_camera.hpp>
 #include <editor/editor_hierarchy.hpp>
 #include <editor/editor_log.hpp>
 #include <editor/editor_viewport.hpp>
@@ -13,6 +14,8 @@ namespace ism
 
 		bool			m_show_main_menu_bar{ true };
 		bool			m_show_imgui_demo{ true };
+		Camera			m_camera;
+		EditorCamera	m_cc{ &m_camera };
 		EditorHierarchy	m_hierarchy;
 		EditorLog		m_log;
 		EditorViewport	m_viewport;
@@ -31,7 +34,6 @@ namespace ism
 		HashMap<String, Ref<Texture>> textures{};
 		HashMap<String, Ref<Shader>> shaders{};
 		HashMap<String, Ref<Mesh>> meshes{};
-		RID color_buffer{}, depth_stencil_buffer{};
 		RID framebuffer{};
 	};
 }

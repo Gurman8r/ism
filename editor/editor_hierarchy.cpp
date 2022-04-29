@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(EditorHierarchy, t) {}
+EMBED_OBJECT_CLASS(EditorHierarchy, t) {}
 
 EditorHierarchy::EditorHierarchy() : EditorPanel{ "Hierarchy" }
 {
@@ -15,11 +15,9 @@ EditorHierarchy::~EditorHierarchy()
 void EditorHierarchy::draw()
 {
 	if (!is_open()) { return; }
-
 	ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };
 	ImGui::SetNextWindowPos(main_viewport->GetWorkPos() + Vec2{ 32, 32 }, ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize({ 320.f, 180.f }, ImGuiCond_FirstUseEver);
-
 	bool open; EDITOR_PANEL_SCOPE(open);
 	if (!open) { return; }
 

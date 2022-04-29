@@ -23,8 +23,8 @@ void ism::register_core_types()
 	ASSERT(typeof<PropertyObject>().ready());
 	ASSERT(typeof<ModuleObject>().ready());
 
-	SINGLETON(Internals)->bind_class
-	<
+	INIT_OBJECT_CLASS
+	(
 		CppFunctionObject, // <- cppfunction must go first
 		Object,
 		TypeObject,
@@ -55,7 +55,7 @@ void ism::register_core_types()
 
 		MainLoop
 
-	>();
+	);
 }
 
 void ism::register_core_driver_types()
@@ -76,7 +76,7 @@ void ism::unregister_core_driver_types()
 
 void ism::unregister_core_types()
 {
-	auto & db{ SINGLETON(Internals)->class_db };
+	auto & db{ Internals::get_singleton()->class_db };
 
 	for (size_t i = 0; i < db.size(); ++i)
 	{

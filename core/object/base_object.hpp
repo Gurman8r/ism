@@ -10,7 +10,7 @@
 private:																			\
 	friend class ism::Internals;													\
 																					\
-	friend class ism::EmbedClassHelper<m_class>;									\
+	friend class ism::EmbedObjectClassHelper<m_class>;								\
 																					\
 	friend struct ism::DefaultDelete<m_class>;										\
 																					\
@@ -23,7 +23,7 @@ protected:																			\
 	{																				\
 		if (static bool once{}; !once && (once = true))								\
 		{																			\
-			SINGLETON(ism::Internals)->add_class(&m_class::__type_static);			\
+			ism::Internals::get_singleton()->add_class(&m_class::__type_static);	\
 																					\
 			if (m_class::__type_static.tp_bind)										\
 			{																		\
@@ -65,22 +65,23 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // class embedding utility
-#define EMBED_CLASS(m_class, m_var, ...)														\
+#define EMBED_OBJECT_CLASS(m_class, m_var, ...)													\
 																								\
 	/* declare binder */																		\
-	template <> class ism::EmbedClassHelper<m_class> final										\
+	template <> class ism::EmbedObjectClassHelper<m_class> final								\
 	{																							\
-	public:																						\
-		static void embed(ism::TypeObject & m_var);												\
+	public: static void embed(ism::TypeObject & m_var);											\
 	};																							\
 																								\
 	/* construct type object */																	\
 	MEMBER_IMPL(m_class::__type_static) =														\
+																								\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
-	+ ism::EmbedClassHelper<m_class>::embed;													\
+																								\
+	+ ism::EmbedObjectClassHelper<m_class>::embed;												\
 																								\
 	/* implement binder function body */														\
-	void ism::EmbedClassHelper<m_class>::embed(ism::TypeObject & m_var)							\
+	void ism::EmbedObjectClassHelper<m_class>::embed(ism::TypeObject & m_var)					\
 																								\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -96,7 +97,7 @@ namespace ism
 	private:
 		friend class OBJ;
 		friend class Internals;
-		friend class EmbedClassHelper<Object>;
+		friend class EmbedObjectClassHelper<Object>;
 		friend struct DefaultDelete<Object>;
 		friend bool predelete_handler(Object *);
 		friend void postinitialize_handler(Object *);

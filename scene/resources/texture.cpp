@@ -5,15 +5,15 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Texture, t) {}
+EMBED_OBJECT_CLASS(Texture, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Texture2D, t) {}
+EMBED_OBJECT_CLASS(Texture2D, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(ImageTexture, t) {}
+EMBED_OBJECT_CLASS(ImageTexture, t) {}
 
 ImageTexture::ImageTexture(Path const & path)
 {
@@ -21,7 +21,7 @@ ImageTexture::ImageTexture(Path const & path)
 	if (ImageLoader::load_image(m_image, path) != Error_None) { m_image = nullptr; return; }
 	m_width = m_image->get_width();
 	m_height = m_image->get_height();
-	m_texture = SINGLETON(RenderingServer)->texture2d_create(m_image);
+	m_texture = RenderingServer::get_singleton()->texture2d_create(m_image);
 }
 
 ImageTexture::ImageTexture(Ref<Image> const & image)
@@ -30,14 +30,14 @@ ImageTexture::ImageTexture(Ref<Image> const & image)
 	m_image = image;
 	m_width = m_image->get_width();
 	m_height = m_image->get_height();
-	m_texture = SINGLETON(RenderingServer)->texture2d_create(m_image);
+	m_texture = RenderingServer::get_singleton()->texture2d_create(m_image);
 }
 
 ImageTexture::~ImageTexture()
 {
 	if (m_texture)
 	{
-		SINGLETON(RenderingDevice)->texture_destroy(m_texture);
+		GFX->texture_destroy(m_texture);
 	}
 }
 
@@ -45,7 +45,7 @@ Ref<Image> ImageTexture::get_data() const
 {
 	if (m_texture)
 	{
-		return SINGLETON(RenderingServer)->texture2d_get(m_texture);
+		return RenderingServer::get_singleton()->texture2d_get(m_texture);
 	}
 	else
 	{
@@ -59,7 +59,7 @@ void ImageTexture::update(Ref<Image> const & image, bool immediate)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Texture3D, t) {}
+EMBED_OBJECT_CLASS(Texture3D, t) {}
 
 Texture3D::Texture3D() {}
 
@@ -67,7 +67,7 @@ Texture3D::~Texture3D() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Cubemap, t) {}
+EMBED_OBJECT_CLASS(Cubemap, t) {}
 
 Cubemap::Cubemap() {}
 

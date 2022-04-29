@@ -9,7 +9,7 @@ void TypeObject::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		SINGLETON(Internals)->add_class(&__type_static);
+		Internals::get_singleton()->add_class(&__type_static);
 
 		ASSERT(VALIDATE(__type_static.tp_bind)(&__type_static));
 	};
@@ -23,7 +23,7 @@ TYPE TypeObject::get_type_static() noexcept { return &__type_static; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
+EMBED_OBJECT_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 

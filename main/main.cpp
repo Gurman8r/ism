@@ -34,6 +34,7 @@
 
 #include <servers/rendering/rendering_server_default.hpp>
 
+#include <servers/camera_server.hpp>
 #include <servers/text_server.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -49,13 +50,14 @@ static EventBus *			g_bus{};
 static Input *				g_input{};
 static DisplayServer *		g_display{};
 static RenderingServer *	g_renderer{};
+static CameraServer *		g_cameras{};
 static TextServer *			g_text{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	SINGLETON(OS)->initialize();
+	OS::get_singleton()->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -81,7 +83,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_module_types();
 
-	//g_camera_server = CameraServer::create();
+	g_cameras = memnew(CameraServer);
 	
 	register_driver_types();
 	
@@ -91,7 +93,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_server_singletons();
 	
-	SINGLETON(OS)->set_cmdline(exepath, { argv, argv + argc });
+	OS::get_singleton()->set_cmdline(exepath, { argv, argv + argc });
 
 	// event system
 	g_bus = memnew(EventBus);
@@ -155,10 +157,7 @@ bool Main::start()
 
 	TYPE main_loop_type{};
 
-	if (script != "")
-	{
-		/* TODO */
-	}
+	if (script != "") { /* TODO */ }
 
 	if (!main_loop && !main_loop_type) { main_loop_type = typeof<SceneTree>(); }
 
@@ -182,7 +181,7 @@ bool Main::start()
 #endif
 	}
 	
-	SINGLETON(OS)->set_main_loop(main_loop);
+	OS::get_singleton()->set_main_loop(main_loop);
 
 	main_loop->initialize();
 
@@ -191,7 +190,7 @@ bool Main::start()
 
 bool Main::iteration()
 {
-	++g_iterating;
+	++g_iterating; SCOPE_EXIT(&) { --g_iterating; };
 
 	Timer const loop_timer{ true };
 	static Duration delta_time{ 16_ms };
@@ -201,15 +200,13 @@ bool Main::iteration()
 
 	// process physics here
 
-	SINGLETON(DisplayServer)->poll_events();
+	DisplayServer::get_singleton()->poll_events();
 
 	ImGui_NewFrame();
 
-	if (SINGLETON(OS)->get_main_loop()->process(delta_time)) { should_close = true; }
+	if (OS::get_singleton()->get_main_loop()->process(delta_time)) { should_close = true; }
 
 	ImGui_RenderFrame();
-
-	--g_iterating;
 
 	return should_close;
 }
@@ -219,8 +216,8 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	SINGLETON(OS)->get_main_loop()->finalize();
-	SINGLETON(OS)->delete_main_loop();
+	OS::get_singleton()->get_main_loop()->finalize();
+	OS::get_singleton()->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -234,10 +231,10 @@ void Main::cleanup()
 	unregister_server_types();
 	unregister_scene_types();
 
-	//memdelete(g_audio_server);
-	//memdelete(g_camera_server);
+	//memdelete(g_audio);
+	memdelete(g_cameras);
 
-	SINGLETON(OS)->finalize();
+	OS::get_singleton()->finalize();
 
 	ImGui_Shutdown();
 	ImGui::DestroyContext();
@@ -254,7 +251,7 @@ void Main::cleanup()
 	unregister_core_types();
 
 	memdelete(g_internals);
-	SINGLETON(OS)->finalize_core();
+	OS::get_singleton()->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

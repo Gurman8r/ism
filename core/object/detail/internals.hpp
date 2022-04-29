@@ -3,6 +3,9 @@
 
 #include <core/object/base_object.hpp>
 
+#define INIT_OBJECT_CLASS(...) \
+	(Internals::get_singleton()->bind_class<##__VA_ARGS__>())
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

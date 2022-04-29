@@ -4,18 +4,18 @@
 
 using namespace ism;
 
-EMBED_CLASS(Shader, t) {}
+EMBED_OBJECT_CLASS(Shader, t) {}
 
 Shader::~Shader()
 {
-	if (m_shader) { SINGLETON(RenderingDevice)->shader_destroy(m_shader); }
+	if (m_shader) { GFX->shader_destroy(m_shader); }
 }
 
 void Shader::reload_from_file()
 {
 	if (get_path().empty()) { return; }
 
-	if (m_shader) { SINGLETON(RenderingDevice)->shader_destroy(m_shader); }
+	if (m_shader) { GFX->shader_destroy(m_shader); }
 
 	std::ifstream file{ get_path().c_str() };
 	SCOPE_EXIT(&file) { file.close(); };
@@ -67,48 +67,48 @@ void Shader::reload_from_file()
 	_parse_stage("tess_ctrl", ShaderStage_TesselationControl);
 	_parse_stage("tess_eval", ShaderStage_TesselationEvaluation);
 	_parse_stage("compute", ShaderStage_Compute);
-	m_shader = SINGLETON(RenderingDevice)->shader_create(stages);
+	m_shader = GFX->shader_create(stages);
 	ASSERT(m_shader);
 }
 
 void Shader::bind()
 {
-	SINGLETON(RenderingDevice)->shader_bind(m_shader);
+	GFX->shader_bind(m_shader);
 }
 
 void Shader::unbind()
 {
-	SINGLETON(RenderingDevice)->shader_bind(nullptr);
+	GFX->shader_bind(nullptr);
 }
 
 void Shader::set_uniform1i(cstring name, int32_t const value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform1i(m_shader, name, value);
+	GFX->shader_set_uniform1i(m_shader, name, value);
 }
 
 void Shader::set_uniform1f(cstring name, float_t const value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform1f(m_shader, name, value);
+	GFX->shader_set_uniform1f(m_shader, name, value);
 }
 
 void Shader::set_uniform2f(cstring name, Vec2f const & value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform2f(m_shader, name, value);
+	GFX->shader_set_uniform2f(m_shader, name, value);
 }
 
 void Shader::set_uniform3f(cstring name, Vec3f const & value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform3f(m_shader, name, value);
+	GFX->shader_set_uniform3f(m_shader, name, value);
 }
 
 void Shader::set_uniform4f(cstring name, Vec4f const & value)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform4f(m_shader, name, value);
+	GFX->shader_set_uniform4f(m_shader, name, value);
 }
 
 void Shader::set_uniform16f(cstring name, Mat4f const & value, bool transpose)
 {
-	SINGLETON(RenderingDevice)->shader_set_uniform16f(m_shader, name, value, transpose);
+	GFX->shader_set_uniform16f(m_shader, name, value, transpose);
 }
 
 void Shader::set_uniform_color(cstring name, Color const & value)
@@ -118,7 +118,7 @@ void Shader::set_uniform_color(cstring name, Color const & value)
 
 void Shader::set_uniform_texture(cstring name, RID const value, size_t slot)
 {
-	SINGLETON(RenderingDevice)->texture_bind(value, slot);
+	GFX->texture_bind(value, slot);
 
 	set_uniform1i(name, slot);
 }

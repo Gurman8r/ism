@@ -11,7 +11,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Window, t)
+EMBED_OBJECT_CLASS(Window, t)
 {
 	t.tp_bind = CLASS_BINDER(Window, t)
 	{
@@ -34,339 +34,339 @@ Window::~Window()
 
 void Window::make_context_current()
 {
-	SINGLETON(DisplayServer)->make_context_current(m_window_id);
+	DisplayServer::get_singleton()->make_context_current(m_window_id);
 }
 
 void Window::poll_events()
 {
-	SINGLETON(DisplayServer)->poll_events();
+	DisplayServer::get_singleton()->poll_events();
 }
 
 void Window::swap_buffers()
 {
-	SINGLETON(DisplayServer)->swap_buffers(m_window_id);
+	DisplayServer::get_singleton()->swap_buffers(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void Window::focus()
 {
-	SINGLETON(DisplayServer)->focus_window(m_window_id);
+	DisplayServer::get_singleton()->focus_window(m_window_id);
 }
 
 void Window::hide()
 {
-	SINGLETON(DisplayServer)->hide_window(m_window_id);
+	DisplayServer::get_singleton()->hide_window(m_window_id);
 }
 
 void Window::iconify()
 {
-	SINGLETON(DisplayServer)->iconify_window(m_window_id);
+	DisplayServer::get_singleton()->iconify_window(m_window_id);
 }
 
 void Window::maximize()
 {
-	SINGLETON(DisplayServer)->maximize_window(m_window_id);
+	DisplayServer::get_singleton()->maximize_window(m_window_id);
 }
 
 void Window::restore()
 {
-	SINGLETON(DisplayServer)->restore_window(m_window_id);
+	DisplayServer::get_singleton()->restore_window(m_window_id);
 }
 
 void Window::request_attention()
 {
-	SINGLETON(DisplayServer)->request_window_attention(m_window_id);
+	DisplayServer::get_singleton()->request_window_attention(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 String Window::get_clipboard() const
 {
-	return SINGLETON(DisplayServer)->window_get_clipboard(m_window_id);
+	return DisplayServer::get_singleton()->window_get_clipboard(m_window_id);
 }
 
 Vec2f Window::get_content_scale() const
 {
-	return SINGLETON(DisplayServer)->window_get_content_scale(m_window_id);
+	return DisplayServer::get_singleton()->window_get_content_scale(m_window_id);
 }
 
 IntRect Window::get_frame_size() const
 {
-	return SINGLETON(DisplayServer)->window_get_frame_size(m_window_id);
+	return DisplayServer::get_singleton()->window_get_frame_size(m_window_id);
 }
 
 Vec2i Window::get_framebuffer_size() const
 {
-	return SINGLETON(DisplayServer)->window_get_framebuffer_size(m_window_id);
+	return DisplayServer::get_singleton()->window_get_framebuffer_size(m_window_id);
 }
 
 int32_t Window::get_input_mode(InputMode value) const
 {
-	return SINGLETON(DisplayServer)->window_get_input_mode(m_window_id, value);
+	return DisplayServer::get_singleton()->window_get_input_mode(m_window_id, value);
 }
 
 InputAction Window::get_key(KeyCode value) const
 {
-	return SINGLETON(DisplayServer)->window_get_key(m_window_id, value);
+	return DisplayServer::get_singleton()->window_get_key(m_window_id, value);
 }
 
 InputAction Window::get_mouse_button(MouseButton value) const
 {
-	return SINGLETON(DisplayServer)->window_get_mouse_button(m_window_id, value);
+	return DisplayServer::get_singleton()->window_get_mouse_button(m_window_id, value);
 }
 
 Vec2d Window::get_mouse_position() const
 {
-	return SINGLETON(DisplayServer)->window_get_mouse_position(m_window_id);
+	return DisplayServer::get_singleton()->window_get_mouse_position(m_window_id);
 }
 
 void * Window::get_native_handle() const
 {
-	return SINGLETON(DisplayServer)->window_get_native_handle(m_window_id);
+	return DisplayServer::get_singleton()->window_get_native_handle(m_window_id);
 }
 
 float_t Window::get_opacity() const
 {
-	return SINGLETON(DisplayServer)->window_get_opacity(m_window_id);
+	return DisplayServer::get_singleton()->window_get_opacity(m_window_id);
 }
 
 Vec2i Window::get_position() const
 {
-	return SINGLETON(DisplayServer)->window_get_position(m_window_id);
+	return DisplayServer::get_singleton()->window_get_position(m_window_id);
 }
 
 Vec2i Window::get_size() const
 {
-	return SINGLETON(DisplayServer)->window_get_size(m_window_id);
+	return DisplayServer::get_singleton()->window_get_size(m_window_id);
 }
 
 bool Window::get_should_close() const
 {
-	return SINGLETON(DisplayServer)->window_get_should_close(m_window_id);
+	return DisplayServer::get_singleton()->window_get_should_close(m_window_id);
 }
 
 void * Window::get_user_pointer() const
 {
-	return SINGLETON(DisplayServer)->window_get_user_pointer(m_window_id);
+	return DisplayServer::get_singleton()->window_get_user_pointer(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 bool Window::is_decorated() const
 {
-	return SINGLETON(DisplayServer)->window_is_decorated(m_window_id);
+	return DisplayServer::get_singleton()->window_is_decorated(m_window_id);
 }
 
 bool Window::is_floating() const
 {
-	return SINGLETON(DisplayServer)->window_is_floating(m_window_id);
+	return DisplayServer::get_singleton()->window_is_floating(m_window_id);
 }
 
 bool Window::is_focused() const
 {
-	return SINGLETON(DisplayServer)->window_is_focused(m_window_id);
+	return DisplayServer::get_singleton()->window_is_focused(m_window_id);
 }
 
 bool Window::is_hovered() const
 {
-	return SINGLETON(DisplayServer)->window_is_hovered(m_window_id);
+	return DisplayServer::get_singleton()->window_is_hovered(m_window_id);
 }
 
 bool Window::is_iconified() const
 {
-	return SINGLETON(DisplayServer)->window_is_iconified(m_window_id);
+	return DisplayServer::get_singleton()->window_is_iconified(m_window_id);
 }
 
 bool Window::is_maximized() const
 {
-	return SINGLETON(DisplayServer)->window_is_maximized(m_window_id);
+	return DisplayServer::get_singleton()->window_is_maximized(m_window_id);
 }
 
 bool Window::is_resizable() const
 {
-	return SINGLETON(DisplayServer)->window_is_resizable(m_window_id);
+	return DisplayServer::get_singleton()->window_is_resizable(m_window_id);
 }
 
 bool Window::is_transparent() const
 {
-	return SINGLETON(DisplayServer)->window_is_transparent(m_window_id);
+	return DisplayServer::get_singleton()->window_is_transparent(m_window_id);
 }
 
 bool Window::is_visible() const
 {
-	return SINGLETON(DisplayServer)->window_is_visible(m_window_id);
+	return DisplayServer::get_singleton()->window_is_visible(m_window_id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void Window::set_clipboard(String const & value)
 {
-	SINGLETON(DisplayServer)->window_set_clipboard(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_clipboard(m_window_id, value);
 }
 
 void Window::set_cursor(CursorID value)
 {
-	SINGLETON(DisplayServer)->window_set_cursor(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_cursor(m_window_id, value);
 }
 
 void Window::set_input_mode(InputMode value)
 {
-	SINGLETON(DisplayServer)->window_set_cursor_mode(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_cursor_mode(m_window_id, value);
 }
 
 void Window::set_icons(int32_t width, int32_t height, uint8_t * pixels, int32_t count)
 {
-	SINGLETON(DisplayServer)->window_set_icons(m_window_id, width, height, pixels, count);
+	DisplayServer::get_singleton()->window_set_icons(m_window_id, width, height, pixels, count);
 }
 
 void Window::set_input_mode(int32_t mode, int32_t value)
 {
-	SINGLETON(DisplayServer)->window_set_input_mode(m_window_id, mode, value);
+	DisplayServer::get_singleton()->window_set_input_mode(m_window_id, mode, value);
 }
 
 void Window::set_monitor(MonitorID monitor, IntRect const & bounds)
 {
-	SINGLETON(DisplayServer)->window_set_monitor(m_window_id, monitor, bounds);
+	DisplayServer::get_singleton()->window_set_monitor(m_window_id, monitor, bounds);
 }
 
 void Window::set_mouse_position(Vec2d const & value)
 {
-	SINGLETON(DisplayServer)->window_set_mouse_position(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_mouse_position(m_window_id, value);
 }
 
 void Window::set_opacity(float_t value)
 {
-	SINGLETON(DisplayServer)->window_set_opacity(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_opacity(m_window_id, value);
 }
 
 void Window::set_position(Vec2i const & value)
 {
-	SINGLETON(DisplayServer)->window_set_position(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_position(m_window_id, value);
 }
 
 void Window::set_should_close(bool value)
 {
-	SINGLETON(DisplayServer)->window_set_should_close(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_should_close(m_window_id, value);
 }
 
 void Window::set_size(Vec2i const & value)
 {
-	SINGLETON(DisplayServer)->window_set_size(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_size(m_window_id, value);
 }
 
 void Window::set_title(String const & value)
 {
-	SINGLETON(DisplayServer)->window_set_title(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_title(m_window_id, value);
 }
 
 void Window::set_user_pointer(void * value)
 {
-	SINGLETON(DisplayServer)->window_set_user_pointer(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_user_pointer(m_window_id, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void Window::set_is_decorated(bool value)
 {
-	SINGLETON(DisplayServer)->window_set_is_decorated(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_is_decorated(m_window_id, value);
 }
 
 void Window::set_is_floating(bool value)
 {
-	SINGLETON(DisplayServer)->window_set_is_floating(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_is_floating(m_window_id, value);
 }
 
 void Window::set_is_resizable(bool value)
 {
-	SINGLETON(DisplayServer)->window_set_is_resizable(m_window_id, value);
+	DisplayServer::get_singleton()->window_set_is_resizable(m_window_id, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 WindowCharCallback Window::set_char_callback(WindowCharCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_char_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_char_callback(m_window_id, value);
 }
 
 WindowCharModsCallback Window::set_char_mods_callback(WindowCharModsCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_char_mods_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_char_mods_callback(m_window_id, value);
 }
 
 WindowCloseCallback Window::set_close_callback(WindowCloseCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_close_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_close_callback(m_window_id, value);
 }
 
 WindowContentCallback Window::set_content_scale_callback(WindowContentCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_content_scale_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_content_scale_callback(m_window_id, value);
 }
 
 WindowDropCallback Window::set_drop_callback(WindowDropCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_drop_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_drop_callback(m_window_id, value);
 }
 
 WindowFocusCallback Window::set_focus_callback(WindowFocusCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_focus_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_focus_callback(m_window_id, value);
 }
 
 WindowFramebufferResizeCallback Window::set_framebuffer_resize_callback(WindowFramebufferResizeCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_framebuffer_resize_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_framebuffer_resize_callback(m_window_id, value);
 }
 
 WindowIconifyCallback Window::set_iconify_callback(WindowIconifyCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_iconify_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_iconify_callback(m_window_id, value);
 }
 
 WindowKeyCallback Window::set_key_callback(WindowKeyCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_key_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_key_callback(m_window_id, value);
 }
 
 WindowMaximizeCallback Window::set_maximize_callback(WindowMaximizeCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_maximize_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_maximize_callback(m_window_id, value);
 }
 
 WindowMouseButtonCallback Window::set_mouse_button_callback(WindowMouseButtonCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_mouse_button_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_mouse_button_callback(m_window_id, value);
 }
 
 WindowMouseEnterCallback Window::set_mouse_enter_callback(WindowMouseEnterCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_mouse_enter_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_mouse_enter_callback(m_window_id, value);
 }
 
 WindowMousePositionCallback Window::set_mouse_position_callback(WindowMousePositionCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_mouse_position_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_mouse_position_callback(m_window_id, value);
 }
 
 WindowPositionCallback Window::set_position_callback(WindowPositionCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_position_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_position_callback(m_window_id, value);
 }
 
 WindowRefreshCallback Window::set_refresh_callback(WindowRefreshCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_refresh_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_refresh_callback(m_window_id, value);
 }
 
 WindowScrollCallback Window::set_scroll_callback(WindowScrollCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_scroll_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_scroll_callback(m_window_id, value);
 }
 
 WindowSizeCallback Window::set_size_callback(WindowSizeCallback value)
 {
-	return SINGLETON(DisplayServer)->window_set_size_callback(m_window_id, value);
+	return DisplayServer::get_singleton()->window_set_size_callback(m_window_id, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

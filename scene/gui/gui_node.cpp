@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_CLASS(GuiNode, t) {}
+EMBED_OBJECT_CLASS(GuiNode, t) {}
 
 GuiNode::~GuiNode() {}

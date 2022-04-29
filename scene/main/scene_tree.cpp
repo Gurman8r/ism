@@ -7,7 +7,7 @@ using namespace ism;
 
 MEMBER_IMPL(SceneTree::singleton) {};
 
-EMBED_CLASS(SceneTree, t)
+EMBED_OBJECT_CLASS(SceneTree, t)
 {
 	t.tp_bind = CLASS_BINDER(SceneTree, t)
 	{
@@ -26,7 +26,7 @@ SceneTree::SceneTree(SceneSettings const & settings) : MainLoop{}
 {
 	singleton = this;
 
-	m_root.instance(SINGLETON(DisplayServer)->get_context_current());
+	m_root.instance(DisplayServer::get_singleton()->get_context_current());
 }
 
 SceneTree::~SceneTree()

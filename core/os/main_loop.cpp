@@ -4,7 +4,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(MainLoop, t)
+EMBED_OBJECT_CLASS(MainLoop, t)
 {
 	t.tp_bind = CLASS_BINDER(MainLoop, t)
 	{

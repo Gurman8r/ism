@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(Image, t)
+EMBED_OBJECT_CLASS(Image, t)
 {
 	t.tp_bind = CLASS_BINDER(Image, t)
 	{

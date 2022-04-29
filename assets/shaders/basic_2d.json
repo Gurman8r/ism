@@ -1,8 +1,0 @@
-{
-    "vertex": {
-        "path": "../../../assets/shaders/basic_2d.vertex.shader"
-    },
-    "fragment": {
-        "path": "../../../assets/shaders/basic.fragment.shader"
-    }
-}

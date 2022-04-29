@@ -21,21 +21,13 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorPanel, Object);
 
-		cstring				m_name{};
-		bool				m_is_open{};
-		ImGuiWindowFlags	m_flags{};
-		ImGuiWindow *		m_window{};
+		cstring				m_name;
+		bool				m_is_open;
+		ImGuiWindowFlags	m_flags;
+		ImGuiWindow *		m_window;
 
 	protected:
-		EditorPanel(cstring name, bool start_open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
-			: m_name	{ name }
-			, m_is_open	{ start_open }
-			, m_flags	{ flags }
-		{
-		}
-
-		EditorPanel(String const & name, bool start_open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None)
-			: EditorPanel{ name.c_str(), start_open, flags } {}
+		EditorPanel(cstring name, bool start_open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None);
 
 	public:
 		virtual ~EditorPanel();
@@ -46,8 +38,6 @@ namespace ism
 		
 		bool is_open() const noexcept { return m_is_open; }
 		void set_open(bool value) noexcept { m_is_open = value; }
-		void open() noexcept { m_is_open = true; }
-		void close() noexcept { m_is_open = false; }
 		void toggle_open() noexcept { m_is_open = !m_is_open; }
 
 		auto get_flags() const noexcept -> ImGuiWindowFlags { return m_flags; }

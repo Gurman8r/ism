@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_CLASS(Button, t) {}
+EMBED_OBJECT_CLASS(Button, t) {}
 
 Button::~Button() {}

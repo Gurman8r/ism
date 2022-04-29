@@ -39,7 +39,7 @@ namespace ism
 
 	class Internals;
 
-	template <class T> class EmbedClassHelper;
+	template <class T> class EmbedObjectClassHelper;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

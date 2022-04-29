@@ -48,7 +48,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 	} break;
 	}
 
-	SINGLETON(OS)->printerr(
+	OS::get_singleton()->printerr(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -255,7 +255,7 @@ MAKE_ENUM_MAPPING(TO_GL, ColorChannel_, uint32_t,
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(RenderingDeviceOpenGL, t)
+EMBED_OBJECT_CLASS(RenderingDeviceOpenGL, t)
 {
 }
 
@@ -656,6 +656,7 @@ void RenderingDeviceOpenGL::framebuffer_destroy(RID rid)
 {
 	ASSERT(rid);
 	RD_Framebuffer * framebuffer{ (RD_Framebuffer *)rid };
+	for (RID texture : framebuffer->texture_attachments) { texture_destroy(texture); }
 	glCheck(glDeleteFramebuffers(1, &GL_RID(framebuffer->handle)));
 	memdelete(framebuffer);
 }

@@ -4,45 +4,45 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(WindowCharEvent, t) {}
+EMBED_OBJECT_CLASS(WindowCharEvent, t) {}
 
-EMBED_CLASS(WindowCharModsEvent, t) {}
+EMBED_OBJECT_CLASS(WindowCharModsEvent, t) {}
 
-EMBED_CLASS(WindowCloseEvent, t) {}
+EMBED_OBJECT_CLASS(WindowCloseEvent, t) {}
 
-EMBED_CLASS(WindowContentScaleEvent, t) {}
+EMBED_OBJECT_CLASS(WindowContentScaleEvent, t) {}
 
-EMBED_CLASS(WindowDropEvent, t) {}
+EMBED_OBJECT_CLASS(WindowDropEvent, t) {}
 
-EMBED_CLASS(WindowFocusEvent, t) {}
+EMBED_OBJECT_CLASS(WindowFocusEvent, t) {}
 
-EMBED_CLASS(WindowFramebufferResizeEvent, t) {}
+EMBED_OBJECT_CLASS(WindowFramebufferResizeEvent, t) {}
 
-EMBED_CLASS(WindowIconifyEvent, t) {}
+EMBED_OBJECT_CLASS(WindowIconifyEvent, t) {}
 
-EMBED_CLASS(WindowKeyEvent, t) {}
+EMBED_OBJECT_CLASS(WindowKeyEvent, t) {}
 
-EMBED_CLASS(WindowMaximizeEvent, t) {}
+EMBED_OBJECT_CLASS(WindowMaximizeEvent, t) {}
 
-EMBED_CLASS(WindowMouseButtonEvent, t) {}
+EMBED_OBJECT_CLASS(WindowMouseButtonEvent, t) {}
 
-EMBED_CLASS(WindowMouseEnterEvent, t) {}
+EMBED_OBJECT_CLASS(WindowMouseEnterEvent, t) {}
 
-EMBED_CLASS(WindowMousePositionEvent, t) {}
+EMBED_OBJECT_CLASS(WindowMousePositionEvent, t) {}
 
-EMBED_CLASS(WindowScrollEvent, t) {}
+EMBED_OBJECT_CLASS(WindowScrollEvent, t) {}
 
-EMBED_CLASS(WindowPositionEvent, t) {}
+EMBED_OBJECT_CLASS(WindowPositionEvent, t) {}
 
-EMBED_CLASS(WindowRefreshEvent, t) {}
+EMBED_OBJECT_CLASS(WindowRefreshEvent, t) {}
 
-EMBED_CLASS(WindowSizeEvent, t) {}
+EMBED_OBJECT_CLASS(WindowSizeEvent, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 MEMBER_IMPL(DisplayServer::singleton) {};
 
-EMBED_CLASS(DisplayServer, t, TypeFlags_IsAbstract) {}
+EMBED_OBJECT_CLASS(DisplayServer, t, TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

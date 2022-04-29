@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(EditorViewport, t) {}
+EMBED_OBJECT_CLASS(EditorViewport, t) {}
 
 EditorViewport::EditorViewport()
 	: EditorPanel	{ "Viewport", true, ImGuiWindowFlags_NoScrollbar }
@@ -17,27 +17,16 @@ EditorViewport::~EditorViewport()
 void EditorViewport::draw()
 {
 	if (!is_open()) { return; }
-
 	ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };
 	ImGui::SetNextWindowPos(main_viewport->GetWorkPos() + Vec2{ 32, 32 }, ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize({ 1280.f, 720.f }, ImGuiCond_FirstUseEver);
-	
 	ImGui::PushStyleVar(ImGuiStyleVarType_WindowPadding, { 0.f, 0.f });
-
 	bool open; EDITOR_PANEL_SCOPE(open);
-	
 	ImGui::PopStyleVar(1);
-	
 	if (!open) { return; }
 
 	ImGuiWindow * const window{ get_window() };
-
 	ImRect const rect{ window->InnerRect };
-
-	if (ImGui::ItemAdd(rect, NULL))
-	{
-		window->DrawList->AddImage(m_main_texture, rect.Min, rect.Max, { 0, 1 }, { 1, 0 });
-	}
-
-	ImGui::GetForegroundDrawList(window)->AddRect(rect.Min, rect.Max, IM_COL32(255, 255, 0, 255));
+	if (ImGui::ItemAdd(rect, NULL)) { window->DrawList->AddImage(m_main_texture, rect.Min, rect.Max, { 0, 1 }, { 1, 0 }); }
+	//ImGui::GetForegroundDrawList(window)->AddRect(rect.Min, rect.Max, 0xff00ffff);
 }

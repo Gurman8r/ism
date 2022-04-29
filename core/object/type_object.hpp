@@ -14,7 +14,7 @@ namespace ism
 	private:
 		friend class TYPE;
 		friend class Internals;
-		friend class EmbedClassHelper<TypeObject>;
+		friend class EmbedObjectClassHelper<TypeObject>;
 		friend struct DefaultDelete<TypeObject>;
 
 		static constexpr StringView __class_static{ "TypeObject" };

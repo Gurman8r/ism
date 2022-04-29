@@ -38,7 +38,7 @@ static struct NODISCARD MemoryTracker final
 				});
 			}
 
-			SINGLETON(OS)->pause();
+			OS::get_singleton()->pause();
 		}
 #endif
 

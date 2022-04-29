@@ -12,7 +12,8 @@ namespace ism
 		static TextServer * singleton;
 
 	public:
-		TextServer();
+		explicit TextServer();
+
 		~TextServer();
 	};
 }

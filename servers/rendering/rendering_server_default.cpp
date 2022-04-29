@@ -9,7 +9,7 @@
 
 using namespace ism;
 
-EMBED_CLASS(RenderingServerDefault, t) {}
+EMBED_OBJECT_CLASS(RenderingServerDefault, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -94,7 +94,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 	} break;
 	}
 
-	return SINGLETON(RenderingDevice)->texture_create({
+	return GFX->texture_create({
 		TextureType_2D,
 		color_format,
 		(uint32_t)image->get_width(),

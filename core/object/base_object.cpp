@@ -9,7 +9,7 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		SINGLETON(Internals)->add_class(&__type_static);
+		Internals::get_singleton()->add_class(&__type_static);
 
 		ASSERT(VALIDATE(__type_static.tp_bind)(&__type_static));
 	}
@@ -60,7 +60,7 @@ void Object::set_type(TYPE const & value) noexcept { m_type = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(Object, t, TypeFlags_IsAbstract)
+EMBED_OBJECT_CLASS(Object, t, TypeFlags_IsAbstract)
 {
 	t.tp_getattro = (getattrofunc)&Object::generic_getattr;
 

@@ -4,4 +4,4 @@ using namespace ism;
 
 MEMBER_IMPL(RenderingServer::singleton) {};
 
-EMBED_CLASS(RenderingServer, t, TypeFlags_IsAbstract) {}
+EMBED_OBJECT_CLASS(RenderingServer, t, TypeFlags_IsAbstract) {}

@@ -4,7 +4,7 @@ using namespace ism;
 
 MEMBER_IMPL(Input::singleton) {};
 
-EMBED_CLASS(Input, t)
+EMBED_OBJECT_CLASS(Input, t)
 {
 	t.tp_bind = CLASS_BINDER(Input, t)
 	{
