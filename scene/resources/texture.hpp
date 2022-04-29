@@ -1,7 +1,7 @@
 #ifndef _ISM_TEXTURE_HPP_
 #define _ISM_TEXTURE_HPP_
 
-#include <core/io/image_loader.hpp>
+#include <core/io/image.hpp>
 
 namespace ism
 {
@@ -13,7 +13,6 @@ namespace ism
 
 	public:
 		Texture() noexcept {}
-
 		virtual ~Texture() noexcept override = default;
 	};
 

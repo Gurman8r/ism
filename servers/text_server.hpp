@@ -5,6 +5,8 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API TextServer : public Object
 	{
 		OBJECT_COMMON(TextServer, Object);
@@ -14,8 +16,16 @@ namespace ism
 	public:
 		explicit TextServer();
 
-		~TextServer();
+		virtual ~TextServer();
+
+		NODISCARD static TextServer * get_singleton() noexcept { return singleton; }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define TS (ism::TextServer::get_singleton())
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_TEXT_SERVER_HPP_

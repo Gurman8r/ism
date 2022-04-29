@@ -357,6 +357,11 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// event bus singleton
+#define BUS (ism::EventBus::get_singleton())
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	inline EventHandler::EventHandler(EventBus * bus) noexcept
 		: m_event_bus{ bus ? bus : EventBus::get_singleton() }
 		, m_handler_index{ VALIDATE(get_event_bus())->next_handler_id() }

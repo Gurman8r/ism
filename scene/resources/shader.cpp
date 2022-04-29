@@ -8,14 +8,14 @@ EMBED_OBJECT_CLASS(Shader, t) {}
 
 Shader::~Shader()
 {
-	if (m_shader) { GFX->shader_destroy(m_shader); }
+	if (m_shader) { RD->shader_destroy(m_shader); }
 }
 
 void Shader::reload_from_file()
 {
 	if (get_path().empty()) { return; }
 
-	if (m_shader) { GFX->shader_destroy(m_shader); }
+	if (m_shader) { RD->shader_destroy(m_shader); }
 
 	std::ifstream file{ get_path().c_str() };
 	SCOPE_EXIT(&file) { file.close(); };
@@ -33,6 +33,7 @@ void Shader::reload_from_file()
 
 		if (auto stage{ json.find(stage_name) }; stage != json.end())
 		{
+			// GLSL
 			if (auto glsl{ stage->find("glsl") }; glsl != stage->end())
 			{
 				for (String const & line : glsl->get<Vector<String>>()) {
@@ -41,12 +42,12 @@ void Shader::reload_from_file()
 				}
 				data.source << '\0';
 			}
+			// PATH
 			else if (auto path{ stage->find("path") }; path != stage->end())
 			{
 				std::ifstream file{ path->get<Path>().c_str() };
 				SCOPE_EXIT(&file) { file.close(); };
 				if (!file) { return; }
-
 				String line;
 				while (std::getline(file, line)) {
 					data.source.write(line.data(), line.size());
@@ -67,58 +68,58 @@ void Shader::reload_from_file()
 	_parse_stage("tess_ctrl", ShaderStage_TesselationControl);
 	_parse_stage("tess_eval", ShaderStage_TesselationEvaluation);
 	_parse_stage("compute", ShaderStage_Compute);
-	m_shader = GFX->shader_create(stages);
+	m_shader = RD->shader_create(stages);
 	ASSERT(m_shader);
 }
 
 void Shader::bind()
 {
-	GFX->shader_bind(m_shader);
+	RD->shader_bind(m_shader);
 }
 
 void Shader::unbind()
 {
-	GFX->shader_bind(nullptr);
+	RD->shader_bind(nullptr);
 }
 
 void Shader::set_uniform1i(cstring name, int32_t const value)
 {
-	GFX->shader_set_uniform1i(m_shader, name, value);
+	RD->shader_set_uniform1i(m_shader, name, value);
 }
 
 void Shader::set_uniform1f(cstring name, float_t const value)
 {
-	GFX->shader_set_uniform1f(m_shader, name, value);
+	RD->shader_set_uniform1f(m_shader, name, value);
 }
 
 void Shader::set_uniform2f(cstring name, Vec2f const & value)
 {
-	GFX->shader_set_uniform2f(m_shader, name, value);
+	RD->shader_set_uniform2f(m_shader, name, value);
 }
 
 void Shader::set_uniform3f(cstring name, Vec3f const & value)
 {
-	GFX->shader_set_uniform3f(m_shader, name, value);
+	RD->shader_set_uniform3f(m_shader, name, value);
 }
 
 void Shader::set_uniform4f(cstring name, Vec4f const & value)
 {
-	GFX->shader_set_uniform4f(m_shader, name, value);
+	RD->shader_set_uniform4f(m_shader, name, value);
 }
 
 void Shader::set_uniform16f(cstring name, Mat4f const & value, bool transpose)
 {
-	GFX->shader_set_uniform16f(m_shader, name, value, transpose);
+	RD->shader_set_uniform16f(m_shader, name, value, transpose);
 }
 
 void Shader::set_uniform_color(cstring name, Color const & value)
 {
-	set_uniform4f(name, (Vec4f)value);
+	RD->shader_set_uniform4f(m_shader, name, value);
 }
 
 void Shader::set_uniform_texture(cstring name, RID const value, size_t slot)
 {
-	GFX->texture_bind(value, slot);
+	RD->texture_bind(value, slot);
 
-	set_uniform1i(name, slot);
+	RD->shader_set_uniform1i(m_shader, name, slot);
 }

@@ -61,17 +61,17 @@ void ism::ImGui_RenderFrame()
 {
 	ImGui::Render();
 
-	GFX->set_viewport(SceneTree::get_singleton()->get_root()->get_bounds());
-	GFX->clear();
+	RD->set_viewport(SceneTree::get_singleton()->get_root()->get_bounds());
+	RD->clear();
 
 	ImGui_RenderDrawData(&ImGui::GetCurrentContext()->Viewports[0]->DrawDataP);
 
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
-		WindowID window{ DisplayServer::get_singleton()->get_context_current() };
+		WindowID window{ DS->get_context_current() };
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		DisplayServer::get_singleton()->make_context_current(window);
+		DS->make_context_current(window);
 	}
 }
 

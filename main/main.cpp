@@ -57,7 +57,7 @@ static TextServer *			g_text{};
 
 Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	OS::get_singleton()->initialize();
+	OS->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -93,7 +93,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_server_singletons();
 	
-	OS::get_singleton()->set_cmdline(exepath, { argv, argv + argc });
+	OS->set_cmdline(exepath, { argv, argv + argc });
 
 	// event system
 	g_bus = memnew(EventBus);
@@ -181,7 +181,7 @@ bool Main::start()
 #endif
 	}
 	
-	OS::get_singleton()->set_main_loop(main_loop);
+	OS->set_main_loop(main_loop);
 
 	main_loop->initialize();
 
@@ -200,11 +200,11 @@ bool Main::iteration()
 
 	// process physics here
 
-	DisplayServer::get_singleton()->poll_events();
+	DS->poll_events();
 
 	ImGui_NewFrame();
 
-	if (OS::get_singleton()->get_main_loop()->process(delta_time)) { should_close = true; }
+	if (OS->get_main_loop()->process(delta_time)) { should_close = true; }
 
 	ImGui_RenderFrame();
 
@@ -216,8 +216,8 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	OS::get_singleton()->get_main_loop()->finalize();
-	OS::get_singleton()->delete_main_loop();
+	OS->get_main_loop()->finalize();
+	OS->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -234,7 +234,7 @@ void Main::cleanup()
 	//memdelete(g_audio);
 	memdelete(g_cameras);
 
-	OS::get_singleton()->finalize();
+	OS->finalize();
 
 	ImGui_Shutdown();
 	ImGui::DestroyContext();
@@ -251,7 +251,7 @@ void Main::cleanup()
 	unregister_core_types();
 
 	memdelete(g_internals);
-	OS::get_singleton()->finalize_core();
+	OS->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

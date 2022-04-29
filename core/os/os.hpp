@@ -10,10 +10,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// operating system
-	class ISM_API OS
+	class ISM_API OperatingSystem
 	{
 	private:
-		static OS * singleton;
+		static OperatingSystem * singleton;
 
 		String				m_exepath{};
 		Vector<String>		m_cmdline{};
@@ -21,11 +21,11 @@ namespace ism
 		CompositeLogger *	m_logger{};
 
 	public:
-		OS();
+		OperatingSystem();
 
-		virtual ~OS();
+		virtual ~OperatingSystem();
 
-		FORCE_INLINE static OS * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static OperatingSystem * get_singleton() noexcept { return singleton; }
 
 	protected:
 		friend class Main;
@@ -93,6 +93,11 @@ namespace ism
 		
 		virtual Error_ get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional = false) { return Error_Unknown; }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// operating system singleton
+#define OS (ism::OperatingSystem::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

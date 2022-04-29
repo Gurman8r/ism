@@ -1,20 +1,18 @@
 #ifndef _ISM_WINDOW_HPP_
 #define _ISM_WINDOW_HPP_
 
-#include <scene/main/node.hpp>
-#include <servers/display_server.hpp>
-#include <servers/rendering_server.hpp>
+#include <scene/main/viewport.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window
-	class ISM_API Window : public Node
+	class ISM_API Window : public Viewport
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		OBJECT_COMMON(Window, Node);
+		OBJECT_COMMON(Window, Viewport);
 
 	protected:
 		friend class SceneTree;
@@ -24,7 +22,8 @@ namespace ism
 	public:
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		explicit Window(WindowID const window_id) noexcept;
+		explicit Window() noexcept;
+
 		virtual ~Window();
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

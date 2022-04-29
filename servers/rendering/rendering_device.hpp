@@ -742,10 +742,11 @@ namespace ism
 
 	public:
 		/* FRAMEBUFFER */
-		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
+		virtual RID framebuffer_create(Vector<TextureFormat> const & texture_attachments) = 0;
 		virtual void framebuffer_destroy(RID rid) = 0;
 		virtual void framebuffer_bind(RID rid) = 0;
 		virtual void framebuffer_resize(RID rid, int32_t width, int32_t height) = 0;
+		virtual RID framebuffer_attachment(RID framebuffer, size_t attachment) const = 0;
 
 	public:
 		/* SHADER */
@@ -763,7 +764,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define GFX (ism::RenderingDevice::get_singleton())
+	// rendering device singleton
+#define RD (ism::RenderingDevice::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

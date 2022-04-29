@@ -43,24 +43,8 @@ namespace ism
 		auto get_flags() const noexcept -> ImGuiWindowFlags { return m_flags; }
 		void set_flags(ImGuiWindowFlags value) noexcept { m_flags = value; }
 
-	public:
 		auto get_window() const noexcept -> ImGuiWindow * { return m_window; }
 		auto operator->() const noexcept -> ImGuiWindow * { return m_window; }
-
-		auto get_id(cstring str, cstring str_end = NULL) -> ImGuiID { return m_window->GetID(str, str_end); }
-		auto get_id(void const * ptr) -> ImGuiID { return m_window->GetID(ptr); }
-		auto get_id(int32_t n) -> ImGuiID { return m_window->GetID(n); }
-		auto get_id_no_keep_alive(cstring str, cstring str_end = NULL) -> ImGuiID { return m_window->GetIDNoKeepAlive(str, str_end); }
-		auto get_id_no_keep_alive(void const * ptr) -> ImGuiID { return m_window->GetIDNoKeepAlive(ptr); }
-		auto get_id_no_keep_alive(int32_t n) -> ImGuiID { return m_window->GetIDNoKeepAlive(n); }
-		auto get_id_from_rectangle(ImRect const & r) -> ImGuiID { return m_window->GetIDFromRectangle(r); }
-		
-		auto get_rect() const -> ImRect { return m_window->Rect(); }
-		auto get_font_size() const -> float_t { return m_window->CalcFontSize(); }
-		auto get_title_bar_height() const -> float_t { return m_window->TitleBarHeight(); }
-		auto get_title_bar_rect() const -> ImRect { return m_window->TitleBarRect(); }
-		auto get_menu_bar_height() const -> float_t { return m_window->MenuBarHeight(); }
-		auto get_menu_bar_rect() const -> ImRect { return m_window->MenuBarRect(); }
 		
 	public:
 		virtual void draw() = 0;

@@ -22,9 +22,9 @@ Mesh::~Mesh()
 	{
 		m_data.expand<VAO, VBO, IBO>(i, [](RID vao, RID ibo, RID vbo)
 		{
-			if (vao) { GFX->vertexarray_destroy(vao); }
-			if (ibo) { GFX->indexbuffer_destroy(ibo); }
-			if (vbo) { GFX->vertexbuffer_destroy(vbo); }
+			if (vao) { RD->vertexarray_destroy(vao); }
+			if (ibo) { RD->indexbuffer_destroy(ibo); }
+			if (vbo) { RD->vertexbuffer_destroy(vbo); }
 		});
 	}
 }
@@ -35,7 +35,7 @@ void Mesh::draw() const
 	{
 		m_data.expand<VAO>(i, [](RID vao)
 		{
-			GFX->vertexarray_draw(vao);
+			RD->vertexarray_draw(vao);
 		});
 	}
 }
@@ -83,13 +83,21 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 		if (mesh->HasTextureCoords(0))
 		{
 			vertices << mesh->mTextureCoords[0][i].x << mesh->mTextureCoords[0][i].y;
-			//vertices << mesh->mTangents[i].x << mesh->mTangents[i].y << mesh->mTangents[i].z;
-			//vertices << mesh->mBitangents[i].x << mesh->mBitangents[i].y << mesh->mBitangents[i].z;
 		}
 		else
 		{
 			vertices << Vec2f{};
 		}
+
+		//if (mesh->HasTangentsAndBitangents())
+		//{
+		//	vertices << mesh->mTangents[i].x << mesh->mTangents[i].y << mesh->mTangents[i].z;
+		//	vertices << mesh->mBitangents[i].x << mesh->mBitangents[i].y << mesh->mBitangents[i].z;
+		//}
+		//else
+		//{
+		//	vertices << Vec3f{} << Vec3f{};
+		//}
 	}
 
 	for (uint32_t i = 0; i < mesh->mNumFaces; ++i)
@@ -142,9 +150,9 @@ void Mesh::reload_from_file()
 	_process_node(meshes, scene->mRootNode, scene);
 	for (SubMesh & submesh : meshes)
 	{
-		RID ibo{ GFX->indexbuffer_create(submesh.indices) };
-		RID vbo{ GFX->vertexbuffer_create(submesh.vertices) };
-		RID vao{ GFX->vertexarray_create(submesh.layout, ibo, vbo) };
+		RID ibo{ RD->indexbuffer_create(submesh.indices) };
+		RID vbo{ RD->vertexbuffer_create(submesh.vertices) };
+		RID vao{ RD->vertexarray_create(submesh.layout, ibo, vbo) };
 		m_data.push_back(vao, ibo, vbo, submesh.textures);
 	}
 }

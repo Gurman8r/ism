@@ -8,14 +8,17 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API EditorNode : public Node
 	{
 		OBJECT_COMMON(EditorNode, Node);
 
+		static EditorNode * singleton;
+
 		bool			m_show_main_menu_bar{ true };
 		bool			m_show_imgui_demo{ true };
 		Camera			m_camera;
-		EditorCamera	m_cc{ &m_camera };
 		EditorHierarchy	m_hierarchy;
 		EditorLog		m_log;
 		EditorViewport	m_viewport;
@@ -27,15 +30,22 @@ namespace ism
 
 		virtual void process(Duration const & dt) override;
 
-	public:
-		void on_gui();
+		void draw_interface();
 
+	public:
 		HashMap<String, Ref<Image>> images{};
 		HashMap<String, Ref<Texture>> textures{};
 		HashMap<String, Ref<Shader>> shaders{};
 		HashMap<String, Ref<Mesh>> meshes{};
 		RID framebuffer{};
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// editor node singleton
+#define EDITOR (ism::EditorNode::get_singleton())
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_EDITOR_NODE_HPP_

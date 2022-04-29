@@ -5,13 +5,11 @@
 
 namespace ism
 {
-	class ISM_API EditorCamera : public CameraController
+	class ISM_API EditorCamera : public Camera
 	{
-		OBJECT_COMMON(EditorCamera, CameraController);
+		OBJECT_COMMON(EditorCamera, Camera);
 
 	public:
-		EditorCamera(Camera * ptr = {}) : CameraController{ ptr } {}
-
 		virtual ~EditorCamera();
 	};
 }

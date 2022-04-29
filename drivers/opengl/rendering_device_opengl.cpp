@@ -48,7 +48,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 	} break;
 	}
 
-	OS::get_singleton()->printerr(
+	OS->printerr(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -606,10 +606,13 @@ void RenderingDeviceOpenGL::_texture_update(RID rid, void const * data)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attachments)
+RID RenderingDeviceOpenGL::framebuffer_create(Vector<TextureFormat> const & texture_attachments)
 {
 	RD_Framebuffer * framebuffer{ memnew(RD_Framebuffer{}) };
-	framebuffer->texture_attachments = texture_attachments;
+	framebuffer->texture_attachments.reserve(texture_attachments.size());
+	for (TextureFormat const & fmt : texture_attachments) {
+		framebuffer->texture_attachments.push_back(texture_create(fmt));
+	}
 
 	uint32_t & handle{ GL_RID(framebuffer->handle) };
 	glCheck(glGenFramebuffers(1, &handle));
@@ -712,6 +715,17 @@ void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t h
 	ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, NULL));
 }
+
+RID RenderingDeviceOpenGL::framebuffer_attachment(RID framebuffer, size_t attachment) const
+{
+	RD_Framebuffer * const f{ (RD_Framebuffer *)VALIDATE(framebuffer) };
+
+	RD_Texture * const t{ (RD_Texture *)f->texture_attachments[attachment] };
+
+	return VALIDATE(t)->handle;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

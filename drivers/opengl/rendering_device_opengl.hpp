@@ -57,10 +57,11 @@ namespace ism
 
 	public:
 		/* FRAMEBUFFER */
-		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) override;
+		virtual RID framebuffer_create(Vector<TextureFormat> const & texture_attachments) override;
 		virtual void framebuffer_destroy(RID rid) override;
 		virtual void framebuffer_bind(RID rid) override;
 		virtual void framebuffer_resize(RID rid, int32_t width, int32_t height) override;
+		virtual RID framebuffer_attachment(RID framebuffer, size_t attachment) const override;
 
 	public:
 		/* SHADER */
@@ -74,7 +75,6 @@ namespace ism
 		virtual void shader_set_uniform3f(RID rid, cstring name, Vec3 const & value) override;
 		virtual void shader_set_uniform4f(RID rid, cstring name, Vec4 const & value) override;
 		virtual void shader_set_uniform16f(RID rid, cstring name, Mat4 const & value, bool transpose = false) override;
-
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

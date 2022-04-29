@@ -63,8 +63,14 @@ namespace ism
 
 		FORCE_INLINE static Input * get_singleton() noexcept { return singleton; }
 
+	public:
 		NODISCARD bool get_key_down(int32_t) const { return false; }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// input manager singleton
+//#define INPUT (ism::Input::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

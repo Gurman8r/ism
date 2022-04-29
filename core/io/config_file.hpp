@@ -11,24 +11,20 @@ namespace ism
 	{
 		OBJECT_COMMON(ConfigFile, Resource);
 
+		INIReader * m_ini;
+
 	public:
 		ConfigFile() noexcept {}
 
-		ConfigFile(Path const & path) noexcept { open(path); }
+		explicit ConfigFile(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
-		virtual ~ConfigFile() { close(); }
+		virtual ~ConfigFile();
 
-		virtual bool open(Path const & path);
+		NODISCARD virtual RID get_rid() const override { return (RID)m_ini; }
 
-		virtual void close();
-
-		NODISCARD bool good() const { return (bool)m_ini; }
-
-		NODISCARD operator bool() const { return (bool)m_ini; }
+		virtual void reload_from_file() override;
 
 	public:
-		NODISCARD Set<String> & sections() const;
-		
 		NODISCARD bool get_bool(String const & section, String const & name, bool dv) const;
 		
 		NODISCARD float64_t get_double(String const & section, String const & name, float64_t dv) const;
@@ -42,9 +38,6 @@ namespace ism
 		NODISCARD String get_string(String const & section, String const & name, String const & dv) const;
 
 		bool set_string(String const & section, String const & name, String const & value);
-
-	private:
-		INIReader * m_ini;
 	};
 }
 

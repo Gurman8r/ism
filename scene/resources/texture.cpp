@@ -21,7 +21,7 @@ ImageTexture::ImageTexture(Path const & path)
 	if (ImageLoader::load_image(m_image, path) != Error_None) { m_image = nullptr; return; }
 	m_width = m_image->get_width();
 	m_height = m_image->get_height();
-	m_texture = RenderingServer::get_singleton()->texture2d_create(m_image);
+	m_texture = RS->texture2d_create(m_image);
 }
 
 ImageTexture::ImageTexture(Ref<Image> const & image)
@@ -30,14 +30,14 @@ ImageTexture::ImageTexture(Ref<Image> const & image)
 	m_image = image;
 	m_width = m_image->get_width();
 	m_height = m_image->get_height();
-	m_texture = RenderingServer::get_singleton()->texture2d_create(m_image);
+	m_texture = RS->texture2d_create(m_image);
 }
 
 ImageTexture::~ImageTexture()
 {
 	if (m_texture)
 	{
-		GFX->texture_destroy(m_texture);
+		RD->texture_destroy(m_texture);
 	}
 }
 
@@ -45,7 +45,7 @@ Ref<Image> ImageTexture::get_data() const
 {
 	if (m_texture)
 	{
-		return RenderingServer::get_singleton()->texture2d_get(m_texture);
+		return RS->texture2d_get(m_texture);
 	}
 	else
 	{

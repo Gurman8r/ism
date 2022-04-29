@@ -19,7 +19,7 @@ namespace ism
 		explicit RenderingServer() noexcept { singleton = this; }
 
 	public:
-		virtual ~RenderingServer() override {}
+		virtual ~RenderingServer() override;
 
 		NODISCARD static RenderingServer * get_singleton() noexcept { return singleton; }
 
@@ -32,7 +32,17 @@ namespace ism
 		virtual RID texture_replace(RID old_texture, RID new_texture) = 0;
 		virtual RID texture2d_create(Ref<Image> const & image) = 0;
 		virtual Ref<Image> texture2d_get(RID texture) = 0;
+
+	public:
+		/* RENDERER */
+		virtual void begin_scene() = 0;
+		virtual void end_scene() = 0;
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// rendering server singleton
+#define RS (ism::RenderingServer::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

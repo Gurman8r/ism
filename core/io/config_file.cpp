@@ -6,37 +6,24 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(ConfigFile, t)
-{
-}
+EMBED_OBJECT_CLASS(ConfigFile, t) {}
+
+ConfigFile::~ConfigFile() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-bool ConfigFile::open(Path const & path)
+void ConfigFile::reload_from_file()
 {
-	if (m_ini) { return false; }
+	if (get_path().empty()) { return; }
 
-	m_ini = memnew(INIReader(path.string().c_str()));
+	memdelete_nonzero(m_ini);
 
-	return m_ini && (m_ini->ParseError() == EXIT_SUCCESS);
-}
+	m_ini = memnew(INIReader(get_path().string().c_str()));
 
-void ConfigFile::close()
-{
-	if (m_ini)
-	{
-		memdelete(m_ini);
-		
-		m_ini = nullptr;
-	}
+	if (m_ini->ParseError() != EXIT_SUCCESS) { memdelete(m_ini); return; }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-Set<String> & ConfigFile::sections() const
-{
-	return (Set<String> &)m_ini->Sections();
-}
 
 bool ConfigFile::get_bool(String const & section, String const & name, bool dv) const
 {

@@ -26,7 +26,7 @@ SceneTree::SceneTree(SceneSettings const & settings) : MainLoop{}
 {
 	singleton = this;
 
-	m_root.instance(DisplayServer::get_singleton()->get_context_current());
+	m_root.instance();
 }
 
 SceneTree::~SceneTree()

@@ -94,7 +94,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 	} break;
 	}
 
-	return GFX->texture_create({
+	return RD->texture_create({
 		TextureType_2D,
 		color_format,
 		(uint32_t)image->get_width(),
@@ -119,6 +119,16 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 Ref<Image> RenderingServerDefault::texture2d_get(RID texture)
 {
 	return {};
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void RenderingServerDefault::begin_scene()
+{
+}
+
+void RenderingServerDefault::end_scene()
+{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

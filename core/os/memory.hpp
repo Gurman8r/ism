@@ -143,8 +143,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// used to 'test' an upstream memory resource
-	class MemoryResourceView : public std::pmr::memory_resource
+	// passthrough for getting information about an upstream memory resource
+	class TestMemoryResource : public std::pmr::memory_resource
 	{
 	public:
 		using pointer					= typename byte *;
@@ -158,7 +158,7 @@ namespace ism
 		using size_type					= typename size_t;
 		using difference_type			= typename ptrdiff_t;
 
-		MemoryResourceView(std::pmr::memory_resource * mres, void const * data, size_t const size) noexcept
+		TestMemoryResource(std::pmr::memory_resource * mres, void const * data, size_t const size) noexcept
 			: m_upstream_resource{ mres }
 			, m_buffer_data{ (byte *)data }
 			, m_buffer_size{ size }
@@ -210,19 +210,18 @@ namespace ism
 		std::pmr::memory_resource * const m_upstream_resource;
 		pointer const m_buffer_data;
 		size_t const m_buffer_size;
-
-		size_t m_num_allocations{};
-		size_t m_bytes_used{};
+		size_t m_num_allocations{}, m_bytes_used{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// WIP
 	class ISM_API MemoryArena final
 	{
 		std::vector<byte> m_data;
 		std::pmr::monotonic_buffer_resource m_buffer;
 		std::pmr::unsynchronized_pool_resource m_pool;
-		MemoryResourceView m_view;
+		TestMemoryResource m_view;
 		std::pmr::memory_resource * m_prev;
 
 	public:
@@ -233,12 +232,12 @@ namespace ism
 
 		~MemoryArena();
 
-		NODISCARD auto operator*() const noexcept -> MemoryResourceView & {
-			return const_cast<MemoryResourceView &>(m_view);
+		NODISCARD auto operator*() const noexcept -> TestMemoryResource & {
+			return const_cast<TestMemoryResource &>(m_view);
 		}
 
-		NODISCARD auto operator->() const noexcept -> MemoryResourceView * {
-			return const_cast<MemoryResourceView *>(&m_view);
+		NODISCARD auto operator->() const noexcept -> TestMemoryResource * {
+			return const_cast<TestMemoryResource *>(&m_view);
 		}
 	};
 

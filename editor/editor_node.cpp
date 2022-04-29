@@ -4,7 +4,7 @@
 
 using namespace ism;
 
-static Mat4 object_matrix[4] = // 
+static Mat4 object_matrix[] = // 
 {
 	{
 		1.f, 0.f, 0.f, 0.f,
@@ -12,34 +12,19 @@ static Mat4 object_matrix[4] = //
 		0.f, 0.f, 1.f, 0.f,
 		0.f, 0.f, 0.f, 1.f
 	},
-	{
-		1.f, 0.f, 0.f, 0.f,
-		0.f, 1.f, 0.f, 0.f,
-		0.f, 0.f, 1.f, 0.f,
-		2.f, 0.f, 0.f, 1.f
-	},
-	{
-		1.f, 0.f, 0.f, 0.f,
-		0.f, 1.f, 0.f, 0.f,
-		0.f, 0.f, 1.f, 0.f,
-		2.f, 0.f, 2.f, 1.f
-	},
-	{
-		1.f, 0.f, 0.f, 0.f,
-		0.f, 1.f, 0.f, 0.f,
-		0.f, 0.f, 1.f, 0.f,
-		0.f, 0.f, 2.f, 1.f
-	}
 };
+
+MEMBER_IMPL(EditorNode::singleton) {};
 
 EMBED_OBJECT_CLASS(EditorNode, t) {}
 
 EditorNode::EditorNode()
 {
-	framebuffer = GFX->framebuffer_create
+	singleton = this;
+
+	framebuffer = RD->framebuffer_create
 	({
-		GFX->texture_create
-		({
+		{
 			TextureType_2D,
 			ColorFormat_R8G8B8_UNORM,
 			1280, 720,
@@ -50,9 +35,8 @@ EditorNode::EditorNode()
 			SamplerRepeatMode_ClampToEdge,
 			TextureSamples_1,
 			TextureFlags_Default | TextureFlags_ColorAttachment
-		}),
-		GFX->texture_create
-		({
+		},
+		{
 			TextureType_2D,
 			ColorFormat_D24_UNORM_S8_UINT,
 			1280, 720,
@@ -63,10 +47,10 @@ EditorNode::EditorNode()
 			SamplerRepeatMode_ClampToEdge,
 			TextureSamples_1,
 			TextureFlags_Default | TextureFlags_DepthStencilAttachment
-		})
+		}
 	});
 
-	m_viewport.set_main_texture(((RD_Texture *)((RD_Framebuffer *)framebuffer)->texture_attachments[0])->handle);
+	m_viewport.set_main_texture(RD->framebuffer_attachment(framebuffer, 0));
 
 	textures["sanic"].instance<ImageTexture>("../../../assets/textures/Sanic.png");
 	textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
@@ -79,27 +63,15 @@ EditorNode::EditorNode()
 	shaders["3d"].instance("../../../assets/shaders/3d.json");
 
 	// camera
-	m_camera.set_background({ 0.223f, 0.f, 0.46f, 1.f });
-	m_camera.set_orthographic(false);
 	m_camera.set_eye({ 0.f, 0.f, -5.f });
-	m_cc.set_position(m_camera.get_eye());
-	m_cc.set_yaw(90.f);
-
-	Shader * shader{};
-	{
-		shader = *shaders["3d"];
-		shader->bind();
-		shader->set_uniform("Model", object_matrix[0]);
-		shader->set_uniform("View", m_camera.get_view_matrix());
-		shader->set_uniform("Proj", m_camera.get_proj_matrix());
-		shader->set_uniform("Tint", Colors::white);
-		shader->set_uniform("Texture0", textures["earth_dm_2k"]->get_rid());
-	}
+	m_camera.set_yaw(90.f);
+	m_camera.set_res({ 1280, 720 });
+	m_camera.recalculate();
 }
 
 EditorNode::~EditorNode()
 {
-	GFX->framebuffer_destroy(framebuffer);
+	RD->framebuffer_destroy(framebuffer);
 }
 
 void EditorNode::process(Duration const & dt)
@@ -108,36 +80,37 @@ void EditorNode::process(Duration const & dt)
 	std::sprintf(window_title, "ism @ %.1f fps", (float_t)get_tree()->get_fps());
 	get_tree()->get_root()->set_title(window_title);
 
-	{
-		static Vec2 view_size{ 1280, 720 }, view_size_prev{};
-		if (m_viewport.get_window()) { view_size = m_viewport->InnerRect.GetSize(); }
-		m_cc.recalculate(view_size);
-		GFX->framebuffer_bind(framebuffer);
-		if (view_size_prev != view_size) {
-			GFX->framebuffer_resize(framebuffer, (int32_t)view_size[0], (int32_t)view_size[1]);
-			view_size_prev = view_size;
-		}
-		GFX->clear(Colors::magenta);
-		{
-			static Mesh * mesh{ *meshes["sphere32x24"] };
-			static Shader * shader{ *shaders["3d"] };
-			static Texture * texture{ *textures["earth_dm_2k"] };
-			shader->bind();
-			shader->set_uniform("Model", object_matrix[0]);
-			shader->set_uniform("View", m_camera.get_view_matrix());
-			shader->set_uniform("Proj", m_camera.get_proj_matrix());
-			shader->set_uniform("Texture0", texture->get_rid());
-			mesh->draw();
-		}
-		GFX->framebuffer_bind(0);
+	static Vec2 view_size{ 1280, 720 }, view_size_prev{};
+	if (m_viewport.get_window()) { view_size = m_viewport->InnerRect.GetSize(); }
+	m_camera.set_res(view_size);
+	m_camera.recalculate();
+	if (view_size_prev != view_size) {
+		RD->framebuffer_resize(framebuffer, (int32_t)view_size[0], (int32_t)view_size[1]);
+		view_size_prev = view_size;
 	}
 
-	on_gui();
+	RD->framebuffer_bind(framebuffer);
+	RD->clear(Colors::magenta);
+	{
+		static Mesh * mesh{ *meshes["sphere32x24"] };
+		static Shader * shader{ *shaders["3d"] };
+		static Texture * texture{ *textures["earth_dm_2k"] };
+		shader->bind();
+		shader->set_uniform("Model", object_matrix[0]);
+		shader->set_uniform("View", m_camera.get_view());
+		shader->set_uniform("Proj", m_camera.get_projection());
+		shader->set_uniform("Tint", Colors::white);
+		shader->set_uniform("Texture0", texture->get_rid());
+		mesh->draw();
+	}
+	RD->framebuffer_bind(0);
+
+	draw_interface();
 
 	Node::process(dt);
 }
 
-void EditorNode::on_gui()
+void EditorNode::draw_interface()
 {
 	// DOCKSPACE
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
