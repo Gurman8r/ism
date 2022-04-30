@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(CppFunctionObject, t)
+OBJECT_EMBED(CppFunctionObject, t)
 {
 	t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 

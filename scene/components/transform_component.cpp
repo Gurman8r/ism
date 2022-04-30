@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(TransformComponent, t) {}
+OBJECT_EMBED(TransformComponent, t) {}
 
 TransformComponent::TransformComponent(Entity * entity) noexcept : Component{ entity } {}

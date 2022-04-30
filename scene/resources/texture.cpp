@@ -5,15 +5,15 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(Texture, t) {}
+OBJECT_EMBED(Texture, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(Texture2D, t) {}
+OBJECT_EMBED(Texture2D, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(ImageTexture, t) {}
+OBJECT_EMBED(ImageTexture, t) {}
 
 ImageTexture::ImageTexture(Path const & path)
 {
@@ -41,11 +41,11 @@ ImageTexture::~ImageTexture()
 	}
 }
 
-Ref<Image> ImageTexture::get_data() const
+Ref<Image> ImageTexture::get_image() const
 {
 	if (m_texture)
 	{
-		return RS->texture2d_get(m_texture);
+		return RS->texture2d_get_image(m_texture);
 	}
 	else
 	{
@@ -59,7 +59,7 @@ void ImageTexture::update(Ref<Image> const & image, bool immediate)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(Texture3D, t) {}
+OBJECT_EMBED(Texture3D, t) {}
 
 Texture3D::Texture3D() {}
 
@@ -67,7 +67,7 @@ Texture3D::~Texture3D() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(Cubemap, t) {}
+OBJECT_EMBED(Cubemap, t) {}
 
 Cubemap::Cubemap() {}
 

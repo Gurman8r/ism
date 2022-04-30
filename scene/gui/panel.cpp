@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(Panel, t) {}
+OBJECT_EMBED(Panel, t) {}
 
 Panel::~Panel() {}

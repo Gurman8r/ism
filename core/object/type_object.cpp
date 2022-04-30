@@ -23,7 +23,7 @@ TYPE TypeObject::get_type_static() noexcept { return &__type_static; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
+OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 

@@ -258,24 +258,13 @@ namespace ism
 
 			if (!m_is_ortho)
 			{
-				perspective(
-					m_fov[m_is_ortho],
-					m_resolution[0] / m_resolution[1],
-					m_clip[m_is_ortho][0],
-					m_clip[m_is_ortho][1],
-					m_proj);
+				perspective(m_fov[m_is_ortho], m_resolution[0] / m_resolution[1], m_clip[m_is_ortho][0], m_clip[m_is_ortho][1], m_proj);
 			}
 			else
 			{
 				float_t const ortho_height{ m_fov[m_is_ortho] * m_resolution[1] / m_resolution[0] };
-				orthographic(
-					-m_fov[m_is_ortho],
-					m_fov[m_is_ortho],
-					-ortho_height,
-					ortho_height,
-					m_clip[m_is_ortho][0],
-					m_clip[m_is_ortho][1],
-					m_proj);
+
+				orthographic(-m_fov[m_is_ortho], m_fov[m_is_ortho], -ortho_height, ortho_height, m_clip[m_is_ortho][0], m_clip[m_is_ortho][1], m_proj);
 			}
 			
 			m_target = m_eye + Vec3{

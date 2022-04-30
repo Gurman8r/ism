@@ -23,7 +23,7 @@ void ism::register_core_types()
 	ASSERT(typeof<PropertyObject>().ready());
 	ASSERT(typeof<ModuleObject>().ready());
 
-	INIT_OBJECT_CLASS
+	REGISTER_OBJECT_CLASS
 	(
 		CppFunctionObject, // <- cppfunction must go first
 		Object,

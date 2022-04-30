@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(CameraComponent, t) {}
+OBJECT_EMBED(CameraComponent, t) {}
 
 CameraComponent::CameraComponent(Entity * entity) noexcept : BehaviorComponent{ entity } {}

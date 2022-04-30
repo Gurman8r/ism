@@ -11,8 +11,10 @@ namespace ism
 	{
 		OBJECT_COMMON(Texture, Resource);
 
-	public:
+	protected:
 		Texture() noexcept {}
+
+	public:
 		virtual ~Texture() noexcept override = default;
 	};
 
@@ -22,13 +24,17 @@ namespace ism
 	{
 		OBJECT_COMMON(Texture2D, Texture);
 
-	public:
+	protected:
 		Texture2D() noexcept {}
+
+	public:
 		virtual ~Texture2D() noexcept override = default;
 
 		NODISCARD virtual int32_t get_width() const = 0;
+		
 		NODISCARD virtual int32_t get_height() const = 0;
-		NODISCARD virtual Ref<Image> get_data() const { return nullptr; }
+		
+		NODISCARD virtual Ref<Image> get_image() const { return nullptr; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -37,21 +43,27 @@ namespace ism
 	{
 		OBJECT_COMMON(ImageTexture, Texture2D);
 
-		mutable RID		m_texture{};
-		int32_t			m_width{};
-		int32_t			m_height{};
-		Ref<Image>		m_image{};
+		RID			m_texture{};
+		int32_t		m_width{};
+		int32_t		m_height{};
+		Ref<Image>	m_image{};
 
 	public:
 		ImageTexture() noexcept {}
+		
 		ImageTexture(Path const & path);
+		
 		ImageTexture(Ref<Image> const & image);
+		
 		virtual ~ImageTexture() override;
 
 		NODISCARD virtual RID get_rid() const override { return m_texture; }
+		
 		NODISCARD virtual int32_t get_width() const override { return m_width; }
+		
 		NODISCARD virtual int32_t get_height() const override { return m_height; }
-		NODISCARD virtual Ref<Image> get_data() const override;
+		
+		NODISCARD virtual Ref<Image> get_image() const override;
 
 		void update(Ref<Image> const & image, bool immediate = false);
 	};
@@ -64,6 +76,7 @@ namespace ism
 
 	public:
 		Texture3D();
+
 		virtual ~Texture3D() override;
 	};
 
@@ -75,6 +88,7 @@ namespace ism
 
 	public:
 		Cubemap();
+
 		virtual ~Cubemap() override;
 	};
 

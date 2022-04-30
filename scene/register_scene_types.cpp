@@ -14,7 +14,7 @@ using namespace ism;
 
 void ism::register_scene_types()
 {
-	INIT_OBJECT_CLASS
+	REGISTER_OBJECT_CLASS
 	(
 		SceneTree,
 		Node,

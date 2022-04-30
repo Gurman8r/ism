@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(Material, t) {}
+OBJECT_EMBED(Material, t) {}
 
 Material::Material() : Resource{}
 {

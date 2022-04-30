@@ -5,6 +5,7 @@
 #include <editor/editor_hierarchy.hpp>
 #include <editor/editor_log.hpp>
 #include <editor/editor_viewport.hpp>
+#include <servers/rendering/framebuffer.hpp>
 
 namespace ism
 {
@@ -16,12 +17,13 @@ namespace ism
 
 		static EditorNode * singleton;
 
-		bool			m_show_main_menu_bar{ true };
-		bool			m_show_imgui_demo{ true };
-		Camera			m_camera;
-		EditorHierarchy	m_hierarchy;
-		EditorLog		m_log;
-		EditorViewport	m_viewport;
+		bool				m_show_main_menu_bar{ true };
+		bool				m_show_imgui_demo{ true };
+		Camera				m_camera;
+		EditorHierarchy		m_hierarchy;
+		EditorLog			m_log;
+		EditorViewport		m_viewport;
+		Ref<Framebuffer>	m_framebuffer;
 
 	public:
 		EditorNode();

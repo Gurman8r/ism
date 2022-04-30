@@ -65,7 +65,7 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // class embedding utility
-#define EMBED_OBJECT_CLASS(m_class, m_var, ...)													\
+#define OBJECT_EMBED(m_class, m_var, ...)														\
 																								\
 	/* declare binder */																		\
 	template <> class ism::EmbedObjectClassHelper<m_class> final								\

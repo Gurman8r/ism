@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(EditorLog, t) {}
+OBJECT_EMBED(EditorLog, t) {}
 
 EditorLog::EditorLog() : EditorPanel{ "Log" }
 {

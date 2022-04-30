@@ -4,7 +4,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(Event, t, TypeFlags_IsAbstract)
+OBJECT_EMBED(Event, t, TypeFlags_IsAbstract)
 {
 	t.tp_bind = CLASS_BINDER(Event, t)
 	{
@@ -19,7 +19,7 @@ EMBED_OBJECT_CLASS(Event, t, TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(EventHandler, t, TypeFlags_IsAbstract)
+OBJECT_EMBED(EventHandler, t, TypeFlags_IsAbstract)
 {
 	t.tp_bind = CLASS_BINDER(EventHandler, t)
 	{
@@ -31,16 +31,16 @@ EMBED_OBJECT_CLASS(EventHandler, t, TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(DummyHandler, t) {}
+OBJECT_EMBED(DummyHandler, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(EventDelegate<Event>, t) {}
+OBJECT_EMBED(EventDelegate<Event>, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 MEMBER_IMPL(EventBus::singleton) {};
 
-EMBED_OBJECT_CLASS(EventBus, t) {}
+OBJECT_EMBED(EventBus, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

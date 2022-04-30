@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(CapsuleObject, t)
+OBJECT_EMBED(CapsuleObject, t)
 {
 	t.tp_bind = CLASS_BINDER(CapsuleObject, t)
 	{

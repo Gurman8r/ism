@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(EditorViewport, t) {}
+OBJECT_EMBED(EditorViewport, t) {}
 
 EditorViewport::EditorViewport()
 	: EditorPanel	{ "Viewport", true, ImGuiWindowFlags_NoScrollbar }

@@ -48,7 +48,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 	} break;
 	}
 
-	OS->printerr(
+	SYS->printerr(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -255,7 +255,7 @@ MAKE_ENUM_MAPPING(TO_GL, ColorChannel_, uint32_t,
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(RenderingDeviceOpenGL, t)
+OBJECT_EMBED(RenderingDeviceOpenGL, t)
 {
 }
 
@@ -491,7 +491,7 @@ void RenderingDeviceOpenGL::indexbuffer_update(RID rid, Buffer const & data, siz
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::texture_create(TextureFormat const & format, Buffer const & data)
+RID RenderingDeviceOpenGL::texture_create(TextureSpecification const & format, Buffer const & data)
 {
 	RD_Texture * texture{ memnew(RD_Texture{}) };
 	texture->texture_type = format.texture_type;
@@ -606,13 +606,10 @@ void RenderingDeviceOpenGL::_texture_update(RID rid, void const * data)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::framebuffer_create(Vector<TextureFormat> const & texture_attachments)
+RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attachments)
 {
 	RD_Framebuffer * framebuffer{ memnew(RD_Framebuffer{}) };
-	framebuffer->texture_attachments.reserve(texture_attachments.size());
-	for (TextureFormat const & fmt : texture_attachments) {
-		framebuffer->texture_attachments.push_back(texture_create(fmt));
-	}
+	framebuffer->texture_attachments = texture_attachments;
 
 	uint32_t & handle{ GL_RID(framebuffer->handle) };
 	glCheck(glGenFramebuffers(1, &handle));
@@ -621,24 +618,19 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<TextureFormat> const & text
 	uint32_t color_attachment_index{};
 	for (size_t i = 0; i < framebuffer->texture_attachments.size(); ++i)
 	{
+		// resize texture
 		ASSERT(framebuffer->texture_attachments[i]);
-
 		RD_Texture * texture{ (RD_Texture *)framebuffer->texture_attachments[i] };
+		if (i == 0 && framebuffer->width <= 0) { framebuffer->width = texture->width; }
+		if (i == 0 && framebuffer->height <= 0) { framebuffer->height = texture->height; }
 
-		if (i == 0) {
-			if (framebuffer->width <= 0) { framebuffer->width = texture->width; }
-			if (framebuffer->height <= 0) { framebuffer->height = texture->height; }
-		}
-
+		// attach texture to framebuffer
 		uint32_t & texture_handle{ GL_RID(texture->handle) };
 		uint32_t const sampler_type{ TO_GL(texture->texture_type) };
 		glCheck(glBindTexture(sampler_type, texture_handle));
 		bool const is_color{ FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment) };
 		bool const is_depth{ FLAG_READ(texture->usage_flags, TextureFlags_DepthStencilAttachment) };
-		if (!is_color && !is_depth)
-		{
-			FLAG_SET(texture->usage_flags, TextureFlags_ColorAttachment);
-		}
+		if (!is_color && !is_depth) { FLAG_SET(texture->usage_flags, TextureFlags_ColorAttachment); }
 		ASSERT((is_color && !is_depth) || (is_depth && !is_color));
 		if (is_color)
 		{
@@ -676,7 +668,7 @@ void RenderingDeviceOpenGL::framebuffer_bind(RID rid)
 	}
 }
 
-void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t height)
+void RenderingDeviceOpenGL::framebuffer_update(RID rid, int32_t width, int32_t height)
 {
 	ASSERT(rid);
 	RD_Framebuffer * framebuffer{ (RD_Framebuffer *)rid };
@@ -692,11 +684,14 @@ void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t h
 	uint32_t color_attachment_index{};
 	for (size_t i = 0; i < framebuffer->texture_attachments.size(); ++i)
 	{
+		// resize texture
+		ASSERT(framebuffer->texture_attachments[i]);
 		RD_Texture * texture{ (RD_Texture *)framebuffer->texture_attachments[i] };
 		texture->width = framebuffer->width;
 		texture->height = framebuffer->height;
 		texture_update((RID)texture);
 	
+		// attach texture to framebuffer
 		uint32_t & texture_handle{ GL_RID(texture->handle) };
 		uint32_t const sampler_type{ TO_GL(texture->texture_type) };
 		bool const is_color{ FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment) };
@@ -715,17 +710,6 @@ void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t h
 	ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, NULL));
 }
-
-RID RenderingDeviceOpenGL::framebuffer_attachment(RID framebuffer, size_t attachment) const
-{
-	RD_Framebuffer * const f{ (RD_Framebuffer *)VALIDATE(framebuffer) };
-
-	RD_Texture * const t{ (RD_Texture *)f->texture_attachments[attachment] };
-
-	return VALIDATE(t)->handle;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -830,7 +814,7 @@ struct UniformBinder final
 	}
 };
 
-int32_t RenderingDeviceOpenGL::shader_uniform_location(RID rid, cstring name)
+int32_t RenderingDeviceOpenGL::shader_uniform_location(RID rid, cstring name) const
 {
 	return UniformBinder{ *VALIDATE((RD_Shader *)rid), name }.location;
 }

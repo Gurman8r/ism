@@ -11,7 +11,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(Window, t)
+OBJECT_EMBED(Window, t)
 {
 	t.tp_bind = CLASS_BINDER(Window, t)
 	{

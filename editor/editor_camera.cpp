@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(EditorCamera, t) {}
+OBJECT_EMBED(EditorCamera, t) {}
 
 EditorCamera::~EditorCamera() {}

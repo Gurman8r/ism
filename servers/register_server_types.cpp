@@ -8,7 +8,7 @@ using namespace ism;
 
 void ism::register_server_types()
 {
-	INIT_OBJECT_CLASS(
+	REGISTER_OBJECT_CLASS(
 		CameraServer,
 		DisplayServer,
 		RenderingDevice,

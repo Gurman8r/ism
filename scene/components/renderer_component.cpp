@@ -2,6 +2,6 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(RendererComponent, t) {}
+OBJECT_EMBED(RendererComponent, t) {}
 
 RendererComponent::RendererComponent(Entity * entity) noexcept : Component{ entity } {}

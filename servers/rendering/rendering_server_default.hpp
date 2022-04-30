@@ -26,7 +26,12 @@ namespace ism
 		/* TEXTURE */
 		virtual RID texture_replace(RID old_texture, RID new_texture) override;
 		virtual RID texture2d_create(Ref<Image> const & image) override;
-		virtual Ref<Image> texture2d_get(RID texture) override;
+		virtual RID texture2d_placeholder_create() override;
+		virtual Ref<Image> texture2d_get_image(RID texture) override;
+
+	public:
+		/* FRAMEBUFFER */
+		virtual RID framebuffer_create(FramebufferSpecification const & spec) override;
 
 	public:
 		/* RENDERER */

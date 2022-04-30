@@ -7,7 +7,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(Node, t, TypeFlags_IsAbstract)
+OBJECT_EMBED(Node, t, TypeFlags_IsAbstract)
 {
 	t.tp_bind = CLASS_BINDER(Node, t)
 	{

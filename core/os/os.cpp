@@ -4,11 +4,11 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMPL(OperatingSystem::singleton) {};
+MEMBER_IMPL(OS::singleton) {};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OperatingSystem::OperatingSystem()
+OS::OS()
 {
 	singleton = this;
 
@@ -17,14 +17,14 @@ OperatingSystem::OperatingSystem()
 	set_logger(memnew(CompositeLogger(std::move(temp))));
 }
 
-OperatingSystem::~OperatingSystem()
+OS::~OS()
 {
 	memdelete(m_logger);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void OperatingSystem::add_logger(Logger * value)
+void OS::add_logger(Logger * value)
 {
 	if (!value)
 	{
@@ -38,13 +38,13 @@ void OperatingSystem::add_logger(Logger * value)
 	}
 }
 
-void OperatingSystem::set_cmdline(cstring exepath, Vector<String> const & args)
+void OS::set_cmdline(cstring exepath, Vector<String> const & args)
 {
 	m_exepath = exepath;
 	m_cmdline = args;
 }
 
-void OperatingSystem::set_logger(CompositeLogger * value)
+void OS::set_logger(CompositeLogger * value)
 {
 	memdelete_nonzero(m_logger);
 
@@ -53,7 +53,7 @@ void OperatingSystem::set_logger(CompositeLogger * value)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void OperatingSystem::pause()
+void OS::pause()
 {
 #if SYSTEM_WINDOWS
 	std::system("pause");
@@ -63,17 +63,17 @@ void OperatingSystem::pause()
 #endif
 }
 
-void OperatingSystem::print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
+void OS::print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
 {
 	m_logger->log_error(func, file, line, desc, message, type);
 }
 
-void OperatingSystem::print(String const & s)
+void OS::print(String const & s)
 {
 	print("%s", s.c_str());
 }
 
-void OperatingSystem::print(cstring fmt, ...)
+void OS::print(cstring fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -81,17 +81,17 @@ void OperatingSystem::print(cstring fmt, ...)
 	va_end(args);
 }
 
-void OperatingSystem::printv(cstring fmt, va_list args)
+void OS::printv(cstring fmt, va_list args)
 {
 	m_logger->logv(fmt, args, false);
 }
 
-void OperatingSystem::printerr(String const & s)
+void OS::printerr(String const & s)
 {
 	printerr("%s", s.c_str());
 }
 
-void OperatingSystem::printerr(cstring fmt, ...)
+void OS::printerr(cstring fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -99,7 +99,7 @@ void OperatingSystem::printerr(cstring fmt, ...)
 	va_end(args);
 }
 
-void OperatingSystem::printerrv(cstring fmt, va_list args)
+void OS::printerrv(cstring fmt, va_list args)
 {
 	m_logger->logv(fmt, args, true);
 }

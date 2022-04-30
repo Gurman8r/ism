@@ -9,7 +9,7 @@ using namespace ism;
 
 void ism::register_editor_types()
 {
-	INIT_OBJECT_CLASS
+	REGISTER_OBJECT_CLASS
 	(
 		EditorCamera,
 		EditorNode,

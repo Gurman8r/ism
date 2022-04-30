@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(Component, t) {}
+OBJECT_EMBED(Component, t) {}
 
 Component::Component(Entity * entity) noexcept : m_entity{ VALIDATE(entity) }
 {

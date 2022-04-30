@@ -7,7 +7,7 @@
 
 void ism::register_driver_types()
 {
-	INIT_OBJECT_CLASS
+	REGISTER_OBJECT_CLASS
 	(
 		RENDERING_DEVICE_DEFAULT
 	);

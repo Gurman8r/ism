@@ -16,62 +16,30 @@ static Mat4 object_matrix[] = //
 
 MEMBER_IMPL(EditorNode::singleton) {};
 
-EMBED_OBJECT_CLASS(EditorNode, t) {}
+OBJECT_EMBED(EditorNode, t) {}
 
 EditorNode::EditorNode()
 {
 	singleton = this;
 
-	framebuffer = RD->framebuffer_create
-	({
-		{
-			TextureType_2D,
-			ColorFormat_R8G8B8_UNORM,
-			1280, 720,
-			1, 1, 0,
-			SamplerFilter_Linear,
-			SamplerFilter_Linear,
-			SamplerRepeatMode_ClampToEdge,
-			SamplerRepeatMode_ClampToEdge,
-			TextureSamples_1,
-			TextureFlags_Default | TextureFlags_ColorAttachment
-		},
-		{
-			TextureType_2D,
-			ColorFormat_D24_UNORM_S8_UINT,
-			1280, 720,
-			1, 1, 0,
-			SamplerFilter_Linear,
-			SamplerFilter_Linear,
-			SamplerRepeatMode_ClampToEdge,
-			SamplerRepeatMode_ClampToEdge,
-			TextureSamples_1,
-			TextureFlags_Default | TextureFlags_DepthStencilAttachment
-		}
-	});
-
-	m_viewport.set_main_texture(RD->framebuffer_attachment(framebuffer, 0));
+	m_framebuffer.instance(FramebufferSpecification{ 1280, 720, { FramebufferTextureType_Color, FramebufferTextureType_DepthStencil } });
+	m_viewport.set_main_texture(((RD_Texture *)m_framebuffer->get_attachment(0))->handle);
 
 	textures["sanic"].instance<ImageTexture>("../../../assets/textures/Sanic.png");
 	textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 
 	meshes["sphere8x6"].instance("../../../assets/meshes/sphere8x6.obj");
 	meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-	//meshes["teapot"].instance("../../../assets/meshes/teapot.obj");
 
 	shaders["2d"].instance("../../../assets/shaders/2d.json");
 	shaders["3d"].instance("../../../assets/shaders/3d.json");
 
-	// camera
 	m_camera.set_eye({ 0.f, 0.f, -5.f });
 	m_camera.set_yaw(90.f);
-	m_camera.set_res({ 1280, 720 });
-	m_camera.recalculate();
 }
 
 EditorNode::~EditorNode()
 {
-	RD->framebuffer_destroy(framebuffer);
 }
 
 void EditorNode::process(Duration const & dt)
@@ -85,11 +53,11 @@ void EditorNode::process(Duration const & dt)
 	m_camera.set_res(view_size);
 	m_camera.recalculate();
 	if (view_size_prev != view_size) {
-		RD->framebuffer_resize(framebuffer, (int32_t)view_size[0], (int32_t)view_size[1]);
+		m_framebuffer->resize((int32_t)view_size[0], (int32_t)view_size[1]);
 		view_size_prev = view_size;
 	}
 
-	RD->framebuffer_bind(framebuffer);
+	m_framebuffer->bind();
 	RD->clear(Colors::magenta);
 	{
 		static Mesh * mesh{ *meshes["sphere32x24"] };
@@ -103,7 +71,7 @@ void EditorNode::process(Duration const & dt)
 		shader->set_uniform("Texture0", texture->get_rid());
 		mesh->draw();
 	}
-	RD->framebuffer_bind(0);
+	m_framebuffer->unbind();
 
 	draw_interface();
 

@@ -57,7 +57,7 @@ static TextServer *			g_text{};
 
 Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	OS->initialize();
+	SYS->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -93,7 +93,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_server_singletons();
 	
-	OS->set_cmdline(exepath, { argv, argv + argc });
+	SYS->set_cmdline(exepath, { argv, argv + argc });
 
 	// event system
 	g_bus = memnew(EventBus);
@@ -181,7 +181,7 @@ bool Main::start()
 #endif
 	}
 	
-	OS->set_main_loop(main_loop);
+	SYS->set_main_loop(main_loop);
 
 	main_loop->initialize();
 
@@ -191,7 +191,6 @@ bool Main::start()
 bool Main::iteration()
 {
 	++g_iterating; SCOPE_EXIT(&) { --g_iterating; };
-
 	Timer const loop_timer{ true };
 	static Duration delta_time{ 16_ms };
 	SCOPE_EXIT(&) { delta_time = loop_timer.elapsed(); };
@@ -204,7 +203,7 @@ bool Main::iteration()
 
 	ImGui_NewFrame();
 
-	if (OS->get_main_loop()->process(delta_time)) { should_close = true; }
+	if (SYS->get_main_loop()->process(delta_time)) { should_close = true; }
 
 	ImGui_RenderFrame();
 
@@ -216,8 +215,8 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	OS->get_main_loop()->finalize();
-	OS->delete_main_loop();
+	SYS->get_main_loop()->finalize();
+	SYS->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -234,7 +233,7 @@ void Main::cleanup()
 	//memdelete(g_audio);
 	memdelete(g_cameras);
 
-	OS->finalize();
+	SYS->finalize();
 
 	ImGui_Shutdown();
 	ImGui::DestroyContext();
@@ -251,7 +250,7 @@ void Main::cleanup()
 	unregister_core_types();
 
 	memdelete(g_internals);
-	OS->finalize_core();
+	SYS->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

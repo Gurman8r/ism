@@ -309,6 +309,17 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	ENUM_INT(FramebufferTextureType)
+	{
+		FramebufferTextureType_Color,
+		FramebufferTextureType_RedInteger,
+		FramebufferTextureType_DepthStencil,
+	};
+
+	ALIAS(FramebufferAttachmentSpecification) Vector<FramebufferTextureType_>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ENUM_INT(SamplerFilter)
 	{
 		SamplerFilter_Nearest,
@@ -477,135 +488,194 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD TextureFormat final
+	struct NODISCARD TextureSpecification
 	{
-		DEFAULT_COPYABLE_MOVABLE(TextureFormat);
-		TextureType_		texture_type{ TextureType_2D };
-		ColorFormat_		color_format{ ColorFormat_R8G8B8_UNORM };
-		uint32_t			width{ 1 };
-		uint32_t			height{ 1 };
-		uint32_t			depth{ 1 };
-		uint32_t			layers{ 1 };
-		uint32_t			mipmaps{ 1 };
-		SamplerFilter_		min_filter{ SamplerFilter_Nearest }, mag_filter{ SamplerFilter_Nearest };
-		SamplerRepeatMode_	repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat };
-		TextureSamples_		samples{ TextureSamples_1 };
-		TextureFlags		usage_flags{ TextureFlags_Default };
-		ColorFormat_		color_format_srgb{ ColorFormat_MAX };
-		TextureSwizzle_		swizzle_r{ TextureSwizzle_R };
-		TextureSwizzle_		swizzle_g{ TextureSwizzle_G };
-		TextureSwizzle_		swizzle_b{ TextureSwizzle_B };
-		TextureSwizzle_		swizzle_a{ TextureSwizzle_A };
+		DEFAULT_COPYABLE_MOVABLE(TextureSpecification);
+		
+		TextureType_ texture_type{ TextureType_2D };
+		
+		ColorFormat_ color_format{ ColorFormat_R8G8B8_UNORM };
+		
+		uint32_t width{ 1 }, height{ 1 }, depth{ 1 }, layers{ 1 }, mipmaps{ 1 };
+
+		SamplerFilter_ min_filter{ SamplerFilter_Nearest }, mag_filter{ SamplerFilter_Nearest };
+
+		SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat };
+
+		TextureSamples_ samples{ TextureSamples_1 };
+
+		TextureFlags usage_flags{ TextureFlags_Default };
+
+		ColorFormat_ color_format_srgb{ ColorFormat_MAX };
+
+		TextureSwizzle_ swizzle_r{ TextureSwizzle_R }, swizzle_g{ TextureSwizzle_G }, swizzle_b{ TextureSwizzle_B }, swizzle_a{ TextureSwizzle_A };
 	};
 
-	struct NODISCARD ShaderStageData final
+	struct NODISCARD ShaderStageData
 	{
 		DEFAULT_COPYABLE_MOVABLE(ShaderStageData);
+		
 		ShaderStage_ shader_stage{ ShaderStage_Vertex };
+		
 		Buffer source{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD Uniform final
+	struct NODISCARD FramebufferSpecification
+	{
+		DEFAULT_COPYABLE_MOVABLE(FramebufferSpecification);
+
+		uint32_t width{ 1280 }, height{ 720 };
+
+		FramebufferAttachmentSpecification attachments{ FramebufferTextureType_Color, FramebufferTextureType_DepthStencil };
+
+		bool swap_chain_target{ false };
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct NODISCARD Uniform
 	{
 		DEFAULT_COPYABLE_MOVABLE(Uniform);
+		
 		UniformType_ uniform_type{ UniformType_Image };
+		
 		int32_t binding{ 0 };
+		
 		Vector<RID> ids{};
 	};
 
-	struct NODISCARD SamplerState final
+	struct NODISCARD SamplerState
 	{
 		DEFAULT_COPYABLE_MOVABLE(SamplerState);
-		SamplerFilter_ mag_filter{ SamplerFilter_Nearest };
-		SamplerFilter_ min_filter{ SamplerFilter_Nearest };
-		SamplerFilter_ mip_filter{ SamplerFilter_Nearest };
-		SamplerRepeatMode_ repeat_u{ SamplerRepeatMode_ClampToEdge };
-		SamplerRepeatMode_ repeat_v{ SamplerRepeatMode_ClampToEdge };
-		SamplerRepeatMode_ repeat_w{ SamplerRepeatMode_ClampToEdge };
+		
+		SamplerFilter_ mag_filter{ SamplerFilter_Nearest }, min_filter{ SamplerFilter_Nearest }, mip_filter{ SamplerFilter_Nearest };
+		
+		SamplerRepeatMode_ repeat_u{ SamplerRepeatMode_ClampToEdge }, repeat_v{ SamplerRepeatMode_ClampToEdge }, repeat_w{ SamplerRepeatMode_ClampToEdge };
+		
 		float_t lod_bias{ 0 };
+		
 		bool use_anisotropy{ false };
+		
 		float_t anisotropy_max{ 1.f };
+		
 		bool enable_compare{};
+		
 		CompareOperator_ compare_op{ CompareOperator_Always };
-		float_t min_lod{ 0 };
-		float_t max_lod{ 1e20f }; //something very large should do
+		
+		float_t min_lod{ 0 }, max_lod{ 1e20f }; //something very large should do
+		
 		SamplerBorderColor_ border_color{ SamplerBorderColor_Float_Opaque_Black };
+		
 		bool unnormalized_uvw{ false };
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD PipelineRasterizationState final
+	struct NODISCARD PipelineRasterizationState
 	{
 		DEFAULT_COPYABLE_MOVABLE(PipelineRasterizationState);
+		
 		bool enable_depth_clamp{ false };
+		
 		bool discard_primitives{ false };
+		
 		bool wireframe{ false };
+		
 		PolygonCullMode_ cull_mode{ PolygonCullMode_Disabled };
+		
 		PolygonFrontFace_ front_face{ PolygonFrontFace_Clockwise };
+		
 		bool depth_bias_enable{ false };
+		
 		float_t depth_bias_constant_factor{ 0.f };
+		
 		float_t depth_bias_clamp{ 0.f };
+		
 		float_t depth_bias_slope_factor{ 0.f };
+		
 		float_t line_width{ 1.f };
+		
 		uint32_t patch_control_points{ 1 };
 	};
 
-	struct NODISCARD PipelineMultisampleState final
+	struct NODISCARD PipelineMultisampleState
 	{
 		DEFAULT_COPYABLE_MOVABLE(PipelineMultisampleState);
+		
 		TextureSamples_ sample_count{ TextureSamples_1 };
+		
 		bool enable_sample_shading{ false };
+		
 		float_t min_sample_shading{ 0.f };
+		
 		Buffer sample_mask{};
+		
 		bool enable_alpha_to_coverage{ false };
+		
 		bool enable_alpha_to_one{ false };
 	};
 
-	struct NODISCARD PipelineDepthStencilState final
+	struct NODISCARD PipelineDepthStencilState
 	{
-		struct NODISCARD StencilOperationState final
+		struct NODISCARD StencilOperationState
 		{
 			DEFAULT_COPYABLE_MOVABLE(StencilOperationState);
+			
 			StencilOperation_ fail{ StencilOperation_Zero };
+			
 			StencilOperation_ pass{ StencilOperation_Zero };
+			
 			StencilOperation_ depth_fail{ StencilOperation_Zero };
+			
 			CompareOperator_ compare{ CompareOperator_Always };
+			
 			uint32_t compare_mask{ 0 };
+			
 			uint32_t write_mask{ 0 };
+			
 			uint32_t reference{ 0 };
 		};
 
 		DEFAULT_COPYABLE_MOVABLE(PipelineDepthStencilState);
+		
 		bool enable_depth_test{ false };
+		
 		bool enable_depth_write{ false };
+		
 		CompareOperator_ depth_compare_operator{ CompareOperator_Always };
+		
 		bool enable_depth_range{ false };
-		float_t depth_range_min{ 0.f };
-		float_t depth_range_max{ 0.f };
+		
+		float_t depth_range_min{ 0.f }, depth_range_max{ 0.f };
+		
 		bool enable_stencil{ false };
-		StencilOperationState front_op{};
-		StencilOperationState back_op{};
+		
+		StencilOperationState front_op{}, back_op{};
 	};
 
-	struct NODISCARD PipelineColorBlendState final
+	struct NODISCARD PipelineColorBlendState
 	{
-		struct NODISCARD Attachment final
+		struct NODISCARD Attachment
 		{
 			DEFAULT_COPYABLE_MOVABLE(Attachment);
+			
 			bool enable_blend{ false };
+			
 			BlendFactor_ src_color_blend_factor{ BlendFactor_Zero };
+			
 			BlendFactor_ dst_color_blend_factor{ BlendFactor_Zero };
+			
 			BlendOperation_ color_blend_op{ BlendOperation_Add };
+			
 			BlendFactor_ src_alpha_blend_factor{ BlendFactor_Zero };
+			
 			BlendFactor_ dst_alpha_blend_factor{ BlendFactor_Zero };
+			
 			BlendOperation_ alpha_blend_op{ BlendOperation_Add };
-			bool write_r{ true };
-			bool write_g{ true };
-			bool write_b{ true };
-			bool write_a{ true };
+			
+			bool write_r{ true }, write_g{ true }, write_b{ true }, write_a{ true };
 		};
 
 		DEFAULT_COPYABLE_MOVABLE(PipelineColorBlendState);
@@ -639,9 +709,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD VertexLayout final
+	struct NODISCARD VertexLayout
 	{
-		struct NODISCARD Element final
+		struct NODISCARD Element
 		{
 			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(Element);
 
@@ -734,7 +804,7 @@ namespace ism
 
 	public:
 		/* TEXTURE */
-		virtual RID texture_create(TextureFormat const & format, Buffer const & data = {}) = 0;
+		virtual RID texture_create(TextureSpecification const & format, Buffer const & data = {}) = 0;
 		virtual void texture_destroy(RID rid) = 0;
 		virtual void texture_bind(RID rid, size_t slot = 0) = 0;
 		virtual void texture_update(RID rid, Buffer const & data = {}) = 0;
@@ -742,18 +812,17 @@ namespace ism
 
 	public:
 		/* FRAMEBUFFER */
-		virtual RID framebuffer_create(Vector<TextureFormat> const & texture_attachments) = 0;
+		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
 		virtual void framebuffer_destroy(RID rid) = 0;
 		virtual void framebuffer_bind(RID rid) = 0;
-		virtual void framebuffer_resize(RID rid, int32_t width, int32_t height) = 0;
-		virtual RID framebuffer_attachment(RID framebuffer, size_t attachment) const = 0;
+		virtual void framebuffer_update(RID rid, int32_t width, int32_t height) = 0;
 
 	public:
 		/* SHADER */
 		virtual RID shader_create(Vector<ShaderStageData> const & stage_data) = 0;
 		virtual void shader_destroy(RID rid) = 0;
 		virtual void shader_bind(RID rid) = 0;
-		virtual int32_t shader_uniform_location(RID rid, cstring name) = 0;
+		virtual int32_t shader_uniform_location(RID rid, cstring name) const = 0;
 		virtual void shader_set_uniform1i(RID rid, cstring name, int32_t const value) = 0;
 		virtual void shader_set_uniform1f(RID rid, cstring name, float_t const value) = 0;
 		virtual void shader_set_uniform2f(RID rid, cstring name, Vec2 const & value) = 0;

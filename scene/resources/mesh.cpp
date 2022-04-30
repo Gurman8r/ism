@@ -14,7 +14,7 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(Mesh, t) {}
+OBJECT_EMBED(Mesh, t) {}
 
 Mesh::~Mesh()
 {
@@ -117,7 +117,7 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 	//_load_material_textures(textures, material, aiTextureType_HEIGHT, "texture_normal");
 	//_load_material_textures(textures, material, aiTextureType_AMBIENT, "texture_height");
 
-	return SubMesh{ std::move(layout), std::move(vertices), std::move(indices), std::move(textures)};
+	return SubMesh{ std::move(layout), std::move(vertices), std::move(indices), std::move(textures) };
 }
 
 static void _process_node(Vector<SubMesh> & meshes, aiNode * node, aiScene const * scene)

@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(BehaviorComponent, t) {}
+OBJECT_EMBED(BehaviorComponent, t) {}
 
 BehaviorComponent::BehaviorComponent(Entity * entity) noexcept : Component{ entity }
 {

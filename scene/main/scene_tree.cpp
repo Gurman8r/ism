@@ -7,7 +7,7 @@ using namespace ism;
 
 MEMBER_IMPL(SceneTree::singleton) {};
 
-EMBED_OBJECT_CLASS(SceneTree, t)
+OBJECT_EMBED(SceneTree, t)
 {
 	t.tp_bind = CLASS_BINDER(SceneTree, t)
 	{

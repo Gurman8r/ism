@@ -6,7 +6,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(ConfigFile, t) {}
+OBJECT_EMBED(ConfigFile, t) {}
 
 ConfigFile::~ConfigFile() {}
 

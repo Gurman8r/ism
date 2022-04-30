@@ -4,7 +4,7 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(Entity, t) {}
+OBJECT_EMBED(Entity, t) {}
 
 Entity::Entity()
 {

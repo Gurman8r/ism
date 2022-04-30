@@ -6,6 +6,6 @@ using namespace ism;
 
 MEMBER_IMPL(RenderingDevice::singleton) {};
 
-EMBED_OBJECT_CLASS(RenderingDevice, t, TypeFlags_IsAbstract) {}
+OBJECT_EMBED(RenderingDevice, t, TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

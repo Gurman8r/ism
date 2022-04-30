@@ -4,7 +4,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(Camera, t) {}
+OBJECT_EMBED(Camera, t) {}
 
 Camera::~Camera() {}
 
@@ -12,7 +12,7 @@ Camera::~Camera() {}
 
 MEMBER_IMPL(CameraServer::singleton) {};
 
-EMBED_OBJECT_CLASS(CameraServer, t) {}
+OBJECT_EMBED(CameraServer, t) {}
 
 CameraServer::CameraServer() { singleton = this; }
 

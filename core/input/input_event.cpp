@@ -2,4 +2,4 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(InputEvent, t) {}
+OBJECT_EMBED(InputEvent, t) {}

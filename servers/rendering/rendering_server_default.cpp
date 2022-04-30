@@ -9,7 +9,7 @@
 
 using namespace ism;
 
-EMBED_OBJECT_CLASS(RenderingServerDefault, t) {}
+OBJECT_EMBED(RenderingServerDefault, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -116,9 +116,46 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 	}, image->get_data());
 }
 
-Ref<Image> RenderingServerDefault::texture2d_get(RID texture)
+RID RenderingServerDefault::texture2d_placeholder_create()
 {
-	return {};
+	return nullptr;
+}
+
+Ref<Image> RenderingServerDefault::texture2d_get_image(RID texture)
+{
+	return nullptr;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+RID RenderingServerDefault::framebuffer_create(FramebufferSpecification const & spec)
+{
+	ASSERT(0 < spec.width && 0 < spec.height);
+
+	Vector<RID> textures; textures.reserve(spec.attachments.size());
+
+	for (FramebufferTextureType_ const type : spec.attachments)
+	{
+		constexpr ColorFormat_ color_format[3] = { ColorFormat_R8G8B8_UNORM, ColorFormat_R8_UNORM, ColorFormat_D24_UNORM_S8_UINT, };
+
+		textures.push_back(RD->texture_create
+		({
+			TextureType_2D,
+			color_format[type],
+			spec.width,
+			spec.height,
+			1, 1, 0,
+			SamplerFilter_Linear,
+			SamplerFilter_Linear,
+			SamplerRepeatMode_ClampToEdge,
+			SamplerRepeatMode_ClampToEdge,
+			TextureSamples_1,
+			TextureFlags_Default
+			| (type != FramebufferTextureType_DepthStencil ? TextureFlags_ColorAttachment : TextureFlags_DepthStencilAttachment)
+		}));
+	}
+
+	return RD->framebuffer_create(std::move(textures));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
