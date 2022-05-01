@@ -2,18 +2,10 @@
 #define _ISM_FONT_HPP_
 
 #include <core/io/resource.hpp>
+#include <servers/text_server.hpp>
 
 namespace ism
 {
-	class Texture2D;
-
-	struct NODISCARD Glyph
-	{
-		Ref<Texture2D> graphic{};
-		FloatRect bounds{};
-		uint32_t advance{};
-	};
-
 	class ISM_API Font : public Resource
 	{
 		OBJECT_COMMON(Font, Resource);

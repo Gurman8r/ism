@@ -2,6 +2,10 @@
 
 using namespace ism;
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 OBJECT_EMBED(EditorCamera, t) {}
 
 EditorCamera::~EditorCamera() {}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -9,14 +9,19 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorViewport, EditorPanel);
 
-		RID m_main_texture;
+		RID m_main_texture{};
+		bool m_dragging_view{};
 
 	public:
 		EditorViewport();
+
 		virtual ~EditorViewport();
 
+	public:
 		auto get_main_texture() const -> RID { return m_main_texture; }
 		void set_main_texture(RID value) { m_main_texture = value; }
+
+		bool is_dragging_view() const noexcept { return m_dragging_view; }
 
 	public:
 		virtual void draw() override;

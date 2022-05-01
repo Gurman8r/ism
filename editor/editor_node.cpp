@@ -22,20 +22,17 @@ EditorNode::EditorNode()
 {
 	singleton = this;
 
-	m_framebuffer.instance(FramebufferSpecification{ 1280, 720, { FramebufferTextureType_Color, FramebufferTextureType_DepthStencil } });
+	m_framebuffer.instance(FramebufferSpecification{ 1280, 720, { ColorFormat_R8G8B8_UNORM, ColorFormat_D24_UNORM_S8_UINT } });
 	m_viewport.set_main_texture(((RD_Texture *)m_framebuffer->get_attachment(0))->handle);
 
-	textures["sanic"].instance<ImageTexture>("../../../assets/textures/Sanic.png");
 	textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
-
-	meshes["sphere8x6"].instance("../../../assets/meshes/sphere8x6.obj");
 	meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-
 	shaders["2d"].instance("../../../assets/shaders/2d.json");
 	shaders["3d"].instance("../../../assets/shaders/3d.json");
 
-	m_camera.set_eye({ 0.f, 0.f, -5.f });
+	m_camera.set_eye({ 0.f, 1.f, -5.f });
 	m_camera.set_yaw(90.f);
+	m_camera.set_pitch(360.f - 15.f);
 }
 
 EditorNode::~EditorNode()
@@ -58,15 +55,18 @@ void EditorNode::process(Duration const & dt)
 	}
 
 	m_framebuffer->bind();
-	RD->clear(Colors::magenta);
 	{
+		static Color clear_color{ Colors::magenta };
+		RD->clear(clear_color);
+		clear_color = rotate_hue(clear_color, (float_t)dt * 10.f);
+
 		static Mesh * mesh{ *meshes["sphere32x24"] };
 		static Shader * shader{ *shaders["3d"] };
 		static Texture * texture{ *textures["earth_dm_2k"] };
 		shader->bind();
 		shader->set_uniform("Model", object_matrix[0]);
 		shader->set_uniform("View", m_camera.get_view());
-		shader->set_uniform("Proj", m_camera.get_projection());
+		shader->set_uniform("Proj", m_camera.get_proj());
 		shader->set_uniform("Tint", Colors::white);
 		shader->set_uniform("Texture0", texture->get_rid());
 		mesh->draw();
@@ -74,6 +74,12 @@ void EditorNode::process(Duration const & dt)
 	m_framebuffer->unbind();
 
 	draw_interface();
+
+	if (m_viewport.is_dragging_view()) {
+		Vec2 const md{ INPUT->get_mouse_delta() * (float_t)dt * 50 };
+		m_camera.do_yaw(-md[0]);
+		m_camera.do_pitch(+md[1]);
+	}
 
 	Node::process(dt);
 }
@@ -110,7 +116,13 @@ void EditorNode::draw_interface()
 				ImGui::DockBuilderRemoveNode(id);
 				ImGui::DockBuilderAddNode(id);
 				{
-					// TODO: build dockspace here
+					// build dockspace here
+					ImGuiID right{ id };
+					ImGuiID left_up{ ImGui::DockBuilderSplitNode(right, ImGuiDir_Left, 0.2f, nullptr, &right) };
+					ImGuiID left_down{ ImGui::DockBuilderSplitNode(left_up, ImGuiDir_Down, 0.5f, nullptr, &left_up) };
+					ImGui::DockBuilderDockWindow(m_viewport.get_name(), right);
+					ImGui::DockBuilderDockWindow(m_hierarchy.get_name(), left_up);
+					ImGui::DockBuilderDockWindow(m_log.get_name(), left_down);
 				}
 				ImGui::DockBuilderFinish(id);
 			}
@@ -152,4 +164,23 @@ void EditorNode::draw_interface()
 	m_hierarchy.draw();
 	m_log.draw();
 	m_viewport.draw();
+
+	// GIZMOS
+	ImRect const view_rect{ m_viewport->InnerRect };
+	ImGuizmo::SetDrawlist(m_viewport->DrawList);
+	ImGuizmo::SetRect(view_rect.Min.x, view_rect.Min.y, view_rect.GetWidth(), view_rect.GetHeight());
+	if (m_grid_enabled) {
+		ImGuizmo::DrawGrid(m_camera.get_view(), m_camera.get_proj(), m_grid_matrix, m_grid_size);
+	}
+	//if (0 && 0 < m_object_count)
+	//{
+	//	ImGuizmo::DrawCubes(view_matrix, proj_matrix, &m_object_matrix[0][0], m_object_count);
+	//}
+	//for (int32_t i = 0; i < m_object_count; ++i)
+	//{
+	//	ImGuizmo::SetID(i);
+	//	if (m_xeditor.Manipulate(view_matrix, proj_matrix, m_object_matrix[i])) {
+	//		m_object_index = i;
+	//	}
+	//}
 }

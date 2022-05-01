@@ -34,19 +34,6 @@ namespace ism
 		storage_type m_data; // aggregate initializer
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		constexpr void swap(self_type & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
-				for (size_t i = 0; i < _N; ++i)
-				{
-					ism::util::swap(m_data[i], other.m_data[i]);
-				}
-			}
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
 		NODISCARD constexpr auto data() noexcept -> pointer { return m_data; }
 		NODISCARD constexpr auto data() const noexcept -> const_pointer { return m_data; }
@@ -98,6 +85,20 @@ namespace ism
 		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return std::make_reverse_iterator(begin()); }
 		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(cbegin()); }
 		
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		constexpr self_type & swap(self_type & other) noexcept
+		{
+			if (this != std::addressof(other))
+			{
+				for (size_t i = 0; i < _N; ++i)
+				{
+					ism::util::swap(m_data[i], other.m_data[i]);
+				}
+			}
+			return (*this);
+		}
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 }

@@ -274,7 +274,7 @@ namespace ism::ecs::detail
 
 		using component_storage = typename components_type::storage_type;
 		using system_storage	= typename systems_type::template storage_type<self_type>;
-		using signature_type	= typename Bitset<component_count + tag_count>;
+		using signature_type	= typename BitSet<component_count + tag_count>;
 		using signature_storage	= typename mpl::array<signature_type, signature_count>;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -361,7 +361,7 @@ namespace ism::ecs::detail
 			mpl::for_type_list<typename signatures_type::type_list
 			>([&temp](auto s)
 			{
-				// get the signature_type's Bitset
+				// get the signature_type's BitSet
 				auto & b{ std::get<self_type::signature_id<decltype(s)::type>()>(temp) };
 
 				// enable component bits

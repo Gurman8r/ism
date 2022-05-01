@@ -31,8 +31,8 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD virtual WindowID get_context_current() const override;
-		virtual void make_context_current(WindowID id) override;
+		NODISCARD virtual WindowID get_current_context() const override;
+		virtual void set_current_context(WindowID id) override;
 		virtual void poll_events() override;
 		virtual void swap_buffers(WindowID id) override;
 		virtual void swap_interval(int32_t value) override;

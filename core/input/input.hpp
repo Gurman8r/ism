@@ -43,34 +43,80 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	class ISM_API Input : public Object
+	// input state
+	struct NODISCARD InputState final
 	{
-		OBJECT_COMMON(Input, Object);
+		DEFAULT_COPYABLE_MOVABLE(InputState);
 
-		static Input * singleton;
+		char last_char;
 
-	public:
-		explicit Input() noexcept { singleton = this; }
+		bool is_shift, is_ctrl, is_alt, is_super;
 
-	public:
-		virtual ~Input() override {}
+		Vec2 mouse_pos, mouse_delta;
 
-		FORCE_INLINE static Input * get_singleton() noexcept { return singleton; }
+		float_t mouse_scroll;
 
-	public:
-		NODISCARD bool get_key_down(int32_t) const { return false; }
+		BitSet<MouseButton_MAX> mouse_down;
+
+		BitSet<KeyCode_MAX> keys_down;
+
+		float_t mouse_down_duration[MouseButton_MAX];
+
+		float_t keys_down_duration[KeyCode_MAX];
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// input manager singleton
-//#define INPUT (ism::Input::get_singleton())
+	// input
+	class ISM_API Input : public Object
+	{
+		OBJECT_COMMON(Input, Object);
+
+		friend class Main;
+
+		static Input * singleton;
+
+		InputState m_state{};
+
+	public:
+		explicit Input() noexcept { singleton = this; }
+
+		virtual ~Input() override {}
+
+		FORCE_INLINE static Input * get_singleton() noexcept { return singleton; }
+
+		NODISCARD InputState const & get_state() const noexcept { return m_state; }
+
+	public:
+		NODISCARD char get_char() const { return m_state.last_char; }
+
+		NODISCARD bool is_shift() const { return m_state.is_shift; }
+		NODISCARD bool is_ctrl() const { return m_state.is_ctrl; }
+		NODISCARD bool is_alt() const { return m_state.is_alt; }
+		NODISCARD bool is_super() const { return m_state.is_super; }
+
+		NODISCARD bool is_shift(KeyCode value) const { return m_state.is_shift && m_state.keys_down.read(value); }
+		NODISCARD bool is_ctrl(KeyCode value) const { return m_state.is_ctrl && m_state.keys_down.read(value); }
+		NODISCARD bool is_alt(KeyCode value) const { return m_state.is_alt && m_state.keys_down.read(value); }
+		NODISCARD bool is_super(KeyCode value) const { return m_state.is_super && m_state.keys_down.read(value); }
+
+		NODISCARD bool get_key_up(KeyCode value) const { return !m_state.keys_down.read(value); }
+		NODISCARD bool get_key_down(KeyCode value) const { return m_state.keys_down.read(value); }
+		NODISCARD auto get_key_down_duration(KeyCode value) const { return m_state.keys_down_duration[value]; }
+
+		NODISCARD auto get_mouse_pos() const -> Vec2 const & { return m_state.mouse_pos; }
+		NODISCARD bool get_mouse_up(MouseButton value) const { return !m_state.mouse_down.read(value); }
+		NODISCARD bool get_mouse_down(MouseButton value) const { return m_state.mouse_down.read(value); }
+		NODISCARD auto get_mouse_down_duration(MouseButton value) const { return m_state.mouse_down_duration[value]; }
+		NODISCARD auto get_mouse_delta() const -> Vec2 const & { return m_state.mouse_delta; }
+		NODISCARD auto get_mouse_scroll() const { return m_state.mouse_scroll; }
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// input singleton
+#define INPUT (ism::Input::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -199,6 +199,30 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	NODISCARD inline Color rotate_hue(Color const & v, float_t degrees) noexcept
+	{
+		// https://stackoverflow.com/a/8510751
+		float_t const c{ std::cos(deg2rad(degrees)) }, s{ std::sin(deg2rad(degrees)) };
+		auto m{ Mat3::identity() };
+		m.at(0, 0) = c + (1.0f - c) / 3.0f;
+		m.at(0, 1) = 1.f / 3.f * (1.0f - c) - std::sqrt(1.f / 3.f) * s;
+		m.at(0, 2) = 1.f / 3.f * (1.0f - c) + std::sqrt(1.f / 3.f) * s;
+		m.at(1, 0) = 1.f / 3.f * (1.0f - c) + std::sqrt(1.f / 3.f) * s;
+		m.at(1, 1) = c + 1.f / 3.f * (1.0f - c);
+		m.at(1, 2) = 1.f / 3.f * (1.0f - c) - std::sqrt(1.f / 3.f) * s;
+		m.at(2, 0) = 1.f / 3.f * (1.0f - c) - std::sqrt(1.f / 3.f) * s;
+		m.at(2, 1) = 1.f / 3.f * (1.0f - c) + std::sqrt(1.f / 3.f) * s;
+		m.at(2, 2) = c + 1.f / 3.f * (1.0f - c);
+		return {
+			v[0] * m.at(0, 0) + v[1] * m.at(0, 1) + v[2] * m.at(0, 2),
+			v[0] * m.at(1, 0) + v[1] * m.at(1, 1) + v[2] * m.at(1, 2),
+			v[0] * m.at(2, 0) + v[1] * m.at(2, 1) + v[2] * m.at(2, 2),
+			1.f
+		};
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_COLOR_HPP_

@@ -3,6 +3,7 @@
 
 #include <core/io/resource.hpp>
 
+// enums
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -75,6 +76,12 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// image
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API Image : public Resource
 	{
@@ -90,22 +97,33 @@ namespace ism
 
 	public:
 		virtual ~Image() noexcept override = default;
+		
 		Image() noexcept {}
+		
 		Image(int32_t width, int32_t height, ImageFormat_ format);
+		
 		Image(int32_t width, int32_t height, ImageFormat_ format, Buffer const & data);
 
 		void flip_vertically();
+		
 		void flip_horizontally();
 
 		NODISCARD Color32 get_pixel(size_t i) const;
+		
 		NODISCARD Color32 get_pixel(size_t x, size_t y) const;
+		
 		void set_pixel(size_t i, Color32 value);
+		
 		void set_pixel(size_t x, size_t y, Color32 value);
 
 		NODISCARD auto get_width() const noexcept -> int32_t { return m_width; }
+		
 		NODISCARD auto get_height() const noexcept -> int32_t { return m_height; }
+		
 		NODISCARD auto get_channel_count() const noexcept -> int32_t { return m_channels; }
+		
 		NODISCARD auto get_format() const noexcept -> ImageFormat_ { return m_format; }
+		
 		NODISCARD auto get_data() const noexcept -> Buffer const & { return m_pixels; }
 	};
 

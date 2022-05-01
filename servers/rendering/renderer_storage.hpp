@@ -7,6 +7,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// vertexarray storage
 	struct NODISCARD RD_Vertexarray final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Vertexarray);
@@ -24,9 +25,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD RD_Vertexbuffer final
+	// buffer storage
+	struct NODISCARD RD_Buffer final
 	{
-		DEFAULT_COPYABLE_MOVABLE(RD_Vertexbuffer);
+		DEFAULT_COPYABLE_MOVABLE(RD_Buffer);
 
 		RID handle{};
 
@@ -35,17 +37,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD RD_Indexbuffer final
-	{
-		DEFAULT_COPYABLE_MOVABLE(RD_Indexbuffer);
-
-		RID handle{};
-
-		Buffer data{};
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	// texture storage
 	struct NODISCARD RD_Texture final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Texture);
@@ -75,6 +67,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// framebuffer storage
 	struct NODISCARD RD_Framebuffer final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Framebuffer);
@@ -88,6 +81,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// shader storage
 	struct NODISCARD RD_Shader final
 	{
 		DEFAULT_COPYABLE_MOVABLE(RD_Shader);

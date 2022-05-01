@@ -38,7 +38,7 @@ static struct NODISCARD MemoryTracker final
 				});
 			}
 
-			SYS->pause();
+			OS->pause();
 		}
 #endif
 

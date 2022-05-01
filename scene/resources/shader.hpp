@@ -36,7 +36,7 @@ namespace ism
 		void set_uniform_texture(cstring name, RID const value, size_t slot = 0);
 
 		template <class T, class ... Args
-		> void set_uniform(cstring name, T const & value, Args && ... args)
+		> void set_uniform(cstring name, T const & value, Args && ... args) noexcept
 		{
 			if constexpr (std::is_floating_point_v<T> || std::is_same_v<T, Duration>) { set_uniform1f(name, (float_t)value); }
 			else if constexpr (std::is_same_v<T, RID>) { set_uniform_texture(name, value, FWD(args)...); }

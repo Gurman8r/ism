@@ -3,12 +3,6 @@
 
 #include <core/templates/array.hpp>
 
-#define GLM_FORCE_SIZE_T_LENGTH
-#include <glm/glm/glm.hpp>
-#include <glm/glm/gtc/type_ptr.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <glm/glm/gtx/quaternion.hpp>
-
 // MATRIX
 namespace ism
 {
@@ -43,16 +37,6 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		storage_type m_data; // aggregate initializer
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		constexpr void swap(self_type & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
-				m_data.swap(other.m_data);
-			}
-		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
@@ -126,6 +110,29 @@ namespace ism
 		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
 		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
 		
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		constexpr auto & swap(self_type & other) noexcept
+		{
+			if (this != std::addressof(other))
+			{
+				m_data.swap(other.m_data);
+			}
+			return (*this);
+		}
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		static constexpr self_type identity() noexcept
+		{
+			self_type temp;
+			for (size_t i = 0; i < _Width * _Height; ++i)
+			{
+				temp[i] = ((i % _Width) == (i / _Height)) ? static_cast<value_type>(1) : static_cast<value_type>(0);
+			}
+			return temp;
+		}
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class U, size_t W, size_t H

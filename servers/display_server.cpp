@@ -46,13 +46,13 @@ OBJECT_EMBED(DisplayServer, t, TypeFlags_IsAbstract) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-WindowID DisplayServer::get_context_current() const
+WindowID DisplayServer::get_current_context() const
 {
 	CRASH("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-void DisplayServer::make_context_current(WindowID id)
+void DisplayServer::set_current_context(WindowID id)
 {
 	CRASH("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 }

@@ -35,7 +35,7 @@ public:																											\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// declare an enum and an additional lenient type
+// create a weak and strong enum type
 #define DECL_ENUM(m_name, m_base) \
 	ALIAS(m_name) m_base; \
 	enum CAT(m_name, _) : m_name

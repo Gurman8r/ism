@@ -1,4 +1,5 @@
 #include <editor/editor_viewport.hpp>
+#include <editor/editor_node.hpp>
 
 using namespace ism;
 
@@ -16,6 +17,8 @@ EditorViewport::~EditorViewport()
 
 void EditorViewport::draw()
 {
+	m_dragging_view = false;
+
 	if (!is_open()) { return; }
 	ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };
 	ImGui::SetNextWindowPos(main_viewport->GetWorkPos() + Vec2{ 32, 32 }, ImGuiCond_FirstUseEver);
@@ -26,7 +29,10 @@ void EditorViewport::draw()
 	if (!open) { return; }
 
 	ImGuiWindow * const window{ get_window() };
-	ImRect const rect{ window->InnerRect };
-	if (ImGui::ItemAdd(rect, NULL)) { window->DrawList->AddImage(m_main_texture, rect.Min, rect.Max, { 0, 1 }, { 1, 0 }); }
-	//ImGui::GetForegroundDrawList(window)->AddRect(rect.Min, rect.Max, 0xff00ffff);
+	ImRect const view_rect{ window->InnerRect };
+	if (ImGui::ItemAdd(view_rect, NULL)) {
+		window->DrawList->AddImage(m_main_texture, view_rect.Min, view_rect.Max, { 0, 1 }, { 1, 0 });
+		m_dragging_view = !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && ImGui::IsMouseDragging(0);
+	}
+	//ImGui::GetForegroundDrawList(window)->AddRect(view_rect.Min, view_rect.Max, 0xff00ffff);
 }

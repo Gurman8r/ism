@@ -5,7 +5,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OS_Windows::OS_Windows(HINSTANCE hInstance) : OS{}
+OS_Windows::OS_Windows(HINSTANCE hInstance) : OperatingSystem{}
 {
 	m_instance = hInstance ? hInstance : GetModuleHandle(NULL);
 }

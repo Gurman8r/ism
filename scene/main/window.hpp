@@ -8,11 +8,11 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window
-	class ISM_API Window : public Viewport
+	class ISM_API Window : public Node
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		OBJECT_COMMON(Window, Viewport);
+		OBJECT_COMMON(Window, Node);
 
 	protected:
 		friend class SceneTree;
@@ -33,7 +33,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		virtual void make_context_current();
+		virtual void make_current_context();
 		virtual void poll_events();
 		virtual void swap_buffers();
 

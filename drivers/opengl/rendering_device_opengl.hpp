@@ -60,7 +60,7 @@ namespace ism
 		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) override;
 		virtual void framebuffer_destroy(RID rid) override;
 		virtual void framebuffer_bind(RID rid) override;
-		virtual void framebuffer_update(RID rid, int32_t width, int32_t height) override;
+		virtual void framebuffer_resize(RID rid, int32_t width, int32_t height) override;
 
 	public:
 		/* SHADER */

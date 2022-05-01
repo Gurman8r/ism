@@ -3,6 +3,10 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#ifdef INPUT
+#undef INPUT
+#endif
+
 #include <glfw/glfw3.h>
 #if defined(SYSTEM_WINDOWS)
 #	undef APIENTRY
@@ -76,7 +80,7 @@ DisplayServerWindows::DisplayServerWindows(DisplayServerSettings const & setting
 		CRASH("FAILED CREATING GLFW WINDOW");
 	}
 
-	make_context_current((WindowID)m_glfw_window);
+	set_current_context((WindowID)m_glfw_window);
 	
 	if (settings.hints & WindowHints_Maximized) { maximize_window((WindowID)m_glfw_window); }
 }
@@ -129,12 +133,12 @@ Vector<VideoMode> const & DisplayServerWindows::get_fullscreen_video_modes() con
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-WindowID DisplayServerWindows::get_context_current() const
+WindowID DisplayServerWindows::get_current_context() const
 {
 	return (WindowID)glfwGetCurrentContext();
 }
 
-void DisplayServerWindows::make_context_current(WindowID id)
+void DisplayServerWindows::set_current_context(WindowID id)
 {
 	glfwMakeContextCurrent((GLFWwindow *)id);
 }

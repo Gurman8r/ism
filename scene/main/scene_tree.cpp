@@ -1,5 +1,4 @@
 #include <scene/main/scene_tree.hpp>
-#include <scene/gui/imgui.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -24,14 +23,16 @@ OBJECT_EMBED(SceneTree, t)
 
 SceneTree::SceneTree(SceneSettings const & settings) : MainLoop{}
 {
-	singleton = this;
+	if (singleton == nullptr) { singleton = this; }
 
-	m_root.instance();
+	m_root = memnew(Window);
 }
 
 SceneTree::~SceneTree()
 {
-	m_root = nullptr;
+	memdelete(m_root);
+
+	if (singleton == this) { singleton = nullptr; }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

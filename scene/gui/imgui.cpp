@@ -47,7 +47,6 @@ void ism::ImGui_NewFrame()
 {
 	IMGUI_RENDERER_NEWFRAME();
 	IMGUI_PLATFORM_NEWFRAME();
-
 	ImGui::NewFrame();
 	ImGuizmo::BeginFrame();
 }
@@ -55,24 +54,6 @@ void ism::ImGui_NewFrame()
 void ism::ImGui_RenderDrawData(ImDrawData * draw_data)
 {
 	IMGUI_RENDER_DRAW_DATA(draw_data);
-}
-
-void ism::ImGui_RenderFrame()
-{
-	ImGui::Render();
-
-	RD->set_viewport(SceneTree::get_singleton()->get_root()->get_bounds());
-	RD->clear();
-
-	ImGui_RenderDrawData(&ImGui::GetCurrentContext()->Viewports[0]->DrawDataP);
-
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable)
-	{
-		WindowID window{ DS->get_context_current() };
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
-		DS->make_context_current(window);
-	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -42,7 +42,7 @@
 namespace ism
 {
 	template <size_t _Count = 64
-	> struct Bitset
+	> struct BitSet
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -50,7 +50,7 @@ namespace ism
 
 		static_assert(0 < bit_count, "bit count negative or zero");
 
-		using self_type = typename Bitset<bit_count>;
+		using self_type = typename BitSet<bit_count>;
 
 		using array_type = typename Array<bool, bit_count>;
 
@@ -68,37 +68,37 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr Bitset() noexcept : m_words{} {}
+		constexpr BitSet() noexcept : m_words{} {}
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> constexpr Bitset(T const value) noexcept
+		> constexpr BitSet(T const value) noexcept
 			: m_words{ static_cast<value_type>(value) }
 		{
 		}
 
-		constexpr Bitset(self_type const & value)
+		constexpr BitSet(self_type const & value)
 			: m_words{ value.m_words }
 		{
 		}
 
-		constexpr Bitset(self_type && value) noexcept
+		constexpr BitSet(self_type && value) noexcept
 			: m_words{ std::move(value.m_words) }
 		{
 		}
 
 		template <size_t N
-		> constexpr Bitset(Bitset<N> const & value)
+		> constexpr BitSet(BitSet<N> const & value)
 			: m_words{ value.m_words }
 		{
 		}
 
 		template <size_t N
-		> constexpr Bitset(Bitset<N> && value) noexcept
+		> constexpr BitSet(BitSet<N> && value) noexcept
 			: m_words{ std::move(value.m_words) }
 		{
 		}
 
-		constexpr Bitset(array_type const & value) noexcept
+		constexpr BitSet(array_type const & value) noexcept
 			: m_words{}
 		{
 			for (auto it = value.begin(); it != value.end(); ++it)
@@ -158,14 +158,18 @@ namespace ism
 
 		NODISCARD constexpr bool read(size_t const i) const noexcept
 		{
-			return BIT_READ(m_words[i / bits_per_word], i % bits_per_word);
+			return (1ULL & (m_words[i / bits_per_word] >> 1ULL)) == 1ULL;
+
+			//return BIT_READ(m_words[i / bits_per_word], i % bits_per_word);
 		}
 
 		constexpr bool clear(size_t const i) noexcept
 		{
 			bool const temp{ this->read(i) };
 			
-			BIT_CLEAR(m_words[i / bits_per_word], i % bits_per_word);
+			//BIT_CLEAR(m_words[i / bits_per_word], i % bits_per_word);
+
+			m_words[i / bits_per_word] &= ~(1ULL << (i % bits_per_word));
 			
 			return temp;
 		}
@@ -174,7 +178,9 @@ namespace ism
 		{
 			bool const temp{ !this->read(i) };
 			
-			BIT_SET(m_words[i / bits_per_word], i % bits_per_word);
+			//BIT_SET(m_words[i / bits_per_word], i % bits_per_word);
+
+			m_words[i / bits_per_word] |= 1ULL << (i % bits_per_word);
 			
 			return temp;
 		}
@@ -210,7 +216,7 @@ namespace ism
 
 		NODISCARD constexpr array_type arr() const noexcept
 		{
-			array_type temp{};
+			array_type temp;
 			for (size_t i = 0; i < bit_count; ++i)
 			{
 				temp[i] = read(i);

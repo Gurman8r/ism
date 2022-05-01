@@ -132,16 +132,16 @@ RID RenderingServerDefault::framebuffer_create(FramebufferSpecification const & 
 {
 	ASSERT(0 < spec.width && 0 < spec.height);
 
-	Vector<RID> textures; textures.reserve(spec.attachments.size());
+	Vector<RID> textures;
+	
+	textures.reserve(spec.attachments.size());
 
-	for (FramebufferTextureType_ const type : spec.attachments)
+	for (ColorFormat_ const color_format : spec.attachments)
 	{
-		constexpr ColorFormat_ color_format[3] = { ColorFormat_R8G8B8_UNORM, ColorFormat_R8_UNORM, ColorFormat_D24_UNORM_S8_UINT, };
-
 		textures.push_back(RD->texture_create
 		({
 			TextureType_2D,
-			color_format[type],
+			color_format,
 			spec.width,
 			spec.height,
 			1, 1, 0,
@@ -149,9 +149,8 @@ RID RenderingServerDefault::framebuffer_create(FramebufferSpecification const & 
 			SamplerFilter_Linear,
 			SamplerRepeatMode_ClampToEdge,
 			SamplerRepeatMode_ClampToEdge,
-			TextureSamples_1,
-			TextureFlags_Default
-			| (type != FramebufferTextureType_DepthStencil ? TextureFlags_ColorAttachment : TextureFlags_DepthStencilAttachment)
+			spec.samples,
+			spec.usage_flags | (color_format == ColorFormat_D24_UNORM_S8_UINT ? TextureFlags_DepthStencilAttachment : TextureFlags_ColorAttachment)
 		}));
 	}
 

@@ -51,7 +51,7 @@ namespace ism
 
 		NODISCARD auto get_registry() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
 
-		NODISCARD auto get_root() const noexcept -> Ref<Window> { return m_root; }
+		NODISCARD auto get_root() const noexcept -> Window * { return m_root; }
 
 		NODISCARD auto get_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
 
@@ -63,6 +63,9 @@ namespace ism
 			m_root->for_nodes(fn, recursive, reverse);
 		}
 
+	protected:
+		template <class T> void on_component_added(Entity &, T &) {}
+
 	private:
 		bool m_initialized{};
 
@@ -70,10 +73,15 @@ namespace ism
 
 		FrameRateTracker m_fps{ 120 };
 
-		Ref<Window> m_root{};
+		Window * m_root{};
 
 		EntityRegistry m_entt{};
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// scene tree singleton
+#define SCENE (ism::SceneTree::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

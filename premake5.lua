@@ -59,13 +59,14 @@ includedirs{
 	"%{wks.location}/source",
 	"%{wks.location}/thirdparty",
 	"%{wks.location}/thirdparty/assimp/include",
-	"%{wks.location}/thirdparty/glfw/include",
+	"%{wks.location}/thirdparty/entt/src",
 	"%{wks.location}/thirdparty/freetype2/include",
 	"%{wks.location}/thirdparty/freetype2/include/freetype",
-	"%{wks.location}/thirdparty/json/include",
-	"%{wks.location}/thirdparty/entt/src",
+	"%{wks.location}/thirdparty/gcem/include",
+	"%{wks.location}/thirdparty/glfw/include",
 	"%{wks.location}/thirdparty/imgui",
 	"%{wks.location}/thirdparty/imgui-node-editor",
+	"%{wks.location}/thirdparty/json/include",
 }
 
 -- Preprocessor

@@ -48,7 +48,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 	} break;
 	}
 
-	SYS->printerr(
+	OS->printerr(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -329,12 +329,12 @@ RID RenderingDeviceOpenGL::vertexarray_create(VertexLayout const & layout, RID i
 	vertexarray->vertices = vertices;
 	vertexarray->layout = layout;
 
-	if (RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)vertexarray->indices })
+	if (RD_Buffer * indexbuffer{ (RD_Buffer *)vertexarray->indices })
 	{
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
 	}
 
-	if (RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vertexarray->vertices })
+	if (RD_Buffer * vertexbuffer{ (RD_Buffer *)vertexarray->vertices })
 	{
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 
@@ -392,18 +392,18 @@ void RenderingDeviceOpenGL::vertexarray_draw(RID rid)
 	ASSERT(vertexarray->vertices);
 	glCheck(glBindVertexArray(GL_RID(vertexarray->handle)));
 
-	if (RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)vertexarray->indices })
+	if (RD_Buffer * indexbuffer{ (RD_Buffer *)vertexarray->indices })
 	{
 		// draw elements
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
-		RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vertexarray->vertices };
+		RD_Buffer * vertexbuffer{ (RD_Buffer *)vertexarray->vertices };
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 		glCheck(glDrawElements(GL_TRIANGLES, indexbuffer->data.size() / sizeof(uint32_t), GL_UNSIGNED_INT, nullptr));
 	}
 	else
 	{
 		// draw arrays
-		RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)vertexarray->vertices };
+		RD_Buffer * vertexbuffer{ (RD_Buffer *)vertexarray->vertices };
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 		glCheck(glDrawArrays(GL_TRIANGLES, 0, vertexbuffer->data.size() / sizeof(float_t)));
 	}
@@ -413,7 +413,7 @@ void RenderingDeviceOpenGL::vertexarray_draw(RID rid)
 
 RID RenderingDeviceOpenGL::vertexbuffer_create(Buffer const & data)
 {
-	RD_Vertexbuffer * vertexbuffer{ memnew(RD_Vertexbuffer{}) };
+	RD_Buffer * vertexbuffer{ memnew(RD_Buffer{}) };
 	vertexbuffer->data = data;
 	glCheck(glGenBuffers(1, &GL_RID(vertexbuffer->handle)));
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
@@ -424,7 +424,7 @@ RID RenderingDeviceOpenGL::vertexbuffer_create(Buffer const & data)
 void RenderingDeviceOpenGL::vertexbuffer_destroy(RID rid)
 {
 	ASSERT(rid);
-	RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)rid };
+	RD_Buffer * vertexbuffer{ (RD_Buffer *)rid };
 	glCheck(glDeleteBuffers(1, &GL_RID(vertexbuffer->handle)));
 	memdelete(vertexbuffer);
 }
@@ -432,7 +432,7 @@ void RenderingDeviceOpenGL::vertexbuffer_destroy(RID rid)
 void RenderingDeviceOpenGL::vertexbuffer_bind(RID rid)
 {
 	if (rid) {
-		RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)rid };
+		RD_Buffer * vertexbuffer{ (RD_Buffer *)rid };
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 	}
 	else {
@@ -443,7 +443,7 @@ void RenderingDeviceOpenGL::vertexbuffer_bind(RID rid)
 void RenderingDeviceOpenGL::vertexbuffer_update(RID rid, Buffer const & data, size_t offset)
 {
 	ASSERT(rid);
-	RD_Vertexbuffer * vertexbuffer{ (RD_Vertexbuffer *)rid };
+	RD_Buffer * vertexbuffer{ (RD_Buffer *)rid };
 	vertexbuffer->data = data;
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 	glCheck(glBufferSubData(GL_ARRAY_BUFFER, (uint32_t)offset, (uint32_t)vertexbuffer->data.size(), vertexbuffer->data.data()));
@@ -453,7 +453,7 @@ void RenderingDeviceOpenGL::vertexbuffer_update(RID rid, Buffer const & data, si
 
 RID RenderingDeviceOpenGL::indexbuffer_create(Buffer const & data)
 {
-	RD_Indexbuffer * indexbuffer{ memnew(RD_Indexbuffer{}) };
+	RD_Buffer * indexbuffer{ memnew(RD_Buffer{}) };
 	indexbuffer->data = data;
 	glCheck(glGenBuffers(1, &GL_RID(indexbuffer->handle)));
 	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
@@ -464,7 +464,7 @@ RID RenderingDeviceOpenGL::indexbuffer_create(Buffer const & data)
 void RenderingDeviceOpenGL::indexbuffer_destroy(RID rid)
 {
 	ASSERT(rid);
-	RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)rid };
+	RD_Buffer * indexbuffer{ (RD_Buffer *)rid };
 	glCheck(glDeleteBuffers(1, &GL_RID(indexbuffer->handle)));
 	memdelete(indexbuffer);
 }
@@ -472,7 +472,7 @@ void RenderingDeviceOpenGL::indexbuffer_destroy(RID rid)
 void RenderingDeviceOpenGL::indexbuffer_bind(RID rid)
 {
 	if (rid) {
-		RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)rid };
+		RD_Buffer * indexbuffer{ (RD_Buffer *)rid };
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
 	}
 	else {
@@ -483,7 +483,7 @@ void RenderingDeviceOpenGL::indexbuffer_bind(RID rid)
 void RenderingDeviceOpenGL::indexbuffer_update(RID rid, Buffer const & data, size_t offset)
 {
 	ASSERT(rid);
-	RD_Indexbuffer * indexbuffer{ (RD_Indexbuffer *)rid };
+	RD_Buffer * indexbuffer{ (RD_Buffer *)rid };
 	indexbuffer->data = data;
 	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
 	glCheck(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, (uint32_t)offset, (uint32_t)indexbuffer->data.size(), indexbuffer->data.data()));
@@ -668,7 +668,7 @@ void RenderingDeviceOpenGL::framebuffer_bind(RID rid)
 	}
 }
 
-void RenderingDeviceOpenGL::framebuffer_update(RID rid, int32_t width, int32_t height)
+void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t height)
 {
 	ASSERT(rid);
 	RD_Framebuffer * framebuffer{ (RD_Framebuffer *)rid };

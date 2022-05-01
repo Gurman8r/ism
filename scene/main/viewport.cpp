@@ -4,6 +4,11 @@ using namespace ism;
 
 OBJECT_EMBED(Viewport, t) {}
 
-Viewport::Viewport() {}
+Viewport::Viewport()
+	: m_viewport{}
+{
+}
 
-Viewport::~Viewport() {}
+Viewport::~Viewport()
+{
+}

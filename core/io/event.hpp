@@ -191,9 +191,9 @@ private:
 
 		explicit EventDelegate(EventBus * bus) noexcept : EventDelegate<Event>{ bus } { this->subscribe<Ev>(); }
 
-		void handle_event(Event const & event) final
+		void handle_event(Event const & ev) final
 		{
-			ASSERT((EventID)event == ID);
+			ASSERT((EventID)ev == ID);
 
 			for (Callback const & callback : m_callbacks)
 			{

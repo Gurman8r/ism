@@ -3,6 +3,7 @@
 
 #include <servers/display_server.hpp>
 
+// enums
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -309,17 +310,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(FramebufferTextureType)
-	{
-		FramebufferTextureType_Color,
-		FramebufferTextureType_RedInteger,
-		FramebufferTextureType_DepthStencil,
-	};
-
-	ALIAS(FramebufferAttachmentSpecification) Vector<FramebufferTextureType_>;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	ENUM_INT(SamplerFilter)
 	{
 		SamplerFilter_Nearest,
@@ -484,6 +474,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
+// data
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -528,9 +519,11 @@ namespace ism
 
 		uint32_t width{ 1280 }, height{ 720 };
 
-		FramebufferAttachmentSpecification attachments{ FramebufferTextureType_Color, FramebufferTextureType_DepthStencil };
-
-		bool swap_chain_target{ false };
+		Vector<ColorFormat_> attachments{ ColorFormat_R8G8B8_UNORM, ColorFormat_D24_UNORM_S8_UINT };
+		
+		TextureSamples_ samples{ TextureSamples_1 };
+		
+		TextureFlags_ usage_flags{ TextureFlags_Default };
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -545,6 +538,8 @@ namespace ism
 		
 		Vector<RID> ids{};
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct NODISCARD SamplerState
 	{
@@ -754,6 +749,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
+// rendering device
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -815,7 +811,7 @@ namespace ism
 		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
 		virtual void framebuffer_destroy(RID rid) = 0;
 		virtual void framebuffer_bind(RID rid) = 0;
-		virtual void framebuffer_update(RID rid, int32_t width, int32_t height) = 0;
+		virtual void framebuffer_resize(RID rid, int32_t width, int32_t height) = 0;
 
 	public:
 		/* SHADER */

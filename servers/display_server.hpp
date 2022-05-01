@@ -462,8 +462,8 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD virtual WindowID get_context_current() const;
-		virtual void make_context_current(WindowID id);
+		NODISCARD virtual WindowID get_current_context() const;
+		virtual void set_current_context(WindowID id);
 		virtual void poll_events();
 		virtual void swap_buffers(WindowID id);
 		virtual void swap_interval(int32_t value);

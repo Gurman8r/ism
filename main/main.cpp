@@ -34,7 +34,7 @@
 
 #include <servers/rendering/rendering_server_default.hpp>
 
-#include <servers/camera_server.hpp>
+#include <servers/audio_server.hpp>
 #include <servers/text_server.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -50,14 +50,14 @@ static EventBus *			g_bus{};
 static Input *				g_input{};
 static DisplayServer *		g_display{};
 static RenderingServer *	g_renderer{};
-static CameraServer *		g_cameras{};
+static AudioServer *		g_audio{};
 static TextServer *			g_text{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	SYS->initialize();
+	OS->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -83,7 +83,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_module_types();
 
-	g_cameras = memnew(CameraServer);
+	g_audio = memnew(AudioServer);
 	
 	register_driver_types();
 	
@@ -93,7 +93,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_server_singletons();
 	
-	SYS->set_cmdline(exepath, { argv, argv + argc });
+	OS->set_cmdline(exepath, { argv, argv + argc });
 
 	// event system
 	g_bus = memnew(EventBus);
@@ -112,7 +112,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 		WindowHints_Default_Maximized & ~(WindowHints_Doublebuffer)
 		}));
 	
-	WindowID main_window{ g_display->get_context_current() };
+	WindowID main_window{ g_display->get_current_context() };
 	g_display->window_set_char_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharEvent(x...)); });
 	g_display->window_set_char_mods_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharModsEvent(x...)); });
 	g_display->window_set_close_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCloseEvent(x...)); });
@@ -130,6 +130,25 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	g_display->window_set_refresh_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowRefreshEvent(x...)); });
 	g_display->window_set_scroll_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowScrollEvent(x...)); });
 	g_display->window_set_size_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowSizeEvent(x...)); });
+	g_bus->get_event_delegate<WindowCharEvent>().add([&](WindowCharEvent const & ev) {
+		g_input->m_state.last_char = (char)ev.codepoint;
+	});
+	g_bus->get_event_delegate<WindowKeyEvent>().add([&](WindowKeyEvent const & ev) {
+		g_input->m_state.keys_down.write(ev.key, ev.action != InputAction_Release);
+		g_input->m_state.is_shift = g_input->m_state.keys_down[KeyCode_LeftShift] || g_input->m_state.keys_down[KeyCode_RightShift];
+		g_input->m_state.is_ctrl = g_input->m_state.keys_down[KeyCode_LeftCtrl] || g_input->m_state.keys_down[KeyCode_RightCtrl];
+		g_input->m_state.is_alt = g_input->m_state.keys_down[KeyCode_LeftAlt] || g_input->m_state.keys_down[KeyCode_RightAlt];
+		g_input->m_state.is_super = g_input->m_state.keys_down[KeyCode_LeftSuper] || g_input->m_state.keys_down[KeyCode_RightSuper];
+	});
+	g_bus->get_event_delegate<WindowMouseButtonEvent>().add([&](WindowMouseButtonEvent const & ev) {
+		g_input->m_state.mouse_down = ev.action != InputAction_Release;
+	});
+	g_bus->get_event_delegate<WindowMousePositionEvent>().add([&](WindowMousePositionEvent const & ev) {
+		g_input->m_state.mouse_pos = { (float_t)ev.xpos, (float_t)ev.ypos };
+	});
+	g_bus->get_event_delegate<WindowScrollEvent>().add([&](WindowScrollEvent const & ev) {
+		g_input->m_state.mouse_scroll = (float_t)ev.yoffset;
+	});
 
 	// rendering server
 	g_renderer = memnew(RenderingServerDefault());
@@ -174,14 +193,14 @@ bool Main::start()
 	{
 		Ref<SceneTree> tree{ main_loop };
 
-		Ref<Window> root{ tree->get_root() };
+		Window * root{ tree->get_root() };
 
 #if TOOLS_ENABLED
 		if (editor) { root->add_child<EditorNode>(); }
 #endif
 	}
 	
-	SYS->set_main_loop(main_loop);
+	OS->set_main_loop(main_loop);
 
 	main_loop->initialize();
 
@@ -191,21 +210,48 @@ bool Main::start()
 bool Main::iteration()
 {
 	++g_iterating; SCOPE_EXIT(&) { --g_iterating; };
+
 	Timer const loop_timer{ true };
 	static Duration delta_time{ 16_ms };
 	SCOPE_EXIT(&) { delta_time = loop_timer.elapsed(); };
 
-	bool should_close{ false };
+	// TODO: physics stuff goes here
 
-	// process physics here
+	bool should_close{ false };
 
 	DS->poll_events();
 
+	static Vec2 last_mouse_pos{};
+	g_input->m_state.mouse_delta = g_input->m_state.mouse_pos - last_mouse_pos;
+	last_mouse_pos = g_input->m_state.mouse_pos;
+	for (size_t i = 0; i < MouseButton_MAX; ++i) {
+		g_input->m_state.mouse_down_duration[i] = (g_input->m_state.mouse_down[i]
+			? (g_input->m_state.mouse_down_duration[i] < 0.f ? 0.f : g_input->m_state.mouse_down_duration[i] + delta_time)
+			: -1.f);
+	}
+	for (size_t i = 0; i < KeyCode_MAX; ++i) {
+		g_input->m_state.keys_down_duration[i] = (g_input->m_state.keys_down[i]
+			? (g_input->m_state.keys_down_duration[i] < 0.f ? 0.f : g_input->m_state.keys_down_duration[i] + delta_time)
+			: -1.f);
+	}
+
 	ImGui_NewFrame();
 
-	if (SYS->get_main_loop()->process(delta_time)) { should_close = true; }
+	if (OS->get_main_loop()->process(delta_time)) { should_close = true; }
 
-	ImGui_RenderFrame();
+	ImGui::Render();
+	RD->set_viewport(SCENE->get_root()->get_bounds());
+	RD->clear(Colors::black, false);
+	ImGui_RenderDrawData(&ImGui::GetCurrentContext()->Viewports[0]->DrawDataP);
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+		WindowID backup_context{ DS->get_current_context() };
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		DS->set_current_context(backup_context);
+	}
+
+	g_input->m_state.mouse_scroll = 0.f;
+	g_input->m_state.last_char = 0;
 
 	return should_close;
 }
@@ -215,8 +261,8 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	SYS->get_main_loop()->finalize();
-	SYS->delete_main_loop();
+	OS->get_main_loop()->finalize();
+	OS->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -231,9 +277,9 @@ void Main::cleanup()
 	unregister_scene_types();
 
 	//memdelete(g_audio);
-	memdelete(g_cameras);
+	memdelete(g_audio);
 
-	SYS->finalize();
+	OS->finalize();
 
 	ImGui_Shutdown();
 	ImGui::DestroyContext();
@@ -250,7 +296,7 @@ void Main::cleanup()
 	unregister_core_types();
 
 	memdelete(g_internals);
-	SYS->finalize_core();
+	OS->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -5,15 +5,15 @@ using namespace ism;
 
 void ism::print_line()
 {
-	SYS->print("\n");
+	OS->print("\n");
 }
 
 void ism::print_line(String const & s)
 {
-	SYS->print("%s\n", s.c_str());
+	OS->print("%s\n", s.c_str());
 }
 
 void ism::print_error(String const & s)
 {
-	SYS->printerr("%s\n", s.c_str());
+	OS->printerr("%s\n", s.c_str());
 }

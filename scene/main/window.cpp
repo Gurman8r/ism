@@ -21,9 +21,7 @@ OBJECT_EMBED(Window, t)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Window::Window() noexcept
-	: Viewport{}
-	, m_window_id{ DS->get_context_current() }
+Window::Window() noexcept : m_window_id{ DS->get_current_context() }
 {
 }
 
@@ -34,9 +32,9 @@ Window::~Window()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void Window::make_context_current()
+void Window::make_current_context()
 {
-	DS->make_context_current(m_window_id);
+	DS->set_current_context(m_window_id);
 }
 
 void Window::poll_events()
