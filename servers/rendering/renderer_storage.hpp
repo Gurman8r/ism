@@ -26,6 +26,8 @@ namespace ism
 
 			RID color{};
 
+			ColorFormat_ color_format{}, color_format_srgb{};
+
 			RID texture{};
 
 			RID framebuffer_uniforms{}, backbuffer_uniforms{};

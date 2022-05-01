@@ -9,21 +9,23 @@ namespace ism
 	{
 		OBJECT_COMMON(RendererViewport, Object);
 
-		struct Viewport final
-		{
-			RID self{}, parent{};
-
-			RID render_target{};
-		};
-
-		Vector<Viewport *> m_active_viewports{};
-
 	public:
 		RendererViewport();
 
 		virtual ~RendererViewport();
 
 	public:
+		struct Viewport final
+		{
+			RID self{}, parent{};
+
+			Vec2i size{};
+
+			RID camera{};
+
+			RID render_target{}, render_target_texture{}, render_buffers{};
+		};
+
 		RID viewport_create();
 		
 		void viewport_destroy(RID rid);

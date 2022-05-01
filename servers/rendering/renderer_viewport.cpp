@@ -51,7 +51,4 @@ void RendererViewport::viewport_set_clear_color(RID rid, Color const & value)
 
 void RendererViewport::draw_viewports()
 {
-	for (Viewport * viewport : m_active_viewports)
-	{
-	}
 }

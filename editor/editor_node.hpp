@@ -27,6 +27,8 @@ namespace ism
 		Ref<Framebuffer>	m_framebuffer{};
 		Ref<SceneTree>		m_active_scene{};
 
+		RID m_viewport{};
+
 		HashMap<String, Ref<Image>> images{};
 		HashMap<String, Ref<Texture>> textures{};
 		HashMap<String, Ref<Shader>> shaders{};
