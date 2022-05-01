@@ -22,9 +22,9 @@ Mesh::~Mesh()
 	{
 		m_data.expand<VAO, VBO, IBO>(i, [](RID vao, RID ibo, RID vbo)
 		{
-			if (vao) { RD->vertexarray_destroy(vao); }
-			if (ibo) { RD->indexbuffer_destroy(ibo); }
-			if (vbo) { RD->vertexbuffer_destroy(vbo); }
+			if (vao) { RD::get_singleton()->vertexarray_destroy(vao); }
+			if (ibo) { RD::get_singleton()->indexbuffer_destroy(ibo); }
+			if (vbo) { RD::get_singleton()->vertexbuffer_destroy(vbo); }
 		});
 	}
 }
@@ -35,7 +35,7 @@ void Mesh::draw() const
 	{
 		m_data.expand<VAO>(i, [](RID vao)
 		{
-			RD->vertexarray_draw(vao);
+			RD::get_singleton()->vertexarray_draw(vao);
 		});
 	}
 }
@@ -150,9 +150,9 @@ void Mesh::reload_from_file()
 	_process_node(meshes, scene->mRootNode, scene);
 	for (SubMesh & submesh : meshes)
 	{
-		RID ibo{ RD->indexbuffer_create(submesh.indices) };
-		RID vbo{ RD->vertexbuffer_create(submesh.vertices) };
-		RID vao{ RD->vertexarray_create(submesh.layout, ibo, vbo) };
+		RID ibo{ RD::get_singleton()->indexbuffer_create(submesh.indices) };
+		RID vbo{ RD::get_singleton()->vertexbuffer_create(submesh.vertices) };
+		RID vao{ RD::get_singleton()->vertexarray_create(submesh.layout, ibo, vbo) };
 		m_data.push_back(vao, ibo, vbo, submesh.textures);
 	}
 }

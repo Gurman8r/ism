@@ -322,19 +322,19 @@ void RenderingDeviceOpenGL::set_viewport(IntRect const & rect)
 
 RID RenderingDeviceOpenGL::vertexarray_create(VertexLayout const & layout, RID indices, RID vertices)
 {
-	RD_Vertexarray * vertexarray{ memnew(RD_Vertexarray{}) };
+	RD::ArrayObject * vertexarray{ memnew(RD::ArrayObject{}) };
 	glCheck(glGenVertexArrays(1, &GL_RID(vertexarray->handle)));
 	glCheck(glBindVertexArray(GL_RID(vertexarray->handle)));
 	vertexarray->indices = indices;
 	vertexarray->vertices = vertices;
 	vertexarray->layout = layout;
 
-	if (RD_Buffer * indexbuffer{ (RD_Buffer *)vertexarray->indices })
+	if (RD::BufferObject * indexbuffer{ (RD::BufferObject *)vertexarray->indices })
 	{
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
 	}
 
-	if (RD_Buffer * vertexbuffer{ (RD_Buffer *)vertexarray->vertices })
+	if (RD::BufferObject * vertexbuffer{ (RD::BufferObject *)vertexarray->vertices })
 	{
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 
@@ -373,7 +373,7 @@ RID RenderingDeviceOpenGL::vertexarray_create(VertexLayout const & layout, RID i
 void RenderingDeviceOpenGL::vertexarray_destroy(RID rid)
 {
 	ASSERT(rid);
-	RD_Vertexarray * vertexarray{ (RD_Vertexarray *)rid };
+	RD::ArrayObject * vertexarray{ (RD::ArrayObject *)rid };
 	glCheck(glDeleteVertexArrays(1, &GL_RID(vertexarray->handle)));
 	memdelete(vertexarray);
 }
@@ -381,29 +381,29 @@ void RenderingDeviceOpenGL::vertexarray_destroy(RID rid)
 void RenderingDeviceOpenGL::vertexarray_bind(RID rid)
 {
 	ASSERT(rid);
-	RD_Vertexarray * vertexarray{ (RD_Vertexarray *)rid };
+	RD::ArrayObject * vertexarray{ (RD::ArrayObject *)rid };
 	glCheck(glBindVertexArray(GL_RID(vertexarray->handle)));
 }
 
 void RenderingDeviceOpenGL::vertexarray_draw(RID rid)
 {
 	ASSERT(rid);
-	RD_Vertexarray * vertexarray{ (RD_Vertexarray *)rid };
+	RD::ArrayObject * vertexarray{ (RD::ArrayObject *)rid };
 	ASSERT(vertexarray->vertices);
 	glCheck(glBindVertexArray(GL_RID(vertexarray->handle)));
 
-	if (RD_Buffer * indexbuffer{ (RD_Buffer *)vertexarray->indices })
+	if (RD::BufferObject * indexbuffer{ (RD::BufferObject *)vertexarray->indices })
 	{
 		// draw elements
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
-		RD_Buffer * vertexbuffer{ (RD_Buffer *)vertexarray->vertices };
+		RD::BufferObject * vertexbuffer{ (RD::BufferObject *)vertexarray->vertices };
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 		glCheck(glDrawElements(GL_TRIANGLES, indexbuffer->data.size() / sizeof(uint32_t), GL_UNSIGNED_INT, nullptr));
 	}
 	else
 	{
 		// draw arrays
-		RD_Buffer * vertexbuffer{ (RD_Buffer *)vertexarray->vertices };
+		RD::BufferObject * vertexbuffer{ (RD::BufferObject *)vertexarray->vertices };
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 		glCheck(glDrawArrays(GL_TRIANGLES, 0, vertexbuffer->data.size() / sizeof(float_t)));
 	}
@@ -413,7 +413,7 @@ void RenderingDeviceOpenGL::vertexarray_draw(RID rid)
 
 RID RenderingDeviceOpenGL::vertexbuffer_create(Buffer const & data)
 {
-	RD_Buffer * vertexbuffer{ memnew(RD_Buffer{}) };
+	RD::BufferObject * vertexbuffer{ memnew(RD::BufferObject{}) };
 	vertexbuffer->data = data;
 	glCheck(glGenBuffers(1, &GL_RID(vertexbuffer->handle)));
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
@@ -424,7 +424,7 @@ RID RenderingDeviceOpenGL::vertexbuffer_create(Buffer const & data)
 void RenderingDeviceOpenGL::vertexbuffer_destroy(RID rid)
 {
 	ASSERT(rid);
-	RD_Buffer * vertexbuffer{ (RD_Buffer *)rid };
+	RD::BufferObject * vertexbuffer{ (RD::BufferObject *)rid };
 	glCheck(glDeleteBuffers(1, &GL_RID(vertexbuffer->handle)));
 	memdelete(vertexbuffer);
 }
@@ -432,7 +432,7 @@ void RenderingDeviceOpenGL::vertexbuffer_destroy(RID rid)
 void RenderingDeviceOpenGL::vertexbuffer_bind(RID rid)
 {
 	if (rid) {
-		RD_Buffer * vertexbuffer{ (RD_Buffer *)rid };
+		RD::BufferObject * vertexbuffer{ (RD::BufferObject *)rid };
 		glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 	}
 	else {
@@ -443,7 +443,7 @@ void RenderingDeviceOpenGL::vertexbuffer_bind(RID rid)
 void RenderingDeviceOpenGL::vertexbuffer_update(RID rid, Buffer const & data, size_t offset)
 {
 	ASSERT(rid);
-	RD_Buffer * vertexbuffer{ (RD_Buffer *)rid };
+	RD::BufferObject * vertexbuffer{ (RD::BufferObject *)rid };
 	vertexbuffer->data = data;
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, GL_RID(vertexbuffer->handle)));
 	glCheck(glBufferSubData(GL_ARRAY_BUFFER, (uint32_t)offset, (uint32_t)vertexbuffer->data.size(), vertexbuffer->data.data()));
@@ -453,7 +453,7 @@ void RenderingDeviceOpenGL::vertexbuffer_update(RID rid, Buffer const & data, si
 
 RID RenderingDeviceOpenGL::indexbuffer_create(Buffer const & data)
 {
-	RD_Buffer * indexbuffer{ memnew(RD_Buffer{}) };
+	RD::BufferObject * indexbuffer{ memnew(RD::BufferObject{}) };
 	indexbuffer->data = data;
 	glCheck(glGenBuffers(1, &GL_RID(indexbuffer->handle)));
 	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
@@ -464,7 +464,7 @@ RID RenderingDeviceOpenGL::indexbuffer_create(Buffer const & data)
 void RenderingDeviceOpenGL::indexbuffer_destroy(RID rid)
 {
 	ASSERT(rid);
-	RD_Buffer * indexbuffer{ (RD_Buffer *)rid };
+	RD::BufferObject * indexbuffer{ (RD::BufferObject *)rid };
 	glCheck(glDeleteBuffers(1, &GL_RID(indexbuffer->handle)));
 	memdelete(indexbuffer);
 }
@@ -472,7 +472,7 @@ void RenderingDeviceOpenGL::indexbuffer_destroy(RID rid)
 void RenderingDeviceOpenGL::indexbuffer_bind(RID rid)
 {
 	if (rid) {
-		RD_Buffer * indexbuffer{ (RD_Buffer *)rid };
+		RD::BufferObject * indexbuffer{ (RD::BufferObject *)rid };
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
 	}
 	else {
@@ -483,7 +483,7 @@ void RenderingDeviceOpenGL::indexbuffer_bind(RID rid)
 void RenderingDeviceOpenGL::indexbuffer_update(RID rid, Buffer const & data, size_t offset)
 {
 	ASSERT(rid);
-	RD_Buffer * indexbuffer{ (RD_Buffer *)rid };
+	RD::BufferObject * indexbuffer{ (RD::BufferObject *)rid };
 	indexbuffer->data = data;
 	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_RID(indexbuffer->handle)));
 	glCheck(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, (uint32_t)offset, (uint32_t)indexbuffer->data.size(), indexbuffer->data.data()));
@@ -493,7 +493,7 @@ void RenderingDeviceOpenGL::indexbuffer_update(RID rid, Buffer const & data, siz
 
 RID RenderingDeviceOpenGL::texture_create(TextureSpecification const & format, Buffer const & data)
 {
-	RD_Texture * texture{ memnew(RD_Texture{}) };
+	RD::Texture * texture{ memnew(RD::Texture{}) };
 	texture->texture_type = format.texture_type;
 	texture->color_format = format.color_format;
 	texture->width_2d = texture->width = format.width;
@@ -523,20 +523,20 @@ RID RenderingDeviceOpenGL::texture_create(TextureSpecification const & format, B
 void RenderingDeviceOpenGL::texture_destroy(RID rid)
 {
 	ASSERT(rid);
-	RD_Texture * texture{ (RD_Texture *)rid };
+	RD::Texture * texture{ (RD::Texture *)rid };
 	glCheck(glDeleteTextures(1, &GL_RID(texture->handle)));
 	memdelete(texture);
 }
 
 void RenderingDeviceOpenGL::texture_bind(RID rid, size_t slot)
 {
-	glCheck(glBindTextureUnit((uint32_t)slot, rid ? GL_RID(((RD_Texture *)rid)->handle) : NULL));
+	glCheck(glBindTextureUnit((uint32_t)slot, rid ? GL_RID(((RD::Texture *)rid)->handle) : NULL));
 }
 
 void RenderingDeviceOpenGL::texture_update(RID rid, Buffer const & data)
 {
 	ASSERT(rid);
-	RD_Texture * texture{ (RD_Texture *)rid };
+	RD::Texture * texture{ (RD::Texture *)rid };
 	if (texture->handle) { glCheck(glDeleteTextures(1, &GL_RID(texture->handle))); }
 	_texture_update((RID)texture, data.data());
 }
@@ -544,7 +544,7 @@ void RenderingDeviceOpenGL::texture_update(RID rid, Buffer const & data)
 Buffer RenderingDeviceOpenGL::texture_get_data(RID rid)
 {
 	ASSERT(rid);
-	RD_Texture * texture{ (RD_Texture *)rid };
+	RD::Texture * texture{ (RD::Texture *)rid };
 	uint32_t const sampler_type{ TO_GL(texture->texture_type) };
 
 	uint32_t color_composition{}, pixel_data_type{};
@@ -570,7 +570,7 @@ void RenderingDeviceOpenGL::_texture_update(RID rid, void const * data)
 {
 	ASSERT(rid);
 
-	RD_Texture * texture{ (RD_Texture *)rid };
+	RD::Texture * texture{ (RD::Texture *)rid };
 
 	uint32_t color_composition{}, pixel_data_format{}, pixel_data_type{};
 	get_color_format_info(texture->color_format, 0, &color_composition, &pixel_data_format, &pixel_data_type);
@@ -608,37 +608,30 @@ void RenderingDeviceOpenGL::_texture_update(RID rid, void const * data)
 
 RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attachments)
 {
-	RD_Framebuffer * framebuffer{ memnew(RD_Framebuffer{}) };
+	RD::Framebuffer * framebuffer{ memnew(RD::Framebuffer{}) };
 	framebuffer->texture_attachments = texture_attachments;
 
 	uint32_t & handle{ GL_RID(framebuffer->handle) };
 	glCheck(glGenFramebuffers(1, &handle));
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, handle));
 
-	uint32_t color_attachment_index{};
-	for (size_t i = 0; i < framebuffer->texture_attachments.size(); ++i)
+	for (uint32_t i = 0, color_attachment_index = 0; i < (uint32_t)framebuffer->texture_attachments.size(); ++i)
 	{
-		// resize texture
 		ASSERT(framebuffer->texture_attachments[i]);
-		RD_Texture * texture{ (RD_Texture *)framebuffer->texture_attachments[i] };
+		RD::Texture * texture{ (RD::Texture *)framebuffer->texture_attachments[i] };
 		if (i == 0 && framebuffer->width <= 0) { framebuffer->width = texture->width; }
 		if (i == 0 && framebuffer->height <= 0) { framebuffer->height = texture->height; }
 
-		// attach texture to framebuffer
-		uint32_t & texture_handle{ GL_RID(texture->handle) };
-		uint32_t const sampler_type{ TO_GL(texture->texture_type) };
-		glCheck(glBindTexture(sampler_type, texture_handle));
-		bool const is_color{ FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment) };
-		bool const is_depth{ FLAG_READ(texture->usage_flags, TextureFlags_DepthStencilAttachment) };
-		if (!is_color && !is_depth) { FLAG_SET(texture->usage_flags, TextureFlags_ColorAttachment); }
-		ASSERT((is_color && !is_depth) || (is_depth && !is_color));
-		if (is_color)
+		uint32_t const texture_handle{ GL_RID(texture->handle) };
+		uint32_t const texture_type{ TO_GL(texture->texture_type) };
+		glCheck(glBindTexture(texture_type, texture_handle));
+		if (FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment))
 		{
-			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), sampler_type, texture_handle, 0));
+			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), texture_type, texture_handle, 0));
 		}
 		else
 		{
-			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, sampler_type, texture_handle, 0));
+			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture_type, texture_handle, 0));
 		}
 	}
 
@@ -650,7 +643,7 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 void RenderingDeviceOpenGL::framebuffer_destroy(RID rid)
 {
 	ASSERT(rid);
-	RD_Framebuffer * framebuffer{ (RD_Framebuffer *)rid };
+	RD::Framebuffer * framebuffer{ (RD::Framebuffer *)rid };
 	for (RID texture : framebuffer->texture_attachments) { texture_destroy(texture); }
 	glCheck(glDeleteFramebuffers(1, &GL_RID(framebuffer->handle)));
 	memdelete(framebuffer);
@@ -659,7 +652,7 @@ void RenderingDeviceOpenGL::framebuffer_destroy(RID rid)
 void RenderingDeviceOpenGL::framebuffer_bind(RID rid)
 {
 	if (rid) {
-		RD_Framebuffer * framebuffer{ (RD_Framebuffer *)rid };
+		RD::Framebuffer * framebuffer{ (RD::Framebuffer *)rid };
 		glCheck(glBindFramebuffer(GL_FRAMEBUFFER, GL_RID(framebuffer->handle)));
 		glCheck(glViewport(0, 0, framebuffer->width, framebuffer->height));
 	}
@@ -671,7 +664,7 @@ void RenderingDeviceOpenGL::framebuffer_bind(RID rid)
 void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t height)
 {
 	ASSERT(rid);
-	RD_Framebuffer * framebuffer{ (RD_Framebuffer *)rid };
+	RD::Framebuffer * framebuffer{ (RD::Framebuffer *)rid };
 	if (framebuffer->width == width && framebuffer->height == height) { return; }
 	framebuffer->width = width;
 	framebuffer->height = height;
@@ -680,33 +673,27 @@ void RenderingDeviceOpenGL::framebuffer_resize(RID rid, int32_t width, int32_t h
 	if (handle) { glCheck(glDeleteFramebuffers(1, &handle)); }
 	glCheck(glGenFramebuffers(1, &handle));
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, handle));
-	
-	uint32_t color_attachment_index{};
-	for (size_t i = 0; i < framebuffer->texture_attachments.size(); ++i)
+
+	for (uint32_t i = 0, color_attachment_index = 0; i < (uint32_t)framebuffer->texture_attachments.size(); ++i)
 	{
-		// resize texture
 		ASSERT(framebuffer->texture_attachments[i]);
-		RD_Texture * texture{ (RD_Texture *)framebuffer->texture_attachments[i] };
+		RD::Texture * texture{ (RD::Texture *)framebuffer->texture_attachments[i] };
 		texture->width = framebuffer->width;
 		texture->height = framebuffer->height;
 		texture_update((RID)texture);
-	
-		// attach texture to framebuffer
-		uint32_t & texture_handle{ GL_RID(texture->handle) };
-		uint32_t const sampler_type{ TO_GL(texture->texture_type) };
-		bool const is_color{ FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment) };
-		bool const is_depth{ FLAG_READ(texture->usage_flags, TextureFlags_DepthStencilAttachment) };
-		ASSERT((is_color && !is_depth) || (is_depth && !is_color));
-		if (is_color)
+
+		uint32_t const texture_handle{ GL_RID(texture->handle) };
+		uint32_t const texture_type{ TO_GL(texture->texture_type) };
+		if (FLAG_READ(texture->usage_flags, TextureFlags_ColorAttachment))
 		{
-			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), sampler_type, texture_handle, 0));
+			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), texture_type, texture_handle, 0));
 		}
 		else
 		{
-			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, sampler_type, texture_handle, 0));
+			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, texture_type, texture_handle, 0));
 		}
 	}
-	
+
 	ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE);
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, NULL));
 }
@@ -727,7 +714,8 @@ RID RenderingDeviceOpenGL::shader_create(Vector<ShaderStageData> const & stage_d
 {
 	static char log_str[1024]{};
 	ASSERT(!stage_data.empty());
-	RD_Shader * shader{ memnew(RD_Shader{}) };
+
+	RD::Shader * shader{ memnew(RD::Shader{}) };
 	uint32_t & handle{ GL_RID(shader->handle) };
 	glCheck(handle = glCreateProgramObjectARB());
 
@@ -772,14 +760,14 @@ RID RenderingDeviceOpenGL::shader_create(Vector<ShaderStageData> const & stage_d
 void RenderingDeviceOpenGL::shader_destroy(RID rid)
 {
 	ASSERT(rid);
-	RD_Shader * shader{ (RD_Shader *)rid };
+	RD::Shader * shader{ (RD::Shader *)rid };
 	glCheck(glDeleteProgramsARB(1, &GL_RID(shader->handle)));
 	memdelete(shader);
 }
 
 void RenderingDeviceOpenGL::shader_bind(RID rid)
 {
-	glCheck(glUseProgramObjectARB(rid ? GL_RID(((RD_Shader *)rid)->handle) : NULL));
+	glCheck(glUseProgramObjectARB(rid ? GL_RID(((RD::Shader *)rid)->handle) : NULL));
 }
 
 struct UniformBinder final
@@ -790,7 +778,7 @@ struct UniformBinder final
 
 	operator bool() const noexcept { return -1 < location; }
 
-	UniformBinder(RD_Shader & shader, cstring name)
+	UniformBinder(RD::Shader & shader, cstring name)
 	{
 		if (!name || !*name || !(self = GL_RID(shader.handle))) { return; }
 
@@ -816,12 +804,12 @@ struct UniformBinder final
 
 int32_t RenderingDeviceOpenGL::shader_uniform_location(RID rid, cstring name) const
 {
-	return UniformBinder{ *VALIDATE((RD_Shader *)rid), name }.location;
+	return UniformBinder{ *VALIDATE((RD::Shader *)rid), name }.location;
 }
 
 void RenderingDeviceOpenGL::shader_set_uniform1i(RID rid, cstring name, int32_t const value)
 {
-	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
+	if (UniformBinder u{ *VALIDATE((RD::Shader *)rid), name })
 	{
 		glCheck(glUniform1iARB(u.location, value));
 	}
@@ -829,7 +817,7 @@ void RenderingDeviceOpenGL::shader_set_uniform1i(RID rid, cstring name, int32_t 
 
 void RenderingDeviceOpenGL::shader_set_uniform1f(RID rid, cstring name, float_t const value)
 {
-	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
+	if (UniformBinder u{ *VALIDATE((RD::Shader *)rid), name })
 	{
 		glCheck(glUniform1fARB(u.location, value));
 	}
@@ -837,7 +825,7 @@ void RenderingDeviceOpenGL::shader_set_uniform1f(RID rid, cstring name, float_t 
 
 void RenderingDeviceOpenGL::shader_set_uniform2f(RID rid, cstring name, Vec2 const & value)
 {
-	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
+	if (UniformBinder u{ *VALIDATE((RD::Shader *)rid), name })
 	{
 		glCheck(glUniform2fARB(u.location, value[0], value[1]));
 	}
@@ -845,7 +833,7 @@ void RenderingDeviceOpenGL::shader_set_uniform2f(RID rid, cstring name, Vec2 con
 
 void RenderingDeviceOpenGL::shader_set_uniform3f(RID rid, cstring name, Vec3 const & value)
 {
-	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
+	if (UniformBinder u{ *VALIDATE((RD::Shader *)rid), name })
 	{
 		glCheck(glUniform3fARB(u.location, value[0], value[1], value[2]));
 	}
@@ -853,7 +841,7 @@ void RenderingDeviceOpenGL::shader_set_uniform3f(RID rid, cstring name, Vec3 con
 
 void RenderingDeviceOpenGL::shader_set_uniform4f(RID rid, cstring name, Vec4 const & value)
 {
-	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
+	if (UniformBinder u{ *VALIDATE((RD::Shader *)rid), name })
 	{
 		glCheck(glUniform4fARB(u.location, value[0], value[1], value[2], value[3]));
 	}
@@ -861,7 +849,7 @@ void RenderingDeviceOpenGL::shader_set_uniform4f(RID rid, cstring name, Vec4 con
 
 void RenderingDeviceOpenGL::shader_set_uniform16f(RID rid, cstring name, Mat4 const & value, bool transpose)
 {
-	if (UniformBinder u{ *VALIDATE((RD_Shader *)rid), name })
+	if (UniformBinder u{ *VALIDATE((RD::Shader *)rid), name })
 	{
 		glCheck(glUniformMatrix4fvARB(u.location, 1, transpose, value));
 	}

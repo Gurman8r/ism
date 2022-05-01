@@ -1,5 +1,5 @@
-#ifndef _ISM_FRAMEBUFFER_HPP_
-#define _ISM_FRAMEBUFFER_HPP_
+#ifndef _ISM_RENDER_TARGET_HPP_
+#define _ISM_RENDER_TARGET_HPP_
 
 #include <scene/resources/texture.hpp>
 #include <servers/rendering/rendering_device.hpp>
@@ -52,4 +52,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_FRAMEBUFFER_HPP_
+#endif // !_ISM_RENDER_TARGET_HPP_

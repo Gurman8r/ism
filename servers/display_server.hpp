@@ -3,6 +3,7 @@
 
 #include <core/os/os.hpp>
 #include <core/input/input.hpp>
+#include <core/io/image.hpp>
 
 // types
 namespace ism
@@ -560,8 +561,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// display server singleton
-#define DS (ism::DisplayServer::get_singleton())
+	ALIAS(DS) DisplayServer;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

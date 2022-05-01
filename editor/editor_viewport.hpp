@@ -1,7 +1,9 @@
 #ifndef _ISM_EDITOR_VIEWPORT_HPP_
 #define _ISM_EDITOR_VIEWPORT_HPP_
 
+#include <editor/editor_camera.hpp>
 #include <editor/editor_panel.hpp>
+#include <servers/rendering/render_target.hpp>
 
 namespace ism
 {
@@ -9,8 +11,11 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorViewport, EditorPanel);
 
-		RID m_main_texture{};
-		bool m_dragging_view{};
+		RID				m_main_texture;
+		EditorCamera	m_editor_camera;
+		bool			m_grid_enabled;
+		Mat4			m_grid_matrix;
+		float_t			m_grid_size;
 
 	public:
 		EditorViewport();
@@ -21,10 +26,10 @@ namespace ism
 		auto get_main_texture() const -> RID { return m_main_texture; }
 		void set_main_texture(RID value) { m_main_texture = value; }
 
-		bool is_dragging_view() const noexcept { return m_dragging_view; }
+		auto get_editor_camera() const noexcept { return const_cast<EditorCamera *>(&m_editor_camera); }
 
 	public:
-		virtual void draw() override;
+		virtual void process(Duration const dt) override;
 	};
 }
 

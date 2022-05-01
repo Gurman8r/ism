@@ -94,7 +94,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 	} break;
 	}
 
-	return RD->texture_create({
+	return RD::get_singleton()->texture_create({
 		TextureType_2D,
 		color_format,
 		(uint32_t)image->get_width(),
@@ -124,47 +124,6 @@ RID RenderingServerDefault::texture2d_placeholder_create()
 Ref<Image> RenderingServerDefault::texture2d_get_image(RID texture)
 {
 	return nullptr;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-RID RenderingServerDefault::framebuffer_create(FramebufferSpecification const & spec)
-{
-	ASSERT(0 < spec.width && 0 < spec.height);
-
-	Vector<RID> textures;
-	
-	textures.reserve(spec.attachments.size());
-
-	for (ColorFormat_ const color_format : spec.attachments)
-	{
-		textures.push_back(RD->texture_create
-		({
-			TextureType_2D,
-			color_format,
-			spec.width,
-			spec.height,
-			1, 1, 0,
-			SamplerFilter_Linear,
-			SamplerFilter_Linear,
-			SamplerRepeatMode_ClampToEdge,
-			SamplerRepeatMode_ClampToEdge,
-			spec.samples,
-			spec.usage_flags | (color_format == ColorFormat_D24_UNORM_S8_UINT ? TextureFlags_DepthStencilAttachment : TextureFlags_ColorAttachment)
-		}));
-	}
-
-	return RD->framebuffer_create(std::move(textures));
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void RenderingServerDefault::begin_scene()
-{
-}
-
-void RenderingServerDefault::end_scene()
-{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

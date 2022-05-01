@@ -1,7 +1,9 @@
 #ifndef _ISM_WINDOW_HPP_
 #define _ISM_WINDOW_HPP_
 
-#include <scene/main/viewport.hpp>
+#include <scene/main/node.hpp>
+#include <servers/display_server.hpp>
+#include <servers/rendering_server.hpp>
 
 namespace ism
 {

@@ -219,20 +219,16 @@ bool Main::iteration()
 
 	bool should_close{ false };
 
-	DS->poll_events();
+	DS::get_singleton()->poll_events();
 
 	static Vec2 last_mouse_pos{};
 	g_input->m_state.mouse_delta = g_input->m_state.mouse_pos - last_mouse_pos;
 	last_mouse_pos = g_input->m_state.mouse_pos;
 	for (size_t i = 0; i < MouseButton_MAX; ++i) {
-		g_input->m_state.mouse_down_duration[i] = (g_input->m_state.mouse_down[i]
-			? (g_input->m_state.mouse_down_duration[i] < 0.f ? 0.f : g_input->m_state.mouse_down_duration[i] + delta_time)
-			: -1.f);
+		g_input->m_state.mouse_down_duration[i] = (g_input->m_state.mouse_down[i] ? (g_input->m_state.mouse_down_duration[i] < 0.f ? 0.f : g_input->m_state.mouse_down_duration[i] + delta_time) : -1.f);
 	}
 	for (size_t i = 0; i < KeyCode_MAX; ++i) {
-		g_input->m_state.keys_down_duration[i] = (g_input->m_state.keys_down[i]
-			? (g_input->m_state.keys_down_duration[i] < 0.f ? 0.f : g_input->m_state.keys_down_duration[i] + delta_time)
-			: -1.f);
+		g_input->m_state.keys_down_duration[i] = (g_input->m_state.keys_down[i] ? (g_input->m_state.keys_down_duration[i] < 0.f ? 0.f : g_input->m_state.keys_down_duration[i] + delta_time) : -1.f);
 	}
 
 	ImGui_NewFrame();
@@ -240,14 +236,15 @@ bool Main::iteration()
 	if (OS->get_main_loop()->process(delta_time)) { should_close = true; }
 
 	ImGui::Render();
-	RD->set_viewport(SCENE->get_root()->get_bounds());
-	RD->clear(Colors::black, false);
+
+	RD::get_singleton()->set_viewport(SCENE->get_root()->get_bounds());
+	RD::get_singleton()->clear(Colors::black, false);
 	ImGui_RenderDrawData(&ImGui::GetCurrentContext()->Viewports[0]->DrawDataP);
 	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-		WindowID backup_context{ DS->get_current_context() };
+		WindowID backup_context{ DS::get_singleton()->get_current_context() };
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		DS->set_current_context(backup_context);
+		DS::get_singleton()->set_current_context(backup_context);
 	}
 
 	g_input->m_state.mouse_scroll = 0.f;

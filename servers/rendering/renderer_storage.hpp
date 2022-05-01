@@ -1,5 +1,5 @@
 #ifndef _ISM_RENDERER_STORAGE_HPP_
-#define _ISM_RENDERER_STORAGE_HPP_VertexArray
+#define _ISM_RENDERER_STORAGE_HPP_
 
 #include <servers/rendering/rendering_device.hpp>
 
@@ -7,90 +7,37 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// vertexarray storage
-	struct NODISCARD RD_Vertexarray final
+	class ISM_API RendererStorage : public Object
 	{
-		DEFAULT_COPYABLE_MOVABLE(RD_Vertexarray);
+		OBJECT_COMMON(RendererStorage, Object);
 
-		RID handle{};
+	public:
+		RendererStorage();
 
-		RenderPrimitive_ primitive{};
+		virtual ~RendererStorage();
 
-		RID indices{};
+	public:
+		/* RENDER TARGET */
+		struct RenderTarget final
+		{
+			Vec2i size{};
 
-		RID vertices{};
+			RID framebuffer{}, backbuffer{};
 
-		VertexLayout layout{};
-	};
+			RID color{};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+			RID texture{};
 
-	// buffer storage
-	struct NODISCARD RD_Buffer final
-	{
-		DEFAULT_COPYABLE_MOVABLE(RD_Buffer);
+			RID framebuffer_uniforms{}, backbuffer_uniforms{};
 
-		RID handle{};
+			bool clear_requested{};
 
-		Buffer data{};
-	};
+			Color clear_color{};
+		};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// texture storage
-	struct NODISCARD RD_Texture final
-	{
-		DEFAULT_COPYABLE_MOVABLE(RD_Texture);
-
-		RID handle{};
-
-		TextureType_ texture_type{};
-		
-		ColorFormat_ color_format{}, color_format_srgb{};
-		
-		ImageFormat_ image_format{};
-		
-		int32_t width{}, height{}, depth{}, layers{}, mipmaps{};
-		
-		SamplerFilter_ min_filter{}, mag_filter{};
-
-		SamplerRepeatMode_ repeat_s{}, repeat_t{};
-
-		TextureSamples_ samples{};
-		
-		TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
-
-		TextureFlags usage_flags{};
-
-		int32_t width_2d{ width }, height_2d{ height }; // size override
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// framebuffer storage
-	struct NODISCARD RD_Framebuffer final
-	{
-		DEFAULT_COPYABLE_MOVABLE(RD_Framebuffer);
-
-		RID handle{};
-
-		int32_t width{}, height{};
-		
-		Vector<RID> texture_attachments{};
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// shader storage
-	struct NODISCARD RD_Shader final
-	{
-		DEFAULT_COPYABLE_MOVABLE(RD_Shader);
-
-		RID handle{};
-
-		FlatMap<hash_t, int32_t> bindings{};
-
-		Vector<ShaderStageData> stage_data{};
+		RID render_target_create();
+		void render_target_destroy(RID rid);
+		void render_target_resize(RID rid, int32_t width, int32_t height);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

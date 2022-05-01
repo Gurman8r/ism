@@ -29,7 +29,7 @@ void MainLoop::initialize()
 	}
 }
 
-bool MainLoop::process(Duration const & dt)
+bool MainLoop::process(Duration const dt)
 {
 	bool should_close{};
 

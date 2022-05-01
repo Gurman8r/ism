@@ -15,7 +15,7 @@ namespace ism
 		virtual ~EditorLog();
 
 	public:
-		virtual void draw() override;
+		virtual void process(Duration const dt) override;
 	};
 }
 

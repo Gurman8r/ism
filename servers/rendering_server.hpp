@@ -33,21 +33,11 @@ namespace ism
 		virtual RID texture2d_create(Ref<Image> const & image) = 0;
 		virtual RID texture2d_placeholder_create() = 0;
 		virtual Ref<Image> texture2d_get_image(RID texture) = 0;
-
-	public:
-		/* FRAMEBUFFER */
-		virtual RID framebuffer_create(FramebufferSpecification const & spec) = 0;
-
-	public:
-		/* RENDERER */
-		virtual void begin_scene() = 0;
-		virtual void end_scene() = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// rendering server singleton
-#define RS (ism::RenderingServer::get_singleton())
+	ALIAS(RS) RenderingServer;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

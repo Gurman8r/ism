@@ -32,6 +32,8 @@ namespace ism
 	public:
 		virtual ~EditorPanel();
 
+		virtual void process(Duration const dt) = 0;
+
 	public:
 		auto get_name() const noexcept -> cstring { return m_name; }
 		void set_name(cstring value) noexcept { m_name = value; }
@@ -45,9 +47,6 @@ namespace ism
 
 		auto get_window() const noexcept -> ImGuiWindow * { return m_window; }
 		auto operator->() const noexcept -> ImGuiWindow * { return m_window; }
-		
-	public:
-		virtual void draw() = 0;
 
 	protected:
 		virtual bool begin_window();

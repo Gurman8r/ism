@@ -38,7 +38,7 @@ namespace ism
 
 		virtual ~Node() noexcept override;
 
-		virtual void process(Duration const & dt);
+		virtual void process(Duration const dt);
 
 		virtual void handle_event(Event const & event) override;
 

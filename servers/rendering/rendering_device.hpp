@@ -479,7 +479,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD TextureSpecification
+	struct TextureSpecification
 	{
 		DEFAULT_COPYABLE_MOVABLE(TextureSpecification);
 		
@@ -502,7 +502,9 @@ namespace ism
 		TextureSwizzle_ swizzle_r{ TextureSwizzle_R }, swizzle_g{ TextureSwizzle_G }, swizzle_b{ TextureSwizzle_B }, swizzle_a{ TextureSwizzle_A };
 	};
 
-	struct NODISCARD ShaderStageData
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct ShaderStageData
 	{
 		DEFAULT_COPYABLE_MOVABLE(ShaderStageData);
 		
@@ -513,7 +515,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD FramebufferSpecification
+	struct FramebufferSpecification
 	{
 		DEFAULT_COPYABLE_MOVABLE(FramebufferSpecification);
 
@@ -528,7 +530,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD Uniform
+	struct Uniform
 	{
 		DEFAULT_COPYABLE_MOVABLE(Uniform);
 		
@@ -541,7 +543,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD SamplerState
+	struct SamplerState
 	{
 		DEFAULT_COPYABLE_MOVABLE(SamplerState);
 		
@@ -568,7 +570,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD PipelineRasterizationState
+	struct PipelineRasterizationState
 	{
 		DEFAULT_COPYABLE_MOVABLE(PipelineRasterizationState);
 		
@@ -595,7 +597,7 @@ namespace ism
 		uint32_t patch_control_points{ 1 };
 	};
 
-	struct NODISCARD PipelineMultisampleState
+	struct PipelineMultisampleState
 	{
 		DEFAULT_COPYABLE_MOVABLE(PipelineMultisampleState);
 		
@@ -612,9 +614,9 @@ namespace ism
 		bool enable_alpha_to_one{ false };
 	};
 
-	struct NODISCARD PipelineDepthStencilState
+	struct PipelineDepthStencilState
 	{
-		struct NODISCARD StencilOperationState
+		struct StencilOperationState
 		{
 			DEFAULT_COPYABLE_MOVABLE(StencilOperationState);
 			
@@ -650,9 +652,9 @@ namespace ism
 		StencilOperationState front_op{}, back_op{};
 	};
 
-	struct NODISCARD PipelineColorBlendState
+	struct PipelineColorBlendState
 	{
-		struct NODISCARD Attachment
+		struct Attachment
 		{
 			DEFAULT_COPYABLE_MOVABLE(Attachment);
 			
@@ -704,9 +706,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD VertexLayout
+	struct VertexLayout
 	{
-		struct NODISCARD Element
+		struct Element
 		{
 			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(Element);
 
@@ -779,20 +781,38 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY */
+		struct ArrayObject final
+		{
+			RID handle{};
+
+			RenderPrimitive_ primitive{};
+
+			RID indices{};
+
+			RID vertices{};
+
+			VertexLayout layout{};
+		};
+
 		virtual RID vertexarray_create(VertexLayout const & layout, RID indices, RID vertices) = 0;
 		virtual void vertexarray_destroy(RID rid) = 0;
 		virtual void vertexarray_bind(RID rid) = 0;
 		virtual void vertexarray_draw(RID rid) = 0;
 		
 	public:
-		/* VERTEXBUFFER */
-		virtual RID vertexbuffer_create(Buffer const & data) = 0;
+		/* BUFFER */
+		struct BufferObject final
+		{
+			RID handle{};
+
+			Buffer data{};
+		};
+
+		virtual RID vertexbuffer_create(ism::Buffer const & data) = 0;
 		virtual void vertexbuffer_destroy(RID rid) = 0;
 		virtual void vertexbuffer_bind(RID rid) = 0;
 		virtual void vertexbuffer_update(RID rid, Buffer const & data, size_t offset = 0) = 0;
 		
-	public:
-		/* INDEXBUFFER */
 		virtual RID indexbuffer_create(Buffer const & data) = 0;
 		virtual void indexbuffer_destroy(RID rid) = 0;
 		virtual void indexbuffer_bind(RID rid) = 0;
@@ -800,6 +820,31 @@ namespace ism
 
 	public:
 		/* TEXTURE */
+		struct Texture final
+		{
+			RID handle{};
+
+			TextureType_ texture_type{};
+
+			ColorFormat_ color_format{}, color_format_srgb{};
+
+			ImageFormat_ image_format{};
+
+			int32_t width{}, height{}, depth{}, layers{}, mipmaps{};
+
+			SamplerFilter_ min_filter{}, mag_filter{};
+
+			SamplerRepeatMode_ repeat_s{}, repeat_t{};
+
+			TextureSamples_ samples{};
+
+			TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
+
+			TextureFlags usage_flags{};
+
+			int32_t width_2d{ width }, height_2d{ height }; // size override
+		};
+
 		virtual RID texture_create(TextureSpecification const & format, Buffer const & data = {}) = 0;
 		virtual void texture_destroy(RID rid) = 0;
 		virtual void texture_bind(RID rid, size_t slot = 0) = 0;
@@ -808,6 +853,15 @@ namespace ism
 
 	public:
 		/* FRAMEBUFFER */
+		struct Framebuffer final
+		{
+			RID handle{};
+
+			int32_t width{}, height{};
+
+			Vector<RID> texture_attachments{};
+		};
+
 		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
 		virtual void framebuffer_destroy(RID rid) = 0;
 		virtual void framebuffer_bind(RID rid) = 0;
@@ -815,6 +869,15 @@ namespace ism
 
 	public:
 		/* SHADER */
+		struct Shader final
+		{
+			RID handle{};
+
+			FlatMap<hash_t, int32_t> bindings{};
+
+			Vector<ShaderStageData> stage_data{};
+		};
+
 		virtual RID shader_create(Vector<ShaderStageData> const & stage_data) = 0;
 		virtual void shader_destroy(RID rid) = 0;
 		virtual void shader_bind(RID rid) = 0;
@@ -829,8 +892,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// rendering device singleton
-#define RD (ism::RenderingDevice::get_singleton())
+	ALIAS(RD) RenderingDevice;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

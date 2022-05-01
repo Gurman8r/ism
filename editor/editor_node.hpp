@@ -1,11 +1,9 @@
 #ifndef _ISM_EDITOR_NODE_HPP_
 #define _ISM_EDITOR_NODE_HPP_
 
-#include <editor/editor_camera.hpp>
 #include <editor/editor_hierarchy.hpp>
 #include <editor/editor_log.hpp>
 #include <editor/editor_viewport.hpp>
-#include <servers/rendering/framebuffer.hpp>
 
 namespace ism
 {
@@ -17,18 +15,22 @@ namespace ism
 
 		static EditorNode * singleton;
 
+		friend class EditorHierarchy;
+		friend class EditorLog;
+		friend class EditorViewport;
+
 		bool				m_show_imgui_demo{};
 		bool				m_show_main_menu_bar{ true };
-		EditorCamera		m_camera{};
 		EditorHierarchy		m_hierarchy{};
-		EditorLog			m_log{};
-		EditorViewport		m_viewport{};
+		EditorLog			m_editor_log{};
+		EditorViewport		m_editor_view{};
 		Ref<Framebuffer>	m_framebuffer{};
-		Ref<SceneTree>		m_scene{};
+		Ref<SceneTree>		m_active_scene{};
 
-		bool	m_grid_enabled	{ true };
-		Mat4	m_grid_matrix	{ Mat4::identity() };
-		float_t	m_grid_size		{ 100.f };
+		HashMap<String, Ref<Image>> images{};
+		HashMap<String, Ref<Texture>> textures{};
+		HashMap<String, Ref<Shader>> shaders{};
+		HashMap<String, Ref<Mesh>> meshes{};
 
 	public:
 		EditorNode();
@@ -37,25 +39,20 @@ namespace ism
 
 		FORCE_INLINE static EditorNode * get_singleton() noexcept { return singleton; }
 
-		virtual void process(Duration const & dt) override;
-
-		void draw_interface();
+		virtual void process(Duration const dt) override;
 
 	public:
-		NODISCARD auto get_camera() noexcept -> EditorCamera & { return m_camera; }
-		NODISCARD auto get_camera() const noexcept -> EditorCamera const & { return m_camera; }
+		NODISCARD auto get_hierarchy() const noexcept { return const_cast<EditorHierarchy *>(&m_hierarchy); }
+		NODISCARD auto get_log() const noexcept { return const_cast<EditorLog *>(&m_editor_log); }
+		NODISCARD auto get_viewport() const noexcept { return const_cast<EditorViewport *>(&m_editor_view); }
 
-	public:
-		HashMap<String, Ref<Image>> images{};
-		HashMap<String, Ref<Texture>> textures{};
-		HashMap<String, Ref<Shader>> shaders{};
-		HashMap<String, Ref<Mesh>> meshes{};
+	protected:
+		void _draw_dockspace();
+
+		void _build_dockspace();
+
+		void _draw_menu_bar();
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// editor node singleton
-#define EDITOR (ism::EditorNode::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

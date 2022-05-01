@@ -20,7 +20,7 @@ namespace ism
 		{
 		}
 
-		void update(Duration const & dt) noexcept
+		void update(Duration const dt) noexcept
 		{
 			accum += dt - times[index];
 			times[index] = dt;
