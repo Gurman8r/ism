@@ -1,5 +1,4 @@
 #include <servers/register_server_types.hpp>
-#include <servers/audio_server.hpp>
 #include <servers/display_server.hpp>
 #include <servers/rendering/rendering_server_default.hpp>
 #include <servers/text_server.hpp>
@@ -9,7 +8,6 @@ using namespace ism;
 void ism::register_server_types()
 {
 	REGISTER_OBJECT_CLASS(
-		AudioServer,
 		DisplayServer,
 		RenderingDevice,
 		RenderingServerDefault,

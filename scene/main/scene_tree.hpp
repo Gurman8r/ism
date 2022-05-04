@@ -81,7 +81,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// scene tree singleton
-#define SCENE (ism::SceneTree::get_singleton())
+#define SCENE_TREE (ism::SceneTree::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -3,7 +3,6 @@
 
 #include <editor/editor_camera.hpp>
 #include <editor/editor_panel.hpp>
-#include <servers/rendering/render_target.hpp>
 #include <servers/rendering/renderer_viewport.hpp>
 
 namespace ism
@@ -12,11 +11,13 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorViewport, EditorPanel);
 
-		RID				m_main_texture;
-		EditorCamera	m_editor_camera;
-		bool			m_grid_enabled;
-		Mat4			m_grid_matrix;
-		float_t			m_grid_size;
+		RID m_main_texture;
+		
+		EditorCamera m_editor_camera;
+
+		bool	m_grid_enabled;
+		Mat4	m_grid_matrix;
+		float_t	m_grid_size;
 
 	public:
 		EditorViewport();

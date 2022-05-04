@@ -2,6 +2,8 @@
 #include <scene/resources/texture.hpp>
 #include <servers/rendering_server.hpp>
 
+using namespace ism;
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <assimp/Importer.hpp>
@@ -10,41 +12,9 @@
 #include <assimp/material.h>
 #include <assimp/scene.h>
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-using namespace ism;
-
-OBJECT_EMBED(Mesh, t) {}
-
-Mesh::~Mesh()
-{
-	for (size_t i = 0; i < m_data.size(); ++i)
-	{
-		m_data.expand<VAO, VBO, IBO>(i, [](RID vao, RID ibo, RID vbo)
-		{
-			if (vao) { RD::get_singleton()->vertexarray_destroy(vao); }
-			if (ibo) { RD::get_singleton()->indexbuffer_destroy(ibo); }
-			if (vbo) { RD::get_singleton()->vertexbuffer_destroy(vbo); }
-		});
-	}
-}
-
-void Mesh::draw() const
-{
-	for (size_t i = 0; i < m_data.size(); ++i)
-	{
-		m_data.expand<VAO>(i, [](RID vao)
-		{
-			RD::get_singleton()->vertexarray_draw(vao);
-		});
-	}
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 struct SubMesh
 {
-	VertexLayout layout{};
+	VertexFormat layout{};
 
 	Buffer vertices{}, indices{};
 
@@ -63,7 +33,7 @@ static void _load_material_textures(Vector<Ref<Texture>> & textures, aiMaterial 
 
 static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 {
-	VertexLayout layout{};
+	VertexFormat layout{};
 
 	Buffer vertices{}, indices{};
 
@@ -71,7 +41,7 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 	{
 		vertices << mesh->mVertices[i].x << mesh->mVertices[i].y << mesh->mVertices[i].z;
 
-		if(mesh->HasNormals())
+		if (mesh->HasNormals())
 		{
 			vertices << mesh->mNormals[i].x << mesh->mNormals[i].y << mesh->mNormals[i].z;
 		}
@@ -110,12 +80,12 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 		}
 	}
 
-	Vector<Ref<Texture>> textures;
-	//aiMaterial * material{ scene->mMaterials[mesh->mMaterialIndex] };
-	//_load_material_textures(textures, material, aiTextureType_DIFFUSE, "texture_diffuse");
-	//_load_material_textures(textures, material, aiTextureType_SPECULAR, "texture_specular");
-	//_load_material_textures(textures, material, aiTextureType_HEIGHT, "texture_normal");
-	//_load_material_textures(textures, material, aiTextureType_AMBIENT, "texture_height");
+	Vector<Ref<Texture>> textures{};
+	aiMaterial * material{ scene->mMaterials[mesh->mMaterialIndex] };
+	_load_material_textures(textures, material, aiTextureType_DIFFUSE, "texture_diffuse");
+	_load_material_textures(textures, material, aiTextureType_SPECULAR, "texture_specular");
+	_load_material_textures(textures, material, aiTextureType_HEIGHT, "texture_normal");
+	_load_material_textures(textures, material, aiTextureType_AMBIENT, "texture_height");
 
 	return SubMesh{ std::move(layout), std::move(vertices), std::move(indices), std::move(textures) };
 }
@@ -132,6 +102,19 @@ static void _process_node(Vector<SubMesh> & meshes, aiNode * node, aiScene const
 	}
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+OBJECT_EMBED(Mesh, t) {}
+
+Mesh::~Mesh()
+{
+	for_data([](RID vertexarray, RID indexbuffer, auto &)
+	{
+		if (indexbuffer) { RENDERING_DEVICE->indexbuffer_destroy(indexbuffer); }
+		if (vertexarray) { RENDERING_DEVICE->vertexarray_destroy(vertexarray); }
+	});
+}
+
 void Mesh::reload_from_file()
 {
 	if (get_path().empty()) { return; }
@@ -146,13 +129,15 @@ void Mesh::reload_from_file()
 		aiProcess_GenUVCoords) };
 	SCOPE_EXIT(&_ai) { _ai.FreeScene(); };
 
-	Vector<SubMesh> meshes;
+	Vector<SubMesh> meshes{};
 	_process_node(meshes, scene->mRootNode, scene);
 	for (SubMesh & submesh : meshes)
 	{
-		RID ibo{ RD::get_singleton()->indexbuffer_create(submesh.indices) };
-		RID vbo{ RD::get_singleton()->vertexbuffer_create(submesh.vertices) };
-		RID vao{ RD::get_singleton()->vertexarray_create(submesh.layout, ibo, vbo) };
-		m_data.push_back(vao, ibo, vbo, submesh.textures);
+		RID const ib{ RENDERING_DEVICE->indexbuffer_create(submesh.indices) };
+		RID const vb{ RENDERING_DEVICE->vertexbuffer_create(submesh.vertices) };
+		RID const va{ RENDERING_DEVICE->vertexarray_create(submesh.layout, { vb }) };
+		m_data.push_back(va, ib, std::move(submesh.textures));
 	}
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

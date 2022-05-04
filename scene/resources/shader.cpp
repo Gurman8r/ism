@@ -8,14 +8,14 @@ OBJECT_EMBED(Shader, t) {}
 
 Shader::~Shader()
 {
-	if (m_shader) { RD::get_singleton()->shader_destroy(m_shader); }
+	if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); }
 }
 
 void Shader::reload_from_file()
 {
 	if (get_path().empty()) { return; }
 
-	if (m_shader) { RD::get_singleton()->shader_destroy(m_shader); }
+	if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); }
 
 	std::ifstream file{ get_path().c_str() };
 	SCOPE_EXIT(&file) { file.close(); };
@@ -24,12 +24,12 @@ void Shader::reload_from_file()
 	JSON json{ JSON::parse(file) };
 	if (json.empty()) { return; }
 
-	Vector<ShaderStageData> stages{};
+	Vector<RD::ShaderStageData> stages{};
 
 	auto _parse_stage = [&json, &stages
 	](cstring stage_name, ShaderStage_ stage_index)
 	{
-		ShaderStageData data{ stage_index };
+		RD::ShaderStageData data{ stage_index };
 
 		if (auto stage{ json.find(stage_name) }; stage != json.end())
 		{
@@ -68,58 +68,58 @@ void Shader::reload_from_file()
 	_parse_stage("tess_ctrl", ShaderStage_TesselationControl);
 	_parse_stage("tess_eval", ShaderStage_TesselationEvaluation);
 	_parse_stage("compute", ShaderStage_Compute);
-	m_shader = RD::get_singleton()->shader_create(stages);
+	m_shader = RENDERING_DEVICE->shader_create(stages);
 	ASSERT(m_shader);
 }
 
 void Shader::bind()
 {
-	RD::get_singleton()->shader_bind(m_shader);
+	RENDERING_DEVICE->shader_bind(m_shader);
 }
 
 void Shader::unbind()
 {
-	RD::get_singleton()->shader_bind(nullptr);
+	RENDERING_DEVICE->shader_bind(nullptr);
 }
 
 void Shader::set_uniform1i(cstring name, int32_t const value)
 {
-	RD::get_singleton()->shader_set_uniform1i(m_shader, name, value);
+	RENDERING_DEVICE->shader_uniform1i(m_shader, name, value);
 }
 
 void Shader::set_uniform1f(cstring name, float_t const value)
 {
-	RD::get_singleton()->shader_set_uniform1f(m_shader, name, value);
+	RENDERING_DEVICE->shader_uniform1f(m_shader, name, value);
 }
 
 void Shader::set_uniform2f(cstring name, Vec2f const & value)
 {
-	RD::get_singleton()->shader_set_uniform2f(m_shader, name, value);
+	RENDERING_DEVICE->shader_uniform2f(m_shader, name, value);
 }
 
 void Shader::set_uniform3f(cstring name, Vec3f const & value)
 {
-	RD::get_singleton()->shader_set_uniform3f(m_shader, name, value);
+	RENDERING_DEVICE->shader_uniform3f(m_shader, name, value);
 }
 
 void Shader::set_uniform4f(cstring name, Vec4f const & value)
 {
-	RD::get_singleton()->shader_set_uniform4f(m_shader, name, value);
+	RENDERING_DEVICE->shader_uniform4f(m_shader, name, value);
 }
 
 void Shader::set_uniform16f(cstring name, Mat4f const & value, bool transpose)
 {
-	RD::get_singleton()->shader_set_uniform16f(m_shader, name, value, transpose);
+	RENDERING_DEVICE->shader_uniform16f(m_shader, name, value, transpose);
 }
 
 void Shader::set_uniform_color(cstring name, Color const & value)
 {
-	RD::get_singleton()->shader_set_uniform4f(m_shader, name, value);
+	RENDERING_DEVICE->shader_uniform4f(m_shader, name, value);
 }
 
 void Shader::set_uniform_texture(cstring name, RID const value, size_t slot)
 {
-	RD::get_singleton()->texture_bind(value, slot);
+	RENDERING_DEVICE->texture_bind(value, slot);
 
-	RD::get_singleton()->shader_set_uniform1i(m_shader, name, slot);
+	RENDERING_DEVICE->shader_uniform1i(m_shader, name, slot);
 }

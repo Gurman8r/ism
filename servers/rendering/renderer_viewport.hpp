@@ -1,18 +1,25 @@
 #ifndef _ISM_RENDERER_VIEWPORT_HPP_
 #define _ISM_RENDERER_VIEWPORT_HPP_
 
-#include <servers/rendering/render_target.hpp>
+#include <servers/rendering/rendering_device.hpp>
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// renderer viewport
 	class ISM_API RendererViewport : public Object
 	{
 		OBJECT_COMMON(RendererViewport, Object);
 
+		static RendererViewport * singleton;
+
 	public:
-		RendererViewport();
+		explicit RendererViewport();
 
 		virtual ~RendererViewport();
+
+		FORCE_INLINE static RendererViewport * get_singleton() noexcept { return singleton; }
 
 	public:
 		struct Viewport final
@@ -23,23 +30,30 @@ namespace ism
 
 			RID camera{};
 
-			RID render_target{}, render_target_texture{}, render_buffers{};
+			RID render_target{}, render_target_texture{};
 		};
 
 		RID viewport_create();
+
+		void viewport_destroy(RID viewport);
 		
-		void viewport_destroy(RID rid);
+		void viewport_set_parent_viewport(RID viewport, RID parent_viewport);
+
+		void viewport_set_size(RID viewport, int32_t width, int32_t height);
+
+		RID viewport_get_texture(RID viewport) const;
 		
-		void viewport_resize(RID rid, int32_t width, int32_t height);
-		
-		RID viewport_get_texture(RID rid) const;
-		
-		void viewport_attach_to_screen(RID rid, IntRect const & rect, WindowID screen);
-		
-		void viewport_set_clear_color(RID rid, Color const & value);
+		void viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen);
 		
 		void draw_viewports();
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define RENDERER_VIEWPORT (ism::RendererViewport::get_singleton())
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 }
 
 #endif // !_ISM_RENDERER_VIEWPORT_HPP_

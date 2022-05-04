@@ -4,7 +4,7 @@ using namespace ism;
 
 OBJECT_EMBED(EditorLog, t) {}
 
-EditorLog::EditorLog() : EditorPanel{ "Log" }
+EditorLog::EditorLog() : EditorPanel{ "Log##Editor" }
 {
 }
 

@@ -16,7 +16,7 @@ Glyph::Glyph(Buffer const & buffer, IntRect const & bounds, uint32_t advance)
 
 Glyph::~Glyph()
 {
-	if (m_texture) { RD::get_singleton()->texture_destroy(m_texture); }
+	if (m_texture) { RENDERING_DEVICE->texture_destroy(m_texture); }
 }
 
 Ref<Image> Glyph::get_image() const

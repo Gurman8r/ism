@@ -323,10 +323,10 @@ private:
 	public:
 		/* DELEGATE API */
 
-		NODISCARD auto const & get_all_event_delegates() const noexcept { return m_event_delegates; }
+		NODISCARD auto const & get_all_delegates() const noexcept { return m_event_delegates; }
 
 		template <class Ev
-		> NODISCARD auto get_event_delegate() noexcept -> EventDelegate<Ev> &
+		> NODISCARD auto get_delegate() noexcept -> EventDelegate<Ev> &
 		{
 			return **((Ref<EventDelegate<Ev>> &)m_event_delegates.find_or_add_fn(Ev::ID, [&]() noexcept {
 				return memnew(EventDelegate<Ev>(this));
@@ -334,7 +334,7 @@ private:
 		}
 
 		template <class ... Evs
-		> void remove_event_delegates() noexcept
+		> void remove_delegates() noexcept
 		{
 			if constexpr (0 < sizeof...(Evs))
 			{

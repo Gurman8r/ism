@@ -24,9 +24,10 @@ namespace ism
 		EditorHierarchy		m_hierarchy{};
 		EditorLog			m_editor_log{};
 		EditorViewport		m_editor_view{};
-		Ref<Framebuffer>	m_framebuffer{};
 		Ref<SceneTree>		m_active_scene{};
 
+		RID m_framebuffer{};
+		RID m_render_target{};
 		RID m_viewport{};
 
 		HashMap<String, Ref<Image>> images{};

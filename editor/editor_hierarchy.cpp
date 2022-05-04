@@ -4,7 +4,7 @@ using namespace ism;
 
 OBJECT_EMBED(EditorHierarchy, t) {}
 
-EditorHierarchy::EditorHierarchy() : EditorPanel{ "Hierarchy" }
+EditorHierarchy::EditorHierarchy() : EditorPanel{ "Hierarchy##Editor" }
 {
 }
 

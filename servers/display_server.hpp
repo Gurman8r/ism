@@ -563,6 +563,8 @@ namespace ism
 
 	ALIAS(DS) DisplayServer;
 
+#define DISPLAY_SERVER (ism::DisplayServer::get_singleton())
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 

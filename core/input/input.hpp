@@ -55,7 +55,7 @@ namespace ism
 
 		Vec2 mouse_pos, mouse_delta;
 
-		float_t mouse_scroll;
+		Vec2 scroll;
 
 		BitSet<MouseButton_MAX> mouse_down;
 
@@ -110,8 +110,12 @@ namespace ism
 		NODISCARD bool get_mouse_down(MouseButton value) const { return m_state.mouse_down.read(value); }
 		NODISCARD auto get_mouse_down_duration(MouseButton value) const { return m_state.mouse_down_duration[value]; }
 		NODISCARD auto get_mouse_delta() const -> Vec2 const & { return m_state.mouse_delta; }
-		NODISCARD auto get_mouse_scroll() const { return m_state.mouse_scroll; }
+		NODISCARD auto get_scroll() const -> Vec2 const & { return m_state.scroll; }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#define INPUT (ism::Input::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -2,10 +2,13 @@
 
 using namespace ism;
 
+MEMBER_IMPL(RendererSceneRenderer::singleton) {};
+
 OBJECT_EMBED(RendererSceneRenderer, t) {}
 
 RendererSceneRenderer::RendererSceneRenderer()
 {
+	singleton = this;
 }
 
 RendererSceneRenderer::~RendererSceneRenderer()
