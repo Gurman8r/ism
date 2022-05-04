@@ -131,12 +131,15 @@ void Mesh::reload_from_file()
 
 	Vector<SubMesh> meshes{};
 	_process_node(meshes, scene->mRootNode, scene);
-	for (SubMesh & submesh : meshes)
+	for (SubMesh & m : meshes)
 	{
-		RID const ib{ RENDERING_DEVICE->indexbuffer_create(submesh.indices) };
-		RID const vb{ RENDERING_DEVICE->vertexbuffer_create(submesh.vertices) };
-		RID const va{ RENDERING_DEVICE->vertexarray_create(submesh.layout, { vb }) };
-		m_data.push_back(va, ib, std::move(submesh.textures));
+		RID ib{ RENDERING_DEVICE->indexbuffer_create(m.indices.size() / sizeof(uint32_t), IndexbufferFormat_U32, m.indices) };
+		
+		RID vb{ RENDERING_DEVICE->vertexbuffer_create(m.vertices.size(), m.vertices) };
+		
+		RID va{ RENDERING_DEVICE->vertexarray_create(m.vertices.size() / sizeof(float_t), m.layout, { vb }) };
+		
+		m_data.push_back(va, ib, std::move(m.textures));
 	}
 }
 

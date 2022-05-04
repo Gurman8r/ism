@@ -22,21 +22,30 @@ EditorNode::EditorNode()
 {
 	singleton = this;
 
+	textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
+	meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
+	shaders["2d"].instance("../../../assets/shaders/2d.json");
+	shaders["3d"].instance("../../../assets/shaders/3d.json");
+
 	Vector<RID> fb_textures{
 		RENDERING_DEVICE->texture_create({ TextureType_2D, ColorFormat_R8G8B8_UNORM, 1280, 720 }),
 		RENDERING_DEVICE->texture_create({ TextureType_2D, ColorFormat_D24_UNORM_S8_UINT, 1280, 720 }) };
 	m_framebuffer = RENDERING_DEVICE->framebuffer_create(fb_textures);
 	m_editor_view.set_main_texture(fb_textures[0]);
 
-	textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
-	meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-	shaders["2d"].instance("../../../assets/shaders/2d.json");
-	shaders["3d"].instance("../../../assets/shaders/3d.json");
+	m_pipeline = RENDERING_DEVICE->pipeline_create(
+		shaders["3d"]->get_rid(),
+		RenderPrimitive_Triangles,
+		COMPOSE(RD::RasterizationState, rs) {},
+		COMPOSE(RD::MultisampleState, ms) {},
+		COMPOSE(RD::DepthStencilState, ds) {},
+		RD::ColorBlendState::create_blend());
 }
 
 EditorNode::~EditorNode()
 {
 	RENDERING_DEVICE->framebuffer_destroy(m_framebuffer);
+	RENDERING_DEVICE->pipeline_destroy(m_pipeline);
 }
 
 void EditorNode::process(Duration const dt)
@@ -59,18 +68,18 @@ void EditorNode::process(Duration const dt)
 		static Color clear_color{ Colors::magenta };
 		clear_color = rotate_hue(clear_color, (float_t)dt * 10.f);
 		RID dl{ RENDERING_DEVICE->drawlist_begin(m_framebuffer, clear_color) };
+		RENDERING_DEVICE->drawlist_bind_pipeline(dl, m_pipeline);
+		RENDERING_DEVICE->drawlist_bind_uniforms(dl, nullptr);
 
-		static Mesh * mesh{ *meshes["sphere32x24"] };
 		static Shader * shader{ *shaders["3d"] };
 		static Texture * texture{ *textures["earth_dm_2k"] };
-		shader->bind();
 		shader->set_uniform("Model", object_matrix[0]);
 		shader->set_uniform("View", editor_camera->get_view());
 		shader->set_uniform("Proj", editor_camera->get_proj());
 		shader->set_uniform("Texture0", texture->get_rid());
 
-		mesh->for_data([&](RID vertexarray, RID indexbuffer, auto &)
-		{
+		static Mesh * mesh{ *meshes["sphere32x24"] };
+		mesh->for_data([&](RID vertexarray, RID indexbuffer, auto &) {
 			RENDERING_DEVICE->drawlist_bind_vertices(dl, vertexarray);
 			RENDERING_DEVICE->drawlist_bind_indices(dl, indexbuffer);
 			RENDERING_DEVICE->drawlist_draw(dl, true, 0, 0);

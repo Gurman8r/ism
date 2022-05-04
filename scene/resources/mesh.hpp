@@ -11,11 +11,7 @@ namespace ism
 	{
 		OBJECT_COMMON(Mesh, Resource);
 
-		mutable Batch<
-			RID, // vertexarray
-			RID, // indexbuffer
-			Vector<Ref<Texture>>
-		> m_data{};
+		mutable Batch<RID, RID, Vector<Ref<Texture>>> m_data{};
 
 	public:
 		enum { Vertices, Indices, Textures };

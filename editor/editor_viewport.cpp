@@ -36,7 +36,7 @@ void EditorViewport::process(Duration const dt)
 	ImRect const view_rect{ window->InnerRect };
 
 	if (ImGui::ItemAdd(view_rect, NULL)) {
-		RID const texture_handle{ RENDERING_DEVICE->texture_get_handle(m_main_texture) };
+		void * texture_handle{ RENDERING_DEVICE->texture_get_handle(m_main_texture) };
 		window->DrawList->AddImage(texture_handle, view_rect.Min, view_rect.Max, { 0, 1 }, { 1, 0 });
 	}
 

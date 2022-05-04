@@ -76,8 +76,6 @@ void RendererStorage::render_target_bind(RID rid)
 	RenderTarget * const rt{ VALIDATE((RenderTarget *)rid) };
 
 	RENDERING_DEVICE->framebuffer_bind(rt->framebuffer);
-
-	if (rt->clear_requested) { RENDERING_DEVICE->clear(rt->clear_color); }
 }
 
 void RendererStorage::render_target_set_position(RID rid, int32_t x, int32_t  y)

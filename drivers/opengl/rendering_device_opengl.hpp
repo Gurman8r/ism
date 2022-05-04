@@ -21,59 +21,58 @@ namespace ism
 		virtual void finalize() override;
 
 	public:
-		/* VERTEXARRAY */
-		struct _VertexArray
-		{
-			RID handle{};
-
-			RenderPrimitive_ primitive{};
-
-			Vector<RID> buffers{};
-
-			VertexFormat layout{};
-		};
-
-		virtual RID vertexarray_create(VertexFormat const & layout, Vector<RID> const & buffers) override;
-		virtual void vertexarray_destroy(RID rid) override;
-		virtual void vertexarray_bind(RID rid) override;
-		virtual RID * vertexarray_get_buffers(RID vertexarray) override;
-		virtual size_t vertexarray_get_buffer_count(RID vertexarray) override;
-
-	public:
 		/* VERTEXBUFFER */
 		struct _VertexBuffer
 		{
-			RID handle{};
+			uint32_t handle{};
 
 			Buffer data{};
 		};
 
-		virtual RID vertexbuffer_create(Buffer const & data) override;
+		virtual RID vertexbuffer_create(uint32_t size_bytes, Buffer const & data = {}) override;
 		virtual void vertexbuffer_destroy(RID rid) override;
-		virtual void vertexbuffer_bind(RID rid) override;
-		virtual void vertexbuffer_update(RID rid, Buffer const & data, size_t offset = 0) override;
+		virtual void vertexbuffer_set_data(RID rid, Buffer const & data, size_t offset = 0) override;
+
+	public:
+		/* VERTEXARRAY */
+		struct _VertexArray
+		{
+			uint32_t handle{};
+
+			uint32_t vertex_count{};
+
+			VertexFormat format{};
+
+			Vector<RID> buffers{};
+		};
+
+		virtual RID vertexarray_create(uint32_t vertex_count, VertexFormat const & format, Vector<RID> const & buffers) override;
+		virtual void vertexarray_destroy(RID rid) override;
 
 	public:
 		/* INDEXBUFFER */
 		struct _IndexBuffer
 		{
-			RID handle{};
+			uint32_t handle{};
+
+			uint32_t index_count{};
+
+			uint32_t index_type{};
 
 			Buffer data{};
 		};
 
-		virtual RID indexbuffer_create(Buffer const & data) override;
+		virtual RID indexbuffer_create(uint32_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, Buffer const & data = {}) override;
 		virtual void indexbuffer_destroy(RID rid) override;
-		virtual void indexbuffer_bind(RID rid) override;
-		virtual void indexbuffer_update(RID rid, Buffer const & data, size_t offset = 0) override;
+		virtual void indexbuffer_set_data(RID rid, Buffer const & data, size_t offset = 0) override;
 
 	public:
 		/* TEXTURE */
 		struct _Texture
 		{
-			RID handle{};
+			uint32_t handle{};
 
-			TextureType_ texture_type{};
+			uint32_t texture_type{};
 
 			ColorFormat_ color_format{}, color_format_srgb{};
 
@@ -81,13 +80,13 @@ namespace ism
 
 			int32_t width{}, height{}, depth{}, layers{}, mipmaps{};
 
-			SamplerFilter_ min_filter{}, mag_filter{};
+			uint32_t min_filter{}, mag_filter{};
 
-			SamplerRepeatMode_ repeat_s{}, repeat_t{};
+			uint32_t repeat_s{}, repeat_t{};
 
 			TextureSamples_ samples{};
 
-			TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
+			Vec4i swizzle_mask{};
 
 			TextureFlags usage_flags{};
 
@@ -99,14 +98,14 @@ namespace ism
 		virtual void texture_bind(RID rid, size_t slot = 0) override;
 		virtual void texture_update(RID rid, Buffer const & data = {}) override;
 		virtual Buffer texture_get_data(RID rid) override;
-		virtual RID texture_get_handle(RID texture) override;
+		virtual void * texture_get_handle(RID texture) override;
 		void _texture_update(RID rid, void const * data);
 
 	public:
 		/* FRAMEBUFFER */
 		struct _Framebuffer
 		{
-			RID handle{};
+			uint32_t handle{};
 
 			int32_t width{}, height{};
 
@@ -120,6 +119,31 @@ namespace ism
 
 	public:
 		/* SAMPLER */
+		struct _SamplerState
+		{
+			uint32_t handle{};
+
+			uint32_t mag_filter{}, min_filter{}, mip_filter{};
+
+			uint32_t repeat_s{}, repeat_t{}, repeat_r{};
+
+			float_t lod_bias{};
+
+			bool use_anisotropy{};
+
+			float_t anisotropy_max{};
+
+			bool enable_compare{};
+
+			uint32_t compare_op{};
+
+			float_t min_lod{}, max_lod{};
+
+			SamplerBorderColor_ border_color{};
+
+			bool unnormalized_uvw{};
+		};
+
 		virtual RID sampler_create(RD::SamplerState const & sampler_state) override;
 		virtual void sampler_destroy(RID sampler) override;
 
@@ -127,7 +151,7 @@ namespace ism
 		/* SHADER */
 		struct _Shader
 		{
-			RID handle{};
+			uint32_t handle{};
 
 			FlatMap<hash_t, int32_t> bindings{};
 
@@ -151,7 +175,7 @@ namespace ism
 		/* UNIFORMS */
 		struct _UniformSet
 		{
-
+			RID shader{};
 		};
 
 		virtual RID uniform_buffer_create(Buffer const & data = {}) override;
@@ -162,10 +186,20 @@ namespace ism
 		struct _Pipeline
 		{
 			RID shader{};
+
+			uint32_t primitive{};
+
+			RD::RasterizationState rasterization_state{};
+			
+			RD::MultisampleState multisample_state{};
+			
+			RD::DepthStencilState depthstencil_state{};
+			
+			RD::ColorBlendState colorblend_state{};
 		};
 
-		virtual RID render_pipeline_create(RD::RasterizationState const & rasterization_state, RD::MultisampleState const & multisample_state, RD::DepthStencilState const & depthstencil_state, RD::ColorBlendState const & colorblend_state) override;
-		virtual void render_pipeline_destroy(RID pipeline) override;
+		virtual RID pipeline_create(RID shader, RenderPrimitive_ primitive, RD::RasterizationState const & rasterization_state, RD::MultisampleState const & multisample_state, RD::DepthStencilState const & depthstencil_state, RD::ColorBlendState const & colorblend_state) override;
+		virtual void pipeline_destroy(RID pipeline) override;
 
 	public:
 		/* DRAW LIST */
@@ -178,7 +212,7 @@ namespace ism
 				RID pipeline_shader{};
 				RID vertexarray{};
 				RID indexbuffer{};
-			} state;
+			} state{};
 		}
 		*m_drawlist{};
 
@@ -190,10 +224,6 @@ namespace ism
 		virtual void drawlist_bind_indices(RID list, RID indexbuffer) override;
 		virtual void drawlist_draw(RID list, bool use_indices, uint32_t instances, uint32_t procedural_vertices) override;
 		virtual void drawlist_end() override;
-
-	public:
-		virtual void clear(Color const & color = {}, bool depth_stencil = true) override;
-		virtual void set_viewport(IntRect const & rect) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -26,6 +26,7 @@ namespace ism
 		EditorViewport		m_editor_view{};
 		Ref<SceneTree>		m_active_scene{};
 
+		RID m_pipeline{};
 		RID m_framebuffer{};
 		RID m_render_target{};
 		RID m_viewport{};
