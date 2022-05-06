@@ -22,28 +22,34 @@ namespace ism
 		FORCE_INLINE static RendererStorage * get_singleton() noexcept { return singleton; }
 
 	public:
-		/* MATERIAL */
-		struct Material final
-		{
+		/* TEXTURE */
+		RID texture2d_placeholder_create();
 
+	public:
+		/* MATERIAL */
+		struct _Material
+		{
 		};
 
 		RID material_create();
-
+		void material_destroy(RID material);
 		void material_set_shader(RID material, RID shader);
 
 	public:
 		/* MESH */
-		struct Mesh final
+		struct _Mesh
 		{
+			enum { Vertices, Indices, Textures };
 
+			Batch<RID, RID, Vector<RID>> data{};
 		};
 
 		RID mesh_create();
+		void mesh_destroy(RID mesh);
 
 	public:
 		/* RENDER TARGET */
-		struct RenderTarget final
+		struct _RenderTarget
 		{
 			Vec2i size{};
 
@@ -63,21 +69,21 @@ namespace ism
 		};
 
 		RID render_target_create();
-		void render_target_destroy(RID rid);
-		void render_target_bind(RID rid);
+		void render_target_destroy(RID render_target);
+		void render_target_bind(RID render_target);
 
-		void render_target_set_position(RID rid, int32_t x, int32_t  y);
-		void render_target_set_size(RID rid, int32_t width, int32_t height);
+		void render_target_set_position(RID render_target, int32_t x, int32_t  y);
+		void render_target_set_size(RID render_target, int32_t width, int32_t height);
 
-		RID render_target_get_texture(RID rid);
-		Vec2i render_target_get_position(RID rid);
-		Vec2i render_target_get_size(RID rid);
+		RID render_target_get_texture(RID render_target);
+		Vec2i render_target_get_position(RID render_target);
+		Vec2i render_target_get_size(RID render_target);
 
-		void render_target_request_clear(RID rid, Color const & value);
-		void render_target_disable_clear_request(RID rid);
-		bool render_target_is_clear_requested(RID rid);
-		Color render_target_get_clear_request_color(RID rid);
-		void render_target_do_clear_request(RID rid);
+		void render_target_request_clear(RID render_target, Color const & value);
+		void render_target_disable_clear_request(RID render_target);
+		bool render_target_is_clear_requested(RID render_target);
+		Color render_target_get_clear_request_color(RID render_target);
+		void render_target_do_clear_request(RID render_target);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

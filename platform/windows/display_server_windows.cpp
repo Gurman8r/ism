@@ -166,7 +166,7 @@ CursorID DisplayServerWindows::create_custom_cursor(int32_t w, int32_t h, byte c
 	return (CursorID)glfwCreateCursor(&img, x, y);
 }
 
-CursorID DisplayServerWindows::create_standard_cursor(CursorShape shape)
+CursorID DisplayServerWindows::create_standard_cursor(CursorShape_ shape)
 {
 	return (CursorID)glfwCreateStandardCursor(std::invoke([shape]() noexcept
 	{
@@ -257,19 +257,19 @@ Vec2i DisplayServerWindows::window_get_framebuffer_size(WindowID id) const
 	return { x, y };
 }
 
-int32_t DisplayServerWindows::window_get_input_mode(WindowID id, InputMode value) const
+int32_t DisplayServerWindows::window_get_input_mode(WindowID id, InputMode_ value) const
 {
 	return glfwGetInputMode((GLFWwindow *)id, value);
 }
 
-InputAction DisplayServerWindows::window_get_key(WindowID id, KeyCode value) const
+InputAction_ DisplayServerWindows::window_get_key(WindowID id, KeyCode_ value) const
 {
-	return glfwGetKey((GLFWwindow *)id, value);
+	return (InputAction_)glfwGetKey((GLFWwindow *)id, value);
 }
 
-InputAction DisplayServerWindows::window_get_mouse_button(WindowID id, MouseButton value) const
+InputAction_ DisplayServerWindows::window_get_mouse_button(WindowID id, MouseButton_ value) const
 {
-	return glfwGetMouseButton((GLFWwindow *)id, value);
+	return (InputAction_)glfwGetMouseButton((GLFWwindow *)id, value);
 }
 
 Vec2d DisplayServerWindows::window_get_mouse_position(WindowID id) const

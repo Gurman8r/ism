@@ -101,17 +101,17 @@ Vec2i Window::get_framebuffer_size() const
 	return DISPLAY_SERVER->window_get_framebuffer_size(m_window_id);
 }
 
-int32_t Window::get_input_mode(InputMode value) const
+int32_t Window::get_input_mode(InputMode_ value) const
 {
 	return DISPLAY_SERVER->window_get_input_mode(m_window_id, value);
 }
 
-InputAction Window::get_key(KeyCode value) const
+InputAction_ Window::get_key(KeyCode_ value) const
 {
 	return DISPLAY_SERVER->window_get_key(m_window_id, value);
 }
 
-InputAction Window::get_mouse_button(MouseButton value) const
+InputAction_ Window::get_mouse_button(MouseButton_ value) const
 {
 	return DISPLAY_SERVER->window_get_mouse_button(m_window_id, value);
 }
@@ -210,7 +210,7 @@ void Window::set_cursor(CursorID value)
 	DISPLAY_SERVER->window_set_cursor(m_window_id, value);
 }
 
-void Window::set_input_mode(InputMode value)
+void Window::set_input_mode(InputMode_ value)
 {
 	DISPLAY_SERVER->window_set_cursor_mode(m_window_id, value);
 }

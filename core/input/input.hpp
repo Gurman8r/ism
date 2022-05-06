@@ -10,7 +10,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// input action
-	ENUM_INT(InputAction)
+	enum InputAction_
 	{
 		InputAction_Press,
 		InputAction_Release,
@@ -18,7 +18,7 @@ namespace ism
 	};
 
 	// input mode
-	ENUM_INT(InputMode)
+	enum InputMode_
 	{
 		InputMode_Cursor,
 		InputMode_StickyKeys,
@@ -28,7 +28,7 @@ namespace ism
 	};
 
 	// mouse button
-	ENUM_INT(MouseButton)
+	enum MouseButton_
 	{
 		MouseButton_0,
 		MouseButton_1,
@@ -96,19 +96,19 @@ namespace ism
 		NODISCARD bool is_alt() const { return m_state.is_alt; }
 		NODISCARD bool is_super() const { return m_state.is_super; }
 
-		NODISCARD bool is_shift(KeyCode value) const { return m_state.is_shift && m_state.keys_down.read(value); }
-		NODISCARD bool is_ctrl(KeyCode value) const { return m_state.is_ctrl && m_state.keys_down.read(value); }
-		NODISCARD bool is_alt(KeyCode value) const { return m_state.is_alt && m_state.keys_down.read(value); }
-		NODISCARD bool is_super(KeyCode value) const { return m_state.is_super && m_state.keys_down.read(value); }
+		NODISCARD bool is_shift(KeyCode_ value) const { return m_state.is_shift && m_state.keys_down.read(value); }
+		NODISCARD bool is_ctrl(KeyCode_ value) const { return m_state.is_ctrl && m_state.keys_down.read(value); }
+		NODISCARD bool is_alt(KeyCode_ value) const { return m_state.is_alt && m_state.keys_down.read(value); }
+		NODISCARD bool is_super(KeyCode_ value) const { return m_state.is_super && m_state.keys_down.read(value); }
 
-		NODISCARD bool get_key_up(KeyCode value) const { return !m_state.keys_down.read(value); }
-		NODISCARD bool get_key_down(KeyCode value) const { return m_state.keys_down.read(value); }
-		NODISCARD auto get_key_down_duration(KeyCode value) const { return m_state.keys_down_duration[value]; }
+		NODISCARD bool get_key_up(KeyCode_ value) const { return !m_state.keys_down.read(value); }
+		NODISCARD bool get_key_down(KeyCode_ value) const { return m_state.keys_down.read(value); }
+		NODISCARD auto get_key_down_duration(KeyCode_ value) const { return m_state.keys_down_duration[value]; }
 
 		NODISCARD auto get_mouse_pos() const -> Vec2 const & { return m_state.mouse_pos; }
-		NODISCARD bool get_mouse_up(MouseButton value) const { return !m_state.mouse_down.read(value); }
-		NODISCARD bool get_mouse_down(MouseButton value) const { return m_state.mouse_down.read(value); }
-		NODISCARD auto get_mouse_down_duration(MouseButton value) const { return m_state.mouse_down_duration[value]; }
+		NODISCARD bool get_mouse_up(MouseButton_ value) const { return !m_state.mouse_down.read(value); }
+		NODISCARD bool get_mouse_down(MouseButton_ value) const { return m_state.mouse_down.read(value); }
+		NODISCARD auto get_mouse_down_duration(MouseButton_ value) const { return m_state.mouse_down_duration[value]; }
 		NODISCARD auto get_mouse_delta() const -> Vec2 const & { return m_state.mouse_delta; }
 		NODISCARD auto get_scroll() const -> Vec2 const & { return m_state.scroll; }
 	};

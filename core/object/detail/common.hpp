@@ -131,7 +131,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(TypeFlags)
+	enum TypeFlags_
 	{
 		TypeFlags_None,
 
@@ -152,7 +152,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(ReturnValuePolicy)
+	enum ReturnValuePolicy_
 	{
 		ReturnValuePolicy_Automatic,
 		ReturnValuePolicy_AutomaticReference,
@@ -165,7 +165,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(DataType)
+	enum DataType_
 	{
 		DataType_Invalid = -1,
 		DataType_I8, DataType_I16, DataType_I32, DataType_I64,
@@ -213,7 +213,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(CompareOperator)
+	enum CompareOperator_
 	{
 		CompareOperator_Never,
 		CompareOperator_Less,
@@ -228,7 +228,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(LogicOperation)
+	enum LogicOperation_
 	{
 		LogicOperation_Clear,
 		LogicOperation_And,

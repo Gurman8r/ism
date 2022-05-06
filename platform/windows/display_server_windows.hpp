@@ -40,7 +40,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
-		NODISCARD virtual CursorID create_standard_cursor(CursorShape shape) override;
+		NODISCARD virtual CursorID create_standard_cursor(CursorShape_ shape) override;
 		virtual void destroy_cursor(CursorID value) override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -58,9 +58,9 @@ namespace ism
 		NODISCARD virtual Vec2f window_get_content_scale(WindowID id) const override;
 		NODISCARD virtual IntRect window_get_frame_size(WindowID id) const override;
 		NODISCARD virtual Vec2i window_get_framebuffer_size(WindowID id) const override;
-		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode value) const override;
-		NODISCARD virtual InputAction window_get_key(WindowID id, KeyCode value) const override;
-		NODISCARD virtual InputAction window_get_mouse_button(WindowID id, MouseButton value) const override;
+		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode_ value) const override;
+		NODISCARD virtual InputAction_ window_get_key(WindowID id, KeyCode_ value) const override;
+		NODISCARD virtual InputAction_ window_get_mouse_button(WindowID id, MouseButton_ value) const override;
 		NODISCARD virtual Vec2d window_get_mouse_position(WindowID id) const override;
 		NODISCARD virtual void * window_get_native_handle(WindowID id) const override;
 		NODISCARD virtual float_t window_get_opacity(WindowID id) const override;

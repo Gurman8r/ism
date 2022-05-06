@@ -24,8 +24,12 @@ EditorNode::EditorNode()
 
 	textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 	meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-	shaders["2d"].instance("../../../assets/shaders/2d.json");
 	shaders["3d"].instance("../../../assets/shaders/3d.json");
+
+	m_uniform_buffer = RENDERING_DEVICE->uniform_buffer_create(2 * sizeof(Mat4));
+	m_uniform_set = RENDERING_DEVICE->uniform_set_create({
+		RD::Uniform{ UniformType_UniformBuffer, 0, {m_uniform_buffer} },
+	}, shaders["3d"]->get_rid());
 
 	Vector<RID> fb_textures{
 		RENDERING_DEVICE->texture_create({ TextureType_2D, ColorFormat_R8G8B8_UNORM, 1280, 720 }),
@@ -36,14 +40,57 @@ EditorNode::EditorNode()
 	m_pipeline = RENDERING_DEVICE->pipeline_create(
 		shaders["3d"]->get_rid(),
 		RenderPrimitive_Triangles,
-		COMPOSE(RD::RasterizationState, rs) {},
-		COMPOSE(RD::MultisampleState, ms) {},
-		COMPOSE(RD::DepthStencilState, ds) {},
-		RD::ColorBlendState::create_blend());
+		COMPOSE(RD::RasterizationState, r) {
+			r.enable_depth_clamp = false;
+			r.discard_primitives = false;
+			r.enable_wireframe = false;
+			r.cull_mode = PolygonCullMode_Front;
+			r.front_face = PolygonFrontFace_Clockwise;
+			r.enable_depth_bias = false;
+			r.depth_bias_constant_factor = 0.f;
+			r.depth_bias_clamp = 0.f;
+			r.depth_bias_slope_factor = 0.f;
+			r.line_width = 1.f;
+			r.patch_control_points = 1;
+		},
+		COMPOSE(RD::MultisampleState, m) {
+			m.sample_count = TextureSamples_1;
+			m.enable_sample_shading = false;
+			m.sample_mask = {};
+			m.enable_alpha_to_coverage = false;
+			m.enable_alpha_to_one = false;
+		},
+		COMPOSE(RD::DepthStencilState, d) {
+			d.enable_depth_test = true;
+			d.enable_depth_write = true;
+			d.depth_compare_operator = CompareOperator_Less;
+			d.enable_depth_range = false;
+			d.depth_range_min = 0.f;
+			d.depth_range_max = 0.f;
+			d.enable_stencil = false;
+			d.front_op.fail = d.back_op.fail = StencilOperation_Zero;
+			d.front_op.pass = d.back_op.pass = StencilOperation_Zero;
+			d.front_op.depth_fail = d.back_op.depth_fail = StencilOperation_Zero;
+			d.front_op.compare = d.back_op.compare = CompareOperator_Always;
+			d.front_op.compare_mask = d.back_op.compare_mask = 0;
+			d.front_op.write_mask = d.back_op.write_mask = 0;
+			d.front_op.reference = d.back_op.reference = 0;
+		},
+		COMPOSE(RD::ColorBlendState, c) {
+			c.enable_logic_op = true;
+			c.logic_op = LogicOperation_Clear;
+			c.blend_constant = Colors::clear;
+			c.attachments.push_back({ true,
+				BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add,
+				BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add,
+				true, true, true, true });
+		});
 }
 
 EditorNode::~EditorNode()
 {
+	RENDERING_DEVICE->uniform_set_destroy(m_uniform_set);
+	RENDERING_DEVICE->uniform_buffer_destroy(m_uniform_buffer);
 	RENDERING_DEVICE->framebuffer_destroy(m_framebuffer);
 	RENDERING_DEVICE->pipeline_destroy(m_pipeline);
 }
@@ -65,24 +112,25 @@ void EditorNode::process(Duration const dt)
 	}
 
 	{
+		RENDERING_DEVICE->uniform_buffer_update(m_uniform_buffer, 0, editor_camera->get_proj(), sizeof(Mat4));
+		RENDERING_DEVICE->uniform_buffer_update(m_uniform_buffer, sizeof(Mat4), editor_camera->get_view(), sizeof(Mat4));
+
 		static Color clear_color{ Colors::magenta };
 		clear_color = rotate_hue(clear_color, (float_t)dt * 10.f);
 		RID dl{ RENDERING_DEVICE->drawlist_begin(m_framebuffer, clear_color) };
 		RENDERING_DEVICE->drawlist_bind_pipeline(dl, m_pipeline);
-		RENDERING_DEVICE->drawlist_bind_uniforms(dl, nullptr);
+		RENDERING_DEVICE->drawlist_bind_uniform_set(dl, m_uniform_set, 0);
 
 		static Shader * shader{ *shaders["3d"] };
 		static Texture * texture{ *textures["earth_dm_2k"] };
-		shader->set_uniform("Model", object_matrix[0]);
-		shader->set_uniform("View", editor_camera->get_view());
-		shader->set_uniform("Proj", editor_camera->get_proj());
-		shader->set_uniform("Texture0", texture->get_rid());
+		shader->set_uniform("u_Model", object_matrix[0]);
+		shader->set_uniform("u_Texture0", texture->get_rid());
 
 		static Mesh * mesh{ *meshes["sphere32x24"] };
-		mesh->for_data([&](RID vertexarray, RID indexbuffer, auto &) {
-			RENDERING_DEVICE->drawlist_bind_vertices(dl, vertexarray);
-			RENDERING_DEVICE->drawlist_bind_indices(dl, indexbuffer);
-			RENDERING_DEVICE->drawlist_draw(dl, true, 0, 0);
+		mesh->for_each([dl](RID vertex_array, RID index_array, auto & textures) {
+			RENDERING_DEVICE->drawlist_bind_vertex_array(dl, vertex_array);
+			RENDERING_DEVICE->drawlist_bind_index_array(dl, index_array);
+			RENDERING_DEVICE->drawlist_draw(dl, true, 1, 0);
 		});
 		
 		RENDERING_DEVICE->drawlist_end();

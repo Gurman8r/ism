@@ -123,7 +123,10 @@ RID RenderingServerDefault::texture2d_placeholder_create()
 
 Ref<Image> RenderingServerDefault::texture2d_get_image(RID texture)
 {
-	return nullptr;
+	if (!texture) { return nullptr; }
+	
+	Ref<Image> image;
+	return image;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

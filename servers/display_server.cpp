@@ -80,7 +80,7 @@ CursorID DisplayServer::create_custom_cursor(int32_t w, int32_t h, byte const * 
 	return {};
 }
 
-CursorID DisplayServer::create_standard_cursor(CursorShape shape)
+CursorID DisplayServer::create_standard_cursor(CursorShape_ shape)
 {
 	CRASH("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
@@ -149,19 +149,19 @@ Vec2i DisplayServer::window_get_framebuffer_size(WindowID id) const
 	return {};
 }
 
-int32_t DisplayServer::window_get_input_mode(WindowID id, InputMode value) const
+int32_t DisplayServer::window_get_input_mode(WindowID id, InputMode_ value) const
 {
 	CRASH("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-InputAction DisplayServer::window_get_key(WindowID id, KeyCode value) const
+InputAction_ DisplayServer::window_get_key(WindowID id, KeyCode_ value) const
 {
 	CRASH("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};
 }
 
-InputAction DisplayServer::window_get_mouse_button(WindowID id, MouseButton value) const
+InputAction_ DisplayServer::window_get_mouse_button(WindowID id, MouseButton_ value) const
 {
 	CRASH("NOT IMPLEMENTED: " PRETTY_FUNCTION "");
 	return {};

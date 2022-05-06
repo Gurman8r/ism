@@ -14,9 +14,11 @@ using namespace ism;
 
 struct SubMesh
 {
-	VertexFormat layout{};
+	RD::VertexFormat format{};
 
-	Buffer vertices{}, indices{};
+	Buffer vertices{};
+
+	Buffer indices{};
 
 	Vector<Ref<Texture>> textures{};
 };
@@ -33,10 +35,16 @@ static void _load_material_textures(Vector<Ref<Texture>> & textures, aiMaterial 
 
 static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 {
-	VertexFormat layout{};
+	// format
+	RD::VertexFormat format{
+		{ "a_Position"	, DataType_F32, 3 },
+		{ "a_Normal"	, DataType_F32, 3 },
+		{ "a_Texcoord"	, DataType_F32, 2 },
+		{ "a_Tangent"	, DataType_F32, 3 },
+		{ "a_Bitangent"	, DataType_F32, 3 }, };
 
-	Buffer vertices{}, indices{};
-
+	// vertices
+	Buffer vertices{};
 	for (uint32_t i = 0; i < mesh->mNumVertices; ++i)
 	{
 		vertices << mesh->mVertices[i].x << mesh->mVertices[i].y << mesh->mVertices[i].z;
@@ -59,17 +67,19 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 			vertices << Vec2f{};
 		}
 
-		//if (mesh->HasTangentsAndBitangents())
-		//{
-		//	vertices << mesh->mTangents[i].x << mesh->mTangents[i].y << mesh->mTangents[i].z;
-		//	vertices << mesh->mBitangents[i].x << mesh->mBitangents[i].y << mesh->mBitangents[i].z;
-		//}
-		//else
-		//{
-		//	vertices << Vec3f{} << Vec3f{};
-		//}
+		if (mesh->HasTangentsAndBitangents())
+		{
+			vertices << mesh->mTangents[i].x << mesh->mTangents[i].y << mesh->mTangents[i].z;
+			vertices << mesh->mBitangents[i].x << mesh->mBitangents[i].y << mesh->mBitangents[i].z;
+		}
+		else
+		{
+			vertices << Vec3f{} << Vec3f{};
+		}
 	}
 
+	// indices
+	Buffer indices{};
 	for (uint32_t i = 0; i < mesh->mNumFaces; ++i)
 	{
 		aiFace face{ mesh->mFaces[i] };
@@ -80,6 +90,7 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 		}
 	}
 
+	// textures
 	Vector<Ref<Texture>> textures{};
 	aiMaterial * material{ scene->mMaterials[mesh->mMaterialIndex] };
 	_load_material_textures(textures, material, aiTextureType_DIFFUSE, "texture_diffuse");
@@ -87,7 +98,8 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 	_load_material_textures(textures, material, aiTextureType_HEIGHT, "texture_normal");
 	_load_material_textures(textures, material, aiTextureType_AMBIENT, "texture_height");
 
-	return SubMesh{ std::move(layout), std::move(vertices), std::move(indices), std::move(textures) };
+	// create submesh
+	return SubMesh{ std::move(format), std::move(vertices), std::move(indices), std::move(textures) };
 }
 
 static void _process_node(Vector<SubMesh> & meshes, aiNode * node, aiScene const * scene)
@@ -108,11 +120,15 @@ OBJECT_EMBED(Mesh, t) {}
 
 Mesh::~Mesh()
 {
-	for_data([](RID vertexarray, RID indexbuffer, auto &)
+	for (size_t i = 0; i < m_data.size(); ++i)
 	{
-		if (indexbuffer) { RENDERING_DEVICE->indexbuffer_destroy(indexbuffer); }
-		if (vertexarray) { RENDERING_DEVICE->vertexarray_destroy(vertexarray); }
-	});
+		m_data.expand_all(i, [&](RID vertex_array, RID index_array, Vector<Ref<Texture>> & textures)
+		{
+			if (index_array) { RENDERING_DEVICE->index_array_destroy(index_array); }
+
+			if (vertex_array) { RENDERING_DEVICE->vertex_array_destroy(vertex_array); }
+		});
+	}
 }
 
 void Mesh::reload_from_file()
@@ -133,13 +149,19 @@ void Mesh::reload_from_file()
 	_process_node(meshes, scene->mRootNode, scene);
 	for (SubMesh & m : meshes)
 	{
-		RID ib{ RENDERING_DEVICE->indexbuffer_create(m.indices.size() / sizeof(uint32_t), IndexbufferFormat_U32, m.indices) };
-		
-		RID vb{ RENDERING_DEVICE->vertexbuffer_create(m.vertices.size(), m.vertices) };
-		
-		RID va{ RENDERING_DEVICE->vertexarray_create(m.vertices.size() / sizeof(float_t), m.layout, { vb }) };
-		
-		m_data.push_back(va, ib, std::move(m.textures));
+		IndexbufferFormat_ const index_type{ IndexbufferFormat_U32 };
+		size_t const index_size{ get_index_type_size(index_type) };
+		size_t const index_count{ m.indices.size() / index_size };
+		RID ib{ RENDERING_DEVICE->index_buffer_create(index_count, index_type, m.indices) };
+		RID ia{ RENDERING_DEVICE->index_array_create(ib, 0, index_count) };
+
+		DataType_ const vertex_type{ DataType_F32 };
+		size_t const vertex_size{ get_data_type_size(vertex_type) };
+		size_t const vertex_count{ m.vertices.size() / vertex_size };
+		RID vb{ RENDERING_DEVICE->vertex_buffer_create(m.vertices.size(), m.vertices) };
+		RID va{ RENDERING_DEVICE->vertex_array_create(vertex_count, m.format, { vb }) };
+
+		m_data.push_back(va, ia, std::move(m.textures));
 	}
 }
 

@@ -55,9 +55,9 @@ namespace ism
 		NODISCARD virtual Vec2f get_content_scale() const;
 		NODISCARD virtual IntRect get_frame_size() const;
 		NODISCARD virtual Vec2i get_framebuffer_size() const;
-		NODISCARD virtual int32_t get_input_mode(InputMode value) const;
-		NODISCARD virtual InputAction get_key(KeyCode value) const;
-		NODISCARD virtual InputAction get_mouse_button(MouseButton value) const;
+		NODISCARD virtual int32_t get_input_mode(InputMode_ value) const;
+		NODISCARD virtual InputAction_ get_key(KeyCode_ value) const;
+		NODISCARD virtual InputAction_ get_mouse_button(MouseButton_ value) const;
 		NODISCARD virtual Vec2d get_mouse_position() const;
 		NODISCARD virtual void * get_native_handle() const;
 		NODISCARD virtual float_t get_opacity() const;
@@ -82,7 +82,7 @@ namespace ism
 
 		virtual void set_clipboard(String const & value);
 		virtual void set_cursor(CursorID value);
-		virtual void set_input_mode(InputMode value);
+		virtual void set_input_mode(InputMode_ value);
 		virtual void set_icons(int32_t width, int32_t height, uint8_t * pixels, int32_t count = 1);
 		virtual void set_input_mode(int32_t mode, int32_t value);
 		virtual void set_monitor(MonitorID monitor, IntRect const & bounds);

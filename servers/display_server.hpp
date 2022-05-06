@@ -24,9 +24,9 @@ namespace ism
 	ALIAS(WindowFocusCallback)				void(*)(WindowID, int32_t);
 	ALIAS(WindowFramebufferResizeCallback)	void(*)(WindowID, int32_t, int32_t);
 	ALIAS(WindowIconifyCallback)			void(*)(WindowID, int32_t);
-	ALIAS(WindowKeyCallback)				void(*)(WindowID, KeyCode, int32_t, InputAction, int32_t);
+	ALIAS(WindowKeyCallback)				void(*)(WindowID, int32_t, int32_t, int32_t, int32_t);
 	ALIAS(WindowMaximizeCallback)			void(*)(WindowID, int32_t);
-	ALIAS(WindowMouseButtonCallback)		void(*)(WindowID, MouseButton, InputAction, int32_t);
+	ALIAS(WindowMouseButtonCallback)		void(*)(WindowID, int32_t, int32_t, int32_t);
 	ALIAS(WindowMouseEnterCallback)			void(*)(WindowID, int32_t);
 	ALIAS(WindowMousePositionCallback)		void(*)(WindowID, double_t, double_t);
 	ALIAS(WindowPositionCallback)			void(*)(WindowID, int32_t, int32_t);
@@ -37,7 +37,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// cursor mode
-	ENUM_INT(CursorMode)
+	enum CursorMode_
 	{
 		CursorMode_Normal		, // normal
 		CursorMode_Hidden		, // hidden
@@ -45,7 +45,7 @@ namespace ism
 	};
 
 	// cursor shape
-	ENUM_INT(CursorShape)
+	enum CursorShape_
 	{
 		CursorShape_Arrow			, // arrow
 		CursorShape_IBeam			, // ibeam
@@ -65,7 +65,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window hints
-	ENUM_INT(WindowHints)
+	enum WindowHints_
 	{
 		WindowHints_None			= 0		, // none
 		WindowHints_AutoIconify		= 1 << 0, // auto iconify
@@ -101,7 +101,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// renderer api
-	ENUM_INT(RendererAPI)
+	enum RendererAPI_
 	{
 		RendererAPI_Unknown		, // unknown
 		RendererAPI_OpenGL		, // opengl
@@ -110,7 +110,7 @@ namespace ism
 	};
 
 	// renderer profile
-	ENUM_INT(RendererProfile)
+	enum RendererProfile_
 	{
 		RendererProfile_Any		, // any
 		RendererProfile_Core	, // core
@@ -152,14 +152,18 @@ namespace ism
 	{
 		DEFAULT_COPYABLE_MOVABLE(ContextSettings);
 
-		RendererAPI		api				{ RendererAPI_OpenGL };
-		int32_t			major			{ 4 };
-		int32_t			minor			{ 6 };
-		RendererProfile	profile			{ RendererProfile_Compat };
-		int32_t			depth_bits		{ 24 };
-		int32_t			stencil_bits	{ 8 };
-		bool			multisample		{ true };
-		bool			srgb_capable	{ false };
+		RendererAPI_ api{ RendererAPI_OpenGL };
+		
+		int32_t major{ 4 };
+		
+		int32_t minor{ 6 };
+		
+		RendererProfile_ profile{ RendererProfile_Compat };
+		
+		int32_t depth_bits{ 24 };
+		int32_t stencil_bits{ 8 };
+		bool multisample{ true };
+		bool srgb_capable{ false };
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -172,7 +176,7 @@ namespace ism
 		String			title	{ "New Window" };
 		VideoMode		video	{};
 		ContextSettings	context	{};
-		WindowHints		hints	{ WindowHints_Default };
+		int32_t			hints	{ WindowHints_Default };
 		MonitorID		monitor	{};
 		WindowID		share	{};
 	};
@@ -311,7 +315,7 @@ namespace ism
 		InputAction_ action;
 		int32_t mods;
 
-		WindowKeyEvent(WindowID window, KeyCode key, int32_t scancode, InputAction action, int32_t mods) noexcept
+		WindowKeyEvent(WindowID window, int32_t key, int32_t scancode, int32_t action, int32_t mods) noexcept
 			: window{ window }, key{ (KeyCode_)key }, scancode{ scancode }, action{ (InputAction_)action }, mods{ mods } {}
 	};
 
@@ -341,7 +345,7 @@ namespace ism
 		InputAction_ action;
 		int32_t mods;
 
-		WindowMouseButtonEvent(WindowID window, MouseButton button, InputAction action, int32_t mods) noexcept
+		WindowMouseButtonEvent(WindowID window, int32_t button, int32_t action, int32_t mods) noexcept
 			: window{ window }, button{ (MouseButton_)button }, action{ (InputAction_)action }, mods{ mods } {}
 	};
 
@@ -472,7 +476,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
 		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y);
-		NODISCARD virtual CursorID create_standard_cursor(CursorShape shape);
+		NODISCARD virtual CursorID create_standard_cursor(CursorShape_ shape);
 		virtual void destroy_cursor(CursorID value);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -491,9 +495,9 @@ namespace ism
 		NODISCARD virtual Vec2f window_get_content_scale(WindowID id) const;
 		NODISCARD virtual IntRect window_get_frame_size(WindowID id) const;
 		NODISCARD virtual Vec2i window_get_framebuffer_size(WindowID id) const;
-		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode value) const;
-		NODISCARD virtual InputAction window_get_key(WindowID id, KeyCode value) const;
-		NODISCARD virtual InputAction window_get_mouse_button(WindowID id, MouseButton value) const;
+		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode_ value) const;
+		NODISCARD virtual InputAction_ window_get_key(WindowID id, KeyCode_ value) const;
+		NODISCARD virtual InputAction_ window_get_mouse_button(WindowID id, MouseButton_ value) const;
 		NODISCARD virtual Vec2d window_get_mouse_position(WindowID id) const;
 		NODISCARD virtual void * window_get_native_handle(WindowID id) const;
 		NODISCARD virtual float_t window_get_opacity(WindowID id) const;

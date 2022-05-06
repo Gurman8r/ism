@@ -38,7 +38,7 @@ namespace ism
 		DEFAULT_COPYABLE_MOVABLE(TypeObject);
 
 		template <class T
-		> TypeObject(mpl::type_tag<T>, cstring name, TypeFlags flags = TypeFlags_None) noexcept : TypeObject{}
+		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags = TypeFlags_None) noexcept : TypeObject{}
 		{
 			tp_name = name;
 			tp_size = sizeof(T);
@@ -64,7 +64,7 @@ namespace ism
 	public:
 		String				tp_name				{};
 		ssize_t				tp_size				{};
-		TypeFlags			tp_flags			{};
+		int32_t				tp_flags			{};
 		bindfunc			tp_bind				{};
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
@@ -152,7 +152,7 @@ namespace ism
 	public:
 		NODISCARD bool ready() const { return m_ptr->ready(); }
 
-		NODISCARD bool has_feature(TypeFlags flag) const { return FLAG_READ(m_ptr->tp_flags, flag); }
+		NODISCARD bool has_feature(TypeFlags_ flag) const { return FLAG_READ(m_ptr->tp_flags, flag); }
 
 		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
 

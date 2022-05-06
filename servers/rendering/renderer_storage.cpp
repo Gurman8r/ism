@@ -20,9 +20,23 @@ RendererStorage::~RendererStorage()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RendererStorage::material_create()
+RID RendererStorage::texture2d_placeholder_create()
 {
 	return RID();
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+RID RendererStorage::material_create()
+{
+	_Material * m{ memnew(_Material{}) };
+	return (RID)m;
+}
+
+void RendererStorage::material_destroy(RID material)
+{
+	_Material * const m{ VALIDATE((_Material *)material) };
+	memdelete(m);
 }
 
 void RendererStorage::material_set_shader(RID material, RID shader)
@@ -33,28 +47,33 @@ void RendererStorage::material_set_shader(RID material, RID shader)
 
 RID RendererStorage::mesh_create()
 {
-	return RID();
+	_Mesh * m{ memnew(_Mesh{}) };
+	return (RID)m;
+}
+
+void RendererStorage::mesh_destroy(RID mesh)
+{
+	_Mesh * const m{ VALIDATE((_Mesh *)mesh) };
+	memdelete(m);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RendererStorage::render_target_create()
 {
-	RenderTarget * const rt{ memnew(RenderTarget) };
+	_RenderTarget * const rt{ memnew(_RenderTarget) };
 
-	if (!rt->texture) {
-		// create placeholder
-	}
+	if (!rt->texture) { rt->texture = texture2d_placeholder_create(); }
 
 	rt->color_format = ColorFormat_R8G8B8_UNORM;
 	rt->color_format_srgb = ColorFormat_R8G8B8_UNORM;
 	
-	rt->color = RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureFormat, ts) {
-		ts.color_format = rt->color_format;
-		ts.color_format_srgb = rt->color_format_srgb;
-		ts.width = (uint32_t)rt->size[0];
-		ts.width = (uint32_t)rt->size[1];
-		ts.usage_flags = TextureFlags_Sampling | TextureFlags_ColorAttachment | TextureFlags_CanCopyFrom;
+	rt->color = RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureFormat, t) {
+		t.color_format = rt->color_format;
+		t.color_format_srgb = rt->color_format_srgb;
+		t.width = (uint32_t)rt->size[0];
+		t.width = (uint32_t)rt->size[1];
+		t.usage_flags = TextureFlags_Sampling | TextureFlags_ColorAttachment | TextureFlags_CanCopyFrom;
 	});
 
 	rt->framebuffer = RENDERING_DEVICE->framebuffer_create({ rt->color });
@@ -62,81 +81,79 @@ RID RendererStorage::render_target_create()
 	return (RID)rt;
 }
 
-void RendererStorage::render_target_destroy(RID rid)
+void RendererStorage::render_target_destroy(RID render_target)
 {
-	ASSERT(rid);
+	ASSERT(render_target);
 
-	RenderTarget * const rt{ (RenderTarget *)rid };
+	_RenderTarget * const rt{ (_RenderTarget *)render_target };
 
 	memdelete(rt);
 }
 
-void RendererStorage::render_target_bind(RID rid)
+void RendererStorage::render_target_bind(RID render_target)
 {
-	RenderTarget * const rt{ VALIDATE((RenderTarget *)rid) };
+	_RenderTarget * const rt{ VALIDATE((_RenderTarget *)render_target) };
 
 	RENDERING_DEVICE->framebuffer_bind(rt->framebuffer);
 }
 
-void RendererStorage::render_target_set_position(RID rid, int32_t x, int32_t  y)
+void RendererStorage::render_target_set_position(RID render_target, int32_t x, int32_t  y)
 {
-	RenderTarget * const rt{ VALIDATE((RenderTarget *)rid) };
+	_RenderTarget * const rt{ VALIDATE((_RenderTarget *)render_target) };
 }
 
-void RendererStorage::render_target_set_size(RID rid, int32_t width, int32_t height)
+void RendererStorage::render_target_set_size(RID render_target, int32_t width, int32_t height)
 {
-	RenderTarget * const rt{ VALIDATE((RenderTarget *)rid) };
+	_RenderTarget * const rt{ VALIDATE((_RenderTarget *)render_target) };
 
 	RENDERING_DEVICE->framebuffer_set_size(rt->framebuffer, width, height);
 }
 
-RID RendererStorage::render_target_get_texture(RID rid)
+RID RendererStorage::render_target_get_texture(RID render_target)
 {
-	RenderTarget * const rt{ VALIDATE((RenderTarget *)rid) };
+	_RenderTarget * const rt{ VALIDATE((_RenderTarget *)render_target) };
 
-	if (!rt->texture) {
-		rt->texture = nullptr;
-	}
+	if (!rt->texture) { rt->texture = texture2d_placeholder_create(); }
 
 	return rt->texture;
 }
 
-Vec2i RendererStorage::render_target_get_position(RID rid)
+Vec2i RendererStorage::render_target_get_position(RID render_target)
 {
 	return { 0, 0 };
 }
 
-Vec2i RendererStorage::render_target_get_size(RID rid)
+Vec2i RendererStorage::render_target_get_size(RID render_target)
 {
-	return VALIDATE((RenderTarget *)rid)->size;
+	return VALIDATE((_RenderTarget *)render_target)->size;
 }
 
-void RendererStorage::render_target_request_clear(RID rid, Color const & value)
+void RendererStorage::render_target_request_clear(RID render_target, Color const & value)
 {
-	RenderTarget * const rt{ VALIDATE((RenderTarget *)rid) };
+	_RenderTarget * const rt{ VALIDATE((_RenderTarget *)render_target) };
 	rt->clear_color = value;
 	rt->clear_requested = true;
 }
 
-void RendererStorage::render_target_disable_clear_request(RID rid)
+void RendererStorage::render_target_disable_clear_request(RID render_target)
 {
-	RenderTarget * const rt{ VALIDATE((RenderTarget *)rid) };
+	_RenderTarget * const rt{ VALIDATE((_RenderTarget *)render_target) };
 	rt->clear_requested = false;
 }
 
-bool RendererStorage::render_target_is_clear_requested(RID rid)
+bool RendererStorage::render_target_is_clear_requested(RID render_target)
 {
-	return VALIDATE((RenderTarget *)rid)->clear_requested;
+	return VALIDATE((_RenderTarget *)render_target)->clear_requested;
 }
 
-Color RendererStorage::render_target_get_clear_request_color(RID rid)
+Color RendererStorage::render_target_get_clear_request_color(RID render_target)
 {
-	return VALIDATE((RenderTarget *)rid)->clear_color;
+	return VALIDATE((_RenderTarget *)render_target)->clear_color;
 }
 
-void RendererStorage::render_target_do_clear_request(RID rid)
+void RendererStorage::render_target_do_clear_request(RID render_target)
 {
-	RenderTarget * const rt{ VALIDATE((RenderTarget *)rid) };
+	_RenderTarget * const rt{ VALIDATE((_RenderTarget *)render_target) };
 	if (!rt->clear_requested) { return; }
 	RENDERING_DEVICE->drawlist_begin(rt->framebuffer, rt->clear_color);
 	RENDERING_DEVICE->drawlist_end();

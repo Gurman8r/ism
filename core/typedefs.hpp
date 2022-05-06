@@ -35,19 +35,6 @@ public:																											\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// create a weak and strong enum type
-#define DECL_ENUM(m_name, m_base) \
-	ALIAS(m_name) m_base; \
-	enum CAT(m_name, _) : m_name
-
-// declare signed enum
-#define ENUM_INT(m_name) DECL_ENUM(m_name, int32_t)
-
-// declare unsigned enum
-#define ENUM_UINT(m_name) DECL_ENUM(m_name, uint32_t)
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 // declare opaque handle type
 #define DECL_HANDLE(m_name) \
 	struct CAT(__, m_name) { int unused; }; \

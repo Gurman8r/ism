@@ -2,28 +2,48 @@
     "vertex": {
         "glsl": [
             "#version 460 core",
-            "layout(location = 0) in vec3 a_Position;",
-            "layout(location = 1) in vec3 a_Normal;",
-            "layout(location = 2) in vec2 a_Texcoord;",
-            "out _Vertex{ vec3 Position; vec3 Normal; vec2 Texcoord; } Vertex;",
-            "uniform mat4 Model;",
-            "uniform mat4 View;",
-            "uniform mat4 Proj;",
+            "layout (location = 0) in vec3 a_Position;",
+            "layout (location = 1) in vec3 a_Normal;",
+            "layout (location = 2) in vec2 a_Texcoord;",
+            "layout (location = 3) in vec3 a_Tangent;",
+            "layout (location = 4) in vec3 a_Bitangent;",
+            "out _Vertex {",
+            "   vec3 Position;",
+            "   vec3 Normal;",
+            "   vec2 Texcoord;",
+            "   vec3 Tangent;",
+            "   vec3 Bitangent;",
+            "} Vertex;",
+            "layout (std140, binding = 0) uniform MVP {",
+            "   mat4 u_Proj;",
+            "   mat4 u_View;",
+            "};",
+            "uniform mat4 u_Model;",
             "void main() {",
             "    Vertex.Position = a_Position;",
             "    Vertex.Normal = a_Normal;",
             "    Vertex.Texcoord = a_Texcoord;",
-            "    gl_Position = (Proj * View * Model) * vec4(Vertex.Position, 1.0);",
+            "    Vertex.Tangent = a_Tangent;",
+            "    Vertex.Bitangent = a_Bitangent;",
+            "    gl_Position = (u_Proj * u_View * u_Model) * vec4(Vertex.Position, 1.0);",
             "}"
         ]
     },
-    "fragment": {
+    "pixel": {
         "glsl": [
             "#version 460 core",
-            "in _Vertex { vec3 Position; vec3 Normal; vec2 Texcoord; } Vertex;",
+            "in _Vertex {",
+            "   vec3 Position;",
+            "   vec3 Normal;",
+            "   vec2 Texcoord;",
+            "   vec3 Tangent;",
+            "   vec3 Bitangent;",
+            "} Vertex;",
             "out vec4 gl_Color;",
-            "uniform sampler2D Texture0;",
-            "void main() { gl_Color = texture(Texture0, Vertex.Texcoord); }"
+            "uniform sampler2D u_Texture0;",
+            "void main() {",
+            "   gl_Color = texture(u_Texture0, Vertex.Texcoord);",
+            "}"
         ]
     }
 }

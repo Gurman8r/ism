@@ -8,7 +8,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(ColorFormat)
+	enum ColorFormat_
 	{
 		ColorFormat_R4G4_UNORM_PACK8,
 		ColorFormat_R4G4B4A4_UNORM_PACK16,
@@ -239,7 +239,7 @@ namespace ism
 		ColorFormat_MAX
 	};
 
-	constexpr bool is_depth_stencil_color_format(ColorFormat_ value) noexcept
+	constexpr bool is_depth_stencil_color_format(ColorFormat_ const value) noexcept
 	{
 		switch (value)
 		{
@@ -256,7 +256,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(TextureType)
+	enum TextureType_
 	{
 		TextureType_1D,
 		TextureType_2D,
@@ -271,7 +271,7 @@ namespace ism
 		TextureType_MAX
 	};
 
-	ENUM_INT(TextureSamples)
+	enum TextureSamples_
 	{
 		TextureSamples_1,
 		TextureSamples_2,
@@ -283,7 +283,7 @@ namespace ism
 		TextureSamples_MAX
 	};
 
-	ENUM_INT(TextureFlags)
+	enum TextureFlags_
 	{
 		TextureFlags_None,
 		TextureFlags_Sampling				= 1 << 0,
@@ -303,7 +303,7 @@ namespace ism
 			TextureFlags_CanCopyFrom
 	};
 
-	ENUM_INT(TextureSwizzle)
+	enum TextureSwizzle_
 	{
 		TextureSwizzle_Identity,
 		TextureSwizzle_Zero,
@@ -315,7 +315,7 @@ namespace ism
 		TextureSwizzle_MAX
 	};
 
-	ENUM_INT(TextureSliceType)
+	enum TextureSliceType_
 	{
 		TextureSliceType_2D,
 		TextureSliceType_Cube,
@@ -325,13 +325,13 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(SamplerFilter)
+	enum SamplerFilter_
 	{
 		SamplerFilter_Nearest,
 		SamplerFilter_Linear,
 	};
 
-	ENUM_INT(SamplerRepeatMode)
+	enum SamplerRepeatMode_
 	{
 		SamplerRepeatMode_Repeat,
 		SamplerRepeatMode_MirroredRepeat,
@@ -341,7 +341,7 @@ namespace ism
 		SamplerRepeatMode_MAX
 	};
 
-	ENUM_INT(SamplerBorderColor)
+	enum SamplerBorderColor_
 	{
 		SamplerBorderColor_Float_Transparent_Black,
 		SamplerBorderColor_Int_Transparent_Black,
@@ -354,22 +354,32 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(VertexFrequency)
+	enum VertexFrequency_
 	{
 		VertexFrequency_Vertex,
 		VertexFrequency_Instance,
 	};
 
-	ENUM_INT(IndexbufferFormat)
+	enum IndexbufferFormat_
 	{
 		IndexbufferFormat_U8,
 		IndexbufferFormat_U16,
 		IndexbufferFormat_U32,
 	};
 
+	constexpr size_t get_index_type_size(IndexbufferFormat_ const value) noexcept
+	{
+		switch (value) {
+		case IndexbufferFormat_U8: return sizeof(uint8_t);
+		case IndexbufferFormat_U16: return sizeof(uint16_t);
+		case IndexbufferFormat_U32: return sizeof(uint32_t);
+		}
+		return get_index_type_size(IndexbufferFormat_U32);
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(ShaderStage)
+	enum ShaderStage_
 	{
 		ShaderStage_Vertex,
 		ShaderStage_Fragment,
@@ -386,7 +396,7 @@ namespace ism
 		ShaderStage_Compute_Bit					= 1 << 5,
 	};
 
-	ENUM_INT(ShaderLanguage)
+	enum ShaderLanguage_
 	{
 		ShaderLanguage_GLSL,
 		ShaderLanguage_HLSL,
@@ -394,24 +404,24 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(UniformType)
+	enum UniformType_
 	{
 		UniformType_Sampler,
 		UniformType_SamplerWithTexture,
 		UniformType_Texture,
 		UniformType_Image,
-		UniformType_Texture_Buffer,
-		UniformType_SamplerWithTexture_Buffer,
-		UniformType_Image_Buffer,
-		UniformType_Uniform_Buffer,
-		UniformType_Storage_Buffer,
+		UniformType_TextureBuffer,
+		UniformType_SamplerWithTextureBuffer,
+		UniformType_ImageBuffer,
+		UniformType_UniformBuffer,
+		UniformType_StorageBuffer,
 		UniformType_InputAttachment,
 		UniformType_MAX
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(RenderPrimitive)
+	enum RenderPrimitive_
 	{
 		RenderPrimitive_Points,
 		RenderPrimitive_Lines,
@@ -427,20 +437,20 @@ namespace ism
 		RenderPrimitive_MAX
 	};
 
-	ENUM_INT(PolygonCullMode)
+	enum PolygonCullMode_
 	{
 		PolygonCullMode_Disabled,
 		PolygonCullMode_Front,
 		PolygonCullMode_Back,
 	};
 
-	ENUM_INT(PolygonFrontFace)
+	enum PolygonFrontFace_
 	{
 		PolygonFrontFace_Clockwise,
 		PolygonFrontFace_CounterClockwise,
 	};
 
-	ENUM_INT(StencilOperation)
+	enum StencilOperation_
 	{
 		StencilOperation_Keep,
 		StencilOperation_Zero,
@@ -453,7 +463,7 @@ namespace ism
 		StencilOperation_MAX
 	};
 
-	ENUM_INT(BlendFactor)
+	enum BlendFactor_
 	{
 		BlendFactor_Zero,
 		BlendFactor_One,
@@ -477,7 +487,7 @@ namespace ism
 		BlendFactor_MAX
 	};
 
-	ENUM_INT(BlendOperation)
+	enum BlendOperation_
 	{
 		BlendOperation_Add,
 		BlendOperation_Subtract,
@@ -485,51 +495,6 @@ namespace ism
 		BlendOperation_Minimum,
 		BlendOperation_Maximum,
 		BlendOperation_MAX
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// data
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct VertexFormat final
-	{
-		struct Element final
-		{
-			cstring		name{};
-			DataType_	type{};
-			uint32_t	count{};
-			bool		normalized{};
-			uint32_t	size{ ism::get_data_type_size(type) * count };
-			uint32_t	offset{};
-		};
-
-		uint32_t stride{};
-
-		Vector<Element> elements{};
-
-		template <class It> VertexFormat(It first, It last) noexcept : elements{ first, last }
-		{
-			uint32_t offset{};
-			for (Element & e : elements) {
-				e.offset = offset;
-				offset += e.size;
-				stride += e.size;
-			}
-		}
-
-		VertexFormat(std::initializer_list<Element> init) noexcept : VertexFormat{ init.begin(), init.end() } {}
-
-		template <size_t N> VertexFormat(Element const (&arr)[N]) noexcept : VertexFormat{ &arr[0], &arr[N] } {}
-
-		VertexFormat() noexcept : VertexFormat{
-			{ "a_Position",	DataType_F32, 3 },
-			{ "a_Normal",	DataType_F32, 3 },
-			{ "a_Texcoord",	DataType_F32, 2 },
-		} {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -560,26 +525,72 @@ namespace ism
 		virtual void finalize() = 0;
 
 	public:
-		/* VERTEXBUFFER */
-		virtual RID vertexbuffer_create(uint32_t size_bytes, Buffer const & data = {}) = 0;
-		virtual void vertexbuffer_destroy(RID vertexbuffer) = 0;
-		virtual void vertexbuffer_set_data(RID vertexbuffer, Buffer const & data, size_t offset = 0) = 0;
+		/* VERTEXARRAY */
+		struct VertexFormat
+		{
+			struct Element
+			{
+				CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(Element);
+
+				cstring		name{};
+				DataType_	type{};
+				uint32_t	count{};
+				bool		normalized{};
+				uint32_t	size{ ism::get_data_type_size(type) * count };
+				uint32_t	offset{};
+			};
+
+			uint32_t stride{};
+
+			Vector<Element> elements{};
+
+			template <class It> VertexFormat(It first, It last) noexcept : elements{ first, last }
+			{
+				uint32_t offset{};
+				for (Element & e : elements) {
+					e.offset = offset;
+					offset += e.size;
+					stride += e.size;
+				}
+			}
+
+			VertexFormat(std::initializer_list<Element> init) noexcept : VertexFormat{ init.begin(), init.end() } {}
+
+			template <size_t N> VertexFormat(Element const (&arr)[N]) noexcept : VertexFormat{ &arr[0], &arr[N] } {}
+
+			VertexFormat() noexcept : VertexFormat{
+				{ "a_Position",	DataType_F32, 3 },
+				{ "a_Normal",	DataType_F32, 3 },
+				{ "a_Texcoord",	DataType_F32, 2 },
+			} {}
+		};
+
+		virtual RID vertex_array_create(size_t vertex_count, VertexFormat const & format, Vector<RID> const & buffers) = 0;
+		virtual void vertex_array_destroy(RID vertex_array) = 0;
 
 	public:
-		/* VERTEXARRAY */
-		virtual RID vertexarray_create(uint32_t vertex_count, VertexFormat const & format, Vector<RID> const & buffers) = 0;
-		virtual void vertexarray_destroy(RID vertexarray) = 0;
+		/* VERTEXBUFFER */
+		virtual RID vertex_buffer_create(size_t size_in_bytes, Buffer const & buffer = {}) = 0;
+		virtual void vertex_buffer_destroy(RID vertex_buffer) = 0;
+		virtual void vertex_buffer_update(RID vertex_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
+
+	public:
+		/* INDEXARRAY */
+		virtual RID index_array_create(RID index_buffer, size_t index_offset, size_t index_count) = 0;
+		virtual void index_array_destroy(RID index_array) = 0;
 
 	public:
 		/* INDEXBUFFER */
-		virtual RID indexbuffer_create(uint32_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, Buffer const & data = {}) = 0;
-		virtual void indexbuffer_destroy(RID indexbuffer) = 0;
-		virtual void indexbuffer_set_data(RID indexbuffer, Buffer const & data, size_t offset = 0) = 0;
+		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, Buffer const & buffer = {}) = 0;
+		virtual void index_buffer_destroy(RID index_buffer) = 0;
+		virtual void index_buffer_update(RID index_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
 
 	public:
 		/* TEXTURE */
-		struct TextureFormat final
+		struct TextureFormat
 		{
+			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(TextureFormat);
+
 			TextureType_ texture_type{ TextureType_2D };
 
 			ColorFormat_ color_format{ ColorFormat_R8G8B8_UNORM };
@@ -592,7 +603,7 @@ namespace ism
 
 			TextureSamples_ samples{ TextureSamples_1 };
 
-			TextureFlags usage_flags{ TextureFlags_Default };
+			int32_t usage_flags{ TextureFlags_Default };
 
 			ColorFormat_ color_format_srgb{ ColorFormat_MAX };
 
@@ -603,8 +614,8 @@ namespace ism
 		virtual void texture_destroy(RID texture) = 0;
 		virtual void texture_bind(RID texture, size_t slot = 0) = 0;
 		virtual void texture_update(RID texture, Buffer const & data = {}) = 0;
-		virtual Buffer texture_get_data(RID texture) = 0;
 		virtual void * texture_get_handle(RID texture) = 0;
+		virtual Buffer texture_get_data(RID texture) = 0;
 
 	public:
 		/* FRAMEBUFFER */
@@ -615,8 +626,10 @@ namespace ism
 
 	public:
 		/* SAMPLER */
-		struct SamplerState final
+		struct SamplerState
 		{
+			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(SamplerState);
+
 			SamplerFilter_ mag_filter{ SamplerFilter_Nearest }, min_filter{ SamplerFilter_Nearest }, mip_filter{ SamplerFilter_Nearest };
 
 			SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat }, repeat_r{ SamplerRepeatMode_Repeat };
@@ -638,33 +651,38 @@ namespace ism
 			bool unnormalized_uvw{ false };
 		};
 
-		virtual RID sampler_create(SamplerState const & sampler_state) = 0;
+		virtual RID sampler_create(SamplerState const & sampler_state = {}) = 0;
 		virtual void sampler_destroy(RID sampler) = 0;
 
 	public:
 		/* SHADER */
-		struct ShaderStageData final
+		struct ShaderStageData
 		{
+			DEFAULT_COPYABLE_MOVABLE(ShaderStageData);
+
 			ShaderStage_ shader_stage{ ShaderStage_Vertex };
-			Buffer source{};
+
+			Buffer source_code{};
 		};
 
 		virtual RID shader_create(Vector<ShaderStageData> const & stage_data) = 0;
 		virtual void shader_destroy(RID shader) = 0;
 		virtual void shader_bind(RID shader) = 0;
 
-		virtual int32_t shader_uniform_location(RID shader, cstring name) = 0;
-		virtual void shader_uniform1i(RID shader, cstring name, int32_t const value) = 0;
-		virtual void shader_uniform1f(RID shader, cstring name, float_t const value) = 0;
-		virtual void shader_uniform2f(RID shader, cstring name, float_t const * value) = 0;
-		virtual void shader_uniform3f(RID shader, cstring name, float_t const * value) = 0;
-		virtual void shader_uniform4f(RID shader, cstring name, float_t const * value) = 0;
-		virtual void shader_uniform16f(RID shader, cstring name, float_t const * value, bool transpose = false) = 0;
+		virtual int32_t shader_uniform_location(RID shader, String const & name) = 0;
+		virtual void shader_uniform1i(RID shader, String const & name, int32_t const value) = 0;
+		virtual void shader_uniform1f(RID shader, String const & name, float_t const value) = 0;
+		virtual void shader_uniform2f(RID shader, String const & name, float_t const * value) = 0;
+		virtual void shader_uniform3f(RID shader, String const & name, float_t const * value) = 0;
+		virtual void shader_uniform4f(RID shader, String const & name, float_t const * value) = 0;
+		virtual void shader_uniform16f(RID shader, String const & name, float_t const * value, bool transpose = false) = 0;
 
 	public:
 		/* UNIFORMS */
-		struct Uniform final
+		struct Uniform
 		{
+			DEFAULT_COPYABLE_MOVABLE(Uniform);
+
 			UniformType_ uniform_type{ UniformType_Image };
 
 			int32_t binding{};
@@ -672,24 +690,30 @@ namespace ism
 			Vector<RID> ids{};
 		};
 
-		virtual RID uniform_buffer_create(Buffer const & data = {}) = 0;
+		virtual RID uniform_buffer_create(size_t size_in_bytes, Buffer const & buffer = {}) = 0;
+		virtual void uniform_buffer_destroy(RID uniform_buffer) = 0;
+		virtual void uniform_buffer_update(RID uniform_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
+
 		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) = 0;
+		virtual void uniform_set_destroy(RID uniform_set) = 0;
 
 	public:
 		/* PIPELINE */
-		struct RasterizationState final
+		struct RasterizationState
 		{
+			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(RasterizationState);
+
 			bool enable_depth_clamp{ false };
 
 			bool discard_primitives{ false };
 
-			bool wireframe{ false };
+			bool enable_wireframe{ false };
 
-			PolygonCullMode_ cull_mode{ PolygonCullMode_Front };
+			PolygonCullMode_ cull_mode{ PolygonCullMode_Disabled };
 
 			PolygonFrontFace_ front_face{ PolygonFrontFace_Clockwise };
 
-			bool depth_bias_enable{ false };
+			bool enable_depth_bias{ false };
 
 			float_t depth_bias_constant_factor{ 0.f };
 
@@ -702,8 +726,10 @@ namespace ism
 			uint32_t patch_control_points{ 1 };
 		};
 
-		struct MultisampleState final
+		struct MultisampleState
 		{
+			DEFAULT_COPYABLE_MOVABLE(MultisampleState);
+
 			TextureSamples_ sample_count{ TextureSamples_1 };
 
 			bool enable_sample_shading{ false };
@@ -717,10 +743,14 @@ namespace ism
 			bool enable_alpha_to_one{ false };
 		};
 
-		struct DepthStencilState final
+		struct DepthStencilState
 		{
-			struct StencilOperationState final
+			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(DepthStencilState);
+
+			struct StencilOperationState
 			{
+				CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(StencilOperationState);
+
 				StencilOperation_ fail{ StencilOperation_Zero };
 
 				StencilOperation_ pass{ StencilOperation_Zero };
@@ -737,36 +767,40 @@ namespace ism
 			};
 
 			bool enable_depth_test{ false };
-
+			
 			bool enable_depth_write{ false };
-
+			
 			CompareOperator_ depth_compare_operator{ CompareOperator_Always };
 
 			bool enable_depth_range{ false };
-
+			
 			float_t depth_range_min{ 0.f }, depth_range_max{ 0.f };
 
 			bool enable_stencil{ false };
-
+			
 			StencilOperationState front_op{}, back_op{};
 		};
 
-		struct ColorBlendState final
+		struct ColorBlendState
 		{
-			struct Attachment final
+			DEFAULT_COPYABLE_MOVABLE(ColorBlendState);
+
+			struct Attachment
 			{
+				CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(Attachment);
+
 				bool enable_blend{ false };
 
 				BlendFactor_ src_color_blend_factor{ BlendFactor_Zero };
-
+				
 				BlendFactor_ dst_color_blend_factor{ BlendFactor_Zero };
-
+				
 				BlendOperation_ color_blend_op{ BlendOperation_Add };
 
 				BlendFactor_ src_alpha_blend_factor{ BlendFactor_Zero };
-
+				
 				BlendFactor_ dst_alpha_blend_factor{ BlendFactor_Zero };
-
+				
 				BlendOperation_ alpha_blend_op{ BlendOperation_Add };
 
 				bool write_r{ true }, write_g{ true }, write_b{ true }, write_a{ true };
@@ -775,17 +809,17 @@ namespace ism
 			bool enable_logic_op{ false };
 			
 			LogicOperation_ logic_op{ LogicOperation_Clear };
+
+			Color blend_constant{};
 			
 			Vector<Attachment> attachments{};
-			
-			Color blend_constant{};
 
 			NODISCARD static ColorBlendState create_disabled(int32_t num_attachments = 1)
 			{
 				ColorBlendState temp{};
 				temp.attachments.reserve(num_attachments);
-				for (int32_t i = 0; i < num_attachments; i++) {
-					temp.attachments.push_back(Attachment{});
+				for (int32_t i = 0; i < num_attachments; ++i) {
+					temp.attachments.push_back({});
 				}
 				return temp;
 			}
@@ -794,16 +828,17 @@ namespace ism
 			{
 				ColorBlendState temp{};
 				temp.attachments.reserve(num_attachments);
-				for (int32_t i = 0; i < num_attachments; i++) {
-					temp.attachments.push_back(Attachment{ true,
+				for (int32_t i = 0; i < num_attachments; ++i) {
+					temp.attachments.push_back({ true,
 						BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add,
-						BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add, });
+						BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add,
+						true, true, true, true });
 				}
 				return temp;
 			}
 		};
 
-		virtual RID pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depthstencil_state, ColorBlendState const & colorblend_state) = 0;
+		virtual RID pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state) = 0;
 		virtual void pipeline_destroy(RID pipeline) = 0;
 		
 	public:
@@ -811,10 +846,10 @@ namespace ism
 		virtual RID drawlist_begin_for_screen(WindowID window, Color const & clear_color = {}) = 0;
 		virtual RID drawlist_begin(RID framebuffer, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
 		virtual void drawlist_bind_pipeline(RID list, RID pipeline) = 0;
-		virtual void drawlist_bind_uniforms(RID list, RID uniforms) = 0;
-		virtual void drawlist_bind_vertices(RID list, RID vertexarray) = 0;
-		virtual void drawlist_bind_indices(RID list, RID indexbuffer) = 0;
-		virtual void drawlist_draw(RID list, bool use_indices, uint32_t instances, uint32_t procedural_vertices) = 0;
+		virtual void drawlist_bind_uniform_set(RID list, RID uniform_set, size_t index) = 0;
+		virtual void drawlist_bind_vertex_array(RID list, RID vertex_array) = 0;
+		virtual void drawlist_bind_index_array(RID list, RID index_array) = 0;
+		virtual void drawlist_draw(RID list, bool use_indices, size_t instances, size_t procedural_vertices) = 0;
 		virtual void drawlist_end() = 0;
 	};
 

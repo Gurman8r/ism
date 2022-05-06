@@ -8,7 +8,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(ColorChannel)
+	enum ColorChannel_
 	{
 		ColorChannel_L,
 		ColorChannel_LA,
@@ -20,7 +20,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(ImageFormat)
+	enum ImageFormat_
 	{
 		ImageFormat_L8, //luminance
 		ImageFormat_LA8, //luminance-alpha
@@ -64,9 +64,20 @@ namespace ism
 		ImageFormat_MAX
 	};
 
+	constexpr size_t get_image_format_channel_count(ImageFormat_ image_format)
+	{
+		switch (image_format) {
+		case ImageFormat_R8: return 1;
+		case ImageFormat_RG8: return 2;
+		case ImageFormat_RGB8: return 3;
+		case ImageFormat_RGBA8: return 4;
+		}
+		return 0;
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ENUM_INT(Interpolation)
+	enum Interpolation_
 	{
 		Interpolation_Nearest,
 		Interpolation_Bilinear,

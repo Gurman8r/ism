@@ -26,6 +26,10 @@ namespace ism
 		EditorViewport		m_editor_view{};
 		Ref<SceneTree>		m_active_scene{};
 
+		RID m_uniform_buffer{};
+		RID m_uniform_set{};
+
+		RID m_sampler{};
 		RID m_pipeline{};
 		RID m_framebuffer{};
 		RID m_render_target{};

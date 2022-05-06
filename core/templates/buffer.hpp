@@ -58,6 +58,8 @@ namespace ism
 
 		NODISCARD auto size() const noexcept -> size_t { return m_data.size(); }
 
+		NODISCARD auto capacity() const noexcept -> size_t { return m_data.capacity(); }
+
 		NODISCARD auto data() noexcept -> pointer { return m_data.data(); }
 
 		NODISCARD auto data() const noexcept -> const_pointer { return m_data.data(); }
@@ -141,7 +143,7 @@ namespace ism
 			return get_to<T>(index, temp);
 		}
 
-	protected:
+	public:
 		void do_write(size_t const index, void const * src, size_t const size_in_bytes)
 		{
 			reserve(index + size_in_bytes);
@@ -149,7 +151,6 @@ namespace ism
 			copymem(begin() + index, src, size_in_bytes);
 		}
 
-	public:
 		Buffer & write(size_t const index, void const * src, size_t const size_in_bytes)
 		{
 			if (src && size_in_bytes) { do_write(index, src, size_in_bytes); }
@@ -248,6 +249,19 @@ namespace ism
 		Buffer & print(cstring str)
 		{
 			if (str) { do_write(size(), str, std::strlen(str)); }
+			return (*this);
+		}
+
+	public:
+		Buffer & insert(size_t const index, size_t const size_in_bytes, byte const value = null)
+		{
+			if (size_in_bytes) { std::fill_n(std::inserter(m_data, m_data.begin() + index), size_in_bytes, value); }
+			return (*this);
+		}
+
+		Buffer & pad(size_t const size_in_bytes, byte const value = null)
+		{
+			if (size_in_bytes) { std::fill_n(std::back_inserter(m_data), size_in_bytes, value); }
 			return (*this);
 		}
 

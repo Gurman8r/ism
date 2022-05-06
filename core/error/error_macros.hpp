@@ -60,7 +60,7 @@ namespace ism
 
 namespace ism
 {
-	ENUM_INT(ErrorHandlerType)
+	enum ErrorHandlerType_
 	{
 		ErrorHandlerType_Error,
 		ErrorHandlerType_Warning,

@@ -7,7 +7,7 @@
 
 namespace ism
 {
-	ENUM_INT(Error)
+	enum Error_
 	{
 		Error_Unknown = -1,
 		Error_None = 0,

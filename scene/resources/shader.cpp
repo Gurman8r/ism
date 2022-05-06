@@ -37,10 +37,10 @@ void Shader::reload_from_file()
 			if (auto glsl{ stage->find("glsl") }; glsl != stage->end())
 			{
 				for (String const & line : glsl->get<Vector<String>>()) {
-					data.source.write(line.data(), line.size());
-					data.source << '\n';
+					data.source_code.write(line.data(), line.size());
+					data.source_code << '\n';
 				}
-				data.source << '\0';
+				data.source_code << '\0';
 			}
 			// PATH
 			else if (auto path{ stage->find("path") }; path != stage->end())
@@ -50,20 +50,20 @@ void Shader::reload_from_file()
 				if (!file) { return; }
 				String line;
 				while (std::getline(file, line)) {
-					data.source.write(line.data(), line.size());
-					data.source << '\n';
+					data.source_code.write(line.data(), line.size());
+					data.source_code << '\n';
 				}
-				data.source << '\0';
+				data.source_code << '\0';
 			}
 		}
-		if (!data.source.empty())
+		if (!data.source_code.empty())
 		{
 			stages.push_back(std::move(data));
 		}
 	};
 
 	_parse_stage("vertex", ShaderStage_Vertex);
-	_parse_stage("fragment", ShaderStage_Fragment);
+	_parse_stage("pixel", ShaderStage_Fragment);
 	_parse_stage("geometry", ShaderStage_Geometry);
 	_parse_stage("tess_ctrl", ShaderStage_TesselationControl);
 	_parse_stage("tess_eval", ShaderStage_TesselationEvaluation);
@@ -82,42 +82,37 @@ void Shader::unbind()
 	RENDERING_DEVICE->shader_bind(nullptr);
 }
 
-void Shader::set_uniform1i(cstring name, int32_t const value)
+void Shader::set_uniform1i(String const & name, int32_t const value)
 {
 	RENDERING_DEVICE->shader_uniform1i(m_shader, name, value);
 }
 
-void Shader::set_uniform1f(cstring name, float_t const value)
+void Shader::set_uniform1f(String const & name, float_t const value)
 {
 	RENDERING_DEVICE->shader_uniform1f(m_shader, name, value);
 }
 
-void Shader::set_uniform2f(cstring name, Vec2f const & value)
+void Shader::set_uniform2f(String const & name, Vec2f const & value)
 {
 	RENDERING_DEVICE->shader_uniform2f(m_shader, name, value);
 }
 
-void Shader::set_uniform3f(cstring name, Vec3f const & value)
+void Shader::set_uniform3f(String const & name, Vec3f const & value)
 {
 	RENDERING_DEVICE->shader_uniform3f(m_shader, name, value);
 }
 
-void Shader::set_uniform4f(cstring name, Vec4f const & value)
+void Shader::set_uniform4f(String const & name, Vec4f const & value)
 {
 	RENDERING_DEVICE->shader_uniform4f(m_shader, name, value);
 }
 
-void Shader::set_uniform16f(cstring name, Mat4f const & value, bool transpose)
+void Shader::set_uniform16f(String const & name, Mat4f const & value, bool transpose)
 {
 	RENDERING_DEVICE->shader_uniform16f(m_shader, name, value, transpose);
 }
 
-void Shader::set_uniform_color(cstring name, Color const & value)
-{
-	RENDERING_DEVICE->shader_uniform4f(m_shader, name, value);
-}
-
-void Shader::set_uniform_texture(cstring name, RID const value, size_t slot)
+void Shader::set_uniform_texture(String const & name, RID const value, size_t slot)
 {
 	RENDERING_DEVICE->texture_bind(value, slot);
 
