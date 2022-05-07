@@ -16,9 +16,9 @@ struct SubMesh
 {
 	RD::VertexFormat format{};
 
-	Buffer vertices{};
+	DynamicBuffer vertices{};
 
-	Buffer indices{};
+	DynamicBuffer indices{};
 
 	Vector<Ref<Texture>> textures{};
 };
@@ -44,7 +44,7 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 		{ "a_Bitangent"	, DataType_F32, 3 }, };
 
 	// vertices
-	Buffer vertices{};
+	DynamicBuffer vertices{};
 	for (uint32_t i = 0; i < mesh->mNumVertices; ++i)
 	{
 		vertices << mesh->mVertices[i].x << mesh->mVertices[i].y << mesh->mVertices[i].z;
@@ -79,7 +79,7 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 	}
 
 	// indices
-	Buffer indices{};
+	DynamicBuffer indices{};
 	for (uint32_t i = 0; i < mesh->mNumFaces; ++i)
 	{
 		aiFace face{ mesh->mFaces[i] };
@@ -149,8 +149,8 @@ void Mesh::reload_from_file()
 	_process_node(meshes, scene->mRootNode, scene);
 	for (SubMesh & m : meshes)
 	{
-		IndexbufferFormat_ const index_type{ IndexbufferFormat_U32 };
-		size_t const index_size{ get_index_type_size(index_type) };
+		RD::IndexbufferFormat_ const index_type{ RD::IndexbufferFormat_U32 };
+		size_t const index_size{ RD::get_index_buffer_format_size(index_type) };
 		size_t const index_count{ m.indices.size() / index_size };
 		RID ib{ RENDERING_DEVICE->index_buffer_create(index_count, index_type, m.indices) };
 		RID ia{ RENDERING_DEVICE->index_array_create(ib, 0, index_count) };

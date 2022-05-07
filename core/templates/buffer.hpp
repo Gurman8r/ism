@@ -8,7 +8,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class Buffer
+	class DynamicBuffer
 	{
 		Vector<byte> m_data{};
 
@@ -24,28 +24,28 @@ namespace ism
 
 		static constexpr byte null{ (byte)'\0' };
 
-		~Buffer() noexcept = default;
+		~DynamicBuffer() noexcept = default;
 
-		Buffer(allocator_type alloc = {}) noexcept : m_data{ alloc } {}
+		DynamicBuffer(allocator_type alloc = {}) noexcept : m_data{ alloc } {}
 
-		Buffer(storage_type const & data, allocator_type alloc = {}) : m_data{ data, alloc } {}
+		DynamicBuffer(storage_type const & data, allocator_type alloc = {}) : m_data{ data, alloc } {}
 
-		Buffer(storage_type && data, allocator_type alloc = {}) noexcept : m_data{ std::move(data), alloc } {}
+		DynamicBuffer(storage_type && data, allocator_type alloc = {}) noexcept : m_data{ std::move(data), alloc } {}
 
-		Buffer(size_t const size_in_bytes, byte const value = null, allocator_type alloc = {}) : m_data{ alloc } { resize(size_in_bytes, value); }
+		DynamicBuffer(size_t const size_in_bytes, byte const value = null, allocator_type alloc = {}) : m_data{ alloc } { resize(size_in_bytes, value); }
 
-		Buffer(void const * src, size_t const size_in_bytes, allocator_type alloc = {}) : m_data{ alloc } { write(src, size_in_bytes); }
+		DynamicBuffer(void const * src, size_t const size_in_bytes, allocator_type alloc = {}) : m_data{ alloc } { write(src, size_in_bytes); }
 
 		template <class Iter = iterator
-		> Buffer(Iter first, Iter last, allocator_type alloc = {}) : m_data{ alloc } { write(first, std::distance(first, last) / sizeof(*first)); }
+		> DynamicBuffer(Iter first, Iter last, allocator_type alloc = {}) : m_data{ alloc } { write(first, std::distance(first, last) / sizeof(*first)); }
 
-		Buffer(Buffer const & other, allocator_type alloc = {}) : m_data{ other.m_data, alloc } {}
+		DynamicBuffer(DynamicBuffer const & other, allocator_type alloc = {}) : m_data{ other.m_data, alloc } {}
 
-		Buffer(Buffer && other, allocator_type alloc = {}) noexcept : m_data{ alloc } { swap(std::move(other)); }
+		DynamicBuffer(DynamicBuffer && other, allocator_type alloc = {}) noexcept : m_data{ alloc } { swap(std::move(other)); }
 
-		Buffer & operator=(Buffer const & other) { Buffer temp{ other }; return swap(temp); }
+		DynamicBuffer & operator=(DynamicBuffer const & other) { DynamicBuffer temp{ other }; return swap(temp); }
 
-		Buffer & operator=(Buffer && other) noexcept { return swap(std::move(other)); }
+		DynamicBuffer & operator=(DynamicBuffer && other) noexcept { return swap(std::move(other)); }
 
 		NODISCARD operator storage_type & () & noexcept { return m_data; }
 
@@ -87,12 +87,17 @@ namespace ism
 		NODISCARD auto operator[](size_t const i) const noexcept -> byte { ASSERT(i < size()); return m_data[i]; }
 
 	public:
-		Buffer & clear() noexcept
+		DynamicBuffer & clear() noexcept
 		{
 			return m_data.clear(), (*this);
 		}
 
-		Buffer & reserve(size_t const size_in_bytes)
+		DynamicBuffer & copy(DynamicBuffer const & other) {
+			if (this != std::addressof(other)) { m_data = other.m_data; }
+			return (*this);
+		}
+
+		DynamicBuffer & reserve(size_t const size_in_bytes)
 		{
 			if (size() < size_in_bytes)
 			{
@@ -101,12 +106,12 @@ namespace ism
 			return (*this);
 		}
 
-		Buffer & resize(size_t const size_in_bytes, byte const value = null)
+		DynamicBuffer & resize(size_t const size_in_bytes, byte const value = null)
 		{
 			return m_data.resize(size_in_bytes, value), (*this);
 		}
 
-		Buffer & swap(Buffer & other) noexcept
+		DynamicBuffer & swap(DynamicBuffer & other) noexcept
 		{
 			if (this != std::addressof(other))
 			{
@@ -144,41 +149,41 @@ namespace ism
 		}
 
 	public:
-		void do_write(size_t const index, void const * src, size_t const size_in_bytes)
+		void write_unchecked(size_t const index, void const * src, size_t const size_in_bytes)
 		{
 			reserve(index + size_in_bytes);
 
 			copymem(begin() + index, src, size_in_bytes);
 		}
 
-		Buffer & write(size_t const index, void const * src, size_t const size_in_bytes)
+		DynamicBuffer & write(size_t const index, void const * src, size_t const size_in_bytes)
 		{
-			if (src && size_in_bytes) { do_write(index, src, size_in_bytes); }
+			if (src && size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
 			return (*this);
 		}
 
-		Buffer & write(void const * src, size_t const size_in_bytes)
+		DynamicBuffer & write(void const * src, size_t const size_in_bytes)
 		{
-			if (src && size_in_bytes) { do_write(size(), src, size_in_bytes); }
-			return (*this);
-		}
-
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> Buffer & write(size_t const index, T const & value)
-		{
-			do_write(index, std::addressof(value), sizeof(T));
+			if (src && size_in_bytes) { write_unchecked(size(), src, size_in_bytes); }
 			return (*this);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> Buffer & write(T const & value)
+		> DynamicBuffer & write(size_t const index, T const & value)
 		{
-			do_write(size(), std::addressof(value), sizeof(T));
+			write_unchecked(index, std::addressof(value), sizeof(T));
+			return (*this);
+		}
+
+		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
+		> DynamicBuffer & write(T const & value)
+		{
+			write_unchecked(size(), std::addressof(value), sizeof(T));
 			return (*this);
 		}
 
 	public:
-		Buffer & vprintf(size_t const index, cstring fmt, va_list args)
+		DynamicBuffer & vprintf(size_t const index, cstring fmt, va_list args)
 		{
 			if (int32_t size_in_bytes{ std::vsnprintf(nullptr, 0, fmt, args) }; 0 < size_in_bytes)
 			{
@@ -191,12 +196,12 @@ namespace ism
 			return (*this);
 		}
 
-		Buffer & vprintf(cstring fmt, va_list args)
+		DynamicBuffer & vprintf(cstring fmt, va_list args)
 		{
 			return vprintf(size(), fmt, args);
 		}
 
-		Buffer & printf(size_t const index, cstring fmt, ...)
+		DynamicBuffer & printf(size_t const index, cstring fmt, ...)
 		{
 			if (!fmt) { return (*this); }
 			va_list args;
@@ -206,7 +211,7 @@ namespace ism
 			return (*this);
 		}
 
-		Buffer & printf(cstring fmt, ...)
+		DynamicBuffer & printf(cstring fmt, ...)
 		{
 			if (!fmt) { return (*this); }
 			va_list args;
@@ -216,50 +221,50 @@ namespace ism
 			return (*this);
 		}
 
-		Buffer & print(size_t const index, String const & str)
+		DynamicBuffer & print(size_t const index, String const & str)
 		{
-			if (!str.empty()) { do_write(index, str.data(), str.size()); }
+			if (!str.empty()) { write_unchecked(index, str.data(), str.size()); }
 			return (*this);
 		}
 
-		Buffer & print(String const & str)
+		DynamicBuffer & print(String const & str)
 		{
-			if (!str.empty()) { do_write(size(), str.data(), str.size()); }
+			if (!str.empty()) { write_unchecked(size(), str.data(), str.size()); }
 			return (*this);
 		}
 
-		Buffer & print(size_t const index, cstring str, size_t const size_in_bytes)
+		DynamicBuffer & print(size_t const index, cstring str, size_t const size_in_bytes)
 		{
-			if (str && size_in_bytes) { do_write(index, str, size_in_bytes); }
+			if (str && size_in_bytes) { write_unchecked(index, str, size_in_bytes); }
 			return (*this);
 		}
 
-		Buffer & print(size_t const index, cstring str)
+		DynamicBuffer & print(size_t const index, cstring str)
 		{
-			if (str) { do_write(index, str, std::strlen(str)); }
+			if (str) { write_unchecked(index, str, std::strlen(str)); }
 			return (*this);
 		}
 
-		Buffer & print(cstring str, size_t const size_in_bytes)
+		DynamicBuffer & print(cstring str, size_t const size_in_bytes)
 		{
-			if (str && size_in_bytes) { do_write(size(), str, size_in_bytes); }
+			if (str && size_in_bytes) { write_unchecked(size(), str, size_in_bytes); }
 			return (*this);
 		}
 
-		Buffer & print(cstring str)
+		DynamicBuffer & print(cstring str)
 		{
-			if (str) { do_write(size(), str, std::strlen(str)); }
+			if (str) { write_unchecked(size(), str, std::strlen(str)); }
 			return (*this);
 		}
 
 	public:
-		Buffer & insert(size_t const index, size_t const size_in_bytes, byte const value = null)
+		DynamicBuffer & insert(size_t const index, size_t const size_in_bytes, byte const value = null)
 		{
 			if (size_in_bytes) { std::fill_n(std::inserter(m_data, m_data.begin() + index), size_in_bytes, value); }
 			return (*this);
 		}
 
-		Buffer & pad(size_t const size_in_bytes, byte const value = null)
+		DynamicBuffer & pad(size_t const size_in_bytes, byte const value = null)
 		{
 			if (size_in_bytes) { std::fill_n(std::back_inserter(m_data), size_in_bytes, value); }
 			return (*this);
@@ -267,7 +272,7 @@ namespace ism
 
 	public:
 		template <class T
-		> Buffer & operator<<(T const & value)
+		> DynamicBuffer & operator<<(T const & value)
 		{
 			if constexpr (1 == sizeof(T))
 			{
@@ -279,14 +284,257 @@ namespace ism
 			}
 		}
 
-		Buffer & operator<<(cstring str)
+		DynamicBuffer & operator<<(cstring str)
 		{
 			return print(str);
 		}
 
-		Buffer & operator<<(String const & str)
+		DynamicBuffer & operator<<(String const & str)
 		{
 			return print(str);
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <size_t _Size
+	> class StaticBuffer
+	{
+		static_assert(0 < _Size);
+
+		byte m_data[_Size]{};
+
+	public:
+		using self_type			= typename StaticBuffer<_Size>;
+		using reference			= typename byte &;
+		using const_reference	= typename byte const &;
+		using pointer			= typename byte *;
+		using const_pointer		= typename byte const *;
+		using iterator			= typename pointer;
+		using const_iterator	= typename const_pointer;
+
+		StaticBuffer() noexcept {}
+
+		StaticBuffer(self_type const & other) { copy(other); }
+	
+		StaticBuffer(self_type && other) noexcept { swap(std::move(other)); }
+
+		StaticBuffer(size_t const index, void const * src, size_t const size_in_bytes) noexcept {
+			write(index, src, size_in_bytes);
+		}
+
+		StaticBuffer(void const * src, size_t const size_in_bytes) noexcept {
+			write(0, src, size_in_bytes);
+		}
+
+		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
+		> StaticBuffer(size_t const index, T const & value) noexcept {
+			write(index, value);
+		}
+
+		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
+		> StaticBuffer(T const & value) noexcept {
+			write(0, value);
+		}
+	
+		self_type & operator=(self_type const & other) {
+			self_type temp{ other };
+			return swap(temp);
+		}
+	
+		self_type & operator=(self_type && other) noexcept {
+			return swap(std::move(other));
+		}
+
+	public:
+		self_type & clear() noexcept {
+			zeromem(m_data, _Size);
+			return (*this);
+		}
+	
+		self_type & copy(self_type const & other) {
+			if (this != std::addressof(other)) { copymem(m_data, other.m_data, _Size); }
+			return (*this);
+		}
+	
+		self_type & swap(self_type & other) noexcept {
+			if (this != std::addressof(other)) {
+				byte temp[_Size];
+				copymem(temp, m_data, _Size);
+				copymem(m_data, other.m_data, _Size);
+				copymem(other.m_data, temp, _Size);
+			}
+			return (*this);
+		}
+
+	public:
+		NODISCARD bool empty() const noexcept { return false; }
+
+		NODISCARD auto size() const noexcept -> size_t { return _Size; }
+
+		NODISCARD auto capacity() const noexcept -> size_t { return _Size; }
+
+		NODISCARD auto data() noexcept -> pointer { return m_data; }
+
+		NODISCARD auto data() const noexcept -> const_pointer { return m_data; }
+
+		NODISCARD auto c_str() const noexcept -> cstring { return (cstring)data(); }
+
+		NODISCARD auto begin() noexcept -> iterator { return data(); }
+
+		NODISCARD auto begin() const noexcept -> const_iterator { return data(); }
+
+		NODISCARD auto end() noexcept -> iterator { return begin() + size(); }
+
+		NODISCARD auto end() const noexcept -> const_iterator { return begin() + size(); }
+
+		NODISCARD auto front() noexcept -> reference { return *(begin()); }
+
+		NODISCARD auto front() const noexcept -> const_reference { return *(begin()); }
+
+		NODISCARD auto back() noexcept -> reference { return *(end() - 1); }
+
+		NODISCARD auto back() const noexcept -> const_reference { return *(end() - 1); }
+
+		NODISCARD auto operator[](size_t const i) noexcept -> reference { return m_data[i]; }
+
+		NODISCARD auto operator[](size_t const i) const noexcept -> byte { return m_data[i]; }
+
+	public:
+		void * get_to(size_t const index, void * dst, size_t const size_in_bytes)
+		{
+			ASSERT(index + size_in_bytes <= _Size);
+			copymem(dst, begin() + index, size_in_bytes);
+			return dst;
+		}
+
+		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
+		> T & get_to(size_t const index, T & value)
+		{
+			get_to(index, std::addressof(value), sizeof(T));
+			return value;
+		}
+
+		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
+		> T & get_to(T & value)
+		{
+			return get_to<T>(0, value);
+		}
+
+		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
+		> NODISCARD T get(size_t const index = 0)
+		{
+			T temp;
+			return get_to<T>(index, temp);
+		}
+
+	public:
+		void write_unchecked(size_t const index, void const * src, size_t const size_in_bytes)
+		{
+			ASSERT(index + size_in_bytes <= _Size);
+
+			copymem(begin() + index, src, size_in_bytes);
+		}
+
+		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
+		{
+			if (src && size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
+			return (*this);
+		}
+
+		self_type & write(void const * src, size_t const size_in_bytes)
+		{
+			if (src && size_in_bytes) { write_unchecked(0, src, size_in_bytes); }
+			return (*this);
+		}
+
+		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
+		> self_type & write(size_t const index, T const & value)
+		{
+			write_unchecked(index, std::addressof(value), sizeof(T));
+			return (*this);
+		}
+
+		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
+		> self_type & write(T const & value)
+		{
+			write_unchecked(0, std::addressof(value), sizeof(T));
+			return (*this);
+		}
+
+	public:
+		self_type & vprintf(size_t const index, cstring fmt, va_list args)
+		{
+			if (int32_t size_in_bytes{ std::vsnprintf(nullptr, 0, fmt, args) }; 0 < size_in_bytes)
+			{
+				size_in_bytes++; // account for null teminator
+
+				ASSERT(index + size_in_bytes <= _Size);
+
+				std::vsprintf((char *)begin() + index, fmt, args);
+			}
+			return (*this);
+		}
+
+		self_type & vprintf(cstring fmt, va_list args)
+		{
+			return vprintf(0, fmt, args);
+		}
+
+		self_type & printf(size_t const index, cstring fmt, ...)
+		{
+			if (!fmt) { return (*this); }
+			va_list args;
+			va_start(args, fmt);
+			vprintf(index, fmt, args);
+			va_end(args);
+			return (*this);
+		}
+
+		self_type & printf(cstring fmt, ...)
+		{
+			if (!fmt) { return (*this); }
+			va_list args;
+			va_start(args, fmt);
+			vprintf(0, fmt, args);
+			va_end(args);
+			return (*this);
+		}
+
+		self_type & print(size_t const index, String const & str)
+		{
+			if (!str.empty()) { write_unchecked(index, str.data(), str.size()); }
+			return (*this);
+		}
+
+		self_type & print(String const & str)
+		{
+			if (!str.empty()) { write_unchecked(0, str.data(), str.size()); }
+			return (*this);
+		}
+
+		self_type & print(size_t const index, cstring str, size_t const size_in_bytes)
+		{
+			if (str && size_in_bytes) { write_unchecked(index, str, size_in_bytes); }
+			return (*this);
+		}
+
+		self_type & print(size_t const index, cstring str)
+		{
+			if (str) { write_unchecked(index, str, std::strlen(str)); }
+			return (*this);
+		}
+
+		self_type & print(cstring str, size_t const size_in_bytes)
+		{
+			if (str && size_in_bytes) { write_unchecked(0, str, size_in_bytes); }
+			return (*this);
+		}
+
+		self_type & print(cstring str)
+		{
+			if (str) { write_unchecked(0, str, std::strlen(str)); }
+			return (*this);
 		}
 	};
 

@@ -26,28 +26,26 @@ namespace ism
 		RenderingServerDefault();
 		virtual ~RenderingServerDefault() override;
 
+	public:
 		virtual void initialize() override;
-		
 		virtual void finalize() override;
 
 	public:
 		/* TEXTURE */
 		virtual RID texture_replace(RID old_texture, RID new_texture) override;
-		
 		virtual RID texture2d_create(Ref<Image> const & image) override;
-		
 		virtual RID texture2d_placeholder_create() override;
-		
 		virtual Ref<Image> texture2d_get_image(RID texture) override;
 
 	public:
 		/* SHADER */
 		virtual RID shader_create() override;
+		virtual void shader_destroy(RID shader) override;
 
 	public:
 		/* MATERIAL */
 		virtual RID material_create() override;
-
+		virtual void material_destroy(RID material) override;
 		virtual void material_set_shader(RID material, RID shader) override;
 
 	public:
@@ -61,15 +59,10 @@ namespace ism
 	public:
 		/* VIEWPORT */
 		virtual RID viewport_create() override;
-
 		virtual void viewport_destroy(RID viewport) override;
-
 		virtual void viewport_set_parent_viewport(RID viewport, RID parent_viewport) override;
-
 		virtual void viewport_set_size(RID viewport, int32_t width, int32_t height) override;
-
 		virtual RID viewport_get_texture(RID viewport) const override;
-
 		virtual void viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen) override;
 	};
 

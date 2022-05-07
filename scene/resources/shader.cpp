@@ -27,7 +27,7 @@ void Shader::reload_from_file()
 	Vector<RD::ShaderStageData> stages{};
 
 	auto _parse_stage = [&json, &stages
-	](cstring stage_name, ShaderStage_ stage_index)
+	](cstring stage_name, RD::ShaderStage_ stage_index)
 	{
 		RD::ShaderStageData data{ stage_index };
 
@@ -62,12 +62,12 @@ void Shader::reload_from_file()
 		}
 	};
 
-	_parse_stage("vertex", ShaderStage_Vertex);
-	_parse_stage("pixel", ShaderStage_Fragment);
-	_parse_stage("geometry", ShaderStage_Geometry);
-	_parse_stage("tess_ctrl", ShaderStage_TesselationControl);
-	_parse_stage("tess_eval", ShaderStage_TesselationEvaluation);
-	_parse_stage("compute", ShaderStage_Compute);
+	_parse_stage("vertex", RD::ShaderStage_Vertex);
+	_parse_stage("pixel", RD::ShaderStage_Fragment);
+	_parse_stage("geometry", RD::ShaderStage_Geometry);
+	_parse_stage("tess_ctrl", RD::ShaderStage_TesselationControl);
+	_parse_stage("tess_eval", RD::ShaderStage_TesselationEvaluation);
+	_parse_stage("compute", RD::ShaderStage_Compute);
 	m_shader = RENDERING_DEVICE->shader_create(stages);
 	ASSERT(m_shader);
 }

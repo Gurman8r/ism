@@ -52,54 +52,54 @@ RID RenderingServerDefault::texture_replace(RID old_texture, RID new_texture)
 RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 {
 	if (!image) { return nullptr; }
-	ColorFormat_ color_format{}, color_format_srgb{};
-	TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
+	RD::DataFormat_ color_format{}, color_format_srgb{};
+	RD::TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
 	switch (image->get_format())
 	{
 	case ImageFormat_L8: {
-		color_format = ColorFormat_R8_UNORM;
-		swizzle_r = TextureSwizzle_R;
-		swizzle_g = TextureSwizzle_R;
-		swizzle_b = TextureSwizzle_R;
-		swizzle_a = TextureSwizzle_One;
+		color_format = RD::DataFormat_R8_UNORM;
+		swizzle_r = RD::TextureSwizzle_R;
+		swizzle_g = RD::TextureSwizzle_R;
+		swizzle_b = RD::TextureSwizzle_R;
+		swizzle_a = RD::TextureSwizzle_One;
 	} break;
 	case ImageFormat_LA8: {
-		color_format = ColorFormat_R8G8_UNORM;
-		swizzle_r = TextureSwizzle_R;
-		swizzle_g = TextureSwizzle_R;
-		swizzle_b = TextureSwizzle_R;
-		swizzle_a = TextureSwizzle_G;
+		color_format = RD::DataFormat_R8G8_UNORM;
+		swizzle_r = RD::TextureSwizzle_R;
+		swizzle_g = RD::TextureSwizzle_R;
+		swizzle_b = RD::TextureSwizzle_R;
+		swizzle_a = RD::TextureSwizzle_G;
 	} break;
 	case ImageFormat_R8: {
-		color_format = ColorFormat_R8_UNORM;
-		swizzle_r = TextureSwizzle_R;
-		swizzle_g = TextureSwizzle_Zero;
-		swizzle_b = TextureSwizzle_Zero;
-		swizzle_a = TextureSwizzle_One;
+		color_format = RD::DataFormat_R8_UNORM;
+		swizzle_r = RD::TextureSwizzle_R;
+		swizzle_g = RD::TextureSwizzle_Zero;
+		swizzle_b = RD::TextureSwizzle_Zero;
+		swizzle_a = RD::TextureSwizzle_One;
 	} break;
 	case ImageFormat_RG8: {
-		color_format = ColorFormat_R8G8_UNORM;
-		swizzle_r = TextureSwizzle_R;
-		swizzle_g = TextureSwizzle_G;
-		swizzle_b = TextureSwizzle_Zero;
-		swizzle_a = TextureSwizzle_One;
+		color_format = RD::DataFormat_R8G8_UNORM;
+		swizzle_r = RD::TextureSwizzle_R;
+		swizzle_g = RD::TextureSwizzle_G;
+		swizzle_b = RD::TextureSwizzle_Zero;
+		swizzle_a = RD::TextureSwizzle_One;
 	} break;
 	case ImageFormat_RGB8: {
-		color_format = ColorFormat_R8G8B8_UNORM;
-		color_format_srgb = ColorFormat_R8G8B8_SRGB;
-		swizzle_r = TextureSwizzle_R;
-		swizzle_g = TextureSwizzle_G;
-		swizzle_b = TextureSwizzle_B;
-		swizzle_a = TextureSwizzle_One;
+		color_format = RD::DataFormat_R8G8B8_UNORM;
+		color_format_srgb = RD::DataFormat_R8G8B8_SRGB;
+		swizzle_r = RD::TextureSwizzle_R;
+		swizzle_g = RD::TextureSwizzle_G;
+		swizzle_b = RD::TextureSwizzle_B;
+		swizzle_a = RD::TextureSwizzle_One;
 
 	} break;
 	case ImageFormat_RGBA8: {
-		color_format = ColorFormat_R8G8B8A8_UNORM;
-		color_format_srgb = ColorFormat_R8G8B8A8_SRGB;
-		swizzle_r = TextureSwizzle_R;
-		swizzle_g = TextureSwizzle_G;
-		swizzle_b = TextureSwizzle_B;
-		swizzle_a = TextureSwizzle_A;
+		color_format = RD::DataFormat_R8G8B8A8_UNORM;
+		color_format_srgb = RD::DataFormat_R8G8B8A8_SRGB;
+		swizzle_r = RD::TextureSwizzle_R;
+		swizzle_g = RD::TextureSwizzle_G;
+		swizzle_b = RD::TextureSwizzle_B;
+		swizzle_a = RD::TextureSwizzle_A;
 	} break;
 	}
 	return m_device->texture_create(COMPOSE(RD::TextureFormat, ts) {
@@ -107,8 +107,8 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 		ts.color_format_srgb = color_format_srgb;
 		ts.width = (uint32_t)image->get_width();
 		ts.height = (uint32_t)image->get_height();
-		ts.min_filter = ts.mag_filter = SamplerFilter_Linear;
-		ts.repeat_s = ts.repeat_t = SamplerRepeatMode_ClampToEdge;
+		ts.min_filter = ts.mag_filter = RD::SamplerFilter_Linear;
+		ts.repeat_s = ts.repeat_t = RD::SamplerRepeatMode_ClampToEdge;
 		ts.swizzle_r = swizzle_r;
 		ts.swizzle_g = swizzle_g;
 		ts.swizzle_b = swizzle_b;
@@ -136,15 +136,25 @@ RID RenderingServerDefault::shader_create()
 	return RID();
 }
 
+void RenderingServerDefault::shader_destroy(RID shader)
+{
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RenderingServerDefault::material_create()
 {
-	return RID();
+	return m_storage->material_create();
+}
+
+void RenderingServerDefault::material_destroy(RID material)
+{
+	m_storage->material_destroy(material);
 }
 
 void RenderingServerDefault::material_set_shader(RID material, RID shader)
 {
+	m_storage->material_set_shader(material, shader);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -7,7 +7,7 @@ using namespace ism;
 
 OBJECT_EMBED(Glyph, t) {}
 
-Glyph::Glyph(Buffer const & buffer, IntRect const & bounds, uint32_t advance)
+Glyph::Glyph(DynamicBuffer const & buffer, IntRect const & bounds, uint32_t advance)
 	: m_texture	{}
 	, m_bounds	{ bounds }
 	, m_advance	{ advance }

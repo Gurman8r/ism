@@ -26,19 +26,10 @@ namespace ism
 		EditorViewport		m_editor_view{};
 		Ref<SceneTree>		m_active_scene{};
 
-		RID m_uniform_buffer{};
-		RID m_uniform_set{};
-
-		RID m_sampler{};
-		RID m_pipeline{};
-		RID m_framebuffer{};
-		RID m_render_target{};
-		RID m_viewport{};
-
-		HashMap<String, Ref<Image>> images{};
-		HashMap<String, Ref<Texture>> textures{};
-		HashMap<String, Ref<Shader>> shaders{};
-		HashMap<String, Ref<Mesh>> meshes{};
+		HashMap<String, Ref<Image>> m_images{};
+		HashMap<String, Ref<Texture>> m_textures{};
+		HashMap<String, Ref<Shader>> m_shaders{};
+		HashMap<String, Ref<Mesh>> m_meshes{};
 
 	public:
 		EditorNode();

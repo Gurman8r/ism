@@ -16,7 +16,7 @@ namespace ism
 		uint32_t m_advance{};
 
 	public:
-		Glyph(Buffer const & buffer, IntRect const & bounds, uint32_t advance);
+		Glyph(DynamicBuffer const & buffer, IntRect const & bounds, uint32_t advance);
 
 		virtual ~Glyph();
 

@@ -100,7 +100,7 @@ namespace ism
 
 		friend class ImageLoader;
 
-		Buffer m_pixels{};
+		DynamicBuffer m_pixels{};
 
 		int32_t m_width{}, m_height{}, m_channels{};
 
@@ -113,7 +113,7 @@ namespace ism
 		
 		Image(int32_t width, int32_t height, ImageFormat_ format);
 		
-		Image(int32_t width, int32_t height, ImageFormat_ format, Buffer const & data);
+		Image(int32_t width, int32_t height, ImageFormat_ format, DynamicBuffer const & data);
 
 		void flip_vertically();
 		
@@ -135,7 +135,7 @@ namespace ism
 		
 		NODISCARD auto get_format() const noexcept -> ImageFormat_ { return m_format; }
 		
-		NODISCARD auto get_data() const noexcept -> Buffer const & { return m_pixels; }
+		NODISCARD auto get_data() const noexcept -> DynamicBuffer const & { return m_pixels; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

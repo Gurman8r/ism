@@ -29,7 +29,7 @@ Image::Image(int32_t width, int32_t height, ImageFormat_ format)
 	m_pixels.resize((size_t)(m_width * m_height * m_channels));
 }
 
-Image::Image(int32_t width, int32_t height, ImageFormat_ format, Buffer const & data)
+Image::Image(int32_t width, int32_t height, ImageFormat_ format, DynamicBuffer const & data)
 {
 	m_width = width;
 	m_height = height;

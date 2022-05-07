@@ -3,503 +3,6 @@
 
 #include <servers/display_server.hpp>
 
-// enums
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum ColorFormat_
-	{
-		ColorFormat_R4G4_UNORM_PACK8,
-		ColorFormat_R4G4B4A4_UNORM_PACK16,
-		ColorFormat_B4G4R4A4_UNORM_PACK16,
-		ColorFormat_R5G6B5_UNORM_PACK16,
-		ColorFormat_B5G6R5_UNORM_PACK16,
-		ColorFormat_R5G5B5A1_UNORM_PACK16,
-		ColorFormat_B5G5R5A1_UNORM_PACK16,
-		ColorFormat_A1R5G5B5_UNORM_PACK16,
-		ColorFormat_R8_UNORM,
-		ColorFormat_R8_SNORM,
-		ColorFormat_R8_USCALED,
-		ColorFormat_R8_SSCALED,
-		ColorFormat_R8_UINT,
-		ColorFormat_R8_SINT,
-		ColorFormat_R8_SRGB,
-		ColorFormat_R8G8_UNORM,
-		ColorFormat_R8G8_SNORM,
-		ColorFormat_R8G8_USCALED,
-		ColorFormat_R8G8_SSCALED,
-		ColorFormat_R8G8_UINT,
-		ColorFormat_R8G8_SINT,
-		ColorFormat_R8G8_SRGB,
-		ColorFormat_R8G8B8_UNORM,
-		ColorFormat_R8G8B8_SNORM,
-		ColorFormat_R8G8B8_USCALED,
-		ColorFormat_R8G8B8_SSCALED,
-		ColorFormat_R8G8B8_UINT,
-		ColorFormat_R8G8B8_SINT,
-		ColorFormat_R8G8B8_SRGB,
-		ColorFormat_B8G8R8_UNORM,
-		ColorFormat_B8G8R8_SNORM,
-		ColorFormat_B8G8R8_USCALED,
-		ColorFormat_B8G8R8_SSCALED,
-		ColorFormat_B8G8R8_UINT,
-		ColorFormat_B8G8R8_SINT,
-		ColorFormat_B8G8R8_SRGB,
-		ColorFormat_R8G8B8A8_UNORM,
-		ColorFormat_R8G8B8A8_SNORM,
-		ColorFormat_R8G8B8A8_USCALED,
-		ColorFormat_R8G8B8A8_SSCALED,
-		ColorFormat_R8G8B8A8_UINT,
-		ColorFormat_R8G8B8A8_SINT,
-		ColorFormat_R8G8B8A8_SRGB,
-		ColorFormat_B8G8R8A8_UNORM,
-		ColorFormat_B8G8R8A8_SNORM,
-		ColorFormat_B8G8R8A8_USCALED,
-		ColorFormat_B8G8R8A8_SSCALED,
-		ColorFormat_B8G8R8A8_UINT,
-		ColorFormat_B8G8R8A8_SINT,
-		ColorFormat_B8G8R8A8_SRGB,
-		ColorFormat_A8B8G8R8_UNORM_PACK32,
-		ColorFormat_A8B8G8R8_SNORM_PACK32,
-		ColorFormat_A8B8G8R8_USCALED_PACK32,
-		ColorFormat_A8B8G8R8_SSCALED_PACK32,
-		ColorFormat_A8B8G8R8_UINT_PACK32,
-		ColorFormat_A8B8G8R8_SINT_PACK32,
-		ColorFormat_A8B8G8R8_SRGB_PACK32,
-		ColorFormat_A2R10G10B10_UNORM_PACK32,
-		ColorFormat_A2R10G10B10_SNORM_PACK32,
-		ColorFormat_A2R10G10B10_USCALED_PACK32,
-		ColorFormat_A2R10G10B10_SSCALED_PACK32,
-		ColorFormat_A2R10G10B10_UINT_PACK32,
-		ColorFormat_A2R10G10B10_SINT_PACK32,
-		ColorFormat_A2B10G10R10_UNORM_PACK32,
-		ColorFormat_A2B10G10R10_SNORM_PACK32,
-		ColorFormat_A2B10G10R10_USCALED_PACK32,
-		ColorFormat_A2B10G10R10_SSCALED_PACK32,
-		ColorFormat_A2B10G10R10_UINT_PACK32,
-		ColorFormat_A2B10G10R10_SINT_PACK32,
-		ColorFormat_R16_UNORM,
-		ColorFormat_R16_SNORM,
-		ColorFormat_R16_USCALED,
-		ColorFormat_R16_SSCALED,
-		ColorFormat_R16_UINT,
-		ColorFormat_R16_SINT,
-		ColorFormat_R16_SFLOAT,
-		ColorFormat_R16G16_UNORM,
-		ColorFormat_R16G16_SNORM,
-		ColorFormat_R16G16_USCALED,
-		ColorFormat_R16G16_SSCALED,
-		ColorFormat_R16G16_UINT,
-		ColorFormat_R16G16_SINT,
-		ColorFormat_R16G16_SFLOAT,
-		ColorFormat_R16G16B16_UNORM,
-		ColorFormat_R16G16B16_SNORM,
-		ColorFormat_R16G16B16_USCALED,
-		ColorFormat_R16G16B16_SSCALED,
-		ColorFormat_R16G16B16_UINT,
-		ColorFormat_R16G16B16_SINT,
-		ColorFormat_R16G16B16_SFLOAT,
-		ColorFormat_R16G16B16A16_UNORM,
-		ColorFormat_R16G16B16A16_SNORM,
-		ColorFormat_R16G16B16A16_USCALED,
-		ColorFormat_R16G16B16A16_SSCALED,
-		ColorFormat_R16G16B16A16_UINT,
-		ColorFormat_R16G16B16A16_SINT,
-		ColorFormat_R16G16B16A16_SFLOAT,
-		ColorFormat_R32_UINT,
-		ColorFormat_R32_SINT,
-		ColorFormat_R32_SFLOAT,
-		ColorFormat_R32G32_UINT,
-		ColorFormat_R32G32_SINT,
-		ColorFormat_R32G32_SFLOAT,
-		ColorFormat_R32G32B32_UINT,
-		ColorFormat_R32G32B32_SINT,
-		ColorFormat_R32G32B32_SFLOAT,
-		ColorFormat_R32G32B32A32_UINT,
-		ColorFormat_R32G32B32A32_SINT,
-		ColorFormat_R32G32B32A32_SFLOAT,
-		ColorFormat_R64_UINT,
-		ColorFormat_R64_SINT,
-		ColorFormat_R64_SFLOAT,
-		ColorFormat_R64G64_UINT,
-		ColorFormat_R64G64_SINT,
-		ColorFormat_R64G64_SFLOAT,
-		ColorFormat_R64G64B64_UINT,
-		ColorFormat_R64G64B64_SINT,
-		ColorFormat_R64G64B64_SFLOAT,
-		ColorFormat_R64G64B64A64_UINT,
-		ColorFormat_R64G64B64A64_SINT,
-		ColorFormat_R64G64B64A64_SFLOAT,
-		ColorFormat_B10G11R11_UFLOAT_PACK32,
-		ColorFormat_E5B9G9R9_UFLOAT_PACK32,
-		ColorFormat_D16_UNORM,
-		ColorFormat_X8_D24_UNORM_PACK32,
-		ColorFormat_D32_SFLOAT,
-		ColorFormat_S8_UINT,
-		ColorFormat_D16_UNORM_S8_UINT,
-		ColorFormat_D24_UNORM_S8_UINT,
-		ColorFormat_D32_SFLOAT_S8_UINT,
-		ColorFormat_BC1_RGB_UNORM_BLOCK,
-		ColorFormat_BC1_RGB_SRGB_BLOCK,
-		ColorFormat_BC1_RGBA_UNORM_BLOCK,
-		ColorFormat_BC1_RGBA_SRGB_BLOCK,
-		ColorFormat_BC2_UNORM_BLOCK,
-		ColorFormat_BC2_SRGB_BLOCK,
-		ColorFormat_BC3_UNORM_BLOCK,
-		ColorFormat_BC3_SRGB_BLOCK,
-		ColorFormat_BC4_UNORM_BLOCK,
-		ColorFormat_BC4_SNORM_BLOCK,
-		ColorFormat_BC5_UNORM_BLOCK,
-		ColorFormat_BC5_SNORM_BLOCK,
-		ColorFormat_BC6H_UFLOAT_BLOCK,
-		ColorFormat_BC6H_SFLOAT_BLOCK,
-		ColorFormat_BC7_UNORM_BLOCK,
-		ColorFormat_BC7_SRGB_BLOCK,
-		ColorFormat_ETC2_R8G8B8_UNORM_BLOCK,
-		ColorFormat_ETC2_R8G8B8_SRGB_BLOCK,
-		ColorFormat_ETC2_R8G8B8A1_UNORM_BLOCK,
-		ColorFormat_ETC2_R8G8B8A1_SRGB_BLOCK,
-		ColorFormat_ETC2_R8G8B8A8_UNORM_BLOCK,
-		ColorFormat_ETC2_R8G8B8A8_SRGB_BLOCK,
-		ColorFormat_EAC_R11_UNORM_BLOCK,
-		ColorFormat_EAC_R11_SNORM_BLOCK,
-		ColorFormat_EAC_R11G11_UNORM_BLOCK,
-		ColorFormat_EAC_R11G11_SNORM_BLOCK,
-		ColorFormat_ASTC_4x4_UNORM_BLOCK,
-		ColorFormat_ASTC_4x4_SRGB_BLOCK,
-		ColorFormat_ASTC_5x4_UNORM_BLOCK,
-		ColorFormat_ASTC_5x4_SRGB_BLOCK,
-		ColorFormat_ASTC_5x5_UNORM_BLOCK,
-		ColorFormat_ASTC_5x5_SRGB_BLOCK,
-		ColorFormat_ASTC_6x5_UNORM_BLOCK,
-		ColorFormat_ASTC_6x5_SRGB_BLOCK,
-		ColorFormat_ASTC_6x6_UNORM_BLOCK,
-		ColorFormat_ASTC_6x6_SRGB_BLOCK,
-		ColorFormat_ASTC_8x5_UNORM_BLOCK,
-		ColorFormat_ASTC_8x5_SRGB_BLOCK,
-		ColorFormat_ASTC_8x6_UNORM_BLOCK,
-		ColorFormat_ASTC_8x6_SRGB_BLOCK,
-		ColorFormat_ASTC_8x8_UNORM_BLOCK,
-		ColorFormat_ASTC_8x8_SRGB_BLOCK,
-		ColorFormat_ASTC_10x5_UNORM_BLOCK,
-		ColorFormat_ASTC_10x5_SRGB_BLOCK,
-		ColorFormat_ASTC_10x6_UNORM_BLOCK,
-		ColorFormat_ASTC_10x6_SRGB_BLOCK,
-		ColorFormat_ASTC_10x8_UNORM_BLOCK,
-		ColorFormat_ASTC_10x8_SRGB_BLOCK,
-		ColorFormat_ASTC_10x10_UNORM_BLOCK,
-		ColorFormat_ASTC_10x10_SRGB_BLOCK,
-		ColorFormat_ASTC_12x10_UNORM_BLOCK,
-		ColorFormat_ASTC_12x10_SRGB_BLOCK,
-		ColorFormat_ASTC_12x12_UNORM_BLOCK,
-		ColorFormat_ASTC_12x12_SRGB_BLOCK,
-		ColorFormat_G8B8G8R8_422_UNORM,
-		ColorFormat_B8G8R8G8_422_UNORM,
-		ColorFormat_G8_B8_R8_3PLANE_420_UNORM,
-		ColorFormat_G8_B8R8_2PLANE_420_UNORM,
-		ColorFormat_G8_B8_R8_3PLANE_422_UNORM,
-		ColorFormat_G8_B8R8_2PLANE_422_UNORM,
-		ColorFormat_G8_B8_R8_3PLANE_444_UNORM,
-		ColorFormat_R10X6_UNORM_PACK16,
-		ColorFormat_R10X6G10X6_UNORM_2PACK16,
-		ColorFormat_R10X6G10X6B10X6A10X6_UNORM_4PACK16,
-		ColorFormat_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16,
-		ColorFormat_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16,
-		ColorFormat_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16,
-		ColorFormat_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16,
-		ColorFormat_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16,
-		ColorFormat_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16,
-		ColorFormat_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16,
-		ColorFormat_R12X4_UNORM_PACK16,
-		ColorFormat_R12X4G12X4_UNORM_2PACK16,
-		ColorFormat_R12X4G12X4B12X4A12X4_UNORM_4PACK16,
-		ColorFormat_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16,
-		ColorFormat_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16,
-		ColorFormat_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16,
-		ColorFormat_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16,
-		ColorFormat_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16,
-		ColorFormat_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16,
-		ColorFormat_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16,
-		ColorFormat_G16B16G16R16_422_UNORM,
-		ColorFormat_B16G16R16G16_422_UNORM,
-		ColorFormat_G16_B16_R16_3PLANE_420_UNORM,
-		ColorFormat_G16_B16R16_2PLANE_420_UNORM,
-		ColorFormat_G16_B16_R16_3PLANE_422_UNORM,
-		ColorFormat_G16_B16R16_2PLANE_422_UNORM,
-		ColorFormat_G16_B16_R16_3PLANE_444_UNORM,
-		ColorFormat_PVRTC1_2BPP_UNORM_BLOCK_IMG,
-		ColorFormat_PVRTC1_4BPP_UNORM_BLOCK_IMG,
-		ColorFormat_PVRTC2_2BPP_UNORM_BLOCK_IMG,
-		ColorFormat_PVRTC2_4BPP_UNORM_BLOCK_IMG,
-		ColorFormat_PVRTC1_2BPP_SRGB_BLOCK_IMG,
-		ColorFormat_PVRTC1_4BPP_SRGB_BLOCK_IMG,
-		ColorFormat_PVRTC2_2BPP_SRGB_BLOCK_IMG,
-		ColorFormat_PVRTC2_4BPP_SRGB_BLOCK_IMG,
-		ColorFormat_MAX
-	};
-
-	constexpr bool is_depth_stencil_color_format(ColorFormat_ const value) noexcept
-	{
-		switch (value)
-		{
-		case ColorFormat_D16_UNORM:
-		case ColorFormat_X8_D24_UNORM_PACK32:
-		case ColorFormat_D32_SFLOAT:
-		case ColorFormat_D16_UNORM_S8_UINT:
-		case ColorFormat_D24_UNORM_S8_UINT:
-		case ColorFormat_D32_SFLOAT_S8_UINT:
-			return true;
-		}
-		return false;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum TextureType_
-	{
-		TextureType_1D,
-		TextureType_2D,
-		TextureType_3D,
-		TextureType_Cube,
-		TextureType_1D_Array,
-		TextureType_2D_Array,
-		TextureType_Cube_Array,
-		TextureType_Proxy_2D,
-		TextureType_Proxy_1D_Array,
-		TextureType_Proxy_Cubemap,
-		TextureType_MAX
-	};
-
-	enum TextureSamples_
-	{
-		TextureSamples_1,
-		TextureSamples_2,
-		TextureSamples_4,
-		TextureSamples_8,
-		TextureSamples_16,
-		TextureSamples_32,
-		TextureSamples_64,
-		TextureSamples_MAX
-	};
-
-	enum TextureFlags_
-	{
-		TextureFlags_None,
-		TextureFlags_Sampling				= 1 << 0,
-		TextureFlags_ColorAttachment		= 1 << 1,
-		TextureFlags_DepthStencilAttachment = 1 << 2,
-		TextureFlags_Storage				= 1 << 3,
-		TextureFlags_Storage_Atomic			= 1 << 4,
-		TextureFlags_CpuRead				= 1 << 5,
-		TextureFlags_CanUpdate				= 1 << 6,
-		TextureFlags_CanCopyFrom			= 1 << 7,
-		TextureFlags_CanCopyTo				= 1 << 8,
-		TextureFlags_ResolveAttachment		= 1 << 9,
-
-		TextureFlags_Default =
-			TextureFlags_Sampling |
-			TextureFlags_CanUpdate |
-			TextureFlags_CanCopyFrom
-	};
-
-	enum TextureSwizzle_
-	{
-		TextureSwizzle_Identity,
-		TextureSwizzle_Zero,
-		TextureSwizzle_One,
-		TextureSwizzle_R,
-		TextureSwizzle_G,
-		TextureSwizzle_B,
-		TextureSwizzle_A,
-		TextureSwizzle_MAX
-	};
-
-	enum TextureSliceType_
-	{
-		TextureSliceType_2D,
-		TextureSliceType_Cube,
-		TextureSliceType_3D,
-		TextureSliceType_2D_Array,
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum SamplerFilter_
-	{
-		SamplerFilter_Nearest,
-		SamplerFilter_Linear,
-	};
-
-	enum SamplerRepeatMode_
-	{
-		SamplerRepeatMode_Repeat,
-		SamplerRepeatMode_MirroredRepeat,
-		SamplerRepeatMode_ClampToEdge,
-		SamplerRepeatMode_ClampToBorder,
-		SamplerRepeatMode_MirrorClampToEdge,
-		SamplerRepeatMode_MAX
-	};
-
-	enum SamplerBorderColor_
-	{
-		SamplerBorderColor_Float_Transparent_Black,
-		SamplerBorderColor_Int_Transparent_Black,
-		SamplerBorderColor_Float_Opaque_Black,
-		SamplerBorderColor_Int_Opaque_Black,
-		SamplerBorderColor_Float_Opaque_White,
-		SamplerBorderColor_Int_Opaque_White,
-		SamplerBorderColor_MAX
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum VertexFrequency_
-	{
-		VertexFrequency_Vertex,
-		VertexFrequency_Instance,
-	};
-
-	enum IndexbufferFormat_
-	{
-		IndexbufferFormat_U8,
-		IndexbufferFormat_U16,
-		IndexbufferFormat_U32,
-	};
-
-	constexpr size_t get_index_type_size(IndexbufferFormat_ const value) noexcept
-	{
-		switch (value) {
-		case IndexbufferFormat_U8: return sizeof(uint8_t);
-		case IndexbufferFormat_U16: return sizeof(uint16_t);
-		case IndexbufferFormat_U32: return sizeof(uint32_t);
-		}
-		return get_index_type_size(IndexbufferFormat_U32);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum ShaderStage_
-	{
-		ShaderStage_Vertex,
-		ShaderStage_Fragment,
-		ShaderStage_Geometry,
-		ShaderStage_TesselationControl,
-		ShaderStage_TesselationEvaluation,
-		ShaderStage_Compute,
-		ShaderStage_MAX,
-		ShaderStage_Vertex_Bit					= 1 << 0,
-		ShaderStage_Fragment_Bit				= 1 << 1,
-		ShaderStage_Geometry_Bit				= 1 << 2,
-		ShaderStage_TesselationControl_Bit		= 1 << 3,
-		ShaderStage_TesselationEvaluation_Bit	= 1 << 4,
-		ShaderStage_Compute_Bit					= 1 << 5,
-	};
-
-	enum ShaderLanguage_
-	{
-		ShaderLanguage_GLSL,
-		ShaderLanguage_HLSL,
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum UniformType_
-	{
-		UniformType_Sampler,
-		UniformType_SamplerWithTexture,
-		UniformType_Texture,
-		UniformType_Image,
-		UniformType_TextureBuffer,
-		UniformType_SamplerWithTextureBuffer,
-		UniformType_ImageBuffer,
-		UniformType_UniformBuffer,
-		UniformType_StorageBuffer,
-		UniformType_InputAttachment,
-		UniformType_MAX
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum RenderPrimitive_
-	{
-		RenderPrimitive_Points,
-		RenderPrimitive_Lines,
-		RenderPrimitive_LinesWithAdjacency,
-		RenderPrimitive_Linestrips,
-		RenderPrimitive_LinestripsWithAdjacency,
-		RenderPrimitive_Triangles,
-		RenderPrimitive_TrianglesWithAdjacency,
-		RenderPrimitive_TriangleStrips,
-		RenderPrimitive_TriangleStripsWithAdjacency,
-		RenderPrimitive_TriangleStripsWithRestartIndex,
-		RenderPrimitive_TesselationPatch,
-		RenderPrimitive_MAX
-	};
-
-	enum PolygonCullMode_
-	{
-		PolygonCullMode_Disabled,
-		PolygonCullMode_Front,
-		PolygonCullMode_Back,
-	};
-
-	enum PolygonFrontFace_
-	{
-		PolygonFrontFace_Clockwise,
-		PolygonFrontFace_CounterClockwise,
-	};
-
-	enum StencilOperation_
-	{
-		StencilOperation_Keep,
-		StencilOperation_Zero,
-		StencilOperation_Replace,
-		StencilOperation_IncrementAndClamp,
-		StencilOperation_DecrementAndClamp,
-		StencilOperation_Invert,
-		StencilOperation_IncrementAndWrap,
-		StencilOperation_DecrementAndWrap,
-		StencilOperation_MAX
-	};
-
-	enum BlendFactor_
-	{
-		BlendFactor_Zero,
-		BlendFactor_One,
-		BlendFactor_SrcColor,
-		BlendFactor_OneMinusSrcColor,
-		BlendFactor_DstColor,
-		BlendFactor_OneMinusDstColor,
-		BlendFactor_SrcAlpha,
-		BlendFactor_OneMinusSrcAlpha,
-		BlendFactor_DstAlpha,
-		BlendFactor_OneMinusDstAlpha,
-		BlendFactor_ConstantColor,
-		BlendFactor_OneMinusConstantColor,
-		BlendFactor_ConstantAlpha,
-		BlendFactor_OneMinusConstantAlpha,
-		BlendFactor_SrcAlphaSaturate,
-		BlendFactor_Src1Color,
-		BlendFactor_OneMinusSrc1Color,
-		BlendFactor_Src1Alpha,
-		BlendFactor_OneMinusSrc1Alpha,
-		BlendFactor_MAX
-	};
-
-	enum BlendOperation_
-	{
-		BlendOperation_Add,
-		BlendOperation_Subtract,
-		BlendOperation_ReverseSubtract,
-		BlendOperation_Minimum,
-		BlendOperation_Maximum,
-		BlendOperation_MAX
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
 // rendering device
 namespace ism
 {
@@ -525,7 +28,239 @@ namespace ism
 		virtual void finalize() = 0;
 
 	public:
-		/* VERTEXARRAY */
+		enum DataFormat_
+		{
+			DataFormat_R4G4_UNORM_PACK8,
+			DataFormat_R4G4B4A4_UNORM_PACK16,
+			DataFormat_B4G4R4A4_UNORM_PACK16,
+			DataFormat_R5G6B5_UNORM_PACK16,
+			DataFormat_B5G6R5_UNORM_PACK16,
+			DataFormat_R5G5B5A1_UNORM_PACK16,
+			DataFormat_B5G5R5A1_UNORM_PACK16,
+			DataFormat_A1R5G5B5_UNORM_PACK16,
+			DataFormat_R8_UNORM,
+			DataFormat_R8_SNORM,
+			DataFormat_R8_USCALED,
+			DataFormat_R8_SSCALED,
+			DataFormat_R8_UINT,
+			DataFormat_R8_SINT,
+			DataFormat_R8_SRGB,
+			DataFormat_R8G8_UNORM,
+			DataFormat_R8G8_SNORM,
+			DataFormat_R8G8_USCALED,
+			DataFormat_R8G8_SSCALED,
+			DataFormat_R8G8_UINT,
+			DataFormat_R8G8_SINT,
+			DataFormat_R8G8_SRGB,
+			DataFormat_R8G8B8_UNORM,
+			DataFormat_R8G8B8_SNORM,
+			DataFormat_R8G8B8_USCALED,
+			DataFormat_R8G8B8_SSCALED,
+			DataFormat_R8G8B8_UINT,
+			DataFormat_R8G8B8_SINT,
+			DataFormat_R8G8B8_SRGB,
+			DataFormat_B8G8R8_UNORM,
+			DataFormat_B8G8R8_SNORM,
+			DataFormat_B8G8R8_USCALED,
+			DataFormat_B8G8R8_SSCALED,
+			DataFormat_B8G8R8_UINT,
+			DataFormat_B8G8R8_SINT,
+			DataFormat_B8G8R8_SRGB,
+			DataFormat_R8G8B8A8_UNORM,
+			DataFormat_R8G8B8A8_SNORM,
+			DataFormat_R8G8B8A8_USCALED,
+			DataFormat_R8G8B8A8_SSCALED,
+			DataFormat_R8G8B8A8_UINT,
+			DataFormat_R8G8B8A8_SINT,
+			DataFormat_R8G8B8A8_SRGB,
+			DataFormat_B8G8R8A8_UNORM,
+			DataFormat_B8G8R8A8_SNORM,
+			DataFormat_B8G8R8A8_USCALED,
+			DataFormat_B8G8R8A8_SSCALED,
+			DataFormat_B8G8R8A8_UINT,
+			DataFormat_B8G8R8A8_SINT,
+			DataFormat_B8G8R8A8_SRGB,
+			DataFormat_A8B8G8R8_UNORM_PACK32,
+			DataFormat_A8B8G8R8_SNORM_PACK32,
+			DataFormat_A8B8G8R8_USCALED_PACK32,
+			DataFormat_A8B8G8R8_SSCALED_PACK32,
+			DataFormat_A8B8G8R8_UINT_PACK32,
+			DataFormat_A8B8G8R8_SINT_PACK32,
+			DataFormat_A8B8G8R8_SRGB_PACK32,
+			DataFormat_A2R10G10B10_UNORM_PACK32,
+			DataFormat_A2R10G10B10_SNORM_PACK32,
+			DataFormat_A2R10G10B10_USCALED_PACK32,
+			DataFormat_A2R10G10B10_SSCALED_PACK32,
+			DataFormat_A2R10G10B10_UINT_PACK32,
+			DataFormat_A2R10G10B10_SINT_PACK32,
+			DataFormat_A2B10G10R10_UNORM_PACK32,
+			DataFormat_A2B10G10R10_SNORM_PACK32,
+			DataFormat_A2B10G10R10_USCALED_PACK32,
+			DataFormat_A2B10G10R10_SSCALED_PACK32,
+			DataFormat_A2B10G10R10_UINT_PACK32,
+			DataFormat_A2B10G10R10_SINT_PACK32,
+			DataFormat_R16_UNORM,
+			DataFormat_R16_SNORM,
+			DataFormat_R16_USCALED,
+			DataFormat_R16_SSCALED,
+			DataFormat_R16_UINT,
+			DataFormat_R16_SINT,
+			DataFormat_R16_SFLOAT,
+			DataFormat_R16G16_UNORM,
+			DataFormat_R16G16_SNORM,
+			DataFormat_R16G16_USCALED,
+			DataFormat_R16G16_SSCALED,
+			DataFormat_R16G16_UINT,
+			DataFormat_R16G16_SINT,
+			DataFormat_R16G16_SFLOAT,
+			DataFormat_R16G16B16_UNORM,
+			DataFormat_R16G16B16_SNORM,
+			DataFormat_R16G16B16_USCALED,
+			DataFormat_R16G16B16_SSCALED,
+			DataFormat_R16G16B16_UINT,
+			DataFormat_R16G16B16_SINT,
+			DataFormat_R16G16B16_SFLOAT,
+			DataFormat_R16G16B16A16_UNORM,
+			DataFormat_R16G16B16A16_SNORM,
+			DataFormat_R16G16B16A16_USCALED,
+			DataFormat_R16G16B16A16_SSCALED,
+			DataFormat_R16G16B16A16_UINT,
+			DataFormat_R16G16B16A16_SINT,
+			DataFormat_R16G16B16A16_SFLOAT,
+			DataFormat_R32_UINT,
+			DataFormat_R32_SINT,
+			DataFormat_R32_SFLOAT,
+			DataFormat_R32G32_UINT,
+			DataFormat_R32G32_SINT,
+			DataFormat_R32G32_SFLOAT,
+			DataFormat_R32G32B32_UINT,
+			DataFormat_R32G32B32_SINT,
+			DataFormat_R32G32B32_SFLOAT,
+			DataFormat_R32G32B32A32_UINT,
+			DataFormat_R32G32B32A32_SINT,
+			DataFormat_R32G32B32A32_SFLOAT,
+			DataFormat_R64_UINT,
+			DataFormat_R64_SINT,
+			DataFormat_R64_SFLOAT,
+			DataFormat_R64G64_UINT,
+			DataFormat_R64G64_SINT,
+			DataFormat_R64G64_SFLOAT,
+			DataFormat_R64G64B64_UINT,
+			DataFormat_R64G64B64_SINT,
+			DataFormat_R64G64B64_SFLOAT,
+			DataFormat_R64G64B64A64_UINT,
+			DataFormat_R64G64B64A64_SINT,
+			DataFormat_R64G64B64A64_SFLOAT,
+			DataFormat_B10G11R11_UFLOAT_PACK32,
+			DataFormat_E5B9G9R9_UFLOAT_PACK32,
+			DataFormat_D16_UNORM,
+			DataFormat_X8_D24_UNORM_PACK32,
+			DataFormat_D32_SFLOAT,
+			DataFormat_S8_UINT,
+			DataFormat_D16_UNORM_S8_UINT,
+			DataFormat_D24_UNORM_S8_UINT,
+			DataFormat_D32_SFLOAT_S8_UINT,
+			DataFormat_BC1_RGB_UNORM_BLOCK,
+			DataFormat_BC1_RGB_SRGB_BLOCK,
+			DataFormat_BC1_RGBA_UNORM_BLOCK,
+			DataFormat_BC1_RGBA_SRGB_BLOCK,
+			DataFormat_BC2_UNORM_BLOCK,
+			DataFormat_BC2_SRGB_BLOCK,
+			DataFormat_BC3_UNORM_BLOCK,
+			DataFormat_BC3_SRGB_BLOCK,
+			DataFormat_BC4_UNORM_BLOCK,
+			DataFormat_BC4_SNORM_BLOCK,
+			DataFormat_BC5_UNORM_BLOCK,
+			DataFormat_BC5_SNORM_BLOCK,
+			DataFormat_BC6H_UFLOAT_BLOCK,
+			DataFormat_BC6H_SFLOAT_BLOCK,
+			DataFormat_BC7_UNORM_BLOCK,
+			DataFormat_BC7_SRGB_BLOCK,
+			DataFormat_ETC2_R8G8B8_UNORM_BLOCK,
+			DataFormat_ETC2_R8G8B8_SRGB_BLOCK,
+			DataFormat_ETC2_R8G8B8A1_UNORM_BLOCK,
+			DataFormat_ETC2_R8G8B8A1_SRGB_BLOCK,
+			DataFormat_ETC2_R8G8B8A8_UNORM_BLOCK,
+			DataFormat_ETC2_R8G8B8A8_SRGB_BLOCK,
+			DataFormat_EAC_R11_UNORM_BLOCK,
+			DataFormat_EAC_R11_SNORM_BLOCK,
+			DataFormat_EAC_R11G11_UNORM_BLOCK,
+			DataFormat_EAC_R11G11_SNORM_BLOCK,
+			DataFormat_ASTC_4x4_UNORM_BLOCK,
+			DataFormat_ASTC_4x4_SRGB_BLOCK,
+			DataFormat_ASTC_5x4_UNORM_BLOCK,
+			DataFormat_ASTC_5x4_SRGB_BLOCK,
+			DataFormat_ASTC_5x5_UNORM_BLOCK,
+			DataFormat_ASTC_5x5_SRGB_BLOCK,
+			DataFormat_ASTC_6x5_UNORM_BLOCK,
+			DataFormat_ASTC_6x5_SRGB_BLOCK,
+			DataFormat_ASTC_6x6_UNORM_BLOCK,
+			DataFormat_ASTC_6x6_SRGB_BLOCK,
+			DataFormat_ASTC_8x5_UNORM_BLOCK,
+			DataFormat_ASTC_8x5_SRGB_BLOCK,
+			DataFormat_ASTC_8x6_UNORM_BLOCK,
+			DataFormat_ASTC_8x6_SRGB_BLOCK,
+			DataFormat_ASTC_8x8_UNORM_BLOCK,
+			DataFormat_ASTC_8x8_SRGB_BLOCK,
+			DataFormat_ASTC_10x5_UNORM_BLOCK,
+			DataFormat_ASTC_10x5_SRGB_BLOCK,
+			DataFormat_ASTC_10x6_UNORM_BLOCK,
+			DataFormat_ASTC_10x6_SRGB_BLOCK,
+			DataFormat_ASTC_10x8_UNORM_BLOCK,
+			DataFormat_ASTC_10x8_SRGB_BLOCK,
+			DataFormat_ASTC_10x10_UNORM_BLOCK,
+			DataFormat_ASTC_10x10_SRGB_BLOCK,
+			DataFormat_ASTC_12x10_UNORM_BLOCK,
+			DataFormat_ASTC_12x10_SRGB_BLOCK,
+			DataFormat_ASTC_12x12_UNORM_BLOCK,
+			DataFormat_ASTC_12x12_SRGB_BLOCK,
+			DataFormat_G8B8G8R8_422_UNORM,
+			DataFormat_B8G8R8G8_422_UNORM,
+			DataFormat_G8_B8_R8_3PLANE_420_UNORM,
+			DataFormat_G8_B8R8_2PLANE_420_UNORM,
+			DataFormat_G8_B8_R8_3PLANE_422_UNORM,
+			DataFormat_G8_B8R8_2PLANE_422_UNORM,
+			DataFormat_G8_B8_R8_3PLANE_444_UNORM,
+			DataFormat_R10X6_UNORM_PACK16,
+			DataFormat_R10X6G10X6_UNORM_2PACK16,
+			DataFormat_R10X6G10X6B10X6A10X6_UNORM_4PACK16,
+			DataFormat_G10X6B10X6G10X6R10X6_422_UNORM_4PACK16,
+			DataFormat_B10X6G10X6R10X6G10X6_422_UNORM_4PACK16,
+			DataFormat_G10X6_B10X6_R10X6_3PLANE_420_UNORM_3PACK16,
+			DataFormat_G10X6_B10X6R10X6_2PLANE_420_UNORM_3PACK16,
+			DataFormat_G10X6_B10X6_R10X6_3PLANE_422_UNORM_3PACK16,
+			DataFormat_G10X6_B10X6R10X6_2PLANE_422_UNORM_3PACK16,
+			DataFormat_G10X6_B10X6_R10X6_3PLANE_444_UNORM_3PACK16,
+			DataFormat_R12X4_UNORM_PACK16,
+			DataFormat_R12X4G12X4_UNORM_2PACK16,
+			DataFormat_R12X4G12X4B12X4A12X4_UNORM_4PACK16,
+			DataFormat_G12X4B12X4G12X4R12X4_422_UNORM_4PACK16,
+			DataFormat_B12X4G12X4R12X4G12X4_422_UNORM_4PACK16,
+			DataFormat_G12X4_B12X4_R12X4_3PLANE_420_UNORM_3PACK16,
+			DataFormat_G12X4_B12X4R12X4_2PLANE_420_UNORM_3PACK16,
+			DataFormat_G12X4_B12X4_R12X4_3PLANE_422_UNORM_3PACK16,
+			DataFormat_G12X4_B12X4R12X4_2PLANE_422_UNORM_3PACK16,
+			DataFormat_G12X4_B12X4_R12X4_3PLANE_444_UNORM_3PACK16,
+			DataFormat_G16B16G16R16_422_UNORM,
+			DataFormat_B16G16R16G16_422_UNORM,
+			DataFormat_G16_B16_R16_3PLANE_420_UNORM,
+			DataFormat_G16_B16R16_2PLANE_420_UNORM,
+			DataFormat_G16_B16_R16_3PLANE_422_UNORM,
+			DataFormat_G16_B16R16_2PLANE_422_UNORM,
+			DataFormat_G16_B16_R16_3PLANE_444_UNORM,
+			DataFormat_PVRTC1_2BPP_UNORM_BLOCK_IMG,
+			DataFormat_PVRTC1_4BPP_UNORM_BLOCK_IMG,
+			DataFormat_PVRTC2_2BPP_UNORM_BLOCK_IMG,
+			DataFormat_PVRTC2_4BPP_UNORM_BLOCK_IMG,
+			DataFormat_PVRTC1_2BPP_SRGB_BLOCK_IMG,
+			DataFormat_PVRTC1_4BPP_SRGB_BLOCK_IMG,
+			DataFormat_PVRTC2_2BPP_SRGB_BLOCK_IMG,
+			DataFormat_PVRTC2_4BPP_SRGB_BLOCK_IMG,
+			DataFormat_MAX
+		};
+
+	public:
+		/* VERTEXARRAY API */
 		struct VertexFormat
 		{
 			struct Element
@@ -565,67 +300,66 @@ namespace ism
 			} {}
 		};
 
+		enum IndexbufferFormat_
+		{
+			IndexbufferFormat_U8,
+			IndexbufferFormat_U16,
+			IndexbufferFormat_U32,
+		};
+
+		NODISCARD static constexpr size_t get_index_buffer_format_size(IndexbufferFormat_ const value) noexcept
+		{
+			switch (value) {
+			case IndexbufferFormat_U8: return sizeof(uint8_t);
+			case IndexbufferFormat_U16: return sizeof(uint16_t);
+			case IndexbufferFormat_U32: return sizeof(uint32_t);
+			}
+			return get_index_buffer_format_size(IndexbufferFormat_U32);
+		}
+
 		virtual RID vertex_array_create(size_t vertex_count, VertexFormat const & format, Vector<RID> const & buffers) = 0;
 		virtual void vertex_array_destroy(RID vertex_array) = 0;
 
-	public:
-		/* VERTEXBUFFER */
-		virtual RID vertex_buffer_create(size_t size_in_bytes, Buffer const & buffer = {}) = 0;
+		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) = 0;
 		virtual void vertex_buffer_destroy(RID vertex_buffer) = 0;
 		virtual void vertex_buffer_update(RID vertex_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
 
-	public:
-		/* INDEXARRAY */
 		virtual RID index_array_create(RID index_buffer, size_t index_offset, size_t index_count) = 0;
 		virtual void index_array_destroy(RID index_array) = 0;
 
-	public:
-		/* INDEXBUFFER */
-		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, Buffer const & buffer = {}) = 0;
+		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & buffer = {}) = 0;
 		virtual void index_buffer_destroy(RID index_buffer) = 0;
 		virtual void index_buffer_update(RID index_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
 
 	public:
-		/* TEXTURE */
-		struct TextureFormat
+		/* SAMPLER API */
+		enum SamplerFilter_
 		{
-			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(TextureFormat);
-
-			TextureType_ texture_type{ TextureType_2D };
-
-			ColorFormat_ color_format{ ColorFormat_R8G8B8_UNORM };
-
-			uint32_t width{ 1 }, height{ 1 }, depth{ 1 }, layers{ 1 }, mipmaps{ 1 };
-
-			SamplerFilter_ min_filter{ SamplerFilter_Nearest }, mag_filter{ SamplerFilter_Nearest };
-
-			SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat };
-
-			TextureSamples_ samples{ TextureSamples_1 };
-
-			int32_t usage_flags{ TextureFlags_Default };
-
-			ColorFormat_ color_format_srgb{ ColorFormat_MAX };
-
-			TextureSwizzle_ swizzle_r{ TextureSwizzle_R }, swizzle_g{ TextureSwizzle_G }, swizzle_b{ TextureSwizzle_B }, swizzle_a{ TextureSwizzle_A };
+			SamplerFilter_Nearest,
+			SamplerFilter_Linear,
 		};
 
-		virtual RID texture_create(TextureFormat const & format, Buffer const & data = {}) = 0;
-		virtual void texture_destroy(RID texture) = 0;
-		virtual void texture_bind(RID texture, size_t slot = 0) = 0;
-		virtual void texture_update(RID texture, Buffer const & data = {}) = 0;
-		virtual void * texture_get_handle(RID texture) = 0;
-		virtual Buffer texture_get_data(RID texture) = 0;
+		enum SamplerRepeatMode_
+		{
+			SamplerRepeatMode_Repeat,
+			SamplerRepeatMode_MirroredRepeat,
+			SamplerRepeatMode_ClampToEdge,
+			SamplerRepeatMode_ClampToBorder,
+			SamplerRepeatMode_MirrorClampToEdge,
+			SamplerRepeatMode_MAX
+		};
 
-	public:
-		/* FRAMEBUFFER */
-		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
-		virtual void framebuffer_destroy(RID framebuffer) = 0;
-		virtual void framebuffer_bind(RID framebuffer) = 0;
-		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) = 0;
+		enum SamplerBorderColor_
+		{
+			SamplerBorderColor_Float_Transparent_Black,
+			SamplerBorderColor_Int_Transparent_Black,
+			SamplerBorderColor_Float_Opaque_Black,
+			SamplerBorderColor_Int_Opaque_Black,
+			SamplerBorderColor_Float_Opaque_White,
+			SamplerBorderColor_Int_Opaque_White,
+			SamplerBorderColor_MAX
+		};
 
-	public:
-		/* SAMPLER */
 		struct SamplerState
 		{
 			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(SamplerState);
@@ -655,14 +389,143 @@ namespace ism
 		virtual void sampler_destroy(RID sampler) = 0;
 
 	public:
+		/* TEXTURE API */
+		enum TextureType_
+		{
+			TextureType_1D,
+			TextureType_2D,
+			TextureType_3D,
+			TextureType_Cube,
+			TextureType_1D_Array,
+			TextureType_2D_Array,
+			TextureType_Cube_Array,
+			TextureType_Proxy_2D,
+			TextureType_Proxy_1D_Array,
+			TextureType_Proxy_Cubemap,
+			TextureType_MAX
+		};
+
+		enum TextureSamples_
+		{
+			TextureSamples_1,
+			TextureSamples_2,
+			TextureSamples_4,
+			TextureSamples_8,
+			TextureSamples_16,
+			TextureSamples_32,
+			TextureSamples_64,
+			TextureSamples_MAX
+		};
+
+		enum TextureFlags_
+		{
+			TextureFlags_None,
+			TextureFlags_Sampling = 1 << 0,
+			TextureFlags_ColorAttachment = 1 << 1,
+			TextureFlags_DepthStencilAttachment = 1 << 2,
+			TextureFlags_Storage = 1 << 3,
+			TextureFlags_Storage_Atomic = 1 << 4,
+			TextureFlags_CpuRead = 1 << 5,
+			TextureFlags_CanUpdate = 1 << 6,
+			TextureFlags_CanCopyFrom = 1 << 7,
+			TextureFlags_CanCopyTo = 1 << 8,
+			TextureFlags_ResolveAttachment = 1 << 9,
+
+			TextureFlags_Default =
+			TextureFlags_Sampling |
+			TextureFlags_CanUpdate |
+			TextureFlags_CanCopyFrom
+		};
+
+		enum TextureSwizzle_
+		{
+			TextureSwizzle_Identity,
+			TextureSwizzle_Zero,
+			TextureSwizzle_One,
+			TextureSwizzle_R,
+			TextureSwizzle_G,
+			TextureSwizzle_B,
+			TextureSwizzle_A,
+			TextureSwizzle_MAX
+		};
+
+		enum TextureSliceType_
+		{
+			TextureSliceType_2D,
+			TextureSliceType_Cube,
+			TextureSliceType_3D,
+			TextureSliceType_2D_Array,
+		};
+
+		struct TextureFormat
+		{
+			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(TextureFormat);
+
+			TextureType_ texture_type{ TextureType_2D };
+
+			DataFormat_ color_format{ DataFormat_R8G8B8_UNORM };
+
+			uint32_t width{ 1 }, height{ 1 }, depth{ 1 }, layers{ 1 }, mipmaps{ 1 };
+
+			SamplerFilter_ min_filter{ SamplerFilter_Nearest }, mag_filter{ SamplerFilter_Nearest };
+
+			SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat };
+
+			TextureSamples_ samples{ TextureSamples_1 };
+
+			int32_t usage_flags{ TextureFlags_Default };
+
+			DataFormat_ color_format_srgb{ DataFormat_MAX };
+
+			TextureSwizzle_ swizzle_r{ TextureSwizzle_R }, swizzle_g{ TextureSwizzle_G }, swizzle_b{ TextureSwizzle_B }, swizzle_a{ TextureSwizzle_A };
+		};
+
+		virtual RID texture_create(TextureFormat const & format, DynamicBuffer const & data = {}) = 0;
+		virtual void texture_destroy(RID texture) = 0;
+		virtual void texture_bind(RID texture, size_t slot = 0) = 0;
+		virtual void texture_update(RID texture, DynamicBuffer const & data = {}) = 0;
+		virtual void * texture_get_handle(RID texture) = 0;
+		virtual DynamicBuffer texture_get_data(RID texture) = 0;
+
+	public:
+		/* FRAMEBUFFER */
+		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
+		virtual void framebuffer_destroy(RID framebuffer) = 0;
+		virtual void framebuffer_bind(RID framebuffer) = 0;
+		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) = 0;
+
+	public:
 		/* SHADER */
+		enum ShaderLanguage_
+		{
+			ShaderLanguage_GLSL,
+			ShaderLanguage_HLSL,
+		};
+
+		enum ShaderStage_
+		{
+			ShaderStage_Vertex,
+			ShaderStage_Fragment,
+			ShaderStage_Geometry,
+			ShaderStage_TesselationControl,
+			ShaderStage_TesselationEvaluation,
+			ShaderStage_Compute,
+			ShaderStage_MAX,
+			ShaderStage_Vertex_Bit = 1 << 0,
+			ShaderStage_Fragment_Bit = 1 << 1,
+			ShaderStage_Geometry_Bit = 1 << 2,
+			ShaderStage_TesselationControl_Bit = 1 << 3,
+			ShaderStage_TesselationEvaluation_Bit = 1 << 4,
+			ShaderStage_Compute_Bit = 1 << 5,
+		};
+
 		struct ShaderStageData
 		{
 			DEFAULT_COPYABLE_MOVABLE(ShaderStageData);
 
 			ShaderStage_ shader_stage{ ShaderStage_Vertex };
 
-			Buffer source_code{};
+			DynamicBuffer source_code{};
 		};
 
 		virtual RID shader_create(Vector<ShaderStageData> const & stage_data) = 0;
@@ -679,6 +542,21 @@ namespace ism
 
 	public:
 		/* UNIFORMS */
+		enum UniformType_
+		{
+			UniformType_Sampler,
+			UniformType_SamplerWithTexture,
+			UniformType_Texture,
+			UniformType_Image,
+			UniformType_TextureBuffer,
+			UniformType_SamplerWithTextureBuffer,
+			UniformType_ImageBuffer,
+			UniformType_UniformBuffer,
+			UniformType_StorageBuffer,
+			UniformType_InputAttachment,
+			UniformType_MAX
+		};
+
 		struct Uniform
 		{
 			DEFAULT_COPYABLE_MOVABLE(Uniform);
@@ -690,7 +568,7 @@ namespace ism
 			Vector<RID> ids{};
 		};
 
-		virtual RID uniform_buffer_create(size_t size_in_bytes, Buffer const & buffer = {}) = 0;
+		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) = 0;
 		virtual void uniform_buffer_destroy(RID uniform_buffer) = 0;
 		virtual void uniform_buffer_update(RID uniform_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
 
@@ -698,7 +576,36 @@ namespace ism
 		virtual void uniform_set_destroy(RID uniform_set) = 0;
 
 	public:
-		/* PIPELINE */
+		/* PIPELINE API */
+		enum RenderPrimitive_
+		{
+			RenderPrimitive_Points,
+			RenderPrimitive_Lines,
+			RenderPrimitive_LinesWithAdjacency,
+			RenderPrimitive_Linestrips,
+			RenderPrimitive_LinestripsWithAdjacency,
+			RenderPrimitive_Triangles,
+			RenderPrimitive_TrianglesWithAdjacency,
+			RenderPrimitive_TriangleStrips,
+			RenderPrimitive_TriangleStripsWithAdjacency,
+			RenderPrimitive_TriangleStripsWithRestartIndex,
+			RenderPrimitive_TesselationPatch,
+			RenderPrimitive_MAX
+		};
+
+		enum PolygonCullMode_
+		{
+			PolygonCullMode_Disabled,
+			PolygonCullMode_Front,
+			PolygonCullMode_Back,
+		};
+
+		enum PolygonFrontFace_
+		{
+			PolygonFrontFace_Clockwise,
+			PolygonFrontFace_CounterClockwise,
+		};
+
 		struct RasterizationState
 		{
 			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(RasterizationState);
@@ -743,6 +650,19 @@ namespace ism
 			bool enable_alpha_to_one{ false };
 		};
 
+		enum StencilOperation_
+		{
+			StencilOperation_Keep,
+			StencilOperation_Zero,
+			StencilOperation_Replace,
+			StencilOperation_IncrementAndClamp,
+			StencilOperation_DecrementAndClamp,
+			StencilOperation_Invert,
+			StencilOperation_IncrementAndWrap,
+			StencilOperation_DecrementAndWrap,
+			StencilOperation_MAX
+		};
+
 		struct DepthStencilState
 		{
 			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(DepthStencilState);
@@ -779,6 +699,40 @@ namespace ism
 			bool enable_stencil{ false };
 			
 			StencilOperationState front_op{}, back_op{};
+		};
+
+		enum BlendFactor_
+		{
+			BlendFactor_Zero,
+			BlendFactor_One,
+			BlendFactor_SrcColor,
+			BlendFactor_OneMinusSrcColor,
+			BlendFactor_DstColor,
+			BlendFactor_OneMinusDstColor,
+			BlendFactor_SrcAlpha,
+			BlendFactor_OneMinusSrcAlpha,
+			BlendFactor_DstAlpha,
+			BlendFactor_OneMinusDstAlpha,
+			BlendFactor_ConstantColor,
+			BlendFactor_OneMinusConstantColor,
+			BlendFactor_ConstantAlpha,
+			BlendFactor_OneMinusConstantAlpha,
+			BlendFactor_SrcAlphaSaturate,
+			BlendFactor_Src1Color,
+			BlendFactor_OneMinusSrc1Color,
+			BlendFactor_Src1Alpha,
+			BlendFactor_OneMinusSrc1Alpha,
+			BlendFactor_MAX
+		};
+
+		enum BlendOperation_
+		{
+			BlendOperation_Add,
+			BlendOperation_Subtract,
+			BlendOperation_ReverseSubtract,
+			BlendOperation_Minimum,
+			BlendOperation_Maximum,
+			BlendOperation_MAX
 		};
 
 		struct ColorBlendState

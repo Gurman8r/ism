@@ -6,13 +6,13 @@
 
 namespace ism
 {
-	inline Optional<Buffer> get_file_contents(Path const & path)
+	inline Optional<DynamicBuffer> get_file_contents(Path const & path)
 	{
 		std::ifstream file{ path.c_str(), std::ios_base::binary };
 		SCOPE_EXIT(&file) { file.close(); };
 		if (!file) { return nullopt; }
 
-		Buffer temp;
+		DynamicBuffer temp;
 		file.seekg(0, std::ios_base::end);
 		if (int64_t size{ file.tellg() }; 0 < size)
 		{

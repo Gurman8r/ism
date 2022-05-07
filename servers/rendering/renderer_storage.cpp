@@ -65,15 +65,15 @@ RID RendererStorage::render_target_create()
 
 	if (!rt->texture) { rt->texture = texture2d_placeholder_create(); }
 
-	rt->color_format = ColorFormat_R8G8B8_UNORM;
-	rt->color_format_srgb = ColorFormat_R8G8B8_UNORM;
+	rt->color_format = RD::DataFormat_R8G8B8_UNORM;
+	rt->color_format_srgb = RD::DataFormat_R8G8B8_UNORM;
 	
 	rt->color = RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureFormat, t) {
 		t.color_format = rt->color_format;
 		t.color_format_srgb = rt->color_format_srgb;
 		t.width = (uint32_t)rt->size[0];
 		t.width = (uint32_t)rt->size[1];
-		t.usage_flags = TextureFlags_Sampling | TextureFlags_ColorAttachment | TextureFlags_CanCopyFrom;
+		t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_ColorAttachment | RD::TextureFlags_CanCopyFrom;
 	});
 
 	rt->framebuffer = RENDERING_DEVICE->framebuffer_create({ rt->color });

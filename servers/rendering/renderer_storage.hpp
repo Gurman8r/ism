@@ -26,9 +26,23 @@ namespace ism
 		RID texture2d_placeholder_create();
 
 	public:
+		/* SHADER */
+		enum ShaderType_ {
+			ShaderType_2D,
+			ShaderType_3D,
+			ShaderType_Particles,
+			ShaderType_Sky,
+			ShaderType_MAX
+		};
+
+	public:
 		/* MATERIAL */
 		struct _Material
 		{
+			RID uniform_buffer{};
+			RID uniform_set{};
+			Vector<RID> texture_cache{};
+			DynamicBuffer ubo_data{};
 		};
 
 		RID material_create();
@@ -52,19 +66,12 @@ namespace ism
 		struct _RenderTarget
 		{
 			Vec2i size{};
-
 			RID framebuffer{}, backbuffer{};
-
 			RID color{};
-
-			ColorFormat_ color_format{}, color_format_srgb{};
-
+			RD::DataFormat_ color_format{}, color_format_srgb{};
 			RID texture{};
-
 			RID framebuffer_uniforms{}, backbuffer_uniforms{};
-
 			bool clear_requested{};
-
 			Color clear_color{};
 		};
 
