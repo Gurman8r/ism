@@ -1,36 +1,31 @@
 {   
     "vertex": {
-        "glsl": [
+        "text": [
             "#version 460 core",
-            "layout (location = 0) in vec3 a_Position;",
-            "layout (location = 1) in vec3 a_Normal;",
-            "layout (location = 2) in vec2 a_Texcoord;",
-            "out _Vertex{",
-            "   vec3 Position;",
-            "   vec3 Normal;",
-            "   vec2 Texcoord;",
-            "} Vertex;",
-            "uniform mat4 u_Model;",
+            "layout (location = 0) in vec3 a_position;",
+            "layout (location = 1) in vec2 a_texcoord;",
+            "out _Vertex {",
+            "   vec3 position;",
+            "   vec2 texcoord;",
+            "} vertex;",
             "void main() {",
-            "    Vertex.Position = a_Position;",
-            "    Vertex.Normal = a_Normal;",
-            "    Vertex.Texcoord = a_Texcoord;",
-            "    gl_Position = vec4(Vertex.Position, 1.0);",
+            "    vertex.position = a_position;",
+            "    vertex.texcoord = a_texcoord;",
+            "    gl_Position = vec4(vertex.position, 1.0);",
             "}"
         ]
     },
     "pixel": {
-        "glsl": [
+        "text": [
             "#version 460 core",
             "in _Vertex {",
-            "   vec3 Position;",
-            "   vec3 Normal;",
-            "   vec2 Texcoord;",
-            "} Vertex;",
+            "   vec3 position;",
+            "   vec2 texcoord;",
+            "} vertex;",
             "out vec4 gl_Color;",
-            "uniform sampler2D u_Texture0;",
+            "layout (location = 0) uniform sampler2D u_main_texture;",
             "void main() {",
-            "   gl_Color = texture(u_Texture0, Vertex.Texcoord);",
+            "   gl_Color = texture(u_main_texture, vertex.texcoord);",
             "}"
         ]
     }

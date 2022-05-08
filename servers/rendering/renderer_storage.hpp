@@ -14,9 +14,12 @@ namespace ism
 
 		static RendererStorage * singleton;
 
-	public:
+		friend class RenderingServerDefault;
+
+	protected:
 		explicit RendererStorage();
 
+	public:
 		virtual ~RendererStorage();
 
 		FORCE_INLINE static RendererStorage * get_singleton() noexcept { return singleton; }

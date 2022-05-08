@@ -140,14 +140,6 @@ namespace ism
 		virtual void shader_destroy(RID shader) override;
 		virtual void shader_bind(RID shader) override;
 
-		virtual int32_t shader_uniform_location(RID shader, String const & name) override;
-		virtual void shader_uniform1i(RID shader, String const & name, int32_t const value) override;
-		virtual void shader_uniform1f(RID shader, String const & name, float_t const value) override;
-		virtual void shader_uniform2f(RID shader, String const & name, float_t const * value) override;
-		virtual void shader_uniform3f(RID shader, String const & name, float_t const * value) override;
-		virtual void shader_uniform4f(RID shader, String const & name, float_t const * value) override;
-		virtual void shader_uniform16f(RID shader, String const & name, float_t const * value, bool transpose = false) override;
-
 	public:
 		/* UNIFORM API */
 		struct _UniformBuffer

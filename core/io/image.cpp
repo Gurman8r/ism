@@ -2,16 +2,7 @@
 
 using namespace ism;
 
-OBJECT_EMBED(Image, t)
-{
-	t.tp_bind = CLASS_BINDER(Image, t)
-	{
-		return t
-			.def(init<>())
-			.def(init([]() { return Image{}; }))
-			;
-	};
-}
+OBJECT_EMBED(Image, t) {}
 
 Image::Image(int32_t width, int32_t height, ImageFormat_ format)
 {

@@ -10,6 +10,7 @@
 #include <initializer_list>
 #include <iterator>
 #include <utility>
+#include <type_traits>
 #include <tuple>
 
 #include <gcem/include/gcem.hpp>

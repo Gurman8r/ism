@@ -14,3 +14,7 @@ RendererSceneRenderer::RendererSceneRenderer()
 RendererSceneRenderer::~RendererSceneRenderer()
 {
 }
+
+void RendererSceneRenderer::render_scene()
+{
+}

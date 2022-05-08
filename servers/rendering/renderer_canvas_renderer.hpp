@@ -14,9 +14,12 @@ namespace ism
 
 		static RendererCanvasRenderer * singleton;
 
-	public:
+		friend class RenderingServerDefault;
+
+	protected:
 		explicit RendererCanvasRenderer();
 
+	public:
 		virtual ~RendererCanvasRenderer();
 
 		FORCE_INLINE static RendererCanvasRenderer * get_singleton() noexcept { return singleton; }

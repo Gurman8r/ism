@@ -14,9 +14,12 @@ namespace ism
 
 		static RendererViewport * singleton;
 
-	public:
+		friend class RenderingServerDefault;
+
+	protected:
 		explicit RendererViewport();
 
+	public:
 		virtual ~RendererViewport();
 
 		FORCE_INLINE static RendererViewport * get_singleton() noexcept { return singleton; }

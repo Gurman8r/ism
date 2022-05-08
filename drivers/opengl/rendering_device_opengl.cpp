@@ -832,93 +832,6 @@ void RenderingDeviceOpenGL::shader_bind(RID shader)
 	glCheck(glUseProgramObjectARB(shader ? ((_Shader *)shader)->handle : NULL));
 }
 
-struct UniformBinder
-{
-	int32_t location{ -1 };
-
-	uint32_t self{}, last{};
-
-	operator bool() const noexcept { return -1 < location; }
-
-	UniformBinder(RenderingDeviceOpenGL::_Shader & s, String const & name) noexcept : UniformBinder{ s, name.data(), name.size() } {}
-
-	UniformBinder(RenderingDeviceOpenGL::_Shader & s, cstring name) noexcept : UniformBinder{ s, name, std::strlen(name) } {}
-
-	UniformBinder(RenderingDeviceOpenGL::_Shader & s, cstring name, size_t name_len)
-	{
-		if (!name || !*name || !name_len || !(self = s.handle)) { return; }
-
-		glCheck(last = glGetHandleARB(GL_PROGRAM_OBJECT_ARB));
-
-		if (last != self) { glCheck(glUseProgramObjectARB(self)); }
-
-		location = s.bindings.find_or_add_fn(hash(name, name_len), [&]()
-		{
-			int32_t result;
-			glCheck(result = glGetUniformLocationARB(self, name));
-			return result;
-		});
-	}
-
-	~UniformBinder()
-	{
-		if (self && (self != last)) { glCheck(glUseProgramObjectARB(last)); }
-	}
-};
-
-int32_t RenderingDeviceOpenGL::shader_uniform_location(RID shader, String const & name)
-{
-	return UniformBinder{ *VALIDATE((_Shader *)shader), name }.location;
-}
-
-void RenderingDeviceOpenGL::shader_uniform1i(RID shader, String const & name, int32_t const value)
-{
-	if (UniformBinder u{ *VALIDATE((_Shader *)shader), name })
-	{
-		glCheck(glUniform1iARB(u.location, value));
-	}
-}
-
-void RenderingDeviceOpenGL::shader_uniform1f(RID shader, String const & name, float_t const value)
-{
-	if (UniformBinder u{ *VALIDATE((_Shader *)shader), name })
-	{
-		glCheck(glUniform1fARB(u.location, value));
-	}
-}
-
-void RenderingDeviceOpenGL::shader_uniform2f(RID shader, String const & name, float_t const * value)
-{
-	if (UniformBinder u{ *VALIDATE((_Shader *)shader), name })
-	{
-		glCheck(glUniform2fARB(u.location, value[0], value[1]));
-	}
-}
-
-void RenderingDeviceOpenGL::shader_uniform3f(RID shader, String const & name, float_t const * value)
-{
-	if (UniformBinder u{ *VALIDATE((_Shader *)shader), name })
-	{
-		glCheck(glUniform3fARB(u.location, value[0], value[1], value[2]));
-	}
-}
-
-void RenderingDeviceOpenGL::shader_uniform4f(RID shader, String const & name, float_t const * value)
-{
-	if (UniformBinder u{ *VALIDATE((_Shader *)shader), name })
-	{
-		glCheck(glUniform4fARB(u.location, value[0], value[1], value[2], value[3]));
-	}
-}
-
-void RenderingDeviceOpenGL::shader_uniform16f(RID shader, String const & name, float_t const * value, bool transpose)
-{
-	if (UniformBinder u{ *VALIDATE((_Shader *)shader), name })
-	{
-		glCheck(glUniformMatrix4fvARB(u.location, 1, transpose, value));
-	}
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RenderingDeviceOpenGL::uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer)
@@ -970,11 +883,12 @@ RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, 
 		case UniformType_SamplerWithTexture: {
 		} break;
 		case UniformType_Texture: {
-			ASSERT(1 == uniforms[i].ids.size());
-			desc.uniform_type = UniformType_UniformBuffer;
+			desc.uniform_type = UniformType_Texture;
 			desc.binding = uniforms[i].binding;
-			desc.length = 1;
-			desc.textures.push_back(uniforms[i].ids[0]);
+			desc.length = uniforms[i].ids.size();
+			for (RID const texture : uniforms[i].ids) {
+				desc.textures.push_back(texture);
+			}
 		} break;
 		case UniformType_Image: {
 		} break;
@@ -1143,9 +1057,6 @@ void RenderingDeviceOpenGL::drawlist_bind_vertex_array(RID list, RID vertex_arra
 	_DrawList * const dl{ VALIDATE((_DrawList *)list) };
 	if (dl->state.vertex_array == vertex_array) { return; }
 	dl->state.vertex_array = vertex_array;
-	if (vertex_array) {
-		_VertexArray * const va{ VALIDATE((_VertexArray *)dl->state.vertex_array) };
-	}
 }
 
 void RenderingDeviceOpenGL::drawlist_bind_index_array(RID list, RID index_array)
@@ -1155,18 +1066,16 @@ void RenderingDeviceOpenGL::drawlist_bind_index_array(RID list, RID index_array)
 	dl->state.index_array = index_array;
 	if (index_array) {
 		_IndexArray * const ia{ VALIDATE((_IndexArray *)dl->state.index_array) };
-		_IndexBuffer * const ib{ VALIDATE((_IndexBuffer *)ia->index_buffer) };
-		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->handle));
 	}
 }
 
 void RenderingDeviceOpenGL::drawlist_draw(RID list, bool use_indices, size_t instances, size_t procedural_vertices)
 {
 	_DrawList * const dl{ VALIDATE((_DrawList *)list) };
-	_Pipeline * const rp{ VALIDATE((_Pipeline *)dl->state.pipeline) };
+	_Pipeline * const pipeline{ VALIDATE((_Pipeline *)dl->state.pipeline) };
+	_Shader * const pipeline_shader{ VALIDATE((_Shader *)dl->state.pipeline_shader) };
 
-	_VertexArray * const va{ VALIDATE((_VertexArray *)dl->state.vertex_array) };
-	glCheck(glBindVertexArray(va->handle));
+	glCheck(glUseProgramObjectARB(pipeline_shader->handle));
 
 	for (size_t i = 0; i < dl->state.set_count; ++i)
 	{
@@ -1182,9 +1091,12 @@ void RenderingDeviceOpenGL::drawlist_draw(RID list, bool use_indices, size_t ins
 				case UniformType_SamplerWithTexture: {
 				} break;
 				case UniformType_Texture: {
-					ASSERT(1 == u.textures.size());
-					_Texture * const tx{ VALIDATE((_Texture *)u.textures[0]) };
-					glCheck(glBindTextureUnit(tx->handle, u.binding));
+					ASSERT(0 < u.textures.size());
+					if (1 == u.textures.size()) {
+						_Texture * const t{ VALIDATE((_Texture *)u.textures.front()) };
+						glCheck(glBindTextureUnit(u.binding, t->handle));
+						glCheck(glUniform1iARB(u.binding, u.binding));
+					}
 				} break;
 				case UniformType_Image: {
 				} break;
@@ -1209,19 +1121,23 @@ void RenderingDeviceOpenGL::drawlist_draw(RID list, bool use_indices, size_t ins
 		}
 	}
 
+	_VertexArray * const va{ VALIDATE((_VertexArray *)dl->state.vertex_array) };
+	glCheck(glBindVertexArray(va->handle));
 	if (use_indices)
 	{
 		_IndexArray * const ia{ VALIDATE((_IndexArray *)dl->state.index_array) };
+		_IndexBuffer * const ib{ VALIDATE((_IndexBuffer *)ia->index_buffer) };
+		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->handle));
 		for (RID const vertex_buffer : va->buffers) {
 			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VALIDATE((_VertexBuffer *)vertex_buffer)->handle));
-			glCheck(glDrawElementsInstanced(rp->primitive, ia->index_count, ia->index_type, nullptr, (uint32_t)instances));
+			glCheck(glDrawElementsInstanced(pipeline->primitive, ia->index_count, ia->index_type, nullptr, (uint32_t)instances));
 		}
 	}
 	else
 	{
 		for (RID const vertex_buffer : va->buffers) {
 			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VALIDATE((_VertexBuffer *)vertex_buffer)->handle));
-			glCheck(glDrawArraysInstanced(rp->primitive, 0, va->vertex_count, (uint32_t)instances));
+			glCheck(glDrawArraysInstanced(pipeline->primitive, 0, va->vertex_count, (uint32_t)instances));
 		}
 	}
 }

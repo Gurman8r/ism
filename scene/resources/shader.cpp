@@ -6,9 +6,69 @@ using namespace ism;
 
 OBJECT_EMBED(Shader, t) {}
 
-Shader::~Shader()
+Shader::~Shader() { if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); m_shader = nullptr; } }
+
+struct ShaderImportData
 {
-	if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); }
+	std::ifstream file;
+
+	JSON json{};
+
+	Vector<RD::ShaderStageData> stages{};
+
+	NODISCARD operator bool() const noexcept { return file.operator bool(); }
+
+	~ShaderImportData() { if (file) { file.close(); } }
+
+	explicit ShaderImportData(Path const & path) : file{ path.c_str() }
+	{
+		if (file) { json = JSON::parse(file); }
+	}
+};
+
+static void _parse_text(RD::ShaderStageData & stage_data, JSON & text)
+{
+	for (String const & line : text.get<Vector<String>>()) {
+		stage_data.source_code.write(line.data(), line.size());
+		stage_data.source_code << '\n';
+	}
+	stage_data.source_code << '\0';
+}
+
+static void _parse_file(RD::ShaderStageData & stage_data, JSON & path)
+{
+	std::ifstream file{ path.get<Path>().c_str() };
+	SCOPE_EXIT(&file) { file.close(); };
+	if (!file) { return; }
+	String line;
+	while (std::getline(file, line)) {
+		stage_data.source_code.write(line.data(), line.size());
+		stage_data.source_code << '\n';
+	}
+	stage_data.source_code << '\0';
+}
+
+static void _process_stage(ShaderImportData & import_data, cstring stage_name, RD::ShaderStage_ stage_index)
+{
+	RD::ShaderStageData stage_data{ stage_index };
+	auto stage{ import_data.json.find(stage_name) };
+	if (stage == import_data.json.end()) { return; }
+
+	// TEXT
+	if (auto text{ stage->find("text") }; text != stage->end())
+	{
+		_parse_text(stage_data, *text);
+	}
+	// PATH
+	else if (auto path{ stage->find("path") }; path != stage->end())
+	{
+		_parse_file(stage_data, *path);
+	}
+
+	if (!stage_data.source_code.empty())
+	{
+		import_data.stages.push_back(std::move(stage_data));
+	}
 }
 
 void Shader::reload_from_file()
@@ -17,104 +77,14 @@ void Shader::reload_from_file()
 
 	if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); }
 
-	std::ifstream file{ get_path().c_str() };
-	SCOPE_EXIT(&file) { file.close(); };
-	if (!file) { return; }
-	
-	JSON json{ JSON::parse(file) };
-	if (json.empty()) { return; }
-
-	Vector<RD::ShaderStageData> stages{};
-
-	auto _parse_stage = [&json, &stages
-	](cstring stage_name, RD::ShaderStage_ stage_index)
-	{
-		RD::ShaderStageData data{ stage_index };
-
-		if (auto stage{ json.find(stage_name) }; stage != json.end())
-		{
-			// GLSL
-			if (auto glsl{ stage->find("glsl") }; glsl != stage->end())
-			{
-				for (String const & line : glsl->get<Vector<String>>()) {
-					data.source_code.write(line.data(), line.size());
-					data.source_code << '\n';
-				}
-				data.source_code << '\0';
-			}
-			// PATH
-			else if (auto path{ stage->find("path") }; path != stage->end())
-			{
-				std::ifstream file{ path->get<Path>().c_str() };
-				SCOPE_EXIT(&file) { file.close(); };
-				if (!file) { return; }
-				String line;
-				while (std::getline(file, line)) {
-					data.source_code.write(line.data(), line.size());
-					data.source_code << '\n';
-				}
-				data.source_code << '\0';
-			}
-		}
-		if (!data.source_code.empty())
-		{
-			stages.push_back(std::move(data));
-		}
-	};
-
-	_parse_stage("vertex", RD::ShaderStage_Vertex);
-	_parse_stage("pixel", RD::ShaderStage_Fragment);
-	_parse_stage("geometry", RD::ShaderStage_Geometry);
-	_parse_stage("tess_ctrl", RD::ShaderStage_TesselationControl);
-	_parse_stage("tess_eval", RD::ShaderStage_TesselationEvaluation);
-	_parse_stage("compute", RD::ShaderStage_Compute);
-	m_shader = RENDERING_DEVICE->shader_create(stages);
+	ShaderImportData import_data{ get_path() };
+	if (!import_data) { return; }
+	_process_stage(import_data, "vertex", RD::ShaderStage_Vertex);
+	_process_stage(import_data, "pixel", RD::ShaderStage_Fragment);
+	_process_stage(import_data, "geometry", RD::ShaderStage_Geometry);
+	_process_stage(import_data, "tess_ctrl", RD::ShaderStage_TesselationControl);
+	_process_stage(import_data, "tess_eval", RD::ShaderStage_TesselationEvaluation);
+	_process_stage(import_data, "compute", RD::ShaderStage_Compute);
+	m_shader = RENDERING_DEVICE->shader_create(import_data.stages);
 	ASSERT(m_shader);
-}
-
-void Shader::bind()
-{
-	RENDERING_DEVICE->shader_bind(m_shader);
-}
-
-void Shader::unbind()
-{
-	RENDERING_DEVICE->shader_bind(nullptr);
-}
-
-void Shader::set_uniform1i(String const & name, int32_t const value)
-{
-	RENDERING_DEVICE->shader_uniform1i(m_shader, name, value);
-}
-
-void Shader::set_uniform1f(String const & name, float_t const value)
-{
-	RENDERING_DEVICE->shader_uniform1f(m_shader, name, value);
-}
-
-void Shader::set_uniform2f(String const & name, Vec2f const & value)
-{
-	RENDERING_DEVICE->shader_uniform2f(m_shader, name, value);
-}
-
-void Shader::set_uniform3f(String const & name, Vec3f const & value)
-{
-	RENDERING_DEVICE->shader_uniform3f(m_shader, name, value);
-}
-
-void Shader::set_uniform4f(String const & name, Vec4f const & value)
-{
-	RENDERING_DEVICE->shader_uniform4f(m_shader, name, value);
-}
-
-void Shader::set_uniform16f(String const & name, Mat4f const & value, bool transpose)
-{
-	RENDERING_DEVICE->shader_uniform16f(m_shader, name, value, transpose);
-}
-
-void Shader::set_uniform_texture(String const & name, RID const value, size_t slot)
-{
-	RENDERING_DEVICE->texture_bind(value, slot);
-
-	RENDERING_DEVICE->shader_uniform1i(m_shader, name, slot);
 }

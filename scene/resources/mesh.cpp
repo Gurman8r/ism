@@ -27,8 +27,7 @@ static void _load_material_textures(Vector<Ref<Texture>> & textures, aiMaterial 
 {
 	for (uint32_t i = 0; i < mat->GetTextureCount(type); ++i)
 	{
-		aiString str;
-		mat->GetTexture(type, i, &str);
+		aiString str; mat->GetTexture(type, i, &str);
 		// TODO: load the texture...
 	}
 }

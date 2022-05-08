@@ -532,14 +532,6 @@ namespace ism
 		virtual void shader_destroy(RID shader) = 0;
 		virtual void shader_bind(RID shader) = 0;
 
-		virtual int32_t shader_uniform_location(RID shader, String const & name) = 0;
-		virtual void shader_uniform1i(RID shader, String const & name, int32_t const value) = 0;
-		virtual void shader_uniform1f(RID shader, String const & name, float_t const value) = 0;
-		virtual void shader_uniform2f(RID shader, String const & name, float_t const * value) = 0;
-		virtual void shader_uniform3f(RID shader, String const & name, float_t const * value) = 0;
-		virtual void shader_uniform4f(RID shader, String const & name, float_t const * value) = 0;
-		virtual void shader_uniform16f(RID shader, String const & name, float_t const * value, bool transpose = false) = 0;
-
 	public:
 		/* UNIFORMS */
 		enum UniformType_

@@ -14,12 +14,18 @@ namespace ism
 
 		static RendererSceneRenderer * singleton;
 
-	public:
+		friend class RenderingServerDefault;
+
+	protected:
 		explicit RendererSceneRenderer();
 
+	public:
 		virtual ~RendererSceneRenderer();
 
 		FORCE_INLINE static RendererSceneRenderer * get_singleton() noexcept { return singleton; }
+
+	public:
+		void render_scene();
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
