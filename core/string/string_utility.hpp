@@ -12,7 +12,7 @@ namespace ism::util
 	template <class Ch = char
 	> NODISCARD constexpr size_t strlen(Ch const * s)
 	{
-		return *s ? (1 + ism::strlen(s + 1)) : 0;
+		return *s ? (1 + ism::util::strlen(s + 1)) : 0;
 	}
 
 	template <class Ch = char
@@ -36,7 +36,7 @@ namespace ism::util
 		size_t count{};
 		while (*ptr) {
 			if (index == count) { break; }
-			ptr += ism::strlen(ptr) + 1;
+			ptr += ism::util::strlen(ptr) + 1;
 			count++;
 		}
 		return *ptr ? ptr : (Ch const *)nullptr;
@@ -83,7 +83,7 @@ namespace ism::util
 				{
 					auto chunk{ static_cast<ulong_t>(uval % 1000000000) };
 					uval /= 1000000000;
-					for (int32_t_t i = 0; i != 9; ++i) {
+					for (int32_t i = 0; i != 9; ++i) {
 						*--next = static_cast<char>('0' + chunk % 10);
 						chunk /= 10;
 					}
@@ -177,7 +177,7 @@ namespace ism::util
 	template <class Ch = char
 	> NODISCARD Optional<bool> to_bool(BasicString<Ch> const & value) noexcept
 	{
-		switch (hash(ism::to_lower(value)))
+		switch (hash(util::to_lower(value)))
 		{
 		default				: return nullopt;
 		case hash("1")		:
@@ -194,67 +194,67 @@ namespace ism::util
 	template <class Ch = char
 	> NODISCARD Optional<int8_t> to_i8(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ism::parse_answer<int8_t>(value.c_str(), &_CSTD strtol, base);
+		return util::parse_answer<int8_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<int16_t> to_i16(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ism::parse_answer<int16_t>(value.c_str(), &_CSTD strtol, base);
+		return util::parse_answer<int16_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<int32_t> to_i32(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ism::parse_answer<int32_t>(value.c_str(), &_CSTD strtol, base);
+		return util::parse_answer<int32_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<int64_t> to_i64(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ism::parse_answer<int64_t>(value.c_str(), &_CSTD strtoll, base);
+		return util::parse_answer<int64_t>(value.c_str(), &_CSTD strtoll, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<uint8_t> to_u8(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ism::parse_answer<uint8_t>(value.c_str(), &_CSTD strtoul, base);
+		return util::parse_answer<uint8_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<uint16_t> to_u16(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ism::parse_answer<uint16_t>(value.c_str(), &_CSTD strtoul, base);
+		return util::parse_answer<uint16_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<uint32_t> to_u32(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ism::parse_answer<uint32_t>(value.c_str(), &_CSTD strtoul, base);
+		return util::parse_answer<uint32_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<uint64_t> to_u64(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
-		return ism::parse_answer<uint64_t>(value.c_str(), &_CSTD strtoull, base);
+		return util::parse_answer<uint64_t>(value.c_str(), &_CSTD strtoull, base);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<float32_t> to_f32(BasicString<Ch> const & value) noexcept
 	{
-		return ism::parse_answer<float32_t>(value.c_str(), &_CSTD strtod);
+		return util::parse_answer<float32_t>(value.c_str(), &_CSTD strtod);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<float64_t> to_f64(BasicString<Ch> const & value) noexcept
 	{
-		return ism::parse_answer<float64_t>(value.c_str(), &_CSTD strtod);
+		return util::parse_answer<float64_t>(value.c_str(), &_CSTD strtod);
 	}
 
 	template <class Ch = char
 	> NODISCARD Optional<float80_t> to_f80(BasicString<Ch> const & value) noexcept
 	{
-		return ism::parse_answer<float80_t>(value.c_str(), &_CSTD strtold);
+		return util::parse_answer<float80_t>(value.c_str(), &_CSTD strtold);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

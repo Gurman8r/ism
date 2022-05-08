@@ -123,8 +123,6 @@ namespace ism
 	// video mode
 	struct NODISCARD VideoMode
 	{
-		DEFAULT_COPYABLE_MOVABLE(VideoMode);
-
 		Vec2i	size			{ 1280, 720 };
 		Vec4b	bits_per_pixel	{ 8, 8, 8, 8 };
 		int32_t	refresh_rate	{ -1 };
@@ -150,8 +148,6 @@ namespace ism
 	// context settings
 	struct NODISCARD ContextSettings
 	{
-		DEFAULT_COPYABLE_MOVABLE(ContextSettings);
-
 		RendererAPI_ api{ RendererAPI_OpenGL };
 		
 		int32_t major{ 4 };
@@ -171,8 +167,6 @@ namespace ism
 	// window settings
 	struct NODISCARD DisplayServerSettings
 	{
-		DEFAULT_COPYABLE_MOVABLE(DisplayServerSettings);
-
 		String			title	{ "New Window" };
 		VideoMode		video	{};
 		ContextSettings	context	{};

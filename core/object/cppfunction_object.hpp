@@ -26,9 +26,9 @@ namespace ism
 
 		NON_COPYABLE(CppFunctionObject);
 		
-		CppFunctionObject(CppFunctionObject && value) noexcept : CppFunctionObject{} { swap(std::move(value)); }
+		CppFunctionObject(CppFunctionObject && value) noexcept : CppFunctionObject{} { swap(value); }
 		
-		CppFunctionObject & operator=(CppFunctionObject && value) noexcept { return swap(std::move(value)); }
+		CppFunctionObject & operator=(CppFunctionObject && value) noexcept { return swap(value); }
 		
 		CppFunctionObject & swap(CppFunctionObject & other) noexcept { if (this != std::addressof(other)) { std::swap(m_record, other.m_record); } return (*this); }
 

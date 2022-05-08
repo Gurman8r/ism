@@ -1,6 +1,4 @@
 #include <scene/main/entity.hpp>
-#include <scene/main/scene_tree.hpp>
-#include <scene/components/script_component.hpp>
 
 using namespace ism;
 

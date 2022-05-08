@@ -280,7 +280,7 @@ namespace ism
 	template <class A = OBJ, class B = OBJ
 	> NODISCARD bool isinstance(A const & obj, B const & type)
 	{
-		return typeof(obj).is_subtype(TYPE::check_(type) ? type : typeof(type));
+		return typeof(obj).is_subtype(TYPE::check_(type) ? (TYPE)type : typeof(type));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

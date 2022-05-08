@@ -15,6 +15,30 @@
 
 #include <gcem/include/gcem.hpp>
 
+// compose
+namespace ism::impl
+{
+	// compose helper
+	template <class T> struct ComposerHelper final
+	{
+		T value;
+
+		constexpr ComposerHelper(T && value) noexcept : value{ FWD(value) } {}
+
+		template <class Fn = void(*)(T &)
+		> constexpr decltype(auto) operator+(Fn && fn) && noexcept
+		{
+			return fn(value), std::move(value);
+		}
+	};
+
+#define COMPOSE_EX(m_class, ...) \
+		(ism::impl::ComposerHelper<m_class>(m_class{ ##__VA_ARGS__ }))
+
+#define COMPOSE(m_class, m_var, ...) \
+		COMPOSE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
+}
+
 namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -167,18 +191,18 @@ namespace ism::mpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class ... Ts> ALIAS(all_of) std::conjunction<Ts...>;
-	template <class ... Ts> ALIAS(any_of) std::disjunction<Ts...>;
-	template <class ... Ts> ALIAS(none_of) std::negation<any_of<Ts...>>;
+	template <class ... Ts> using all_of = std::conjunction<Ts...>;
+	template <class ... Ts> using any_of = std::disjunction<Ts...>;
+	template <class ... Ts> using none_of = std::negation<any_of<Ts...>>;
 	template <class ... Ts> constexpr bool all_of_v{ all_of<Ts...>::value };
 	template <class ... Ts> constexpr bool any_of_v{ any_of<Ts...>::value };
 	template <class ... Ts> constexpr bool none_of_v{ none_of<Ts...>::value };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, template<class> class ... Pr> ALIAS(satisfies_all_of) all_of<Pr<T>...>;
-	template <class T, template<class> class ... Pr> ALIAS(satisfies_any_of) any_of<Pr<T>...>;
-	template <class T, template<class> class ... Pr> ALIAS(satisfies_none_of) none_of<Pr<T>...>;
+	template <class T, template<class> class ... Pr> using satisfies_all_of = all_of<Pr<T>...>;
+	template <class T, template<class> class ... Pr> using satisfies_any_of = any_of<Pr<T>...>;
+	template <class T, template<class> class ... Pr> using satisfies_none_of = none_of<Pr<T>...>;
 	template <class T, template<class> class ... Pr> constexpr bool satisfies_all_of_v{ satisfies_all_of<T, Pr...>::value };
 	template <class T, template<class> class ... Pr> constexpr bool satisfies_any_of_v{ satisfies_any_of<T, Pr...>::value };
 	template <class T, template<class> class ... Pr> constexpr bool satisfies_none_of_v{ satisfies_none_of<T, Pr...>::value };
@@ -223,7 +247,7 @@ namespace ism::mpl
 	template <class T> struct remove_class {};
 	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...)> { using type = R(A...); };
 	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...) const> { using type = R(A...); };
-	template <class ... Ts> ALIAS(remove_class_t) remove_class<Ts...>::type;
+	template <class ... Ts> using remove_class_t = remove_class<Ts...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -235,7 +259,7 @@ namespace ism::mpl
 	template <class T> struct intrinsic_type<T &&> { using type = typename intrinsic_type<T>::type; };
 	template <class T, size_t N> struct intrinsic_type<T const [N]> { using type = typename intrinsic_type<T>::type; };
 	template <class T, size_t N> struct intrinsic_type<T[N]> { using type = typename intrinsic_type<T>::type; };
-	template <class T> ALIAS(intrinsic_t) intrinsic_type<T>::type;
+	template <class T> using intrinsic_t = intrinsic_type<T>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -358,11 +382,7 @@ namespace ism::mpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class F> struct strip_function_object { using type = typename remove_class_t<decltype(&F::operator())>; };
-
-	template <class F> using strip_function_object_t = typename strip_function_object<F>::type;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	template <class F> struct strip_function_object { using type = remove_class_t<decltype(&F::operator())>; };
 
 	template <class Func, class F = std::remove_reference_t<Func>
 	> using function_signature_t = std::conditional_t<
@@ -522,7 +542,7 @@ namespace ism::mpl
 	template <class T
 	> struct type_tag { using type = typename T; };
 
-#define TAG_TYPE(tag) typename std::decay_t<decltype(tag)::type>
+#define TAG_TYPE(tag) std::decay_t<decltype(tag)::type>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -628,7 +648,7 @@ namespace ism::mpl
 	};
 
 	template <class ... Ts
-	> ALIAS(concat) impl_concat<Ts...>::type;
+	> using concat = impl_concat<Ts...>::type;
 
 	template <class ... Ts
 	> struct impl_concat<type_list<Ts...>>
@@ -657,7 +677,7 @@ namespace ism::mpl
 	};
 
 	template <template <class> class Pr, class Ls
-	> ALIAS(remap) impl_remap<Pr, Ls>::type;
+	> using remap = impl_remap<Pr, Ls>::type;
 
 	template <template <class> class Pr, class T, class ... Ts
 	> struct impl_remap<Pr, type_list<T, Ts...>>
@@ -687,7 +707,7 @@ namespace ism::mpl
 
 	template<
 		template <class...> class To, class T
-	> ALIAS(rename) impl_rename<To, T>::type;
+	> using rename = impl_rename<To, T>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -746,10 +766,25 @@ namespace ism::mpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class Ls
-	> ALIAS(tuple) rename<std::tuple, Ls>;
+	> using tuple = rename<std::tuple, Ls>;
 	
 	template <class Ls
-	> ALIAS(tag_tuple) tuple<remap<type_tag, Ls>>;
+	> using tag_tuple = tuple<remap<type_tag, Ls>>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class Ls
+	> constexpr size_t size() noexcept { return Ls::size; }
+
+	template <class Ls, class T> using push_back = concat<Ls, type_list<T>>;
+
+	template <class Ls, class T> using push_front = concat<type_list<T>, Ls>;
+
+	template <size_t I, class Ls> using nth = std::tuple_element_t<I, tuple<Ls>>;
+
+	template <class Ls> using head = nth<0, Ls>;
+
+	template <class Ls> using tail = nth<size<Ls>() - 1, Ls>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -791,21 +826,6 @@ namespace ism::mpl
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Ls
-	> constexpr size_t size() noexcept { return Ls::size; }
-
-	template <class Ls, class T> ALIAS(push_back) concat<Ls, type_list<T>>;
-
-	template <class Ls, class T> ALIAS(push_front) concat<type_list<T>, Ls>;
-
-	template <size_t I, class Ls> ALIAS(nth) std::tuple_element_t<I, tuple<Ls>>;
-
-	template <class Ls> ALIAS(head) nth<0, Ls>;
-
-	template <class Ls> ALIAS(tail) nth<size<Ls>() - 1, Ls>;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // REPEAT - size N type_list of T
@@ -826,10 +846,10 @@ namespace ism::mpl
 	};
 
 	template <size_t N, class T
-	> ALIAS(repeat) impl_repeat<N, T>::type;
+	> using repeat = impl_repeat<N, T>::type;
 
 	template <class T, size_t N
-	> ALIAS(array) tuple<repeat<N, T>>;
+	> using array = tuple<repeat<N, T>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -846,7 +866,7 @@ namespace ism::mpl
 	};
 
 	template <template <class> class Pr, class Ls
-	> ALIAS(filter) impl_filter<Pr, Ls>::type;
+	> using filter = impl_filter<Pr, Ls>::type;
 
 	template <template <class> class Pr, class T, class ... Ts
 	> struct impl_filter<Pr, type_list<T, Ts...>>

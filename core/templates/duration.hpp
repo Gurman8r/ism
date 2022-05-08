@@ -11,8 +11,6 @@ namespace ism
 
 	struct Duration final : public std::chrono::duration<float_t>
 	{
-		DEFAULT_COPYABLE_MOVABLE(Duration);
-
 		using std::chrono::duration<float_t>::duration;
 
 		NODISCARD constexpr operator float_t() const noexcept { return count(); }
@@ -148,21 +146,7 @@ namespace ism
 
 		NON_COPYABLE(Timer);
 
-		Timer(Timer && other) noexcept : Timer{} { swap(std::move(other)); }
-
-		Timer & operator=(Timer && other) noexcept { return swap(std::move(other)); }
-
-		Timer & swap(Timer & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
-				std::swap(m_running, other.m_running);
-				std::swap(m_start_time, other.m_start_time);
-				std::swap(m_stop_time, other.m_stop_time);
-				std::swap(m_elapsed, other.m_elapsed);
-			}
-			return (*this);
-		}
+		NON_MOVABLE(Timer);
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

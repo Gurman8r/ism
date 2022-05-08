@@ -163,17 +163,13 @@ namespace ism
 			, m_roll		{ other.m_roll }
 			, m_zoom		{ other.m_zoom }
 		{
-			std::memcpy(m_fov, other.m_fov, sizeof(m_fov));
-			std::memcpy(m_clip, other.m_clip, sizeof(m_clip));
+			copymem(m_fov, other.m_fov, sizeof(m_fov));
+			copymem(m_clip, other.m_clip, sizeof(m_clip));
 		}
-
-		EditorCamera(EditorCamera && other) noexcept : EditorCamera{} { this->swap(std::move(other)); }
 
 		virtual ~EditorCamera();
 
 		EditorCamera & operator=(EditorCamera const & other) { EditorCamera temp{ other }; return swap(temp); }
-
-		EditorCamera & operator=(EditorCamera && other) noexcept { return swap(std::move(other)); }
 
 		EditorCamera & swap(EditorCamera & other) noexcept
 		{

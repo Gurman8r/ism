@@ -126,7 +126,7 @@ namespace ism
 		NODISCARD auto end() const -> const_iterator { return m_ptr->end(); }
 
 		template <class T, class = std::enable_if_t<mpl::is_string_v<T>> // std::is_convertible_v<T, storage_type>
-		> STR & operator=(T && other) noexcept
+		> STR & operator=(T && value) noexcept
 		{
 			if (m_ptr) { m_ptr->m_string = FWD(value); }
 			else { instance(FWD(value)); }

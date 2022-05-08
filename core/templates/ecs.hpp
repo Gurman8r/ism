@@ -32,7 +32,7 @@ namespace ism::ecs::detail
 	> struct x_wrapper final
 	{
 		template <class _Traits
-		> using type = typename _System<_Traits>;
+		> using type = _System<_Traits>;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

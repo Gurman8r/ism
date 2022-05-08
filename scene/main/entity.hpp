@@ -1,7 +1,7 @@
 #ifndef _ISM_ENTITY_HPP_
 #define _ISM_ENTITY_HPP_
 
-#include <scene/main/node.hpp>
+#include <scene/main/scene_tree.hpp>
 
 namespace ism
 {

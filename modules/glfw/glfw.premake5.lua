@@ -4,7 +4,7 @@
 project			"glfw"
 kind			"SharedLib"
 language		"C++"
-cppdialect 		"C++17"
+cppdialect 		"C++20"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"

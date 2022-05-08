@@ -108,7 +108,7 @@ namespace ism
 
 		self_type & operator=(self_type && value) noexcept
 		{
-			this->swap(std::move(value));
+			this->swap(value);
 			return (*this);
 		}
 

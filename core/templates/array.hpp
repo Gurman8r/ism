@@ -6,9 +6,6 @@
 // FIXED SIZE ARRAY
 namespace ism
 {
-	template <class T, size_t N
-	> ALIAS(array_t) T[N];
-
 	template <class _Ty, size_t _N
 	> class NODISCARD Array
 	{

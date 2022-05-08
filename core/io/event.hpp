@@ -31,7 +31,7 @@ namespace ism
 		OBJECT_COMMON(Event, Resource);
 
 	protected:
-		DEFAULT_COPYABLE_MOVABLE(Event);
+		Event() noexcept = default;
 
 	public:
 		enum : EventID { ID = static_cast<EventID>(-1) };
@@ -89,33 +89,10 @@ private:
 		explicit EventHandler(EventBus * bus = nullptr) noexcept;
 
 		template <class Ev0, class ... Evs
-		> void subscribe() noexcept
-		{
-			ASSERT(m_event_bus);
-
-			mpl::for_types<Ev0, Evs...>([&](auto tag) noexcept
-			{
-				m_event_bus->add_event_handler<TAG_TYPE(tag)>(this);
-			});
-		}
+		> void subscribe() noexcept;
 
 		template <class ... Evs
-		> void unsubscribe() noexcept
-		{
-			ASSERT(m_event_bus);
-
-			if constexpr (0 < sizeof...(Evs))
-			{
-				mpl::for_types<Evs...>([&](auto tag) noexcept
-				{
-					m_event_bus->remove_event_handler<TAG_TYPE(tag)>(this);
-				});
-			}
-			else
-			{
-				m_event_bus->remove_event_handler(this); // remove from all events
-			}
-		}
+		> void unsubscribe() noexcept;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -366,6 +343,35 @@ private:
 		: m_event_bus{ bus ? bus : EventBus::get_singleton() }
 		, m_handler_index{ VALIDATE(get_event_bus())->next_handler_id() }
 	{
+	}
+
+	template <class Ev0, class ... Evs
+	> void EventHandler::subscribe() noexcept
+	{
+		ASSERT(m_event_bus);
+
+		mpl::for_types<Ev0, Evs...>([&](auto tag) noexcept
+		{
+			m_event_bus->add_event_handler<TAG_TYPE(tag)>(this);
+		});
+	}
+
+	template <class ... Evs
+	> void EventHandler::unsubscribe() noexcept
+	{
+		ASSERT(m_event_bus);
+
+		if constexpr (0 < sizeof...(Evs))
+		{
+			mpl::for_types<Evs...>([&](auto tag) noexcept
+			{
+				m_event_bus->remove_event_handler<TAG_TYPE(tag)>(this);
+			});
+		}
+		else
+		{
+			m_event_bus->remove_event_handler(this); // remove from all events
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

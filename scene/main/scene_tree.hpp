@@ -13,8 +13,6 @@ namespace ism
 	
 	struct NODISCARD SceneSettings final
 	{
-		DEFAULT_COPYABLE_MOVABLE(SceneSettings);
-
 		String name{ "New Scene" };
 	};
 	
@@ -64,7 +62,7 @@ namespace ism
 		}
 
 	protected:
-		template <class T> void on_component_added(Entity &, T &) {}
+		template <class T> void on_component_added(class Entity &, T &) {}
 
 	private:
 		bool m_initialized{};

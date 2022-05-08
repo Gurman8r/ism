@@ -13,7 +13,7 @@ OBJECT_EMBED(CppFunctionObject, t)
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ
 	{
-		return !obj ? self : METHOD({ self, obj });
+		return !obj ? self : (OBJ)METHOD({ self, obj });
 	};
 
 	t.tp_bind = CLASS_BINDER(CppFunctionObject, t)

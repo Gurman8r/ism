@@ -39,14 +39,14 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I>	using element_i			= typename mpl::nth<I, value_types>;
-		template <class  T> using element_t			= typename T;
-		template <size_t I>	using vector_i			= typename mpl::nth<I, vector_types>;
-		template <class  T> using vector_t			= typename ism::Vector<T>;
-		template <size_t I>	using iterator_i		= typename vector_i<I>::iterator;
-		template <class  T>	using iterator_t		= typename vector_t<T>::iterator;
-		template <size_t I>	using const_iterator_i	= typename vector_i<I>::const_iterator;
-		template <class  T>	using const_iterator_t	= typename vector_t<T>::const_iterator;
+		template <size_t I>	using element_i			= mpl::nth<I, value_types>;
+		template <class  T> using element_t			= T;
+		template <size_t I>	using vector_i			= mpl::nth<I, vector_types>;
+		template <class  T> using vector_t			= ism::Vector<T>;
+		template <size_t I>	using iterator_i		= vector_i<I>::iterator;
+		template <class  T>	using iterator_t		= vector_t<T>::iterator;
+		template <size_t I>	using const_iterator_i	= vector_i<I>::const_iterator;
+		template <class  T>	using const_iterator_t	= vector_t<T>::const_iterator;
 
 		using iterator_types		= typename mpl::remap<iterator_t, value_types>;
 		using iterator_tuple		= typename mpl::tuple<iterator_types>;
@@ -112,7 +112,7 @@ namespace ism
 
 		self_type & operator=(init_type value)
 		{
-			self_type temp{ init };
+			self_type temp{ value };
 			this->swap(temp);
 			return (*this);
 		}
@@ -864,7 +864,7 @@ namespace ism
 		template <size_t I, class U = element_i<I>
 		> NODISCARD bool contains(U && value) const noexcept
 		{
-			return this->end<T>() != this->find<I>(FWD(value));
+			return this->end<I>() != this->find<I>(FWD(value));
 		}
 
 		template <class T, class U = element_t<T>
@@ -931,7 +931,7 @@ namespace ism
 		template <class T, class It = const_iterator_t<T>, class ... Args
 		> auto emplace(It && it, Args && ... args) noexcept -> iterator_t<T>
 		{
-			return this->get<I>().emplace
+			return this->get<T>().emplace
 			(
 				this->get_iterator<T>(FWD(it)), FWD(args)...
 			);

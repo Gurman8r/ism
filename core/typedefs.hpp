@@ -8,7 +8,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // alias
-#define ALIAS(type)	using type = typename
+#define ALIAS(type)	using type = 
 
 // strong typedef
 #define STRONG_TYPEDEF(m_to, m_from)																			\
@@ -108,6 +108,8 @@ namespace ism
 	ALIAS(cwstring)		wchar_t const *;
 #if (ISM_CXX_20)
 	ALIAS(c8string)		char8_t const *;
+#else
+	ALIAS(c8string)		char const *;
 #endif
 	ALIAS(c16string)	char16_t const *;
 	ALIAS(c32string)	char32_t const *;

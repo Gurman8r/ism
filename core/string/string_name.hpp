@@ -21,8 +21,6 @@ namespace ism
 
 		StringName(StringName const & value) : m_text{ value } {}
 
-		StringName(StringName && value) noexcept : m_text{} { swap(std::move(value)); }
-
 		StringName(String const & value) : m_text{ value } {}
 
 		StringName(String && value) noexcept : m_text{ std::move(value) } {}
@@ -32,8 +30,6 @@ namespace ism
 		StringName & swap(StringName & value) noexcept { return m_text.swap(value.m_text), (*this); }
 
 		StringName & operator=(StringName const & value) { StringName temp{ value }; return swap(temp); }
-
-		StringName & operator=(StringName && value) noexcept { return swap(std::move(value)); }
 
 		void clear() noexcept { m_text.clear(); }
 

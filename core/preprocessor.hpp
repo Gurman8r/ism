@@ -117,32 +117,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// compose
-namespace ism::impl
-{
-	// compose helper
-	template <class T> struct ComposerHelper final
-	{
-		T value;
-
-		constexpr ComposerHelper(T && value) noexcept : value{ FWD(value) } {}
-
-		template <class Fn = void(*)(T &)
-		> constexpr decltype(auto) operator+(Fn && fn) && noexcept
-		{
-			return fn(value), std::move(value);
-		}
-	};
-
-#define COMPOSE_EX(m_class, ...) \
-		(ism::impl::ComposerHelper<m_class>(m_class{ ##__VA_ARGS__ }))
-
-#define COMPOSE(m_class, m_var, ...) \
-		COMPOSE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 // return static implementation
 #define _RETURN_STATIC(var, expr)	\
 		static auto var = expr;			\
@@ -173,7 +147,7 @@ namespace ism::impl
 
 // scope enter ex
 #define SCOPE_ENTER_EX(...) \
-		(ism::impl::OnScopeEnterTag{}) + [##__VA_ARGS__]() noexcept -> void
+		(::ism::impl::OnScopeEnterTag{}) + [##__VA_ARGS__]() noexcept -> void
 
 // scope enter
 #define SCOPE_ENTER(...) \
@@ -204,7 +178,7 @@ namespace ism::impl
 
 // scope exit ex
 #define SCOPE_EXIT_EX(...) \
-		(ism::impl::OnScopeExitTag{}) + [##__VA_ARGS__]() noexcept -> void
+		(::ism::impl::OnScopeExitTag{}) + [##__VA_ARGS__]() noexcept -> void
 
 // scope exit
 #define SCOPE_EXIT(...) \
@@ -221,52 +195,6 @@ namespace ism::impl
 #define NON_MOVABLE(T)									\
 		T(T &&) noexcept = delete;						\
 		T & operator=(T &&) noexcept = delete;			\
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// copy constructible
-#define COPYABLE(T)										\
-		T(T const &) = default;							\
-		T & operator=(T const &) = default;				\
-
-// move constructible
-#define MOVABLE(T)										\
-		T(T &&) noexcept = default;						\
-		T & operator=(T &&) noexcept = default;			\
-
-// copy move constructible
-#define COPYABLE_MOVABLE(T)								\
-		COPYABLE(T)										\
-		MOVABLE(T)										\
-
-// default copy move constructible
-#define DEFAULT_COPYABLE_MOVABLE(T)						\
-		T() noexcept = default;							\
-		COPYABLE(T)										\
-		MOVABLE(T)										\
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// constexpr copy constructible
-#define CONSTEXPR_COPYABLE(T)								\
-		constexpr T(T const &) = default;					\
-		constexpr T & operator=(T const &) = default;		\
-
-// constexpr move constructible
-#define CONSTEXPR_MOVABLE(T)								\
-		constexpr T(T &&) noexcept = default;				\
-		constexpr T & operator=(T &&) noexcept = default;	\
-
-// constexpr copy move constructible
-#define CONSTEXPR_COPYABLE_MOVABLE(T)						\
-		CONSTEXPR_COPYABLE(T)								\
-		CONSTEXPR_MOVABLE(T)								\
-
-// constexpr default copy move constructible
-#define CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(T)				\
-		constexpr T() noexcept = default;					\
-		CONSTEXPR_COPYABLE(T)								\
-		CONSTEXPR_MOVABLE(T)								\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -27,7 +27,7 @@
 #endif
 
 #define FWD_OBJ(expr) \
-	(ism::object_or_cast(FWD(expr)))
+	(::ism::object_or_cast(FWD(expr)))
 
 #define STR_IDENTIFIER(m_name) \
 	static ism::StringObject CAT(ID_, m_name) { TOSTR(m_name) }
@@ -598,12 +598,12 @@ namespace ism
 
 		template <class Value> decltype(auto) operator=(Value && value) &&
 		{
-			return Policy::set(m_obj, m_key, FWD_OBJ(value)), (*this);
+			return Policy::set(m_obj, m_key, object_or_cast(value)), (*this);
 		}
 
 		template <class Value> decltype(auto) operator=(Value && value) &
 		{
-			return (get_cache() = FWD_OBJ(value)), (*this);
+			return (get_cache() = object_or_cast(value)), (*this);
 		}
 
 		NODISCARD auto ptr() const { return const_cast<Object *>(get_cache().ptr()); }
@@ -629,10 +629,10 @@ namespace ism
 		using key_type = T;
 
 		template <class O = OBJ, class Index = T
-		> static auto get(O && o, Index && i) { return ism::getattr(FWD(o), FWD(i)); }
+		> static auto get(O && o, Index && i) { return getattr(FWD(o), FWD(i)); }
 
 		template <class O = OBJ, class Index = T, class Value = OBJ
-		> static void set(O && o, Index && i, Value && v) { ism::setattr(FWD(o), FWD(i), FWD(v)); }
+		> static void set(O && o, Index && i, Value && v) { setattr(FWD(o), FWD(i), FWD(v)); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -643,10 +643,10 @@ namespace ism
 		using key_type = T;
 
 		template <class O = OBJ, class Index = T
-		> static auto get(O && o, Index && i) { return ism::getitem(FWD(o), FWD(i)); }
+		> static auto get(O && o, Index && i) { return getitem(FWD(o), FWD(i)); }
 
 		template <class O = OBJ, class Index = T, class Value = OBJ
-		> static void set(O && o, Index && i, Value && v) { ism::setitem(FWD(o), FWD(i), FWD(v)); }
+		> static void set(O && o, Index && i, Value && v) { setitem(FWD(o), FWD(i), FWD(v)); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

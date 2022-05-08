@@ -25,7 +25,7 @@ namespace ism::attr
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// name
-	struct name { cstring value; name(cstring value) : value{ value } {} };
+	class name { public: cstring value; name(cstring value) : value{ value } {} };
 	template <> struct process_attribute<name> : process_attribute_default<name>
 	{
 		static void init(FunctionRecord & r, name && a) noexcept { r.name = a.value; }
@@ -38,42 +38,42 @@ namespace ism::attr
 	};
 
 	// sibling
-	struct sibling { Object * value; sibling(Object * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
+	class sibling { public: Object * value; sibling(Object * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<sibling> : process_attribute_default<sibling>
 	{
 		static void init(FunctionRecord & r, sibling && a) noexcept { r.sibling = a.value; }
 	};
 
 	// is_method
-	struct is_method { Object * value; is_method(Object * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
+	class is_method { public: Object * value; is_method(Object * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<is_method> : process_attribute_default<is_method>
 	{
 		static void init(FunctionRecord & r, is_method && a) noexcept { r.is_method = true; r.scope = a.value; }
 	};
 
 	// scope
-	struct scope { Object * value; scope(Object * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
+	class scope { public: Object * value; scope(Object * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<scope> : process_attribute_default<scope>
 	{
 		static void init(FunctionRecord & r, scope && a) noexcept { r.scope = a.value; }
 	};
 
 	// is_operator
-	struct is_operator {};
+	class is_operator { public: };
 	template <> struct process_attribute<is_operator> : process_attribute_default<is_operator>
 	{
 		static void init(FunctionRecord & r, is_operator && a) noexcept { r.is_operator = true; }
 	};
 
 	// is_constructor
-	struct is_constructor {};
+	class is_constructor { public: };
 	template <> struct process_attribute<is_constructor> : process_attribute_default<is_constructor>
 	{
 		static void init(FunctionRecord & r, is_constructor && a) noexcept { r.is_constructor = true; }
 	};
 
 	// prepend
-	struct prepend {};
+	class prepend { public: };
 	template <> struct process_attribute<prepend> : process_attribute_default<prepend> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

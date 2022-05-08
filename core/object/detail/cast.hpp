@@ -108,36 +108,36 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define TYPE_CASTER_COMMON(m_type, m_name)															\
-protected:																							\
-	m_type value{};																					\
-																									\
-public:																								\
-	static constexpr auto name{ m_name };															\
-																									\
-	operator m_type * () { return &value; }															\
-																									\
-	operator m_type & () { return value; }															\
-																									\
-	operator m_type && () { return std::move(value); }												\
-																									\
-	template <class T_> ALIAS(cast_op_type) ism::movable_cast_op_type<T_>;							\
-																									\
-	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0		\
-	> static ism::OBJ cast(T_ * src, ism::ReturnValuePolicy_ policy, ism::OBJ const & parent)		\
-	{																								\
-		if (!src) { return nullptr; }																\
-		else if (policy == ism::ReturnValuePolicy_TakeOwnership)									\
-		{																							\
-			ism::OBJ h{ cast(std::move(*src), policy, parent) };									\
-			ism::memdelete(src);																	\
-			return h;																				\
-		}																							\
-		else																						\
-		{																							\
-			return ism::cast(*src, policy, parent);													\
-		}																							\
-	}																								\
+#define TYPE_CASTER_COMMON(m_type, m_name)														\
+protected:																						\
+	m_type value{};																				\
+																								\
+public:																							\
+	static constexpr auto name{ m_name };														\
+																								\
+	operator m_type * () { return &value; }														\
+																								\
+	operator m_type & () { return value; }														\
+																								\
+	operator m_type && () { return std::move(value); }											\
+																								\
+	template <class T_> ALIAS(cast_op_type) movable_cast_op_type<T_>;							\
+																								\
+	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0	\
+	> static OBJ cast(T_ * src, ReturnValuePolicy_ policy, OBJ const & parent)					\
+	{																							\
+		if (!src) { return nullptr; }															\
+		else if (policy == ReturnValuePolicy_TakeOwnership)										\
+		{																						\
+			OBJ h{ cast(std::move(*src), policy, parent) };										\
+			memdelete(src);																		\
+			return h;																			\
+		}																						\
+		else																					\
+		{																						\
+			return cast(*src, policy, parent);													\
+		}																						\
+	}																							\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

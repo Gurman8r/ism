@@ -109,10 +109,10 @@ namespace ism
 		void reserve(size_t count) const { m_ptr->reserve(count); }
 
 		template <class Index = OBJ
-		> auto del(Index && i) const -> Error_ { return m_ptr->erase(FWD(i)); }
+		> auto del(Index && i) const -> Error_ { return m_ptr->del(FWD(i)); }
 
 		template <class Index = OBJ, class Value = OBJ
-		> bool insert(Index && i, Value && v) const { return m_ptr->try_emplace(FWD(i), FWD(v)); }
+		> bool insert(Index && i, Value && v) const { return m_ptr->insert(FWD(i), FWD(v)); }
 
 		template <class Index = OBJ
 		> NODISCARD bool contains(Index && i) const { return m_ptr->contains(FWD(i)); }

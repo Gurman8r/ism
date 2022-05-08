@@ -94,7 +94,6 @@ namespace ism
 	template <size_t _Alignment, class ... _Types
 	> class UniformConstantBuffer
 	{
-	public:
 		static_assert(_Alignment % 2 == 0);
 
 		static_assert(0 < sizeof...(_Types));
@@ -149,62 +148,31 @@ namespace ism
 		using iterator			= typename pointer;
 		using const_iterator	= typename const_pointer;
 
+		static constexpr byte null{ (byte)'\0' };
+
 		UniformConstantBuffer() noexcept {}
 
 		UniformConstantBuffer(self_type const & other) { copy(other); }
 	
 		UniformConstantBuffer(self_type && other) noexcept { swap(std::move(other)); }
-
-		UniformConstantBuffer(size_t const index, void const * src, size_t const size_in_bytes) noexcept
-		{
-			write(index, src, size_in_bytes);
-		}
-
-		UniformConstantBuffer(void const * src, size_t const size_in_bytes) noexcept
-		{
-			write(0, src, size_in_bytes);
-		}
-
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> UniformConstantBuffer(size_t const index, T const & value) noexcept
-		{
-			write(index, value);
-		}
-
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> UniformConstantBuffer(T const & value) noexcept
-		{
-			write(0, value);
-		}
 	
-		self_type & operator=(self_type const & other)
-		{
-			self_type temp{ other };
-			return swap(temp);
-		}
+		self_type & operator=(self_type const & other) { self_type temp{ other }; return swap(temp); }
 	
-		self_type & operator=(self_type && other) noexcept
-		{
-			return swap(std::move(other));
-		}
+		self_type & operator=(self_type && other) noexcept { return swap(std::move(other)); }
 
 	public:
-		self_type & clear() noexcept
-		{
+		self_type & clear() noexcept {
 			zeromem(m_data, _Size);
 			return (*this);
 		}
-	
-		self_type & copy(self_type const & other)
-		{
+
+		self_type & copy(self_type const & other) {
 			if (this != std::addressof(other)) { copymem(m_data, other.m_data, _Size); }
 			return (*this);
 		}
-	
-		self_type & swap(self_type & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
+
+		self_type & swap(self_type & other) noexcept {
+			if (this != std::addressof(other)) {
 				byte temp[_Size];
 				copymem(temp, m_data, _Size);
 				copymem(m_data, other.m_data, _Size);
@@ -407,7 +375,7 @@ EditorNode::EditorNode()
 	RID const shader{ m_shaders["3d"]->get_rid() };
 	_setup_pipeline(shader);
 
-	uniform_buffers[SCENE] = RENDERING_DEVICE->uniform_buffer_create(sizeof(Mat4) * 2);
+	uniform_buffers[SCENE] = RENDERING_DEVICE->uniform_buffer_create(UniformConstantBuffer<16, Mat4, Mat4>().size());
 	uniform_sets[SCENE] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, SCENE, { uniform_buffers[SCENE] } },
 	}, shader);
@@ -464,7 +432,6 @@ void EditorNode::process(Duration const dt)
 
 	{
 		static UniformConstantBuffer<16, Mat4, Mat4> scene_ubo_data;
-		constexpr size_t test{ decltype(scene_ubo_data)::_calculate_index<1>() };
 		if (viewport_resized) { scene_ubo_data.set<0>(editor_camera->get_proj()); }
 		scene_ubo_data.set<1>(editor_camera->get_view());
 		RENDERING_DEVICE->uniform_buffer_update(uniform_buffers[SCENE], 0, scene_ubo_data.data(), scene_ubo_data.size());

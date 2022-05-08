@@ -47,8 +47,6 @@ namespace ism
 	// input state
 	struct NODISCARD InputState final
 	{
-		DEFAULT_COPYABLE_MOVABLE(InputState);
-
 		char last_char;
 
 		bool is_shift, is_ctrl, is_alt, is_super;

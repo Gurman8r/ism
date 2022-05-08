@@ -42,29 +42,19 @@ namespace ism
 
 		constexpr Transform(Transform const & other) : m_data{ other.m_data } {}
 		
-		constexpr Transform(Transform && other) noexcept : m_data{} { this->swap(std::move(other)); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		constexpr Transform & operator=(Transform const & other)
 		{
 			Transform temp{ other };
-			this->swap(temp);
-			return (*this);
+			return swap(temp);
 		}
 
-		constexpr Transform & operator=(Transform && other) noexcept
-		{
-			this->swap(std::move(other));
-			return (*this);
-		}
-
-		constexpr void swap(Transform & other) noexcept
+		constexpr Transform & swap(Transform & other) noexcept
 		{
 			if (this != std::addressof(other))
 			{
 				m_data.swap(other.m_data);
 			}
+			return (*this);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

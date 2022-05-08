@@ -21,11 +21,9 @@ namespace ism
 
 		Path(Path const & value) : m_text{ value } {}
 
-		Path(Path && value) noexcept : m_text{} { swap(std::move(value)); }
+		Path(Path && value) noexcept : m_text{} { swap(value); }
 
 		Path(String const & value) : m_text{ value } {}
-
-		Path(String && value) noexcept : m_text{ std::move(value) } {}
 
 		Path(StringName const & value) : m_text{ value } {}
 
@@ -36,8 +34,6 @@ namespace ism
 		Path & swap(Path & value) noexcept { return m_text.swap(value.m_text), (*this); }
 
 		Path & operator=(Path const & value) { Path temp{ value }; return swap(temp); }
-
-		Path & operator=(Path && value) noexcept { return swap(std::move(value)); }
 
 		void clear() noexcept { m_text.clear(); }
 

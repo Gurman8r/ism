@@ -35,7 +35,7 @@ namespace ism
 
 		NODISCARD static TYPE get_type_static() noexcept;
 
-		DEFAULT_COPYABLE_MOVABLE(TypeObject);
+		TypeObject() noexcept {}
 
 		template <class T
 		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags = TypeFlags_None) noexcept : TypeObject{}
@@ -169,7 +169,7 @@ namespace ism
 
 			m_ptr->modified();
 
-			if (ism::is_dunder_name(str_name)) { m_ptr->update_slot(str_name); }
+			if (is_dunder_name(str_name)) { m_ptr->update_slot(str_name); }
 
 			ASSERT(m_ptr->check_consistency());
 		}

@@ -41,11 +41,7 @@ namespace ism
 
 		DynamicBuffer(DynamicBuffer const & other, allocator_type alloc = {}) : m_data{ other.m_data, alloc } {}
 
-		DynamicBuffer(DynamicBuffer && other, allocator_type alloc = {}) noexcept : m_data{ alloc } { swap(std::move(other)); }
-
 		DynamicBuffer & operator=(DynamicBuffer const & other) { DynamicBuffer temp{ other }; return swap(temp); }
-
-		DynamicBuffer & operator=(DynamicBuffer && other) noexcept { return swap(std::move(other)); }
 
 		NODISCARD operator storage_type & () & noexcept { return m_data; }
 
@@ -312,6 +308,8 @@ namespace ism
 		using const_pointer		= typename byte const *;
 		using iterator			= typename pointer;
 		using const_iterator	= typename const_pointer;
+
+		static constexpr byte null{ (byte)'\0' };
 
 		StaticBuffer() noexcept {}
 

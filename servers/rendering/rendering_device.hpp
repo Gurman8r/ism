@@ -265,8 +265,6 @@ namespace ism
 		{
 			struct Element
 			{
-				CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(Element);
-
 				cstring		name{};
 				DataType_	type{};
 				uint32_t	count{};
@@ -294,9 +292,9 @@ namespace ism
 			template <size_t N> VertexFormat(Element const (&arr)[N]) noexcept : VertexFormat{ &arr[0], &arr[N] } {}
 
 			VertexFormat() noexcept : VertexFormat{
-				{ "a_Position",	DataType_F32, 3 },
-				{ "a_Normal",	DataType_F32, 3 },
-				{ "a_Texcoord",	DataType_F32, 2 },
+				Element{ "a_Position",	DataType_F32, 3 },
+				Element{ "a_Normal",	DataType_F32, 3 },
+				Element{ "a_Texcoord",	DataType_F32, 2 },
 			} {}
 		};
 
@@ -362,8 +360,6 @@ namespace ism
 
 		struct SamplerState
 		{
-			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(SamplerState);
-
 			SamplerFilter_ mag_filter{ SamplerFilter_Nearest }, min_filter{ SamplerFilter_Nearest }, mip_filter{ SamplerFilter_Nearest };
 
 			SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat }, repeat_r{ SamplerRepeatMode_Repeat };
@@ -459,8 +455,6 @@ namespace ism
 
 		struct TextureFormat
 		{
-			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(TextureFormat);
-
 			TextureType_ texture_type{ TextureType_2D };
 
 			DataFormat_ color_format{ DataFormat_R8G8B8_UNORM };
@@ -521,8 +515,6 @@ namespace ism
 
 		struct ShaderStageData
 		{
-			DEFAULT_COPYABLE_MOVABLE(ShaderStageData);
-
 			ShaderStage_ shader_stage{ ShaderStage_Vertex };
 
 			DynamicBuffer source_code{};
@@ -551,8 +543,6 @@ namespace ism
 
 		struct Uniform
 		{
-			DEFAULT_COPYABLE_MOVABLE(Uniform);
-
 			UniformType_ uniform_type{ UniformType_Image };
 
 			int32_t binding{};
@@ -600,8 +590,6 @@ namespace ism
 
 		struct RasterizationState
 		{
-			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(RasterizationState);
-
 			bool enable_depth_clamp{ false };
 
 			bool discard_primitives{ false };
@@ -627,8 +615,6 @@ namespace ism
 
 		struct MultisampleState
 		{
-			DEFAULT_COPYABLE_MOVABLE(MultisampleState);
-
 			TextureSamples_ sample_count{ TextureSamples_1 };
 
 			bool enable_sample_shading{ false };
@@ -657,12 +643,8 @@ namespace ism
 
 		struct DepthStencilState
 		{
-			CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(DepthStencilState);
-
 			struct StencilOperationState
 			{
-				CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(StencilOperationState);
-
 				StencilOperation_ fail{ StencilOperation_Zero };
 
 				StencilOperation_ pass{ StencilOperation_Zero };
@@ -729,12 +711,8 @@ namespace ism
 
 		struct ColorBlendState
 		{
-			DEFAULT_COPYABLE_MOVABLE(ColorBlendState);
-
 			struct Attachment
 			{
-				CONSTEXPR_DEFAULT_COPYABLE_MOVABLE(Attachment);
-
 				bool enable_blend{ false };
 
 				BlendFactor_ src_color_blend_factor{ BlendFactor_Zero };

@@ -20,10 +20,6 @@ namespace ism
 
 		virtual ~Glyph();
 
-		Glyph(Glyph && other) noexcept { swap(std::move(other)); }
-
-		Glyph & operator=(Glyph && other) noexcept { return swap(std::move(other)); }
-
 		Glyph & swap(Glyph & other) noexcept
 		{
 			if (this != std::addressof(other))
