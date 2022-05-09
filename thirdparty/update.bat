@@ -12,6 +12,7 @@ git submodule add --force https://github.com/nlohmann/json
 git submodule add --force https://github.com/nothings/stb.git
 git submodule add --force https://github.com/pybind/pybind11.git
 git submodule add --force https://github.com/madler/zlib
+git submodule add --force https://github.com/frk1/ziplib.git
 
 git submodule add --force -b docking https://github.com/ocornut/imgui.git
 git submodule add --force https://github.com/ocornut/imgui_club.git
