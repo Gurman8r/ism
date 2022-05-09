@@ -260,6 +260,18 @@ namespace ism
 		};
 
 	public:
+		/* BUFFER API */
+		enum BufferType_
+		{
+			BufferType_VertexBuffer,
+			BufferType_IndexBuffer,
+			BufferType_UniformBuffer,
+		};
+
+		virtual RID buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & buffer = {}) = 0;
+		virtual void buffer_update(RID buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
+
+	public:
 		/* VERTEXARRAY API */
 		struct VertexFormat
 		{
@@ -320,14 +332,12 @@ namespace ism
 
 		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) = 0;
 		virtual void vertex_buffer_destroy(RID vertex_buffer) = 0;
-		virtual void vertex_buffer_update(RID vertex_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
 
 		virtual RID index_array_create(RID index_buffer, size_t index_offset, size_t index_count) = 0;
 		virtual void index_array_destroy(RID index_array) = 0;
 
 		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & buffer = {}) = 0;
 		virtual void index_buffer_destroy(RID index_buffer) = 0;
-		virtual void index_buffer_update(RID index_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
 
 	public:
 		/* SAMPLER API */
@@ -526,6 +536,9 @@ namespace ism
 
 	public:
 		/* UNIFORMS */
+		template <class ... _Types
+		> using UniformBuffer = ConstantBuffer<16, _Types...>;
+
 		enum UniformType_
 		{
 			UniformType_Sampler,
@@ -552,7 +565,6 @@ namespace ism
 
 		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) = 0;
 		virtual void uniform_buffer_destroy(RID uniform_buffer) = 0;
-		virtual void uniform_buffer_update(RID uniform_buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
 
 		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) = 0;
 		virtual void uniform_set_destroy(RID uniform_set) = 0;

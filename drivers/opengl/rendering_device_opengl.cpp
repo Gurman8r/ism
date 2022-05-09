@@ -155,6 +155,12 @@ void get_color_format_info(
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+ALIAS(BufferType_) RD::BufferType_;
+MAKE_ENUM_MAPPING(TO_GL, BufferType_, uint32_t,
+	GL_ARRAY_BUFFER,
+	GL_ELEMENT_ARRAY_BUFFER,
+	GL_UNIFORM_BUFFER);
+
 ALIAS(IndexbufferFormat_) RD::IndexbufferFormat_;
 MAKE_ENUM_MAPPING(TO_GL, IndexbufferFormat_, uint32_t,
 	GL_UNSIGNED_BYTE,
@@ -334,18 +340,54 @@ void RenderingDeviceOpenGL::finalize()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+RID RenderingDeviceOpenGL::buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & buffer)
+{
+	_Buffer * b;
+	switch (buffer_type)
+	{
+	default: return nullptr;
+	case RenderingDevice::BufferType_VertexBuffer: {
+		b = memnew(_VertexBuffer{});
+		b->usage = buffer.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+	} break;
+	case RenderingDevice::BufferType_IndexBuffer: {
+		b = memnew(_IndexBuffer{});
+		b->usage = buffer.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
+	} break;
+	case RenderingDevice::BufferType_UniformBuffer: {
+		b = memnew(_UniformBuffer{});
+		b->usage = GL_STATIC_DRAW;
+	} break;
+	}
+	b->buffer_type = TO_GL(buffer_type);
+	b->size = (uint32_t)size_in_bytes;
+	b->buffer = buffer;
+
+	glCheck(glGenBuffers(1, &b->handle));
+	glCheck(glBindBuffer(b->buffer_type, b->handle));
+	glCheck(glBufferData(b->buffer_type, b->size, b->buffer.data(), b->usage));
+	glCheck(glBindBuffer(b->buffer_type, 0));
+
+	return (RID)b;
+}
+
+void RenderingDeviceOpenGL::buffer_update(RID buffer, size_t offset, void const * data, size_t size_in_bytes)
+{
+	_Buffer * const b{ VALIDATE((_Buffer *)buffer) };
+	b->buffer.write(offset, data, size_in_bytes);
+	if (b->size < offset + size_in_bytes) { b->size = offset + size_in_bytes; }
+	glCheck(glBindBuffer(b->buffer_type, b->handle));
+	glCheck(glBufferSubData(b->buffer_type, (uint32_t)offset, b->size, b->buffer.data()));
+	glCheck(glBindBuffer(b->buffer_type, 0));
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 RID RenderingDeviceOpenGL::vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer)
 {
 	ASSERT(0 < size_in_bytes);
 
-	_VertexBuffer * vb{ memnew(_VertexBuffer{}) };
-	vb->size = (uint32_t)size_in_bytes;
-	vb->buffer = buffer;
-
-	glCheck(glGenBuffers(1, &vb->handle));
-	glCheck(glBindBuffer(GL_ARRAY_BUFFER, vb->handle));
-	glCheck(glBufferData(GL_ARRAY_BUFFER, vb->size, vb->buffer.data(), vb->buffer.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
-	glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
+	_VertexBuffer * vb{ VALIDATE((_VertexBuffer *)buffer_create(BufferType_VertexBuffer, size_in_bytes, buffer)) };
 
 	return (RID)vb;
 }
@@ -355,16 +397,6 @@ void RenderingDeviceOpenGL::vertex_buffer_destroy(RID vertex_buffer)
 	_VertexBuffer * const vb{ VALIDATE((_VertexBuffer *)vertex_buffer) };
 	glCheck(glDeleteBuffers(1, &vb->handle));
 	memdelete(vb);
-}
-
-void RenderingDeviceOpenGL::vertex_buffer_update(RID vertex_buffer, size_t offset, void const * data, size_t size_in_bytes)
-{
-	_VertexBuffer * const vb{ VALIDATE((_VertexBuffer *)vertex_buffer) };
-	vb->size = (uint32_t)size_in_bytes;
-	vb->buffer.write(offset, data, size_in_bytes);
-	glCheck(glBindBuffer(GL_ARRAY_BUFFER, vb->handle));
-	glCheck(glBufferSubData(GL_ARRAY_BUFFER, (uint32_t)offset, vb->size, vb->buffer.data()));
-	glCheck(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -435,16 +467,13 @@ RID RenderingDeviceOpenGL::index_buffer_create(size_t index_count, IndexbufferFo
 {
 	ASSERT(0 < index_count);
 
-	_IndexBuffer * const ib{ memnew(_IndexBuffer{}) };
-	ib->size = (uint32_t)(index_count * RD::get_index_buffer_format_size(index_type));
-	ib->index_count = (uint32_t)index_count;
-	ib->index_type = TO_GL(index_type);
-	ib->buffer = buffer;
+	size_t const size_in_bytes{ index_count * RD::get_index_buffer_format_size(index_type) };
 
-	glCheck(glGenBuffers(1, &ib->handle));
-	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->handle));
-	glCheck(glBufferData(GL_ELEMENT_ARRAY_BUFFER, ib->size, ib->buffer.data(), ib->buffer.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
-	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	_IndexBuffer * const ib{ VALIDATE((_IndexBuffer *)buffer_create(BufferType_IndexBuffer, size_in_bytes, buffer)) };
+
+	ib->index_count = (uint32_t)index_count;
+
+	ib->index_type = TO_GL(index_type);
 
 	return (RID)ib;
 }
@@ -454,16 +483,6 @@ void RenderingDeviceOpenGL::index_buffer_destroy(RID index_buffer)
 	_IndexBuffer * const ib{ VALIDATE((_IndexBuffer *)index_buffer) };
 	glCheck(glDeleteBuffers(1, &ib->handle));
 	memdelete(ib);
-}
-
-void RenderingDeviceOpenGL::index_buffer_update(RID index_buffer, size_t offset, void const * data, size_t size_in_bytes)
-{
-	_IndexBuffer * const ib{ VALIDATE((_IndexBuffer *)index_buffer) };
-	ib->size = (uint32_t)size_in_bytes;
-	ib->buffer.write(offset, data, size_in_bytes);
-	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->handle));
-	glCheck(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, (uint32_t)offset, ib->size, ib->buffer.data()));
-	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -836,14 +855,7 @@ void RenderingDeviceOpenGL::shader_bind(RID shader)
 
 RID RenderingDeviceOpenGL::uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer)
 {
-	_UniformBuffer * ub{ memnew(_UniformBuffer{}) };
-	ub->buffer = buffer;
-	ub->size = (uint32_t)size_in_bytes;
-
-	glCheck(glGenBuffers(1, &ub->handle));
-	glCheck(glBindBuffer(GL_UNIFORM_BUFFER, ub->handle));
-	glCheck(glBufferData(GL_UNIFORM_BUFFER, ub->size, !ub->buffer.empty() ? buffer.data() : nullptr, GL_STATIC_DRAW));
-	glCheck(glBindBuffer(GL_UNIFORM_BUFFER, 0));
+	_UniformBuffer * ub{ VALIDATE((_UniformBuffer *)buffer_create(BufferType_UniformBuffer, size_in_bytes, buffer)) };
 
 	return (RID)ub;
 }
@@ -853,16 +865,6 @@ void RenderingDeviceOpenGL::uniform_buffer_destroy(RID uniform_buffer)
 	_UniformBuffer * const ub{ VALIDATE((_UniformBuffer *)uniform_buffer) };
 	glCheck(glDeleteBuffers(1, &ub->handle));
 	memdelete(ub);
-}
-
-void RenderingDeviceOpenGL::uniform_buffer_update(RID uniform_buffer, size_t offset, void const * data, size_t size_in_bytes)
-{
-	_UniformBuffer * const ub{ VALIDATE((_UniformBuffer *)uniform_buffer) };
-	ub->buffer.write(offset, data, size_in_bytes);
-	if (ub->size < offset + size_in_bytes) { ub->size = offset + size_in_bytes; }
-	glCheck(glBindBuffer(GL_UNIFORM_BUFFER, ub->handle));
-	glCheck(glBufferSubData(GL_UNIFORM_BUFFER, (uint32_t)offset, ub->size, ub->buffer.data()));
-	glCheck(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
 RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, RID shader)

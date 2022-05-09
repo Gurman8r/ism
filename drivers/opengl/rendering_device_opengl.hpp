@@ -21,12 +21,24 @@ namespace ism
 		virtual void finalize() override;
 
 	public:
-		/* VERTEXARRAY API */
-		struct _VertexBuffer
+		/* BUFFER API */
+		struct _Buffer
 		{
 			uint32_t handle{};
+			uint32_t buffer_type{};
+			uint32_t usage{};
 			uint32_t size{};
 			DynamicBuffer buffer{};
+			uint32_t draw_mode{};
+		};
+
+		virtual RID buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & buffer = {}) override;
+		virtual void buffer_update(RID buffer, size_t offset, void const * data, size_t size_in_bytes) override;
+
+	public:
+		/* VERTEXARRAY API */
+		struct _VertexBuffer : _Buffer
+		{
 		};
 
 		struct _VertexArray
@@ -37,13 +49,10 @@ namespace ism
 			Vector<RID> buffers{};
 		};
 
-		struct _IndexBuffer
+		struct _IndexBuffer : _Buffer
 		{
-			uint32_t handle{};
-			uint32_t size{};
 			uint32_t index_count{};
 			uint32_t index_type{};
-			DynamicBuffer buffer{};
 		};
 
 		struct _IndexArray
@@ -56,14 +65,12 @@ namespace ism
 
 		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) override;
 		virtual void vertex_buffer_destroy(RID vertex_buffer) override;
-		virtual void vertex_buffer_update(RID vertex_buffer, size_t offset, void const * data, size_t size_in_bytes) override;
 
 		virtual RID vertex_array_create(size_t vertex_count, VertexFormat const & format, Vector<RID> const & buffers) override;
 		virtual void vertex_array_destroy(RID rid) override;
 
 		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & buffer = {}) override;
 		virtual void index_buffer_destroy(RID index_buffer) override;
-		virtual void index_buffer_update(RID index_buffer, size_t offset, void const * data, size_t size_in_bytes) override;
 
 		virtual RID index_array_create(RID index_buffer, size_t index_offset, size_t index_count) override;
 		virtual void index_array_destroy(RID index_array) override;
@@ -142,16 +149,12 @@ namespace ism
 
 	public:
 		/* UNIFORM API */
-		struct _UniformBuffer
+		struct _UniformBuffer : _Buffer
 		{
-			uint32_t handle{};
-			uint32_t size{};
-			DynamicBuffer buffer{};
 		};
 
 		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) override;
 		virtual void uniform_buffer_destroy(RID uniform_buffer) override;
-		virtual void uniform_buffer_update(RID uniform_buffer, size_t offset, void const * data, size_t size_in_bytes) override;
 
 		struct _Uniform
 		{

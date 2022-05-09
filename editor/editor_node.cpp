@@ -89,282 +89,6 @@ MEMBER_IMPL(EditorNode::singleton) {};
 
 OBJECT_EMBED(EditorNode, t) {}
 
-namespace ism
-{
-	template <size_t _Alignment, class ... _Types
-	> class UniformConstantBuffer
-	{
-		static_assert(!_Alignment || _Alignment % 2 == 0);
-
-		static_assert(0 < sizeof...(_Types));
-
-		template <size_t I
-		> using _type = mpl::nth<I, mpl::type_list<_Types...>>;
-
-		static constexpr size_t _align(size_t const value) noexcept
-		{
-			return _Alignment ? IS_ALIGNED(value, _Alignment) ? value : SIZE_ROUND_UP(value, _Alignment) : value;
-		}
-
-		template <size_t I = 0, size_t Result = 0
-		> static constexpr size_t _calculate_size() noexcept
-		{
-			if constexpr (I < sizeof...(_Types))
-			{
-				return _calculate_size<I + 1, Result + _align(sizeof(_type<I>))>();
-			}
-			else
-			{
-				return Result;
-			}
-		}
-
-		template <size_t Index, size_t I = 0, size_t Result = 0
-		> static constexpr size_t _calculate_index() noexcept
-		{
-			static_assert(Index < sizeof...(_Types));
-
-			if constexpr (I < Index)
-			{
-				return _calculate_index<Index, I + 1, Result + _align(sizeof(_type<I>))>();
-			}
-			else
-			{
-				return Result;
-			}
-		}
-
-		static constexpr size_t _Size{ _calculate_size() };
-
-		Array<byte, _Size> m_data{};
-
-	public:
-		using self_type			= typename UniformConstantBuffer<_Alignment, _Types...>;
-		using storage_type		= typename decltype(m_data);
-		using reference			= typename byte &;
-		using const_reference	= typename byte const &;
-		using pointer			= typename byte *;
-		using const_pointer		= typename byte const *;
-		using iterator			= typename pointer;
-		using const_iterator	= typename const_pointer;
-
-		static constexpr byte null{ (byte)'\0' };
-
-		UniformConstantBuffer() noexcept {}
-
-		UniformConstantBuffer(self_type const & other) { copy(other); }
-	
-		UniformConstantBuffer(self_type && other) noexcept { swap(std::move(other)); }
-	
-		self_type & operator=(self_type const & other) { self_type temp{ other }; return swap(temp); }
-	
-		self_type & operator=(self_type && other) noexcept { return swap(std::move(other)); }
-
-	public:
-		self_type & clear() noexcept {
-			zeromem(m_data, _Size);
-			return (*this);
-		}
-
-		self_type & copy(self_type const & other) {
-			if (this != std::addressof(other)) { copymem(m_data, other.m_data, _Size); }
-			return (*this);
-		}
-
-		self_type & swap(self_type & other) noexcept {
-			if (this != std::addressof(other)) {
-				byte temp[_Size];
-				copymem(temp, m_data, _Size);
-				copymem(m_data, other.m_data, _Size);
-				copymem(other.m_data, temp, _Size);
-			}
-			return (*this);
-		}
-
-	public:
-		NODISCARD auto alignment() const noexcept { return _Alignment; }
-
-		NODISCARD bool empty() const noexcept { return false; }
-
-		NODISCARD auto size() const noexcept -> size_t { return _Size; }
-
-		NODISCARD auto capacity() const noexcept -> size_t { return _Size; }
-
-		NODISCARD auto data() noexcept -> pointer { return m_data; }
-
-		NODISCARD auto data() const noexcept -> const_pointer { return m_data; }
-
-		NODISCARD auto c_str() const noexcept -> cstring { return (cstring)data(); }
-
-		NODISCARD auto begin() noexcept -> iterator { return data(); }
-
-		NODISCARD auto begin() const noexcept -> const_iterator { return data(); }
-
-		NODISCARD auto end() noexcept -> iterator { return begin() + size(); }
-
-		NODISCARD auto end() const noexcept -> const_iterator { return begin() + size(); }
-
-		NODISCARD auto front() noexcept -> reference { return *(begin()); }
-
-		NODISCARD auto front() const noexcept -> const_reference { return *(begin()); }
-
-		NODISCARD auto back() noexcept -> reference { return *(end() - 1); }
-
-		NODISCARD auto back() const noexcept -> const_reference { return *(end() - 1); }
-
-		NODISCARD auto operator[](size_t const i) noexcept -> reference { return m_data[i]; }
-
-		NODISCARD auto operator[](size_t const i) const noexcept -> byte { return m_data[i]; }
-
-	public:
-		void * get_to(size_t const index, void * dst, size_t const size_in_bytes)
-		{
-			ASSERT(index + size_in_bytes <= _Size);
-			copymem(dst, begin() + index, size_in_bytes);
-			return dst;
-		}
-
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(size_t const index, T & value)
-		{
-			get_to(index, std::addressof(value), sizeof(T));
-			return value;
-		}
-
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(T & value)
-		{
-			return get_to<T>(0, value);
-		}
-
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> NODISCARD T get(size_t const index = 0)
-		{
-			T temp;
-			return get_to<T>(index, temp);
-		}
-
-		template <size_t I
-		> NODISCARD auto get() -> _type<I>
-		{
-			return get<_type<I>>(_calculate_index<I>());
-		}
-
-	public:
-		void write_unchecked(size_t const index, void const * src, size_t const size_in_bytes)
-		{
-			ASSERT(index + size_in_bytes <= _Size);
-
-			copymem(begin() + index, src, size_in_bytes);
-		}
-
-		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
-		{
-			if (src && size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
-			return (*this);
-		}
-
-		self_type & write(void const * src, size_t const size_in_bytes)
-		{
-			if (src && size_in_bytes) { write_unchecked(0, src, size_in_bytes); }
-			return (*this);
-		}
-
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> self_type & write(size_t const index, T const & value)
-		{
-			return write_unchecked(index, std::addressof(value), sizeof(T)), (*this);
-		}
-
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> self_type & write(T const & value)
-		{
-			return write_unchecked(0, std::addressof(value), sizeof(T)), (*this);
-		}
-
-		template <size_t I
-		> self_type & set(mpl::nth<I, mpl::type_list<_Types...>> const & value)
-		{
-			return write(_calculate_index<I>(), value);
-		}
-
-	public:
-		self_type & vprintf(size_t const index, cstring fmt, va_list args)
-		{
-			if (int32_t size_in_bytes{ std::vsnprintf(nullptr, 0, fmt, args) }; 0 < size_in_bytes)
-			{
-				size_in_bytes++; // account for null teminator
-
-				ASSERT(index + size_in_bytes <= _Size);
-
-				std::vsprintf((char *)begin() + index, fmt, args);
-			}
-			return (*this);
-		}
-
-		self_type & vprintf(cstring fmt, va_list args)
-		{
-			return vprintf(0, fmt, args);
-		}
-
-		self_type & printf(size_t const index, cstring fmt, ...)
-		{
-			if (!fmt) { return (*this); }
-			va_list args;
-			va_start(args, fmt);
-			vprintf(index, fmt, args);
-			va_end(args);
-			return (*this);
-		}
-
-		self_type & printf(cstring fmt, ...)
-		{
-			if (!fmt) { return (*this); }
-			va_list args;
-			va_start(args, fmt);
-			vprintf(0, fmt, args);
-			va_end(args);
-			return (*this);
-		}
-
-		self_type & print(size_t const index, String const & str)
-		{
-			if (!str.empty()) { write_unchecked(index, str.data(), str.size()); }
-			return (*this);
-		}
-
-		self_type & print(String const & str)
-		{
-			if (!str.empty()) { write_unchecked(0, str.data(), str.size()); }
-			return (*this);
-		}
-
-		self_type & print(size_t const index, cstring str, size_t const size_in_bytes)
-		{
-			if (str && size_in_bytes) { write_unchecked(index, str, size_in_bytes); }
-			return (*this);
-		}
-
-		self_type & print(size_t const index, cstring str)
-		{
-			if (str) { write_unchecked(index, str, std::strlen(str)); }
-			return (*this);
-		}
-
-		self_type & print(cstring str, size_t const size_in_bytes)
-		{
-			if (str && size_in_bytes) { write_unchecked(0, str, size_in_bytes); }
-			return (*this);
-		}
-
-		self_type & print(cstring str)
-		{
-			if (str) { write_unchecked(0, str, std::strlen(str)); }
-			return (*this);
-		}
-	};
-}
-
 EditorNode::EditorNode()
 {
 	ASSERT(!singleton);
@@ -377,7 +101,7 @@ EditorNode::EditorNode()
 	RID const shader{ m_shaders["3d"]->get_rid() };
 	_setup_pipeline(shader);
 
-	uniform_buffers[SCENE] = RENDERING_DEVICE->uniform_buffer_create(UniformConstantBuffer<16, Mat4, Mat4>().size());
+	uniform_buffers[SCENE] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::UniformBuffer<Mat4, Mat4>));
 	uniform_sets[SCENE] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, SCENE, { uniform_buffers[SCENE] } },
 	}, shader);
@@ -386,7 +110,7 @@ EditorNode::EditorNode()
 	uniform_sets[RENDER_PASS] = RENDERING_DEVICE->uniform_set_create({
 	}, shader);
 
-	uniform_buffers[TRANSFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(Mat4) * 1);
+	uniform_buffers[TRANSFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::UniformBuffer<Mat4>));
 	uniform_sets[TRANSFORMS] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, TRANSFORMS, { uniform_buffers[TRANSFORMS] } },
 	}, shader);
@@ -433,14 +157,14 @@ void EditorNode::process(Duration const dt)
 	}
 
 	{
-		static UniformConstantBuffer<16, Mat4, Mat4> scene_ubo_data;
+		static RD::UniformBuffer<Mat4, Mat4> scene_ubo_data;
 		if (viewport_resized) { scene_ubo_data.set<0>(editor_camera->get_proj()); }
 		scene_ubo_data.set<1>(editor_camera->get_view());
-		RENDERING_DEVICE->uniform_buffer_update(uniform_buffers[SCENE], 0, scene_ubo_data.data(), scene_ubo_data.size());
+		RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE], 0, scene_ubo_data.data(), scene_ubo_data.size());
 
-		static UniformConstantBuffer<16, Mat4> transforms_ubo_data;
+		static RD::UniformBuffer<Mat4> transforms_ubo_data;
 		transforms_ubo_data.set<0>(object_matrix[0]);
-		RENDERING_DEVICE->uniform_buffer_update(uniform_buffers[TRANSFORMS], 0, transforms_ubo_data.data(), transforms_ubo_data.size());
+		RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS], 0, transforms_ubo_data.data(), transforms_ubo_data.size());
 
 		static Color clear_color{ Colors::magenta };
 		clear_color = rotate_hue(clear_color, (float_t)dt * 10.f);
