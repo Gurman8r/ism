@@ -43,10 +43,10 @@ namespace ism
 		template <class  T> using element_t			= T;
 		template <size_t I>	using vector_i			= mpl::nth<I, vector_types>;
 		template <class  T> using vector_t			= ism::Vector<T>;
-		template <size_t I>	using iterator_i		= vector_i<I>::iterator;
-		template <class  T>	using iterator_t		= vector_t<T>::iterator;
-		template <size_t I>	using const_iterator_i	= vector_i<I>::const_iterator;
-		template <class  T>	using const_iterator_t	= vector_t<T>::const_iterator;
+		template <size_t I>	using iterator_i		= typename vector_i<I>::iterator;
+		template <class  T>	using iterator_t		= typename vector_t<T>::iterator;
+		template <size_t I>	using const_iterator_i	= typename vector_i<I>::const_iterator;
+		template <class  T>	using const_iterator_t	= typename vector_t<T>::const_iterator;
 
 		using iterator_types		= typename mpl::remap<iterator_t, value_types>;
 		using iterator_tuple		= typename mpl::tuple<iterator_types>;

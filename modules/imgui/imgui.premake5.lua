@@ -4,7 +4,7 @@
 project			"imgui"
 kind			"SharedLib"
 language		"C++"
-cppdialect 		"C++20"
+cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"

@@ -94,7 +94,7 @@ namespace ism
 	template <size_t _Alignment, class ... _Types
 	> class UniformConstantBuffer
 	{
-		static_assert(_Alignment % 2 == 0);
+		static_assert(!_Alignment || _Alignment % 2 == 0);
 
 		static_assert(0 < sizeof...(_Types));
 
@@ -103,7 +103,7 @@ namespace ism
 
 		static constexpr size_t _align(size_t const value) noexcept
 		{
-			return IS_ALIGNED(value, _Alignment) ? value : SIZE_ROUND_UP(value, _Alignment);
+			return _Alignment ? IS_ALIGNED(value, _Alignment) ? value : SIZE_ROUND_UP(value, _Alignment) : value;
 		}
 
 		template <size_t I = 0, size_t Result = 0
@@ -182,6 +182,8 @@ namespace ism
 		}
 
 	public:
+		NODISCARD auto alignment() const noexcept { return _Alignment; }
+
 		NODISCARD bool empty() const noexcept { return false; }
 
 		NODISCARD auto size() const noexcept -> size_t { return _Size; }

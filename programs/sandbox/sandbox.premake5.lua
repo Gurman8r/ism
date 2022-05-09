@@ -2,7 +2,7 @@
 project			"sandbox"
 kind			"ConsoleApp"
 language		"C++"
-cppdialect 		"C++20"
+cppdialect 		"C++17"
 rtti			"On"
 staticruntime	"Off"
 systemversion	"latest"

@@ -247,7 +247,7 @@ namespace ism::mpl
 	template <class T> struct remove_class {};
 	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...)> { using type = R(A...); };
 	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...) const> { using type = R(A...); };
-	template <class ... Ts> using remove_class_t = remove_class<Ts...>::type;
+	template <class ... Ts> using remove_class_t = typename remove_class<Ts...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -259,7 +259,7 @@ namespace ism::mpl
 	template <class T> struct intrinsic_type<T &&> { using type = typename intrinsic_type<T>::type; };
 	template <class T, size_t N> struct intrinsic_type<T const [N]> { using type = typename intrinsic_type<T>::type; };
 	template <class T, size_t N> struct intrinsic_type<T[N]> { using type = typename intrinsic_type<T>::type; };
-	template <class T> using intrinsic_t = intrinsic_type<T>::type;
+	template <class T> using intrinsic_t = typename intrinsic_type<T>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -648,7 +648,7 @@ namespace ism::mpl
 	};
 
 	template <class ... Ts
-	> using concat = impl_concat<Ts...>::type;
+	> using concat = typename impl_concat<Ts...>::type;
 
 	template <class ... Ts
 	> struct impl_concat<type_list<Ts...>>
@@ -677,7 +677,7 @@ namespace ism::mpl
 	};
 
 	template <template <class> class Pr, class Ls
-	> using remap = impl_remap<Pr, Ls>::type;
+	> using remap = typename impl_remap<Pr, Ls>::type;
 
 	template <template <class> class Pr, class T, class ... Ts
 	> struct impl_remap<Pr, type_list<T, Ts...>>
@@ -707,7 +707,7 @@ namespace ism::mpl
 
 	template<
 		template <class...> class To, class T
-	> using rename = impl_rename<To, T>::type;
+	> using rename = typename impl_rename<To, T>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -846,7 +846,7 @@ namespace ism::mpl
 	};
 
 	template <size_t N, class T
-	> using repeat = impl_repeat<N, T>::type;
+	> using repeat = typename impl_repeat<N, T>::type;
 
 	template <class T, size_t N
 	> using array = tuple<repeat<N, T>>;
@@ -866,7 +866,7 @@ namespace ism::mpl
 	};
 
 	template <template <class> class Pr, class Ls
-	> using filter = impl_filter<Pr, Ls>::type;
+	> using filter = typename impl_filter<Pr, Ls>::type;
 
 	template <template <class> class Pr, class T, class ... Ts
 	> struct impl_filter<Pr, type_list<T, Ts...>>

@@ -103,10 +103,10 @@ namespace ism::attr
 	template <class ... Ts> struct process_attribute<call_guard<Ts...>> : process_attribute_default<call_guard<Ts...>> {};
 
 	template <class T
-	> ALIAS(is_call_guard) mpl::is_instantiation<call_guard, T>;
+	> using is_call_guard = mpl::is_instantiation<call_guard, T>;
 
 	template <class ... Extra
-	> ALIAS(extract_guard_t) mpl::exactly_one_t<is_call_guard, call_guard<>, Extra...>::type;
+	> using extract_guard_t = typename mpl::exactly_one_t<is_call_guard, call_guard<>, Extra...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
