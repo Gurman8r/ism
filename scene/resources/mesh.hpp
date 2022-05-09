@@ -35,7 +35,7 @@ namespace ism
 		> void expand(size_t const i, Fn && fn) noexcept { m_data.expand<I...>(i, FWD(fn)); }
 
 		template <class Fn
-		> void for_each(Fn && fn) { for (size_t i = 0; i < m_data.size(); ++i) { m_data.expand_all(i, FWD(fn)); } }
+		> void each(Fn && fn) { for (size_t i = 0; i < m_data.size(); ++i) { m_data.expand_all(i, FWD(fn)); } }
 	};
 }
 

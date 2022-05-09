@@ -15,7 +15,6 @@
 
 #include <gcem/include/gcem.hpp>
 
-// compose
 namespace ism::impl
 {
 	// compose helper
@@ -37,71 +36,6 @@ namespace ism::impl
 
 #define COMPOSE(m_class, m_var, ...) \
 		COMPOSE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
-}
-
-namespace ism::util
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, class ... Ts
-	> constexpr bool is_any_of_v
-	{
-		std::disjunction_v<std::is_same<T, Ts>...>
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class To, class From
-	> constexpr bool is_trivially_convertible_v
-	{
-		"requires To is trivially default constructible and is copy or move constructible"
-		&& sizeof(To) == sizeof(From)
-		&& std::is_trivially_copyable_v<From>
-		&& std::is_trivial_v<To>
-		&& (std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)
-	};
-
-	template <class To, class From, class = std::enable_if_t<is_trivially_convertible_v<To, From>>
-	> NODISCARD To bit_cast(From const & value) noexcept
-	{
-		To temp;
-		copymem(&temp, &value, sizeof(To));
-		return temp;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T
-	> constexpr void swap(T & lhs, T & rhs) noexcept
-	{
-		T tmp = std::move(lhs);
-		lhs = std::move(rhs);
-		rhs = std::move(tmp);
-	}
-
-	template <class A, class B
-	> constexpr int32_t compare(A const & a, B const & b) noexcept
-	{
-		return CMP(a, b);
-	}
-
-	template <class LI, class RI
-	> NODISCARD constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
-	{
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin == *rBegin) && util::range_equal(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
-	}
-
-	template <class LI, class RI
-	> NODISCARD constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
-	{
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // operators
@@ -180,6 +114,84 @@ namespace ism
 	};
 }
 
+// utility
+namespace ism::util
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	constexpr size_t align_up(size_t const value, size_t const alignment)
+	{
+		return !alignment ? value : (IS_ALIGNED(value, alignment) ? value : SIZE_ROUND_UP(value, alignment));
+	}
+
+	constexpr size_t align_down(size_t const value, size_t const alignment)
+	{
+		return !alignment ? value : (IS_ALIGNED(value, alignment) ? value : SIZE_ROUND_DOWN(value, alignment));
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, class ... Ts
+	> constexpr bool is_any_of_v
+	{
+		std::disjunction_v<std::is_same<T, Ts>...>
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class To, class From
+	> constexpr bool is_trivially_convertible_v
+	{
+		"requires To is trivially default constructible and is copy or move constructible"
+		&& sizeof(To) == sizeof(From)
+		&& std::is_trivially_copyable_v<From>
+		&& std::is_trivial_v<To>
+		&& (std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)
+	};
+
+	template <class To, class From, class = std::enable_if_t<is_trivially_convertible_v<To, From>>
+	> NODISCARD To bit_cast(From const & value) noexcept
+	{
+		To temp;
+		copymem(&temp, &value, sizeof(To));
+		return temp;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T
+	> constexpr void swap(T & lhs, T & rhs) noexcept
+	{
+		T tmp = std::move(lhs);
+		lhs = std::move(rhs);
+		rhs = std::move(tmp);
+	}
+
+	template <class A, class B
+	> constexpr int32_t compare(A const & a, B const & b) noexcept
+	{
+		return CMP(a, b);
+	}
+
+	template <class LI, class RI
+	> NODISCARD constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
+	{
+		return (lBegin != lEnd && rBegin != rEnd)
+			? ((*lBegin == *rBegin) && util::range_equal(lBegin + 1, lEnd, rBegin + 1, rEnd))
+			: (lBegin == lEnd && rBegin == rEnd);
+	}
+
+	template <class LI, class RI
+	> NODISCARD constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
+	{
+		return (lBegin != lEnd && rBegin != rEnd)
+			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))
+			: (lBegin == lEnd && rBegin == rEnd);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
 // traits
 namespace ism::mpl
 {
@@ -243,15 +255,6 @@ namespace ism::mpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// remove_class
-	template <class T> struct remove_class {};
-	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...)> { using type = R(A...); };
-	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...) const> { using type = R(A...); };
-	template <class ... Ts> using remove_class_t = typename remove_class<Ts...>::type;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// intrinsic_type
 	template <class T> struct intrinsic_type { using type = T; };
 	template <class T> struct intrinsic_type<const T> { using type = typename intrinsic_type<T>::type; };
 	template <class T> struct intrinsic_type<T *> { using type = typename intrinsic_type<T>::type; };
@@ -298,8 +301,6 @@ namespace ism::mpl
 	template <class T, class ... Ts
 	> struct pack_element<0, T, Ts...> { using type = T; };
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <template<class> class Pr, class Default, class ... Ts
 	> struct exactly_one
 	{
@@ -315,12 +316,6 @@ namespace ism::mpl
 
 	template <template<class> class Pr, class Default, class ... Ts
 	> using exactly_one_t = typename exactly_one<Pr, Default, Ts...>::type;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, class... /*Us*/> struct deferred_type { using type = T; };
-
-	template <class T, class... Us> using deferred_t = typename deferred_type<T, Us...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -379,6 +374,13 @@ namespace ism::mpl
 		std::is_function_v<typename std::remove_pointer_t<T>>>;
 
 	template <class T> constexpr bool is_function_pointer_v{ is_function_pointer<T>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> struct remove_class {};
+	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...)> { using type = R(A...); };
+	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...) const> { using type = R(A...); };
+	template <class ... Ts> using remove_class_t = typename remove_class<Ts...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

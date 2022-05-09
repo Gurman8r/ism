@@ -15,11 +15,11 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-enum : size_t { ID_index, ID_size, ID_addr, ID_desc };
-
 static struct NODISCARD MemoryTracker final
 {
 	size_t index{};
+
+	enum { Index, Size, Addr, Desc };
 
 	Batch<size_t, size_t, void *, cstring> records{};
 
@@ -43,7 +43,7 @@ static struct NODISCARD MemoryTracker final
 #endif
 
 #if LEAK_CLEANUP_ENABLED
-		while (!records.empty()) { memfree(records.back<ID_addr>()); }
+		while (!records.empty()) { memfree(records.back<Addr>()); }
 #else
 		ASSERT("MEMORY LEAKS DETECTED" && g_memory_tracker.records.empty());
 #endif
@@ -55,7 +55,7 @@ g_memory_tracker{};
 
 void * Memory::alloc_static(size_t size, cstring desc)
 {
-	return std::get<ID_addr>(g_memory_tracker.records.push_back
+	return std::get<MemoryTracker::Addr>(g_memory_tracker.records.push_back
 	(
 		++g_memory_tracker.index,
 		size,
@@ -95,10 +95,10 @@ void * Memory::realloc_static(void * ptr, size_t oldsz, size_t newsz)
 
 void Memory::free_static(void * ptr)
 {
-	if (size_t const i{ g_memory_tracker.records.index_of<ID_addr>(ptr) }
+	if (size_t const i{ g_memory_tracker.records.index_of<MemoryTracker::Addr>(ptr) }
 	; i != g_memory_tracker.records.npos)
 	{
-		size_t const size{ g_memory_tracker.records.get<ID_size>(i) };
+		size_t const size{ g_memory_tracker.records.get<MemoryTracker::Size>(i) };
 
 		std::pmr::get_default_resource()->deallocate(ptr, size);
 
@@ -126,65 +126,6 @@ void operator delete(void * ptr, char const * desc)
 void operator delete(void * ptr, void * (*alloc_fn)(size_t))
 {
 	CRASH("this should never be called");
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-MemoryArena::MemoryArena(size_t const size)
-	: m_data	{ size, byte{}, std::allocator<byte>{} }
-	, m_buffer	{ m_data.data(), size }
-	, m_pool	{ &m_buffer }
-	, m_view	{ &m_pool, m_data.data(), size }
-	, m_prev	{ std::pmr::get_default_resource() }
-{
-	std::pmr::set_default_resource(&m_view);
-}
-
-MemoryArena::~MemoryArena()
-{
-	m_pool.release();
-	m_buffer.release();
-	std::pmr::set_default_resource(m_prev);
-}
-
-static struct MemoryArenaStack final
-{
-	std::vector<MemoryArena *> data{};
-
-	~MemoryArenaStack() { ASSERT(data.empty()); }
-}
-g_arena_stack{};
-
-MemoryArena * ism::get_current_memory_arena()
-{
-	if (g_arena_stack.data.empty())
-	{
-		return nullptr;
-	}
-	else
-	{
-		return g_arena_stack.data.back();
-	}
-}
-
-MemoryArena * ism::push_memory_arena(size_t const size)
-{
-	void * ptr{ std::pmr::new_delete_resource()->allocate(sizeof(MemoryArena)) };
-
-	return g_arena_stack.data.emplace_back(::new(ptr) MemoryArena{ size });
-}
-
-void ism::pop_memory_arena()
-{
-	ASSERT(!g_arena_stack.data.empty());
-
-	MemoryArena * ptr{ g_arena_stack.data.back() };
-	
-	ptr->~MemoryArena();
-	
-	std::pmr::new_delete_resource()->deallocate(ptr, sizeof(MemoryArena));
-	
-	g_arena_stack.data.pop_back();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

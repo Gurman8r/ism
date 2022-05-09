@@ -27,8 +27,13 @@ static void _load_material_textures(Vector<Ref<Texture>> & textures, aiMaterial 
 {
 	for (uint32_t i = 0; i < mat->GetTextureCount(type); ++i)
 	{
-		aiString str; mat->GetTexture(type, i, &str);
-		// TODO: load the texture...
+		aiString str;
+		mat->GetTexture(type, i, &str);
+
+		Ref<ImageTexture> tex;
+		tex.instance(str.C_Str());
+
+		textures.push_back(tex);
 	}
 }
 
@@ -48,31 +53,25 @@ static SubMesh _process_mesh(aiMesh * mesh, aiScene const * scene)
 	{
 		vertices << mesh->mVertices[i].x << mesh->mVertices[i].y << mesh->mVertices[i].z;
 
-		if (mesh->HasNormals())
-		{
+		if (mesh->HasNormals()) {
 			vertices << mesh->mNormals[i].x << mesh->mNormals[i].y << mesh->mNormals[i].z;
 		}
-		else
-		{
+		else {
 			vertices << Vec3f{};
 		}
 
-		if (mesh->HasTextureCoords(0))
-		{
+		if (mesh->HasTextureCoords(0)) {
 			vertices << mesh->mTextureCoords[0][i].x << mesh->mTextureCoords[0][i].y;
 		}
-		else
-		{
+		else {
 			vertices << Vec2f{};
 		}
 
-		if (mesh->HasTangentsAndBitangents())
-		{
+		if (mesh->HasTangentsAndBitangents()) {
 			vertices << mesh->mTangents[i].x << mesh->mTangents[i].y << mesh->mTangents[i].z;
 			vertices << mesh->mBitangents[i].x << mesh->mBitangents[i].y << mesh->mBitangents[i].z;
 		}
-		else
-		{
+		else {
 			vertices << Vec3f{} << Vec3f{};
 		}
 	}
@@ -119,15 +118,12 @@ OBJECT_EMBED(Mesh, t) {}
 
 Mesh::~Mesh()
 {
-	for (size_t i = 0; i < m_data.size(); ++i)
+	each([&](RID vertex_array, RID index_array, Vector<Ref<Texture>> & textures)
 	{
-		m_data.expand_all(i, [&](RID vertex_array, RID index_array, Vector<Ref<Texture>> & textures)
-		{
-			if (index_array) { RENDERING_DEVICE->index_array_destroy(index_array); }
+		if (index_array) { RENDERING_DEVICE->index_array_destroy(index_array); }
 
-			if (vertex_array) { RENDERING_DEVICE->vertex_array_destroy(vertex_array); }
-		});
-	}
+		if (vertex_array) { RENDERING_DEVICE->vertex_array_destroy(vertex_array); }
+	});
 }
 
 void Mesh::reload_from_file()

@@ -28,18 +28,17 @@ namespace ism
 			uint32_t buffer_type{};
 			uint32_t usage{};
 			uint32_t size{};
-			DynamicBuffer buffer{};
 			uint32_t draw_mode{};
+			DynamicBuffer data{};
 		};
 
-		virtual RID buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & buffer = {}) override;
+		virtual RID buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & data = {}) override;
+		virtual void buffer_destroy(RID buffer) override;
 		virtual void buffer_update(RID buffer, size_t offset, void const * data, size_t size_in_bytes) override;
 
 	public:
 		/* VERTEXARRAY API */
-		struct _VertexBuffer : _Buffer
-		{
-		};
+		struct _VertexBuffer : _Buffer {};
 
 		struct _VertexArray
 		{
@@ -63,15 +62,11 @@ namespace ism
 			uint32_t index_type{};
 		};
 
-		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) override;
-		virtual void vertex_buffer_destroy(RID vertex_buffer) override;
-
+		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
 		virtual RID vertex_array_create(size_t vertex_count, VertexFormat const & format, Vector<RID> const & buffers) override;
 		virtual void vertex_array_destroy(RID rid) override;
 
-		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & buffer = {}) override;
-		virtual void index_buffer_destroy(RID index_buffer) override;
-
+		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & data = {}) override;
 		virtual RID index_array_create(RID index_buffer, size_t index_offset, size_t index_count) override;
 		virtual void index_array_destroy(RID index_array) override;
 
@@ -112,10 +107,10 @@ namespace ism
 			int32_t width_2d{ width }, height_2d{ height }; // size override
 		};
 
-		virtual RID texture_create(TextureFormat const & format, DynamicBuffer const & buffer = {}) override;
+		virtual RID texture_create(TextureFormat const & format, DynamicBuffer const & data = {}) override;
 		virtual void texture_destroy(RID rid) override;
 		virtual void texture_bind(RID rid, size_t slot = 0) override;
-		virtual void texture_update(RID rid, DynamicBuffer const & buffer = {}) override;
+		virtual void texture_update(RID rid, DynamicBuffer const & data = {}) override;
 		virtual void * texture_get_handle(RID texture) override;
 		virtual DynamicBuffer texture_get_data(RID rid) override;
 		void _texture_update(RID rid, void const * data);
@@ -149,12 +144,7 @@ namespace ism
 
 	public:
 		/* UNIFORM API */
-		struct _UniformBuffer : _Buffer
-		{
-		};
-
-		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) override;
-		virtual void uniform_buffer_destroy(RID uniform_buffer) override;
+		struct _UniformBuffer : _Buffer {};
 
 		struct _Uniform
 		{
@@ -171,6 +161,7 @@ namespace ism
 			Vector<_Uniform> uniforms{};
 		};
 
+		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
 		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) override;
 		virtual void uniform_set_destroy(RID uniform_set) override;
 
@@ -213,16 +204,16 @@ namespace ism
 			}
 			state{};
 		}
-		* m_drawlist{};
+		* m_draw_list{};
 
-		virtual RID drawlist_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
-		virtual RID drawlist_begin(RID framebuffer, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
-		virtual void drawlist_bind_pipeline(RID list, RID pipeline) override;
-		virtual void drawlist_bind_uniform_set(RID list, RID uniform_set, size_t index) override;
-		virtual void drawlist_bind_vertex_array(RID list, RID vertex_array) override;
-		virtual void drawlist_bind_index_array(RID list, RID index_array) override;
-		virtual void drawlist_draw(RID list, bool use_indices, size_t instances, size_t procedural_vertices) override;
-		virtual void drawlist_end() override;
+		virtual RID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
+		virtual RID draw_list_begin(RID framebuffer, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
+		virtual void draw_list_bind_pipeline(RID draw_list, RID pipeline) override;
+		virtual void draw_list_bind_uniform_set(RID draw_list, RID uniform_set, size_t index) override;
+		virtual void draw_list_bind_vertex_array(RID draw_list, RID vertex_array) override;
+		virtual void draw_list_bind_index_array(RID draw_list, RID index_array) override;
+		virtual void draw_list_draw(RID draw_list, bool use_indices, size_t instances, size_t procedural_vertices) override;
+		virtual void draw_list_end() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

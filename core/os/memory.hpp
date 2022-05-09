@@ -214,40 +214,6 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// WIP
-	class ISM_API MemoryArena final
-	{
-		std::vector<byte> m_data;
-		std::pmr::monotonic_buffer_resource m_buffer;
-		std::pmr::unsynchronized_pool_resource m_pool;
-		TestMemoryResource m_view;
-		std::pmr::memory_resource * m_prev;
-
-	public:
-		NON_COPYABLE(MemoryArena);
-		NON_MOVABLE(MemoryArena);
-
-		MemoryArena(size_t const size);
-
-		~MemoryArena();
-
-		NODISCARD auto operator*() const noexcept -> TestMemoryResource & {
-			return const_cast<TestMemoryResource &>(m_view);
-		}
-
-		NODISCARD auto operator->() const noexcept -> TestMemoryResource * {
-			return const_cast<TestMemoryResource *>(&m_view);
-		}
-	};
-
-	ISM_API_FUNC(MemoryArena *) get_current_memory_arena();
-
-	ISM_API_FUNC(MemoryArena *) push_memory_arena(size_t const size);
-
-	ISM_API_FUNC(void) pop_memory_arena();
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_MEMORY_HPP_

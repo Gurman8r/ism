@@ -43,12 +43,6 @@ namespace ism
 
 		DynamicBuffer & operator=(DynamicBuffer const & other) { DynamicBuffer temp{ other }; return swap(temp); }
 
-		NODISCARD operator storage_type & () & noexcept { return m_data; }
-
-		NODISCARD operator storage_type const & () const & noexcept { return m_data; }
-
-		NODISCARD operator storage_type && () && noexcept { return std::move(m_data); }
-
 	public:
 		NODISCARD bool empty() const noexcept { return m_data.empty(); }
 
@@ -81,6 +75,16 @@ namespace ism
 		NODISCARD auto operator[](size_t const i) noexcept -> reference { ASSERT(i < size()); return m_data[i]; }
 
 		NODISCARD auto operator[](size_t const i) const noexcept -> byte { ASSERT(i < size()); return m_data[i]; }
+
+		NODISCARD operator void * () noexcept { return m_data.data(); }
+
+		NODISCARD operator void const * () const noexcept { return m_data.data(); }
+
+		NODISCARD operator storage_type & () & noexcept { return m_data; }
+
+		NODISCARD operator storage_type const & () const & noexcept { return m_data; }
+
+		NODISCARD operator storage_type && () && noexcept { return std::move(m_data); }
 
 	public:
 		DynamicBuffer & clear() noexcept
@@ -398,6 +402,10 @@ namespace ism
 
 		NODISCARD auto operator[](size_t const i) const noexcept -> byte { return m_data[i]; }
 
+		NODISCARD operator void * () noexcept { return m_data; }
+
+		NODISCARD operator void const * () const noexcept { return m_data; }
+
 	public:
 		void * get_to(size_t const index, void * dst, size_t const size_in_bytes)
 		{
@@ -548,17 +556,12 @@ namespace ism
 		template <size_t I
 		> using _type = mpl::nth<I, mpl::type_list<_Types...>>;
 
-		static constexpr size_t _align(size_t const value) noexcept
-		{
-			return !_Alignment ? value : (IS_ALIGNED(value, _Alignment) ? value : SIZE_ROUND_UP(value, _Alignment));
-		}
-
 		template <size_t I = 0, size_t Result = 0
 		> static constexpr size_t _calculate_size() noexcept
 		{
 			if constexpr (I < sizeof...(_Types))
 			{
-				return _calculate_size<I + 1, Result + _align(sizeof(_type<I>))>();
+				return _calculate_size<I + 1, Result + util::align_up(sizeof(_type<I>), _Alignment)>();
 			}
 			else
 			{
@@ -573,7 +576,7 @@ namespace ism
 
 			if constexpr (I < Index)
 			{
-				return _calculate_index<Index, I + 1, Result + _align(sizeof(_type<I>))>();
+				return _calculate_index<Index, I + 1, Result + util::align_up(sizeof(_type<I>), _Alignment)>();
 			}
 			else
 			{
@@ -586,14 +589,14 @@ namespace ism
 		Array<byte, _Size> m_data{};
 
 	public:
-		using self_type = typename ConstantBuffer<_Alignment, _Types...>;
-		using storage_type = typename decltype(m_data);
-		using reference = typename byte &;
-		using const_reference = typename byte const &;
-		using pointer = typename byte *;
-		using const_pointer = typename byte const *;
-		using iterator = typename pointer;
-		using const_iterator = typename const_pointer;
+		using self_type			= typename ConstantBuffer<_Alignment, _Types...>;
+		using storage_type		= typename decltype(m_data);
+		using reference			= typename byte &;
+		using const_reference	= typename byte const &;
+		using pointer			= typename byte *;
+		using const_pointer		= typename byte const *;
+		using iterator			= typename pointer;
+		using const_iterator	= typename const_pointer;
 
 		static constexpr byte null{ (byte)'\0' };
 
@@ -662,6 +665,16 @@ namespace ism
 		NODISCARD auto operator[](size_t const i) noexcept -> reference { return m_data[i]; }
 
 		NODISCARD auto operator[](size_t const i) const noexcept -> byte { return m_data[i]; }
+
+		NODISCARD operator void * () noexcept { return m_data; }
+
+		NODISCARD operator void const * () const noexcept { return m_data; }
+
+		NODISCARD operator StaticBuffer<_Size> & () noexcept { return *((StaticBuffer<_Size> *)this); }
+
+		NODISCARD operator StaticBuffer<_Size> const & () const noexcept { return *((StaticBuffer<_Size> *)this); }
+
+		NODISCARD operator DynamicBuffer() const noexcept { return { data(), size() }; }
 
 	public:
 		void * get_to(size_t const index, void * dst, size_t const size_in_bytes)

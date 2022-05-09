@@ -30,17 +30,22 @@ RID RendererStorage::texture2d_placeholder_create()
 RID RendererStorage::material_create()
 {
 	_Material * m{ memnew(_Material{}) };
+	m->uniform_buffer = nullptr;
+	m->uniform_set = RENDERING_DEVICE->uniform_set_create({}, nullptr);
 	return (RID)m;
 }
 
 void RendererStorage::material_destroy(RID material)
 {
 	_Material * const m{ VALIDATE((_Material *)material) };
+	if (m->uniform_buffer) { RENDERING_DEVICE->buffer_destroy(m->uniform_buffer); }
+	if (m->uniform_set) { RENDERING_DEVICE->uniform_set_destroy(m->uniform_set); }
 	memdelete(m);
 }
 
 void RendererStorage::material_set_shader(RID material, RID shader)
 {
+	_Material * const m{ VALIDATE((_Material *)material) };
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -155,8 +160,8 @@ void RendererStorage::render_target_do_clear_request(RID render_target)
 {
 	_RenderTarget * const rt{ VALIDATE((_RenderTarget *)render_target) };
 	if (!rt->clear_requested) { return; }
-	RENDERING_DEVICE->drawlist_begin(rt->framebuffer, rt->clear_color);
-	RENDERING_DEVICE->drawlist_end();
+	RENDERING_DEVICE->draw_list_begin(rt->framebuffer, rt->clear_color);
+	RENDERING_DEVICE->draw_list_end();
 	rt->clear_requested = false;
 }
 

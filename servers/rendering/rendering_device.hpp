@@ -268,7 +268,8 @@ namespace ism
 			BufferType_UniformBuffer,
 		};
 
-		virtual RID buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & buffer = {}) = 0;
+		virtual RID buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & data = {}) = 0;
+		virtual void buffer_destroy(RID buffer) = 0;
 		virtual void buffer_update(RID buffer, size_t offset, void const * data, size_t size_in_bytes) = 0;
 
 	public:
@@ -301,6 +302,8 @@ namespace ism
 
 			VertexFormat(std::initializer_list<Element> init) noexcept : VertexFormat{ init.begin(), init.end() } {}
 
+			VertexFormat(Vector<Element> const & elements) noexcept : VertexFormat{ elements.begin(), elements.end() } {}
+
 			template <size_t N> VertexFormat(Element const (&arr)[N]) noexcept : VertexFormat{ &arr[0], &arr[N] } {}
 
 			VertexFormat() noexcept : VertexFormat{
@@ -327,17 +330,13 @@ namespace ism
 			return get_index_buffer_format_size(IndexbufferFormat_U32);
 		}
 
+		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) = 0;
 		virtual RID vertex_array_create(size_t vertex_count, VertexFormat const & format, Vector<RID> const & buffers) = 0;
 		virtual void vertex_array_destroy(RID vertex_array) = 0;
 
-		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) = 0;
-		virtual void vertex_buffer_destroy(RID vertex_buffer) = 0;
-
+		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & data = {}) = 0;
 		virtual RID index_array_create(RID index_buffer, size_t index_offset, size_t index_count) = 0;
 		virtual void index_array_destroy(RID index_array) = 0;
-
-		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & buffer = {}) = 0;
-		virtual void index_buffer_destroy(RID index_buffer) = 0;
 
 	public:
 		/* SAMPLER API */
@@ -515,6 +514,7 @@ namespace ism
 			ShaderStage_TesselationEvaluation,
 			ShaderStage_Compute,
 			ShaderStage_MAX,
+
 			ShaderStage_Vertex_Bit = 1 << 0,
 			ShaderStage_Fragment_Bit = 1 << 1,
 			ShaderStage_Geometry_Bit = 1 << 2,
@@ -537,7 +537,7 @@ namespace ism
 	public:
 		/* UNIFORMS */
 		template <class ... _Types
-		> using UniformBuffer = ConstantBuffer<16, _Types...>;
+		> using ConstantBuffer = ConstantBuffer<16, _Types...>;
 
 		enum UniformType_
 		{
@@ -563,9 +563,7 @@ namespace ism
 			Vector<RID> ids{};
 		};
 
-		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer = {}) = 0;
-		virtual void uniform_buffer_destroy(RID uniform_buffer) = 0;
-
+		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) = 0;
 		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) = 0;
 		virtual void uniform_set_destroy(RID uniform_set) = 0;
 
@@ -779,14 +777,14 @@ namespace ism
 		
 	public:
 		/* DRAW LIST */
-		virtual RID drawlist_begin_for_screen(WindowID window, Color const & clear_color = {}) = 0;
-		virtual RID drawlist_begin(RID framebuffer, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
-		virtual void drawlist_bind_pipeline(RID list, RID pipeline) = 0;
-		virtual void drawlist_bind_uniform_set(RID list, RID uniform_set, size_t index) = 0;
-		virtual void drawlist_bind_vertex_array(RID list, RID vertex_array) = 0;
-		virtual void drawlist_bind_index_array(RID list, RID index_array) = 0;
-		virtual void drawlist_draw(RID list, bool use_indices, size_t instances, size_t procedural_vertices) = 0;
-		virtual void drawlist_end() = 0;
+		virtual RID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) = 0;
+		virtual RID draw_list_begin(RID framebuffer, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
+		virtual void draw_list_bind_pipeline(RID draw_list, RID pipeline) = 0;
+		virtual void draw_list_bind_uniform_set(RID draw_list, RID uniform_set, size_t index) = 0;
+		virtual void draw_list_bind_vertex_array(RID draw_list, RID vertex_array) = 0;
+		virtual void draw_list_bind_index_array(RID draw_list, RID index_array) = 0;
+		virtual void draw_list_draw(RID draw_list, bool use_indices, size_t instances, size_t procedural_vertices) = 0;
+		virtual void draw_list_end() = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

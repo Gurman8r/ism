@@ -38,6 +38,8 @@ namespace ism
 
 		FORCE_INLINE static EditorNode * get_singleton() noexcept { return singleton; }
 
+		virtual void handle_event(Event const & event) override;
+
 		virtual void process(Duration const dt) override;
 
 	public:

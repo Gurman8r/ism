@@ -10,15 +10,15 @@
 
 using namespace ism;
 
-Error_ ImageLoader::load_image(Ref<Image> image, Path const & path)
+Error_ ism::ImageLoader::load_image(Ref<Image> image, Path const & path)
 {
 	if (!image || path.empty()) { return Error_Unknown; }
 
-	static SCOPE_ENTER() { stbi_set_flip_vertically_on_load(true); };
+	static SCOPE_ENTER() { ::stbi_set_flip_vertically_on_load(true); };
 
 	int32_t width, height, channels;
-	byte * data{ (byte *)stbi_load(path.string().c_str(), &width, &height, &channels, 0) };
-	SCOPE_EXIT(data) { stbi_image_free(data); };
+	byte * data{ (byte *)::stbi_load(path.string().c_str(), &width, &height, &channels, 0) };
+	SCOPE_EXIT(data) { ::stbi_image_free(data); };
 	if (!data) { return Error_Unknown; }
 
 	image->m_width = width;
@@ -27,8 +27,7 @@ Error_ ImageLoader::load_image(Ref<Image> image, Path const & path)
 	image->m_pixels.write(data, width * height * channels);
 
 	// TODO: properly deduce image format
-	switch (channels)
-	{
+	switch (channels) {
 	case 1: { image->m_format = ImageFormat_R8; } break;
 	case 2: { image->m_format = ImageFormat_RG8; } break;
 	case 3: { image->m_format = ImageFormat_RGB8; } break;

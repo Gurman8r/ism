@@ -1,0 +1,20 @@
+{
+    "defines": {
+        "SCENE": 0,
+        "RENDER_PASS": 1,
+        "TRANSFORMS": 2,
+        "MATERIAL": 3
+    },
+    "vertex": {
+        "out": { "position": "vec3", "normal": "vec3", "texcoord": "vec2", "tangent": "vec3", "bitangent": "vec3" },
+        "uniforms": {
+            "MVP": { "type": "mat4", "binding": 0 }
+        }
+    },
+    "pixel": {
+        "out": { "frag_color": "vec4" },
+        "uniforms": {
+            "MainTexture": { "type": "texture", "binding": 0 }
+        }
+    }
+}
