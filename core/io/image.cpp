@@ -1,63 +1,87 @@
+#include <core/io/image.hpp>
 #include <core/io/image_loader.hpp>
 
 using namespace ism;
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 OBJECT_EMBED(Image, t) {}
 
-Image::Image(int32_t width, int32_t height, ImageFormat_ format)
+Image::Image(int32_t width, int32_t height, Format_ format)
 {
 	m_width = width;
 	m_height = height;
 	m_format = format;
-	switch (format)
-	{
-	default: { CRASH("Unsupported image format"); } break;
-	case ImageFormat_R8: { m_channels = 1; } break;
-	case ImageFormat_RG8: { m_channels = 2; } break;
-	case ImageFormat_RGB8: { m_channels = 3; } break;
-	case ImageFormat_RGBA8: { m_channels = 4; } break;
+	switch (format) {
+	default: { CRASH("INVALID IMAGE FORMAT"); } break;
+	case Image::Format_R8: { m_depth = 1; } break;
+	case Image::Format_RG8: { m_depth = 2; } break;
+	case Image::Format_RGB8: { m_depth = 3; } break;
+	case Image::Format_RGBA8: { m_depth = 4; } break;
 	}
-	m_pixels.resize((size_t)(m_width * m_height * m_channels));
+	m_pixels.resize((size_t)(m_width * m_height * m_depth));
 }
 
-Image::Image(int32_t width, int32_t height, ImageFormat_ format, DynamicBuffer const & data)
+Image::Image(int32_t width, int32_t height, Format_ format, DynamicBuffer const & data)
 {
 	m_width = width;
 	m_height = height;
 	m_format = format;
 	m_pixels = data;
-	switch (format)
-	{
-	default: { CRASH("Unsupported image format"); } break;
-	case ImageFormat_R8: { m_channels = 1; } break;
-	case ImageFormat_RG8: { m_channels = 2; } break;
-	case ImageFormat_RGB8: { m_channels = 3; } break;
-	case ImageFormat_RGBA8: { m_channels = 4; } break;
+	switch (format) {
+	default: { CRASH("INVALID IMAGE FORMAT"); } break;
+	case Image::Format_R8: { m_depth = 1; } break;
+	case Image::Format_RG8: { m_depth = 2; } break;
+	case Image::Format_RGB8: { m_depth = 3; } break;
+	case Image::Format_RGBA8: { m_depth = 4; } break;
 	}
+}
+
+Image::Image(Path const & path)
+{
+	set_path(path);
+
+	reload_from_file();
+}
+
+Error_ Image::reload_from_file()
+{
+	if (!get_path()) { return Error_Unknown; }
+
+	return ImageLoader::load_image(*this, get_path());
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+void Image::clear()
+{
+	m_pixels = {};
+	m_width = m_height = m_depth = 0;
+	m_format = Image::Format_MAX;
 }
 
 void Image::flip_vertically()
 {
-	ptrdiff_t const columns{ m_width * m_channels };
+	ptrdiff_t const columns{ m_width * m_depth };
 
 	for (ptrdiff_t y = 0; y < m_height; ++y)
 	{
 		auto lhs{ m_pixels.begin() + y * columns };
 
-		auto rhs{ m_pixels.begin() + (y + 1) * columns - m_channels };
+		auto rhs{ m_pixels.begin() + (y + 1) * columns - m_depth };
 
 		for (ptrdiff_t x = 0; x < m_width / 2; ++x)
 		{
-			std::swap_ranges(lhs, lhs + m_channels, rhs);
-			lhs += m_channels;
-			rhs -= m_channels;
+			std::swap_ranges(lhs, lhs + m_depth, rhs);
+			lhs += m_depth;
+			rhs -= m_depth;
 		}
 	}
 }
 
 void Image::flip_horizontally()
 {
-	ptrdiff_t const columns{ m_width * m_channels };
+	ptrdiff_t const columns{ m_width * m_depth };
 
 	auto top{ m_pixels.begin() };
 
@@ -74,28 +98,30 @@ void Image::flip_horizontally()
 Color32 Image::get_pixel(size_t i) const
 {
 	auto it{ m_pixels.begin() + i };
-	byte r = m_channels >= 1 ? *(it + i + 0) : byte{};
-	byte g = m_channels >= 2 ? *(it + i + 1) : byte{};
-	byte b = m_channels >= 3 ? *(it + i + 2) : byte{};
-	byte a = m_channels >= 4 ? *(it + i + 3) : (byte)0xFF;
+	byte r = m_depth >= 1 ? *(it + i + 0) : byte{};
+	byte g = m_depth >= 2 ? *(it + i + 1) : byte{};
+	byte b = m_depth >= 3 ? *(it + i + 2) : byte{};
+	byte a = m_depth >= 4 ? *(it + i + 3) : (byte)0xFF;
 	return ((uint32_t)a << 24) | ((uint32_t)b << 16) | ((uint32_t)g << 8) | ((uint32_t)r << 0);
 }
 
 Color32 Image::get_pixel(size_t x, size_t y) const
 {
-	return get_pixel((x + y * m_width) * m_channels);
+	return get_pixel((x + y * m_width) * m_depth);
 }
 
 void Image::set_pixel(size_t i, Color32 value)
 {
 	auto it{ m_pixels.begin() + i };
-	if (m_channels >= 1) { *it = (byte)((int32_t)(value >> 0) & 0xFF); }
-	if (m_channels >= 2) { *it = (byte)((int32_t)(value >> 8) & 0xFF); }
-	if (m_channels >= 3) { *it = (byte)((int32_t)(value >> 16) & 0xFF); }
-	if (m_channels >= 4) { *it = (byte)((int32_t)(value >> 24) & 0xFF); }
+	if (m_depth >= 1) { *it = (byte)((int32_t)(value >> 0) & 0xFF); }
+	if (m_depth >= 2) { *it = (byte)((int32_t)(value >> 8) & 0xFF); }
+	if (m_depth >= 3) { *it = (byte)((int32_t)(value >> 16) & 0xFF); }
+	if (m_depth >= 4) { *it = (byte)((int32_t)(value >> 24) & 0xFF); }
 }
 
 void Image::set_pixel(size_t x, size_t y, Color32 value)
 {
-	set_pixel(((x + y * m_width) * m_channels), value);
+	set_pixel(((x + y * m_width) * m_depth), value);
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

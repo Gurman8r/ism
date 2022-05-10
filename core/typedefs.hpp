@@ -116,15 +116,13 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// std::byte
-
 	enum class byte : uint8_t {};
 
-	template <class Int, std::enable_if_t<std::is_integral_v<Int>, int> = 0
-	> NODISCARD constexpr byte operator<<(byte const a, Int const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) << b)); }
+	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
+	> NODISCARD constexpr byte operator<<(byte const a, I const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) << b)); }
 
-	template <class Int, std::enable_if_t<std::is_integral_v<Int>, int> = 0
-	> NODISCARD constexpr byte operator>>(byte const a, Int const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) >> b)); }
+	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
+	> NODISCARD constexpr byte operator>>(byte const a, I const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) >> b)); }
 
 	NODISCARD constexpr byte operator|(byte const a, byte const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b))); }
 
@@ -134,11 +132,11 @@ namespace ism
 
 	NODISCARD constexpr byte operator~(byte const a) noexcept { return static_cast<byte>(static_cast<uint8_t>(~static_cast<uint32_t>(a))); }
 
-	template <class Int, std::enable_if_t<std::is_integral_v<Int>, int> = 0
-	> constexpr byte & operator<<=(byte & a, Int const b) noexcept { return a = a << b; }
+	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
+	> constexpr byte & operator<<=(byte & a, I const b) noexcept { return a = a << b; }
 
-	template <class Int, std::enable_if_t<std::is_integral_v<Int>, int> = 0
-	> constexpr byte & operator>>=(byte & a, Int const b) noexcept { return a = a >> b; }
+	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
+	> constexpr byte & operator>>=(byte & a, I const b) noexcept { return a = a >> b; }
 
 	constexpr byte & operator|=(byte & a, byte const b) noexcept { return a = a | b; }
 

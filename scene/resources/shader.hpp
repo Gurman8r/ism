@@ -9,18 +9,20 @@ namespace ism
 	{
 		OBJECT_COMMON(Shader, Resource);
 
-		mutable RID m_shader{};
+		friend class ShaderLoader;
+
+		RID m_shader{};
 
 	public:
 		Shader() noexcept {}
 
-		explicit Shader(Path const & path) noexcept { set_path(path); reload_from_file(); }
+		explicit Shader(Path const & path);
 
 		virtual ~Shader() override;
 
-		NODISCARD virtual RID get_rid() const { return m_shader; }
+		virtual Error_ reload_from_file() override;
 
-		virtual void reload_from_file() override;
+		NODISCARD virtual RID get_rid() const { return m_shader; }
 	};
 }
 

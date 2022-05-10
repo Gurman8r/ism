@@ -20,9 +20,9 @@ namespace ism
 	{
 		OBJECT_COMMON(Resource, Object);
 
-		int32_t	m_subindex{};
-		String	m_name{};
-		Path	m_path_cache{};
+		int32_t m_subindex{};
+		String m_name{};
+		Path m_path_cache{};
 
 	protected:
 		Resource() noexcept {}
@@ -30,7 +30,7 @@ namespace ism
 	public:
 		virtual ~Resource() noexcept override = default;
 
-		virtual void reload_from_file();
+		virtual Error_ reload_from_file();
 
 		NODISCARD virtual RID get_rid() const { return {}; }
 

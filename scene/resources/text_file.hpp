@@ -11,20 +11,18 @@ namespace ism
 
 		String m_text{};
 
-		Path m_path{};
-
 	public:
-		virtual String const & get_text() const { return m_text; }
+		TextFile() noexcept = default;
 
-		virtual bool has_text() const { return !m_text.empty(); }
+		explicit TextFile(Path const & path);
 
-		Error_ load_text(Path const & path);
+		virtual Error_ reload_from_file() override;
 
-		virtual void reload_from_file() override;
+		virtual String const & get_text() const;
 
-		virtual void set_text(String const & value) { m_text = value; }
+		virtual bool has_text(String const & compare_to = {}) const;
 
-		void set_file_path(Path const & value) { m_path = value; }
+		virtual void set_text(String const & value);
 	};
 }
 

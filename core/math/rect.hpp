@@ -11,8 +11,8 @@ namespace ism
 
 		using value_type				= typename _T;
 		using self_type					= typename Rect;
-		using coord_type				= typename TVec2<value_type>;
-		using storage_type				= typename TVec4<value_type>;
+		using coord_type				= typename TVector2<value_type>;
+		using storage_type				= typename TVector4<value_type>;
 		using pointer					= typename storage_type::pointer;
 		using reference					= typename storage_type::reference;
 		using const_pointer				= typename storage_type::const_pointer;

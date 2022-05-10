@@ -7,9 +7,11 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API ImageLoader
+	class ISM_API ImageLoader final
 	{
 	public:
+		/* load from file */
+		static Error_ load_image(Image & image, Path const & path);
 		static Error_ load_image(Ref<Image> image, Path const & path);
 	};
 

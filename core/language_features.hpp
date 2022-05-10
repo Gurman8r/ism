@@ -300,6 +300,7 @@
 #	pragma warning(disable: 26444)	// avoid unnamed objecs with custom construction and destruction
 #	pragma warning(disable: 26451)	// arithmetic overflow
 #	pragma warning(disable: 26495)	// value may be uninitialized
+#	pragma warning(disable: 26498)	// mark as constexpr if desired
 #	pragma warning(disable: 26812)	// unscoped enum
 #	pragma warning(disable: 28251)	// inconsistent annotations
 #endif

@@ -3,93 +3,6 @@
 
 #include <core/io/resource.hpp>
 
-// enums
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum ColorChannel_
-	{
-		ColorChannel_L,
-		ColorChannel_LA,
-		ColorChannel_R,
-		ColorChannel_RG,
-		ColorChannel_RGB,
-		ColorChannel_RGBA,
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum ImageFormat_
-	{
-		ImageFormat_L8, //luminance
-		ImageFormat_LA8, //luminance-alpha
-		ImageFormat_R8,
-		ImageFormat_RG8,
-		ImageFormat_RGB8,
-		ImageFormat_RGBA8,
-		ImageFormat_RGBA4444,
-		ImageFormat_RGB565,
-		ImageFormat_RF, //float
-		ImageFormat_RGF,
-		ImageFormat_RGBF,
-		ImageFormat_RGBAF,
-		ImageFormat_RH, //half float
-		ImageFormat_RGH,
-		ImageFormat_RGBH,
-		ImageFormat_RGBAH,
-		ImageFormat_RGBE9995,
-		ImageFormat_DXT1, //s3tc bc1
-		ImageFormat_DXT3, //bc2
-		ImageFormat_DXT5, //bc3
-		ImageFormat_RGTC_R,
-		ImageFormat_RGTC_RG,
-		ImageFormat_BPTC_RGBA, //btpc bc7
-		ImageFormat_BPTC_RGBF, //float bc6h
-		ImageFormat_BPTC_RGBFU, //unsigned float bc6hu
-		ImageFormat_PVRTC1_2, //pvrtc1
-		ImageFormat_PVRTC1_2A,
-		ImageFormat_PVRTC1_4,
-		ImageFormat_PVRTC1_4A,
-		ImageFormat_ETC, //etc1
-		ImageFormat_ETC2_R11, //etc2
-		ImageFormat_ETC2_R11S, //signed, NOT srgb.
-		ImageFormat_ETC2_RG11,
-		ImageFormat_ETC2_RG11S,
-		ImageFormat_ETC2_RGB8,
-		ImageFormat_ETC2_RGBA8,
-		ImageFormat_ETC2_RGB8A1,
-		ImageFormat_ETC2_RA_AS_RG, //used to make basis universal happy
-		ImageFormat_DXT5_RA_AS_RG, //used to make basis universal happy
-		ImageFormat_MAX
-	};
-
-	constexpr size_t get_image_format_channel_count(ImageFormat_ image_format)
-	{
-		switch (image_format) {
-		case ImageFormat_R8: return 1;
-		case ImageFormat_RG8: return 2;
-		case ImageFormat_RGB8: return 3;
-		case ImageFormat_RGBA8: return 4;
-		}
-		return 0;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum Interpolation_
-	{
-		Interpolation_Nearest,
-		Interpolation_Bilinear,
-		Interpolation_Cubic,
-		Interpolation_Trilinear,
-		Interpolation_Lanczos,
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// image
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -98,45 +11,122 @@ namespace ism
 	{
 		OBJECT_COMMON(Image, Resource);
 
+	public:
+		enum Format_
+		{
+			Format_L8, //luminance
+			Format_LA8, //luminance-alpha
+			Format_R8,
+			Format_RG8,
+			Format_RGB8,
+			Format_RGBA8,
+			Format_RGBA4444,
+			Format_RGB565,
+			Format_RF, //float
+			Format_RGF,
+			Format_RGBF,
+			Format_RGBAF,
+			Format_RH, //half float
+			Format_RGH,
+			Format_RGBH,
+			Format_RGBAH,
+			Format_RGBE9995,
+			Format_DXT1, //s3tc bc1
+			Format_DXT3, //bc2
+			Format_DXT5, //bc3
+			Format_RGTC_R,
+			Format_RGTC_RG,
+			Format_BPTC_RGBA, //btpc bc7
+			Format_BPTC_RGBF, //float bc6h
+			Format_BPTC_RGBFU, //unsigned float bc6hu
+			Format_PVRTC1_2, //pvrtc1
+			Format_PVRTC1_2A,
+			Format_PVRTC1_4,
+			Format_PVRTC1_4A,
+			Format_ETC, //etc1
+			Format_ETC2_R11, //etc2
+			Format_ETC2_R11S, //signed, NOT srgb.
+			Format_ETC2_RG11,
+			Format_ETC2_RG11S,
+			Format_ETC2_RGB8,
+			Format_ETC2_RGBA8,
+			Format_ETC2_RGB8A1,
+			Format_ETC2_RA_AS_RG, //used to make basis universal happy
+			Format_DXT5_RA_AS_RG, //used to make basis universal happy
+			Format_MAX
+		};
+
+		enum Interpolation_
+		{
+			Interpolation_Nearest,
+			Interpolation_Bilinear,
+			Interpolation_Cubic,
+			Interpolation_Trilinear,
+			Interpolation_Lanczos,
+		};
+
+	private:
 		friend class ImageLoader;
+
+		Format_ m_format{};
+
+		int32_t m_width{}, m_height{}, m_depth{};
 
 		DynamicBuffer m_pixels{};
 
-		int32_t m_width{}, m_height{}, m_channels{};
+	public:
+		Image() noexcept {}
 
-		ImageFormat_ m_format{};
+		Image(int32_t width, int32_t height, Format_ format);
+
+		Image(int32_t width, int32_t height, Format_ format, DynamicBuffer const & data);
+
+		explicit Image(Path const & path);
+
+		virtual Error_ reload_from_file() override;
+
+		NODISCARD virtual RID get_rid() const override { return RID{}; }
+
+		NODISCARD int32_t get_width() const noexcept { return m_width; }
+
+		NODISCARD int32_t get_height() const noexcept { return m_height; }
+
+		NODISCARD int32_t get_depth() const noexcept { return m_depth; }
+
+		NODISCARD int32_t get_capacity() const noexcept { return m_width * m_height * m_depth; }
+
+		NODISCARD Format_ get_format() const noexcept { return m_format; }
+
+		NODISCARD DynamicBuffer const & get_data() const noexcept { return m_pixels; }
 
 	public:
-		virtual ~Image() noexcept override = default;
-		
-		Image() noexcept {}
-		
-		Image(int32_t width, int32_t height, ImageFormat_ format);
-		
-		Image(int32_t width, int32_t height, ImageFormat_ format, DynamicBuffer const & data);
+		void clear();
 
 		void flip_vertically();
-		
+
 		void flip_horizontally();
 
 		NODISCARD Color32 get_pixel(size_t i) const;
-		
-		NODISCARD Color32 get_pixel(size_t x, size_t y) const;
-		
-		void set_pixel(size_t i, Color32 value);
-		
-		void set_pixel(size_t x, size_t y, Color32 value);
 
-		NODISCARD auto get_width() const noexcept -> int32_t { return m_width; }
-		
-		NODISCARD auto get_height() const noexcept -> int32_t { return m_height; }
-		
-		NODISCARD auto get_channel_count() const noexcept -> int32_t { return m_channels; }
-		
-		NODISCARD auto get_format() const noexcept -> ImageFormat_ { return m_format; }
-		
-		NODISCARD auto get_data() const noexcept -> DynamicBuffer const & { return m_pixels; }
+		NODISCARD Color32 get_pixel(size_t x, size_t y) const;
+
+		void set_pixel(size_t i, Color32 value);
+
+		void set_pixel(size_t x, size_t y, Color32 value);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr size_t get_image_depth(Image::Format_ image_format) noexcept
+	{
+		switch (image_format) {
+		case Image::Format_R8: return 1;
+		case Image::Format_RG8: return 2;
+		case Image::Format_RGB8: return 3;
+		case Image::Format_RGBA8: return 4;
+		}
+		return 0;
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -5,10 +5,6 @@
 #include <core/string/path.hpp>
 #include <core/string/print_string.hpp>
 #include <core/math/color.hpp>
-#include <core/math/quat.hpp>
-#include <core/math/transform.hpp>
-#include <core/math/transform_2d.hpp>
-#include <core/math/vector4.hpp>
 #include <core/math/rect.hpp>
 #include <core/templates/any.hpp>
 #include <core/templates/atomic.hpp>

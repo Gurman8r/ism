@@ -1,15 +1,22 @@
 #ifndef _ISM_TRANSFORM_HPP_
 #define _ISM_TRANSFORM_HPP_
 
-#include <core/math/vector4.hpp>
+#include <core/math/rect.hpp>
+#include <core/math/quat.hpp>
 
 namespace ism
 {
-	struct Transform
-	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using storage_type				= typename Mat4f;
+	class Transform2D;
+
+	class Transform
+	{
+		Mat4 m_matrix;
+
+	public:
+		using self_type					= typename Transform;
+		using storage_type				= typename decltype(m_matrix);
 		using value_type				= typename storage_type::value_type;
 		using pointer					= typename storage_type::pointer;
 		using const_pointer				= typename storage_type::const_pointer;
@@ -20,113 +27,41 @@ namespace ism
 		using reverse_iterator			= typename storage_type::reverse_iterator;
 		using const_reverse_iterator	= typename storage_type::const_reverse_iterator;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		constexpr Transform() noexcept : m_data{} {}
+	public:
+		constexpr Transform() noexcept : m_matrix{} {}
 
 		constexpr Transform(
-			float_t m00, float_t m01, float_t m02, float_t m03,
-			float_t m10, float_t m11, float_t m12, float_t m13,
-			float_t m20, float_t m21, float_t m22, float_t m23,
-			float_t m30, float_t m31, float_t m32, float_t m33
-		) : m_data{
-			m00, m01, m02, m03,
-			m10, m11, m12, m13,
-			m20, m21, m22, m23,
-			m30, m31, m32, m33
-		} {}
+			value_type m00, value_type m01, value_type m02, value_type m03,
+			value_type m10, value_type m11, value_type m12, value_type m13,
+			value_type m20, value_type m21, value_type m22, value_type m23,
+			value_type m30, value_type m31, value_type m32, value_type m33
+		) : m_matrix{ m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33 } {}
 
-		constexpr Transform(storage_type const & value) : m_data{ value } {}
+		constexpr Transform(storage_type const & value) : m_matrix{ value } {}
+
+		constexpr Transform(storage_type && value) noexcept : m_matrix{ std::move(value) } {}
+
+		constexpr Transform(self_type const & other) : m_matrix{ other.m_matrix } {}
 		
-		constexpr Transform(storage_type && value) noexcept : m_data{ std::move(value) } {}
+		constexpr self_type & operator=(self_type const & other) { self_type temp{ other }; return swap(temp); }
 
-		constexpr Transform(Transform const & other) : m_data{ other.m_data } {}
-		
-		constexpr Transform & operator=(Transform const & other)
-		{
-			Transform temp{ other };
-			return swap(temp);
-		}
-
-		constexpr Transform & swap(Transform & other) noexcept
+		constexpr self_type & swap(self_type & other) noexcept
 		{
 			if (this != std::addressof(other))
 			{
-				m_data.swap(other.m_data);
+				util::swap(m_matrix, other.m_matrix);
 			}
 			return (*this);
 		}
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
-		NODISCARD constexpr auto data() noexcept -> pointer { return m_data.data(); }
-
-		NODISCARD constexpr auto data() const noexcept -> const_pointer { return m_data.data(); }
-
-		NODISCARD constexpr bool empty() const noexcept { return m_data.empty(); }
-
-		NODISCARD constexpr auto max_size() const noexcept -> size_t { return m_data.max_size(); }
-
-		NODISCARD constexpr auto size() const noexcept -> size_t { return m_data.size(); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD constexpr operator pointer() noexcept { return m_data.operator pointer(); }
-
-		NODISCARD constexpr operator const_pointer() const noexcept { return m_data.operator const_pointer(); }
-
-		NODISCARD constexpr auto operator*() & noexcept -> reference { return m_data.operator*(); }
-
-		NODISCARD constexpr auto operator*() const & noexcept -> const_reference { return m_data.operator*(); }
-
-		NODISCARD constexpr auto operator*() && noexcept -> float_t && { return std::move(m_data.operator*()); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD constexpr auto at(size_t const i) & noexcept -> reference { return m_data[i]; }
-
-		NODISCARD constexpr auto at(size_t const i) const & noexcept -> const_reference { return m_data[i]; }
-
-		NODISCARD constexpr auto at(size_t const i) && noexcept -> value_type && { return std::move(m_data[i]); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
-
-		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
-
-		NODISCARD constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-
-		NODISCARD constexpr auto end() noexcept -> iterator { return m_data.end(); }
-
-		NODISCARD constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
-
-		NODISCARD constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-
-		NODISCARD constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
-
-		NODISCARD constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
-
-		NODISCARD constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-
-		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
-
-		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
-
-		NODISCARD constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		// define additional code
 #ifdef ISM_TRANSFORM_EXTRA
 		ISM_TRANSFORM_EXTRA
 #endif // ISM_TRANSFORM_EXTRA
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	private:
-		storage_type m_data;
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_TRANSFORM_HPP_

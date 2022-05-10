@@ -6,18 +6,16 @@
 // MATRIX
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class _T, size_t _Width, size_t _Height
 	> struct NODISCARD Matrix
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		static_assert(0 < _Width, "Matrix width negative or zero");
-
 		static_assert(0 < _Height, "Matrix height negative or zero");
-
 		static_assert(std::is_scalar_v<_T>, "Matrix only supports scalar types");
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		using value_type				= typename _T;
 		using self_type					= typename Matrix<value_type, _Width, _Height>;
@@ -112,18 +110,25 @@ namespace ism
 		
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr auto & swap(self_type & other) noexcept
+		constexpr self_type & swap(self_type & other) noexcept
 		{
 			if (this != std::addressof(other))
 			{
-				m_data.swap(other.m_data);
+				util::swap(m_data, other.m_data);
 			}
 			return (*this);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		static constexpr self_type identity() noexcept
+		NODISCARD static constexpr self_type one() noexcept
+		{
+			self_type temp;
+			for (auto & e : temp) { e = static_cast<value_type>(1); }
+			return temp;
+		}
+
+		NODISCARD static constexpr self_type identity() noexcept
 		{
 			self_type temp;
 			for (size_t i = 0; i < _Width * _Height; ++i)
@@ -146,20 +151,7 @@ namespace ism
 			else
 			{
 				Other temp;
-				if constexpr (std::is_same_v<U, value_type>)
-				{
-					// same value type
-					if constexpr (sizeof(temp) <= sizeof(m_data))
-					{
-						copymem(temp, m_data, sizeof(temp));
-					}
-					else
-					{
-						zeromem(temp, sizeof(temp));
-						copymem(temp, m_data, sizeof(m_data));
-					}
-				}
-				else if constexpr ((W == _Width) && (H == _Height))
+				if constexpr ((W == _Width) && (H == _Height))
 				{
 					// same dims
 					for (size_t i = 0; i < (W * H); ++i)
@@ -191,97 +183,99 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
-}
 
-// ALIASES
-namespace ism
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Matrix<T, N, N>
 	template <class T, size_t N
-	> ALIAS(TMat) Matrix<T, N, N>;
+	> ALIAS(TMatrixNxN) Matrix<T, N, N>;
 
 	// Matrix<T, N, 1>
 	template <class T, size_t N
-	> ALIAS(TVec) Matrix<T, N, 1>;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	> ALIAS(TMatrixNx1) Matrix<T, N, 1>;
 
 	// Matrix<T, 2, 2>
 	template <class T
-	> ALIAS(TMat2) TMat<T, 2>;
-	ALIAS(Mat2b) TMat2<uint8_t>;
-	ALIAS(Mat2i) TMat2<int32_t>;
-	ALIAS(Mat2u) TMat2<uint32_t>;
-	ALIAS(Mat2f) TMat2<float32_t>;
-	ALIAS(Mat2d) TMat2<float64_t>;
-	ALIAS(Mat2s) TMat2<size_t>;
+	> ALIAS(TMatrix2x2) TMatrixNxN<T, 2>;
+
+	// Matrix<T, 3, 3>
+	template <class T
+	> ALIAS(TMatrix3x3) TMatrixNxN<T, 3>;
+
+	// Matrix<T, 4 ,4>
+	template <class T
+	> ALIAS(TMatrix4x4) TMatrixNxN<T, 4>;
+
+	// Matrix<T, 2, 1>
+	template <class T
+	> ALIAS(TVector2) TMatrixNx1<T, 2>;
+
+	// Matrix<T, 3, 1>
+	template <class T
+	> ALIAS(TVector3) TMatrixNx1<T, 3>;
+
+	// Matrix<T, 4, 1>
+	template <class T
+	> ALIAS(TVector4) TMatrixNx1<T, 4>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ALIAS(Mat2b) TMatrix2x2<uint8_t>;
+	ALIAS(Mat2i) TMatrix2x2<int32_t>;
+	ALIAS(Mat2u) TMatrix2x2<uint32_t>;
+	ALIAS(Mat2f) TMatrix2x2<float32_t>;
+	ALIAS(Mat2d) TMatrix2x2<float64_t>;
+	ALIAS(Mat2s) TMatrix2x2<size_t>;
 	ALIAS(Mat2) Mat2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// Matrix<T, 3, 3>
-	template <class T
-	> ALIAS(TMat3) TMat<T, 3>;
-	ALIAS(Mat3b) TMat3<uint8_t>;
-	ALIAS(Mat3i) TMat3<int32_t>;
-	ALIAS(Mat3u) TMat3<uint32_t>;
-	ALIAS(Mat3f) TMat3<float32_t>;
-	ALIAS(Mat3d) TMat3<float64_t>;
-	ALIAS(Mat3s) TMat3<size_t>;
+	ALIAS(Mat3b) TMatrix3x3<uint8_t>;
+	ALIAS(Mat3i) TMatrix3x3<int32_t>;
+	ALIAS(Mat3u) TMatrix3x3<uint32_t>;
+	ALIAS(Mat3f) TMatrix3x3<float32_t>;
+	ALIAS(Mat3d) TMatrix3x3<float64_t>;
+	ALIAS(Mat3s) TMatrix3x3<size_t>;
 	ALIAS(Mat3) Mat3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// Matrix<T, 4 ,4>
-	template <class T
-	> ALIAS(TMat4) TMat<T, 4>;
-	ALIAS(Mat4b) TMat4<uint8_t>;
-	ALIAS(Mat4i) TMat4<int32_t>;
-	ALIAS(Mat4u) TMat4<uint32_t>;
-	ALIAS(Mat4f) TMat4<float32_t>;
-	ALIAS(Mat4d) TMat4<float64_t>;
-	ALIAS(Mat4s) TMat4<size_t>;
+	ALIAS(Mat4b) TMatrix4x4<uint8_t>;
+	ALIAS(Mat4i) TMatrix4x4<int32_t>;
+	ALIAS(Mat4u) TMatrix4x4<uint32_t>;
+	ALIAS(Mat4f) TMatrix4x4<float32_t>;
+	ALIAS(Mat4d) TMatrix4x4<float64_t>;
+	ALIAS(Mat4s) TMatrix4x4<size_t>;
 	ALIAS(Mat4) Mat4f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// Matrix<T, 2, 1>
-	template <class T
-	> ALIAS(TVec2) TVec<T, 2>;
-	ALIAS(Vec2b) TVec2<uint8_t>;
-	ALIAS(Vec2i) TVec2<int32_t>;
-	ALIAS(Vec2u) TVec2<uint32_t>;
-	ALIAS(Vec2f) TVec2<float32_t>;
-	ALIAS(Vec2d) TVec2<float64_t>;
-	ALIAS(Vec2s) TVec2<size_t>;
+	ALIAS(Vec2b) TVector2<uint8_t>;
+	ALIAS(Vec2i) TVector2<int32_t>;
+	ALIAS(Vec2u) TVector2<uint32_t>;
+	ALIAS(Vec2f) TVector2<float32_t>;
+	ALIAS(Vec2d) TVector2<float64_t>;
+	ALIAS(Vec2s) TVector2<size_t>;
 	ALIAS(Vec2) Vec2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// Matrix<T, 3, 1>
-	template <class T
-	> ALIAS(TVec3) TVec<T, 3>;
-	ALIAS(Vec3b) TVec3<uint8_t>;
-	ALIAS(Vec3i) TVec3<int32_t>;
-	ALIAS(Vec3u) TVec3<uint32_t>;
-	ALIAS(Vec3f) TVec3<float32_t>;
-	ALIAS(Vec3d) TVec3<float64_t>;
-	ALIAS(Vec3s) TVec3<size_t>;
+	ALIAS(Vec3b) TVector3<uint8_t>;
+	ALIAS(Vec3i) TVector3<int32_t>;
+	ALIAS(Vec3u) TVector3<uint32_t>;
+	ALIAS(Vec3f) TVector3<float32_t>;
+	ALIAS(Vec3d) TVector3<float64_t>;
+	ALIAS(Vec3s) TVector3<size_t>;
 	ALIAS(Vec3) Vec3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// Matrix<T, 4, 1>
-	template <class T
-	> ALIAS(TVec4) TVec<T, 4>;
-	ALIAS(Vec4b) TVec4<uint8_t>;
-	ALIAS(Vec4i) TVec4<int32_t>;
-	ALIAS(Vec4u) TVec4<uint32_t>;
-	ALIAS(Vec4f) TVec4<float32_t>;
-	ALIAS(Vec4d) TVec4<float64_t>;
-	ALIAS(Vec4s) TVec4<size_t>;
+	ALIAS(Vec4b) TVector4<uint8_t>;
+	ALIAS(Vec4i) TVector4<int32_t>;
+	ALIAS(Vec4u) TVector4<uint32_t>;
+	ALIAS(Vec4f) TVector4<float32_t>;
+	ALIAS(Vec4d) TVector4<float64_t>;
+	ALIAS(Vec4s) TVector4<size_t>;
 	ALIAS(Vec4) Vec4f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -333,8 +327,7 @@ namespace ism
 	template <class Tx, class Ty, size_t W, size_t H
 	> constexpr auto operator+=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept -> auto &
 	{
-		for (auto & e : lhs)
-		{
+		for (auto & e : lhs) {
 			e += static_cast<Tx>(rhs);
 		}
 		return lhs;
@@ -343,8 +336,7 @@ namespace ism
 	template <class Tx, class Ty, size_t W, size_t H
 	> constexpr auto operator-=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept -> auto &
 	{
-		for (auto & e : lhs)
-		{
+		for (auto & e : lhs) {
 			e -= static_cast<Tx>(rhs);
 		}
 		return lhs;
@@ -353,8 +345,7 @@ namespace ism
 	template <class Tx, class Ty, size_t W, size_t H
 	> constexpr auto operator*=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept -> auto &
 	{
-		for (auto & e : lhs)
-		{
+		for (auto & e : lhs) {
 			e *= static_cast<Tx>(rhs);
 		}
 		return lhs;
@@ -363,8 +354,7 @@ namespace ism
 	template <class Tx, class Ty, size_t W, size_t H
 	> constexpr auto operator/=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept -> auto &
 	{
-		for (auto & e : lhs)
-		{
+		for (auto & e : lhs) {
 			e /= static_cast<Tx>(rhs);
 		}
 		return lhs;
@@ -423,40 +413,36 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Tx, class Ty, size_t N
-	> NODISCARD constexpr auto & operator+=(TVec<Tx, N> & lhs, TVec<Ty, N> const & rhs) noexcept
+	> NODISCARD constexpr auto & operator+=(TMatrixNx1<Tx, N> & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
 	{
-		for (size_t i = 0; i < N; ++i)
-		{
+		for (size_t i = 0; i < N; ++i) {
 			lhs[i] += static_cast<Tx>(rhs[i]);
 		}
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> NODISCARD constexpr auto & operator-=(TVec<Tx, N> & lhs, TVec<Ty, N> const & rhs) noexcept
+	> NODISCARD constexpr auto & operator-=(TMatrixNx1<Tx, N> & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
 	{
-		for (size_t i = 0; i < N; ++i)
-		{
+		for (size_t i = 0; i < N; ++i) {
 			lhs[i] -= static_cast<Tx>(rhs[i]);
 		}
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> NODISCARD constexpr auto & operator*=(TVec<Tx, N> & lhs, TVec<Ty, N> const & rhs) noexcept
+	> NODISCARD constexpr auto & operator*=(TMatrixNx1<Tx, N> & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
 	{
-		for (size_t i = 0; i < N; ++i)
-		{
+		for (size_t i = 0; i < N; ++i) {
 			lhs[i] *= static_cast<Tx>(rhs[i]);
 		}
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> NODISCARD constexpr auto & operator/=(TVec<Tx, N> & lhs, TVec<Ty, N> const & rhs) noexcept
+	> NODISCARD constexpr auto & operator/=(TMatrixNx1<Tx, N> & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
 	{
-		for (size_t i = 0; i < N; ++i)
-		{
+		for (size_t i = 0; i < N; ++i) {
 			lhs[i] /= static_cast<Tx>(rhs[i]);
 		}
 		return lhs;
@@ -465,28 +451,28 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Tx, class Ty, size_t N
-	> NODISCARD constexpr auto operator+(TVec<Tx, N> const & lhs, TVec<Ty, N> const & rhs) noexcept
+	> NODISCARD constexpr auto operator+(TMatrixNx1<Tx, N> const & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp += rhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> NODISCARD constexpr auto operator-(TVec<Tx, N> const & lhs, TVec<Ty, N> const & rhs) noexcept
+	> NODISCARD constexpr auto operator-(TMatrixNx1<Tx, N> const & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp -= rhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> NODISCARD constexpr auto operator*(TVec<Tx, N> const & lhs, TVec<Ty, N> const & rhs) noexcept
+	> NODISCARD constexpr auto operator*(TMatrixNx1<Tx, N> const & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp *= rhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> NODISCARD constexpr auto operator/(TVec<Tx, N> const & lhs, TVec<Ty, N> const & rhs) noexcept
+	> NODISCARD constexpr auto operator/(TMatrixNx1<Tx, N> const & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp /= rhs;

@@ -9,13 +9,25 @@ namespace ism
 	{
 		OBJECT_COMMON(Material, Resource);
 
-	public:
-		virtual ~Material();
+		RID m_material;
 
+	public:
 		Material();
 
-	private:
+		virtual ~Material();
 
+	public:
+		template <class T
+		> T get(String const & name)
+		{
+			return {};
+		}
+
+	public:
+		template <class T
+		> void set(String const & name, T const & value)
+		{
+		}
 	};
 }
 

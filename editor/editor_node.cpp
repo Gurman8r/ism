@@ -2,20 +2,26 @@
 #include <scene/gui/imgui.hpp>
 #include <core/io/filesystem.hpp>
 
+#include <servers/rendering/renderer_canvas_renderer.hpp>
+#include <servers/rendering/renderer_scene_renderer.hpp>
+#include <servers/rendering/renderer_storage.hpp>
+#include <servers/rendering/renderer_viewport.hpp>
+
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 enum {
-	SCENE,
-	RENDER_PASS,
-	TRANSFORMS,
-	MATERIAL,
+	SCENE_STATE_UNIFORMS,
+	RENDER_PASS_UNIFORMS,
+	TRANSFORMS_UNIFORMS,
+	MATERIAL_UNIFORMS,
 	MAX_UNIFORMS
 };
 
 static RID uniform_buffers[MAX_UNIFORMS]{};
 static RID uniform_sets[MAX_UNIFORMS]{};
+static RID material{};
 static RID pipeline{};
 static RID framebuffer{}, backbuffer{};
 static RID render_target{};
@@ -100,37 +106,47 @@ EditorNode::EditorNode()
 	//m_textures["earth_hm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_hm_2k.png");
 	//m_textures["earth_lm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_lm_2k.png");
 	//m_textures["earth_nm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_nm_2k.png");
-	//m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
+	m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
 	m_meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
 	m_shaders["3d"].instance("../../../assets/shaders/3d.json");
 
 	RID const shader{ m_shaders["3d"]->get_rid() };
 	_setup_pipeline(shader);
 
-	uniform_buffers[SCENE] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::ConstantBuffer<Mat4, Mat4>));
-	uniform_sets[SCENE] = RENDERING_DEVICE->uniform_set_create({
-		{ RD::UniformType_UniformBuffer, SCENE, { uniform_buffers[SCENE] } },
+	uniform_buffers[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::ConstantBuffer<Mat4, Mat4>));
+	uniform_sets[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		{ RD::UniformType_UniformBuffer, SCENE_STATE_UNIFORMS, { uniform_buffers[SCENE_STATE_UNIFORMS] } },
 	}, shader);
 
-	uniform_buffers[RENDER_PASS] = nullptr;
-	uniform_sets[RENDER_PASS] = RENDERING_DEVICE->uniform_set_create({
-		//{ RD::UniformType_UniformBuffer, RENDER_PASS, { uniform_buffers[RENDER_PASS] } },
+	uniform_buffers[RENDER_PASS_UNIFORMS] = nullptr;
+	uniform_sets[RENDER_PASS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		//{ RD::UniformType_UniformBuffer, RENDER_PASS_UNIFORMS, { uniform_buffers[RENDER_PASS_UNIFORMS] } },
 	}, shader);
 
-	uniform_buffers[TRANSFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::ConstantBuffer<Mat4>));
-	uniform_sets[TRANSFORMS] = RENDERING_DEVICE->uniform_set_create({
-		{ RD::UniformType_UniformBuffer, TRANSFORMS, { uniform_buffers[TRANSFORMS] } },
+	uniform_buffers[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::ConstantBuffer<Mat4>));
+	uniform_sets[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		{ RD::UniformType_UniformBuffer, TRANSFORMS_UNIFORMS, { uniform_buffers[TRANSFORMS_UNIFORMS] } },
 	}, shader);
 
-	uniform_buffers[MATERIAL] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::ConstantBuffer<Vec4, Vec4, Vec4, float_t>));
-	uniform_sets[MATERIAL] = RENDERING_DEVICE->uniform_set_create({
-		//{ RD::UniformType_UniformBuffer, MATERIAL, { uniform_buffers[MATERIAL] } },
+	uniform_buffers[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::ConstantBuffer<Vec4, Vec4, Vec4, float_t>));
+	uniform_sets[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		{ RD::UniformType_UniformBuffer, MATERIAL_UNIFORMS, { uniform_buffers[MATERIAL_UNIFORMS] } },
 		{ RD::UniformType_Texture, 0, { m_textures["earth_dm_2k"]->get_rid() } },
+		{ RD::UniformType_Texture, 1, { m_textures["earth_sm_2k"]->get_rid() } },
 	}, shader);
 
+	material = RENDERER_STORAGE->material_create();
+	
 	Vector<RID> fb_textures{
-		RENDERING_DEVICE->texture_create({ RD::TextureType_2D, RD::DataFormat_R8G8B8_UNORM, 1280, 720 }),
-		RENDERING_DEVICE->texture_create({ RD::TextureType_2D, RD::DataFormat_D24_UNORM_S8_UINT, 1280, 720 }) };
+		RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
+			t.color_format = RD::DataFormat_R8G8B8_UNORM;
+			t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
+		}),
+		RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
+			t.color_format = RD::DataFormat_D24_UNORM_S8_UINT;
+			t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_DepthStencilAttachment;
+		}),
+	};
 	framebuffer = RENDERING_DEVICE->framebuffer_create(fb_textures);
 	m_editor_view.set_main_texture(fb_textures[0]);
 }
@@ -139,10 +155,13 @@ EditorNode::~EditorNode()
 {
 	ASSERT(this == singleton); SCOPE_EXIT(&) { singleton = nullptr; };
 
+	if (material) { RENDERER_STORAGE->material_destroy(material); }
+
 	for (size_t i = 0; i < MAX_UNIFORMS; ++i) {
 		if (uniform_buffers[i]) { RENDERING_DEVICE->buffer_destroy(uniform_buffers[i]); }
 		if (uniform_sets[i]) { RENDERING_DEVICE->uniform_set_destroy(uniform_sets[i]); }
 	}
+
 	if (framebuffer) { RENDERING_DEVICE->framebuffer_destroy(framebuffer); }
 	if (backbuffer) { RENDERING_DEVICE->framebuffer_destroy(backbuffer); }
 	if (pipeline) { RENDERING_DEVICE->pipeline_destroy(pipeline); }
@@ -185,43 +204,42 @@ void EditorNode::process(Duration const dt)
 	}
 	editor_camera->recalculate();
 
-	if constexpr (1)
 	{
 		Mat4 const cam_projection{ editor_camera->get_proj() }, cam_transform{ editor_camera->get_view() };
 
 		static RD::ConstantBuffer<Mat4, Mat4> scene_ubo_data;
 		scene_ubo_data.set<0>(cam_projection); // projection matrix
 		scene_ubo_data.set<1>(cam_transform); // view matrix
-		RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE], 0, scene_ubo_data, sizeof(scene_ubo_data));
+		RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_ubo_data, sizeof(scene_ubo_data));
 
 		static RD::ConstantBuffer<Mat4> transforms_ubo_data;
 		transforms_ubo_data.set<0>(object_matrix[0]); // model matrix
-		RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS], 0, transforms_ubo_data, sizeof(transforms_ubo_data));
+		RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo_data, sizeof(transforms_ubo_data));
 
 		static RD::ConstantBuffer<Vec4, Vec4, Vec4, float_t> material_ubo_data;
-		material_ubo_data.set<0>({ 1, 1, 1, 1 }); // ambient
+		material_ubo_data.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
 		material_ubo_data.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
 		material_ubo_data.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
 		material_ubo_data.set<3>(32.f); // shininess
-		RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL], 0, material_ubo_data, sizeof(material_ubo_data));
+		RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo_data, sizeof(material_ubo_data));
 
 		static Color clear_color{ Colors::magenta };
 		clear_color = rotate_hue(clear_color, (float_t)dt * 10.f);
 
 		RID dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, clear_color) };
 		RENDERING_DEVICE->draw_list_bind_pipeline(dl, pipeline);
-		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[SCENE], SCENE);
-		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[RENDER_PASS], RENDER_PASS);
-		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[TRANSFORMS], TRANSFORMS);
-		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[MATERIAL], MATERIAL);
-		
+		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
+		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
+		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
+		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
+
 		static Mesh * mesh{ *m_meshes["sphere32x24"] };
-		mesh->each([&](RID vertex_array, RID index_array, Vector<Ref<Texture>> & textures) {
+		mesh->for_each_surface([&](RID vertex_array, RID index_array, Vector<Ref<Texture>> & textures) {
 			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, vertex_array);
 			RENDERING_DEVICE->draw_list_bind_index_array(dl, index_array);
 			RENDERING_DEVICE->draw_list_draw(dl, (bool)index_array, 1, 0);
 		});
-		
+
 		RENDERING_DEVICE->draw_list_end();
 	}
 

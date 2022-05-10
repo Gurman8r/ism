@@ -40,8 +40,9 @@ namespace ism
 
 	public:
 		/* MATERIAL */
-		struct _Material
+		struct Material final
 		{
+			RID shader{};
 			RID uniform_buffer{};
 			RID uniform_set{};
 			Vector<RID> texture_cache{};
@@ -54,7 +55,7 @@ namespace ism
 
 	public:
 		/* MESH */
-		struct _Mesh
+		struct Mesh final
 		{
 			enum { Vertices, Indices, Textures };
 
@@ -66,7 +67,7 @@ namespace ism
 
 	public:
 		/* RENDER TARGET */
-		struct _RenderTarget
+		struct RenderTarget final
 		{
 			Vec2i size{};
 			RID framebuffer{}, backbuffer{};
@@ -80,7 +81,6 @@ namespace ism
 
 		RID render_target_create();
 		void render_target_destroy(RID render_target);
-		void render_target_bind(RID render_target);
 
 		void render_target_set_position(RID render_target, int32_t x, int32_t  y);
 		void render_target_set_size(RID render_target, int32_t width, int32_t height);

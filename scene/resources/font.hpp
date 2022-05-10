@@ -10,13 +10,18 @@ namespace ism
 	{
 		OBJECT_COMMON(Font, Resource);
 
+		RID m_font;
+
 	public:
+		Font();
+		
+		explicit Font(Path const & path);
+
 		virtual ~Font();
 
-		Font();
+		virtual Error_ reload_from_file() override;
 
-	private:
-
+		NODISCARD virtual RID get_rid() const override { return m_font; }
 	};
 }
 

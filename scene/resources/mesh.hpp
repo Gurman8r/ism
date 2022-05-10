@@ -11,31 +11,39 @@ namespace ism
 	{
 		OBJECT_COMMON(Mesh, Resource);
 
+		friend class MeshLoader;
+
 		RID m_mesh{};
 
-		mutable Batch<RID, RID, Vector<Ref<Texture>>> m_data{};
+		Batch<
+			RID, // vertex array
+			RID, // index array
+			Vector<Ref<Texture>> // textures
+		> m_surface_data{};
 
 	public:
-		enum { Vertices, Indices, Textures };
+		using SurfaceData = typename decltype(m_surface_data);
 
-		Mesh() noexcept {}
+		enum { VA, IA, TEX };
 
-		explicit Mesh(Path const & path) noexcept { set_path(path); reload_from_file(); }
+		Mesh();
+
+		explicit Mesh(Path const & path);
 
 		virtual ~Mesh() override;
 
-		NODISCARD virtual RID get_rid() const override { return m_data.front<Vertices>(); }
+		virtual Error_ reload_from_file() override;
 
-		virtual void reload_from_file() override;
+		NODISCARD virtual RID get_rid() const override { return m_surface_data.front<VA>(); }
 
 	public:
-		NODISCARD size_t get_size() const noexcept { return m_data.size(); }
+		NODISCARD size_t get_surface_count() const noexcept { return m_surface_data.size(); }
 
 		template <size_t ... I, class Fn
-		> void expand(size_t const i, Fn && fn) noexcept { m_data.expand<I...>(i, FWD(fn)); }
+		> void get_surface(size_t const i, Fn && fn) noexcept { m_surface_data.expand<I...>(i, FWD(fn)); }
 
 		template <class Fn
-		> void each(Fn && fn) { for (size_t i = 0; i < m_data.size(); ++i) { m_data.expand_all(i, FWD(fn)); } }
+		> void for_each_surface(Fn && fn) { for (size_t i = 0; i < m_surface_data.size(); ++i) { m_surface_data.expand_all(i, FWD(fn)); } }
 	};
 }
 

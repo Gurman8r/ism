@@ -22,7 +22,7 @@ namespace ism
 
 	public:
 		/* BUFFER API */
-		struct _Buffer
+		struct BufferBase
 		{
 			uint32_t handle{};
 			uint32_t buffer_type{};
@@ -38,23 +38,23 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY API */
-		struct _VertexBuffer : _Buffer {};
+		struct VertexBuffer : BufferBase {};
 
-		struct _VertexArray
+		struct VertexArray
 		{
 			uint32_t handle{};
 			uint32_t vertex_count{};
-			VertexFormat format{};
+			VertexLayout layout{};
 			Vector<RID> buffers{};
 		};
 
-		struct _IndexBuffer : _Buffer
+		struct IndexBuffer : BufferBase
 		{
 			uint32_t index_count{};
 			uint32_t index_type{};
 		};
 
-		struct _IndexArray
+		struct IndexArray
 		{
 			RID index_buffer{};
 			uint32_t index_offset{};
@@ -63,7 +63,7 @@ namespace ism
 		};
 
 		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
-		virtual RID vertex_array_create(size_t vertex_count, VertexFormat const & format, Vector<RID> const & buffers) override;
+		virtual RID vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers) override;
 		virtual void vertex_array_destroy(RID rid) override;
 
 		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & data = {}) override;
@@ -72,7 +72,7 @@ namespace ism
 
 	public:
 		/* SAMPLER API */
-		struct _SamplerState
+		struct Sampler
 		{
 			uint32_t handle{};
 			uint32_t mag_filter{}, min_filter{}, mip_filter{};
@@ -87,17 +87,17 @@ namespace ism
 			bool unnormalized_uvw{};
 		};
 
-		virtual RID sampler_create(SamplerState const & sampler_state = {}) override;
+		virtual RID sampler_create(SamplerCreateInfo const & sampler_state = {}) override;
 		virtual void sampler_destroy(RID sampler) override;
 
 	public:
 		/* TEXTURE API */
-		struct _Texture
+		struct Texture
 		{
 			uint32_t handle{};
 			uint32_t texture_type{};
 			DataFormat_ color_format{}, color_format_srgb{};
-			ImageFormat_ image_format{};
+			Image::Format_ image_format{};
 			int32_t width{}, height{}, depth{}, layers{}, mipmaps{};
 			uint32_t min_filter{}, mag_filter{};
 			uint32_t repeat_s{}, repeat_t{};
@@ -107,17 +107,16 @@ namespace ism
 			int32_t width_2d{ width }, height_2d{ height }; // size override
 		};
 
-		virtual RID texture_create(TextureFormat const & format, DynamicBuffer const & data = {}) override;
+		virtual RID texture_create(TextureCreateInfo const & spec, DynamicBuffer const & data = {}) override;
 		virtual void texture_destroy(RID rid) override;
-		virtual void texture_bind(RID rid, size_t slot = 0) override;
 		virtual void texture_update(RID rid, DynamicBuffer const & data = {}) override;
+		void _texture_update(RID rid, void const * data);
 		virtual void * texture_get_handle(RID texture) override;
 		virtual DynamicBuffer texture_get_data(RID rid) override;
-		void _texture_update(RID rid, void const * data);
 
 	public:
 		/* FRAMEBUFFER API */
-		struct _Framebuffer
+		struct Framebuffer
 		{
 			uint32_t handle{};
 			int32_t width{}, height{};
@@ -126,27 +125,25 @@ namespace ism
 
 		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) override;
 		virtual void framebuffer_destroy(RID framebuffer) override;
-		virtual void framebuffer_bind(RID framebuffer) override;
 		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) override;
 
 	public:
 		/* SHADER API */
-		struct _Shader
+		struct Shader
 		{
 			uint32_t handle{};
 			FlatMap<hash_t, int32_t> bindings{};
 			Vector<ShaderStageData> stage_data{};
 		};
 
-		virtual RID shader_create(Vector<ShaderStageData> const & stage_data) override;
+		virtual RID shader_create(ShaderCreateInfo const & spec) override;
 		virtual void shader_destroy(RID shader) override;
-		virtual void shader_bind(RID shader) override;
 
 	public:
 		/* UNIFORM API */
-		struct _UniformBuffer : _Buffer {};
+		struct UniformBuffer final : BufferBase {};
 
-		struct _Uniform
+		struct UniformDescriptor final
 		{
 			UniformType_ uniform_type{};
 			uint32_t binding{};
@@ -155,10 +152,10 @@ namespace ism
 			Vector<RID> textures{};
 		};
 
-		struct _UniformSet
+		struct UniformSet final
 		{
 			RID shader{};
-			Vector<_Uniform> uniforms{};
+			Vector<UniformDescriptor> uniforms{};
 		};
 
 		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
@@ -167,7 +164,7 @@ namespace ism
 
 	public:
 		/* PIPELINE API */
-		struct _Pipeline
+		struct RenderPipeline final
 		{
 			RID shader{};
 			uint32_t primitive{};
@@ -182,20 +179,17 @@ namespace ism
 
 	public:
 		/* DRAWLIST API */
-		struct _DrawList
+		struct DrawList final
 		{
 			IntRect viewport{};
 
-			struct SetState
+			struct State final
 			{
-				RID uniform_set{};
-				bool bound{ true };
-			};
-
-			struct State
-			{
-				SetState sets[32]{};
-				size_t set_count{};
+				struct SetState final {
+					RID uniform_set{};
+					bool bound{ true };
+				} sets[32]{};
+				uint32_t set_count{};
 
 				RID pipeline{};
 				RID pipeline_shader{};
@@ -203,8 +197,9 @@ namespace ism
 				RID index_array{};
 			}
 			state{};
-		}
-		* m_draw_list{};
+		};
+
+		Vector<DrawList> m_lists{};
 
 		virtual RID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
 		virtual RID draw_list_begin(RID framebuffer, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;

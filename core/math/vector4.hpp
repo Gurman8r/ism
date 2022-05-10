@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	// TODO: implement additional operations here
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_VECTOR4_HPP_

@@ -1,38 +1,52 @@
 #include <core/io/config_file.hpp>
 
-#include <inih/INIReader.h>
-
 using namespace ism;
+
+#include <inih/INIReader.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 OBJECT_EMBED(ConfigFile, t) {}
 
-ConfigFile::~ConfigFile() {}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void ConfigFile::reload_from_file()
+ConfigFile::ConfigFile(Path const & path)
 {
-	if (get_path().empty()) { return; }
+	set_path(path);
 
-	memdelete_nonzero(m_ini);
+	reload_from_file();
+}
 
-	m_ini = memnew(INIReader(get_path().string().c_str()));
+ConfigFile::~ConfigFile()
+{
+	if (m_ini) { memdelete(m_ini); m_ini = nullptr; }
+}
 
-	if (m_ini->ParseError() != EXIT_SUCCESS) { memdelete(m_ini); return; }
+Error_ ConfigFile::reload_from_file()
+{
+	if (m_ini) { memdelete(m_ini); m_ini = nullptr; }
+
+	if (!get_path()) { return Error_Unknown; }
+
+	m_ini = memnew(INIReader(get_path().c_str()));
+
+	if (m_ini->ParseError() != EXIT_SUCCESS) {
+		memdelete(m_ini);
+		m_ini = nullptr;
+		return Error_Unknown;
+	}
+
+	return Error_None;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 bool ConfigFile::get_bool(String const & section, String const & name, bool dv) const
 {
-	return m_ini ? m_ini->GetBoolean((std::string const &)section, (std::string const &)name, dv) : dv;
+	return VALIDATE(m_ini)->GetBoolean((std::string const &)section, (std::string const &)name, dv);
 }
 
-float64_t ConfigFile::get_double(String const & section, String const & name, float64_t dv) const
+double_t ConfigFile::get_double(String const & section, String const & name, double_t dv) const
 {
-	return m_ini ? m_ini->GetReal((std::string const &)section, (std::string const &)name, dv) : dv;
+	return VALIDATE(m_ini)->GetReal((std::string const &)section, (std::string const &)name, dv);
 }
 
 float_t ConfigFile::get_float(String const & section, String const & name, float_t dv) const
@@ -42,7 +56,7 @@ float_t ConfigFile::get_float(String const & section, String const & name, float
 
 int32_t ConfigFile::get_int(String const & section, String const & name, int32_t dv) const
 {
-	return m_ini ? m_ini->GetInteger((std::string const &)section, (std::string const &)name, dv) : dv;
+	return VALIDATE(m_ini)->GetInteger((std::string const &)section, (std::string const &)name, dv);
 }
 
 uint32_t ConfigFile::get_uint(String const & section, String const & name, uint32_t dv) const
@@ -52,12 +66,12 @@ uint32_t ConfigFile::get_uint(String const & section, String const & name, uint3
 
 String ConfigFile::get_string(String const & section, String const & name, String const & dv) const
 {
-	return m_ini ? (String)m_ini->Get((std::string const &)section, (std::string const &)name, (std::string const &)dv) : dv;
+	return (String)m_ini->Get((std::string const &)section, (std::string const &)name, (std::string const &)dv);
 }
 
 bool ConfigFile::set_string(String const & section, String const & name, String const & value)
 {
-	return m_ini->Set((std::string const &)section, (std::string const &)name, (std::string const &)value);
+	return VALIDATE(m_ini)->Set((std::string const &)section, (std::string const &)name, (std::string const &)value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

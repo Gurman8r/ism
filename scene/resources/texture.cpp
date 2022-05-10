@@ -17,8 +17,8 @@ OBJECT_EMBED(ImageTexture, t) {}
 
 ImageTexture::ImageTexture(Path const & path)
 {
-	m_image.instance();
-	if (ImageLoader::load_image(m_image, path) != Error_None) { m_image = nullptr; return; }
+	m_image.instance(path);
+	if (!m_image->get_capacity()) { m_image = nullptr; return; }
 	m_width = m_image->get_width();
 	m_height = m_image->get_height();
 	m_texture = RENDERING_SERVER->texture2d_create(m_image);
@@ -26,8 +26,7 @@ ImageTexture::ImageTexture(Path const & path)
 
 ImageTexture::ImageTexture(Ref<Image> const & image)
 {
-	ASSERT(image);
-	m_image = image;
+	m_image = VALIDATE(image);
 	m_width = m_image->get_width();
 	m_height = m_image->get_height();
 	m_texture = RENDERING_SERVER->texture2d_create(m_image);
@@ -35,22 +34,12 @@ ImageTexture::ImageTexture(Ref<Image> const & image)
 
 ImageTexture::~ImageTexture()
 {
-	if (m_texture)
-	{
-		RENDERING_DEVICE->texture_destroy(m_texture);
-	}
+	if (m_texture) { RENDERING_DEVICE->texture_destroy(m_texture); m_texture = nullptr; }
 }
 
 Ref<Image> ImageTexture::get_image() const
 {
-	if (m_texture)
-	{
-		return RENDERING_SERVER->texture2d_get_image(m_texture);
-	}
-	else
-	{
-		return nullptr;
-	}
+	return m_texture ? RENDERING_SERVER->texture2d_get_image(m_texture) : nullptr;
 }
 
 void ImageTexture::update(Ref<Image> const & image, bool immediate)

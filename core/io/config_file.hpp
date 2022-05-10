@@ -16,18 +16,18 @@ namespace ism
 	public:
 		ConfigFile() noexcept {}
 
-		explicit ConfigFile(Path const & path) noexcept { set_path(path); reload_from_file(); }
+		explicit ConfigFile(Path const & path);
 
 		virtual ~ConfigFile();
 
 		NODISCARD virtual RID get_rid() const override { return (RID)m_ini; }
 
-		virtual void reload_from_file() override;
+		virtual Error_ reload_from_file() override;
 
 	public:
 		NODISCARD bool get_bool(String const & section, String const & name, bool dv) const;
 		
-		NODISCARD float64_t get_double(String const & section, String const & name, float64_t dv) const;
+		NODISCARD double_t get_double(String const & section, String const & name, double_t dv) const;
 		
 		NODISCARD float_t get_float(String const & section, String const & name, float_t dv) const;
 		

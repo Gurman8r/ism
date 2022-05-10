@@ -56,35 +56,35 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 	RD::TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
 	switch (image->get_format())
 	{
-	case ImageFormat_L8: {
+	case Image::Format_L8: {
 		color_format = RD::DataFormat_R8_UNORM;
 		swizzle_r = RD::TextureSwizzle_R;
 		swizzle_g = RD::TextureSwizzle_R;
 		swizzle_b = RD::TextureSwizzle_R;
 		swizzle_a = RD::TextureSwizzle_One;
 	} break;
-	case ImageFormat_LA8: {
+	case Image::Format_LA8: {
 		color_format = RD::DataFormat_R8G8_UNORM;
 		swizzle_r = RD::TextureSwizzle_R;
 		swizzle_g = RD::TextureSwizzle_R;
 		swizzle_b = RD::TextureSwizzle_R;
 		swizzle_a = RD::TextureSwizzle_G;
 	} break;
-	case ImageFormat_R8: {
+	case Image::Format_R8: {
 		color_format = RD::DataFormat_R8_UNORM;
 		swizzle_r = RD::TextureSwizzle_R;
 		swizzle_g = RD::TextureSwizzle_Zero;
 		swizzle_b = RD::TextureSwizzle_Zero;
 		swizzle_a = RD::TextureSwizzle_One;
 	} break;
-	case ImageFormat_RG8: {
+	case Image::Format_RG8: {
 		color_format = RD::DataFormat_R8G8_UNORM;
 		swizzle_r = RD::TextureSwizzle_R;
 		swizzle_g = RD::TextureSwizzle_G;
 		swizzle_b = RD::TextureSwizzle_Zero;
 		swizzle_a = RD::TextureSwizzle_One;
 	} break;
-	case ImageFormat_RGB8: {
+	case Image::Format_RGB8: {
 		color_format = RD::DataFormat_R8G8B8_UNORM;
 		color_format_srgb = RD::DataFormat_R8G8B8_SRGB;
 		swizzle_r = RD::TextureSwizzle_R;
@@ -93,7 +93,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 		swizzle_a = RD::TextureSwizzle_One;
 
 	} break;
-	case ImageFormat_RGBA8: {
+	case Image::Format_RGBA8: {
 		color_format = RD::DataFormat_R8G8B8A8_UNORM;
 		color_format_srgb = RD::DataFormat_R8G8B8A8_SRGB;
 		swizzle_r = RD::TextureSwizzle_R;
@@ -102,17 +102,18 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 		swizzle_a = RD::TextureSwizzle_A;
 	} break;
 	}
-	return m_device->texture_create(COMPOSE(RD::TextureFormat, ts) {
-		ts.color_format = color_format;
-		ts.color_format_srgb = color_format_srgb;
-		ts.width = (uint32_t)image->get_width();
-		ts.height = (uint32_t)image->get_height();
-		ts.min_filter = ts.mag_filter = RD::SamplerFilter_Linear;
-		ts.repeat_s = ts.repeat_t = RD::SamplerRepeatMode_ClampToEdge;
-		ts.swizzle_r = swizzle_r;
-		ts.swizzle_g = swizzle_g;
-		ts.swizzle_b = swizzle_b;
-		ts.swizzle_a = swizzle_a;
+	return m_device->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
+		t.color_format = color_format;
+		t.color_format_srgb = color_format_srgb;
+		t.width = (uint32_t)image->get_width();
+		t.height = (uint32_t)image->get_height();
+		t.depth = (uint32_t)image->get_depth();
+		t.min_filter = t.mag_filter = RD::SamplerFilter_Linear;
+		t.repeat_s = t.repeat_t = RD::SamplerRepeatMode_ClampToEdge;
+		t.swizzle_r = swizzle_r;
+		t.swizzle_g = swizzle_g;
+		t.swizzle_b = swizzle_b;
+		t.swizzle_a = swizzle_a;
 	}, image->get_data());
 }
 
@@ -124,8 +125,11 @@ RID RenderingServerDefault::texture2d_placeholder_create()
 Ref<Image> RenderingServerDefault::texture2d_get_image(RID texture)
 {
 	if (!texture) { return nullptr; }
-	
+
+	DynamicBuffer data{ m_device->texture_get_data(texture) };
+
 	Ref<Image> image;
+
 	return image;
 }
 

@@ -50,7 +50,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T = float_t
-	> constexpr auto cross(TVec3<T> const & a, TVec3<T> const & b) noexcept -> TVec3<T>
+	> constexpr auto cross(TVector3<T> const & a, TVector3<T> const & b) noexcept -> TVector3<T>
 	{
 		static_assert(std::is_floating_point_v<T>);
 
@@ -58,7 +58,7 @@ namespace ism
 	}
 
 	template <class T = float_t
-	> constexpr auto dot(TVec3<T> const & a, TVec3<T> const & b) noexcept -> T
+	> constexpr auto dot(TVector3<T> const & a, TVector3<T> const & b) noexcept -> T
 	{
 		static_assert(std::is_floating_point_v<T>);
 
@@ -66,7 +66,7 @@ namespace ism
 	}
 
 	template <class T = float_t
-	> constexpr auto normalize(TVec3<T> const & a) noexcept -> TVec3<T>
+	> constexpr auto normalize(TVector3<T> const & a) noexcept -> TVector3<T>
 	{
 		static_assert(std::is_floating_point_v<T>);
 

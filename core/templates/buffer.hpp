@@ -258,19 +258,6 @@ namespace ism
 		}
 
 	public:
-		DynamicBuffer & insert(size_t const index, size_t const size_in_bytes, byte const value = null)
-		{
-			if (size_in_bytes) { std::fill_n(std::inserter(m_data, m_data.begin() + index), size_in_bytes, value); }
-			return (*this);
-		}
-
-		DynamicBuffer & pad(size_t const size_in_bytes, byte const value = null)
-		{
-			if (size_in_bytes) { std::fill_n(std::back_inserter(m_data), size_in_bytes, value); }
-			return (*this);
-		}
-
-	public:
 		template <class T
 		> DynamicBuffer & operator<<(T const & value)
 		{
