@@ -13,7 +13,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static constexpr RD::VertexLayout::Attribute const default_mesh_format[6]{
+static constexpr RD::VertexLayoutAttribute const default_mesh_format[6]{
 { "attr_position"	, DataType_F32, 4 },
 { "attr_normal"		, DataType_F32, 4 },
 { "attr_texcoord"	, DataType_F32, 4 },

@@ -19,6 +19,34 @@ namespace ism
 	>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class TValue, class TKey
+	> NODISCARD auto getptr(JSON & j, TKey && key) noexcept
+	{
+		if (auto const it{ j.find(FWD(key)) }; it != j.end())
+		{
+			return (TValue *)(void *)std::addressof(*it);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
+	template <class TValue, class TKey
+	> NODISCARD auto getptr(JSON const & j, TKey && key) noexcept
+	{
+		if (auto const it{ j.find(FWD(key)) }; it != j.end())
+		{
+			return (TValue *)(void *)std::addressof(*it);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_JSON_HPP_

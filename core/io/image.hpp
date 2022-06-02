@@ -77,11 +77,11 @@ namespace ism
 	public:
 		Image() noexcept {}
 
+		explicit Image(Path const & path) noexcept { set_path(path); reload_from_file(); }
+
 		Image(int32_t width, int32_t height, Format_ format);
 
 		Image(int32_t width, int32_t height, Format_ format, DynamicBuffer const & data);
-
-		explicit Image(Path const & path);
 
 		virtual Error_ reload_from_file() override;
 

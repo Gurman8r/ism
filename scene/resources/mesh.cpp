@@ -15,13 +15,6 @@ Mesh::Mesh()
 	m_mesh = RENDERER_STORAGE->mesh_create();
 }
 
-Mesh::Mesh(Path const & path)
-{
-	set_path(path);
-
-	reload_from_file();
-}
-
 Mesh::~Mesh()
 {
 	if (m_mesh) { RENDERER_STORAGE->mesh_destroy(m_mesh); m_mesh = nullptr; }

@@ -16,7 +16,7 @@ namespace ism
 	public:
 		Shader() noexcept {}
 
-		explicit Shader(Path const & path);
+		explicit Shader(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
 		virtual ~Shader() override;
 

@@ -28,7 +28,7 @@ namespace ism
 
 		Mesh();
 
-		explicit Mesh(Path const & path);
+		explicit Mesh(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
 		virtual ~Mesh() override;
 

@@ -307,7 +307,7 @@ OBJECT_EMBED(RenderingDeviceOpenGL, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RenderingDeviceOpenGL::RenderingDeviceOpenGL() : RenderingDevice{}
+RenderingDeviceOpenGL::RenderingDeviceOpenGL() : RD{}
 {
 	OPENGL_INIT();
 }
@@ -338,15 +338,15 @@ RID RenderingDeviceOpenGL::buffer_create(BufferType_ buffer_type, size_t size_in
 	default: {
 		CRASH("INVALID BUFFER TYPE");
 	} break;
-	case RenderingDevice::BufferType_VertexBuffer: {
+	case RD::BufferType_VertexBuffer: {
 		b = memnew(VertexBuffer{});
 		b->usage = data.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	} break;
-	case RenderingDevice::BufferType_IndexBuffer: {
+	case RD::BufferType_IndexBuffer: {
 		b = memnew(IndexBuffer{});
 		b->usage = data.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	} break;
-	case RenderingDevice::BufferType_UniformBuffer: {
+	case RD::BufferType_UniformBuffer: {
 		b = memnew(UniformBuffer{});
 		b->usage = GL_STATIC_DRAW;
 	} break;
@@ -414,7 +414,7 @@ RID RenderingDeviceOpenGL::vertex_array_create(size_t vertex_count, VertexLayout
 
 		for (uint32_t i = 0, imax = (uint32_t)va->layout.attributes.size(); i < imax; ++i)
 		{
-			VertexLayout::Attribute const & fmt{ va->layout.attributes[i] };
+			VertexLayoutAttribute const & fmt{ va->layout.attributes[i] };
 
 			if (fmt.type == DataType_I32)
 			{

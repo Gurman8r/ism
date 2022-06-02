@@ -6,13 +6,6 @@ using namespace ism;
 
 OBJECT_EMBED(Shader, t) {}
 
-Shader::Shader(Path const & path)
-{
-	set_path(path);
-
-	reload_from_file();
-}
-
 Shader::~Shader()
 {
 	if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); m_shader = nullptr; }

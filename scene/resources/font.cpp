@@ -5,17 +5,6 @@ using namespace ism;
 
 OBJECT_EMBED(Font, t) {}
 
-Font::Font()
-{
-}
-
-Font::Font(Path const & path)
-{
-	set_path(path);
-
-	reload_from_file();
-}
-
 Font::~Font()
 {
 	if (m_font) { TEXT_SERVER->font_destroy(m_font); m_font = nullptr; }
@@ -32,4 +21,11 @@ Error_ Font::reload_from_file()
 	if (!m_font) { return Error_Unknown; }
 
 	return Error_None;
+}
+
+NODISCARD Glyph * Font::get_glyph(uint32_t character, uint32_t character_size)
+{
+	if (!character || !character_size || !m_font) { return nullptr; }
+
+	return TEXT_SERVER->font_get_glyph(m_font, character, character_size);
 }

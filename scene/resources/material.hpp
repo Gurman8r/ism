@@ -14,7 +14,13 @@ namespace ism
 	public:
 		Material();
 
+		explicit Material(Path const & path) noexcept { set_path(path); reload_from_file(); }
+
 		virtual ~Material();
+
+		virtual Error_ reload_from_file() override;
+
+		NODISCARD virtual RID get_rid() const { return m_material; }
 
 	public:
 		template <class T

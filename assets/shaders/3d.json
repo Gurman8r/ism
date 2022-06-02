@@ -1,73 +1,91 @@
 {
+    "language": "GLSL",
+    "defines": {
+        "SCENE_STATE_UNIFORMS": 0,
+        "RENDER_PASS_UNIFORMS": 1,
+        "TRANSFORMS_UNIFORMS": 2,
+        "MATERIAL_UNIFORMS": 3
+    },
     "vertex": {
-        "out": {
-            "pass_position": "vec4"
-        },
-        "text": [
-            "#version 460 core",
-            "#define SCENE_STATE_UNIFORMS 0",
-            "#define RENDER_PASS_UNIFORMS 1",
-            "#define TRANSFORMS_UNIFORMS 2",
-            "#define MATERIAL_UNIFORMS 3",
-            "layout (location = 0) in vec4 attr_position;",
-            "layout (location = 1) in vec4 attr_normal;",
-            "layout (location = 2) in vec4 attr_texcoord;",
-            "layout (location = 3) in vec4 attr_tangent;",
-            "layout (location = 4) in vec4 attr_bitangent;",
-            "layout (location = 5) in ivec4 attr_blending;",
-            "out vec4 pass_position;",
-            "out vec4 pass_normal;",
-            "out vec4 pass_texcoord;",
-            "out vec4 pass_tangent;",
-            "out vec4 pass_bitangent;",
-            "out ivec4 pass_blending;",
-            "layout (std140, binding = SCENE_STATE_UNIFORMS) uniform SceneState {",
-            "   mat4 u_proj;",
-            "   mat4 u_view;",
-            "};",
-            "layout (std140, binding = RENDER_PASS_UNIFORMS) uniform RenderPass {",
-            "   mat4 u_placeholder;",
-            "};",
-            "layout (std140, binding = TRANSFORMS_UNIFORMS) uniform Transforms {",
-            "   mat4 u_model;",
-            "};",
-            "layout (std140, binding = MATERIAL_UNIFORMS) uniform Material {",
-            "   vec4 u_ambient;",
-            "   vec4 u_diffuse;",
-            "   vec4 u_specular;",
-            "   float u_shininess;",
-            "};",
-            "void main() {",
-            "   pass_position = attr_position;",
-            "   pass_normal = attr_normal;",
-            "   pass_texcoord = attr_texcoord;",
-            "   pass_tangent = attr_tangent;",
-            "   pass_bitangent = attr_bitangent;",
-            "   pass_blending = attr_blending;",
-            "   mat4 MVP = u_proj * u_view * u_model;",
-            "   gl_Position = MVP * pass_position;",
-            "}"
+        "in": [
+            { "name": "attr_position",  "type": "vec4f" },
+            { "name": "attr_normal",    "type": "vec4f" },
+            { "name": "attr_texcoord",  "type": "vec4f" },
+            { "name": "attr_tangent",   "type": "vec4f" },
+            { "name": "attr_bitangent", "type": "vec4f" },
+            { "name": "attr_blending" , "type": "vec4i" }
+        ],
+        "out": [
+            { "name": "pass_position",  "type": "vec4f" },
+            { "name": "pass_normal",    "type": "vec4f" },
+            { "name": "pass_texcoord",  "type": "vec4f" },
+            { "name": "pass_tangent",   "type": "vec4f" },
+            { "name": "pass_bitangent", "type": "vec4f" },
+            { "name": "pass_blending" , "type": "vec4i" }
+        ],
+        "buffers": [
+            {
+                "name": "scene_state_uniforms",
+                "type": "uniform_buffer",
+                "data": [
+                    { "name": "u_proj", "type": "mat4f" },
+                    { "name": "u_view", "type": "mat4f" }
+                ]
+            },
+            {
+                "name": "render_pass_uniforms",
+                "type": "uniform_buffer",
+                "data": [
+                    { "name": "u_placeholder", "type": "mat4f" }
+                ]
+            },
+            {
+                "name": "transforms_uniforms",
+                "type": "uniform_buffer",
+                "data": [
+                    { "name": "u_model", "type": "mat4f" }
+                ]
+            },
+            {
+                "name": "material_uniforms",
+                "type": "uniform_buffer",
+                "data": [
+                    { "name": "u_ambient", "type": "vec4f" },
+                    { "name": "u_diffuse", "type": "vec4f" },
+                    { "name": "u_specular", "type": "vec4f" },
+                    { "name": "u_shininess", "type": "float" }
+                ]
+            }
+        ],
+        "main": [
+            "pass_position = attr_position;",
+            "pass_normal = attr_normal;",
+            "pass_texcoord = attr_texcoord;",
+            "pass_tangent = attr_tangent;",
+            "pass_bitangent = attr_bitangent;",
+            "pass_blending = attr_blending;",
+            "mat4 MVP = u_proj * u_view * u_model;",
+            "gl_Position = MVP * pass_position;"
         ]
     },
     "pixel": {
-        "text": [
-            "#version 460 core",
-            "#define SCENE_STATE_UNIFORMS 0",
-            "#define RENDER_PASS_UNIFORMS 1",
-            "#define TRANSFORMS_UNIFORMS 2",
-            "#define MATERIAL_UNIFORMS 3",
-            "in vec4 pass_position;",
-            "in vec4 pass_normal;",
-            "in vec4 pass_texcoord;",
-            "in vec4 pass_tangent;",
-            "in vec4 pass_bitangent;",
-            "in ivec4 pass_blending;",
-            "out vec4 pass_color;",
-            "layout (location = 0) uniform sampler2D u_texture_dm_0;",
-            "layout (location = 1) uniform sampler2D u_texture_sm_0;",
-            "void main() {",
-            "   pass_color = texture(u_texture_dm_0, pass_texcoord.xy);",
-            "}"
+        "in": [
+            { "name": "pass_position",  "type": "vec4f" },
+            { "name": "pass_normal",    "type": "vec4f" },
+            { "name": "pass_texcoord",  "type": "vec4f" },
+            { "name": "pass_tangent",   "type": "vec4f" },
+            { "name": "pass_bitangent", "type": "vec4f" },
+            { "name": "pass_blending" , "type": "vec4i" }
+        ],
+        "out": [
+            { "name": "pass_color", "type": "vec4f" }
+        ],
+        "buffers": [
+            { "name": "u_texture_dm", "type": "texture2d" },
+            { "name": "u_texture_sm", "type": "texture2d" }
+        ],
+        "main": [
+            "pass_color = texture(u_texture_dm, pass_texcoord.xy);"
         ]
     }
 }

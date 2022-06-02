@@ -275,31 +275,31 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY API */
+		struct VertexLayoutAttribute final
+		{
+			cstring		name;
+			DataType_	type;
+			uint32_t	count;
+			bool		normalized;
+			uint32_t	size;
+			uint32_t	offset;
+
+			constexpr VertexLayoutAttribute(cstring name, DataType_ type, size_t count, bool normalized = false) noexcept
+				: name		{ name }
+				, type		{ type }
+				, count		{ (uint32_t)count }
+				, normalized{ normalized }
+				, size		{ (uint32_t)ism::get_data_type_size(type) * count }
+				, offset	{}
+			{
+			}
+		};
+
 		struct VertexLayout final
 		{
-			struct Attribute final
-			{
-				cstring		name;
-				DataType_	type;
-				uint32_t	count;
-				bool		normalized;
-				uint32_t	size;
-				uint32_t	offset;
-
-				constexpr Attribute(cstring name, DataType_ type, size_t count, bool normalized = false) noexcept
-					: name		{ name }
-					, type		{ type }
-					, count		{ (uint32_t)count }
-					, normalized{ normalized }
-					, size		{ (uint32_t)ism::get_data_type_size(type) * count }
-					, offset	{}
-				{
-				}
-			};
-
 			uint32_t stride{};
 
-			Vector<Attribute> attributes{};
+			Vector<VertexLayoutAttribute> attributes{};
 
 			VertexLayout() noexcept : VertexLayout{
 				{ "a_Position",	DataType_F32, 3 },
@@ -309,18 +309,18 @@ namespace ism
 
 			template <class It> VertexLayout(It first, It last) noexcept : attributes{ first, last } { update(); }
 
-			VertexLayout(std::initializer_list<Attribute> init) noexcept : attributes{ init } { update(); }
+			VertexLayout(std::initializer_list<VertexLayoutAttribute> init) noexcept : attributes{ init } { update(); }
 
-			VertexLayout(Vector<Attribute> const & attributes) : attributes{ attributes } { update(); }
+			VertexLayout(Vector<VertexLayoutAttribute> const & attributes) : attributes{ attributes } { update(); }
 
-			VertexLayout(Vector<Attribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
+			VertexLayout(Vector<VertexLayoutAttribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
 
-			template <size_t N> VertexLayout(Attribute const (&arr)[N]) noexcept : attributes{ &arr[0], &arr[N] } { update(); }
+			template <size_t N> VertexLayout(VertexLayoutAttribute const (&arr)[N]) noexcept : attributes{ &arr[0], &arr[N] } { update(); }
 
 			void update()
 			{
 				uint32_t offset{};
-				for (Attribute & e : attributes) {
+				for (VertexLayoutAttribute & e : attributes) {
 					e.offset = offset;
 					offset += e.size;
 					stride += e.size;
@@ -538,20 +538,21 @@ namespace ism
 
 		struct ShaderStageData final
 		{
-			ShaderStage_ const shader_stage{ ShaderStage_Vertex };
+			ShaderStage_ shader_stage{ ShaderStage_MAX };
 
 			DynamicBuffer code{};
 		};
 
 		struct ShaderCreateInfo final
 		{
-			ShaderStageData stage_data[ShaderStage_MAX]{
+			ShaderStageData stage_data[ShaderStage_MAX] = {
 				{ ShaderStage_Vertex },
 				{ ShaderStage_Fragment },
 				{ ShaderStage_Geometry },
 				{ ShaderStage_TesselationControl },
 				{ ShaderStage_TesselationEvaluation },
-				{ ShaderStage_Compute } };
+				{ ShaderStage_Compute },
+			};
 		};
 
 		virtual RID shader_create(ShaderCreateInfo const & spec) = 0;

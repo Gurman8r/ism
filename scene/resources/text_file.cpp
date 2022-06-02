@@ -16,13 +16,6 @@ OBJECT_EMBED(TextFile, t)
 	};
 }
 
-TextFile::TextFile(Path const & path)
-{
-	set_path(path);
-
-	reload_from_file();
-}
-
 Error_ TextFile::reload_from_file()
 {
 	if (!get_path()) { return Error_Unknown; }

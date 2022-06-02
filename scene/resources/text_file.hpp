@@ -12,9 +12,9 @@ namespace ism
 		String m_text{};
 
 	public:
-		TextFile() noexcept = default;
+		TextFile() noexcept {}
 
-		explicit TextFile(Path const & path);
+		explicit TextFile(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
 		virtual Error_ reload_from_file() override;
 

@@ -13,7 +13,7 @@ Image::Image(int32_t width, int32_t height, Format_ format)
 	m_height = height;
 	m_format = format;
 	switch (format) {
-	default: { CRASH("INVALID IMAGE FORMAT"); } break;
+	default: { CRASH("UNSUPPORTED IMAGE FORMAT"); } break;
 	case Image::Format_R8: { m_depth = 1; } break;
 	case Image::Format_RG8: { m_depth = 2; } break;
 	case Image::Format_RGB8: { m_depth = 3; } break;
@@ -29,19 +29,12 @@ Image::Image(int32_t width, int32_t height, Format_ format, DynamicBuffer const 
 	m_format = format;
 	m_pixels = data;
 	switch (format) {
-	default: { CRASH("INVALID IMAGE FORMAT"); } break;
+	default: { CRASH("UNSUPPORTED IMAGE FORMAT"); } break;
 	case Image::Format_R8: { m_depth = 1; } break;
 	case Image::Format_RG8: { m_depth = 2; } break;
 	case Image::Format_RGB8: { m_depth = 3; } break;
 	case Image::Format_RGBA8: { m_depth = 4; } break;
 	}
-}
-
-Image::Image(Path const & path)
-{
-	set_path(path);
-
-	reload_from_file();
 }
 
 Error_ Image::reload_from_file()

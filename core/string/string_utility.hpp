@@ -161,14 +161,14 @@ namespace ism::util
 	template <class Ch = char
 	> NODISCARD BasicString<Ch> to_lower(BasicString<Ch> value) noexcept
 	{
-		for (Ch & elem : value) { elem = std::tolower(elem, {}); }
+		for (Ch & elem : value) { elem = std::tolower(elem); }
 		return value;
 	}
 
 	template <class Ch = char
 	> NODISCARD BasicString<Ch> to_upper(BasicString<Ch> value) noexcept
 	{
-		for (Ch & elem : value) { elem = std::toupper(elem, {}); }
+		for (Ch & elem : value) { elem = std::toupper(elem); }
 		return value;
 	}
 

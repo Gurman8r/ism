@@ -318,7 +318,7 @@ void EditorNode::_build_dockspace()
 void EditorNode::_draw_menu_bar()
 {
 	if (ImGui::BeginMenu("File")) {
-		ImGui::Separator();
+		//ImGui::Separator();
 		if (ImGui::MenuItem("Exit", "Alt+F4")) { get_tree()->get_root()->set_should_close(true); }
 		ImGui::EndMenu();
 	}

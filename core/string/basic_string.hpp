@@ -36,6 +36,18 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	NODISCARD inline String operator "" _s(cstring str, size_t len)
+	{
+		return String{ str, len };
+	}
+
+	NODISCARD inline WideString operator "" _l(cwstring str, size_t len)
+	{
+		return WideString{ str, len };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class Ch = char
 	> inline void to_json(JSON & json, BasicString<Ch> const & value)
 	{

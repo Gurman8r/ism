@@ -1,19 +1,91 @@
 {
+    "language": "GLSL",
     "defines": {
-        "SCENE": 0,
-        "RENDER_PASS": 1,
-        "TRANSFORMS": 2,
-        "MATERIAL": 3
-    },
-    "attributes": {
-        "position": "vec4",
-        "normal": "vec4",
-        "texcoord": "vec4",
-        "tangent": "vec4",
-        "bitangent": "vec4"
+        "SCENE_STATE_UNIFORMS": 0,
+        "RENDER_PASS_UNIFORMS": 1,
+        "TRANSFORMS_UNIFORMS": 2,
+        "MATERIAL_UNIFORMS": 3
     },
     "vertex": {
+        "in": {
+            "attr_position" : { "bind": 0, "type": "vec4f" },
+            "attr_normal"   : { "bind": 1, "type": "vec4f" },
+            "attr_texcoord" : { "bind": 2, "type": "vec4f" },
+            "attr_tangent"  : { "bind": 3, "type": "vec4f" },
+            "attr_bitangent": { "bind": 4, "type": "vec4f" },
+            "attr_blending" : { "bind": 5, "type": "vec4i" }
+        },
+        "out": {
+            "pass_position" : { "bind": 0, "type": "vec4f" },
+            "pass_normal"   : { "bind": 1, "type": "vec4f" },
+            "pass_texcoord" : { "bind": 2, "type": "vec4f" },
+            "pass_tangent"  : { "bind": 3, "type": "vec4f" },
+            "pass_bitangent": { "bind": 4, "type": "vec4f" },
+            "pass_blending" : { "bind": 5, "type": "vec4i" }
+        },
+        "buffers": {
+            "scene_state_uniforms": {
+                "bind": 0,
+                "type": "uniform_buffer",
+                "data": {
+                    "u_proj": { "bind": 0, "type": "mat4f" },
+                    "u_view": { "bind": 1, "type": "mat4f" }
+                }
+            },
+            "render_pass_uniforms": {
+                "bind": 1,
+                "type": "uniform_buffer",
+                "data": {
+                    "u_placeholder": { "bind": 0, "type": "mat4f" }
+                }
+            },
+            "transforms_uniforms": {
+                "bind": 2,
+                "type": "uniform_buffer",
+                "data": {
+                    "u_model": { "bind": 0, "type": "mat4f" }
+                }
+            },
+            "material_uniforms": {
+                "bind": 3,
+                "type": "uniform_buffer",
+                "data": {
+                    "u_ambient": { "bind": 0, "type": "vec4f" },
+                    "u_diffuse": { "bind": 1, "type": "vec4f" },
+                    "u_specular": { "bind": 2, "type": "vec4f" },
+                    "u_shininess": { "bind": 3, "type": "float" }
+                }
+            }
+        },
+        "main": [
+            "pass_position = attr_position;",
+            "pass_normal = attr_normal;",
+            "pass_texcoord = attr_texcoord;",
+            "pass_tangent = attr_tangent;",
+            "pass_bitangent = attr_bitangent;",
+            "pass_blending = attr_blending;",
+            "mat4 MVP = u_proj * u_view * u_model;",
+            "gl_Position = MVP * pass_position;"
+        ]
     },
     "pixel": {
+        "in": {
+            "pass_position" : { "bind": 0, "type": "vec4f" },
+            "pass_normal"   : { "bind": 1, "type": "vec4f" },
+            "pass_texcoord" : { "bind": 2, "type": "vec4f" },
+            "pass_tangent"  : { "bind": 3, "type": "vec4f" },
+            "pass_bitangent": { "bind": 4, "type": "vec4f" },
+            "pass_blending" : { "bind": 5, "type": "vec4i" }
+        },
+        "out": {
+            "pass_color": { "type": "vec4f", "bind": 0 }
+        },
+        "buffers": {
+            "u_texture_dm_0": { "bind": 0, "type": "texture2d" },
+            "u_texture_sm_0": { "bind": 1, "type": "texture2d" }
+        },
+        "main": [
+            "pass_color = texture(u_texture_dm_0, pass_texcoord.xy);"
+        ]
     }
 }

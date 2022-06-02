@@ -32,33 +32,24 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// has
-	template <class _Ty, class T
-	> NODISCARD bool has(Vector<_Ty> const & l, T && value)
+	template <class TValue, class TKey
+	> NODISCARD bool has(Vector<TValue> const & l, TKey && value)
 	{
 		return l.end() != std::find(l.begin(), l.end(), FWD(value));
 	}
 
-	// get pointer
-	template <class _Ty, class T
-	> NODISCARD auto getptr(Vector<_Ty> const & l, T && value)
+	// getptr
+	template <class TValue, class TKey
+	> NODISCARD auto getptr(Vector<TValue> const & l, TKey && value)
 	{
 		if (auto const it{ std::find(l.begin(), l.end(), FWD(value)) }; it != l.end())
 		{
-			return (_Ty *)(void *)std::addressof(*it);
+			return (TValue *)(void *)std::addressof(*it);
 		}
 		else
 		{
 			return nullptr;
 		}
-	}
-
-	// buffer copy
-	template <class Elem = byte
-	> Vector<byte> bufcpy(size_t count, void const * data, PolymorphicAllocator<> alloc = {}) noexcept
-	{
-		return (data
-			? Vector<byte>{ (byte *)data, (byte *)data + count * sizeof(Elem), alloc }
-			: Vector<byte>{ count * sizeof(Elem), (byte)0, alloc });
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
