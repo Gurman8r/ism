@@ -11,7 +11,7 @@ namespace ism
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr FNV1A() = default;
+		constexpr FNV1A() noexcept = default;
 
 		static constexpr hash_t basis{ static_cast<hash_t>(14695981039346656037ULL) };
 
@@ -80,6 +80,18 @@ namespace ism
 	> NODISCARD constexpr hash_t hash(Arg0 && arg0, Arg1 && arg1, Args && ... args)
 	{
 		return H{}(FWD(arg0), FWD(arg1), FWD(args)...);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr hash_t operator "" _hash(cstring str, size_t const len)
+	{
+		return hash(str, len);
+	}
+
+	NODISCARD constexpr hash_t operator "" _hash(cwstring str, size_t const len)
+	{
+		return hash(str, len);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

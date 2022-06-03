@@ -1,66 +1,86 @@
 {
-    "vertex": {
-        "text": [
-            "#version 460 core",
-            "#define SCENE_STATE 0",
-            "#define RENDER_PASS 1",
-            "#define TRANSFORMS 2",
-            "#define MATERIAL 3",
-            "layout (location = 0) in vec4 attr_position;",
-            "layout (location = 1) in vec4 attr_normal;",
-            "layout (location = 2) in vec4 attr_texcoord;",
-            "layout (location = 3) in vec4 attr_tangent;",
-            "layout (location = 4) in vec4 attr_bitangent;",
-            "out vec4 pass_position;",
-            "out vec4 pass_normal;",
-            "out vec4 pass_texcoord;",
-            "out vec4 pass_tangent;",
-            "out vec4 pass_bitangent;",
-            "layout (std140, binding = SCENE_STATE) uniform SceneState {",
-            "   mat4 u_proj;",
-            "   mat4 u_view;",
-            "};",
-            "layout (std140, binding = RENDER_PASS) uniform RenderPass {",
-            "   mat4 u_placeholder;",
-            "};",
-            "layout (std140, binding = TRANSFORMS) uniform Transforms {",
-            "   mat4 u_model;",
-            "};",
-            "layout (std140, binding = MATERIAL) uniform Material {",
-            "   vec4 u_ambient;",
-            "   vec4 u_diffuse;",
-            "   vec4 u_specular;",
-            "   float u_shininess;",
-            "};",
-            "void main() {",
-            "   pass_position = attr_position;",
-            "   pass_normal = attr_normal;",
-            "   pass_texcoord = attr_texcoord;",
-            "   pass_tangent = attr_tangent;",
-            "   pass_bitangent = attr_bitangent;",
-            "   mat4 MVP = u_proj * u_view * u_model;",
-            "   gl_Position = MVP * pass_position;",
-            "}"
+    "type": "Shader",
+    "name": "Phong",
+    "lang": "GLSL",
+    "vs": {
+        "input": [
+            { "type": "vec4f", "name": "attr_position" },
+            { "type": "vec4f", "name": "attr_normal" },
+            { "type": "vec4f", "name": "attr_texcoord" },
+            { "type": "vec4f", "name": "attr_tangent" },
+            { "type": "vec4f", "name": "attr_bitangent" },
+            { "type": "vec4i", "name": "attr_blending" }
+        ],
+        "output": [
+            { "type": "vec4f", "name": "pass_position" },
+            { "type": "vec4f", "name": "pass_normal" },
+            { "type": "vec4f", "name": "pass_texcoord" },
+            { "type": "vec4f", "name": "pass_tangent" },
+            { "type": "vec4f", "name": "pass_bitangent" },
+            { "type": "vec4i", "name": "pass_blending" }
+        ],
+        "data": [
+            {
+                "type": "UBO",
+                "name": "scene_state_uniforms",
+                "data": [
+                    { "type": "mat4f", "name": "u_proj" },
+                    { "type": "mat4f", "name": "u_view" }
+                ]
+            },
+            {
+                "type": "UBO",
+                "name": "render_pass_uniforms",
+                "data": [
+                    { "type": "mat4f", "name": "u_placeholder" }
+                ]
+            },
+            {
+                "type": "UBO",
+                "name": "transforms_uniforms",
+                "data": [
+                    { "type": "mat4f", "name": "u_model" }
+                ]
+            },
+            {
+                "type": "UBO",
+                "name": "material_uniforms",
+                "data": [
+                    { "type": "vec4f", "name": "u_ambient" },
+                    { "type": "vec4f", "name": "u_diffuse" },
+                    { "type": "vec4f", "name": "u_specular" },
+                    { "type": "float", "name": "u_shininess" }
+                ]
+            }
+        ],
+        "main": [
+            "pass_position = attr_position;",
+            "pass_normal = attr_normal;",
+            "pass_texcoord = attr_texcoord;",
+            "pass_tangent = attr_tangent;",
+            "pass_bitangent = attr_bitangent;",
+            "pass_blending = attr_blending;",
+            "gl_Position = u_proj * u_view * u_model * pass_position;"
         ]
     },
-    "pixel": {
-        "text": [
-            "#version 460 core",
-            "#define SCENE_STATE 0",
-            "#define RENDER_PASS 1",
-            "#define TRANSFORMS 2",
-            "#define MATERIAL 3",
-            "in vec4 pass_position;",
-            "in vec4 pass_normal;",
-            "in vec4 pass_texcoord;",
-            "in vec4 pass_tangent;",
-            "in vec4 pass_bitangent;",
-            "out vec4 pass_color;",
-            "layout (location = 0) uniform sampler2D u_texture_dm_0;",
-            "layout (location = 1) uniform sampler2D u_texture_sm_0;",
-            "void main() {",
-            "   pass_color = texture(u_texture_dm_0, pass_texcoord.xy);",
-            "}"
+    "ps": {
+        "input": [
+            { "type": "vec4f", "name": "pass_position" },
+            { "type": "vec4f", "name": "pass_normal" },
+            { "type": "vec4f", "name": "pass_texcoord" },
+            { "type": "vec4f", "name": "pass_tangent" },
+            { "type": "vec4f", "name": "pass_bitangent" },
+            { "type": "vec4i", "name": "pass_blending" }
+        ],
+        "output": [
+            { "type": "vec4f", "name": "pass_color" }
+        ],
+        "data": [
+            { "type": "sampler2D", "name": "u_texture_dm" },
+            { "type": "sampler2D", "name": "u_texture_sm" }
+        ],
+        "main": [
+            "pass_color = texture(u_texture_dm, pass_texcoord.xy);"
         ]
     }
 }

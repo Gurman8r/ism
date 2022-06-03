@@ -16,9 +16,9 @@ namespace ism
 #else
 	// map
 	template <class _Kt, class _Vt, class _Pr = Less<_Kt>
-	> class Map : public std::map<_Kt, _Vt, _Pr, PolymorphicAllocator<std::pair<_Kt const, _Vt>>>
+	> class Map : public std::map<_Kt, _Vt, _Pr, PolymorphicAllocator<Pair<_Kt const, _Vt>>>
 	{
-		using _Mybase = std::map<_Kt, _Vt, _Pr, PolymorphicAllocator<std::pair<_Kt const, _Vt>>>;
+		using _Mybase = std::map<_Kt, _Vt, _Pr, PolymorphicAllocator<Pair<_Kt const, _Vt>>>;
 	public:
 		using _Mybase::map;
 		NODISCARD operator _Mybase & () & noexcept { return static_cast<_Mybase &>(*this); }

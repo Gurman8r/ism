@@ -1,2 +1,18 @@
 {
+    "type": "SceneTree",
+    "name": "Demo Scene",
+    "data": [
+        {
+            "type": "Entity",
+            "name": "Main Camera",
+            "data": [
+                {
+                    "type": "TransformComponent"
+                },
+                {
+                    "type": "CameraComponent"
+                }
+            ]
+        }
+    ]
 }

@@ -109,6 +109,7 @@ EditorNode::EditorNode()
 	m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
 	m_meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
 	m_shaders["3d"].instance("../../../assets/shaders/3d.json");
+	//m_shaders["2d"].instance("../../../assets/shaders/2d.json");
 
 	RID const shader{ m_shaders["3d"]->get_rid() };
 	_setup_pipeline(shader);
@@ -188,15 +189,15 @@ void EditorNode::handle_event(Event const & event)
 
 void EditorNode::process(Duration const dt)
 {
-	char window_title[32]{};
-	std::sprintf(window_title, "ism @ %.1f fps", (float_t)get_tree()->get_fps());
+	char window_title[32];
+	std::sprintf(window_title, "ism @ %.3f fps", (float_t)get_tree()->get_fps());
 	get_tree()->get_root()->set_title(window_title);
 
 	static EditorCamera * editor_camera{ m_editor_view.get_editor_camera() };
 	static Vec2 view_size{ 1280, 720 }, view_size_prev{};
 	if (m_editor_view.get_window()) { view_size = m_editor_view->InnerRect.GetSize(); }
 	bool const viewport_resized{ view_size != view_size_prev };
-	view_size_prev = view_size;
+	SCOPE_EXIT(&) { view_size_prev = view_size; };
 
 	if (viewport_resized) {
 		editor_camera->set_res(view_size);

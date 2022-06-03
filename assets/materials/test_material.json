@@ -1,0 +1,7 @@
+{
+    "type": "Material",
+    "name": "3D",
+    "shader": "3D",
+    "properties": {
+    }
+}

@@ -521,7 +521,7 @@ namespace ism
 		enum ShaderStage_
 		{
 			ShaderStage_Vertex,
-			ShaderStage_Fragment,
+			ShaderStage_Pixel,
 			ShaderStage_Geometry,
 			ShaderStage_TesselationControl,
 			ShaderStage_TesselationEvaluation,
@@ -545,14 +545,20 @@ namespace ism
 
 		struct ShaderCreateInfo final
 		{
-			ShaderStageData stage_data[ShaderStage_MAX] = {
-				{ ShaderStage_Vertex },
-				{ ShaderStage_Fragment },
-				{ ShaderStage_Geometry },
-				{ ShaderStage_TesselationControl },
-				{ ShaderStage_TesselationEvaluation },
-				{ ShaderStage_Compute },
+			ShaderStageData stage_data[ShaderStage_MAX]
+			{
+				{ ShaderStage_MAX },
+				{ ShaderStage_MAX },
+				{ ShaderStage_MAX },
+				{ ShaderStage_MAX },
+				{ ShaderStage_MAX },
+				{ ShaderStage_MAX },
 			};
+
+			auto begin() noexcept -> ShaderStageData * { return stage_data; }
+			auto begin() const noexcept -> ShaderStageData const * { return stage_data; }
+			auto end() noexcept -> ShaderStageData * { return stage_data + (ptrdiff_t)ShaderStage_MAX; }
+			auto end() const noexcept -> ShaderStageData const * { return stage_data + (ptrdiff_t)ShaderStage_MAX; }
 		};
 
 		virtual RID shader_create(ShaderCreateInfo const & spec) = 0;

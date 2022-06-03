@@ -4,20 +4,20 @@
     "lang": "GLSL",
     "vs": {
         "input": [
-            { "type": "vec4f", "name": "attr_position" },
-            { "type": "vec4f", "name": "attr_normal" },
-            { "type": "vec4f", "name": "attr_texcoord" },
-            { "type": "vec4f", "name": "attr_tangent" },
-            { "type": "vec4f", "name": "attr_bitangent" },
-            { "type": "vec4i", "name": "attr_blending" }
+            { "type": "vec4f", "name": "position" },
+            { "type": "vec4f", "name": "normal" },
+            { "type": "vec4f", "name": "texcoord" },
+            { "type": "vec4f", "name": "tangent" },
+            { "type": "vec4f", "name": "bitangent" },
+            { "type": "vec4i", "name": "blending" }
         ],
         "output": [
-            { "type": "vec4f", "name": "pass_position" },
-            { "type": "vec4f", "name": "pass_normal" },
-            { "type": "vec4f", "name": "pass_texcoord" },
-            { "type": "vec4f", "name": "pass_tangent" },
-            { "type": "vec4f", "name": "pass_bitangent" },
-            { "type": "vec4i", "name": "pass_blending" }
+            { "type": "vec4f", "name": "position" },
+            { "type": "vec4f", "name": "normal" },
+            { "type": "vec4f", "name": "texcoord" },
+            { "type": "vec4f", "name": "tangent" },
+            { "type": "vec4f", "name": "bitangent" },
+            { "type": "vec4i", "name": "blending" }
         ],
         "data": [
             {
@@ -54,33 +54,33 @@
             }
         ],
         "main": [
-            "pass_position = attr_position;",
-            "pass_normal = attr_normal;",
-            "pass_texcoord = attr_texcoord;",
-            "pass_tangent = attr_tangent;",
-            "pass_bitangent = attr_bitangent;",
-            "pass_blending = attr_blending;",
-            "gl_Position = u_proj * u_view * u_model * pass_position;"
+            "output.position = input.position;",
+            "output.normal = input.normal;",
+            "output.texcoord = input.texcoord;",
+            "output.tangent = input.tangent;",
+            "output.bitangent = input.bitangent;",
+            "output.blending = input.blending;",
+            "gl_Position = u_proj * u_view * u_model * output.position;"
         ]
     },
     "ps": {
         "input": [
-            { "type": "vec4f", "name": "pass_position" },
-            { "type": "vec4f", "name": "pass_normal" },
-            { "type": "vec4f", "name": "pass_texcoord" },
-            { "type": "vec4f", "name": "pass_tangent" },
-            { "type": "vec4f", "name": "pass_bitangent" },
-            { "type": "vec4i", "name": "pass_blending" }
+            { "type": "vec4f", "name": "position" },
+            { "type": "vec4f", "name": "normal" },
+            { "type": "vec4f", "name": "texcoord" },
+            { "type": "vec4f", "name": "tangent" },
+            { "type": "vec4f", "name": "bitangent" },
+            { "type": "vec4i", "name": "blending" }
         ],
         "output": [
-            { "type": "vec4f", "name": "pass_color" }
+            { "type": "vec4f", "name": "color" }
         ],
         "data": [
             { "type": "sampler2D", "name": "u_texture_dm" },
             { "type": "sampler2D", "name": "u_texture_sm" }
         ],
         "main": [
-            "pass_color = texture(u_texture_dm, pass_texcoord.xy);"
+            "output.color = texture(u_texture_dm, input.texcoord.xy);"
         ]
     }
 }

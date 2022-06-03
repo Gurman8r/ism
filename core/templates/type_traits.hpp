@@ -15,6 +15,12 @@
 
 #include <gcem/include/gcem.hpp>
 
+namespace ism
+{
+	template <class First, class Second
+	> ALIAS(Pair) std::pair<First, Second>;
+}
+
 namespace ism::impl
 {
 	// compose helper
@@ -430,7 +436,7 @@ namespace ism::mpl
 		}
 		else
 		{
-			(void)s; (void)a;
+			UNUSED(s); UNUSED(a);
 #if defined(__cpp_aligned_new) && (!defined(_MSC_VER) || _MSC_VER >= 1912)
 			if (a > __STDCPP_DEFAULT_NEW_ALIGNMENT__) {
 #ifdef __cpp_sized_deallocation
@@ -488,7 +494,7 @@ namespace ism::mpl
 		>>> : is_copy_constructible<typename Container::value_type> {};
 
 	template <class T1, class T2
-	> struct is_copy_constructible<std::pair<T1, T2>> : mpl::all_of<is_copy_constructible<T1>, is_copy_constructible<T2>> {};
+	> struct is_copy_constructible<Pair<T1, T2>> : mpl::all_of<is_copy_constructible<T1>, is_copy_constructible<T2>> {};
 
 	template <class T> constexpr bool is_copy_constructible_v{ is_copy_constructible<T>::value };
 
@@ -504,7 +510,7 @@ namespace ism::mpl
 		>>> : is_copy_assignable<typename Container::value_type> {};
 
 	template <class T1, class T2
-	> struct is_copy_assignable<std::pair<T1, T2>> : mpl::all_of<is_copy_assignable<T1>, is_copy_assignable<T2>> {};
+	> struct is_copy_assignable<Pair<T1, T2>> : mpl::all_of<is_copy_assignable<T1>, is_copy_assignable<T2>> {};
 
 	template <class T> constexpr bool is_copy_assignable_v{ is_copy_assignable<T>::value };
 

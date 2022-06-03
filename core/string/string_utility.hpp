@@ -180,14 +180,14 @@ namespace ism::util
 		switch (hash(util::to_lower(value)))
 		{
 		default				: return nullopt;
-		case hash("1")		:
-		case hash("true")	:
-		case hash("on")		:
-		case hash("yes")	: return make_optional(true);
-		case hash("0")		:
-		case hash("false")	:
-		case hash("off")	:
-		case hash("no")		: return make_optional(false);
+		case "1"_hash		:
+		case "true"_hash	:
+		case "on"_hash		:
+		case "yes"_hash		: return make_optional(true);
+		case "0"_hash		:
+		case "false"_hash	:
+		case "off"_hash		:
+		case "no"_hash		: return make_optional(false);
 		}
 	}
 
@@ -271,6 +271,35 @@ namespace ism::util
 		BasicStringStream<Ch> ss{};
 		ss << FWD(value);
 		return ss.str();
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD inline String operator "" _s(cstring str, size_t len)
+	{
+		return String{ str, len };
+	}
+
+	NODISCARD inline WideString operator "" _l(cwstring str, size_t len)
+	{
+		return WideString{ str, len };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD inline Path operator "" _path(cstring str, size_t len)
+	{
+		return Path{ String{ str, len } };
+	}
+
+	NODISCARD inline Path operator "" _path(cwstring str, size_t len)
+	{
+		return Path{ util::narrow(WideString{ str, len }) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

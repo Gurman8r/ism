@@ -4,6 +4,10 @@
 #include <core/error/error_macros.hpp>
 #include <core/templates/vector.hpp>
 
+#ifndef DYNAMICBUFFER_VPRINTF_STRING_SIZE
+#define DYNAMICBUFFER_VPRINTF_STRING_SIZE 1024
+#endif
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -93,17 +97,15 @@ namespace ism
 			return m_data.clear(), (*this);
 		}
 
-		self_type & copy(self_type const & other) {
+		self_type & copy(self_type const & other)
+		{
 			if (this != std::addressof(other)) { m_data = other.m_data; }
 			return (*this);
 		}
 
 		self_type & reserve(size_t const size_in_bytes)
 		{
-			if (size() < size_in_bytes)
-			{
-				resize(size_in_bytes, null);
-			}
+			if (size() < size_in_bytes) { resize(size_in_bytes, null); }
 			return (*this);
 		}
 
@@ -114,10 +116,7 @@ namespace ism
 
 		self_type & swap(self_type & other) noexcept
 		{
-			if (this != std::addressof(other))
-			{
-				m_data.swap(other.m_data);
-			}
+			if (this != std::addressof(other)) { m_data.swap(other.m_data); }
 			return (*this);
 		}
 
@@ -159,13 +158,13 @@ namespace ism
 
 		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
 		{
-			if (src && size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
+			if (src && 0 < size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
 			return (*this);
 		}
 
 		self_type & write(void const * src, size_t const size_in_bytes)
 		{
-			if (src && size_in_bytes) { write_unchecked(size(), src, size_in_bytes); }
+			if (src && 0 < size_in_bytes) { write_unchecked(size(), src, size_in_bytes); }
 			return (*this);
 		}
 
@@ -184,27 +183,24 @@ namespace ism
 		}
 
 	public:
-		self_type & vprintf(size_t const index, cstring fmt, va_list args, bool account_for_null_terminator = false)
+		self_type & vprintf(size_t const index, cstring fmt, va_list args)
 		{
-			if (int32_t size_in_bytes{ std::vsnprintf(nullptr, 0, fmt, args) }; 0 < size_in_bytes)
-			{
-				size_in_bytes += (int32_t)account_for_null_terminator;
-
-				reserve(index + (size_t)size_in_bytes);
-
-				std::vsprintf((char *)begin() + index, fmt, args);
-			}
+			char str[DYNAMICBUFFER_VPRINTF_STRING_SIZE]{};
+			
+			int32_t const len{ std::vsnprintf(str, sizeof(str), fmt, args) };
+			
+			write(index, str, (size_t)len);
+			
 			return (*this);
 		}
 
-		self_type & vprintf(cstring fmt, va_list args, bool account_for_null_terminator = false)
+		self_type & vprintf(cstring fmt, va_list args)
 		{
-			return vprintf(size(), fmt, args, account_for_null_terminator);
+			return vprintf(size(), fmt, args);
 		}
 
 		self_type & printf(size_t const index, cstring fmt, ...)
 		{
-			if (!fmt) { return (*this); }
 			va_list args;
 			va_start(args, fmt);
 			vprintf(index, fmt, args);
@@ -214,7 +210,6 @@ namespace ism
 
 		self_type & printf(cstring fmt, ...)
 		{
-			if (!fmt) { return (*this); }
 			va_list args;
 			va_start(args, fmt);
 			vprintf(size(), fmt, args);
@@ -224,37 +219,37 @@ namespace ism
 
 		self_type & print(size_t const index, String const & str)
 		{
-			if (!str.empty()) { write_unchecked(index, str.data(), str.size()); }
+			write_unchecked(index, str.data(), str.size());
 			return (*this);
 		}
 
 		self_type & print(String const & str)
 		{
-			if (!str.empty()) { write_unchecked(size(), str.data(), str.size()); }
+			write_unchecked(size(), str.data(), str.size());
 			return (*this);
 		}
 
 		self_type & print(size_t const index, cstring str, size_t const size_in_bytes)
 		{
-			if (str && size_in_bytes) { write_unchecked(index, str, size_in_bytes); }
+			write_unchecked(index, str, size_in_bytes);
 			return (*this);
 		}
 
 		self_type & print(size_t const index, cstring str)
 		{
-			if (str) { write_unchecked(index, str, std::strlen(str)); }
+			write_unchecked(index, str, std::strlen(str));
 			return (*this);
 		}
 
 		self_type & print(cstring str, size_t const size_in_bytes)
 		{
-			if (str && size_in_bytes) { write_unchecked(size(), str, size_in_bytes); }
+			write_unchecked(size(), str, size_in_bytes);
 			return (*this);
 		}
 
 		self_type & print(cstring str)
 		{
-			if (str) { write_unchecked(size(), str, std::strlen(str)); }
+			write_unchecked(size(), str, std::strlen(str));
 			return (*this);
 		}
 
@@ -432,13 +427,13 @@ namespace ism
 
 		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
 		{
-			if (src && size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
+			if (src && 0 < size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
 			return (*this);
 		}
 
 		self_type & write(void const * src, size_t const size_in_bytes)
 		{
-			if (src && size_in_bytes) { write_unchecked(0, src, size_in_bytes); }
+			if (src && 0 < size_in_bytes) { write_unchecked(0, src, size_in_bytes); }
 			return (*this);
 		}
 
@@ -457,27 +452,19 @@ namespace ism
 		}
 
 	public:
-		self_type & vprintf(size_t const index, cstring fmt, va_list args, bool account_for_null_terminator = false)
+		self_type & vprintf(size_t const index, cstring fmt, va_list args)
 		{
-			if (int32_t size_in_bytes{ std::vsnprintf(nullptr, 0, fmt, args) }; 0 < size_in_bytes)
-			{
-				size_in_bytes += (int32_t)account_for_null_terminator;
-
-				ASSERT(index + size_in_bytes <= _Size);
-
-				std::vsprintf((char *)begin() + index, fmt, args);
-			}
+			std::vsnprintf((char *)begin() + index, _Size, fmt, args);
 			return (*this);
 		}
 
-		self_type & vprintf(cstring fmt, va_list args, bool account_for_null_terminator = false)
+		self_type & vprintf(cstring fmt, va_list args)
 		{
-			return vprintf(0, fmt, args, account_for_null_terminator);
+			return vprintf(size(), fmt, args);
 		}
 
 		self_type & printf(size_t const index, cstring fmt, ...)
 		{
-			if (!fmt) { return (*this); }
 			va_list args;
 			va_start(args, fmt);
 			vprintf(index, fmt, args);
@@ -487,47 +474,46 @@ namespace ism
 
 		self_type & printf(cstring fmt, ...)
 		{
-			if (!fmt) { return (*this); }
 			va_list args;
 			va_start(args, fmt);
-			vprintf(0, fmt, args);
+			vprintf(size(), fmt, args);
 			va_end(args);
 			return (*this);
 		}
 
 		self_type & print(size_t const index, String const & str)
 		{
-			if (!str.empty()) { write_unchecked(index, str.data(), str.size()); }
+			write_unchecked(index, str.data(), str.size());
 			return (*this);
 		}
 
 		self_type & print(String const & str)
 		{
-			if (!str.empty()) { write_unchecked(0, str.data(), str.size()); }
+			write_unchecked(size(), str.data(), str.size());
 			return (*this);
 		}
 
 		self_type & print(size_t const index, cstring str, size_t const size_in_bytes)
 		{
-			if (str && size_in_bytes) { write_unchecked(index, str, size_in_bytes); }
+			write_unchecked(index, str, size_in_bytes);
 			return (*this);
 		}
 
 		self_type & print(size_t const index, cstring str)
 		{
-			if (str) { write_unchecked(index, str, std::strlen(str)); }
+			write_unchecked(index, str, std::strlen(str));
 			return (*this);
 		}
 
 		self_type & print(cstring str, size_t const size_in_bytes)
 		{
-			if (str && size_in_bytes) { write_unchecked(0, str, size_in_bytes); }
+			write_unchecked(size(), str, size_in_bytes);
 			return (*this);
 		}
 
 		self_type & print(cstring str)
 		{
-			if (str) { write_unchecked(0, str, std::strlen(str)); }
+			write_unchecked(size(), str, std::strlen(str));
 			return (*this);
 		}
 	};
@@ -708,13 +694,13 @@ namespace ism
 
 		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
 		{
-			if (src && size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
+			if (src && 0 < size_in_bytes) { write_unchecked(index, src, size_in_bytes); }
 			return (*this);
 		}
 
 		self_type & write(void const * src, size_t const size_in_bytes)
 		{
-			if (src && size_in_bytes) { write_unchecked(0, src, size_in_bytes); }
+			if (src && 0 < size_in_bytes) { write_unchecked(0, src, size_in_bytes); }
 			return (*this);
 		}
 
@@ -737,27 +723,19 @@ namespace ism
 		}
 
 	public:
-		self_type & vprintf(size_t const index, cstring fmt, va_list args, bool account_for_null_terminator = false)
+		self_type & vprintf(size_t const index, cstring fmt, va_list args)
 		{
-			if (int32_t size_in_bytes{ std::vsnprintf(nullptr, 0, fmt, args) }; 0 < size_in_bytes)
-			{
-				size_in_bytes += (int32_t)account_for_null_terminator;
-
-				ASSERT(index + size_in_bytes <= _Size);
-
-				std::vsprintf((char *)begin() + index, fmt, args);
-			}
+			std::vsnprintf((char *)begin() + index, _Size, fmt, args);
 			return (*this);
 		}
 
-		self_type & vprintf(cstring fmt, va_list args, bool account_for_null_terminator = false)
+		self_type & vprintf(cstring fmt, va_list args)
 		{
-			return vprintf(0, fmt, args, account_for_null_terminator);
+			return vprintf(size(), fmt, args);
 		}
 
 		self_type & printf(size_t const index, cstring fmt, ...)
 		{
-			if (!fmt) { return (*this); }
 			va_list args;
 			va_start(args, fmt);
 			vprintf(index, fmt, args);
@@ -767,47 +745,46 @@ namespace ism
 
 		self_type & printf(cstring fmt, ...)
 		{
-			if (!fmt) { return (*this); }
 			va_list args;
 			va_start(args, fmt);
-			vprintf(0, fmt, args);
+			vprintf(size(), fmt, args);
 			va_end(args);
 			return (*this);
 		}
 
 		self_type & print(size_t const index, String const & str)
 		{
-			if (!str.empty()) { write_unchecked(index, str.data(), str.size()); }
+			write_unchecked(index, str.data(), str.size());
 			return (*this);
 		}
 
 		self_type & print(String const & str)
 		{
-			if (!str.empty()) { write_unchecked(0, str.data(), str.size()); }
+			write_unchecked(size(), str.data(), str.size());
 			return (*this);
 		}
 
 		self_type & print(size_t const index, cstring str, size_t const size_in_bytes)
 		{
-			if (str && size_in_bytes) { write_unchecked(index, str, size_in_bytes); }
+			write_unchecked(index, str, size_in_bytes);
 			return (*this);
 		}
 
 		self_type & print(size_t const index, cstring str)
 		{
-			if (str) { write_unchecked(index, str, std::strlen(str)); }
+			write_unchecked(index, str, std::strlen(str));
 			return (*this);
 		}
 
 		self_type & print(cstring str, size_t const size_in_bytes)
 		{
-			if (str && size_in_bytes) { write_unchecked(0, str, size_in_bytes); }
+			write_unchecked(size(), str, size_in_bytes);
 			return (*this);
 		}
 
 		self_type & print(cstring str)
 		{
-			if (str) { write_unchecked(0, str, std::strlen(str)); }
+			write_unchecked(size(), str, std::strlen(str));
 			return (*this);
 		}
 	};

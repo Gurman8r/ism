@@ -459,7 +459,7 @@ namespace ism
 		template <class Value
 		> auto impl_insert(Value && value) noexcept -> std::conditional_t<multi,
 			iterator,
-			std::pair<iterator, bool>
+			Pair<iterator, bool>
 		>
 		{
 			if constexpr (multi)

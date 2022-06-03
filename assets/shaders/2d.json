@@ -1,32 +1,35 @@
-{   
-    "vertex": {
-        "text": [
-            "#version 460 core",
-            "layout (location = 0) in vec3 a_position;",
-            "layout (location = 1) in vec2 a_texcoord;",
-            "out _Vertex {",
-            "   vec3 position;",
-            "   vec2 texcoord;",
-            "} vertex;",
-            "void main() {",
-            "    vertex.position = a_position;",
-            "    vertex.texcoord = a_texcoord;",
-            "    gl_Position = vec4(vertex.position, 1.0);",
-            "}"
+{
+    "type": "Shader",
+    "name": "2D",
+    "lang": "GLSL",
+    "vs": {
+        "input": [
+            { "type": "vec4f", "name": "attr_position" },
+            { "type": "vec4f", "name": "attr_texcoord" }
+        ],
+        "output": [
+            { "type": "vec4f", "name": "pass_position" },
+            { "type": "vec4f", "name": "pass_texcoord" }
+        ],
+        "main": [
+            "pass_position = attr_position;",
+            "pass_texcoord = attr_texcoord;",
+            "gl_Position = pass_position;"
         ]
     },
-    "pixel": {
-        "text": [
-            "#version 460 core",
-            "in _Vertex {",
-            "   vec3 position;",
-            "   vec2 texcoord;",
-            "} vertex;",
-            "out vec4 gl_Color;",
-            "layout (location = 0) uniform sampler2D u_main_texture;",
-            "void main() {",
-            "   gl_Color = texture(u_main_texture, vertex.texcoord);",
-            "}"
+    "ps": {
+        "input": [
+            { "type": "vec4f", "name": "pass_position" },
+            { "type": "vec4f", "name": "pass_texcoord" }
+        ],
+        "output": [
+            { "type": "vec4f", "name": "pass_color" }
+        ],
+        "data": [
+            { "type": "sampler2D", "name": "u_main_texture" }
+        ],
+        "main": [
+            "pass_color = texture(u_main_texture, pass_texcoord.xy);"
         ]
     }
 }

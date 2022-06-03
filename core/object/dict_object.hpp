@@ -34,7 +34,7 @@ namespace ism
 
 		DictObject(storage_type && value) noexcept : m_dict{ std::move(value) } {}
 
-		DictObject(std::initializer_list<std::pair<OBJ, OBJ>> init) : m_dict{}
+		DictObject(std::initializer_list<Pair<OBJ, OBJ>> init) : m_dict{}
 		{
 			for (auto const & e : init) { m_dict.insert(e); }
 		}

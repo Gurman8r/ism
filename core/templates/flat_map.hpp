@@ -50,20 +50,20 @@ namespace ism
 		using value_reverse_iterator			= typename value_storage::reverse_iterator;
 		using value_const_reverse_iterator		= typename value_storage::const_reverse_iterator;
 
-		using storage_type						= typename std::pair<key_storage, value_storage>;
-		using keyval_pair						= typename std::pair<key_type, value_type>;
+		using storage_type						= typename Pair<key_storage, value_storage>;
+		using keyval_pair						= typename Pair<key_type, value_type>;
 		using init_type							= typename std::initializer_list<keyval_pair>;
 
-		using pointer_pair						= typename std::pair<key_pointer, value_pointer>;
-		using const_pointer_pair				= typename std::pair<key_const_pointer, value_const_pointer>;
-		using reference_pair					= typename std::pair<key_reference, value_reference>;
-		using const_reference_pair				= typename std::pair<key_const_reference, value_const_reference>;
-		using rvalue_pair						= typename std::pair<key_rvalue, value_rvalue>;
+		using pointer_pair						= typename Pair<key_pointer, value_pointer>;
+		using const_pointer_pair				= typename Pair<key_const_pointer, value_const_pointer>;
+		using reference_pair					= typename Pair<key_reference, value_reference>;
+		using const_reference_pair				= typename Pair<key_const_reference, value_const_reference>;
+		using rvalue_pair						= typename Pair<key_rvalue, value_rvalue>;
 
-		using iterator_pair						= typename std::pair<key_iterator, value_iterator>;
-		using const_iterator_pair				= typename std::pair<key_const_iterator, value_const_iterator>;
-		using reverse_iterator_pair				= typename std::pair<key_reverse_iterator, value_reverse_iterator>;
-		using const_reverse_iterator_pair		= typename std::pair<key_const_reverse_iterator, value_const_reverse_iterator>;
+		using iterator_pair						= typename Pair<key_iterator, value_iterator>;
+		using const_iterator_pair				= typename Pair<key_const_iterator, value_const_iterator>;
+		using reverse_iterator_pair				= typename Pair<key_reverse_iterator, value_reverse_iterator>;
+		using const_reverse_iterator_pair		= typename Pair<key_const_reverse_iterator, value_const_reverse_iterator>;
 
 		using optl_iterator_pair				= typename Optional<iterator_pair>;
 		using optl_const_iterator_pair			= typename Optional<const_iterator_pair>;
@@ -363,7 +363,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Key, class ... Args
-		> std::pair<iterator_pair, bool> try_emplace(Key && key, Args && ... args) noexcept
+		> Pair<iterator_pair, bool> try_emplace(Key && key, Args && ... args) noexcept
 		{
 			if (auto const k{ m_pair.first.insert(FWD(key)) }; k.second)
 			{

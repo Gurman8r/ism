@@ -282,87 +282,87 @@ Error_ TypeObject::update_slot(STR const & name)
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// do nothing
-	case hash("__getattr__"):
-	case hash("__setattr__"):
-	case hash("__delattr__"):
+	case "__getattr__"_hash:
+	case "__setattr__"_hash:
+	case "__delattr__"_hash:
 	default: return Error_None;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	case hash("__new__"): { tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ {
+	case "__new__"_hash: { tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ {
 		if (STR_IDENTIFIER(__new__); OBJ f{ type.lookup(&ID___new__) }) { return call_object(f, args); }
 		return nullptr;
 	}; } break;
 
-	case hash("__del__"): { tp_del = (delfunc)[](Object * obj) -> void {
+	case "__del__"_hash: { tp_del = (delfunc)[](Object * obj) -> void {
 		if (STR_IDENTIFIER(__del__); OBJ f{ typeof(obj).lookup(&ID___del__) }) { /* TODO */ }
 	}; } break;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	case hash("__call__"): { tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
+	case "__call__"_hash: { tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
 		if (STR_IDENTIFIER(__call__); OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
 		return nullptr;
 	}; } break;
 
-	case hash("__hash__"): { tp_hash = (hashfunc)[](OBJ self) -> hash_t {
+	case "__hash__"_hash: { tp_hash = (hashfunc)[](OBJ self) -> hash_t {
 		if (STR_IDENTIFIER(__hash__); OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
 		return 0;
 	}; } break;
 
-	case hash("__len__"): { tp_len = (lenfunc)[](OBJ self) -> ssize_t {
+	case "__len__"_hash: { tp_len = (lenfunc)[](OBJ self) -> ssize_t {
 		if (STR_IDENTIFIER(__len__); OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
 		return -1;
 	}; } break;
 
-	case hash("__repr__"): { tp_repr = (reprfunc)[](OBJ self) -> STR {
+	case "__repr__"_hash: { tp_repr = (reprfunc)[](OBJ self) -> STR {
 		if (STR_IDENTIFIER(__repr__); OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
 		return nullptr;
 	}; } break;
 
-	case hash("__str__"): { tp_str = (reprfunc)[](OBJ self) -> STR {
+	case "__str__"_hash: { tp_str = (reprfunc)[](OBJ self) -> STR {
 		if (STR_IDENTIFIER(__str__); OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
 		return nullptr;
 	}; } break;
 
-	case hash("__get__"): { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) -> OBJ {
+	case "__get__"_hash: { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) -> OBJ {
 		if (STR_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) { /* TODO */ }
 		return nullptr;
 	}; } break;
 
-	case hash("__set__"): { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ type) -> Error_ {
+	case "__set__"_hash: { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ type) -> Error_ {
 		if (STR_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
 		return Error_Unknown;
 	}; } break;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	//case hash("__eq__"): {} break;
-	//case hash("__ne__"): {} break;
-	//case hash("__lt__"): {} break;
-	//case hash("__le__"): {} break;
-	//case hash("__gt__"): {} break;
-	//case hash("__ge__"): {} break;
+	//case "__eq__"_hash: {} break;
+	//case "__ne__"_hash: {} break;
+	//case "__lt__"_hash: {} break;
+	//case "__le__"_hash: {} break;
+	//case "__gt__"_hash: {} break;
+	//case "__ge__"_hash: {} break;
 
-	//case hash("__add__"): {} break;
-	//case hash("__sub__"): {} break;
-	//case hash("__div__"): {} break;
-	//case hash("__mul__"): {} break;
-	//case hash("__mod__"): {} break;
-	//case hash("__pow__"): {} break;
-	//case hash("__pos__"): {} break;
-	//case hash("__neg__"): {} break;
+	//case "__add__"_hash: {} break;
+	//case "__sub__"_hash: {} break;
+	//case "__div__"_hash: {} break;
+	//case "__mul__"_hash: {} break;
+	//case "__mod__"_hash: {} break;
+	//case "__pow__"_hash: {} break;
+	//case "__pos__"_hash: {} break;
+	//case "__neg__"_hash: {} break;
 
-	//case hash("__invert__"): {} break;
-	//case hash("__lshift__"): {} break;
-	//case hash("__rshift__"): {} break;
-	//case hash("__and__"): {} break;
-	//case hash("__or__"): {} break;
-	//case hash("__xor__"): {} break;
+	//case "__invert__"_hash: {} break;
+	//case "__lshift__"_hash: {} break;
+	//case "__rshift__"_hash: {} break;
+	//case "__and__"_hash: {} break;
+	//case "__or__"_hash: {} break;
+	//case "__xor__"_hash: {} break;
 
-	//case hash("__int__"): {} break;
-	//case hash("__float__"): {} break;
-	//case hash("__bool__"): {} break;
+	//case "__int__"_hash: {} break;
+	//case "__float__"_hash: {} break;
+	//case "__bool__"_hash: {} break;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	}
