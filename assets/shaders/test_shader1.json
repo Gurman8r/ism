@@ -1,86 +1,97 @@
 {
     "type": "Shader",
-    "name": "3D",
+    "name": "3D/Test1",
     "lang": "GLSL",
+    "layout": [
+        { "bind": 0, "type": "Vec4f", "name": "Position"  },
+        { "bind": 1, "type": "Vec4f", "name": "Normal"    },
+        { "bind": 2, "type": "Vec4f", "name": "Texcoord"  },
+        { "bind": 3, "type": "Vec4f", "name": "Tangent"   },
+        { "bind": 4, "type": "Vec4f", "name": "Bitangent" },
+        { "bind": 5, "type": "Vec4i", "name": "Blending"  }
+    ],
+    "params": [
+        { "bind": 0, "type": "Sampler2D", "name": "TextureDiffuseMap" }
+    ],
     "vs": {
-        "input": [
-            { "type": "vec4f", "name": "position" },
-            { "type": "vec4f", "name": "normal" },
-            { "type": "vec4f", "name": "texcoord" },
-            { "type": "vec4f", "name": "tangent" },
-            { "type": "vec4f", "name": "bitangent" },
-            { "type": "vec4i", "name": "blending" }
-        ],
-        "output": [
-            { "type": "vec4f", "name": "position" },
-            { "type": "vec4f", "name": "normal" },
-            { "type": "vec4f", "name": "texcoord" },
-            { "type": "vec4f", "name": "tangent" },
-            { "type": "vec4f", "name": "bitangent" },
-            { "type": "vec4i", "name": "blending" }
-        ],
-        "data": [
-            {
+        "input": {
+            "attr_position" : { "bind": 0, "type": "vec4f" },
+            "attr_normal"   : { "bind": 1, "type": "vec4f" },
+            "attr_texcoord" : { "bind": 2, "type": "vec4f" },
+            "attr_tangent"  : { "bind": 3, "type": "vec4f" },
+            "attr_bitangent": { "bind": 4, "type": "vec4f" },
+            "attr_blending" : { "bind": 5, "type": "vec4i" }
+        },
+        "output": {
+            "pass_position" : { "bind": 0, "type": "vec4f" },
+            "pass_normal"   : { "bind": 1, "type": "vec4f" },
+            "pass_texcoord" : { "bind": 2, "type": "vec4f" },
+            "pass_tangent"  : { "bind": 3, "type": "vec4f" },
+            "pass_bitangent": { "bind": 4, "type": "vec4f" },
+            "pass_blending" : { "bind": 5, "type": "vec4i" }
+        },
+        "data": {
+            "scene_state": {
                 "type": "UBO",
-                "name": "scene_state_uniforms",
-                "data": [
-                    { "type": "mat4f", "name": "u_proj" },
-                    { "type": "mat4f", "name": "u_view" }
-                ]
+                "bind": 0,
+                "data": {
+                    "u_proj": { "bind": 0, "type": "mat4f" },
+                    "u_view": { "bind": 1, "type": "mat4f" }
+                }
             },
-            {
+            "render_pass": {
                 "type": "UBO",
-                "name": "render_pass_uniforms",
-                "data": [
-                    { "type": "mat4f", "name": "u_placeholder" }
-                ]
+                "bind": 1,
+                "data": {
+                    "u_placeholder": { "bind": 0, "type": "mat4f" }
+                }
             },
-            {
+            "transforms": {
                 "type": "UBO",
-                "name": "transforms_uniforms",
-                "data": [
-                    { "type": "mat4f", "name": "u_model" }
-                ]
+                "bind": 2,
+                "data": {
+                    "u_model": { "bind": 0, "type": "mat4f" }
+                }
             },
-            {
+            "material": {
                 "type": "UBO",
-                "name": "material_uniforms",
-                "data": [
-                    { "type": "vec4f", "name": "u_ambient" },
-                    { "type": "vec4f", "name": "u_diffuse" },
-                    { "type": "vec4f", "name": "u_specular" },
-                    { "type": "float", "name": "u_shininess" }
-                ]
+                "bind": 3,
+                "data": {
+                    "u_ambient": { "bind": 0, "type": "vec4f" },
+                    "u_diffuse": { "bind": 1, "type": "vec4f" },
+                    "u_specular": { "bind": 2, "type": "vec4f" },
+                    "u_shininess": { "bind": 3, "type": "float" }
+                }
             }
-        ],
+        },
         "main": [
-            "output.position = input.position;",
-            "output.normal = input.normal;",
-            "output.texcoord = input.texcoord;",
-            "output.tangent = input.tangent;",
-            "output.bitangent = input.bitangent;",
-            "output.blending = input.blending;",
-            "gl_Position = u_proj * u_view * u_model * output.position;"
+            "pass_position = attr_position;",
+            "pass_normal = attr_normal;",
+            "pass_texcoord = attr_texcoord;",
+            "pass_tangent = attr_tangent;",
+            "pass_bitangent = attr_bitangent;",
+            "pass_blending = attr_blending;",
+            "gl_Position = u_proj * u_view * u_model * pass_position;"
         ]
     },
     "ps": {
-        "input": [
-            { "type": "vec4f", "name": "position" },
-            { "type": "vec4f", "name": "normal" },
-            { "type": "vec4f", "name": "texcoord" },
-            { "type": "vec4f", "name": "tangent" },
-            { "type": "vec4f", "name": "bitangent" },
-            { "type": "vec4i", "name": "blending" }
-        ],
-        "output": [
-            { "type": "vec4f", "name": "color" }
-        ],
-        "data": [
-            { "type": "sampler2D", "name": "u_texture_dm" },
-            { "type": "sampler2D", "name": "u_texture_sm" }
-        ],
+        "input": {
+            "pass_position" : { "bind": 0, "type": "vec4f" },
+            "pass_normal"   : { "bind": 1, "type": "vec4f" },
+            "pass_texcoord" : { "bind": 2, "type": "vec4f" },
+            "pass_tangent"  : { "bind": 3, "type": "vec4f" },
+            "pass_bitangent": { "bind": 4, "type": "vec4f" },
+            "pass_blending" : { "bind": 5, "type": "vec4i" }
+        },
+        "output": {
+            "pass_color": { "bind": 0, "type": "vec4f" }
+        },
+        "data": {
+            "u_texture_dm": { "bind": 0, "type": "sampler2D" },
+            "u_texture_sm": { "bind": 1, "type": "sampler2D" }
+        },
         "main": [
-            "output.color = texture(u_texture_dm, input.texcoord.xy);"
+            "pass_color = texture(u_texture_dm, pass_texcoord.xy);"
         ]
     }
 }

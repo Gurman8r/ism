@@ -3,6 +3,8 @@
 
 #include <core/object/detail/call.hpp>
 
+// I hate this system, but I can't think of a better solution.
+
 namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

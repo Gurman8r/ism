@@ -28,7 +28,7 @@ OBJECT_EMBED(ModuleObject, t)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(ModuleObject, t)
+	t.tp_install = CLASS_INSTALLER(ModuleObject, t)
 	{
 		return t
 

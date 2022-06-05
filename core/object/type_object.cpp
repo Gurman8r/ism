@@ -9,9 +9,9 @@ void TypeObject::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		Internals::get_singleton()->add_class(&__type_static);
+		Internals::get_singleton()->add_class(&g_type_static);
 
-		ASSERT(VALIDATE(__type_static.tp_bind)(&__type_static));
+		ASSERT(VALIDATE(g_type_static.tp_install)(&g_type_static));
 	};
 }
 
@@ -19,7 +19,7 @@ void TypeObject::_initialize_classv() { TypeObject::initialize_class(); }
 
 TYPE TypeObject::_get_typev() const noexcept { return get_type_static(); }
 
-TYPE TypeObject::get_type_static() noexcept { return &__type_static; }
+TYPE TypeObject::get_type_static() noexcept { return &g_type_static; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -46,7 +46,7 @@ OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
 		return fn ? fn(self, args) : nullptr;
 	};
 
-	t.tp_bind = CLASS_BINDER(TypeObject, t)
+	t.tp_install = CLASS_INSTALLER(TypeObject, t)
 	{
 		return t
 

@@ -13,7 +13,7 @@ OBJECT_EMBED(MethodObject, t)
 
 	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
 
-	t.tp_bind = CLASS_BINDER(MethodObject, t)
+	t.tp_install = CLASS_INSTALLER(MethodObject, t)
 	{
 		return t;
 	};

@@ -7,10 +7,9 @@
 
 void ism::register_driver_types()
 {
-	REGISTER_OBJECT_CLASS
-	(
+	INTERNALS->install_classes<
 		RENDERING_DEVICE_DEFAULT
-	);
+	>();
 }
 
 void ism::unregister_driver_types()

@@ -1,7 +1,7 @@
 #ifndef _ISM_RENDERER_STORAGE_HPP_
 #define _ISM_RENDERER_STORAGE_HPP_
 
-#include <servers/rendering/rendering_device.hpp>
+#include <servers/rendering_server.hpp>
 
 namespace ism
 {
@@ -30,7 +30,8 @@ namespace ism
 
 	public:
 		/* SHADER */
-		enum ShaderType_ {
+		enum ShaderType_
+		{
 			ShaderType_2D,
 			ShaderType_3D,
 			ShaderType_Particles,
@@ -40,7 +41,7 @@ namespace ism
 
 	public:
 		/* MATERIAL */
-		struct Material final
+		struct Material
 		{
 			RID shader{};
 			RID uniform_buffer{};
@@ -52,22 +53,45 @@ namespace ism
 		RID material_create();
 		void material_destroy(RID material);
 		void material_set_shader(RID material, RID shader);
+		void material_set_param(RID material, String const & key, OBJ const & value);
+		OBJ material_get_param(RID material, String const & key);
 
 	public:
 		/* MESH */
-		struct Mesh final
+		struct Mesh
 		{
-			enum { Vertices, Indices, Textures };
+			struct Surface
+			{
+				RD::PrimitiveType_ primitive{};
 
-			Batch<RID, RID, Vector<RID>> data{};
+				RID vertex_array{};
+				size_t vertex_count{};
+				size_t vertex_buffer_size{};
+
+				RID index_array{};
+				size_t index_count{};
+
+				RID material{};
+				RID uniform_set{};
+			};
+
+			Vector<Surface *> surfaces{};
 		};
 
-		RID mesh_create();
+		RID mesh_create(Vector<RS::SurfaceData> const & surfaces = {});
 		void mesh_destroy(RID mesh);
+		void mesh_clear(RID mesh);
+		void mesh_add_surface(RID mesh, RS::SurfaceData const & surf);
+		size_t mesh_get_surface_count(RID mesh);
+
+		RD::PrimitiveType_ mesh_surface_get_primitive(RID mesh, size_t index);
+		RID mesh_surface_get_vertex_array(RID mesh, size_t index);
+		RID mesh_surface_get_index_array(RID mesh, size_t index);
+		RID mesh_surface_get_material(RID mesh, size_t index);
 
 	public:
 		/* RENDER TARGET */
-		struct RenderTarget final
+		struct RenderTarget
 		{
 			Vec2i size{};
 			RID framebuffer{}, backbuffer{};

@@ -13,7 +13,7 @@ using namespace ism;
 
 OBJECT_EMBED(Window, t)
 {
-	t.tp_bind = CLASS_BINDER(Window, t)
+	t.tp_install = CLASS_INSTALLER(Window, t)
 	{
 		return t;
 	};

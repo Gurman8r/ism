@@ -26,7 +26,7 @@ OBJECT_EMBED(FloatObject, t)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(FloatObject, t)
+	t.tp_install = CLASS_INSTALLER(FloatObject, t)
 	{
 		return t;
 	};

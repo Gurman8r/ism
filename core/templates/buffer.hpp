@@ -114,6 +114,11 @@ namespace ism
 			return m_data.resize(size_in_bytes, value), (*this);
 		}
 
+		self_type & shrink_to_fit()
+		{
+			return m_data.shrink_to_fit(), (*this);
+		}
+
 		self_type & swap(self_type & other) noexcept
 		{
 			if (this != std::addressof(other)) { m_data.swap(other.m_data); }
@@ -186,11 +191,8 @@ namespace ism
 		self_type & vprintf(size_t const index, cstring fmt, va_list args)
 		{
 			char str[DYNAMICBUFFER_VPRINTF_STRING_SIZE]{};
-			
 			int32_t const len{ std::vsnprintf(str, sizeof(str), fmt, args) };
-			
-			write(index, str, (size_t)len);
-			
+			if (0 < len) { write_unchecked(index, str, (size_t)len); }
 			return (*this);
 		}
 

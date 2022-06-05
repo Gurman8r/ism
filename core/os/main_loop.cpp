@@ -6,7 +6,7 @@ using namespace ism;
 
 OBJECT_EMBED(MainLoop, t)
 {
-	t.tp_bind = CLASS_BINDER(MainLoop, t)
+	t.tp_install = CLASS_INSTALLER(MainLoop, t)
 	{
 		return t
 			.def("initialize", &MainLoop::initialize)

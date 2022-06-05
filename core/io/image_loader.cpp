@@ -9,19 +9,25 @@ using namespace ism;
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 Error_ ImageLoader::load_image(Image & image, Path const & path)
 {
-	if (path.empty()) { return Error_Unknown; }
+	if (!path) { return Error_Unknown; }
 
-	static SCOPE_ENTER() { ::stbi_set_flip_vertically_on_load(true); };
-	byte * data{ (byte *)::stbi_load(path.string().c_str(), &image.m_width, &image.m_height, &image.m_depth, 0) };
-	SCOPE_EXIT(data) { ::stbi_image_free(data); };
+	static SCOPE_ENTER() { stbi_set_flip_vertically_on_load(true); };
+	int32_t width{}, height{}, depth{};
+	byte * data{ (byte *)stbi_load(path.c_str(), &width, &height, &depth, 0) };
+	SCOPE_EXIT(data) { stbi_image_free(data); };
 	if (!data) { return Error_Unknown; }
 
-	image.m_pixels = { data, data + image.m_width * image.m_height * image.m_depth };
+	image.m_width = width;
+	image.m_height = height;
+	image.m_depth = depth;
+	image.m_pixels = { data, data + width * height * depth };
 
 	// TODO: properly deduce image format
-	switch (image.m_depth) {
+	switch (depth) {
 	case 1: { image.m_format = Image::Format_R8; } break;
 	case 2: { image.m_format = Image::Format_RG8; } break;
 	case 3: { image.m_format = Image::Format_RGB8; } break;
@@ -37,3 +43,5 @@ Error_ ImageLoader::load_image(Ref<Image> image, Path const & path)
 
 	return load_image(**image, path);
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

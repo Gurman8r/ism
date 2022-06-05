@@ -28,7 +28,7 @@ OBJECT_EMBED(StringObject, t)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(StringObject, t)
+	t.tp_install = CLASS_INSTALLER(StringObject, t)
 	{
 		return t
 

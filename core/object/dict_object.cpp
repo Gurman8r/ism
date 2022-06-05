@@ -9,7 +9,7 @@ OBJECT_EMBED(DictObject, t)
 {
 	t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)DICT(self).size(); };
 
-	t.tp_bind = CLASS_BINDER(DictObject, t)
+	t.tp_install = CLASS_INSTALLER(DictObject, t)
 	{
 		return t
 

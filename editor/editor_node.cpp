@@ -1,6 +1,5 @@
 #include <editor/editor_node.hpp>
 #include <scene/gui/imgui.hpp>
-#include <core/io/filesystem.hpp>
 
 #include <servers/rendering/renderer_canvas_renderer.hpp>
 #include <servers/rendering/renderer_scene_renderer.hpp>
@@ -29,10 +28,12 @@ static RID viewport{};
 
 static void _setup_pipeline(RID const shader)
 {
-	pipeline = RENDERING_DEVICE->pipeline_create(
+	pipeline = RENDERING_DEVICE->pipeline_create
+	(
 		shader,
 		RD::RenderPrimitive_Triangles,
-		COMPOSE(RD::RasterizationState, r) {
+		COMPOSE(RD::RasterizationState, r)
+		{
 			r.enable_depth_clamp = false;
 			r.discard_primitives = false;
 			r.enable_wireframe = false;
@@ -45,14 +46,16 @@ static void _setup_pipeline(RID const shader)
 			r.line_width = 1.f;
 			r.patch_control_points = 1;
 		},
-		COMPOSE(RD::MultisampleState, m) {
+		COMPOSE(RD::MultisampleState, m)
+		{
 			m.sample_count = RD::TextureSamples_1;
 			m.enable_sample_shading = false;
 			m.sample_mask = {};
 			m.enable_alpha_to_coverage = false;
 			m.enable_alpha_to_one = false;
 		},
-		COMPOSE(RD::DepthStencilState, d) {
+		COMPOSE(RD::DepthStencilState, d)
+		{
 			d.enable_depth_test = true;
 			d.enable_depth_write = true;
 			d.depth_compare_operator = CompareOperator_Less;
@@ -68,7 +71,8 @@ static void _setup_pipeline(RID const shader)
 			d.front_op.write_mask = d.back_op.write_mask = 0;
 			d.front_op.reference = d.back_op.reference = 0;
 		},
-		COMPOSE(RD::ColorBlendState, c) {
+		COMPOSE(RD::ColorBlendState, c)
+		{
 			c.enable_logic_op = true;
 			c.logic_op = LogicOperation_Clear;
 			c.blend_constant = Colors::clear;
@@ -76,7 +80,8 @@ static void _setup_pipeline(RID const shader)
 				RD::BlendFactor_SrcAlpha, RD::BlendFactor_OneMinusSrcAlpha, RD::BlendOperation_Add,
 				RD::BlendFactor_SrcAlpha, RD::BlendFactor_OneMinusSrcAlpha, RD::BlendOperation_Add,
 				true, true, true, true });
-		});
+		}
+	);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -137,8 +142,10 @@ EditorNode::EditorNode()
 	}, shader);
 
 	material = RENDERER_STORAGE->material_create();
+	RENDERER_STORAGE->material_set_shader(material, shader);
 	
-	Vector<RID> fb_textures{
+	Vector<RID> fb_textures
+	{
 		RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_R8G8B8_UNORM;
 			t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
@@ -196,10 +203,8 @@ void EditorNode::process(Duration const dt)
 	static EditorCamera * editor_camera{ m_editor_view.get_editor_camera() };
 	static Vec2 view_size{ 1280, 720 }, view_size_prev{};
 	if (m_editor_view.get_window()) { view_size = m_editor_view->InnerRect.GetSize(); }
-	bool const viewport_resized{ view_size != view_size_prev };
-	SCOPE_EXIT(&) { view_size_prev = view_size; };
-
-	if (viewport_resized) {
+	if (view_size_prev != view_size) {
+		view_size_prev = view_size;
 		editor_camera->set_res(view_size);
 		RENDERING_DEVICE->framebuffer_set_size(framebuffer, (int32_t)view_size[0], (int32_t)view_size[1]);
 	}
@@ -235,11 +240,11 @@ void EditorNode::process(Duration const dt)
 		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
 
 		static Mesh * mesh{ *m_meshes["sphere32x24"] };
-		mesh->for_each_surface([&](RID vertex_array, RID index_array, Vector<Ref<Texture>> & textures) {
-			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, vertex_array);
-			RENDERING_DEVICE->draw_list_bind_index_array(dl, index_array);
-			RENDERING_DEVICE->draw_list_draw(dl, (bool)index_array, 1, 0);
-		});
+		for (size_t i = 0; i < mesh->get_surface_count(); ++i) {
+			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, mesh->get_vertex_array(i));
+			RENDERING_DEVICE->draw_list_bind_index_array(dl, mesh->get_index_array(i));
+			RENDERING_DEVICE->draw_list_draw(dl, true, 1, 0);
+		}
 
 		RENDERING_DEVICE->draw_list_end();
 	}

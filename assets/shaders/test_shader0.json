@@ -1,6 +1,6 @@
 {
     "type": "Shader",
-    "name": "3D",
+    "name": "3D/Test0",
     "lang": "GLSL",
     "defines": {
         "SCENE_STATE_UNIFORMS": 0,

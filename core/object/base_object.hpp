@@ -16,18 +16,18 @@ private:																			\
 																					\
 	static constexpr ism::StringView __class_static{ TOSTR(m_class) };				\
 																					\
-	static ism::TypeObject __type_static;											\
+	static ism::TypeObject g_type_static;											\
 																					\
 protected:																			\
 	static void initialize_class()													\
 	{																				\
 		if (static bool once{}; !once && (once = true))								\
 		{																			\
-			ism::Internals::get_singleton()->add_class(&m_class::__type_static);	\
+			ism::Internals::get_singleton()->add_class(&m_class::g_type_static);	\
 																					\
-			if (m_class::__type_static.tp_bind)										\
+			if (m_class::g_type_static.tp_install)									\
 			{																		\
-				ASSERT(m_class::__type_static.tp_bind(&m_class::__type_static));	\
+				ASSERT(m_class::g_type_static.tp_install(&m_class::g_type_static));	\
 			}																		\
 		};																			\
 	}																				\
@@ -57,7 +57,7 @@ public:																				\
 																					\
 	FORCE_INLINE static ism::TYPE get_type_static() noexcept						\
 	{																				\
-		return &m_class::__type_static;												\
+		return &m_class::g_type_static;												\
 	}																				\
 																					\
 private:
@@ -74,7 +74,7 @@ private:
 	};																							\
 																								\
 	/* construct type object */																	\
-	MEMBER_IMPL(m_class::__type_static) =														\
+	MEMBER_IMPL(m_class::g_type_static) =														\
 																								\
 	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
 																								\
@@ -104,7 +104,7 @@ namespace ism
 
 		static constexpr StringView __class_static{ "Object" };
 
-		static TypeObject __type_static;
+		static TypeObject g_type_static;
 
 		SafeRefCount m_refcount{}, m_refcount_init{};
 
@@ -235,7 +235,7 @@ namespace ism
 	> NODISCARD TYPE typeof() noexcept { return T::get_type_static(); }
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o) noexcept { return VALIDATE(FWD(o))->get_type(); }
+	> NODISCARD TYPE typeof(T && o) noexcept { return VALIDATE(FWD(o))->get_type(); } // this function is not allowed to fail
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD TYPE typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }
@@ -245,9 +245,9 @@ namespace ism
 	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
 	> NODISCARD TYPE baseof() noexcept
 	{
-		using Base = typename T::base_type;
-		if constexpr (std::is_void_v<Base>) { return nullptr; }
-		else { return typeof<Base>(); }
+		if constexpr (std::is_void_v<T::base_type>) { return nullptr; }
+
+		else { return typeof<T::base_type>(); }
 	}
 
 	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0

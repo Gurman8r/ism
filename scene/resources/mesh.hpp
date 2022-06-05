@@ -15,18 +15,8 @@ namespace ism
 
 		RID m_mesh{};
 
-		Batch<
-			RID, // vertex array
-			RID, // index array
-			Vector<Ref<Texture>> // textures
-		> m_surface_data{};
-
 	public:
-		using SurfaceData = typename decltype(m_surface_data);
-
-		enum { VA, IA, TEX };
-
-		Mesh();
+		Mesh() noexcept {}
 
 		explicit Mesh(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
@@ -34,16 +24,13 @@ namespace ism
 
 		virtual Error_ reload_from_file() override;
 
-		NODISCARD virtual RID get_rid() const override { return m_surface_data.front<VA>(); }
+		NODISCARD virtual RID get_rid() const override { return m_mesh; }
 
-	public:
-		NODISCARD size_t get_surface_count() const noexcept { return m_surface_data.size(); }
+		NODISCARD virtual size_t get_surface_count() const;
 
-		template <size_t ... I, class Fn
-		> void get_surface(size_t const i, Fn && fn) noexcept { m_surface_data.expand<I...>(i, FWD(fn)); }
+		NODISCARD virtual RID get_vertex_array(size_t index) const;
 
-		template <class Fn
-		> void for_each_surface(Fn && fn) { for (size_t i = 0; i < m_surface_data.size(); ++i) { m_surface_data.expand_all(i, FWD(fn)); } }
+		NODISCARD virtual RID get_index_array(size_t index) const;
 	};
 }
 

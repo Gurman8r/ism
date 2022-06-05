@@ -22,11 +22,11 @@ void Internals::add_class(TYPE const & type)
 	ASSERT(type);
 	ASSERT(type.ready());
 
-	String const & name{ type->tp_name };
-	hash_t const id{ hash(name) };
+	String const & type_name{ type->tp_name };
+	hash_t const type_id{ hash(type_name) };
 
-	ASSERT(!class_db.contains<hash_t>(id));
-	class_db.push_back(id, name, type);
+	ASSERT(!class_db.contains<hash_t>(type_id));
+	class_db.push_back(type_id, type_name, type);
 }
 
 TYPE Internals::get_class(StringName const & name) const

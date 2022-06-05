@@ -1,11 +1,12 @@
 #include <scene/resources/text_file.hpp>
 #include <servers/text_server.hpp>
+#include <fstream>
 
 using namespace ism;
 
 OBJECT_EMBED(TextFile, t)
 {
-	t.tp_bind = CLASS_BINDER(TextFile, t)
+	t.tp_install = CLASS_INSTALLER(TextFile, t)
 	{
 		return t
 			.def("reload_from_file", &TextFile::reload_from_file)
@@ -19,6 +20,19 @@ OBJECT_EMBED(TextFile, t)
 Error_ TextFile::reload_from_file()
 {
 	if (!get_path()) { return Error_Unknown; }
+
+	// open file
+	std::ifstream file{ get_path().c_str(), std::ios_base::binary };
+	SCOPE_EXIT(&file) { file.close(); };
+	if (!file) { return Error_Unknown; }
+
+	// load contents
+	file.seekg(0, std::ios_base::end);
+	if (std::streampos size{ file.tellg() }; 0 < size) {
+		file.seekg(0, std::ios_base::beg);
+		m_text.resize((size_t)size);
+		file.read((char *)m_text.data(), size);
+	}
 
 	return Error_None;
 }

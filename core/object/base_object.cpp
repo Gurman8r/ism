@@ -9,9 +9,9 @@ void Object::initialize_class()
 {
 	if (static bool once{}; !once && (once = true))
 	{
-		Internals::get_singleton()->add_class(&__type_static);
+		Internals::get_singleton()->add_class(&g_type_static);
 
-		ASSERT(VALIDATE(__type_static.tp_bind)(&__type_static));
+		ASSERT(VALIDATE(g_type_static.tp_install)(&g_type_static));
 	}
 }
 
@@ -52,7 +52,7 @@ bool Object::unreference()
 
 TYPE Object::_get_typev() const noexcept { return get_type_static(); }
 
-TYPE Object::get_type_static() noexcept { return &__type_static; }
+TYPE Object::get_type_static() noexcept { return &g_type_static; }
 
 TYPE Object::get_type() const noexcept { return ((!!m_type) || (m_type = _get_typev())), m_type; }
 
@@ -66,7 +66,7 @@ OBJECT_EMBED(Object, t, TypeFlags_IsAbstract)
 
 	t.tp_setattro = (setattrofunc)&Object::generic_setattr;
 
-	t.tp_bind = CLASS_BINDER(Object, t)
+	t.tp_install = CLASS_INSTALLER(Object, t)
 	{
 		return t
 			.def("init_ref", &Object::init_ref)

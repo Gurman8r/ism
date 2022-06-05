@@ -17,7 +17,7 @@ OBJECT_EMBED(PropertyObject, t, TypeFlags_MethodDescriptor)
 		return ((PROPERTY &)self).set(obj, value);
 	};
 
-	t.tp_bind = CLASS_BINDER(PropertyObject, t)
+	t.tp_install = CLASS_INSTALLER(PropertyObject, t)
 	{
 		return t;
 	};

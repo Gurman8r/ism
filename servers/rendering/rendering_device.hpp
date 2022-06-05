@@ -275,7 +275,7 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY API */
-		struct VertexLayoutAttribute final
+		struct VertexLayoutAttribute
 		{
 			cstring		name;
 			DataType_	type;
@@ -295,16 +295,19 @@ namespace ism
 			}
 		};
 
-		struct VertexLayout final
+		struct VertexLayout
 		{
 			uint32_t stride{};
 
 			Vector<VertexLayoutAttribute> attributes{};
 
 			VertexLayout() noexcept : VertexLayout{
-				{ "a_Position",	DataType_F32, 3 },
-				{ "a_Normal",	DataType_F32, 3 },
-				{ "a_Texcoord",	DataType_F32, 2 },
+				{ "attr_position"	, DataType_F32, 4 },
+				{ "attr_normal"		, DataType_F32, 4 },
+				{ "attr_texcoord"	, DataType_F32, 4 },
+				{ "attr_tangent"	, DataType_F32, 4 },
+				{ "attr_bitangent"	, DataType_F32, 4 },
+				{ "attr_blending"	, DataType_I32, 4 },
 			} {}
 
 			template <class It> VertexLayout(It first, It last) noexcept : attributes{ first, last } { update(); }
@@ -382,7 +385,7 @@ namespace ism
 			SamplerBorderColor_MAX
 		};
 
-		struct SamplerCreateInfo final
+		struct SamplerCreateInfo
 		{
 			SamplerFilter_ mag_filter{ SamplerFilter_Nearest }, min_filter{ SamplerFilter_Nearest }, mip_filter{ SamplerFilter_Nearest };
 
@@ -477,7 +480,7 @@ namespace ism
 			TextureSliceType_2D_Array,
 		};
 
-		struct TextureCreateInfo final
+		struct TextureCreateInfo
 		{
 			TextureType_ texture_type{ TextureType_2D };
 
@@ -510,6 +513,11 @@ namespace ism
 		virtual void framebuffer_destroy(RID framebuffer) = 0;
 		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) = 0;
 
+		static constexpr bool is_depth_stencil_mode(DataFormat_ const f) noexcept
+		{
+			return f == DataFormat_D16_UNORM || f == DataFormat_X8_D24_UNORM_PACK32 || f == DataFormat_D32_SFLOAT || f == DataFormat_D16_UNORM_S8_UINT || f == DataFormat_D24_UNORM_S8_UINT || f == DataFormat_D32_SFLOAT_S8_UINT;
+		}
+
 	public:
 		/* SHADER */
 		enum ShaderLanguage_
@@ -536,14 +544,14 @@ namespace ism
 			ShaderStage_Compute_Bit = 1 << 5,
 		};
 
-		struct ShaderStageData final
+		struct ShaderStageData
 		{
 			ShaderStage_ shader_stage{ ShaderStage_MAX };
 
 			DynamicBuffer code{};
 		};
 
-		struct ShaderCreateInfo final
+		struct ShaderCreateInfo
 		{
 			ShaderStageData stage_data[ShaderStage_MAX]
 			{
@@ -554,11 +562,6 @@ namespace ism
 				{ ShaderStage_MAX },
 				{ ShaderStage_MAX },
 			};
-
-			auto begin() noexcept -> ShaderStageData * { return stage_data; }
-			auto begin() const noexcept -> ShaderStageData const * { return stage_data; }
-			auto end() noexcept -> ShaderStageData * { return stage_data + (ptrdiff_t)ShaderStage_MAX; }
-			auto end() const noexcept -> ShaderStageData const * { return stage_data + (ptrdiff_t)ShaderStage_MAX; }
 		};
 
 		virtual RID shader_create(ShaderCreateInfo const & spec) = 0;
@@ -584,7 +587,7 @@ namespace ism
 			UniformType_MAX
 		};
 
-		struct Uniform final
+		struct Uniform
 		{
 			UniformType_ uniform_type{ UniformType_Image };
 
@@ -599,6 +602,16 @@ namespace ism
 
 	public:
 		/* PIPELINE API */
+		enum PrimitiveType_
+		{
+			PrimitiveType_Points,
+			PrimitiveType_Lines,
+			PrimitiveType_LineStrip,
+			PrimitiveType_Triangles,
+			PrimitiveType_TriangleStrip,
+			PrimitiveType_MAX
+		};
+
 		enum RenderPrimitive_
 		{
 			RenderPrimitive_Points,
@@ -628,7 +641,7 @@ namespace ism
 			PolygonFrontFace_CounterClockwise,
 		};
 
-		struct RasterizationState final
+		struct RasterizationState
 		{
 			bool enable_depth_clamp{ false };
 
@@ -653,7 +666,7 @@ namespace ism
 			uint32_t patch_control_points{ 1 };
 		};
 
-		struct MultisampleState final
+		struct MultisampleState
 		{
 			TextureSamples_ sample_count{ TextureSamples_1 };
 
@@ -681,7 +694,7 @@ namespace ism
 			StencilOperation_MAX
 		};
 
-		struct StencilOperationState final
+		struct StencilOperationState
 		{
 			StencilOperation_ fail{ StencilOperation_Zero };
 
@@ -698,7 +711,7 @@ namespace ism
 			uint32_t reference{ 0 };
 		};
 
-		struct DepthStencilState final
+		struct DepthStencilState
 		{
 			bool enable_depth_test{ false };
 			
@@ -749,9 +762,9 @@ namespace ism
 			BlendOperation_MAX
 		};
 
-		struct ColorBlendState final
+		struct ColorBlendState
 		{
-			struct Attachment final
+			struct Attachment
 			{
 				bool enable_blend{ false };
 

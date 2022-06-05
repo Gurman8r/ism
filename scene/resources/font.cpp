@@ -25,7 +25,7 @@ Error_ Font::reload_from_file()
 
 NODISCARD Glyph * Font::get_glyph(uint32_t character, uint32_t character_size)
 {
-	if (!character || !character_size || !m_font) { return nullptr; }
+	if (!m_font || !character || !character_size) { return nullptr; }
 
 	return TEXT_SERVER->font_get_glyph(m_font, character, character_size);
 }

@@ -461,98 +461,98 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD virtual WindowID get_current_context() const;
-		virtual void set_current_context(WindowID id);
-		virtual void poll_events();
-		virtual void swap_buffers(WindowID id);
-		virtual void swap_interval(int32_t value);
+		NODISCARD virtual WindowID get_current_context() const = 0;
+		virtual void set_current_context(WindowID id) = 0;
+		virtual void poll_events() = 0;
+		virtual void swap_buffers(WindowID id) = 0;
+		virtual void swap_interval(int32_t value) = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
-		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y);
-		NODISCARD virtual CursorID create_standard_cursor(CursorShape_ shape);
-		virtual void destroy_cursor(CursorID value);
+		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) = 0;
+		NODISCARD virtual CursorID create_standard_cursor(CursorShape_ shape) = 0;
+		virtual void destroy_cursor(CursorID value) = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		virtual void focus_window(WindowID id);
-		virtual void hide_window(WindowID id);
-		virtual void iconify_window(WindowID id);
-		virtual void maximize_window(WindowID id);
-		virtual void restore_window(WindowID id);
-		virtual void request_window_attention(WindowID id);
+		virtual void focus_window(WindowID id) = 0;
+		virtual void hide_window(WindowID id) = 0;
+		virtual void iconify_window(WindowID id) = 0;
+		virtual void maximize_window(WindowID id) = 0;
+		virtual void restore_window(WindowID id) = 0;
+		virtual void request_window_attention(WindowID id) = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD inline IntRect window_get_bounds(WindowID id) const { return { window_get_position(id), window_get_size(id) }; }
-		NODISCARD virtual String window_get_clipboard(WindowID id) const;
-		NODISCARD virtual Vec2f window_get_content_scale(WindowID id) const;
-		NODISCARD virtual IntRect window_get_frame_size(WindowID id) const;
-		NODISCARD virtual Vec2i window_get_framebuffer_size(WindowID id) const;
-		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode_ value) const;
-		NODISCARD virtual InputAction_ window_get_key(WindowID id, KeyCode_ value) const;
-		NODISCARD virtual InputAction_ window_get_mouse_button(WindowID id, MouseButton_ value) const;
-		NODISCARD virtual Vec2d window_get_mouse_position(WindowID id) const;
-		NODISCARD virtual void * window_get_native_handle(WindowID id) const;
-		NODISCARD virtual float_t window_get_opacity(WindowID id) const;
-		NODISCARD virtual Vec2i window_get_position(WindowID id) const;
-		NODISCARD virtual Vec2i window_get_size(WindowID id) const;
-		NODISCARD virtual bool window_get_should_close(WindowID id) const;
-		NODISCARD virtual void * window_get_user_pointer(WindowID id) const;
+		NODISCARD virtual String window_get_clipboard(WindowID id) const = 0;
+		NODISCARD virtual Vec2f window_get_content_scale(WindowID id) const = 0;
+		NODISCARD virtual IntRect window_get_frame_size(WindowID id) const = 0;
+		NODISCARD virtual Vec2i window_get_framebuffer_size(WindowID id) const = 0;
+		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode_ value) const = 0;
+		NODISCARD virtual InputAction_ window_get_key(WindowID id, KeyCode_ value) const = 0;
+		NODISCARD virtual InputAction_ window_get_mouse_button(WindowID id, MouseButton_ value) const = 0;
+		NODISCARD virtual Vec2d window_get_mouse_position(WindowID id) const = 0;
+		NODISCARD virtual void * window_get_native_handle(WindowID id) const = 0;
+		NODISCARD virtual float_t window_get_opacity(WindowID id) const = 0;
+		NODISCARD virtual Vec2i window_get_position(WindowID id) const = 0;
+		NODISCARD virtual Vec2i window_get_size(WindowID id) const = 0;
+		NODISCARD virtual bool window_get_should_close(WindowID id) const = 0;
+		NODISCARD virtual void * window_get_user_pointer(WindowID id) const = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD virtual bool window_is_decorated(WindowID id) const;
-		NODISCARD virtual bool window_is_floating(WindowID id) const;
-		NODISCARD virtual bool window_is_focused(WindowID id) const;
-		NODISCARD virtual bool window_is_hovered(WindowID id) const;
-		NODISCARD virtual bool window_is_iconified(WindowID id) const;
-		NODISCARD virtual bool window_is_maximized(WindowID id) const;
-		NODISCARD virtual bool window_is_resizable(WindowID id) const;
-		NODISCARD virtual bool window_is_transparent(WindowID id) const;
-		NODISCARD virtual bool window_is_visible(WindowID id) const;
+		NODISCARD virtual bool window_is_decorated(WindowID id) const = 0;
+		NODISCARD virtual bool window_is_floating(WindowID id) const = 0;
+		NODISCARD virtual bool window_is_focused(WindowID id) const = 0;
+		NODISCARD virtual bool window_is_hovered(WindowID id) const = 0;
+		NODISCARD virtual bool window_is_iconified(WindowID id) const = 0;
+		NODISCARD virtual bool window_is_maximized(WindowID id) const = 0;
+		NODISCARD virtual bool window_is_resizable(WindowID id) const = 0;
+		NODISCARD virtual bool window_is_transparent(WindowID id) const = 0;
+		NODISCARD virtual bool window_is_visible(WindowID id) const = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		virtual void window_set_clipboard(WindowID id, String const & value);
-		virtual void window_set_cursor(WindowID id, CursorID value);
-		virtual void window_set_cursor_mode(WindowID id, int32_t value);
-		virtual void window_set_icons(WindowID id, int32_t width, int32_t height, uint8_t * pixels, int32_t count = 1);
-		virtual void window_set_input_mode(WindowID id, int32_t mode, int32_t value);
-		virtual void window_set_monitor(WindowID id, MonitorID monitor, IntRect const & bounds);
-		virtual void window_set_mouse_position(WindowID id, Vec2d const & value);
-		virtual void window_set_opacity(WindowID id, float_t value);
-		virtual void window_set_position(WindowID id, Vec2i const & value);
-		virtual void window_set_should_close(WindowID id, bool value);
-		virtual void window_set_size(WindowID id, Vec2i const & value);
-		virtual void window_set_title(WindowID id, String const & value);
-		virtual void window_set_user_pointer(WindowID id, void * value);
+		virtual void window_set_clipboard(WindowID id, String const & value) = 0;
+		virtual void window_set_cursor(WindowID id, CursorID value) = 0;
+		virtual void window_set_cursor_mode(WindowID id, int32_t value) = 0;
+		virtual void window_set_icons(WindowID id, int32_t width, int32_t height, uint8_t * pixels, int32_t count = 1) = 0;
+		virtual void window_set_input_mode(WindowID id, int32_t mode, int32_t value) = 0;
+		virtual void window_set_monitor(WindowID id, MonitorID monitor, IntRect const & bounds) = 0;
+		virtual void window_set_mouse_position(WindowID id, Vec2d const & value) = 0;
+		virtual void window_set_opacity(WindowID id, float_t value) = 0;
+		virtual void window_set_position(WindowID id, Vec2i const & value) = 0;
+		virtual void window_set_should_close(WindowID id, bool value) = 0;
+		virtual void window_set_size(WindowID id, Vec2i const & value) = 0;
+		virtual void window_set_title(WindowID id, String const & value) = 0;
+		virtual void window_set_user_pointer(WindowID id, void * value) = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		virtual void window_set_is_decorated(WindowID id, bool value);
-		virtual void window_set_is_floating(WindowID id, bool value);
-		virtual void window_set_is_resizable(WindowID id, bool value);
+		virtual void window_set_is_decorated(WindowID id, bool value) = 0;
+		virtual void window_set_is_floating(WindowID id, bool value) = 0;
+		virtual void window_set_is_resizable(WindowID id, bool value) = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		virtual WindowCharCallback window_set_char_callback(WindowID id, WindowCharCallback value);
-		virtual WindowCharModsCallback window_set_char_mods_callback(WindowID id, WindowCharModsCallback value);
-		virtual WindowCloseCallback window_set_close_callback(WindowID id, WindowCloseCallback value);
-		virtual WindowContentCallback window_set_content_scale_callback(WindowID id, WindowContentCallback value);
-		virtual WindowDropCallback window_set_drop_callback(WindowID id, WindowDropCallback value);
-		virtual WindowFocusCallback window_set_focus_callback(WindowID id, WindowFocusCallback value);
-		virtual WindowFramebufferResizeCallback window_set_framebuffer_resize_callback(WindowID id, WindowFramebufferResizeCallback value);
-		virtual WindowIconifyCallback window_set_iconify_callback(WindowID id, WindowIconifyCallback value);
-		virtual WindowKeyCallback window_set_key_callback(WindowID id, WindowKeyCallback value);
-		virtual WindowMaximizeCallback window_set_maximize_callback(WindowID id, WindowMaximizeCallback value);
-		virtual WindowMouseButtonCallback window_set_mouse_button_callback(WindowID id, WindowMouseButtonCallback value);
-		virtual WindowMouseEnterCallback window_set_mouse_enter_callback(WindowID id, WindowMouseEnterCallback value);
-		virtual WindowMousePositionCallback window_set_mouse_position_callback(WindowID id, WindowMousePositionCallback value);
-		virtual WindowPositionCallback window_set_position_callback(WindowID id, WindowPositionCallback value);
-		virtual WindowRefreshCallback window_set_refresh_callback(WindowID id, WindowRefreshCallback value);
-		virtual WindowScrollCallback window_set_scroll_callback(WindowID id, WindowScrollCallback value);
-		virtual WindowSizeCallback window_set_size_callback(WindowID id, WindowSizeCallback value);
+		virtual WindowCharCallback window_set_char_callback(WindowID id, WindowCharCallback value) = 0;
+		virtual WindowCharModsCallback window_set_char_mods_callback(WindowID id, WindowCharModsCallback value) = 0;
+		virtual WindowCloseCallback window_set_close_callback(WindowID id, WindowCloseCallback value) = 0;
+		virtual WindowContentCallback window_set_content_scale_callback(WindowID id, WindowContentCallback value) = 0;
+		virtual WindowDropCallback window_set_drop_callback(WindowID id, WindowDropCallback value) = 0;
+		virtual WindowFocusCallback window_set_focus_callback(WindowID id, WindowFocusCallback value) = 0;
+		virtual WindowFramebufferResizeCallback window_set_framebuffer_resize_callback(WindowID id, WindowFramebufferResizeCallback value) = 0;
+		virtual WindowIconifyCallback window_set_iconify_callback(WindowID id, WindowIconifyCallback value) = 0;
+		virtual WindowKeyCallback window_set_key_callback(WindowID id, WindowKeyCallback value) = 0;
+		virtual WindowMaximizeCallback window_set_maximize_callback(WindowID id, WindowMaximizeCallback value) = 0;
+		virtual WindowMouseButtonCallback window_set_mouse_button_callback(WindowID id, WindowMouseButtonCallback value) = 0;
+		virtual WindowMouseEnterCallback window_set_mouse_enter_callback(WindowID id, WindowMouseEnterCallback value) = 0;
+		virtual WindowMousePositionCallback window_set_mouse_position_callback(WindowID id, WindowMousePositionCallback value) = 0;
+		virtual WindowPositionCallback window_set_position_callback(WindowID id, WindowPositionCallback value) = 0;
+		virtual WindowRefreshCallback window_set_refresh_callback(WindowID id, WindowRefreshCallback value) = 0;
+		virtual WindowScrollCallback window_set_scroll_callback(WindowID id, WindowScrollCallback value) = 0;
+		virtual WindowSizeCallback window_set_size_callback(WindowID id, WindowSizeCallback value) = 0;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

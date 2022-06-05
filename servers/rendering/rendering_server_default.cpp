@@ -44,6 +44,11 @@ void RenderingServerDefault::finalize()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+void RenderingServerDefault::texture_destroy(RID texture)
+{
+	m_device->texture_destroy(texture);
+}
+
 RID RenderingServerDefault::texture_replace(RID old_texture, RID new_texture)
 {
 	return {};
@@ -161,11 +166,55 @@ void RenderingServerDefault::material_set_shader(RID material, RID shader)
 	m_storage->material_set_shader(material, shader);
 }
 
+void RenderingServerDefault::material_set_param(RID material, String const & key, OBJ const & value)
+{
+	m_storage->material_set_param(material, key, value);
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingServerDefault::mesh_create()
+RID RenderingServerDefault::mesh_create(Vector<SurfaceData> const & surfaces)
 {
-	return RID();
+	return m_storage->mesh_create(surfaces);
+}
+
+void RenderingServerDefault::mesh_destroy(RID mesh)
+{
+	m_storage->mesh_destroy(mesh);
+}
+
+void RenderingServerDefault::mesh_clear(RID mesh)
+{
+}
+
+size_t RenderingServerDefault::mesh_get_surface_count(RID mesh)
+{
+	return m_storage->mesh_get_surface_count(mesh);
+}
+
+void RenderingServerDefault::mesh_add_surface(RID mesh, SurfaceData const & surface)
+{
+	m_storage->mesh_add_surface(mesh, surface);
+}
+
+RD::PrimitiveType_ RenderingServerDefault::mesh_surface_get_primitive(RID mesh, size_t index)
+{
+	return m_storage->mesh_surface_get_primitive(mesh, index);
+}
+
+RID RenderingServerDefault::mesh_surface_get_vertex_array(RID mesh, size_t index)
+{
+	return m_storage->mesh_surface_get_vertex_array(mesh, index);
+}
+
+RID RenderingServerDefault::mesh_surface_get_index_array(RID mesh, size_t index)
+{
+	return m_storage->mesh_surface_get_index_array(mesh, index);
+}
+
+RID RenderingServerDefault::mesh_surface_get_material(RID mesh, size_t index)
+{
+	return m_storage->mesh_surface_get_material(mesh, index);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -173,6 +222,10 @@ RID RenderingServerDefault::mesh_create()
 RID RenderingServerDefault::camera_create()
 {
 	return RID();
+}
+
+void RenderingServerDefault::camera_destroy(RID camera)
+{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,7 +1,7 @@
 #ifndef _ISM_RENDERER_VIEWPORT_HPP_
 #define _ISM_RENDERER_VIEWPORT_HPP_
 
-#include <servers/rendering/rendering_device.hpp>
+#include <servers/rendering_server.hpp>
 
 namespace ism
 {

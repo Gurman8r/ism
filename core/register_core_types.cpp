@@ -5,7 +5,6 @@
 #include <core/os/main_loop.hpp>
 
 using namespace ism;
-using namespace ism;
 
 void ism::register_core_types()
 {
@@ -23,8 +22,7 @@ void ism::register_core_types()
 	ASSERT(typeof<PropertyObject>().ready());
 	ASSERT(typeof<ModuleObject>().ready());
 
-	REGISTER_OBJECT_CLASS
-	(
+	INTERNALS->install_classes<
 		CppFunctionObject, // <- cppfunction must go first
 		Object,
 		TypeObject,
@@ -54,8 +52,7 @@ void ism::register_core_types()
 		EventBus,
 
 		MainLoop
-
-	);
+	>();
 }
 
 void ism::register_core_driver_types()

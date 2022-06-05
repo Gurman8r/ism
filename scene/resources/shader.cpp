@@ -13,7 +13,5 @@ Shader::~Shader()
 
 Error_ Shader::reload_from_file()
 {
-	if (!get_path()) { return Error_Unknown; }
-
 	return ShaderLoader::load_shader(*this, get_path());
 }

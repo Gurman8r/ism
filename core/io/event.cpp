@@ -6,7 +6,7 @@ using namespace ism;
 
 OBJECT_EMBED(Event, t, TypeFlags_IsAbstract)
 {
-	t.tp_bind = CLASS_BINDER(Event, t)
+	t.tp_install = CLASS_INSTALLER(Event, t)
 	{
 		return t
 			.def("get_event_id", &Event::get_event_id)
@@ -21,7 +21,7 @@ OBJECT_EMBED(Event, t, TypeFlags_IsAbstract)
 
 OBJECT_EMBED(EventHandler, t, TypeFlags_IsAbstract)
 {
-	t.tp_bind = CLASS_BINDER(EventHandler, t)
+	t.tp_install = CLASS_INSTALLER(EventHandler, t)
 	{
 		return t
 			.def("handle_event", &EventHandler::handle_event)

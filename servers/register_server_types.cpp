@@ -7,13 +7,13 @@ using namespace ism;
 
 void ism::register_server_types()
 {
-	REGISTER_OBJECT_CLASS(
+	INTERNALS->install_classes<
 		DisplayServer,
 		RenderingDevice,
 		RenderingServerDefault,
 		RenderingServer,
 		TextServer
-	);
+	>();
 }
 
 void ism::unregister_server_types()

@@ -10,10 +10,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// operating system
-	class ISM_API OperatingSystem
+	class ISM_API OS
 	{
 	private:
-		static OperatingSystem * singleton;
+		static OS * singleton;
 
 		String				m_exepath{};
 		Vector<String>		m_cmdline{};
@@ -21,11 +21,11 @@ namespace ism
 		CompositeLogger *	m_logger{};
 
 	public:
-		OperatingSystem();
+		OS();
 
-		virtual ~OperatingSystem();
+		virtual ~OS();
 
-		FORCE_INLINE static OperatingSystem * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static OS * get_singleton() noexcept { return singleton; }
 
 	protected:
 		friend class Main;
@@ -97,7 +97,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// operating system singleton
-#define OS (ism::OperatingSystem::get_singleton())
+#define SYSTEM (ism::OS::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -14,8 +14,7 @@ using namespace ism;
 
 void ism::register_scene_types()
 {
-	REGISTER_OBJECT_CLASS
-	(
+	INTERNALS->install_classes<
 		SceneTree,
 		Node,
 		Window,
@@ -34,7 +33,7 @@ void ism::register_scene_types()
 		Texture2D,
 		Texture3D,
 		Cubemap
-	);
+	>();
 }
 
 void ism::unregister_scene_types()

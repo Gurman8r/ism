@@ -9,7 +9,7 @@ using namespace ism;
 
 OBJECT_EMBED(Node, t, TypeFlags_IsAbstract)
 {
-	t.tp_bind = CLASS_BINDER(Node, t)
+	t.tp_install = CLASS_INSTALLER(Node, t)
 	{
 		return t
 			.def("process", &Node::process)

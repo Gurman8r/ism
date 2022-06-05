@@ -1,6 +1,6 @@
 #include <scene/resources/shader_loader.hpp>
 #include <servers/rendering_server.hpp>
-#include <core/io/filesystem.hpp>
+#include <fstream>
 
 #if DIRECTX_ENABLED
 #include <drivers/directx/shader_loader_hlsl.hpp>
@@ -18,7 +18,7 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 {
 	if (!path) { return Error_Unknown; }
 
-	// parse json file
+	// load json file
 	std::ifstream file{ path.c_str() };
 	SCOPE_EXIT(&file) { file.close(); };
 	if (!file) { return Error_Unknown; }
@@ -26,22 +26,21 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 	if (json.empty()) { return Error_Unknown; }
 
 	// generate spec
-	RD::ShaderCreateInfo shader_spec;
-	RD::ShaderLanguage_ shader_language;
+	RD::ShaderCreateInfo spec;
 	auto lang{ json.find("lang") };
 	ASSERT(lang != json.end());
 	switch (hash(lang->get<String>())) {
 	default: { return Error_Unknown; } break;
 	case "GLSL"_hash: {
 #if OPENGL_ENABLED
-		shader_spec = ShaderLoaderGLSL::create_shader_spec(json);
+		spec = ShaderLoaderGLSL::create_shader_spec(json);
 #else
 		CRASH("OPENGL IS NOT ENABLED");
 #endif
 	} break;
 	case "HLSL"_hash: {
 #if DIRECTX_ENABLED
-		shader_spec = ShaderLoaderHLSL::create_shader_spec(json);
+		spec = ShaderLoaderHLSL::create_shader_spec(json);
 #else
 		CRASH("DIRECTX IS NOT ENABLED");
 #endif
@@ -50,7 +49,7 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 
 	// create shader
 	if (shader.m_shader) { RENDERING_DEVICE->shader_destroy(shader.m_shader); }
-	shader.m_shader = RENDERING_DEVICE->shader_create(shader_spec);
+	shader.m_shader = RENDERING_DEVICE->shader_create(spec);
 	if (!shader.m_shader) { return Error_Unknown; }
 
 	return Error_None;

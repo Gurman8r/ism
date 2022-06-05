@@ -1,6 +1,6 @@
 {
     "type": "Shader",
-    "name": "2D",
+    "name": "2D/Default",
     "lang": "GLSL",
     "vs": {
         "input": [

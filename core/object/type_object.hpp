@@ -19,7 +19,7 @@ namespace ism
 
 		static constexpr StringView __class_static{ "TypeObject" };
 
-		static TypeObject __type_static;
+		static TypeObject g_type_static;
 
 	protected:
 		static void initialize_class();
@@ -45,7 +45,7 @@ namespace ism
 			tp_flags = flags;
 			tp_base = ism::baseof<T>();
 			tp_del = (delfunc)ism::memdelete<T>;
-			tp_bind = (bindfunc)[](TYPE t) -> TYPE { return t; };
+			tp_install = (bindfunc)[](TYPE t) -> TYPE { return t; };
 			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return ism::Hasher<intptr_t>{}((intptr_t)*o); };
 			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> int32_t { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
@@ -65,7 +65,7 @@ namespace ism
 		String				tp_name				{};
 		ssize_t				tp_size				{};
 		int32_t				tp_flags			{};
-		bindfunc			tp_bind				{};
+		bindfunc			tp_install			{};
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
 
@@ -136,8 +136,6 @@ namespace ism
 
 	// type delete
 	template <> struct DefaultDelete<TypeObject> : DefaultDelete<Object> {};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type check
 #define OBJECT_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))

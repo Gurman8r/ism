@@ -91,7 +91,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 	} break;
 	}
 
-	OS->printerr(
+	SYSTEM->printerr(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -310,6 +310,10 @@ OBJECT_EMBED(RenderingDeviceOpenGL, t) {}
 RenderingDeviceOpenGL::RenderingDeviceOpenGL() : RD{}
 {
 	OPENGL_INIT();
+
+	glCheck(glEnable(GL_ALPHA_TEST));
+	glCheck(glAlphaFunc(GL_GREATER, 0.0001f));
+	glCheck(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 }
 
 RenderingDeviceOpenGL::~RenderingDeviceOpenGL()
@@ -586,18 +590,6 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 		if (i == 0) { fb->width = t->width; }
 		if (i == 0) { fb->height = t->height; }
 
-		bool is_depth_stencil{};
-		switch (t->color_format) {
-		case DataFormat_D16_UNORM:
-		case DataFormat_X8_D24_UNORM_PACK32:
-		case DataFormat_D32_SFLOAT:
-		case DataFormat_D16_UNORM_S8_UINT:
-		case DataFormat_D24_UNORM_S8_UINT:
-		case DataFormat_D32_SFLOAT_S8_UINT: {
-			is_depth_stencil = true;
-		} break;
-		}
-
 		glCheck(glBindTexture(t->texture_type, t->handle));
 
 		if (FLAG_READ(t->usage_flags, TextureFlags_ColorAttachment)) {
@@ -745,6 +737,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderCreateInfo const & shader_info)
 	for (ShaderStageData const & stage : s->stage_data)
 	{
 		cstring code{ VALIDATE(stage.code.c_str()) };
+
 		uint32_t obj;
 		glCheck(obj = glCreateShaderObjectARB(TO_GL(stage.shader_stage)));
 		glCheck(glShaderSourceARB(obj, 1, &code, nullptr));
@@ -759,7 +752,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderCreateInfo const & shader_info)
 			glCheck(glDeleteObjectARB(obj));
 			glCheck(glDeleteProgramsARB(1, &s->handle));
 			memdelete(s);
-			OS->printerr(String{ log_str, (size_t)log_len });
+			SYSTEM->printerr(String{ log_str, (size_t)log_len });
 			return nullptr;
 		}
 
@@ -777,7 +770,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderCreateInfo const & shader_info)
 		glCheck(glGetInfoLogARB(s->handle, sizeof(log_str), &log_len, log_str));
 		glCheck(glDeleteProgramsARB(1, &s->handle));
 		memdelete(s);
-		OS->printerr(String{ log_str, (size_t)log_len });
+		SYSTEM->printerr(String{ log_str, (size_t)log_len });
 		return nullptr;
 	}
 
@@ -806,18 +799,19 @@ RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, 
 	set->shader = shader;
 	for (size_t i = 0; i < uniforms.size(); ++i)
 	{
-		UniformDescriptor u{};
-		switch (uniforms[i].uniform_type)
+		UniformDescriptor u{ uniforms[i].uniform_type };
+		switch (u.uniform_type)
 		{
 		case UniformType_Sampler: {
 		} break;
 		case UniformType_SamplerWithTexture: {
 		} break;
 		case UniformType_Texture: {
-			u.uniform_type = UniformType_Texture;
 			u.binding = uniforms[i].binding;
 			u.length = uniforms[i].ids.size();
-			for (RID const texture : uniforms[i].ids) { u.textures.push_back(texture); }
+			for (RID const texture : uniforms[i].ids) {
+				u.textures.push_back(texture);
+			}
 		} break;
 		case UniformType_Image: {
 		} break;
@@ -829,7 +823,6 @@ RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, 
 		} break;
 		case UniformType_UniformBuffer: {
 			ASSERT(1 == uniforms[i].ids.size());
-			u.uniform_type = UniformType_UniformBuffer;
 			u.binding = uniforms[i].binding;
 			u.length = 1;
 			u.buffers.push_back(uniforms[i].ids[0]);
@@ -942,8 +935,6 @@ void RenderingDeviceOpenGL::draw_list_bind_pipeline(RID draw_list, RID pipeline)
 	glCheck(glStencilMaskSeparate(GL_BACK, rp->depth_stencil_state.back_op.write_mask));
 
 	// color blend state
-	glCheck(glEnable(GL_ALPHA_TEST));
-	glCheck(glAlphaFunc(GL_GREATER, 0.0001f));
 	glCheck(glSetEnabled(GL_LOGIC_OP, rp->color_blend_state.enable_logic_op));
 	glCheck(glLogicOp(TO_GL(rp->color_blend_state.logic_op)));
 	for (auto & attachment : rp->color_blend_state.attachments)
@@ -1002,10 +993,12 @@ void RenderingDeviceOpenGL::draw_list_bind_index_array(RID draw_list, RID index_
 void RenderingDeviceOpenGL::draw_list_draw(RID draw_list, bool use_indices, size_t instances, size_t procedural_vertices)
 {
 	DrawList * const dl{ VALIDATE((DrawList *)draw_list) };
-	RenderPipeline * const pipeline{ VALIDATE((RenderPipeline *)dl->state.pipeline) };
-	Shader * const pipeline_shader{ VALIDATE((Shader *)dl->state.pipeline_shader) };
 
-	glCheck(glUseProgramObjectARB(pipeline_shader->handle));
+	RenderPipeline * const rp{ VALIDATE((RenderPipeline *)dl->state.pipeline) };
+
+	Shader * const ps{ VALIDATE((Shader *)dl->state.pipeline_shader) };
+
+	glCheck(glUseProgramObjectARB(ps->handle));
 
 	for (uint32_t i = 0; i < dl->state.set_count; ++i)
 	{
@@ -1055,16 +1048,18 @@ void RenderingDeviceOpenGL::draw_list_draw(RID draw_list, bool use_indices, size
 	if (use_indices)
 	{
 		IndexArray * const ia{ VALIDATE((IndexArray *)dl->state.index_array) };
-		for (RID const vertex_buffer : va->buffers) {
-			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VALIDATE((VertexBuffer *)vertex_buffer)->handle));
-			glCheck(glDrawElementsInstanced(pipeline->primitive, ia->index_count, ia->index_type, nullptr, (uint32_t)instances));
+		for (RID const vb : va->buffers)
+		{
+			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VALIDATE((VertexBuffer *)vb)->handle));
+			glCheck(glDrawElementsInstanced(rp->primitive, ia->index_count, ia->index_type, nullptr, (uint32_t)instances));
 		}
 	}
 	else
 	{
-		for (RID const vertex_buffer : va->buffers) {
-			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VALIDATE((VertexBuffer *)vertex_buffer)->handle));
-			glCheck(glDrawArraysInstanced(pipeline->primitive, 0, va->vertex_count, (uint32_t)instances));
+		for (RID const vb : va->buffers)
+		{
+			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VALIDATE((VertexBuffer *)vb)->handle));
+			glCheck(glDrawArraysInstanced(rp->primitive, 0, va->vertex_count, (uint32_t)instances));
 		}
 	}
 }

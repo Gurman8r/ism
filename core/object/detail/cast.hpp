@@ -487,14 +487,16 @@ namespace ism
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
 	> NODISCARD OBJ cast(T && o, ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference, OBJ const & parent = {})
 	{
-		if (policy == ReturnValuePolicy_Automatic) {
+		if (policy == ReturnValuePolicy_Automatic)
+		{
 			policy = (std::is_pointer_v<std::remove_reference_t<T>>
 				? ReturnValuePolicy_TakeOwnership
 				: (std::is_lvalue_reference_v<T>
 					? ReturnValuePolicy_Copy
 					: ReturnValuePolicy_Move));
 		}
-		else if (policy == ReturnValuePolicy_AutomaticReference) {
+		else if (policy == ReturnValuePolicy_AutomaticReference)
+		{
 			policy = (std::is_pointer_v<std::remove_reference_t<T>>
 				? ReturnValuePolicy_Reference
 				: (std::is_lvalue_reference_v<T>

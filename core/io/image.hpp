@@ -11,6 +11,8 @@ namespace ism
 	{
 		OBJECT_COMMON(Image, Resource);
 
+		friend class ImageLoader;
+
 	public:
 		enum Format_
 		{
@@ -73,6 +75,10 @@ namespace ism
 		int32_t m_width{}, m_height{}, m_depth{};
 
 		DynamicBuffer m_pixels{};
+
+	public:
+		using iterator = decltype(m_pixels)::iterator;
+		using const_iterator = decltype(m_pixels)::const_iterator;
 
 	public:
 		Image() noexcept {}

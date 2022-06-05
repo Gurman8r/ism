@@ -26,7 +26,7 @@ OBJECT_EMBED(IntObject, t)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(IntObject, t)
+	t.tp_install = CLASS_INSTALLER(IntObject, t)
 	{
 		return t;
 	};

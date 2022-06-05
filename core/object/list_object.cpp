@@ -22,7 +22,7 @@ OBJECT_EMBED(ListObject, t)
 		}
 	};
 
-	t.tp_bind = CLASS_BINDER(ListObject, t)
+	t.tp_install = CLASS_INSTALLER(ListObject, t)
 	{
 		return t
 

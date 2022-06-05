@@ -166,7 +166,7 @@ namespace ism
 	}
 
 	// class binder helper
-#define CLASS_BINDER(m_class, m_var) \
+#define CLASS_INSTALLER(m_class, m_var) \
 	(ism::impl::ClassBinderHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

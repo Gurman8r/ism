@@ -7,7 +7,7 @@ using namespace ism;
 
 OBJECT_EMBED(CapsuleObject, t)
 {
-	t.tp_bind = CLASS_BINDER(CapsuleObject, t)
+	t.tp_install = CLASS_INSTALLER(CapsuleObject, t)
 	{
 		return t;
 	};

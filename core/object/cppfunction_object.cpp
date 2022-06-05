@@ -16,7 +16,7 @@ OBJECT_EMBED(CppFunctionObject, t)
 		return !obj ? self : (OBJ)METHOD({ self, obj });
 	};
 
-	t.tp_bind = CLASS_BINDER(CppFunctionObject, t)
+	t.tp_install = CLASS_INSTALLER(CppFunctionObject, t)
 	{
 		// manually add this first because it's used by CLASS_
 		t.add_object("__name__", PROPERTY({
@@ -53,13 +53,11 @@ CppFunctionObject::~CppFunctionObject()
 void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in, bool prepend)
 {
 	ASSERT("BAD FUNCTION RECORD" && rec && !rec->next);
-
 	m_record = rec;
 
+	// argument info
 	rec->argument_count = argc_in;
-
 	rec->args.reserve(argc_in);
-
 	for (size_t i = 0; i < argc_in; ++i)
 	{
 		rec->args.push_back(COMPOSE(ArgumentRecord, arg)

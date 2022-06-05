@@ -8,7 +8,7 @@ MEMBER_IMPL(SceneTree::singleton) {};
 
 OBJECT_EMBED(SceneTree, t)
 {
-	t.tp_bind = CLASS_BINDER(SceneTree, t)
+	t.tp_install = CLASS_INSTALLER(SceneTree, t)
 	{
 		return t
 			.def("initialize", &SceneTree::initialize)

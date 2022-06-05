@@ -11,7 +11,7 @@ OBJECT_EMBED(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescr
 
 	t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-	t.tp_bind = CLASS_BINDER(FunctionObject, t)
+	t.tp_install = CLASS_INSTALLER(FunctionObject, t)
 	{
 		return t
 

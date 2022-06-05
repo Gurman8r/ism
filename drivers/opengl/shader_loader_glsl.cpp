@@ -1,7 +1,6 @@
 #if OPENGL_ENABLED
 
 #include <drivers/opengl/shader_loader_glsl.hpp>
-#include <core/io/filesystem.hpp>
 
 using namespace ism;
 

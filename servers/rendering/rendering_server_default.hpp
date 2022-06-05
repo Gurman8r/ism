@@ -1,7 +1,6 @@
 #ifndef _ISM_RENDERING_SERVER_DEFAULT_HPP_
 #define _ISM_RENDERING_SERVER_DEFAULT_HPP_
 
-#include <servers/rendering_server.hpp>
 #include <servers/rendering/renderer_storage.hpp>
 #include <servers/rendering/renderer_viewport.hpp>
 #include <servers/rendering/renderer_canvas_renderer.hpp>
@@ -32,6 +31,7 @@ namespace ism
 
 	public:
 		/* TEXTURE */
+		virtual void texture_destroy(RID texture) override;
 		virtual RID texture_replace(RID old_texture, RID new_texture) override;
 		virtual RID texture2d_create(Ref<Image> const & image) override;
 		virtual RID texture2d_placeholder_create() override;
@@ -47,14 +47,25 @@ namespace ism
 		virtual RID material_create() override;
 		virtual void material_destroy(RID material) override;
 		virtual void material_set_shader(RID material, RID shader) override;
+		virtual void material_set_param(RID material, String const & key, OBJ const & value) override;
 
 	public:
 		/* MESH */
-		virtual RID mesh_create() override;
+		virtual RID mesh_create(Vector<SurfaceData> const & surfaces = {}) override;
+		virtual void mesh_destroy(RID mesh) override;
+		virtual void mesh_clear(RID mesh) override;
+		virtual void mesh_add_surface(RID mesh, SurfaceData const & surface) override;
+		virtual size_t mesh_get_surface_count(RID mesh) override;
+
+		virtual RD::PrimitiveType_ mesh_surface_get_primitive(RID mesh, size_t index) override;
+		virtual RID mesh_surface_get_vertex_array(RID mesh, size_t index) override;
+		virtual RID mesh_surface_get_index_array(RID mesh, size_t index) override;
+		virtual RID mesh_surface_get_material(RID mesh, size_t index) override;
 
 	public:
 		/* CAMERA */
 		virtual RID camera_create() override;
+		virtual void camera_destroy(RID camera) override;
 
 	public:
 		/* VIEWPORT */

@@ -50,7 +50,7 @@ static TextServer *			g_text{};
 
 Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	OS->initialize();
+	SYSTEM->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -86,7 +86,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_server_singletons();
 	
-	OS->set_cmdline(exepath, { argv, argv + argc });
+	SYSTEM->set_cmdline(exepath, { argv, argv + argc });
 
 	// event system
 	g_bus = memnew(EventBus);
@@ -104,7 +104,6 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 		{ RendererAPI_OpenGL, 4, 6, RendererProfile_Compat, 24, 8, true, false },
 		WindowHints_Default_Maximized & ~(WindowHints_Doublebuffer)
 		}));
-	
 	WindowID main_window{ g_display->get_current_context() };
 	g_display->window_set_char_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharEvent(x...)); });
 	g_display->window_set_char_mods_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharModsEvent(x...)); });
@@ -185,7 +184,7 @@ bool Main::start()
 #endif
 	}
 	
-	OS->set_main_loop(main_loop);
+	SYSTEM->set_main_loop(main_loop);
 
 	main_loop->initialize();
 
@@ -209,12 +208,16 @@ bool Main::iteration()
 	static Vec2 last_mouse_pos{};
 	g_input->m_state.mouse_delta = g_input->m_state.mouse_pos - last_mouse_pos;
 	last_mouse_pos = g_input->m_state.mouse_pos;
-	for (size_t i = 0; i < MouseButton_MAX; ++i) { g_input->m_state.mouse_down_duration[i] = (g_input->m_state.mouse_down[i] ? (g_input->m_state.mouse_down_duration[i] < 0.f ? 0.f : g_input->m_state.mouse_down_duration[i] + delta_time) : -1.f); }
-	for (size_t i = 0; i < KeyCode_MAX; ++i) { g_input->m_state.keys_down_duration[i] = (g_input->m_state.keys_down[i] ? (g_input->m_state.keys_down_duration[i] < 0.f ? 0.f : g_input->m_state.keys_down_duration[i] + delta_time) : -1.f); }
+	for (size_t i = 0; i < MouseButton_MAX; ++i) {
+		g_input->m_state.mouse_down_duration[i] = (g_input->m_state.mouse_down[i] ? (g_input->m_state.mouse_down_duration[i] < 0.f ? 0.f : g_input->m_state.mouse_down_duration[i] + delta_time) : -1.f);
+	}
+	for (size_t i = 0; i < KeyCode_MAX; ++i) {
+		g_input->m_state.keys_down_duration[i] = (g_input->m_state.keys_down[i] ? (g_input->m_state.keys_down_duration[i] < 0.f ? 0.f : g_input->m_state.keys_down_duration[i] + delta_time) : -1.f);
+	}
 	SCOPE_EXIT(&) { g_input->m_state.scroll = {}; g_input->m_state.last_char = 0; };
 
 	ImGui_NewFrame();
-	if (OS->get_main_loop()->process(delta_time)) { should_close = true; }
+	if (SYSTEM->get_main_loop()->process(delta_time)) { should_close = true; }
 	ImGui::Render();
 
 	RENDERING_DEVICE->draw_list_begin_for_screen(g_display->get_current_context());
@@ -236,8 +239,8 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	OS->get_main_loop()->finalize();
-	OS->delete_main_loop();
+	SYSTEM->get_main_loop()->finalize();
+	SYSTEM->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -253,7 +256,7 @@ void Main::cleanup()
 
 	//memdelete(g_audio);
 
-	OS->finalize();
+	SYSTEM->finalize();
 
 	ImGui_Shutdown();
 	ImGui::DestroyContext();
@@ -270,7 +273,7 @@ void Main::cleanup()
 	unregister_core_types();
 
 	memdelete(g_internals);
-	OS->finalize_core();
+	SYSTEM->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

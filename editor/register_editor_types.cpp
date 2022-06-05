@@ -9,8 +9,7 @@ using namespace ism;
 
 void ism::register_editor_types()
 {
-	REGISTER_OBJECT_CLASS
-	(
+	INTERNALS->install_classes<
 		EditorCamera,
 		EditorNode,
 
@@ -18,7 +17,7 @@ void ism::register_editor_types()
 		EditorHierarchy,
 		EditorLog,
 		EditorViewport
-	);
+	>();
 }
 
 void ism::unregister_editor_types()
