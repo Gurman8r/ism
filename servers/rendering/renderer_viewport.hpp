@@ -25,7 +25,7 @@ namespace ism
 		FORCE_INLINE static RendererViewport * get_singleton() noexcept { return singleton; }
 
 	public:
-		struct Viewport final
+		struct Viewport
 		{
 			RID self{}, parent{};
 

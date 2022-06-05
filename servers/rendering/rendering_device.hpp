@@ -602,16 +602,6 @@ namespace ism
 
 	public:
 		/* PIPELINE API */
-		enum PrimitiveType_
-		{
-			PrimitiveType_Points,
-			PrimitiveType_Lines,
-			PrimitiveType_LineStrip,
-			PrimitiveType_Triangles,
-			PrimitiveType_TriangleStrip,
-			PrimitiveType_MAX
-		};
-
 		enum RenderPrimitive_
 		{
 			RenderPrimitive_Points,

@@ -1,7 +1,8 @@
 #ifndef _ISM_MATERIAL_HPP_
 #define _ISM_MATERIAL_HPP_
 
-#include <core/io/resource.hpp>
+#include <scene/resources/shader.hpp>
+#include <scene/resources/texture.hpp>
 
 namespace ism
 {
@@ -11,19 +12,50 @@ namespace ism
 	{
 		OBJECT_COMMON(Material, Resource);
 
-	protected:
 		RID m_material;
 
+	protected:
 		Material();
 
 	public:
 		virtual ~Material();
 
-		NODISCARD virtual RID get_rid() const { return m_material; }
+		virtual Error_ reload_from_file() override = 0;
+
+		NODISCARD virtual RID get_rid() const override { return m_material; }
 
 		NODISCARD virtual RID get_shader_rid() const = 0;
 
-		virtual Error_ reload_from_file() override = 0;
+		NODISCARD virtual Shader::Mode_ get_shader_mode() const = 0;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API ShaderMaterial : public Material
+	{
+		OBJECT_COMMON(ShaderMaterial, Material);
+
+		Ref<Shader> m_shader;
+
+	public:
+		explicit ShaderMaterial();
+
+		explicit ShaderMaterial(Path const & path) noexcept { set_path(path); reload_from_file(); }
+
+		virtual ~ShaderMaterial() override;
+
+		virtual Error_ reload_from_file() override;
+
+		NODISCARD virtual RID get_shader_rid() const override;
+
+		NODISCARD virtual Shader::Mode_ get_shader_mode() const override;
+
+	public:
+		NODISCARD Ref<Shader> get_shader() const;
+		void set_shader(Ref<Shader> const & value);
+
+		NODISCARD OBJ get_shader_param(String const & key) const;
+		void set_shader_param(String const & key, OBJ const & value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -49,20 +81,22 @@ namespace ism
 		};
 
 	public:
-		BaseMaterial3D();
+		explicit BaseMaterial3D();
 
 		explicit BaseMaterial3D(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
-		virtual ~BaseMaterial3D();
+		virtual ~BaseMaterial3D() override;
+
+		virtual Error_ reload_from_file() override;
 
 		NODISCARD virtual RID get_shader_rid() const override;
 
-		virtual Error_ reload_from_file() override;
+		NODISCARD virtual Shader::Mode_ get_shader_mode() const override;
 
 	private:
 		void _update_shader();
 
-		struct Params final
+		struct Params
 		{
 			Color albedo{};
 			float_t specular{};
@@ -71,12 +105,13 @@ namespace ism
 		m_params{};
 
 	public:
-		Color get_albedo() const { return m_params.albedo; }
-		float_t get_specular() const { return m_params.specular; }
-		float_t get_metallic() const { return m_params.metallic; }
-
+		NODISCARD Color get_albedo() const { return m_params.albedo; }
 		void set_albedo(Color const & value);
+
+		NODISCARD float_t get_specular() const { return m_params.specular; }
 		void set_specular(float_t value);
+
+		NODISCARD float_t get_metallic() const { return m_params.metallic; }
 		void set_metallic(float_t value);
 	};
 

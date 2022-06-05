@@ -1,4 +1,3 @@
-#include <core/io/image.hpp>
 #include <core/io/image_loader.hpp>
 
 using namespace ism;
@@ -42,8 +41,6 @@ Error_ Image::reload_from_file()
 	return ImageLoader::load_image(*this, get_path());
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 void Image::clear()
 {
 	m_pixels = {};
@@ -86,33 +83,26 @@ void Image::flip_horizontally()
 	}
 }
 
-Color32 Image::get_pixel(size_t i) const
+Color32 Image::get_pixel(size_t index) const
 {
-	const_iterator it{ m_pixels.begin() + i };
-	byte const r{ m_depth >= 1 ? *(it + i + 0) : (byte)0 };
-	byte const g{ m_depth >= 2 ? *(it + i + 1) : (byte)0 };
-	byte const b{ m_depth >= 3 ? *(it + i + 2) : (byte)0 };
-	byte const a{ m_depth >= 4 ? *(it + i + 3) : (byte)0xFF };
-	return ((uint32_t)a << 24) | ((uint32_t)b << 16) | ((uint32_t)g << 8) | ((uint32_t)r << 0);
+	ASSERT((int32_t)index + m_depth < get_capacity());
+	const_iterator const it{ m_pixels.begin() + index };
+	byte r{}, g{}, b{}, a{ byte::max };
+	if (m_depth >= 1) { r = *(it + 0); }
+	if (m_depth >= 2) { g = *(it + 1); }
+	if (m_depth >= 3) { b = *(it + 2); }
+	if (m_depth >= 4) { a = *(it + 3); }
+	return COLOR32(r, g, b, a);
 }
 
-Color32 Image::get_pixel(size_t x, size_t y) const
+void Image::set_pixel(size_t index, Color32 value)
 {
-	return get_pixel((x + y * m_width) * m_depth);
-}
-
-void Image::set_pixel(size_t i, Color32 value)
-{
-	iterator it{ m_pixels.begin() + i };
-	if (m_depth >= 1) { *it = (byte)((int32_t)(value >> 0) & 0xFF); }
-	if (m_depth >= 2) { *it = (byte)((int32_t)(value >> 8) & 0xFF); }
-	if (m_depth >= 3) { *it = (byte)((int32_t)(value >> 16) & 0xFF); }
-	if (m_depth >= 4) { *it = (byte)((int32_t)(value >> 24) & 0xFF); }
-}
-
-void Image::set_pixel(size_t x, size_t y, Color32 value)
-{
-	set_pixel(((x + y * m_width) * m_depth), value);
+	ASSERT((int32_t)index + m_depth < get_capacity());
+	iterator const it{ m_pixels.begin() + index };
+	if (m_depth >= 1) { *(it + 0) = COLOR32_R(value); }
+	if (m_depth >= 2) { *(it + 1) = COLOR32_G(value); }
+	if (m_depth >= 3) { *(it + 2) = COLOR32_B(value); }
+	if (m_depth >= 4) { *(it + 3) = COLOR32_A(value); }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

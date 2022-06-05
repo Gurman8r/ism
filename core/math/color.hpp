@@ -174,6 +174,23 @@ namespace ism
 	
 	ALIAS(Color32) uint32_t;
 
+#define COLOR32_R_SHIFT 0
+#define COLOR32_G_SHIFT 8
+#define COLOR32_B_SHIFT 16
+#define COLOR32_A_SHIFT 24
+#define COLOR32_A_MASK 0xFF000000
+
+#define COLOR32(r, g, b, a) \
+	((Color32)((byte)(a)) << COLOR32_A_SHIFT) | \
+	((Color32)((byte)(b)) << COLOR32_B_SHIFT) | \
+	((Color32)((byte)(g)) << COLOR32_B_SHIFT) | \
+	((Color32)((byte)(r)) << COLOR32_A_SHIFT)
+
+#define COLOR32_R(c) ((byte)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
+#define COLOR32_G(c) ((byte)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
+#define COLOR32_B(c) ((byte)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
+#define COLOR32_A(c) ((byte)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class Colors final

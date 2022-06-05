@@ -13,10 +13,8 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-size_t _load_vertices(aiMesh const * mesh, DynamicBuffer & data)
+size_t load_mesh_vertices(aiMesh const * mesh, DynamicBuffer & data)
 {
-	ASSERT(mesh);
-
 	for (size_t i = 0; i < (size_t)mesh->mNumVertices; ++i)
 	{
 		// position
@@ -60,10 +58,8 @@ size_t _load_vertices(aiMesh const * mesh, DynamicBuffer & data)
 	return data.size() / get_data_type_size(DataType_F32);
 }
 
-size_t _load_indices(aiMesh const * mesh, DynamicBuffer & data)
+size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
 {
-	ASSERT(mesh);
-
 	for (size_t i = 0; i < (size_t)mesh->mNumFaces; ++i)
 	{
 		aiFace face{ mesh->mFaces[i] };
@@ -77,7 +73,7 @@ size_t _load_indices(aiMesh const * mesh, DynamicBuffer & data)
 	return data.size() / RD::get_index_buffer_format_size(RD::IndexbufferFormat_U32);
 }
 
-void _load_textures(aiMaterial const * material, Vector<Ref<Texture>> & textures)
+void load_material_textures(aiMaterial const * material, Vector<Ref<Texture>> & textures)
 {
 	if (!material) { return; }
 
@@ -99,24 +95,24 @@ void _load_textures(aiMaterial const * material, Vector<Ref<Texture>> & textures
 	_load_material_texture(aiTextureType_SPECULAR, "sm"); // specular
 }
 
-void _process_node(aiScene const * scene, aiNode const * node, Vector<RS::SurfaceData> & surfaces)
+void load_mesh_spec(aiScene const * scene, aiNode const * node, Vector<RS::SurfaceData> & spec)
 {
 	for (size_t i = 0; i < (size_t)node->mNumMeshes; ++i)
 	{
 		aiMesh const * m{ scene->mMeshes[node->mMeshes[i]] };
 
-		RS::SurfaceData & s{ surfaces.emplace_back(RS::SurfaceData{}) };
-		s.primitive = RD::PrimitiveType_Triangles;
-		s.vertex_count = _load_vertices(m, s.vertex_data);
-		s.index_count = _load_indices(m, s.index_data);
+		RS::SurfaceData & s{ spec.emplace_back(RS::SurfaceData{}) };
+		s.primitive = RS::Primitive_Triangles;
+		s.vertex_count = load_mesh_vertices(m, s.vertex_data);
+		s.index_count = load_mesh_indices(m, s.index_data);
 
 		Vector<Ref<Texture>> textures;
-		_load_textures(scene->mMaterials[m->mMaterialIndex], textures);
+		load_material_textures(scene->mMaterials[m->mMaterialIndex], textures);
 	}
 
 	for (size_t i = 0; i < (size_t)node->mNumChildren; ++i)
 	{
-		_process_node(scene, node->mChildren[i], surfaces);
+		load_mesh_spec(scene, node->mChildren[i], spec);
 	}
 }
 
@@ -125,7 +121,9 @@ void _process_node(aiScene const * scene, aiNode const * node, Vector<RS::Surfac
 Error_ MeshLoader::load_mesh(Mesh & mesh, Path const & path)
 {
 	if (!path) { return Error_Unknown; }
+	if (mesh.m_mesh) { RENDERING_SERVER->mesh_destroy(mesh.m_mesh); }
 
+	// open file
 	Assimp::Importer ai;
 	aiScene const * scene{ ai.ReadFile(path.c_str(),
 		aiProcess_CalcTangentSpace |
@@ -136,10 +134,13 @@ Error_ MeshLoader::load_mesh(Mesh & mesh, Path const & path)
 		aiProcess_GenUVCoords) };
 	SCOPE_EXIT(&ai) { ai.FreeScene(); };
 
-	Vector<RS::SurfaceData> surfaces;
-	_process_node(scene, scene->mRootNode, surfaces);
-	if (mesh.m_mesh) { RENDERING_SERVER->mesh_destroy(mesh.m_mesh); }
-	mesh.m_mesh = RENDERING_SERVER->mesh_create(surfaces);
+	// generate spec
+	Vector<RS::SurfaceData> spec;
+	load_mesh_spec(scene, scene->mRootNode, spec);
+
+	// create mesh
+	mesh.m_mesh = RENDERING_SERVER->mesh_create(spec);
+	if (!mesh.m_mesh) { return Error_Unknown; }
 
 	return Error_None;
 }

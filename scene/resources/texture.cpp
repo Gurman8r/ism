@@ -1,5 +1,4 @@
 #include <scene/resources/texture.hpp>
-#include <servers/rendering_server.hpp>
 
 using namespace ism;
 

@@ -57,7 +57,7 @@ namespace ism
 		virtual void mesh_add_surface(RID mesh, SurfaceData const & surface) override;
 		virtual size_t mesh_get_surface_count(RID mesh) override;
 
-		virtual RD::PrimitiveType_ mesh_surface_get_primitive(RID mesh, size_t index) override;
+		virtual RS::Primitive_ mesh_surface_get_primitive(RID mesh, size_t index) override;
 		virtual RID mesh_surface_get_vertex_array(RID mesh, size_t index) override;
 		virtual RID mesh_surface_get_index_array(RID mesh, size_t index) override;
 		virtual RID mesh_surface_get_material(RID mesh, size_t index) override;

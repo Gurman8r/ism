@@ -1,5 +1,5 @@
 #include <scene/resources/material.hpp>
-#include <servers/rendering_server.hpp>
+#include <scene/resources/shader.hpp>
 
 using namespace ism;
 
@@ -19,14 +19,63 @@ Material::~Material()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(BaseMaterial3D, t) {}
+OBJECT_EMBED(ShaderMaterial, t) {}
 
-BaseMaterial3D::BaseMaterial3D() : Material{}
+ShaderMaterial::ShaderMaterial() : Material{} {}
+
+ShaderMaterial::~ShaderMaterial() {}
+
+Error_ ShaderMaterial::reload_from_file()
+{
+	if (!get_path()) { return Error_Unknown; }
+
+	return Error_None;
+}
+
+RID ShaderMaterial::get_shader_rid() const
+{
+	if (!m_shader) { return nullptr; }
+	return m_shader->get_rid();
+}
+
+Shader::Mode_ ShaderMaterial::get_shader_mode() const
+{
+	return m_shader->get_mode();
+}
+
+Ref<Shader> ShaderMaterial::get_shader() const
+{
+	return m_shader;
+}
+
+void ShaderMaterial::set_shader(Ref<Shader> const & value)
+{
+	if (m_shader == value) { return; }
+	m_shader = value;
+}
+
+OBJ ShaderMaterial::get_shader_param(String const & key) const
+{
+	return nullptr;
+}
+
+void ShaderMaterial::set_shader_param(String const & key, OBJ const & value)
 {
 }
 
-BaseMaterial3D::~BaseMaterial3D()
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+OBJECT_EMBED(BaseMaterial3D, t) {}
+
+BaseMaterial3D::BaseMaterial3D() : Material{} {}
+
+BaseMaterial3D::~BaseMaterial3D() {}
+
+Error_ BaseMaterial3D::reload_from_file()
 {
+	if (!get_path()) { return Error_Unknown; }
+
+	return Error_None;
 }
 
 RID BaseMaterial3D::get_shader_rid() const
@@ -34,11 +83,9 @@ RID BaseMaterial3D::get_shader_rid() const
 	return nullptr;
 }
 
-Error_ BaseMaterial3D::reload_from_file()
+Shader::Mode_ BaseMaterial3D::get_shader_mode() const
 {
-	if (!get_path()) { return Error_Unknown; }
-
-	return Error_None;
+	return Shader::Mode_Spatial;
 }
 
 void BaseMaterial3D::_update_shader()

@@ -1,11 +1,6 @@
 #include <editor/editor_node.hpp>
 #include <scene/gui/imgui.hpp>
 
-#include <servers/rendering/renderer_canvas_renderer.hpp>
-#include <servers/rendering/renderer_scene_renderer.hpp>
-#include <servers/rendering/renderer_storage.hpp>
-#include <servers/rendering/renderer_viewport.hpp>
-
 using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -106,17 +101,12 @@ EditorNode::EditorNode()
 
 	subscribe<WindowKeyEvent, WindowMouseButtonEvent, WindowMousePositionEvent, WindowScrollEvent>();
 	
-	//m_textures["earth_cm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_cm_2k.png");
 	m_textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
-	//m_textures["earth_hm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_hm_2k.png");
-	//m_textures["earth_lm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_lm_2k.png");
-	//m_textures["earth_nm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_nm_2k.png");
 	m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
 	m_meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-	m_shaders["3d"].instance("../../../assets/shaders/3d.json");
-	//m_shaders["2d"].instance("../../../assets/shaders/2d.json");
+	m_shaders["3D"].instance("../../../assets/shaders/3d.json");
 
-	RID const shader{ m_shaders["3d"]->get_rid() };
+	RID const shader{ m_shaders["3D"]->get_rid() };
 	_setup_pipeline(shader);
 
 	uniform_buffers[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::ConstantBuffer<Mat4, Mat4>));
@@ -141,11 +131,11 @@ EditorNode::EditorNode()
 		{ RD::UniformType_Texture, 1, { m_textures["earth_sm_2k"]->get_rid() } },
 	}, shader);
 
-	material = RENDERER_STORAGE->material_create();
-	RENDERER_STORAGE->material_set_shader(material, shader);
+	material = RENDERING_SERVER->material_create();
+	RENDERING_SERVER->material_set_shader(material, shader);
 	
-	Vector<RID> fb_textures
-	{
+	// framebuffer
+	Vector<RID> fb_textures{
 		RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_R8G8B8_UNORM;
 			t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
@@ -163,7 +153,7 @@ EditorNode::~EditorNode()
 {
 	ASSERT(this == singleton); SCOPE_EXIT(&) { singleton = nullptr; };
 
-	if (material) { RENDERER_STORAGE->material_destroy(material); }
+	if (material) { RENDERING_SERVER->material_destroy(material); }
 
 	for (size_t i = 0; i < MAX_UNIFORMS; ++i) {
 		if (uniform_buffers[i]) { RENDERING_DEVICE->buffer_destroy(uniform_buffers[i]); }
@@ -211,7 +201,9 @@ void EditorNode::process(Duration const dt)
 	editor_camera->recalculate();
 
 	{
-		Mat4 const cam_projection{ editor_camera->get_proj() }, cam_transform{ editor_camera->get_view() };
+		Mat4 const
+			cam_projection{ editor_camera->get_proj() },
+			cam_transform{ editor_camera->get_view() };
 
 		static RD::ConstantBuffer<Mat4, Mat4> scene_ubo_data;
 		scene_ubo_data.set<0>(cam_projection); // projection matrix
@@ -241,8 +233,8 @@ void EditorNode::process(Duration const dt)
 
 		static Mesh * mesh{ *m_meshes["sphere32x24"] };
 		for (size_t i = 0; i < mesh->get_surface_count(); ++i) {
-			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, mesh->get_vertex_array(i));
-			RENDERING_DEVICE->draw_list_bind_index_array(dl, mesh->get_index_array(i));
+			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, mesh->surface_get_vertex_array(i));
+			RENDERING_DEVICE->draw_list_bind_index_array(dl, mesh->surface_get_index_array(i));
 			RENDERING_DEVICE->draw_list_draw(dl, true, 1, 0);
 		}
 

@@ -49,11 +49,7 @@ void EditorViewport::process(Duration const dt)
 		m_editor_camera.do_pitch(+md[1]);
 	}
 
-	if (nav_enabled) {
-	}
-
 	if (ImGui::BeginMenuBar()) {
-		ImGui::Text("Focused: %s", nav_enabled ? "TRUE" : "FALSE");
 		ImGui::EndMenuBar();
 	}
 

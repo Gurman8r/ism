@@ -1,12 +1,10 @@
 #ifndef _ISM_MESH_HPP_
 #define _ISM_MESH_HPP_
 
-#include <core/io/resource.hpp>
+#include <servers/rendering_server.hpp>
 
 namespace ism
 {
-	class Texture;
-
 	class ISM_API Mesh : public Resource
 	{
 		OBJECT_COMMON(Mesh, Resource);
@@ -28,9 +26,13 @@ namespace ism
 
 		NODISCARD virtual size_t get_surface_count() const;
 
-		NODISCARD virtual RID get_vertex_array(size_t index) const;
+		NODISCARD virtual RS::Primitive_ surface_get_primitive(size_t index) const;
 
-		NODISCARD virtual RID get_index_array(size_t index) const;
+		NODISCARD virtual RID surface_get_vertex_array(size_t index) const;
+
+		NODISCARD virtual RID surface_get_index_array(size_t index) const;
+
+		NODISCARD virtual RID surface_get_material(size_t index) const;
 	};
 }
 

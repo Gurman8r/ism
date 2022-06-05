@@ -1,8 +1,4 @@
-#include <scene/resources/mesh.hpp>
 #include <scene/resources/mesh_loader.hpp>
-#include <scene/resources/texture.hpp>
-#include <servers/rendering_server.hpp>
-#include <servers/rendering/renderer_storage.hpp>
 
 using namespace ism;
 
@@ -25,14 +21,24 @@ size_t Mesh::get_surface_count() const
 	return RENDERING_SERVER->mesh_get_surface_count(m_mesh);
 }
 
-RID Mesh::get_vertex_array(size_t index) const
+RS::Primitive_ Mesh::surface_get_primitive(size_t index) const
+{
+	return RENDERING_SERVER->mesh_surface_get_primitive(m_mesh, index);
+}
+
+RID Mesh::surface_get_vertex_array(size_t index) const
 {
 	return RENDERING_SERVER->mesh_surface_get_vertex_array(m_mesh, index);
 }
 
-RID Mesh::get_index_array(size_t index) const
+RID Mesh::surface_get_index_array(size_t index) const
 {
 	return RENDERING_SERVER->mesh_surface_get_index_array(m_mesh, index);
+}
+
+RID Mesh::surface_get_material(size_t index) const
+{
+	return RENDERING_SERVER->mesh_surface_get_material(m_mesh, index);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

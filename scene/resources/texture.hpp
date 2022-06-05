@@ -1,7 +1,7 @@
 #ifndef _ISM_TEXTURE_HPP_
 #define _ISM_TEXTURE_HPP_
 
-#include <core/io/image.hpp>
+#include <servers/rendering_server.hpp>
 
 namespace ism
 {

@@ -52,19 +52,20 @@ Ref<Image> Glyph::get_image() const
 RID TextServer::font_create(FontCreateInfo const & spec)
 {
 	FT_Library library;
+	FT_Face face;
+	FT_Stroker stroker;
+
 	if (FT_Init_FreeType(&library)) {
 		SYSTEM->printerr("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
 		return nullptr;
 	}
 
-	FT_Face face;
 	if (FT_New_Face(library, spec.path.c_str(), 0, &face)) {
 		SYSTEM->printerr("FAILED LOADING FONT FACE: %s", spec.path.c_str());
 		FT_Done_FreeType(library);
 		return nullptr;
 	}
 
-	FT_Stroker stroker;
 	if (FT_Stroker_New(library, &stroker)) {
 		SYSTEM->printerr("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
 		FT_Done_Face(face);

@@ -3,12 +3,6 @@
 
 #include <scene/gui/imgui.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/resources/font.hpp>
-#include <scene/resources/material.hpp>
-#include <scene/resources/mesh.hpp>
-#include <scene/resources/shader.hpp>
-#include <scene/resources/text_file.hpp>
-#include <scene/resources/texture.hpp>
 
 #define EDITOR_PANEL_SCOPE(open)						\
 	(open) = ism::EditorPanel::begin_window();			\

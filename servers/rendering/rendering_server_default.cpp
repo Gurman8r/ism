@@ -197,7 +197,7 @@ void RenderingServerDefault::mesh_add_surface(RID mesh, SurfaceData const & surf
 	m_storage->mesh_add_surface(mesh, surface);
 }
 
-RD::PrimitiveType_ RenderingServerDefault::mesh_surface_get_primitive(RID mesh, size_t index)
+RS::Primitive_ RenderingServerDefault::mesh_surface_get_primitive(RID mesh, size_t index)
 {
 	return m_storage->mesh_surface_get_primitive(mesh, index);
 }

@@ -30,14 +30,6 @@ namespace ism
 
 	public:
 		/* SHADER */
-		enum ShaderType_
-		{
-			ShaderType_2D,
-			ShaderType_3D,
-			ShaderType_Particles,
-			ShaderType_Sky,
-			ShaderType_MAX
-		};
 
 	public:
 		/* MATERIAL */
@@ -62,14 +54,13 @@ namespace ism
 		{
 			struct Surface
 			{
-				RD::PrimitiveType_ primitive{};
+				RS::Primitive_ primitive{};
 
 				RID vertex_array{};
-				size_t vertex_count{};
-				size_t vertex_buffer_size{};
+				size_t vertex_count{}, vertex_buffer_size{};
 
 				RID index_array{};
-				size_t index_count{};
+				size_t index_count{}, index_buffer_size{};
 
 				RID material{};
 				RID uniform_set{};
@@ -84,7 +75,7 @@ namespace ism
 		void mesh_add_surface(RID mesh, RS::SurfaceData const & surf);
 		size_t mesh_get_surface_count(RID mesh);
 
-		RD::PrimitiveType_ mesh_surface_get_primitive(RID mesh, size_t index);
+		RS::Primitive_ mesh_surface_get_primitive(RID mesh, size_t index);
 		RID mesh_surface_get_vertex_array(RID mesh, size_t index);
 		RID mesh_surface_get_index_array(RID mesh, size_t index);
 		RID mesh_surface_get_material(RID mesh, size_t index);

@@ -70,21 +70,7 @@ RID RendererStorage::mesh_create(Vector<RS::SurfaceData> const & surfaces)
 
 	for (RS::SurfaceData const & surface : surfaces)
 	{
-		Mesh::Surface * const s{ m->surfaces.emplace_back(memnew(Mesh::Surface{})) };
-		s->primitive = surface.primitive;
-		s->material = nullptr;
-		s->uniform_set = nullptr;
-
-		RID vb{ RENDERING_DEVICE->vertex_buffer_create(surface.vertex_data.size(), surface.vertex_data) };
-		RID va{ RENDERING_DEVICE->vertex_array_create(surface.vertex_count, {}, { vb }) };
-		s->vertex_array = va;
-		s->vertex_count = surface.vertex_count;
-		s->vertex_buffer_size = surface.vertex_data.size();
-
-		RID ib{ RENDERING_DEVICE->index_buffer_create(surface.index_count, RD::IndexbufferFormat_U32, surface.index_data) };
-		RID ia{ RENDERING_DEVICE->index_array_create(ib, 0, surface.index_count) };
-		s->index_array = ia;
-		s->index_count = surface.index_count;
+		mesh_add_surface((RID)m, surface);
 	}
 
 	return (RID)m;
@@ -94,8 +80,9 @@ void RendererStorage::mesh_destroy(RID mesh)
 {
 	Mesh * const m{ VALIDATE((Mesh *)mesh) };
 
-	for (Mesh::Surface * s : m->surfaces) {
-		if (!s) { continue; }
+	for (Mesh::Surface * s : m->surfaces)
+	{
+		ASSERT(s);
 		if (s->vertex_array) { RENDERING_DEVICE->vertex_array_destroy(s->vertex_array); }
 		if (s->index_array) { RENDERING_DEVICE->index_array_destroy(s->index_array); }
 		if (s->uniform_set) { RENDERING_DEVICE->uniform_set_destroy(s->uniform_set); }
@@ -114,22 +101,26 @@ void RendererStorage::mesh_clear(RID mesh)
 void RendererStorage::mesh_add_surface(RID mesh, RS::SurfaceData const & surface)
 {
 	Mesh * const m{ VALIDATE((Mesh *)mesh) };
-
 	Mesh::Surface * const s{ m->surfaces.emplace_back(memnew(Mesh::Surface{})) };
 	s->primitive = surface.primitive;
-	s->material = nullptr;
-	s->uniform_set = nullptr;
 
+	// vertices
 	RID vb{ RENDERING_DEVICE->vertex_buffer_create(surface.vertex_data.size(), surface.vertex_data) };
 	RID va{ RENDERING_DEVICE->vertex_array_create(surface.vertex_count, {}, { vb }) };
 	s->vertex_array = va;
 	s->vertex_count = surface.vertex_count;
 	s->vertex_buffer_size = surface.vertex_data.size();
 
+	// indices
 	RID ib{ RENDERING_DEVICE->index_buffer_create(surface.index_count, RD::IndexbufferFormat_U32, surface.index_data) };
 	RID ia{ RENDERING_DEVICE->index_array_create(ib, 0, surface.index_count) };
 	s->index_array = ia;
 	s->index_count = surface.index_count;
+	s->index_buffer_size = surface.index_data.size();
+
+	// material
+	s->material = nullptr;
+	s->uniform_set = nullptr;
 }
 
 size_t RendererStorage::mesh_get_surface_count(RID mesh)
@@ -138,7 +129,7 @@ size_t RendererStorage::mesh_get_surface_count(RID mesh)
 	return m->surfaces.size();
 }
 
-RD::PrimitiveType_ RendererStorage::mesh_surface_get_primitive(RID mesh, size_t index)
+RS::Primitive_ RendererStorage::mesh_surface_get_primitive(RID mesh, size_t index)
 {
 	Mesh * const m{ VALIDATE((Mesh *)mesh) };
 	ASSERT(index < m->surfaces.size());

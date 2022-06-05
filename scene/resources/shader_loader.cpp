@@ -17,28 +17,34 @@ using namespace ism;
 Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 {
 	if (!path) { return Error_Unknown; }
+	if (shader.m_shader) { RENDERING_DEVICE->shader_destroy(shader.m_shader); }
 
-	// load json file
+	// open file
 	std::ifstream file{ path.c_str() };
 	SCOPE_EXIT(&file) { file.close(); };
 	if (!file) { return Error_Unknown; }
+
 	JSON json{ JSON::parse(file) };
 	if (json.empty()) { return Error_Unknown; }
 
+	JSON::const_iterator lang{ json.find("lang") };
+	if (lang == json.end()) { return Error_Unknown; }
+
 	// generate spec
 	RD::ShaderCreateInfo spec;
-	auto lang{ json.find("lang") };
-	ASSERT(lang != json.end());
-	switch (hash(lang->get<String>())) {
-	default: { return Error_Unknown; } break;
-	case "GLSL"_hash: {
+	switch (hash(util::to_lower(lang->get<String>())))
+	{
+	// GLSL
+	case "glsl"_hash: {
 #if OPENGL_ENABLED
 		spec = ShaderLoaderGLSL::create_shader_spec(json);
 #else
 		CRASH("OPENGL IS NOT ENABLED");
 #endif
 	} break;
-	case "HLSL"_hash: {
+
+	// HLSL
+	case "hlsl"_hash: {
 #if DIRECTX_ENABLED
 		spec = ShaderLoaderHLSL::create_shader_spec(json);
 #else
@@ -48,7 +54,6 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 	}
 
 	// create shader
-	if (shader.m_shader) { RENDERING_DEVICE->shader_destroy(shader.m_shader); }
 	shader.m_shader = RENDERING_DEVICE->shader_create(spec);
 	if (!shader.m_shader) { return Error_Unknown; }
 

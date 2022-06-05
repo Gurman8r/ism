@@ -68,17 +68,15 @@ namespace ism
 		};
 
 	private:
-		friend class ImageLoader;
-
 		Format_ m_format{};
 
 		int32_t m_width{}, m_height{}, m_depth{};
-
+		
 		DynamicBuffer m_pixels{};
 
 	public:
-		using iterator = decltype(m_pixels)::iterator;
-		using const_iterator = decltype(m_pixels)::const_iterator;
+		using iterator = typename decltype(m_pixels)::iterator;
+		using const_iterator = typename decltype(m_pixels)::const_iterator;
 
 	public:
 		Image() noexcept {}
@@ -91,6 +89,13 @@ namespace ism
 
 		virtual Error_ reload_from_file() override;
 
+		void clear();
+
+		void flip_vertically();
+
+		void flip_horizontally();
+
+	public:
 		NODISCARD virtual RID get_rid() const override { return RID{}; }
 
 		NODISCARD int32_t get_width() const noexcept { return m_width; }
@@ -105,20 +110,13 @@ namespace ism
 
 		NODISCARD DynamicBuffer const & get_data() const noexcept { return m_pixels; }
 
-	public:
-		void clear();
+		NODISCARD Color32 get_pixel(size_t index) const;
 
-		void flip_vertically();
+		NODISCARD Color32 get_pixel(size_t x, size_t y) const noexcept { return get_pixel((x + y * m_width) * m_depth); }
 
-		void flip_horizontally();
+		void set_pixel(size_t index, Color32 value);
 
-		NODISCARD Color32 get_pixel(size_t i) const;
-
-		NODISCARD Color32 get_pixel(size_t x, size_t y) const;
-
-		void set_pixel(size_t i, Color32 value);
-
-		void set_pixel(size_t x, size_t y, Color32 value);
+		void set_pixel(size_t x, size_t y, Color32 value) noexcept { set_pixel(((x + y * m_width) * m_depth), value); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

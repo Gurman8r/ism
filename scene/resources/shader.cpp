@@ -1,6 +1,4 @@
-#include <scene/resources/shader.hpp>
 #include <scene/resources/shader_loader.hpp>
-#include <servers/rendering_server.hpp>
 
 using namespace ism;
 
@@ -14,4 +12,13 @@ Shader::~Shader()
 Error_ Shader::reload_from_file()
 {
 	return ShaderLoader::load_shader(*this, get_path());
+}
+
+String Shader::get_code() const
+{
+	return {};
+}
+
+void Shader::set_code(String const & value)
+{
 }

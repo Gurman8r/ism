@@ -49,9 +49,19 @@ namespace ism
 
 	public:
 		/* MESH */
+		enum Primitive_
+		{
+			Primitive_Points,
+			Primitive_Lines,
+			Primitive_LineStrip,
+			Primitive_Triangles,
+			Primitive_TriangleStrip,
+			Primitive_MAX
+		};
+
 		struct SurfaceData
 		{
-			RD::PrimitiveType_ primitive{};
+			Primitive_ primitive{};
 
 			DynamicBuffer vertex_data{};
 			size_t vertex_count{};
@@ -68,7 +78,7 @@ namespace ism
 		virtual void mesh_add_surface(RID mesh, SurfaceData const & surface) = 0;
 		virtual size_t mesh_get_surface_count(RID mesh) = 0;
 
-		virtual RD::PrimitiveType_ mesh_surface_get_primitive(RID mesh, size_t index) = 0;
+		virtual Primitive_ mesh_surface_get_primitive(RID mesh, size_t index) = 0;
 		virtual RID mesh_surface_get_vertex_array(RID mesh, size_t index) = 0;
 		virtual RID mesh_surface_get_index_array(RID mesh, size_t index) = 0;
 		virtual RID mesh_surface_get_material(RID mesh, size_t index) = 0;
