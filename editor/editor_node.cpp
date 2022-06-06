@@ -23,7 +23,7 @@ static RID viewport{};
 
 static void _setup_pipeline(RID const shader)
 {
-	pipeline = RENDERING_DEVICE->pipeline_create
+	pipeline = RENDERING_DEVICE->render_pipeline_create
 	(
 		shader,
 		RD::RenderPrimitive_Triangles,
@@ -162,7 +162,7 @@ EditorNode::~EditorNode()
 
 	if (framebuffer) { RENDERING_DEVICE->framebuffer_destroy(framebuffer); }
 	if (backbuffer) { RENDERING_DEVICE->framebuffer_destroy(backbuffer); }
-	if (pipeline) { RENDERING_DEVICE->pipeline_destroy(pipeline); }
+	if (pipeline) { RENDERING_DEVICE->render_pipeline_destroy(pipeline); }
 }
 
 void EditorNode::handle_event(Event const & event)
@@ -224,7 +224,7 @@ void EditorNode::process(Duration const dt)
 		static Color clear_color{ Colors::magenta };
 		clear_color = rotate_hue(clear_color, (float_t)dt * 10.f);
 
-		RID dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, clear_color) };
+		RD::DrawListID dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_color) };
 		RENDERING_DEVICE->draw_list_bind_pipeline(dl, pipeline);
 		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
 		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);

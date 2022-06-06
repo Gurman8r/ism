@@ -5,22 +5,22 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMPL(RendererStorage::singleton) {};
-
 OBJECT_EMBED(RendererStorage, t) {}
 
-RendererStorage::RendererStorage()
-{
-	singleton = this;
-}
+RendererStorage::RendererStorage() {}
 
-RendererStorage::~RendererStorage()
-{
-}
+RendererStorage::~RendererStorage() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RendererStorage::texture2d_placeholder_create()
+{
+	return RID();
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+RID RendererStorage::shader_placeholder_create()
 {
 	return RID();
 }
@@ -36,12 +36,22 @@ RID RendererStorage::material_create()
 	return (RID)m;
 }
 
+RID RendererStorage::material_placeholder_create()
+{
+	return RID();
+}
+
 void RendererStorage::material_destroy(RID material)
 {
 	Material * const m{ VALIDATE((Material *)material) };
 	if (m->uniform_buffer) { RENDERING_DEVICE->buffer_destroy(m->uniform_buffer); }
 	if (m->uniform_set) { RENDERING_DEVICE->uniform_set_destroy(m->uniform_set); }
 	memdelete(m);
+}
+
+RID RendererStorage::material_get_shader(RID material)
+{
+	return RID();
 }
 
 void RendererStorage::material_set_shader(RID material, RID shader)
@@ -51,15 +61,27 @@ void RendererStorage::material_set_shader(RID material, RID shader)
 	m->shader = shader;
 }
 
-void RendererStorage::material_set_param(RID material, String const & key, OBJ const & value)
+OBJ RendererStorage::material_get_param(RID material, StringName const & key)
+{
+	Material * const m{ VALIDATE((Material *)material) };
+	return nullptr;
+}
+
+void RendererStorage::material_set_param(RID material, StringName const & key, OBJ const & value)
 {
 	Material * const m{ VALIDATE((Material *)material) };
 }
 
-OBJ RendererStorage::material_get_param(RID material, String const & key)
+void RendererStorage::material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params)
 {
-	Material * const m{ VALIDATE((Material *)material) };
-	return nullptr;
+}
+
+void RendererStorage::material_update_textures(RID material, Map<StringName, OBJ> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures)
+{
+}
+
+void RendererStorage::material_update_parameters(RID material, Map<StringName, OBJ> const & params, bool uniforms_dirty, bool textures_dirty)
+{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -106,7 +128,7 @@ void RendererStorage::mesh_add_surface(RID mesh, RS::SurfaceData const & surface
 
 	// vertices
 	RID vb{ RENDERING_DEVICE->vertex_buffer_create(surface.vertex_data.size(), surface.vertex_data) };
-	RID va{ RENDERING_DEVICE->vertex_array_create(surface.vertex_count, {}, { vb }) };
+	RID va{ RENDERING_DEVICE->vertex_array_create(surface.vertex_count, RD::VertexLayout{}, { vb }) };
 	s->vertex_array = va;
 	s->vertex_count = surface.vertex_count;
 	s->vertex_buffer_size = surface.vertex_data.size();
@@ -189,9 +211,20 @@ void RendererStorage::render_target_destroy(RID render_target)
 	memdelete(rt);
 }
 
+Vec2i RendererStorage::render_target_get_position(RID render_target)
+{
+	return { 0, 0 };
+}
+
 void RendererStorage::render_target_set_position(RID render_target, int32_t x, int32_t  y)
 {
 	RenderTarget * const rt{ VALIDATE((RenderTarget *)render_target) };
+}
+
+Vec2i RendererStorage::render_target_get_size(RID render_target)
+{
+	RenderTarget * const rt{ VALIDATE((RenderTarget *)render_target) };
+	return rt->size;
 }
 
 void RendererStorage::render_target_set_size(RID render_target, int32_t width, int32_t height)
@@ -208,16 +241,6 @@ RID RendererStorage::render_target_get_texture(RID render_target)
 	if (!rt->texture) { rt->texture = texture2d_placeholder_create(); }
 
 	return rt->texture;
-}
-
-Vec2i RendererStorage::render_target_get_position(RID render_target)
-{
-	return { 0, 0 };
-}
-
-Vec2i RendererStorage::render_target_get_size(RID render_target)
-{
-	return VALIDATE((RenderTarget *)render_target)->size;
 }
 
 void RendererStorage::render_target_request_clear(RID render_target, Color const & value)
@@ -247,9 +270,55 @@ void RendererStorage::render_target_do_clear_request(RID render_target)
 {
 	RenderTarget * const rt{ VALIDATE((RenderTarget *)render_target) };
 	if (!rt->clear_requested) { return; }
-	RENDERING_DEVICE->draw_list_begin(rt->framebuffer, rt->clear_color);
+	RENDERING_DEVICE->draw_list_begin(rt->framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, rt->clear_color);
 	RENDERING_DEVICE->draw_list_end();
 	rt->clear_requested = false;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+RID RendererStorage::viewport_create()
+{
+	Viewport * const vp{ memnew(Viewport) };
+	vp->self = (RID)vp;
+	vp->parent = nullptr;
+	vp->size = { 1280, 720 };
+	vp->camera = nullptr;
+	vp->render_target = render_target_create();
+	vp->render_target_texture = nullptr;
+	return (RID)vp;
+}
+
+void RendererStorage::viewport_destroy(RID viewport)
+{
+	Viewport * const vp{ VALIDATE((Viewport *)viewport) };
+	render_target_destroy(vp->render_target);
+	memdelete(vp);
+}
+
+void RendererStorage::viewport_set_parent_viewport(RID viewport, RID parent_viewport)
+{
+	Viewport * const vp{ VALIDATE((Viewport *)viewport) };
+	vp->parent = parent_viewport;
+}
+
+void RendererStorage::viewport_set_size(RID viewport, int32_t width, int32_t height)
+{
+	Viewport * const vp{ VALIDATE((Viewport *)viewport) };
+	vp->size = { width, height };
+}
+
+RID RendererStorage::viewport_get_texture(RID viewport) const
+{
+	return VALIDATE((Viewport *)viewport)->render_target_texture;
+}
+
+void RendererStorage::viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen)
+{
+}
+
+void RendererStorage::draw_viewports()
+{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

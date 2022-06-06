@@ -2,7 +2,6 @@
 #define _ISM_RENDERING_SERVER_DEFAULT_HPP_
 
 #include <servers/rendering/renderer_storage.hpp>
-#include <servers/rendering/renderer_viewport.hpp>
 #include <servers/rendering/renderer_canvas_renderer.hpp>
 #include <servers/rendering/renderer_scene_renderer.hpp>
 
@@ -17,7 +16,6 @@ namespace ism
 	protected:
 		RenderingDevice * m_device{};
 		RendererStorage * m_storage{};
-		RendererViewport * m_viewport{};
 		RendererCanvasRenderer * m_canvas_renderer{};
 		RendererSceneRenderer * m_scene_renderer{};
 
@@ -40,23 +38,27 @@ namespace ism
 	public:
 		/* SHADER */
 		virtual RID shader_create() override;
+		virtual RID shader_placeholder_create() override;
 		virtual void shader_destroy(RID shader) override;
 
 	public:
 		/* MATERIAL */
 		virtual RID material_create() override;
+		virtual RID material_placeholder_create() override;
 		virtual void material_destroy(RID material) override;
+		virtual RID material_get_shader(RID material) const override;
 		virtual void material_set_shader(RID material, RID shader) override;
+		virtual OBJ material_get_param(RID material, StringName const & key) const override;
 		virtual void material_set_param(RID material, String const & key, OBJ const & value) override;
 
 	public:
 		/* MESH */
 		virtual RID mesh_create(Vector<SurfaceData> const & surfaces = {}) override;
+		virtual RID mesh_placeholder_create() override;
 		virtual void mesh_destroy(RID mesh) override;
 		virtual void mesh_clear(RID mesh) override;
 		virtual void mesh_add_surface(RID mesh, SurfaceData const & surface) override;
 		virtual size_t mesh_get_surface_count(RID mesh) override;
-
 		virtual RS::Primitive_ mesh_surface_get_primitive(RID mesh, size_t index) override;
 		virtual RID mesh_surface_get_vertex_array(RID mesh, size_t index) override;
 		virtual RID mesh_surface_get_index_array(RID mesh, size_t index) override;

@@ -38,13 +38,17 @@ namespace ism
 	public:
 		/* SHADER */
 		virtual RID shader_create() = 0;
+		virtual RID shader_placeholder_create() = 0;
 		virtual void shader_destroy(RID shader) = 0;
 
 	public:
 		/* MATERIAL */
 		virtual RID material_create() = 0;
+		virtual RID material_placeholder_create() = 0;
 		virtual void material_destroy(RID material) = 0;
+		virtual RID material_get_shader(RID material) const = 0;
 		virtual void material_set_shader(RID material, RID shader) = 0;
+		virtual OBJ material_get_param(RID material, StringName const & key) const = 0;
 		virtual void material_set_param(RID material, String const & key, OBJ const & value) = 0;
 
 	public:
@@ -73,11 +77,11 @@ namespace ism
 		};
 
 		virtual RID mesh_create(Vector<SurfaceData> const & surfaces = {}) = 0;
+		virtual RID mesh_placeholder_create() = 0;
 		virtual void mesh_destroy(RID mesh) = 0;
 		virtual void mesh_clear(RID mesh) = 0;
 		virtual void mesh_add_surface(RID mesh, SurfaceData const & surface) = 0;
 		virtual size_t mesh_get_surface_count(RID mesh) = 0;
-
 		virtual Primitive_ mesh_surface_get_primitive(RID mesh, size_t index) = 0;
 		virtual RID mesh_surface_get_vertex_array(RID mesh, size_t index) = 0;
 		virtual RID mesh_surface_get_index_array(RID mesh, size_t index) = 0;

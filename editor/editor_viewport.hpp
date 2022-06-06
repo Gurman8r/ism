@@ -3,7 +3,6 @@
 
 #include <editor/editor_camera.hpp>
 #include <editor/editor_panel.hpp>
-#include <servers/rendering/renderer_viewport.hpp>
 
 namespace ism
 {

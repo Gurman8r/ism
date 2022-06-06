@@ -12,8 +12,6 @@ namespace ism
 	{
 		OBJECT_COMMON(RendererStorage, Object);
 
-		static RendererStorage * singleton;
-
 		friend class RenderingServerDefault;
 
 	protected:
@@ -22,14 +20,13 @@ namespace ism
 	public:
 		virtual ~RendererStorage();
 
-		FORCE_INLINE static RendererStorage * get_singleton() noexcept { return singleton; }
-
 	public:
 		/* TEXTURE */
 		RID texture2d_placeholder_create();
 
 	public:
 		/* SHADER */
+		RID shader_placeholder_create();
 
 	public:
 		/* MATERIAL */
@@ -40,13 +37,20 @@ namespace ism
 			RID uniform_set{};
 			Vector<RID> texture_cache{};
 			DynamicBuffer ubo_data{};
+			Map<StringName, OBJ> params{};
+			bool update_requested{};
 		};
 
 		RID material_create();
+		RID material_placeholder_create();
 		void material_destroy(RID material);
+		RID material_get_shader(RID material);
 		void material_set_shader(RID material, RID shader);
-		void material_set_param(RID material, String const & key, OBJ const & value);
-		OBJ material_get_param(RID material, String const & key);
+		OBJ material_get_param(RID material, StringName const & key);
+		void material_set_param(RID material, StringName const & key, OBJ const & value);
+		void material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params);
+		void material_update_textures(RID material, Map<StringName, OBJ> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures);
+		void material_update_parameters(RID material, Map<StringName, OBJ> const & params, bool uniforms_dirty, bool textures_dirty);
 
 	public:
 		/* MESH */
@@ -74,7 +78,6 @@ namespace ism
 		void mesh_clear(RID mesh);
 		void mesh_add_surface(RID mesh, RS::SurfaceData const & surf);
 		size_t mesh_get_surface_count(RID mesh);
-
 		RS::Primitive_ mesh_surface_get_primitive(RID mesh, size_t index);
 		RID mesh_surface_get_vertex_array(RID mesh, size_t index);
 		RID mesh_surface_get_index_array(RID mesh, size_t index);
@@ -96,24 +99,34 @@ namespace ism
 
 		RID render_target_create();
 		void render_target_destroy(RID render_target);
-
-		void render_target_set_position(RID render_target, int32_t x, int32_t  y);
-		void render_target_set_size(RID render_target, int32_t width, int32_t height);
-
-		RID render_target_get_texture(RID render_target);
 		Vec2i render_target_get_position(RID render_target);
+		void render_target_set_position(RID render_target, int32_t x, int32_t  y);
 		Vec2i render_target_get_size(RID render_target);
-
+		void render_target_set_size(RID render_target, int32_t width, int32_t height);
+		RID render_target_get_texture(RID render_target);
 		void render_target_request_clear(RID render_target, Color const & value);
 		void render_target_disable_clear_request(RID render_target);
 		bool render_target_is_clear_requested(RID render_target);
 		Color render_target_get_clear_request_color(RID render_target);
 		void render_target_do_clear_request(RID render_target);
+
+	public:
+		struct Viewport
+		{
+			RID self{}, parent{};
+			Vec2i size{};
+			RID camera{};
+			RID render_target{}, render_target_texture{};
+		};
+
+		RID viewport_create();
+		void viewport_destroy(RID viewport);
+		void viewport_set_parent_viewport(RID viewport, RID parent_viewport);
+		void viewport_set_size(RID viewport, int32_t width, int32_t height);
+		RID viewport_get_texture(RID viewport) const;
+		void viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen);
+		void draw_viewports();
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#define RENDERER_STORAGE (ism::RendererStorage::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

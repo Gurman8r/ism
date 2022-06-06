@@ -21,7 +21,7 @@ namespace ism
 		virtual void finalize() override;
 
 	public:
-		/* BUFFER API */
+		/* BUFFER  */
 		struct BufferBase
 		{
 			uint32_t handle{};
@@ -37,7 +37,7 @@ namespace ism
 		virtual void buffer_update(RID buffer, size_t offset, void const * data, size_t size_in_bytes) override;
 
 	public:
-		/* VERTEXARRAY API */
+		/* VERTEXARRAY  */
 		struct VertexBuffer : BufferBase {};
 
 		struct VertexArray
@@ -71,7 +71,7 @@ namespace ism
 		virtual void index_array_destroy(RID index_array) override;
 
 	public:
-		/* SAMPLER API */
+		/* SAMPLER  */
 		struct Sampler
 		{
 			uint32_t handle{};
@@ -91,7 +91,7 @@ namespace ism
 		virtual void sampler_destroy(RID sampler) override;
 
 	public:
-		/* TEXTURE API */
+		/* TEXTURE  */
 		struct Texture
 		{
 			uint32_t handle{};
@@ -115,7 +115,7 @@ namespace ism
 		virtual DynamicBuffer texture_get_data(RID rid) override;
 
 	public:
-		/* FRAMEBUFFER API */
+		/* FRAMEBUFFER  */
 		struct Framebuffer
 		{
 			uint32_t handle{};
@@ -128,7 +128,7 @@ namespace ism
 		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) override;
 
 	public:
-		/* SHADER API */
+		/* SHADER  */
 		struct Shader
 		{
 			uint32_t handle{};
@@ -140,10 +140,10 @@ namespace ism
 		virtual void shader_destroy(RID shader) override;
 
 	public:
-		/* UNIFORM API */
-		struct UniformBuffer final : BufferBase {};
+		/* UNIFORM  */
+		struct UniformBuffer : BufferBase {};
 
-		struct UniformDescriptor final
+		struct UniformDescriptor
 		{
 			UniformType_ uniform_type{};
 			uint32_t binding{};
@@ -152,7 +152,7 @@ namespace ism
 			Vector<RID> textures{};
 		};
 
-		struct UniformSet final
+		struct UniformSet
 		{
 			RID shader{};
 			Vector<UniformDescriptor> uniforms{};
@@ -163,8 +163,8 @@ namespace ism
 		virtual void uniform_set_destroy(RID uniform_set) override;
 
 	public:
-		/* PIPELINE API */
-		struct RenderPipeline final
+		/* PIPELINE  */
+		struct RenderPipeline
 		{
 			RID shader{};
 			uint32_t primitive{};
@@ -174,40 +174,49 @@ namespace ism
 			ColorBlendState color_blend_state{};
 		};
 
-		virtual RID pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state) override;
-		virtual void pipeline_destroy(RID pipeline) override;
+		virtual RID render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state) override;
+		virtual void render_pipeline_destroy(RID pipeline) override;
 
 	public:
-		/* DRAWLIST API */
-		struct DrawList final
+		/* DRAWLIST  */
+		struct DrawList
 		{
 			IntRect viewport{};
 
-			struct State final
+			struct SetState
 			{
-				struct SetState final {
-					RID uniform_set{};
-					bool bound{ true };
-				} sets[32]{};
+				RID uniform_set{};
+				bool bound{ true };
+			};
+
+			struct State
+			{
+				SetState sets[32]{};
 				uint32_t set_count{};
 
 				RID pipeline{};
 				RID pipeline_shader{};
 				RID vertex_array{};
 				RID index_array{};
+
+				void const * data{};
+				size_t data_size{};
 			}
 			state{};
 		};
 
-		Vector<DrawList> m_lists{};
+		Vector<DrawList> m_draw_list{};
 
-		virtual RID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
-		virtual RID draw_list_begin(RID framebuffer, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
-		virtual void draw_list_bind_pipeline(RID draw_list, RID pipeline) override;
-		virtual void draw_list_bind_uniform_set(RID draw_list, RID uniform_set, size_t index) override;
-		virtual void draw_list_bind_vertex_array(RID draw_list, RID vertex_array) override;
-		virtual void draw_list_bind_index_array(RID draw_list, RID index_array) override;
-		virtual void draw_list_draw(RID draw_list, bool use_indices, size_t instances, size_t procedural_vertices) override;
+		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
+		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
+		virtual void draw_list_bind_pipeline(DrawListID list, RID pipeline) override;
+		virtual void draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index) override;
+		virtual void draw_list_bind_vertex_array(DrawListID list, RID vertex_array) override;
+		virtual void draw_list_bind_index_array(DrawListID list, RID index_array) override;
+		virtual void draw_list_set_push_constant(DrawListID list, void const * data, size_t data_size) override;
+		virtual void draw_list_enable_scissor(DrawListID list, IntRect const & rect) override;
+		virtual void draw_list_disable_scissor(DrawListID list) override;
+		virtual void draw_list_draw(DrawListID list, bool use_indices, size_t instances, size_t procedural_vertices) override;
 		virtual void draw_list_end() override;
 	};
 

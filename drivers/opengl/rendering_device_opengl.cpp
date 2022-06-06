@@ -842,7 +842,7 @@ void RenderingDeviceOpenGL::uniform_set_destroy(RID uniform_set)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state)
+RID RenderingDeviceOpenGL::render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state)
 {
 	RenderPipeline * rp{ memnew(RenderPipeline{}) };
 	rp->shader = shader;
@@ -854,7 +854,7 @@ RID RenderingDeviceOpenGL::pipeline_create(RID shader, RenderPrimitive_ primitiv
 	return (RID)rp;
 }
 
-void RenderingDeviceOpenGL::pipeline_destroy(RID pipeline)
+void RenderingDeviceOpenGL::render_pipeline_destroy(RID pipeline)
 {
 	RenderPipeline * const rp{ VALIDATE((RenderPipeline *)pipeline) };
 	memdelete(rp);
@@ -862,23 +862,25 @@ void RenderingDeviceOpenGL::pipeline_destroy(RID pipeline)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::draw_list_begin_for_screen(WindowID window, Color const & clear_color)
+RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(WindowID window, Color const & clear_color)
 {
 	ASSERT(window);
 
-	DrawList * dl{ &m_lists.emplace_back(DrawList{}) };
+	DrawList * const dl{ &m_draw_list.emplace_back(DrawList{}) };
+	DrawListID const draw_list{ m_draw_list.size() - 1 };
 
 	Vec2i const size{ DISPLAY_SERVER->window_get_size(window) };
 	glCheck(glViewport(0, 0, size[0], size[1]));
 	glCheck(glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT));
 
-	return (RID)dl;
+	return draw_list;
 }
 
-RID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, Color const & clear_color, float_t clear_depth, int32_t clear_stencil)
+RD::DrawListID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Color const & clear_color, float_t clear_depth, int32_t clear_stencil)
 {
-	DrawList * dl{ &m_lists.emplace_back(DrawList{}) };
+	DrawList * const dl{ &m_draw_list.emplace_back(DrawList{}) };
+	DrawListID const draw_list{ m_draw_list.size() - 1 };
 
 	Framebuffer * const fb{ VALIDATE((Framebuffer *)framebuffer) };
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fb->handle));
@@ -888,12 +890,13 @@ RID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, Color const & clear_
 	glCheck(glClearStencil(clear_stencil));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
-	return (RID)dl;
+	return draw_list;
 }
 
-void RenderingDeviceOpenGL::draw_list_bind_pipeline(RID draw_list, RID pipeline)
+void RenderingDeviceOpenGL::draw_list_bind_pipeline(DrawListID list, RID pipeline)
 {
-	DrawList * const dl{ VALIDATE((DrawList *)draw_list) };
+	ASSERT(list < m_draw_list.size());
+	DrawList * const dl{ m_draw_list.data() + list };
 	if (dl->state.pipeline == pipeline) { return; }
 	dl->state.pipeline = pipeline;
 	
@@ -953,32 +956,53 @@ void RenderingDeviceOpenGL::draw_list_bind_pipeline(RID draw_list, RID pipeline)
 	}
 }
 
-void RenderingDeviceOpenGL::draw_list_bind_uniform_set(RID draw_list, RID uniform_set, size_t index)
+void RenderingDeviceOpenGL::draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index)
 {
-	DrawList * const dl{ VALIDATE((DrawList *)draw_list) };
+	ASSERT(list < m_draw_list.size());
+	DrawList * const dl{ m_draw_list.data() + list };
 	ASSERT(index < ARRAY_SIZE(dl->state.sets));
 	if (dl->state.set_count <= index) { dl->state.set_count = (uint32_t)index + 1; }
 	dl->state.sets[index].uniform_set = uniform_set;
 	dl->state.sets[index].bound = false;
 }
 
-void RenderingDeviceOpenGL::draw_list_bind_vertex_array(RID draw_list, RID vertex_array)
+void RenderingDeviceOpenGL::draw_list_bind_vertex_array(DrawListID list, RID vertex_array)
 {
-	DrawList * const dl{ VALIDATE((DrawList *)draw_list) };
+	ASSERT(list < m_draw_list.size());
+	DrawList * const dl{ m_draw_list.data() + list };
 	if (dl->state.vertex_array == vertex_array) { return; }
 	dl->state.vertex_array = vertex_array;
 }
 
-void RenderingDeviceOpenGL::draw_list_bind_index_array(RID draw_list, RID index_array)
+void RenderingDeviceOpenGL::draw_list_bind_index_array(DrawListID list, RID index_array)
 {
-	DrawList * const dl{ VALIDATE((DrawList *)draw_list) };
+	ASSERT(list < m_draw_list.size());
+	DrawList * const dl{ m_draw_list.data() + list };
 	if (dl->state.index_array == index_array) { return; }
 	dl->state.index_array = index_array;
 }
 
-void RenderingDeviceOpenGL::draw_list_draw(RID draw_list, bool use_indices, size_t instances, size_t procedural_vertices)
+void RenderingDeviceOpenGL::draw_list_set_push_constant(DrawListID list, void const * data, size_t data_size)
 {
-	DrawList * const dl{ VALIDATE((DrawList *)draw_list) };
+	ASSERT(list < m_draw_list.size());
+	DrawList * const dl{ m_draw_list.data() + list };
+	if (dl->state.data == data && dl->state.data_size == data_size) { return; }
+	dl->state.data = data;
+	dl->state.data_size = data_size;
+}
+
+void RenderingDeviceOpenGL::draw_list_enable_scissor(DrawListID list, IntRect const & rect)
+{
+}
+
+void RenderingDeviceOpenGL::draw_list_disable_scissor(DrawListID list)
+{
+}
+
+void RenderingDeviceOpenGL::draw_list_draw(DrawListID list, bool use_indices, size_t instances, size_t procedural_vertices)
+{
+	ASSERT(list < m_draw_list.size());
+	DrawList * const dl{ m_draw_list.data() + list };
 	RenderPipeline * const rp{ VALIDATE((RenderPipeline *)dl->state.pipeline) };
 
 	// bind shader
@@ -1061,18 +1085,15 @@ void RenderingDeviceOpenGL::draw_list_draw(RID draw_list, bool use_indices, size
 
 void RenderingDeviceOpenGL::draw_list_end()
 {
-	ASSERT(!m_lists.empty());
-	SCOPE_EXIT(&) { m_lists.pop_back(); };
+	ASSERT(!m_draw_list.empty());
 
 	glCheck(glBindVertexArray(NULL));
-
 	glCheck(glBindBuffer(GL_ARRAY_BUFFER, NULL));
-
 	glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL));
-
 	glCheck(glUseProgramObjectARB(NULL));
-
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, NULL));
+
+	SCOPE_EXIT(&) { m_draw_list.pop_back(); };
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

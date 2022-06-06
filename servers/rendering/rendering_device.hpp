@@ -28,6 +28,7 @@ namespace ism
 		virtual void finalize() = 0;
 
 	public:
+		/* MISC */
 		enum DataFormat_
 		{
 			DataFormat_R4G4_UNORM_PACK8,
@@ -257,6 +258,19 @@ namespace ism
 			DataFormat_PVRTC2_2BPP_SRGB_BLOCK_IMG,
 			DataFormat_PVRTC2_4BPP_SRGB_BLOCK_IMG,
 			DataFormat_MAX
+		};
+
+		static constexpr bool is_depth_stencil_format(DataFormat_ const f) noexcept
+		{
+			return f == DataFormat_D16_UNORM || f == DataFormat_X8_D24_UNORM_PACK32 || f == DataFormat_D32_SFLOAT || f == DataFormat_D16_UNORM_S8_UINT || f == DataFormat_D24_UNORM_S8_UINT || f == DataFormat_D32_SFLOAT_S8_UINT;
+		}
+
+		enum BarrierMask_
+		{
+			BarrierMask_Raster = 1 << 0,
+			BarrierMask_Compute = 1 << 1,
+			BarrierMask_Transfer = 1 << 2,
+			BarrierMask_All = BarrierMask_Raster | BarrierMask_Compute | BarrierMask_Transfer
 		};
 
 	public:
@@ -512,11 +526,6 @@ namespace ism
 		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
 		virtual void framebuffer_destroy(RID framebuffer) = 0;
 		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) = 0;
-
-		static constexpr bool is_depth_stencil_mode(DataFormat_ const f) noexcept
-		{
-			return f == DataFormat_D16_UNORM || f == DataFormat_X8_D24_UNORM_PACK32 || f == DataFormat_D32_SFLOAT || f == DataFormat_D16_UNORM_S8_UINT || f == DataFormat_D24_UNORM_S8_UINT || f == DataFormat_D32_SFLOAT_S8_UINT;
-		}
 
 	public:
 		/* SHADER */
@@ -805,18 +814,41 @@ namespace ism
 			}
 		};
 
-		virtual RID pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state) = 0;
-		virtual void pipeline_destroy(RID pipeline) = 0;
+		virtual RID render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state) = 0;
+		virtual void render_pipeline_destroy(RID pipeline) = 0;
 		
 	public:
 		/* DRAW LIST */
-		virtual RID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) = 0;
-		virtual RID draw_list_begin(RID framebuffer, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
-		virtual void draw_list_bind_pipeline(RID draw_list, RID pipeline) = 0;
-		virtual void draw_list_bind_uniform_set(RID draw_list, RID uniform_set, size_t index) = 0;
-		virtual void draw_list_bind_vertex_array(RID draw_list, RID vertex_array) = 0;
-		virtual void draw_list_bind_index_array(RID draw_list, RID index_array) = 0;
-		virtual void draw_list_draw(RID draw_list, bool use_indices, size_t instances, size_t procedural_vertices) = 0;
+		using DrawListID = typename size_t;
+
+		enum InitialAction_
+		{
+			InitialAction_Clear,		// start rendering and clear the whole framebuffer (region or not) (supply params)
+			InitialAction_ClearRegion,	// start rendering and clear the framebuffer in the specified region (supply params)
+			InitialAction_Keep,			// start rendering, but keep attached color texture contents (depth will be cleared)
+			InitialAction_Drop,			// start rendering, ignore what is there, just write above it
+			InitialAction_Continue,		// continue rendering (framebuffer must have been left in "continue" state as action previously)
+			InitialAction_MAX
+		};
+
+		enum FinalAction_
+		{
+			FinalAction_Read,		// will no longer render to it, allows attached textures to be read again, but depth buffer contents will be dropped (Can't be read from)
+			FinalAction_Discard,	// discard contents after rendering
+			FinalAction_Continue,	// will continue rendering later, attached textures can't be read until re-bound with "finish"
+			FinalAction_MAX
+		};
+
+		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) = 0;
+		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
+		virtual void draw_list_bind_pipeline(DrawListID list, RID pipeline) = 0;
+		virtual void draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index) = 0;
+		virtual void draw_list_bind_vertex_array(DrawListID list, RID vertex_array) = 0;
+		virtual void draw_list_bind_index_array(DrawListID list, RID index_array) = 0;
+		virtual void draw_list_set_push_constant(DrawListID list, void const * data, size_t size) = 0;
+		virtual void draw_list_enable_scissor(DrawListID list, IntRect const & rect) = 0;
+		virtual void draw_list_disable_scissor(DrawListID list) = 0;
+		virtual void draw_list_draw(DrawListID list, bool use_indices, size_t instances, size_t procedural_vertices) = 0;
 		virtual void draw_list_end() = 0;
 	};
 

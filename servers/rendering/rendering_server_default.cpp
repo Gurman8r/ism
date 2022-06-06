@@ -17,7 +17,6 @@ RenderingServerDefault::RenderingServerDefault()
 	: RenderingServer	{}
 	, m_device			{ memnew(RENDERING_DEVICE_DEFAULT()) }
 	, m_storage			{ memnew(RendererStorage) }
-	, m_viewport		{ memnew(RendererViewport) }
 	, m_canvas_renderer	{ memnew(RendererCanvasRenderer) }
 	, m_scene_renderer	{ memnew(RendererSceneRenderer) }
 {
@@ -27,7 +26,6 @@ RenderingServerDefault::~RenderingServerDefault()
 {
 	if (m_scene_renderer) { memdelete(m_scene_renderer); m_scene_renderer = nullptr; }
 	if (m_canvas_renderer) { memdelete(m_canvas_renderer); m_canvas_renderer = nullptr; }
-	if (m_viewport) { memdelete(m_viewport); m_viewport = nullptr; }
 	if (m_storage) { memdelete(m_storage); m_storage = nullptr; }
 	if (m_device) { memdelete(m_device); m_device = nullptr; }
 }
@@ -124,7 +122,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 
 RID RenderingServerDefault::texture2d_placeholder_create()
 {
-	return nullptr;
+	return m_storage->texture2d_placeholder_create();
 }
 
 Ref<Image> RenderingServerDefault::texture2d_get_image(RID texture)
@@ -145,6 +143,11 @@ RID RenderingServerDefault::shader_create()
 	return RID();
 }
 
+RID RenderingServerDefault::shader_placeholder_create()
+{
+	return m_storage->shader_placeholder_create();
+}
+
 void RenderingServerDefault::shader_destroy(RID shader)
 {
 }
@@ -156,14 +159,29 @@ RID RenderingServerDefault::material_create()
 	return m_storage->material_create();
 }
 
+RID RenderingServerDefault::material_placeholder_create()
+{
+	return RID();
+}
+
 void RenderingServerDefault::material_destroy(RID material)
 {
 	m_storage->material_destroy(material);
 }
 
+RID RenderingServerDefault::material_get_shader(RID material) const
+{
+	return m_storage->material_get_shader(material);
+}
+
 void RenderingServerDefault::material_set_shader(RID material, RID shader)
 {
 	m_storage->material_set_shader(material, shader);
+}
+
+OBJ RenderingServerDefault::material_get_param(RID material, StringName const & key) const
+{
+	return m_storage->material_get_param(material, key);
 }
 
 void RenderingServerDefault::material_set_param(RID material, String const & key, OBJ const & value)
@@ -176,6 +194,11 @@ void RenderingServerDefault::material_set_param(RID material, String const & key
 RID RenderingServerDefault::mesh_create(Vector<SurfaceData> const & surfaces)
 {
 	return m_storage->mesh_create(surfaces);
+}
+
+RID RenderingServerDefault::mesh_placeholder_create()
+{
+	return RID();
 }
 
 void RenderingServerDefault::mesh_destroy(RID mesh)
@@ -232,12 +255,12 @@ void RenderingServerDefault::camera_destroy(RID camera)
 
 RID RenderingServerDefault::viewport_create()
 {
-	return m_viewport->viewport_create();
+	return m_storage->viewport_create();
 }
 
 void RenderingServerDefault::viewport_destroy(RID viewport)
 {
-	VALIDATE(m_viewport)->viewport_destroy(viewport);
+	m_storage->viewport_destroy(viewport);
 }
 
 void RenderingServerDefault::viewport_set_parent_viewport(RID viewport, RID parent_viewport)
