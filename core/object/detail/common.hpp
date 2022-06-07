@@ -6,7 +6,6 @@
 #include <core/string/print_string.hpp>
 #include <core/math/color.hpp>
 #include <core/math/rect.hpp>
-#include <core/templates/any.hpp>
 #include <core/templates/atomic.hpp>
 #include <core/templates/buffer.hpp>
 #include <core/templates/duration.hpp>
@@ -386,14 +385,11 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Ref<Object> 
-	template <class _Type
-	> class NOVTABLE Ref : public _Ref_Tag, public ObjectAPI<Ref<_Type>>
+	template <class T
+	> class NOVTABLE Ref : public _Ref_Tag, public ObjectAPI<Ref<T>>
 	{
-	public:
-		using value_type = typename _Type;
-
 	protected:
-		value_type * m_ptr{};
+		T * m_ptr{};
 
 		void ref(Ref const & value)
 		{
@@ -403,28 +399,30 @@ namespace ism
 			if (m_ptr) { m_ptr->reference(); }
 		}
 
-		void ref_pointer(value_type * value)
+		void ref_pointer(T * value)
 		{
-			ASSERT("INVALID POINTER" && value);
+			ASSERT("INVALID REF POINTER" && value);
 
 			if (value->init_ref()) { m_ptr = value; }
 		}
 
 	public:
+		using value_type = typename T;
+
 		~Ref() noexcept { unref(); }
 
 		Ref() noexcept = default;
 
 		Ref(nullptr_t) noexcept {}
 
-		Ref(value_type * value) { if (value) { ref_pointer(value); } }
+		Ref(T * value) { if (value) { ref_pointer(value); } }
 
 		Ref(Ref const & value) { ref(value); }
 
 		template <class U
 		> Ref(Ref<U> const & value) { reset(value); }
 
-		Ref(value_type && value) noexcept { instance(std::move(value)); }
+		Ref(T && value) noexcept { instance(std::move(value)); }
 
 		Ref & operator=(nullptr_t) { return unref(), (*this); }
 
@@ -433,27 +431,27 @@ namespace ism
 		template <class U
 		> Ref & operator=(Ref<U> const & value) { return reset(value), (*this); }
 
-		Ref & operator=(value_type && value) noexcept { return instance(std::move(value)), (*this); }
+		Ref & operator=(T && value) noexcept { return instance(std::move(value)), (*this); }
 
 	public:
 		template <class ... Args
-		> static auto new_(Args && ... args) { return Ref<value_type>{ value_type{ FWD(args)... } }; }
+		> static auto new_(Args && ... args) { return Ref<T>{ T{ FWD(args)... } }; }
 
 		template <class U> NODISCARD U cast() const &; // cast.hpp
 
 		template <class U> NODISCARD U cast() &&; // cast.hpp
 
-		NODISCARD static constexpr auto get_class_static() noexcept { return value_type::get_class_static(); }
+		NODISCARD static constexpr auto get_class_static() noexcept { return T::get_class_static(); }
 
-		NODISCARD static auto get_type_static() noexcept { return value_type::get_type_static(); }
+		NODISCARD static auto get_type_static() noexcept { return T::get_type_static(); }
 
 	public:
-		template <class T = value_type, class ... Args
+		template <class U = T, class ... Args
 		> void instance(Args && ... args)
 		{
-			static_assert(std::is_base_of_v<value_type, T>);
+			static_assert(std::is_base_of_v<T, U>);
 
-			ref(memnew(T{ FWD(args)... }));
+			ref(memnew(U{ FWD(args)... }));
 		}
 
 		void unref()
@@ -473,7 +471,7 @@ namespace ism
 		{
 			if (m_ptr == value) { return; }
 			unref();
-			value_type * r{ dynamic_cast<value_type *>(value) };
+			T * r{ dynamic_cast<T *>(value) };
 			if (r) { ref_pointer(r); }
 		}
 
@@ -482,7 +480,7 @@ namespace ism
 			Object * other{ static_cast<Object *>(value.ptr()) };
 			if (!other) { unref(); return; }
 			Ref r;
-			r.m_ptr = dynamic_cast<value_type *>(other);
+			r.m_ptr = dynamic_cast<T *>(other);
 			ref(r);
 			r.m_ptr = nullptr;
 		}
@@ -491,7 +489,7 @@ namespace ism
 		NODISCARD operator bool() const noexcept { return m_ptr != nullptr; }
 		NODISCARD bool is_null() const noexcept { return m_ptr == nullptr; }
 		NODISCARD bool is_valid() const noexcept { return m_ptr != nullptr; }
-		NODISCARD auto ptr() const noexcept { return const_cast<value_type *>(m_ptr); }
+		NODISCARD auto ptr() const noexcept { return const_cast<T *>(m_ptr); }
 
 		NODISCARD auto operator*() noexcept { return m_ptr; }
 		NODISCARD auto operator*() const noexcept { return m_ptr; }

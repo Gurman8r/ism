@@ -74,6 +74,7 @@ namespace ism
 		};
 
 		RID mesh_create(Vector<RS::SurfaceData> const & surfaces = {});
+		RID mesh_placeholder_create();
 		void mesh_destroy(RID mesh);
 		void mesh_clear(RID mesh);
 		void mesh_add_surface(RID mesh, RS::SurfaceData const & surf);
@@ -109,6 +110,15 @@ namespace ism
 		bool render_target_is_clear_requested(RID render_target);
 		Color render_target_get_clear_request_color(RID render_target);
 		void render_target_do_clear_request(RID render_target);
+
+	public:
+		struct Camera
+		{
+			Mat4 xform{};
+		};
+
+		RID camera_create();
+		void camera_destroy(RID camera);
 
 	public:
 		struct Viewport

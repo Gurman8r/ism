@@ -102,7 +102,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 		"ism",
 		{ { 1280, 720 }, { 8, 8, 8, 8 }, -1 },
 		{ RendererAPI_OpenGL, 4, 6, RendererProfile_Compat, 24, 8, true, false },
-		WindowHints_Default_Maximized & ~(WindowHints_Doublebuffer)
+		WindowFlags_Default_Maximized & ~(WindowFlags_Doublebuffer)
 		}));
 	WindowID main_window{ g_display->get_current_context() };
 	g_display->window_set_char_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharEvent(x...)); });

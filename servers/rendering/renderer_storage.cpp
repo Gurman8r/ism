@@ -15,14 +15,14 @@ RendererStorage::~RendererStorage() {}
 
 RID RendererStorage::texture2d_placeholder_create()
 {
-	return RID();
+	return nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RendererStorage::shader_placeholder_create()
 {
-	return RID();
+	return nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -38,7 +38,7 @@ RID RendererStorage::material_create()
 
 RID RendererStorage::material_placeholder_create()
 {
-	return RID();
+	return nullptr;
 }
 
 void RendererStorage::material_destroy(RID material)
@@ -51,7 +51,7 @@ void RendererStorage::material_destroy(RID material)
 
 RID RendererStorage::material_get_shader(RID material)
 {
-	return RID();
+	return nullptr;
 }
 
 void RendererStorage::material_set_shader(RID material, RID shader)
@@ -64,12 +64,36 @@ void RendererStorage::material_set_shader(RID material, RID shader)
 OBJ RendererStorage::material_get_param(RID material, StringName const & key)
 {
 	Material * const m{ VALIDATE((Material *)material) };
-	return nullptr;
+
+	if (auto const it{ m->params.find(key) }; it != m->params.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 void RendererStorage::material_set_param(RID material, StringName const & key, OBJ const & value)
 {
 	Material * const m{ VALIDATE((Material *)material) };
+
+	if (auto const it{ m->params.find(key) }; it != m->params.end())
+	{
+		if (!value)
+		{
+			m->params.erase(it);
+		}
+		else if (it->second != value)
+		{
+			it->second = value;
+		}
+	}
+	else if (value)
+	{
+		m->params.insert({ key, value });
+	}
 }
 
 void RendererStorage::material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params)
@@ -98,25 +122,28 @@ RID RendererStorage::mesh_create(Vector<RS::SurfaceData> const & surfaces)
 	return (RID)m;
 }
 
+RID RendererStorage::mesh_placeholder_create()
+{
+	return nullptr;
+}
+
 void RendererStorage::mesh_destroy(RID mesh)
 {
-	Mesh * const m{ VALIDATE((Mesh *)mesh) };
+	mesh_clear(mesh);
 
-	for (Mesh::Surface * s : m->surfaces)
-	{
-		ASSERT(s);
-		if (s->vertex_array) { RENDERING_DEVICE->vertex_array_destroy(s->vertex_array); }
-		if (s->index_array) { RENDERING_DEVICE->index_array_destroy(s->index_array); }
-		if (s->uniform_set) { RENDERING_DEVICE->uniform_set_destroy(s->uniform_set); }
-		memdelete(s);
-	}
-
-	memdelete(m);
+	memdelete((Mesh *)mesh);
 }
 
 void RendererStorage::mesh_clear(RID mesh)
 {
 	Mesh * const m{ VALIDATE((Mesh *)mesh) };
+	for (Mesh::Surface * s : m->surfaces) {
+		if (!s) { continue; }
+		if (s->vertex_array) { RENDERING_DEVICE->vertex_array_destroy(s->vertex_array); }
+		if (s->index_array) { RENDERING_DEVICE->index_array_destroy(s->index_array); }
+		if (s->uniform_set) { RENDERING_DEVICE->uniform_set_destroy(s->uniform_set); }
+		memdelete(s);
+	}
 	m->surfaces.clear();
 }
 
@@ -270,9 +297,23 @@ void RendererStorage::render_target_do_clear_request(RID render_target)
 {
 	RenderTarget * const rt{ VALIDATE((RenderTarget *)render_target) };
 	if (!rt->clear_requested) { return; }
-	RENDERING_DEVICE->draw_list_begin(rt->framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, rt->clear_color);
+	RENDERING_DEVICE->draw_list_begin(rt->framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, { rt->clear_color });
 	RENDERING_DEVICE->draw_list_end();
 	rt->clear_requested = false;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+RID RendererStorage::camera_create()
+{
+	Camera * const cam{ memnew(Camera{}) };
+	return (RID)cam;
+}
+
+void RendererStorage::camera_destroy(RID camera)
+{
+	Camera * const cam{ VALIDATE((Camera *)camera) };
+	memdelete(cam);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

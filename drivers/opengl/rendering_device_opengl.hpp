@@ -138,6 +138,8 @@ namespace ism
 
 		virtual RID shader_create(ShaderCreateInfo const & spec) override;
 		virtual void shader_destroy(RID shader) override;
+		virtual String shader_get_code(RID shader) override;
+		virtual void shader_set_code(RID shader, String const & value) override;
 
 	public:
 		/* UNIFORM  */
@@ -149,7 +151,7 @@ namespace ism
 			uint32_t binding{};
 			uint32_t length{};
 			Vector<RID> buffers{};
-			Vector<RID> textures{};
+			Vector<RID> images{};
 		};
 
 		struct UniformSet
@@ -199,8 +201,8 @@ namespace ism
 				RID vertex_array{};
 				RID index_array{};
 
-				void const * data{};
-				size_t data_size{};
+				void const * user_data{};
+				size_t user_data_size{};
 			}
 			state{};
 		};
@@ -208,7 +210,7 @@ namespace ism
 		Vector<DrawList> m_draw_list{};
 
 		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
-		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
+		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
 		virtual void draw_list_bind_pipeline(DrawListID list, RID pipeline) override;
 		virtual void draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index) override;
 		virtual void draw_list_bind_vertex_array(DrawListID list, RID vertex_array) override;

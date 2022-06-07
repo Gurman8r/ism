@@ -5,7 +5,8 @@
 
 namespace ism
 {
-	// TODO: implement quaternion
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_QUAT_HPP_

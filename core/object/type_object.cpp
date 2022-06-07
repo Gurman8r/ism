@@ -289,51 +289,78 @@ Error_ TypeObject::update_slot(STR const & name)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	case "__new__"_hash: { tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ {
-		if (STR_IDENTIFIER(__new__); OBJ f{ type.lookup(&ID___new__) }) { return call_object(f, args); }
-		return nullptr;
-	}; } break;
+	case "__new__"_hash: {
+		tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ {
+			STR_IDENTIFIER(__new__);
+			if (OBJ f{ type.lookup(&ID___new__) }) { return call_object(f, args); }
+			return nullptr;
+		};
+	} break;
 
-	case "__del__"_hash: { tp_del = (delfunc)[](Object * obj) -> void {
-		if (STR_IDENTIFIER(__del__); OBJ f{ typeof(obj).lookup(&ID___del__) }) { /* TODO */ }
-	}; } break;
+	case "__del__"_hash: {
+		tp_del = (delfunc)[](Object * obj) -> void {
+			STR_IDENTIFIER(__del__);
+			if (OBJ f{ typeof(obj).lookup(&ID___del__) }) { /* TODO */ }
+		};
+	} break;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	case "__call__"_hash: { tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
-		if (STR_IDENTIFIER(__call__); OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
-		return nullptr;
-	}; } break;
+	case "__call__"_hash: {
+		tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
+			STR_IDENTIFIER(__call__);
+			if (OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
+			return nullptr;
+		};
+	} break;
 
-	case "__hash__"_hash: { tp_hash = (hashfunc)[](OBJ self) -> hash_t {
-		if (STR_IDENTIFIER(__hash__); OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
-		return 0;
-	}; } break;
+	case "__hash__"_hash: {
+		tp_hash = (hashfunc)[](OBJ self) -> hash_t {
+			STR_IDENTIFIER(__hash__);
+			if (OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
+			return 0;
+		};
+	} break;
 
-	case "__len__"_hash: { tp_len = (lenfunc)[](OBJ self) -> ssize_t {
-		if (STR_IDENTIFIER(__len__); OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
-		return -1;
-	}; } break;
+	case "__len__"_hash: {
+		tp_len = (lenfunc)[](OBJ self) -> ssize_t {
+			STR_IDENTIFIER(__len__);
+			if (OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
+			return -1;
+		};
+	} break;
 
-	case "__repr__"_hash: { tp_repr = (reprfunc)[](OBJ self) -> STR {
-		if (STR_IDENTIFIER(__repr__); OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
-		return nullptr;
-	}; } break;
+	case "__repr__"_hash: {
+		tp_repr = (reprfunc)[](OBJ self) -> STR {
+			STR_IDENTIFIER(__repr__);
+			if (OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
+			return nullptr;
+		};
+	} break;
 
-	case "__str__"_hash: { tp_str = (reprfunc)[](OBJ self) -> STR {
-		if (STR_IDENTIFIER(__str__); OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
-		return nullptr;
-	}; } break;
+	case "__str__"_hash: {
+		tp_str = (reprfunc)[](OBJ self) -> STR {
+			STR_IDENTIFIER(__str__);
+			if (OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
+			return nullptr;
+		};
+	} break;
 
-	case "__get__"_hash: { tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) -> OBJ {
-		if (STR_IDENTIFIER(__get__); OBJ f{ typeof(self).lookup(&ID___get__) }) { /* TODO */ }
-		return nullptr;
-	}; } break;
+	case "__get__"_hash: {
+		tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) -> OBJ {
+			STR_IDENTIFIER(__get__);
+			if (OBJ f{ typeof(self).lookup(&ID___get__) }) { /* TODO */ }
+			return nullptr;
+		};
+	} break;
 
-	case "__set__"_hash: { tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ type) -> Error_ {
-		if (STR_IDENTIFIER(__set__); OBJ f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
-		return Error_Unknown;
-	}; } break;
+	case "__set__"_hash: {
+		tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ type) -> Error_ {
+			STR_IDENTIFIER(__set__);
+			if (OBJ f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
+			return Error_Unknown;
+		};
+	} break;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

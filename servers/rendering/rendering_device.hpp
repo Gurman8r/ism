@@ -289,31 +289,31 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY API */
-		struct VertexLayoutAttribute
-		{
-			cstring		name;
-			DataType_	type;
-			uint32_t	count;
-			bool		normalized;
-			uint32_t	size;
-			uint32_t	offset;
-
-			constexpr VertexLayoutAttribute(cstring name, DataType_ type, size_t count, bool normalized = false) noexcept
-				: name		{ name }
-				, type		{ type }
-				, count		{ (uint32_t)count }
-				, normalized{ normalized }
-				, size		{ (uint32_t)ism::get_data_type_size(type) * count }
-				, offset	{}
-			{
-			}
-		};
-
 		struct VertexLayout
 		{
+			struct Attribute
+			{
+				cstring		name;
+				DataType_	type;
+				uint32_t	count;
+				bool		normalized;
+				uint32_t	size;
+				uint32_t	offset;
+
+				constexpr Attribute(cstring name, DataType_ type, size_t count, bool normalized = false) noexcept
+					: name		{ name }
+					, type		{ type }
+					, count		{ (uint32_t)count }
+					, normalized{ normalized }
+					, size		{ (uint32_t)ism::get_data_type_size(type) * count }
+					, offset	{}
+				{
+				}
+			};
+
 			uint32_t stride{};
 
-			Vector<VertexLayoutAttribute> attributes{};
+			Vector<Attribute> attributes{};
 
 			VertexLayout() noexcept : VertexLayout{
 				{ "attr_position"	, DataType_F32, 4 },
@@ -326,18 +326,18 @@ namespace ism
 
 			template <class It> VertexLayout(It first, It last) noexcept : attributes{ first, last } { update(); }
 
-			VertexLayout(std::initializer_list<VertexLayoutAttribute> init) noexcept : attributes{ init } { update(); }
+			VertexLayout(std::initializer_list<Attribute> init) noexcept : attributes{ init } { update(); }
 
-			VertexLayout(Vector<VertexLayoutAttribute> const & attributes) : attributes{ attributes } { update(); }
+			VertexLayout(Vector<Attribute> const & attributes) : attributes{ attributes } { update(); }
 
-			VertexLayout(Vector<VertexLayoutAttribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
+			VertexLayout(Vector<Attribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
 
-			template <size_t N> VertexLayout(VertexLayoutAttribute const (&arr)[N]) noexcept : attributes{ &arr[0], &arr[N] } { update(); }
+			template <size_t N> VertexLayout(Attribute const (&arr)[N]) noexcept : attributes{ &arr[0], &arr[N] } { update(); }
 
 			void update()
 			{
 				uint32_t offset{};
-				for (VertexLayoutAttribute & e : attributes) {
+				for (VertexLayout::Attribute & e : attributes) {
 					e.offset = offset;
 					offset += e.size;
 					stride += e.size;
@@ -575,6 +575,8 @@ namespace ism
 
 		virtual RID shader_create(ShaderCreateInfo const & spec) = 0;
 		virtual void shader_destroy(RID shader) = 0;
+		virtual String shader_get_code(RID shader) = 0;
+		virtual void shader_set_code(RID shader, String const & value) = 0;
 
 	public:
 		/* UNIFORMS */
@@ -840,7 +842,7 @@ namespace ism
 		};
 
 		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) = 0;
-		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Color const & clear_color = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
+		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
 		virtual void draw_list_bind_pipeline(DrawListID list, RID pipeline) = 0;
 		virtual void draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index) = 0;
 		virtual void draw_list_bind_vertex_array(DrawListID list, RID vertex_array) = 0;

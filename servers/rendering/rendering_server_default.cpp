@@ -198,7 +198,7 @@ RID RenderingServerDefault::mesh_create(Vector<SurfaceData> const & surfaces)
 
 RID RenderingServerDefault::mesh_placeholder_create()
 {
-	return RID();
+	return m_storage->mesh_placeholder_create();
 }
 
 void RenderingServerDefault::mesh_destroy(RID mesh)
@@ -208,6 +208,7 @@ void RenderingServerDefault::mesh_destroy(RID mesh)
 
 void RenderingServerDefault::mesh_clear(RID mesh)
 {
+	m_storage->mesh_clear(mesh);
 }
 
 size_t RenderingServerDefault::mesh_get_surface_count(RID mesh)
@@ -244,11 +245,12 @@ RID RenderingServerDefault::mesh_surface_get_material(RID mesh, size_t index)
 
 RID RenderingServerDefault::camera_create()
 {
-	return RID();
+	return m_storage->camera_create();
 }
 
 void RenderingServerDefault::camera_destroy(RID camera)
 {
+	m_storage->camera_destroy(camera);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -265,19 +267,22 @@ void RenderingServerDefault::viewport_destroy(RID viewport)
 
 void RenderingServerDefault::viewport_set_parent_viewport(RID viewport, RID parent_viewport)
 {
+	m_storage->viewport_set_parent_viewport(viewport, parent_viewport);
 }
 
 void RenderingServerDefault::viewport_set_size(RID viewport, int32_t width, int32_t height)
 {
+	m_storage->viewport_set_size(viewport, width, height);
 }
 
 RID RenderingServerDefault::viewport_get_texture(RID viewport) const
 {
-	return RID();
+	return m_storage->viewport_get_texture(viewport);
 }
 
 void RenderingServerDefault::viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen)
 {
+	m_storage->viewport_attach_to_screen(viewport, rect, screen);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

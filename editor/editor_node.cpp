@@ -200,11 +200,9 @@ void EditorNode::process(Duration const dt)
 	}
 	editor_camera->recalculate();
 
-	{
-		Mat4 const
-			cam_projection{ editor_camera->get_proj() },
-			cam_transform{ editor_camera->get_view() };
+	Mat4 const cam_projection{ editor_camera->get_proj() }, cam_transform{ editor_camera->get_view() };
 
+	{
 		static RD::ConstantBuffer<Mat4, Mat4> scene_ubo_data;
 		scene_ubo_data.set<0>(cam_projection); // projection matrix
 		scene_ubo_data.set<1>(cam_transform); // view matrix
@@ -221,10 +219,10 @@ void EditorNode::process(Duration const dt)
 		material_ubo_data.set<3>(32.f); // shininess
 		RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo_data, sizeof(material_ubo_data));
 
-		static Color clear_color{ Colors::magenta };
-		clear_color = rotate_hue(clear_color, (float_t)dt * 10.f);
+		static Vector<Color> clear_colors{ Colors::magenta };
+		clear_colors[0] = rotate_hue(clear_colors[0], (float_t)dt * 10.f);
 
-		RD::DrawListID dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_color) };
+		RD::DrawListID const dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
 		RENDERING_DEVICE->draw_list_bind_pipeline(dl, pipeline);
 		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
 		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);

@@ -55,7 +55,9 @@ size_t load_mesh_vertices(aiMesh const * mesh, DynamicBuffer & data)
 		data << Vec4i{ 1, 1, 1, 1 };
 	}
 
-	return data.size() / get_data_type_size(DataType_F32);
+	// TODO: properly deduce type
+	constexpr DataType_ dt{ DataType_F32 };
+	return data.size() / get_data_type_size(dt);
 }
 
 size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
@@ -70,7 +72,9 @@ size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
 		}
 	}
 
-	return data.size() / RD::get_index_buffer_format_size(RD::IndexbufferFormat_U32);
+	// TODO: properly deduce type
+	constexpr RD::IndexbufferFormat_ dt{ RD::IndexbufferFormat_U32 };
+	return data.size() / RD::get_index_buffer_format_size(dt);
 }
 
 void load_material_textures(aiMaterial const * material, Vector<Ref<Texture>> & textures)
@@ -106,8 +110,8 @@ void load_mesh_spec(aiScene const * scene, aiNode const * node, Vector<RS::Surfa
 		s.vertex_count = load_mesh_vertices(m, s.vertex_data);
 		s.index_count = load_mesh_indices(m, s.index_data);
 
-		Vector<Ref<Texture>> textures;
-		load_material_textures(scene->mMaterials[m->mMaterialIndex], textures);
+		//Vector<Ref<Texture>> textures;
+		//load_material_textures(scene->mMaterials[m->mMaterialIndex], textures);
 	}
 
 	for (size_t i = 0; i < (size_t)node->mNumChildren; ++i)

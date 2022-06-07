@@ -392,11 +392,10 @@ void RenderingDeviceOpenGL::buffer_update(RID buffer, size_t offset, void const 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & buffer)
+RID RenderingDeviceOpenGL::vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data)
 {
 	ASSERT(0 < size_in_bytes);
-	VertexBuffer * const vb{ VALIDATE((VertexBuffer *)buffer_create(BufferType_VertexBuffer, size_in_bytes, buffer)) };
-	return (RID)vb;
+	return buffer_create(BufferType_VertexBuffer, size_in_bytes, data);
 }
 
 RID RenderingDeviceOpenGL::vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers)
@@ -418,7 +417,7 @@ RID RenderingDeviceOpenGL::vertex_array_create(size_t vertex_count, VertexLayout
 
 		for (uint32_t i = 0, imax = (uint32_t)va->layout.attributes.size(); i < imax; ++i)
 		{
-			VertexLayoutAttribute const & fmt{ va->layout.attributes[i] };
+			VertexLayout::Attribute const & fmt{ va->layout.attributes[i] };
 
 			if (fmt.type == DataType_I32)
 			{
@@ -653,7 +652,7 @@ void RenderingDeviceOpenGL::framebuffer_set_size(RID framebuffer, int32_t width,
 
 RID RenderingDeviceOpenGL::sampler_create(SamplerCreateInfo const & sampler_state)
 {
-	Sampler * ss{ memnew(Sampler{}) };
+	Sampler * const ss{ memnew(Sampler{}) };
 	ss->mag_filter = TO_GL(sampler_state.mag_filter);
 	ss->min_filter = TO_GL(sampler_state.min_filter);
 	ss->mip_filter = TO_GL(sampler_state.mip_filter);
@@ -725,15 +724,16 @@ void RenderingDeviceOpenGL::sampler_destroy(RID sampler)
 
 RID RenderingDeviceOpenGL::shader_create(ShaderCreateInfo const & shader_info)
 {
-	Shader * s{ memnew(Shader{}) };
+	Shader * const s{ memnew(Shader{}) };
+
 	glCheck(s->handle = glCreateProgramObjectARB());
-	for (ShaderStageData const & stage : shader_info.stage_data) {
-		if (!stage.code.empty()) {
-			s->stage_data.push_back(stage);
-		}
+
+	for (ShaderStageData const & stage : shader_info.stage_data)
+	{
+		if (!stage.code.empty()) { s->stage_data.push_back(stage); }
 	}
 
-	// compile stages
+	// compile
 	for (ShaderStageData const & stage : s->stage_data)
 	{
 		cstring code{ VALIDATE(stage.code.c_str()) };
@@ -760,7 +760,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderCreateInfo const & shader_info)
 		glCheck(glDeleteObjectARB(obj));
 	}
 
-	// link stages
+	// link
 	glCheck(glLinkProgramARB(s->handle));
 	int32_t link_status;
 	glCheck(glGetObjectParameterivARB(s->handle, GL_OBJECT_LINK_STATUS_ARB, &link_status));
@@ -779,9 +779,18 @@ RID RenderingDeviceOpenGL::shader_create(ShaderCreateInfo const & shader_info)
 
 void RenderingDeviceOpenGL::shader_destroy(RID shader)
 {
-	Shader * s{ VALIDATE((Shader *)shader) };
+	Shader * const s{ VALIDATE((Shader *)shader) };
 	if (s->handle) { glCheck(glDeleteProgramsARB(1, &s->handle)); }
 	memdelete(s);
+}
+
+String RenderingDeviceOpenGL::shader_get_code(RID shader)
+{
+	return {};
+}
+
+void RenderingDeviceOpenGL::shader_set_code(RID shader, String const & value)
+{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -789,13 +798,12 @@ void RenderingDeviceOpenGL::shader_destroy(RID shader)
 RID RenderingDeviceOpenGL::uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data)
 {
 	ASSERT(0 < size_in_bytes);
-	UniformBuffer * ub{ VALIDATE((UniformBuffer *)buffer_create(BufferType_UniformBuffer, size_in_bytes, data)) };
-	return (RID)ub;
+	return buffer_create(BufferType_UniformBuffer, size_in_bytes, data);
 }
 
 RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, RID shader)
 {
-	UniformSet * us{ memnew(UniformSet{}) };
+	UniformSet * const us{ memnew(UniformSet{}) };
 	us->shader = shader;
 	for (size_t i = 0; i < uniforms.size(); ++i)
 	{
@@ -810,7 +818,7 @@ RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, 
 		} break;
 		case UniformType_Texture: {
 			ud.length = uniforms[i].ids.size();
-			for (RID const texture : uniforms[i].ids) { ud.textures.push_back(texture); }
+			for (RID const texture : uniforms[i].ids) { ud.images.push_back(texture); }
 		} break;
 		case UniformType_Image: {
 		} break;
@@ -844,7 +852,7 @@ void RenderingDeviceOpenGL::uniform_set_destroy(RID uniform_set)
 
 RID RenderingDeviceOpenGL::render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state)
 {
-	RenderPipeline * rp{ memnew(RenderPipeline{}) };
+	RenderPipeline * const rp{ memnew(RenderPipeline{}) };
 	rp->shader = shader;
 	rp->primitive = TO_GL(primitive);
 	rp->rasterization_state = rasterization_state;
@@ -867,30 +875,41 @@ RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(WindowID window
 	ASSERT(window);
 
 	DrawList * const dl{ &m_draw_list.emplace_back(DrawList{}) };
-	DrawListID const draw_list{ m_draw_list.size() - 1 };
+	DrawListID const index{ m_draw_list.size() - 1 };
 
 	Vec2i const size{ DISPLAY_SERVER->window_get_size(window) };
 	glCheck(glViewport(0, 0, size[0], size[1]));
 	glCheck(glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT));
 
-	return draw_list;
+	return index;
 }
 
-RD::DrawListID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Color const & clear_color, float_t clear_depth, int32_t clear_stencil)
+RD::DrawListID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors, float_t clear_depth, int32_t clear_stencil)
 {
 	DrawList * const dl{ &m_draw_list.emplace_back(DrawList{}) };
-	DrawListID const draw_list{ m_draw_list.size() - 1 };
+	DrawListID const index{ m_draw_list.size() - 1 };
 
 	Framebuffer * const fb{ VALIDATE((Framebuffer *)framebuffer) };
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fb->handle));
 	glCheck(glViewport(0, 0, fb->width, fb->height));
-	glCheck(glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
-	glCheck(glClearDepth(clear_depth));
-	glCheck(glClearStencil(clear_stencil));
-	glCheck(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
-	return draw_list;
+	uint32_t clear_mask{};
+
+	if (!clear_colors.empty()) {
+		glCheck(glClearColor(clear_colors[0][0], clear_colors[0][1], clear_colors[0][2], clear_colors[0][3]));
+		clear_mask |= GL_COLOR_BUFFER_BIT;
+	}
+
+	glCheck(glClearDepth(clear_depth));
+	clear_mask |= GL_DEPTH_BUFFER_BIT;
+
+	glCheck(glClearStencil(clear_stencil));
+	clear_mask |= GL_STENCIL_BUFFER_BIT;
+
+	glCheck(glClear(clear_mask));
+
+	return index;
 }
 
 void RenderingDeviceOpenGL::draw_list_bind_pipeline(DrawListID list, RID pipeline)
@@ -940,19 +959,9 @@ void RenderingDeviceOpenGL::draw_list_bind_pipeline(DrawListID list, RID pipelin
 	for (auto & attachment : rp->color_blend_state.attachments)
 	{
 		glCheck(glSetEnabled(GL_BLEND, attachment.enable_blend));
-		glCheck(glBlendColor(
-			rp->color_blend_state.blend_constant[0],
-			rp->color_blend_state.blend_constant[1],
-			rp->color_blend_state.blend_constant[2],
-			rp->color_blend_state.blend_constant[3]));
-		glCheck(glBlendFuncSeparate(
-			TO_GL(attachment.src_color_blend_factor),
-			TO_GL(attachment.dst_color_blend_factor),
-			TO_GL(attachment.src_alpha_blend_factor),
-			TO_GL(attachment.dst_alpha_blend_factor)));
-		glCheck(glBlendEquationSeparate(
-			TO_GL(attachment.color_blend_op),
-			TO_GL(attachment.alpha_blend_op)));
+		glCheck(glBlendColor(rp->color_blend_state.blend_constant[0], rp->color_blend_state.blend_constant[1], rp->color_blend_state.blend_constant[2], rp->color_blend_state.blend_constant[3]));
+		glCheck(glBlendFuncSeparate(TO_GL(attachment.src_color_blend_factor), TO_GL(attachment.dst_color_blend_factor), TO_GL(attachment.src_alpha_blend_factor), TO_GL(attachment.dst_alpha_blend_factor)));
+		glCheck(glBlendEquationSeparate(TO_GL(attachment.color_blend_op), TO_GL(attachment.alpha_blend_op)));
 	}
 }
 
@@ -986,17 +995,21 @@ void RenderingDeviceOpenGL::draw_list_set_push_constant(DrawListID list, void co
 {
 	ASSERT(list < m_draw_list.size());
 	DrawList * const dl{ m_draw_list.data() + list };
-	if (dl->state.data == data && dl->state.data_size == data_size) { return; }
-	dl->state.data = data;
-	dl->state.data_size = data_size;
+	if (dl->state.user_data == data && dl->state.user_data_size == data_size) { return; }
+	dl->state.user_data = data;
+	dl->state.user_data_size = data_size;
 }
 
 void RenderingDeviceOpenGL::draw_list_enable_scissor(DrawListID list, IntRect const & rect)
 {
+	ASSERT(list < m_draw_list.size());
+	DrawList * const dl{ m_draw_list.data() + list };
 }
 
 void RenderingDeviceOpenGL::draw_list_disable_scissor(DrawListID list)
 {
+	ASSERT(list < m_draw_list.size());
+	DrawList * const dl{ m_draw_list.data() + list };
 }
 
 void RenderingDeviceOpenGL::draw_list_draw(DrawListID list, bool use_indices, size_t instances, size_t procedural_vertices)
@@ -1006,8 +1019,8 @@ void RenderingDeviceOpenGL::draw_list_draw(DrawListID list, bool use_indices, si
 	RenderPipeline * const rp{ VALIDATE((RenderPipeline *)dl->state.pipeline) };
 
 	// bind shader
-	Shader * const ps{ VALIDATE((Shader *)dl->state.pipeline_shader) };
-	glCheck(glUseProgramObjectARB(ps->handle));
+	Shader * const s{ VALIDATE((Shader *)dl->state.pipeline_shader) };
+	glCheck(glUseProgramObjectARB(s->handle));
 
 	// bind uniforms
 	for (uint32_t i = 0; i < dl->state.set_count; ++i)
@@ -1025,10 +1038,10 @@ void RenderingDeviceOpenGL::draw_list_draw(DrawListID list, bool use_indices, si
 				case UniformType_SamplerWithTexture: {
 				} break;
 				case UniformType_Texture: {
-					ASSERT(0 < ud.textures.size());
-					if (1 == ud.textures.size()) {
-						Texture * const tex{ VALIDATE((Texture *)ud.textures.front()) };
-						glCheck(glBindTextureUnit(ud.binding, tex->handle));
+					ASSERT(0 < ud.images.size());
+					if (1 == ud.images.size()) {
+						Texture * const t{ VALIDATE((Texture *)ud.images.front()) };
+						glCheck(glBindTextureUnit(ud.binding, t->handle));
 						glCheck(glUniform1iARB(ud.binding, ud.binding));
 					}
 				} break;

@@ -70,6 +70,7 @@ namespace ism
 			Param_Albedo,
 			Param_Specular,
 			Param_Metallic,
+			// etc...
 			Param_MAX
 		};
 
@@ -78,6 +79,7 @@ namespace ism
 			"Albedo",
 			"Specular",
 			"Metallic",
+			// etc...
 		};
 
 	public:
@@ -101,6 +103,7 @@ namespace ism
 			Color albedo{};
 			float_t specular{};
 			float_t metallic{};
+			// etc...
 		}
 		m_params{};
 
@@ -113,6 +116,8 @@ namespace ism
 
 		NODISCARD float_t get_metallic() const { return m_params.metallic; }
 		void set_metallic(float_t value);
+
+		// etc...
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

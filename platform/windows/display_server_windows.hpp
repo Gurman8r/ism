@@ -11,40 +11,25 @@ namespace ism
 	// windows display server
 	class ISM_API DisplayServerWindows : public DisplayServer
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		OBJECT_COMMON(DisplayServerWindows, DisplayServer);
 
 		GLFWwindow * m_glfw_window{};
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	public:
 		DisplayServerWindows(DisplayServerSettings const & settings);
 
 		~DisplayServerWindows();
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		NODISCARD virtual VideoMode const & get_desktop_video_mode() const override;
 		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		NODISCARD virtual WindowID get_current_context() const override;
 		virtual void set_current_context(WindowID id) override;
 		virtual void poll_events() override;
 		virtual void swap_buffers(WindowID id) override;
 		virtual void swap_interval(int32_t value) override;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
-		NODISCARD virtual CursorID create_standard_cursor(CursorShape_ shape) override;
-		virtual void destroy_cursor(CursorID value) override;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		virtual void focus_window(WindowID id) override;
 		virtual void hide_window(WindowID id) override;
 		virtual void iconify_window(WindowID id) override;
@@ -52,8 +37,12 @@ namespace ism
 		virtual void restore_window(WindowID id) override;
 		virtual void request_window_attention(WindowID id) override;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	public:
+		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
+		NODISCARD virtual CursorID create_standard_cursor(CursorShape_ shape) override;
+		virtual void destroy_cursor(CursorID value) override;
 
+	public:
 		NODISCARD virtual String window_get_clipboard(WindowID id) const override;
 		NODISCARD virtual Vec2f window_get_content_scale(WindowID id) const override;
 		NODISCARD virtual IntRect window_get_frame_size(WindowID id) const override;
@@ -68,9 +57,6 @@ namespace ism
 		NODISCARD virtual Vec2i window_get_size(WindowID id) const override;
 		NODISCARD virtual bool window_get_should_close(WindowID id) const override;
 		NODISCARD virtual void * window_get_user_pointer(WindowID id) const override;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		NODISCARD virtual bool window_is_decorated(WindowID id) const override;
 		NODISCARD virtual bool window_is_floating(WindowID id) const override;
 		NODISCARD virtual bool window_is_focused(WindowID id) const override;
@@ -81,8 +67,7 @@ namespace ism
 		NODISCARD virtual bool window_is_transparent(WindowID id) const override;
 		NODISCARD virtual bool window_is_visible(WindowID id) const override;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		virtual void window_set_clipboard(WindowID id, String const & value) override;
 		virtual void window_set_cursor(WindowID id, CursorID value) override;
 		virtual void window_set_cursor_mode(WindowID id, int32_t value) override;
@@ -96,15 +81,11 @@ namespace ism
 		virtual void window_set_size(WindowID id, Vec2i const & value) override;
 		virtual void window_set_title(WindowID id, String const & value) override;
 		virtual void window_set_user_pointer(WindowID id, void * value) override;
+		virtual void window_set_decorated(WindowID id, bool value) override;
+		virtual void window_set_floating(WindowID id, bool value) override;
+		virtual void window_set_resizable(WindowID id, bool value) override;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		virtual void window_set_is_decorated(WindowID id, bool value) override;
-		virtual void window_set_is_floating(WindowID id, bool value) override;
-		virtual void window_set_is_resizable(WindowID id, bool value) override;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		virtual WindowCharCallback window_set_char_callback(WindowID id, WindowCharCallback value) override;
 		virtual WindowCharModsCallback window_set_char_mods_callback(WindowID id, WindowCharModsCallback value) override;
 		virtual WindowCloseCallback window_set_close_callback(WindowID id, WindowCloseCallback value) override;

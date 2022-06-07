@@ -12,8 +12,6 @@ namespace ism
 	{
 		OBJECT_COMMON(RendererCanvasRenderer, Object);
 
-		static RendererCanvasRenderer * singleton;
-
 		friend class RenderingServerDefault;
 
 	protected:
@@ -21,13 +19,7 @@ namespace ism
 
 	public:
 		virtual ~RendererCanvasRenderer();
-
-		FORCE_INLINE static RendererCanvasRenderer * get_singleton() noexcept { return singleton; }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#define CANVAS_RENDERER (ism::RendererCanvasRenderer::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

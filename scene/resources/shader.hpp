@@ -7,6 +7,8 @@ namespace ism
 {
 	class ISM_API Shader : public Resource
 	{
+		OBJECT_COMMON(Shader, Resource);
+
 	public:
 		enum Mode_
 		{
@@ -18,8 +20,6 @@ namespace ism
 		};
 
 	private:
-		OBJECT_COMMON(Shader, Resource);
-
 		friend class ShaderLoader;
 
 		RID m_shader{};

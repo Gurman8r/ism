@@ -32,35 +32,27 @@ Error_ ShaderMaterial::reload_from_file()
 	return Error_None;
 }
 
-RID ShaderMaterial::get_shader_rid() const
-{
-	if (!m_shader) { return nullptr; }
-	return m_shader->get_rid();
-}
+RID ShaderMaterial::get_shader_rid() const { return m_shader ? m_shader->get_rid() : nullptr; }
 
-Shader::Mode_ ShaderMaterial::get_shader_mode() const
-{
-	return m_shader->get_mode();
-}
+Shader::Mode_ ShaderMaterial::get_shader_mode() const { return m_shader->get_mode(); }
 
-Ref<Shader> ShaderMaterial::get_shader() const
-{
-	return m_shader;
-}
+Ref<Shader> ShaderMaterial::get_shader() const { return m_shader; }
 
 void ShaderMaterial::set_shader(Ref<Shader> const & value)
 {
 	if (m_shader == value) { return; }
 	m_shader = value;
+	RENDERING_SERVER->material_set_shader(get_rid(), get_shader_rid());
 }
 
 OBJ ShaderMaterial::get_shader_param(String const & key) const
 {
-	return nullptr;
+	return RENDERING_SERVER->material_get_param(get_rid(), key);
 }
 
 void ShaderMaterial::set_shader_param(String const & key, OBJ const & value)
 {
+	RENDERING_SERVER->material_set_param(get_rid(), key, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -83,10 +75,7 @@ RID BaseMaterial3D::get_shader_rid() const
 	return nullptr;
 }
 
-Shader::Mode_ BaseMaterial3D::get_shader_mode() const
-{
-	return Shader::Mode_Spatial;
-}
+Shader::Mode_ BaseMaterial3D::get_shader_mode() const { return Shader::Mode_MAX; }
 
 void BaseMaterial3D::_update_shader()
 {

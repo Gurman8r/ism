@@ -47,8 +47,6 @@ void Window::swap_buffers()
 	DISPLAY_SERVER->swap_buffers(m_window_id);
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 void Window::focus()
 {
 	DISPLAY_SERVER->focus_window(m_window_id);
@@ -150,8 +148,6 @@ void * Window::get_user_pointer() const
 {
 	return DISPLAY_SERVER->window_get_user_pointer(m_window_id);
 }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 bool Window::is_decorated() const
 {
@@ -265,21 +261,19 @@ void Window::set_user_pointer(void * value)
 	DISPLAY_SERVER->window_set_user_pointer(m_window_id, value);
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 void Window::set_is_decorated(bool value)
 {
-	DISPLAY_SERVER->window_set_is_decorated(m_window_id, value);
+	DISPLAY_SERVER->window_set_decorated(m_window_id, value);
 }
 
 void Window::set_is_floating(bool value)
 {
-	DISPLAY_SERVER->window_set_is_floating(m_window_id, value);
+	DISPLAY_SERVER->window_set_floating(m_window_id, value);
 }
 
 void Window::set_is_resizable(bool value)
 {
-	DISPLAY_SERVER->window_set_is_resizable(m_window_id, value);
+	DISPLAY_SERVER->window_set_resizable(m_window_id, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

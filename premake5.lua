@@ -16,9 +16,9 @@ end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
-workspace "ism_api_%{_ACTION}"
+workspace "ism_%{_ACTION}"
 
-startproject "sandbox"
+startproject "ism"
 
 configurations{ "Debug", "Release" }
 
@@ -45,9 +45,6 @@ group "Modules"
 	include "modules/glew/glew.premake5.lua"
 	include "modules/glfw/glfw.premake5.lua"
 	include "modules/imgui/imgui.premake5.lua"
-
-group "Programs"
-	include "programs/sandbox/sandbox.premake5.lua"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 

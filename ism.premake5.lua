@@ -1,6 +1,6 @@
 -- ism
 project			"ism"
-kind			"SharedLib"
+kind			"ConsoleApp"
 language		"C++"
 cppdialect 		"C++17"
 systemversion	"latest"
@@ -27,6 +27,8 @@ defines{
 files{
 	"%{wks.location}/ism.premake5.lua",
 
+	"%{wks.location}/assets/**.**",
+
 	"%{wks.location}/core/**.hpp", "%{wks.location}/core/**.cpp",
 
 	"%{wks.location}/drivers/**.hpp", "%{wks.location}/drivers/**.cpp",
@@ -36,6 +38,7 @@ files{
 	"%{wks.location}/main/**.hpp", "%{wks.location}/main/**.cpp",
 
 	"%{wks.location}/platform/*.hpp", "%{wks.location}/platform/*.cpp",
+
 	"%{wks.location}/platform/%{_TARGET_OS}/**.hpp", "%{wks.location}/platform/%{_TARGET_OS}/**.cpp",
 
 	"%{wks.location}/scene/**.hpp", "%{wks.location}/scene/**.cpp",
@@ -44,5 +47,5 @@ files{
 }
 
 postbuildcommands{
-	COPY_FILE("%{wks.location}bin-lib/%{cfg.platform}/%{cfg.buildcfg}/%{prj.targetname}%{DLL}", "%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+	COPY_FILE("%{wks.location}bin-lib/%{cfg.platform}/%{cfg.buildcfg}/%{prj.targetname}%{EXE}", "%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"),
 }

@@ -46,16 +46,16 @@ DisplayServerWindows::DisplayServerWindows(DisplayServerSettings const & setting
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, settings.context.minor);
 
 	// style hints
-	glfwWindowHint(GLFW_AUTO_ICONIFY, settings.hints & WindowHints_AutoIconify);
-	glfwWindowHint(GLFW_CENTER_CURSOR, settings.hints & WindowHints_CenterCursor);
-	glfwWindowHint(GLFW_DECORATED, settings.hints & WindowHints_Decorated);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, settings.hints & WindowHints_Doublebuffer);
-	glfwWindowHint(GLFW_FLOATING, settings.hints & WindowHints_Floating);
-	glfwWindowHint(GLFW_FOCUS_ON_SHOW, settings.hints & WindowHints_FocusOnShow);
-	glfwWindowHint(GLFW_FOCUSED, settings.hints & WindowHints_Focused);
-	glfwWindowHint(GLFW_MAXIMIZED, settings.hints & WindowHints_Maximized);
-	glfwWindowHint(GLFW_RESIZABLE, settings.hints & WindowHints_Resizable);
-	glfwWindowHint(GLFW_VISIBLE, settings.hints & WindowHints_Visible);
+	glfwWindowHint(GLFW_AUTO_ICONIFY, settings.hints & WindowFlags_AutoIconify);
+	glfwWindowHint(GLFW_CENTER_CURSOR, settings.hints & WindowFlags_CenterCursor);
+	glfwWindowHint(GLFW_DECORATED, settings.hints & WindowFlags_Decorated);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, settings.hints & WindowFlags_Doublebuffer);
+	glfwWindowHint(GLFW_FLOATING, settings.hints & WindowFlags_Floating);
+	glfwWindowHint(GLFW_FOCUS_ON_SHOW, settings.hints & WindowFlags_FocusOnShow);
+	glfwWindowHint(GLFW_FOCUSED, settings.hints & WindowFlags_Focused);
+	glfwWindowHint(GLFW_MAXIMIZED, settings.hints & WindowFlags_Maximized);
+	glfwWindowHint(GLFW_RESIZABLE, settings.hints & WindowFlags_Resizable);
+	glfwWindowHint(GLFW_VISIBLE, settings.hints & WindowFlags_Visible);
 
 	// monitor hints
 	glfwWindowHint(GLFW_REFRESH_RATE, settings.video.refresh_rate);
@@ -82,7 +82,7 @@ DisplayServerWindows::DisplayServerWindows(DisplayServerSettings const & setting
 
 	set_current_context((WindowID)m_glfw_window);
 	
-	if (settings.hints & WindowHints_Maximized) { maximize_window((WindowID)m_glfw_window); }
+	if (settings.hints & WindowFlags_Maximized) { maximize_window((WindowID)m_glfw_window); }
 }
 
 DisplayServerWindows::~DisplayServerWindows()
@@ -158,6 +158,36 @@ void DisplayServerWindows::swap_interval(int32_t value)
 	glfwSwapInterval(value);
 }
 
+void DisplayServerWindows::focus_window(WindowID id)
+{
+	glfwFocusWindow((GLFWwindow *)id);
+}
+
+void DisplayServerWindows::hide_window(WindowID id)
+{
+	glfwHideWindow((GLFWwindow *)id);
+}
+
+void DisplayServerWindows::iconify_window(WindowID id)
+{
+	glfwIconifyWindow((GLFWwindow *)id);
+}
+
+void DisplayServerWindows::maximize_window(WindowID id)
+{
+	glfwMaximizeWindow((GLFWwindow *)id);
+}
+
+void DisplayServerWindows::restore_window(WindowID id)
+{
+	glfwRestoreWindow((GLFWwindow *)id);
+}
+
+void DisplayServerWindows::request_window_attention(WindowID id)
+{
+	glfwRequestWindowAttention((GLFWwindow *)id);
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 CursorID DisplayServerWindows::create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y)
@@ -195,38 +225,6 @@ CursorID DisplayServerWindows::create_standard_cursor(CursorShape_ shape)
 void DisplayServerWindows::destroy_cursor(CursorID value)
 {
 	glfwDestroyCursor((GLFWcursor *)value);
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void DisplayServerWindows::focus_window(WindowID id)
-{
-	glfwFocusWindow((GLFWwindow *)id);
-}
-
-void DisplayServerWindows::hide_window(WindowID id)
-{
-	glfwHideWindow((GLFWwindow *)id);
-}
-
-void DisplayServerWindows::iconify_window(WindowID id)
-{
-	glfwIconifyWindow((GLFWwindow *)id);
-}
-
-void DisplayServerWindows::maximize_window(WindowID id)
-{
-	glfwMaximizeWindow((GLFWwindow *)id);
-}
-
-void DisplayServerWindows::restore_window(WindowID id)
-{
-	glfwRestoreWindow((GLFWwindow *)id);
-}
-
-void DisplayServerWindows::request_window_attention(WindowID id)
-{
-	glfwRequestWindowAttention((GLFWwindow *)id);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -316,8 +314,6 @@ void * DisplayServerWindows::window_get_user_pointer(WindowID id) const
 {
 	return glfwGetWindowUserPointer((GLFWwindow *)id);
 }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 bool DisplayServerWindows::window_is_decorated(WindowID id) const
 {
@@ -421,7 +417,7 @@ void DisplayServerWindows::window_set_position(WindowID id, Vec2i const & value)
 	glfwSetWindowPos((GLFWwindow *)id, (int32_t)value[0], (int32_t)value[1]);
 }
 
-void DisplayServerWindows::window_set_is_resizable(WindowID id, bool value)
+void DisplayServerWindows::window_set_resizable(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_RESIZABLE, value);
 }
@@ -446,14 +442,12 @@ void DisplayServerWindows::window_set_user_pointer(WindowID id, void * value)
 	glfwSetWindowUserPointer((GLFWwindow *)id, value);
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void DisplayServerWindows::window_set_is_decorated(WindowID id, bool value)
+void DisplayServerWindows::window_set_decorated(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED, value);
 }
 
-void DisplayServerWindows::window_set_is_floating(WindowID id, bool value)
+void DisplayServerWindows::window_set_floating(WindowID id, bool value)
 {
 	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING, value);
 }

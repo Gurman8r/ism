@@ -12,8 +12,6 @@ namespace ism
 	{
 		OBJECT_COMMON(RendererSceneRenderer, Object);
 
-		static RendererSceneRenderer * singleton;
-
 		friend class RenderingServerDefault;
 
 	protected:
@@ -21,16 +19,7 @@ namespace ism
 
 	public:
 		virtual ~RendererSceneRenderer();
-
-		FORCE_INLINE static RendererSceneRenderer * get_singleton() noexcept { return singleton; }
-
-	public:
-		void render_scene();
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#define SCENE_RENDERER (ism::RendererSceneRenderer::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

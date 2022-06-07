@@ -12,35 +12,25 @@ namespace ism
 	// window
 	class ISM_API Window : public Node
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		OBJECT_COMMON(Window, Node);
 
-	protected:
 		friend class SceneTree;
 
 		WindowID m_window_id{};
 
 	public:
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		explicit Window() noexcept;
 
 		virtual ~Window();
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		NODISCARD WindowID get_window_id() const noexcept { return m_window_id; }
 
 		NODISCARD operator WindowID() const noexcept { return m_window_id; }
-		NODISCARD auto get_window_id() const noexcept -> WindowID { return m_window_id; }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		virtual void make_current_context();
 		virtual void poll_events();
 		virtual void swap_buffers();
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		virtual void focus();
 		virtual void hide();
 		virtual void iconify();
@@ -48,8 +38,7 @@ namespace ism
 		virtual void restore();
 		virtual void request_attention();
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		NODISCARD inline IntRect get_bounds() const noexcept { return { get_position(), get_size() }; }
 		NODISCARD virtual String get_clipboard() const;
 		NODISCARD virtual Vec2f get_content_scale() const;
@@ -65,9 +54,6 @@ namespace ism
 		NODISCARD virtual Vec2i get_size() const;
 		NODISCARD virtual bool get_should_close() const;
 		NODISCARD virtual void * get_user_pointer() const;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		NODISCARD virtual bool is_decorated() const;
 		NODISCARD virtual bool is_floating() const;
 		NODISCARD virtual bool is_focused() const;
@@ -78,8 +64,7 @@ namespace ism
 		NODISCARD virtual bool is_transparent() const;
 		NODISCARD virtual bool is_visible() const;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		virtual void set_clipboard(String const & value);
 		virtual void set_cursor(CursorID value);
 		virtual void set_input_mode(InputMode_ value);
@@ -93,15 +78,11 @@ namespace ism
 		virtual void set_should_close(bool value);
 		virtual void set_size(Vec2i const & value);
 		virtual void set_user_pointer(void * value);
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		virtual void set_is_decorated(bool value);
 		virtual void set_is_floating(bool value);
 		virtual void set_is_resizable(bool value);
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		virtual WindowCharCallback set_char_callback(WindowCharCallback value);
 		virtual WindowCharModsCallback set_char_mods_callback(WindowCharModsCallback value);
 		virtual WindowCloseCallback set_close_callback(WindowCloseCallback value);
@@ -119,8 +100,6 @@ namespace ism
 		virtual WindowRefreshCallback set_refresh_callback(WindowRefreshCallback value);
 		virtual WindowScrollCallback set_scroll_callback(WindowScrollCallback value);
 		virtual WindowSizeCallback set_size_callback(WindowSizeCallback value);
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
