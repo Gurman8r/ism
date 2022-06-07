@@ -70,11 +70,6 @@ namespace ism
 
 	public:
 		/* FONT API */
-		struct FontCreateInfo
-		{
-			Path path{};
-		};
-
 		using FontLibrary = void *;
 
 		using FontFace = void *;
@@ -97,12 +92,14 @@ namespace ism
 			Map<uint32_t, FontPage> pages{};
 		};
 
-		RID font_create(FontCreateInfo const & spec);
+		struct FontCreateInfo
+		{
+			Path path{};
+		};
 
+		RID font_create(FontCreateInfo const & spec);
 		void font_destroy(RID font);
-		
 		FontPage * font_get_page(RID font, uint32_t character_size);
-		
 		Glyph * font_get_glyph(RID font, uint32_t character, uint32_t character_size);
 	};
 

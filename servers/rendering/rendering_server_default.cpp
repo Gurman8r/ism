@@ -136,6 +136,16 @@ Ref<Image> RenderingServerDefault::texture2d_get_image(RID texture)
 	return image;
 }
 
+RID RenderingServerDefault::texture3d_placeholder_create()
+{
+	return m_storage->texture3d_placeholder_create();
+}
+
+RID RenderingServerDefault::cubemap_placeholder_create()
+{
+	return m_storage->cubemap_placeholder_create();
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RenderingServerDefault::shader_create()
@@ -161,7 +171,7 @@ RID RenderingServerDefault::material_create()
 
 RID RenderingServerDefault::material_placeholder_create()
 {
-	return RID();
+	return m_storage->material_placeholder_create();
 }
 
 void RenderingServerDefault::material_destroy(RID material)
@@ -251,6 +261,36 @@ RID RenderingServerDefault::camera_create()
 void RenderingServerDefault::camera_destroy(RID camera)
 {
 	m_storage->camera_destroy(camera);
+}
+
+Vec3 RenderingServerDefault::camera_get_position(RID camera)
+{
+	return m_storage->camera_get_position(camera);
+}
+
+void RenderingServerDefault::camera_set_position(RID camera, Vec3 const & value)
+{
+	m_storage->camera_set_position(camera, value);
+}
+
+Quat RenderingServerDefault::camera_get_rotation(RID camera)
+{
+	return m_storage->camera_get_rotation(camera);
+}
+
+void RenderingServerDefault::camera_set_rotation(RID camera, Quat const & value)
+{
+	m_storage->camera_set_rotation(camera, value);
+}
+
+Mat4 RenderingServerDefault::camera_get_transform(RID camera)
+{
+	return m_storage->camera_get_transform(camera);
+}
+
+void RenderingServerDefault::camera_set_transform(RID camera, Mat4 const & value)
+{
+	m_storage->camera_set_transform(camera, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

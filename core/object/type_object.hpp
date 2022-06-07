@@ -57,6 +57,7 @@ namespace ism
 			else if constexpr (std::is_base_of_v<IntObject, T>) { tp_flags |= TypeFlags_Int_Subclass; }
 			else if constexpr (std::is_base_of_v<FloatObject, T>) { tp_flags |= TypeFlags_Float_Subclass; }
 			else if constexpr (std::is_base_of_v<StringObject, T>) { tp_flags |= TypeFlags_Str_Subclass; }
+			else if constexpr (std::is_base_of_v<TupleObject, T>) { tp_flags |= TypeFlags_Tuple_Subclass; }
 			else if constexpr (std::is_base_of_v<ListObject, T>) { tp_flags |= TypeFlags_List_Subclass; }
 			else if constexpr (std::is_base_of_v<DictObject, T>) { tp_flags |= TypeFlags_Dict_Subclass; }
 		}

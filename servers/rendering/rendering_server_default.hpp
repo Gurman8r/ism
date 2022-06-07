@@ -34,6 +34,8 @@ namespace ism
 		virtual RID texture2d_create(Ref<Image> const & image) override;
 		virtual RID texture2d_placeholder_create() override;
 		virtual Ref<Image> texture2d_get_image(RID texture) override;
+		virtual RID texture3d_placeholder_create() override;
+		virtual RID cubemap_placeholder_create() override;
 
 	public:
 		/* SHADER */
@@ -68,6 +70,12 @@ namespace ism
 		/* CAMERA */
 		virtual RID camera_create() override;
 		virtual void camera_destroy(RID camera) override;
+		virtual Vec3 camera_get_position(RID camera) override;
+		virtual void camera_set_position(RID camera, Vec3 const & value) override;
+		virtual Quat camera_get_rotation(RID camera) override;
+		virtual void camera_set_rotation(RID camera, Quat const & value) override;
+		virtual Mat4 camera_get_transform(RID camera) override;
+		virtual void camera_set_transform(RID camera, Mat4 const & value) override;
 
 	public:
 		/* VIEWPORT */

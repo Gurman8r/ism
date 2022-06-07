@@ -5,6 +5,12 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#ifndef ISM_MAIN
+#define ISM_MAIN false
+#endif
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #ifndef ISM_VERSION_MAJOR
 #define ISM_VERSION_MAJOR 0
 #endif

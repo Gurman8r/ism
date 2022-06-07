@@ -1,6 +1,6 @@
 #include <core/version.hpp>
 
-#ifdef SYSTEM_WINDOWS
+#if SYSTEM_WINDOWS && ISM_MAIN
 
 #include <main/main.hpp>
 #include <platform/windows/os_windows.hpp>

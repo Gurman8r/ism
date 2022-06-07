@@ -66,7 +66,7 @@ namespace ism
 		virtual RID vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers) override;
 		virtual void vertex_array_destroy(RID rid) override;
 
-		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & data = {}) override;
+		virtual RID index_buffer_create(size_t index_count, DataType_ index_type = DataType_U32, DynamicBuffer const & data = {}) override;
 		virtual RID index_array_create(RID index_buffer, size_t index_offset, size_t index_count) override;
 		virtual void index_array_destroy(RID index_array) override;
 

@@ -40,7 +40,6 @@ Error_ ImageLoader::load_image(Image & image, Path const & path)
 Error_ ImageLoader::load_image(Ref<Image> image, Path const & path)
 {
 	if (!image) { return Error_Unknown; }
-
 	return load_image(**image, path);
 }
 

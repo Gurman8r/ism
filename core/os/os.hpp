@@ -12,7 +12,6 @@ namespace ism
 	// operating system
 	class ISM_API OS
 	{
-	private:
 		static OS * singleton;
 
 		String				m_exepath{};
@@ -63,9 +62,9 @@ namespace ism
 		
 		void printerrv(cstring fmt, va_list args);
 		
-		virtual String get_stdin_string(bool block = true) = 0;
-
 	public:
+		NODISCARD virtual String get_stdin_string(bool block = true) = 0;
+
 		NODISCARD int32_t get_exit_code() const noexcept { return m_exit_code; }
 
 		NODISCARD virtual String get_executable_path() const { return m_exepath; }

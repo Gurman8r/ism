@@ -4,8 +4,8 @@
 #include <core/typedefs.hpp>
 #include <core/string/path.hpp>
 #include <core/string/print_string.hpp>
-#include <core/math/color.hpp>
-#include <core/math/rect.hpp>
+#include <core/math/transform.hpp>
+#include <core/math/transform_2d.hpp>
 #include <core/templates/atomic.hpp>
 #include <core/templates/buffer.hpp>
 #include <core/templates/duration.hpp>
@@ -52,6 +52,7 @@ namespace ism
 	class IntObject;
 	class FloatObject;
 	class StringObject;
+	class TupleObject;
 	class ListObject;
 	class DictObject;
 	class CapsuleObject;
@@ -78,6 +79,7 @@ namespace ism
 	class INT;
 	class FLT;
 	class STR;
+	class TUPLE;
 	class LIST;
 	class DICT;
 	class CAPSULE;
@@ -137,9 +139,10 @@ namespace ism
 		TypeFlags_IsAbstract		= 1 << 4,
 		TypeFlags_IsFinal			= 1 << 5,
 
-		TypeFlags_Int_Subclass		= 1 << 25,
-		TypeFlags_Float_Subclass	= 1 << 26,
-		TypeFlags_Str_Subclass		= 1 << 27,
+		TypeFlags_Int_Subclass		= 1 << 24,
+		TypeFlags_Float_Subclass	= 1 << 25,
+		TypeFlags_Str_Subclass		= 1 << 26,
+		TypeFlags_Tuple_Subclass	= 1 << 27,
 		TypeFlags_List_Subclass		= 1 << 28,
 		TypeFlags_Dict_Subclass		= 1 << 29,
 		TypeFlags_Type_Subclass		= 1 << 30,
@@ -204,6 +207,12 @@ namespace ism
 		case DataType_String: return sizeof(String);
 		}
 		return 0;
+	}
+
+	template <DataType_ type
+	> NODISCARD constexpr size_t get_data_type_size() noexcept
+	{
+		return get_data_type_size(type);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

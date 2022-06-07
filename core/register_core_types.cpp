@@ -13,6 +13,7 @@ void ism::register_core_types()
 	ASSERT(typeof<IntObject>().ready());
 	ASSERT(typeof<FloatObject>().ready());
 	ASSERT(typeof<StringObject>().ready());
+	ASSERT(typeof<TupleObject>().ready());
 	ASSERT(typeof<ListObject>().ready());
 	ASSERT(typeof<DictObject>().ready());
 	ASSERT(typeof<CapsuleObject>().ready());
@@ -29,6 +30,7 @@ void ism::register_core_types()
 		IntObject,
 		FloatObject,
 		StringObject,
+		TupleObject,
 		ListObject,
 		DictObject,
 		CapsuleObject,

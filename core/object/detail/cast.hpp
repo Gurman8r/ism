@@ -6,6 +6,7 @@
 #include <core/object/int_object.hpp>
 #include <core/object/float_object.hpp>
 #include <core/object/string_object.hpp>
+#include <core/object/tuple_object.hpp>
 #include <core/object/list_object.hpp>
 #include <core/object/dict_object.hpp>
 #include <core/object/capsule_object.hpp>

@@ -1,6 +1,7 @@
 #ifndef _ISM_TRANSFORM_HPP_
 #define _ISM_TRANSFORM_HPP_
 
+#include <core/math/color.hpp>
 #include <core/math/rect.hpp>
 #include <core/math/quat.hpp>
 

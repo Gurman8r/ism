@@ -30,12 +30,20 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 	JSON::const_iterator lang{ json.find("lang") };
 	if (lang == json.end()) { return Error_Unknown; }
 
+	// string to shader_language
+	auto str_to_shader_language = [](String const & s) noexcept {
+		switch (hash(util::to_lower(s))) {
+		case "glsl"_hash: return RD::ShaderLanguage_GLSL;
+		case "hlsl"_hash: return RD::ShaderLanguage_HLSL;
+		}
+		return RD::ShaderLanguage_MAX;
+	};
+
 	// generate spec
 	RD::ShaderCreateInfo spec;
-	switch (hash(util::to_lower(lang->get<String>())))
+	switch (RD::ShaderLanguage_ const shader_language{ str_to_shader_language(lang->get<String>()) })
 	{
-	// GLSL
-	case "glsl"_hash: {
+	case RD::ShaderLanguage_GLSL: {
 #if OPENGL_ENABLED
 		spec = ShaderLoaderGLSL::create_shader_spec(json);
 #else
@@ -43,8 +51,7 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 #endif
 	} break;
 
-	// HLSL
-	case "hlsl"_hash: {
+	case RD::ShaderLanguage_HLSL: {
 #if DIRECTX_ENABLED
 		spec = ShaderLoaderHLSL::create_shader_spec(json);
 #else
@@ -63,7 +70,6 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 Error_ ShaderLoader::load_shader(Ref<Shader> shader, Path const & path)
 {
 	if (!shader) { return Error_Unknown; }
-
 	return load_shader(**shader, path);
 }
 
@@ -72,14 +78,12 @@ Error_ ShaderLoader::load_shader(Ref<Shader> shader, Path const & path)
 Error_ ShaderLoader::load_shader(Shader & shader, DynamicBuffer const & code)
 {
 	// TODO: load shader binary
-
 	return Error_None;
 }
 
 Error_ ShaderLoader::load_shader(Ref<Shader> shader, DynamicBuffer const & code)
 {
 	if (!shader) { return Error_Unknown; }
-
 	return load_shader(**shader, code);
 }
 

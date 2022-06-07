@@ -1,8 +1,6 @@
 #ifndef _ISM_NODE_HPP_
 #define _ISM_NODE_HPP_
 
-#include <core/math/transform.hpp>
-#include <core/math/transform_2d.hpp>
 #include <core/input/input.hpp>
 #include <entt/entt.hpp>
 

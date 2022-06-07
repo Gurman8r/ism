@@ -1,5 +1,5 @@
-#ifndef _SYSTEM_WINDOWS_HPP_
-#define _SYSTEM_WINDOWS_HPP_
+#ifndef _ISM_SYSTEM_WINDOWS_HPP_
+#define _ISM_SYSTEM_WINDOWS_HPP_
 
 #include <core/os/os.hpp>
 
@@ -14,7 +14,7 @@ namespace ism
 	class ISM_API OS_Windows : public OS
 	{
 		Ref<MainLoop> m_main_loop{};
-		HINSTANCE m_instance{};
+		HINSTANCE m_hinstance{};
 		HWND m_main_window{};
 
 	public:
@@ -22,9 +22,9 @@ namespace ism
 
 		virtual ~OS_Windows() override;
 
+		NODISCARD HINSTANCE get_instance() { return m_hinstance; }
+
 		void set_main_window(HWND value) { m_main_window = value; }
-		
-		HINSTANCE get_instance() { return m_instance; }
 
 	protected:
 		virtual void initialize() override;
@@ -33,28 +33,26 @@ namespace ism
 
 		virtual void finalize_core() override;
 
+		virtual void set_main_loop(Ref<MainLoop> value) override;
+
+		virtual void delete_main_loop() override;
+
 	public:
+		NODISCARD virtual String get_stdin_string(bool block = true) override;
+
 		NODISCARD virtual bool has_environment(String const & key) const override;
 
 		NODISCARD virtual String get_environment(String const & key) const override;
 
 		virtual bool set_environment(String const & key, String const & value) const override;
 
-	public:
 		virtual Path get_cwd() const override;
 
 		virtual Error_ set_cwd(Path const & path) override;
 
 		NODISCARD virtual String get_name() const override;
 
-		virtual String get_stdin_string(bool block = true) override;
-
-	public:
 		virtual Ref<MainLoop> get_main_loop() const override;
-
-		virtual void set_main_loop(Ref<MainLoop> value) override;
-
-		virtual void delete_main_loop() override;
 
 	public:
 		virtual Error_ open_dynamic_library(Path const & path, void *& instance) override;
@@ -67,4 +65,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_SYSTEM_WINDOWS_HPP_
+#endif // !_ISM_SYSTEM_WINDOWS_HPP_

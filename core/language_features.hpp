@@ -68,27 +68,27 @@
 
 #if defined(_WIN32) || defined(_WIN64) || defined(WIN32) || defined(WIN64) || defined(__MINGW32__) || defined(__MINGW64__)
 //									Windows
-#   define SYSTEM_WINDOWS			1
+#   define SYSTEM_WINDOWS			true
 
 #elif defined(__APPLE__) && defined(__MACH__)
 //									Apple
-#   define SYSTEM_APPLE				1
+#   define SYSTEM_APPLE				true
 
 #elif defined(__unix__)
 //									Unix
-#   define SYSTEM_UNIX				1
+#   define SYSTEM_UNIX				true
 
 #   if defined(__ANDROID__)
 //									Android
-#       define SYSTEM_ANDROID		1
+#       define SYSTEM_ANDROID		true
 
 #   elif defined(__linux__)
 //									Linux
-#       define SYSTEM_LINUX			1
+#       define SYSTEM_LINUX			true
 
 #   elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 //									FreeBSD
-#       define SYSTEM_FREEBSD		1
+#       define SYSTEM_FREEBSD		true
 
 #   else
 #       error "this unix operating system is not supported"
@@ -105,31 +105,31 @@
 
 #if defined(__x86_64__) || defined(_M_X64) || defined(_x64)
 //									x64
-#	define CPU_X64					1
+#	define CPU_X64					true
 #	define ARCHITECTURE				64
 
 #elif defined(__i386__) || defined(_M_IX86)
 //									x86
-#	define CPU_X86					1
+#	define CPU_X86					true
 #	define ARCHITECTURE				32
 
 #elif defined(__arm__) || defined(_M_ARM) || defined(__aarch64__)
 //									ARM
 #	if defined(__aarch64__)
-#		define CPU_ARM64			1
+#		define CPU_ARM64			true
 #		define ARCHITECTURE			64
 #	else
-#		define CPU_ARM32			1
+#		define CPU_ARM32			true
 #		define ARCHITECTURE			32
 #	endif
 
 #elif defined(ppc) || defined(_M_PPC) || defined(__ppc64__)
 //									PowerPC
 #	if defined(__ppc64__)
-#		define CPU_PPC64			1
+#		define CPU_PPC64			true
 #		define ARCHITECTURE			64
 #	else
-#		define CPU_PPC32			1
+#		define CPU_PPC32			true
 #		define ARCHITECTURE			32
 #	endif
 
@@ -277,7 +277,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef _HAS_FUNCTION_ALLOCATOR_SUPPORT
-#define _HAS_FUNCTION_ALLOCATOR_SUPPORT 1
+#define _HAS_FUNCTION_ALLOCATOR_SUPPORT true
 #endif // !_HAS_FUNCTION_ALLOCATOR_SUPPORT
 
 

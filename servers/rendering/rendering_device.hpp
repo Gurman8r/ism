@@ -8,6 +8,8 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	class ShaderLanguage;
+
 	// low-level graphics api
 	class ISM_API RenderingDevice : public Object
 	{
@@ -345,28 +347,11 @@ namespace ism
 			}
 		};
 
-		enum IndexbufferFormat_
-		{
-			IndexbufferFormat_U8,
-			IndexbufferFormat_U16,
-			IndexbufferFormat_U32,
-		};
-
-		NODISCARD static constexpr size_t get_index_buffer_format_size(IndexbufferFormat_ const value) noexcept
-		{
-			switch (value) {
-			case IndexbufferFormat_U8: return sizeof(uint8_t);
-			case IndexbufferFormat_U16: return sizeof(uint16_t);
-			case IndexbufferFormat_U32: return sizeof(uint32_t);
-			}
-			return get_index_buffer_format_size(IndexbufferFormat_U32);
-		}
-
 		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) = 0;
 		virtual RID vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers) = 0;
 		virtual void vertex_array_destroy(RID vertex_array) = 0;
 
-		virtual RID index_buffer_create(size_t index_count, IndexbufferFormat_ index_type = IndexbufferFormat_U32, DynamicBuffer const & data = {}) = 0;
+		virtual RID index_buffer_create(size_t index_count, DataType_ index_type = DataType_U32, DynamicBuffer const & data = {}) = 0;
 		virtual RID index_array_create(RID index_buffer, size_t index_offset, size_t index_count) = 0;
 		virtual void index_array_destroy(RID index_array) = 0;
 
@@ -402,23 +387,14 @@ namespace ism
 		struct SamplerCreateInfo
 		{
 			SamplerFilter_ mag_filter{ SamplerFilter_Nearest }, min_filter{ SamplerFilter_Nearest }, mip_filter{ SamplerFilter_Nearest };
-
 			SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat }, repeat_r{ SamplerRepeatMode_Repeat };
-
 			float_t lod_bias{ 0 };
-
 			bool use_anisotropy{ false };
-
 			float_t anisotropy_max{ 1.f };
-
 			bool enable_compare{};
-
 			CompareOperator_ compare_op{ CompareOperator_Always };
-
 			float_t min_lod{ 0 }, max_lod{ 1e20f };
-
 			SamplerBorderColor_ border_color{ SamplerBorderColor_Float_Opaque_Black };
-
 			bool unnormalized_uvw{ false };
 		};
 
@@ -497,21 +473,13 @@ namespace ism
 		struct TextureCreateInfo
 		{
 			TextureType_ texture_type{ TextureType_2D };
-
 			DataFormat_ color_format{ DataFormat_R8G8B8_UNORM };
-
 			uint32_t width{ 1 }, height{ 1 }, depth{ 1 }, layers{ 1 }, mipmaps{ 1 };
-
 			SamplerFilter_ min_filter{ SamplerFilter_Nearest }, mag_filter{ SamplerFilter_Nearest };
-
 			SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat };
-
 			TextureSamples_ samples{ TextureSamples_1 };
-
 			int32_t usage_flags{ TextureFlags_Default };
-
 			DataFormat_ color_format_srgb{ DataFormat_MAX };
-
 			TextureSwizzle_ swizzle_r{ TextureSwizzle_R }, swizzle_g{ TextureSwizzle_G }, swizzle_b{ TextureSwizzle_B }, swizzle_a{ TextureSwizzle_A };
 		};
 
@@ -533,6 +501,7 @@ namespace ism
 		{
 			ShaderLanguage_GLSL,
 			ShaderLanguage_HLSL,
+			ShaderLanguage_MAX,
 		};
 
 		enum ShaderStage_
@@ -556,7 +525,6 @@ namespace ism
 		struct ShaderStageData
 		{
 			ShaderStage_ shader_stage{ ShaderStage_MAX };
-
 			DynamicBuffer code{};
 		};
 
@@ -581,7 +549,7 @@ namespace ism
 	public:
 		/* UNIFORMS */
 		template <class ... _Types
-		> using ConstantBuffer = ConstantBuffer<16, _Types...>;
+		> using CBuffer = ConstantBuffer<16, _Types...>;
 
 		enum UniformType_
 		{
@@ -601,9 +569,7 @@ namespace ism
 		struct Uniform
 		{
 			UniformType_ uniform_type{ UniformType_Image };
-
 			int32_t binding{};
-
 			Vector<RID> ids{};
 		};
 
@@ -645,40 +611,25 @@ namespace ism
 		struct RasterizationState
 		{
 			bool enable_depth_clamp{ false };
-
 			bool discard_primitives{ false };
-
 			bool enable_wireframe{ false };
-
 			PolygonCullMode_ cull_mode{ PolygonCullMode_Disabled };
-
 			PolygonFrontFace_ front_face{ PolygonFrontFace_Clockwise };
-
 			bool enable_depth_bias{ false };
-
 			float_t depth_bias_constant_factor{ 0.f };
-
 			float_t depth_bias_clamp{ 0.f };
-
 			float_t depth_bias_slope_factor{ 0.f };
-
 			float_t line_width{ 1.f };
-
 			uint32_t patch_control_points{ 1 };
 		};
 
 		struct MultisampleState
 		{
 			TextureSamples_ sample_count{ TextureSamples_1 };
-
 			bool enable_sample_shading{ false };
-
 			float_t min_sample_shading{ 0.f };
-
 			Vector<uint32_t> sample_mask{};
-
 			bool enable_alpha_to_coverage{ false };
-
 			bool enable_alpha_to_one{ false };
 		};
 
@@ -698,34 +649,22 @@ namespace ism
 		struct StencilOperationState
 		{
 			StencilOperation_ fail{ StencilOperation_Zero };
-
 			StencilOperation_ pass{ StencilOperation_Zero };
-
 			StencilOperation_ depth_fail{ StencilOperation_Zero };
-
 			CompareOperator_ compare{ CompareOperator_Always };
-
 			uint32_t compare_mask{ 0 };
-
 			uint32_t write_mask{ 0 };
-
 			uint32_t reference{ 0 };
 		};
 
 		struct DepthStencilState
 		{
 			bool enable_depth_test{ false };
-			
 			bool enable_depth_write{ false };
-			
 			CompareOperator_ depth_compare_operator{ CompareOperator_Always };
-
 			bool enable_depth_range{ false };
-			
 			float_t depth_range_min{ 0.f }, depth_range_max{ 0.f };
-
 			bool enable_stencil{ false };
-			
 			StencilOperationState front_op{}, back_op{};
 		};
 
@@ -768,19 +707,12 @@ namespace ism
 			struct Attachment
 			{
 				bool enable_blend{ false };
-
 				BlendFactor_ src_color_blend_factor{ BlendFactor_Zero };
-				
 				BlendFactor_ dst_color_blend_factor{ BlendFactor_Zero };
-				
 				BlendOperation_ color_blend_op{ BlendOperation_Add };
-
 				BlendFactor_ src_alpha_blend_factor{ BlendFactor_Zero };
-				
 				BlendFactor_ dst_alpha_blend_factor{ BlendFactor_Zero };
-				
 				BlendOperation_ alpha_blend_op{ BlendOperation_Add };
-
 				bool write_r{ true }, write_g{ true }, write_b{ true }, write_a{ true };
 			};
 

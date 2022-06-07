@@ -153,6 +153,15 @@ void get_image_info(RD::DataFormat_ const data_format, Image::Format_ * image_fo
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+MAKE_ENUM_MAPPING(TO_GL, DataType_, uint32_t,
+	GL_BYTE, GL_SHORT, GL_INT, GL_INT64_ARB,
+	GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT, GL_UNSIGNED_INT64_ARB,
+	0, 0, // string, object
+	GL_FLOAT, GL_DOUBLE,
+	GL_BYTE, GL_BYTE, GL_BYTE,
+	GL_UNSIGNED_INT,
+	0); // void
+
 MAKE_ENUM_MAPPING(TO_GL, CompareOperator_, uint32_t,
 	GL_NEVER,
 	GL_LESS,
@@ -184,12 +193,6 @@ MAKE_ENUM_MAPPING(TO_GL, BufferType_, uint32_t,
 	GL_ARRAY_BUFFER,
 	GL_ELEMENT_ARRAY_BUFFER,
 	GL_UNIFORM_BUFFER);
-
-ALIAS(IndexbufferFormat_) RD::IndexbufferFormat_;
-MAKE_ENUM_MAPPING(TO_GL, IndexbufferFormat_, uint32_t,
-	GL_UNSIGNED_BYTE,
-	GL_UNSIGNED_SHORT,
-	GL_UNSIGNED_INT);
 
 ALIAS(TextureType_) RD::TextureType_;
 MAKE_ENUM_MAPPING(TO_GL, TextureType_, uint32_t,
@@ -339,23 +342,25 @@ RID RenderingDeviceOpenGL::buffer_create(BufferType_ buffer_type, size_t size_in
 	BufferBase * b;
 	switch (buffer_type)
 	{
-	default: {
-		CRASH("INVALID BUFFER TYPE");
-	} break;
-	case RD::BufferType_VertexBuffer: {
+	default: { return nullptr; } break;
+
+	case BufferType_VertexBuffer: {
 		b = memnew(VertexBuffer{});
 		b->usage = data.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	} break;
-	case RD::BufferType_IndexBuffer: {
+
+	case BufferType_IndexBuffer: {
 		b = memnew(IndexBuffer{});
 		b->usage = data.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	} break;
-	case RD::BufferType_UniformBuffer: {
+
+	case BufferType_UniformBuffer: {
 		b = memnew(UniformBuffer{});
 		b->usage = GL_STATIC_DRAW;
 	} break;
 	}
 
+	ASSERT(b);
 	b->buffer_type = TO_GL(buffer_type);
 	b->size = (uint32_t)size_in_bytes;
 	b->data = data;
@@ -449,11 +454,11 @@ void RenderingDeviceOpenGL::vertex_array_destroy(RID vertex_array)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::index_buffer_create(size_t index_count, IndexbufferFormat_ index_type, DynamicBuffer const & data)
+RID RenderingDeviceOpenGL::index_buffer_create(size_t index_count, DataType_ index_type, DynamicBuffer const & data)
 {
 	ASSERT(0 < index_count);
-	size_t const size_in_bytes{ index_count * RD::get_index_buffer_format_size(index_type) };
-	IndexBuffer * const ib{ VALIDATE((IndexBuffer *)buffer_create(BufferType_IndexBuffer, size_in_bytes, data)) };
+	ASSERT(index_type == DataType_U8 || index_type == DataType_U16 || index_type == DataType_U32);
+	IndexBuffer * const ib{ VALIDATE((IndexBuffer *)buffer_create(BufferType_IndexBuffer, index_count * get_data_type_size(index_type), data)) };
 	ib->index_count = (uint32_t)index_count;
 	ib->index_type = TO_GL(index_type);
 	return (RID)ib;
@@ -576,7 +581,7 @@ DynamicBuffer RenderingDeviceOpenGL::texture_get_data(RID texture)
 
 RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attachments)
 {
-	Framebuffer * fb{ memnew(Framebuffer{}) };
+	Framebuffer * const fb{ memnew(Framebuffer{}) };
 	fb->texture_attachments = texture_attachments;
 
 	glCheck(glGenFramebuffers(1, &fb->handle));
@@ -586,16 +591,17 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 	for (size_t i = 0; i < fb->texture_attachments.size(); ++i)
 	{
 		Texture * const t{ VALIDATE((Texture *)fb->texture_attachments[i]) };
-		if (i == 0) { fb->width = t->width; }
-		if (i == 0) { fb->height = t->height; }
+		if (i == 0) { fb->width = t->width; fb->height = t->height; }
 
 		glCheck(glBindTexture(t->texture_type, t->handle));
 
-		if (FLAG_READ(t->usage_flags, TextureFlags_ColorAttachment)) {
+		if (FLAG_READ(t->usage_flags, TextureFlags_ColorAttachment))
+		{
 			ASSERT(!FLAG_READ(t->usage_flags, TextureFlags_DepthStencilAttachment));
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), t->texture_type, t->handle, 0));
 		}
-		else {
+		else
+		{
 			ASSERT(FLAG_READ(t->usage_flags, TextureFlags_DepthStencilAttachment));
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, t->texture_type, t->handle, 0));
 		}
@@ -634,11 +640,13 @@ void RenderingDeviceOpenGL::framebuffer_set_size(RID framebuffer, int32_t width,
 
 		texture_update((RID)t);
 
-		if (FLAG_READ(t->usage_flags, TextureFlags_ColorAttachment)) {
+		if (FLAG_READ(t->usage_flags, TextureFlags_ColorAttachment))
+		{
 			ASSERT(!FLAG_READ(t->usage_flags, TextureFlags_DepthStencilAttachment));
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), t->texture_type, t->handle, 0));
 		}
-		else {
+		else
+		{
 			ASSERT(FLAG_READ(t->usage_flags, TextureFlags_DepthStencilAttachment));
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, t->texture_type, t->handle, 0));
 		}

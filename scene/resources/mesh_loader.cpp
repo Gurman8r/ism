@@ -73,8 +73,8 @@ size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
 	}
 
 	// TODO: properly deduce type
-	constexpr RD::IndexbufferFormat_ dt{ RD::IndexbufferFormat_U32 };
-	return data.size() / RD::get_index_buffer_format_size(dt);
+	constexpr DataType_ dt{ DataType_U32 };
+	return data.size() / get_data_type_size(dt);
 }
 
 void load_material_textures(aiMaterial const * material, Vector<Ref<Texture>> & textures)
@@ -152,7 +152,6 @@ Error_ MeshLoader::load_mesh(Mesh & mesh, Path const & path)
 Error_ MeshLoader::load_mesh(Ref<Mesh> mesh, Path const & path)
 {
 	if (!mesh) { return Error_Unknown; }
-
 	return load_mesh(**mesh, path);
 }
 

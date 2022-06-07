@@ -18,7 +18,7 @@ end
 
 workspace "ism_%{_ACTION}"
 
-startproject "ism"
+startproject "launcher"
 
 configurations{ "Debug", "Release" }
 
@@ -45,6 +45,9 @@ group "Modules"
 	include "modules/glew/glew.premake5.lua"
 	include "modules/glfw/glfw.premake5.lua"
 	include "modules/imgui/imgui.premake5.lua"
+
+group "Programs"
+	include "programs/launcher/launcher.premake5.lua"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 

@@ -18,6 +18,16 @@ RID RendererStorage::texture2d_placeholder_create()
 	return nullptr;
 }
 
+RID RendererStorage::texture3d_placeholder_create()
+{
+	return nullptr;
+}
+
+RID RendererStorage::cubemap_placeholder_create()
+{
+	return nullptr;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RendererStorage::shader_placeholder_create()
@@ -29,7 +39,7 @@ RID RendererStorage::shader_placeholder_create()
 
 RID RendererStorage::material_create()
 {
-	Material * m{ memnew(Material{}) };
+	Material * const m{ memnew(Material{}) };
 	m->shader = nullptr;
 	m->uniform_buffer = nullptr;
 	m->uniform_set = RENDERING_DEVICE->uniform_set_create({}, nullptr);
@@ -137,7 +147,8 @@ void RendererStorage::mesh_destroy(RID mesh)
 void RendererStorage::mesh_clear(RID mesh)
 {
 	Mesh * const m{ VALIDATE((Mesh *)mesh) };
-	for (Mesh::Surface * s : m->surfaces) {
+	for (Mesh::Surface * s : m->surfaces)
+	{
 		if (!s) { continue; }
 		if (s->vertex_array) { RENDERING_DEVICE->vertex_array_destroy(s->vertex_array); }
 		if (s->index_array) { RENDERING_DEVICE->index_array_destroy(s->index_array); }
@@ -161,7 +172,7 @@ void RendererStorage::mesh_add_surface(RID mesh, RS::SurfaceData const & surface
 	s->vertex_buffer_size = surface.vertex_data.size();
 
 	// indices
-	RID ib{ RENDERING_DEVICE->index_buffer_create(surface.index_count, RD::IndexbufferFormat_U32, surface.index_data) };
+	RID ib{ RENDERING_DEVICE->index_buffer_create(surface.index_count, DataType_U32, surface.index_data) };
 	RID ia{ RENDERING_DEVICE->index_array_create(ib, 0, surface.index_count) };
 	s->index_array = ia;
 	s->index_count = surface.index_count;
@@ -314,6 +325,33 @@ void RendererStorage::camera_destroy(RID camera)
 {
 	Camera * const cam{ VALIDATE((Camera *)camera) };
 	memdelete(cam);
+}
+
+Vec3 RendererStorage::camera_get_position(RID camera)
+{
+	return Vec3();
+}
+
+void RendererStorage::camera_set_position(RID camera, Vec3 const & value)
+{
+}
+
+Quat RendererStorage::camera_get_rotation(RID camera)
+{
+	return Quat();
+}
+
+void RendererStorage::camera_set_rotation(RID camera, Quat const & value)
+{
+}
+
+Mat4 RendererStorage::camera_get_transform(RID camera)
+{
+	return Mat4();
+}
+
+void RendererStorage::camera_set_transform(RID camera, Mat4 const & value)
+{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

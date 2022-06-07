@@ -1,6 +1,6 @@
 -- ism
 project			"ism"
-kind			"ConsoleApp"
+kind			"SharedLib"
 language		"C++"
 cppdialect 		"C++17"
 systemversion	"latest"
@@ -17,17 +17,15 @@ dependson{ "assimp", "glew", "glfw", "imgui", }
 links{ "assimp.lib", "IrrXML", "zlibstatic", "glew", "glfw", "imgui" }
 
 defines{
-	"TOOLS_ENABLED=1",
-	"OPENGL_ENABLED=1",
-	"OPENGL_LOADER_GLEW=1",
+	"TOOLS_ENABLED=true",
+	"OPENGL_ENABLED=true",
+	"OPENGL_LOADER_GLEW=true",
 	"ISM_API=ISM_API_EXPORT",
 	"IMGUI_API=ISM_API_IMPORT",
 }
 
 files{
 	"%{wks.location}/ism.premake5.lua",
-
-	"%{wks.location}/assets/**.**",
 
 	"%{wks.location}/core/**.hpp", "%{wks.location}/core/**.cpp",
 
@@ -47,5 +45,5 @@ files{
 }
 
 postbuildcommands{
-	COPY_FILE("%{wks.location}bin-lib/%{cfg.platform}/%{cfg.buildcfg}/%{prj.targetname}%{EXE}", "%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+	COPY_FILE("%{wks.location}bin-lib/%{cfg.platform}/%{cfg.buildcfg}/%{prj.targetname}%{DLL}", "%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"),
 }

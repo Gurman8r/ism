@@ -23,6 +23,8 @@ namespace ism
 	public:
 		/* TEXTURE */
 		RID texture2d_placeholder_create();
+		RID texture3d_placeholder_create();
+		RID cubemap_placeholder_create();
 
 	public:
 		/* SHADER */
@@ -61,10 +63,12 @@ namespace ism
 				RS::Primitive_ primitive{};
 
 				RID vertex_array{};
-				size_t vertex_count{}, vertex_buffer_size{};
+				size_t vertex_count{};
+				size_t vertex_buffer_size{};
 
 				RID index_array{};
-				size_t index_count{}, index_buffer_size{};
+				size_t index_count{};
+				size_t index_buffer_size{};
 
 				RID material{};
 				RID uniform_set{};
@@ -114,11 +118,19 @@ namespace ism
 	public:
 		struct Camera
 		{
+			Vec4 position{};
+			Quat rotation{};
 			Mat4 xform{};
 		};
 
 		RID camera_create();
 		void camera_destroy(RID camera);
+		Vec3 camera_get_position(RID camera);
+		void camera_set_position(RID camera, Vec3 const & value);
+		Quat camera_get_rotation(RID camera);
+		void camera_set_rotation(RID camera, Quat const & value);
+		Mat4 camera_get_transform(RID camera);
+		void camera_set_transform(RID camera, Mat4 const & value);
 
 	public:
 		struct Viewport
