@@ -18,46 +18,42 @@ size_t load_mesh_vertices(aiMesh const * mesh, DynamicBuffer & data)
 	for (size_t i = 0; i < (size_t)mesh->mNumVertices; ++i)
 	{
 		// position
-		data << Vec4{ mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.f };
+		data << Vec4f{ mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.f };
 
 		// normals
 		if (mesh->HasNormals())
 		{
-			data << Vec4{ mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 1.f };
+			data << Vec4f{ mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 1.f };
 		}
 		else
 		{
-			data << Vec4{ 0, 0, 0, 1 };
+			data << Vec4f{};
 		}
 
 		// texcoords
 		if (mesh->HasTextureCoords(0))
 		{
-			data << Vec4{ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, mesh->mTextureCoords[0][i].z, 1.f };
+			data << Vec4f{ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, mesh->mTextureCoords[0][i].z, 1.f };
 		}
 		else
 		{
-			data << Vec4{ 0, 0, 0, 1 };
+			data << Vec4f{};
 		}
 
 		// tangents & bitantents
 		if (mesh->HasTangentsAndBitangents())
 		{
-			data << Vec4{ mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z, 1.f };
-			data << Vec4{ mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z, 1.f };
+			data << Vec4f{ mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z, 1.f };
+			data << Vec4f{ mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z, 1.f };
 		}
 		else
 		{
-			data << Vec4{ 0, 0, 0, 1 } << Vec4{ 0, 0, 0, 1 };
+			data << Vec4f{} << Vec4f{};
 		}
-
-		// blending
-		data << Vec4i{ 1, 1, 1, 1 };
 	}
 
 	// TODO: properly deduce type
-	constexpr DataType_ dt{ DataType_F32 };
-	return data.size() / get_data_type_size(dt);
+	return data.size() / sizeof(float_t);
 }
 
 size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
@@ -73,8 +69,7 @@ size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
 	}
 
 	// TODO: properly deduce type
-	constexpr DataType_ dt{ DataType_U32 };
-	return data.size() / get_data_type_size(dt);
+	return data.size() / sizeof(uint32_t);
 }
 
 void load_material_textures(aiMaterial const * material, Vector<Ref<Texture>> & textures)
@@ -85,10 +80,9 @@ void load_material_textures(aiMaterial const * material, Vector<Ref<Texture>> & 
 	{
 		for (uint32_t i = 0; i < material->GetTextureCount(type); ++i)
 		{
-			aiString path; material->GetTexture(type, i, &path);
-			
+			aiString path;
+			if (material->GetTexture(type, i, &path) != aiReturn_SUCCESS) { continue; }
 			Ref<ImageTexture> texture{ Path{ path.C_Str() } };
-			
 			textures.push_back(texture);
 		}
 	};
@@ -99,7 +93,7 @@ void load_material_textures(aiMaterial const * material, Vector<Ref<Texture>> & 
 	_load_material_texture(aiTextureType_SPECULAR, "sm"); // specular
 }
 
-void load_mesh_spec(aiScene const * scene, aiNode const * node, Vector<RS::SurfaceData> & spec)
+void process_mesh_node(aiScene const * scene, aiNode const * node, Vector<RS::SurfaceData> & spec)
 {
 	for (size_t i = 0; i < (size_t)node->mNumMeshes; ++i)
 	{
@@ -116,7 +110,7 @@ void load_mesh_spec(aiScene const * scene, aiNode const * node, Vector<RS::Surfa
 
 	for (size_t i = 0; i < (size_t)node->mNumChildren; ++i)
 	{
-		load_mesh_spec(scene, node->mChildren[i], spec);
+		process_mesh_node(scene, node->mChildren[i], spec);
 	}
 }
 
@@ -140,7 +134,7 @@ Error_ MeshLoader::load_mesh(Mesh & mesh, Path const & path)
 
 	// generate spec
 	Vector<RS::SurfaceData> spec;
-	load_mesh_spec(scene, scene->mRootNode, spec);
+	process_mesh_node(scene, scene->mRootNode, spec);
 
 	// create mesh
 	mesh.m_mesh = RENDERING_SERVER->mesh_create(spec);

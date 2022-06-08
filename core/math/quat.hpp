@@ -7,19 +7,18 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct Quat : Vec4
+	struct Quat : Matrix<float_t, 4, 1>
 	{
-		using Vec4::Vec4;
+		using self_type = typename Quat;
+		using base_type = typename Matrix<float_t, 4, 1>;
+		using typename base_type::value_type;
+		using base_type::Matrix;
+		using base_type::operator=;
 
-		using Vec4::operator=;
-
-		explicit Quat(glm::quat const & q) : Vec4{ q.x, q.y, q.z, q.w } {}
-
-		Quat & operator=(glm::quat const & q) { Quat temp{ q }; return (Quat &)swap(temp); }
-
-		operator glm::quat & () const noexcept { return *((glm::quat *)(void *)this); }
-
-		operator glm::quat const & () const noexcept { return *((glm::quat const *)(void *)this); }
+		explicit Quat(glm::quat const & q) : base_type{ q.x, q.y, q.z, q.w } {}
+		NODISCARD self_type & operator=(glm::quat const & q) { Quat temp{ q }; return (Quat &)swap(temp); }
+		NODISCARD operator glm::quat & () const noexcept { return *((glm::quat *)(void *)this); }
+		NODISCARD operator glm::quat const & () const noexcept { return *((glm::quat const *)(void *)this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

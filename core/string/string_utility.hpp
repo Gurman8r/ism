@@ -280,12 +280,19 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	NODISCARD constexpr StringView operator "" _sv(cstring str, size_t len)
+	{
+		return StringView{ str, len };
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	NODISCARD inline String operator "" _s(cstring str, size_t len)
 	{
 		return String{ str, len };
 	}
 
-	NODISCARD inline WideString operator "" _l(cwstring str, size_t len)
+	NODISCARD inline WideString operator "" _s(cwstring str, size_t len)
 	{
 		return WideString{ str, len };
 	}

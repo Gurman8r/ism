@@ -14,11 +14,10 @@ namespace ism
 
 		friend class RenderingServerDefault;
 
-	protected:
-		explicit RendererSceneRenderer();
-
 	public:
-		virtual ~RendererSceneRenderer();
+		RendererSceneRenderer();
+
+		virtual ~RendererSceneRenderer() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

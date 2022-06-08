@@ -46,7 +46,7 @@ void SceneTree::initialize()
 	MainLoop::initialize();
 }
 
-bool SceneTree::process(Duration const dt)
+bool SceneTree::process(Duration const & dt)
 {
 	MainLoop::process(dt);
 

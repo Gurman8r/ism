@@ -2,34 +2,34 @@
     "type": "Shader",
     "name": "Pipeline",
     "lang": "GLSL",
-    "vs": {
+    "vertex": {
         "input": [
-            { "type": "vec4f", "name": "attr_position" },
-            { "type": "vec4f", "name": "attr_texcoord" }
+            { "type": "Vec4", "name": "Position" },
+            { "type": "Vec4", "name": "UV" }
         ],
         "output": [
-            { "type": "vec4f", "name": "pass_position" },
-            { "type": "vec4f", "name": "pass_texcoord" }
+            { "type": "Vec4", "name": "Pixel_Position" },
+            { "type": "Vec4", "name": "Pixel_UV" }
         ],
         "main": [
-            "pass_position = attr_position;",
-            "pass_texcoord = attr_texcoord;",
-            "gl_Position = pass_position;"
+            "Pixel_Position = Position",
+            "Pixel_UV = UV",
+            "gl_Position = Pixel_Position"
         ]
     },
-    "ps": {
+    "pixel": {
         "input": [
-            { "type": "vec4f", "name": "pass_position" },
-            { "type": "vec4f", "name": "pass_texcoord" }
+            { "type": "Vec4", "name": "Pixel_Position" },
+            { "type": "Vec4", "name": "Pixel_UV" }
         ],
         "output": [
-            { "type": "vec4f", "name": "pass_color" }
+            { "type": "Vec4", "name": "Out_Color" }
         ],
         "data": [
-            { "type": "sampler2D", "name": "u_main_texture" }
+            { "type": "Texture2D", "name": "MainTexture" }
         ],
         "main": [
-            "pass_color = texture(u_main_texture, pass_texcoord.xy);"
+            "Out_Color = texture(MainTexture, Pixel_UV.xy)"
         ]
     }
 }

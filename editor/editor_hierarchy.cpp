@@ -12,7 +12,7 @@ EditorHierarchy::~EditorHierarchy()
 {
 }
 
-void EditorHierarchy::process(Duration const dt)
+void EditorHierarchy::process(Duration const & dt)
 {
 	if (!is_open()) { return; }
 	ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };

@@ -165,13 +165,12 @@ namespace ism
 
 	enum DataType_
 	{
-		DataType_Invalid = -1,
+		DataType_Void,
+		DataType_Bool, DataType_Byte, DataType_Char,
 		DataType_I8, DataType_I16, DataType_I32, DataType_I64,
 		DataType_U8, DataType_U16, DataType_U32, DataType_U64,
 		DataType_F32, DataType_F64,
 		DataType_String, DataType_Object,
-		DataType_Char, DataType_Byte, DataType_Bool,
-		DataType_Void,
 
 #if ARCHITECTURE < 64
 		DataType_SizeT = DataType_U32,

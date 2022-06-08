@@ -10,7 +10,7 @@ namespace ism
 	class ISM_API ShaderLoaderGLSL final
 	{
 	public:
-		static RD::ShaderCreateInfo create_shader_spec(JSON const & json);
+		static RD::ShaderCreateInfo load_spec(JSON const & json);
 	};
 }
 

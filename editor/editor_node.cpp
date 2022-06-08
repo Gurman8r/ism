@@ -105,11 +105,12 @@ EditorNode::EditorNode()
 	m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
 	m_meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
 	m_shaders["3D"].instance("../../../assets/shaders/3d.json");
+	m_shaders["canvas"].instance("../../../assets/shaders/canvas.json");
 
 	RID const shader{ m_shaders["3D"]->get_rid() };
 	_setup_pipeline(shader);
 
-	uniform_buffers[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::CBuffer<Mat4, Mat4>));
+	uniform_buffers[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::UBO_Data<Mat4, Mat4>));
 	uniform_sets[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, SCENE_STATE_UNIFORMS, { uniform_buffers[SCENE_STATE_UNIFORMS] } },
 	}, shader);
@@ -119,12 +120,12 @@ EditorNode::EditorNode()
 		//{ RD::UniformType_UniformBuffer, RENDER_PASS_UNIFORMS, { uniform_buffers[RENDER_PASS_UNIFORMS] } },
 	}, shader);
 
-	uniform_buffers[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::CBuffer<Mat4>));
+	uniform_buffers[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::UBO_Data<Mat4>));
 	uniform_sets[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, TRANSFORMS_UNIFORMS, { uniform_buffers[TRANSFORMS_UNIFORMS] } },
 	}, shader);
 
-	uniform_buffers[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::CBuffer<Vec4, Vec4, Vec4, float_t>));
+	uniform_buffers[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::UBO_Data<Vec4, Vec4, Vec4, float_t>));
 	uniform_sets[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, MATERIAL_UNIFORMS, { uniform_buffers[MATERIAL_UNIFORMS] } },
 		{ RD::UniformType_Texture, 0, { m_textures["earth_dm_2k"]->get_rid() } },
@@ -133,6 +134,15 @@ EditorNode::EditorNode()
 
 	material = RENDERING_SERVER->material_create();
 	RENDERING_SERVER->material_set_shader(material, shader);
+	RENDERING_SERVER->material_set_param(material, "Projection", nullptr);
+	RENDERING_SERVER->material_set_param(material, "View", nullptr);
+	RENDERING_SERVER->material_set_param(material, "Transform", nullptr);
+	RENDERING_SERVER->material_set_param(material, "Ambient", nullptr);
+	RENDERING_SERVER->material_set_param(material, "Diffuse", nullptr);
+	RENDERING_SERVER->material_set_param(material, "Specular", nullptr);
+	RENDERING_SERVER->material_set_param(material, "Shininess", FLT{ 32.f });
+	RENDERING_SERVER->material_set_param(material, "Diffuse_Map", m_textures["earth_dm_2k"]);
+	RENDERING_SERVER->material_set_param(material, "Specular_Map", m_textures["earth_sm_2k"]);
 	
 	// framebuffer
 	Vector<RID> fb_textures{
@@ -184,7 +194,7 @@ void EditorNode::handle_event(Event const & event)
 	}
 }
 
-void EditorNode::process(Duration const dt)
+void EditorNode::process(Duration const & dt)
 {
 	char window_title[32];
 	std::sprintf(window_title, "ism @ %.3f fps", (float_t)get_tree()->get_fps());
@@ -203,16 +213,16 @@ void EditorNode::process(Duration const dt)
 	Mat4 const cam_projection{ editor_camera->get_proj() }, cam_transform{ editor_camera->get_view() };
 
 	{
-		static RD::CBuffer<Mat4, Mat4> scene_ubo_data;
+		static RD::UBO_Data<Mat4, Mat4> scene_ubo_data;
 		scene_ubo_data.set<0>(cam_projection); // projection matrix
 		scene_ubo_data.set<1>(cam_transform); // view matrix
 		RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_ubo_data, sizeof(scene_ubo_data));
 
-		static RD::CBuffer<Mat4> transforms_ubo_data;
+		static RD::UBO_Data<Mat4> transforms_ubo_data;
 		transforms_ubo_data.set<0>(object_matrix[0]); // model matrix
 		RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo_data, sizeof(transforms_ubo_data));
 
-		static RD::CBuffer<Vec4, Vec4, Vec4, float_t> material_ubo_data;
+		static RD::UBO_Data<Vec4, Vec4, Vec4, float_t> material_ubo_data;
 		material_ubo_data.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
 		material_ubo_data.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
 		material_ubo_data.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
@@ -231,8 +241,8 @@ void EditorNode::process(Duration const dt)
 
 		static Mesh * mesh{ *m_meshes["sphere32x24"] };
 		for (size_t i = 0; i < mesh->get_surface_count(); ++i) {
-			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, mesh->surface_get_vertex_array(i));
-			RENDERING_DEVICE->draw_list_bind_index_array(dl, mesh->surface_get_index_array(i));
+			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, VALIDATE(mesh->surface_get_vertex_array(i)));
+			RENDERING_DEVICE->draw_list_bind_index_array(dl, VALIDATE(mesh->surface_get_index_array(i)));
 			RENDERING_DEVICE->draw_list_draw(dl, true, 1, 0);
 		}
 

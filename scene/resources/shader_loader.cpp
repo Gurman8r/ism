@@ -24,13 +24,13 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 	SCOPE_EXIT(&file) { file.close(); };
 	if (!file) { return Error_Unknown; }
 
+	// load json
 	JSON json{ JSON::parse(file) };
 	if (json.empty()) { return Error_Unknown; }
 
+	// select language
 	JSON::const_iterator lang{ json.find("lang") };
 	if (lang == json.end()) { return Error_Unknown; }
-
-	// string to shader_language
 	auto str_to_shader_language = [](String const & s) noexcept {
 		switch (hash(util::to_lower(s))) {
 		case "glsl"_hash: return RD::ShaderLanguage_GLSL;
@@ -39,26 +39,23 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 		return RD::ShaderLanguage_MAX;
 	};
 
-	// generate spec
+	// load spec
 	RD::ShaderCreateInfo spec;
 	switch (RD::ShaderLanguage_ const shader_language{ str_to_shader_language(lang->get<String>()) })
 	{
-	case RD::ShaderLanguage_GLSL: {
 #if OPENGL_ENABLED
-		spec = ShaderLoaderGLSL::create_shader_spec(json);
-#else
-		CRASH("OPENGL IS NOT ENABLED");
+	case RD::ShaderLanguage_GLSL: { spec = ShaderLoaderGLSL::load_spec(json); } break;
 #endif
-	} break;
 
-	case RD::ShaderLanguage_HLSL: {
 #if DIRECTX_ENABLED
-		spec = ShaderLoaderHLSL::create_shader_spec(json);
-#else
-		CRASH("DIRECTX IS NOT ENABLED");
+	case RD::ShaderLanguage_HLSL: { spec = ShaderLoaderHLSL::load_spec(json); } break;
 #endif
-	} break;
 	}
+
+	// validate spec
+	size_t check{};
+	for (auto const & stage : spec.stage_data) { check += (stage.shader_stage != RD::ShaderStage_MAX); }
+	if (!check) { return Error_Unknown; }
 
 	// create shader
 	shader.m_shader = RENDERING_DEVICE->shader_create(spec);

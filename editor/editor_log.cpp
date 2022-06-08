@@ -12,7 +12,7 @@ EditorLog::~EditorLog()
 {
 }
 
-void EditorLog::process(Duration const dt)
+void EditorLog::process(Duration const & dt)
 {
 	if (!is_open()) { return; }
 	ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };

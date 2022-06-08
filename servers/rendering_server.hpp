@@ -98,7 +98,6 @@ namespace ism
 		virtual Quat camera_get_rotation(RID camera) = 0;
 		virtual void camera_set_rotation(RID camera, Quat const & value) = 0;
 		virtual Mat4 camera_get_transform(RID camera) = 0;
-		virtual void camera_set_transform(RID camera, Mat4 const & value) = 0;
 
 	public:
 		/* VIEWPORT */

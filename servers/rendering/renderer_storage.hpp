@@ -50,9 +50,9 @@ namespace ism
 		void material_set_shader(RID material, RID shader);
 		OBJ material_get_param(RID material, StringName const & key);
 		void material_set_param(RID material, StringName const & key, OBJ const & value);
-		void material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params);
-		void material_update_textures(RID material, Map<StringName, OBJ> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures);
-		void material_update_parameters(RID material, Map<StringName, OBJ> const & params, bool uniforms_dirty, bool textures_dirty);
+		void _material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params);
+		void _material_update_textures(RID material, Map<StringName, OBJ> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures);
+		void _material_update_parameters(RID material, Map<StringName, OBJ> const & params, bool uniforms_dirty, bool textures_dirty);
 
 	public:
 		/* MESH */
@@ -130,7 +130,6 @@ namespace ism
 		Quat camera_get_rotation(RID camera);
 		void camera_set_rotation(RID camera, Quat const & value);
 		Mat4 camera_get_transform(RID camera);
-		void camera_set_transform(RID camera, Mat4 const & value);
 
 	public:
 		struct Viewport

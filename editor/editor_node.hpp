@@ -45,7 +45,7 @@ namespace ism
 
 		virtual void handle_event(Event const & event) override;
 
-		virtual void process(Duration const dt) override;
+		virtual void process(Duration const & dt) override;
 
 	public:
 		NODISCARD auto get_hierarchy() const noexcept { return const_cast<EditorHierarchy *>(&m_hierarchy); }

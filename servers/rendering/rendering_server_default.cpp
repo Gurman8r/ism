@@ -288,11 +288,6 @@ Mat4 RenderingServerDefault::camera_get_transform(RID camera)
 	return m_storage->camera_get_transform(camera);
 }
 
-void RenderingServerDefault::camera_set_transform(RID camera, Mat4 const & value)
-{
-	m_storage->camera_set_transform(camera, value);
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RenderingServerDefault::viewport_create()

@@ -154,13 +154,18 @@ void get_image_info(RD::DataFormat_ const data_format, Image::Format_ * image_fo
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 MAKE_ENUM_MAPPING(TO_GL, DataType_, uint32_t,
-	GL_BYTE, GL_SHORT, GL_INT, GL_INT64_ARB,
-	GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT, GL_UNSIGNED_INT64_ARB,
-	0, 0, // string, object
-	GL_FLOAT, GL_DOUBLE,
+	// void
+	0,
+	// bool, byte, char
 	GL_BYTE, GL_BYTE, GL_BYTE,
-	GL_UNSIGNED_INT,
-	0); // void
+	// int8, int16, int32, int64
+	GL_BYTE, GL_SHORT, GL_INT, GL_INT64_ARB,
+	// uint8, uint16, uint32, uint64
+	GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT, GL_UNSIGNED_INT64_ARB,
+	// string, object
+	0, 0,
+	// float, double
+	GL_FLOAT, GL_DOUBLE);
 
 MAKE_ENUM_MAPPING(TO_GL, CompareOperator_, uint32_t,
 	GL_NEVER,
@@ -856,6 +861,45 @@ void RenderingDeviceOpenGL::uniform_set_destroy(RID uniform_set)
 	memdelete(us);
 }
 
+void RenderingDeviceOpenGL::_uniform_set_bind(UniformSet const & us)
+{
+	for (UniformDescriptor const & ud : us.uniforms)
+	{
+		switch (ud.uniform_type)
+		{
+		case UniformType_Sampler: {
+		} break;
+		case UniformType_SamplerWithTexture: {
+		} break;
+		case UniformType_Texture: {
+			ASSERT(0 < ud.images.size());
+			if (1 == ud.images.size()) {
+				Texture * const t{ VALIDATE((Texture *)ud.images.front()) };
+				glCheck(glBindTextureUnit(ud.binding, t->handle));
+				glCheck(glUniform1iARB(ud.binding, ud.binding));
+			}
+		} break;
+		case UniformType_Image: {
+		} break;
+		case UniformType_TextureBuffer: {
+		} break;
+		case UniformType_SamplerWithTextureBuffer: {
+		} break;
+		case UniformType_ImageBuffer: {
+		} break;
+		case UniformType_UniformBuffer: {
+			ASSERT(1 == ud.buffers.size());
+			UniformBuffer * const ub{ VALIDATE((UniformBuffer *)ud.buffers[0]) };
+			glCheck(glBindBufferRange(GL_UNIFORM_BUFFER, ud.binding, ub->handle, 0, ub->size));
+		} break;
+		case UniformType_StorageBuffer: {
+		} break;
+		case UniformType_InputAttachment: {
+		} break;
+		}
+	}
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 RID RenderingDeviceOpenGL::render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state)
@@ -874,6 +918,48 @@ void RenderingDeviceOpenGL::render_pipeline_destroy(RID pipeline)
 {
 	RenderPipeline * const rp{ VALIDATE((RenderPipeline *)pipeline) };
 	memdelete(rp);
+}
+
+void RenderingDeviceOpenGL::_render_pipeline_bind(RenderPipeline const & rp)
+{
+	// rasterization state
+	glCheck(glSetEnabled(GL_DEPTH_CLAMP, rp.rasterization_state.enable_depth_clamp));
+	glCheck(glSetEnabled(GL_RASTERIZER_DISCARD, rp.rasterization_state.discard_primitives));
+	glCheck(glEnable(GL_CULL_FACE));
+	glCheck(glCullFace(TO_GL(rp.rasterization_state.cull_mode)));
+	glCheck(glFrontFace(TO_GL(rp.rasterization_state.front_face)));
+	glCheck(glPixelTransferf(GL_DEPTH_BIAS, rp.rasterization_state.depth_bias_constant_factor));
+	glCheck(glLineWidth(rp.rasterization_state.line_width));
+
+	// multisample state
+	glCheck(glSetEnabled(GL_SAMPLE_SHADING, rp.multisample_state.enable_sample_shading));
+	glCheck(glMinSampleShading(rp.multisample_state.min_sample_shading));
+	for (size_t i = 0; i < rp.multisample_state.sample_mask.size(); ++i) {
+		glCheck(glSampleMaski((uint32_t)i, rp.multisample_state.sample_mask[i]));
+	}
+	glCheck(glSetEnabled(GL_SAMPLE_ALPHA_TO_COVERAGE, rp.multisample_state.enable_alpha_to_coverage));
+	glCheck(glSetEnabled(GL_SAMPLE_ALPHA_TO_ONE, rp.multisample_state.enable_alpha_to_one));
+
+	// depth stencil state
+	glCheck(glSetEnabled(GL_DEPTH_TEST, rp.depth_stencil_state.enable_depth_test));
+	glCheck(glDepthFunc(TO_GL(rp.depth_stencil_state.depth_compare_operator)));
+	glCheck(glDepthRange(rp.depth_stencil_state.depth_range_min, rp.depth_stencil_state.depth_range_max));
+	glCheck(glSetEnabled(GL_STENCIL_TEST, rp.depth_stencil_state.enable_stencil));
+	glCheck(glStencilFuncSeparate(GL_FRONT, TO_GL(rp.depth_stencil_state.front_op.compare), rp.depth_stencil_state.front_op.reference, rp.depth_stencil_state.front_op.compare_mask));
+	glCheck(glStencilMaskSeparate(GL_FRONT, rp.depth_stencil_state.front_op.write_mask));
+	glCheck(glStencilFuncSeparate(GL_BACK, TO_GL(rp.depth_stencil_state.back_op.compare), rp.depth_stencil_state.back_op.reference, rp.depth_stencil_state.back_op.compare_mask));
+	glCheck(glStencilMaskSeparate(GL_BACK, rp.depth_stencil_state.back_op.write_mask));
+
+	// color blend state
+	glCheck(glSetEnabled(GL_LOGIC_OP, rp.color_blend_state.enable_logic_op));
+	glCheck(glLogicOp(TO_GL(rp.color_blend_state.logic_op)));
+	for (auto & attachment : rp.color_blend_state.attachments)
+	{
+		glCheck(glSetEnabled(GL_BLEND, attachment.enable_blend));
+		glCheck(glBlendColor(rp.color_blend_state.blend_constant[0], rp.color_blend_state.blend_constant[1], rp.color_blend_state.blend_constant[2], rp.color_blend_state.blend_constant[3]));
+		glCheck(glBlendFuncSeparate(TO_GL(attachment.src_color_blend_factor), TO_GL(attachment.dst_color_blend_factor), TO_GL(attachment.src_alpha_blend_factor), TO_GL(attachment.dst_alpha_blend_factor)));
+		glCheck(glBlendEquationSeparate(TO_GL(attachment.color_blend_op), TO_GL(attachment.alpha_blend_op)));
+	}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -932,45 +1018,6 @@ void RenderingDeviceOpenGL::draw_list_bind_pipeline(DrawListID list, RID pipelin
 		dl->state.pipeline_shader = rp->shader;
 		// shader changed...
 	}
-
-	// rasterization state
-	glCheck(glSetEnabled(GL_DEPTH_CLAMP, rp->rasterization_state.enable_depth_clamp));
-	glCheck(glSetEnabled(GL_RASTERIZER_DISCARD, rp->rasterization_state.discard_primitives));
-	glCheck(glEnable(GL_CULL_FACE));
-	glCheck(glCullFace(TO_GL(rp->rasterization_state.cull_mode)));
-	glCheck(glFrontFace(TO_GL(rp->rasterization_state.front_face)));
-	glCheck(glPixelTransferf(GL_DEPTH_BIAS, rp->rasterization_state.depth_bias_constant_factor));
-	glCheck(glLineWidth(rp->rasterization_state.line_width));
-
-	// multisample state
-	glCheck(glSetEnabled(GL_SAMPLE_SHADING, rp->multisample_state.enable_sample_shading));
-	glCheck(glMinSampleShading(rp->multisample_state.min_sample_shading));
-	for (size_t i = 0; i < rp->multisample_state.sample_mask.size(); ++i) {
-		glCheck(glSampleMaski((uint32_t)i, rp->multisample_state.sample_mask[i]));
-	}
-	glCheck(glSetEnabled(GL_SAMPLE_ALPHA_TO_COVERAGE, rp->multisample_state.enable_alpha_to_coverage));
-	glCheck(glSetEnabled(GL_SAMPLE_ALPHA_TO_ONE, rp->multisample_state.enable_alpha_to_one));
-
-	// depth stencil state
-	glCheck(glSetEnabled(GL_DEPTH_TEST, rp->depth_stencil_state.enable_depth_test));
-	glCheck(glDepthFunc(TO_GL(rp->depth_stencil_state.depth_compare_operator)));
-	glCheck(glDepthRange(rp->depth_stencil_state.depth_range_min, rp->depth_stencil_state.depth_range_max));
-	glCheck(glSetEnabled(GL_STENCIL_TEST, rp->depth_stencil_state.enable_stencil));
-	glCheck(glStencilFuncSeparate(GL_FRONT, TO_GL(rp->depth_stencil_state.front_op.compare), rp->depth_stencil_state.front_op.reference, rp->depth_stencil_state.front_op.compare_mask));
-	glCheck(glStencilMaskSeparate(GL_FRONT, rp->depth_stencil_state.front_op.write_mask));
-	glCheck(glStencilFuncSeparate(GL_BACK, TO_GL(rp->depth_stencil_state.back_op.compare), rp->depth_stencil_state.back_op.reference, rp->depth_stencil_state.back_op.compare_mask));
-	glCheck(glStencilMaskSeparate(GL_BACK, rp->depth_stencil_state.back_op.write_mask));
-
-	// color blend state
-	glCheck(glSetEnabled(GL_LOGIC_OP, rp->color_blend_state.enable_logic_op));
-	glCheck(glLogicOp(TO_GL(rp->color_blend_state.logic_op)));
-	for (auto & attachment : rp->color_blend_state.attachments)
-	{
-		glCheck(glSetEnabled(GL_BLEND, attachment.enable_blend));
-		glCheck(glBlendColor(rp->color_blend_state.blend_constant[0], rp->color_blend_state.blend_constant[1], rp->color_blend_state.blend_constant[2], rp->color_blend_state.blend_constant[3]));
-		glCheck(glBlendFuncSeparate(TO_GL(attachment.src_color_blend_factor), TO_GL(attachment.dst_color_blend_factor), TO_GL(attachment.src_alpha_blend_factor), TO_GL(attachment.dst_alpha_blend_factor)));
-		glCheck(glBlendEquationSeparate(TO_GL(attachment.color_blend_op), TO_GL(attachment.alpha_blend_op)));
-	}
 }
 
 void RenderingDeviceOpenGL::draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index)
@@ -1012,19 +1059,27 @@ void RenderingDeviceOpenGL::draw_list_enable_scissor(DrawListID list, IntRect co
 {
 	ASSERT(list < m_draw_list.size());
 	DrawList * const dl{ m_draw_list.data() + list };
+	if (dl->state.scissor_enabled) { return; }
+	dl->state.scissor_enabled = true;
+	dl->state.scissor_rect = rect;
 }
 
 void RenderingDeviceOpenGL::draw_list_disable_scissor(DrawListID list)
 {
 	ASSERT(list < m_draw_list.size());
 	DrawList * const dl{ m_draw_list.data() + list };
+	if (!dl->state.scissor_enabled) { return; }
+	dl->state.scissor_enabled = false;
 }
 
 void RenderingDeviceOpenGL::draw_list_draw(DrawListID list, bool use_indices, size_t instances, size_t procedural_vertices)
 {
 	ASSERT(list < m_draw_list.size());
 	DrawList * const dl{ m_draw_list.data() + list };
+
+	// bind pipeline
 	RenderPipeline * const rp{ VALIDATE((RenderPipeline *)dl->state.pipeline) };
+	_render_pipeline_bind(*rp);
 
 	// bind shader
 	Shader * const s{ VALIDATE((Shader *)dl->state.pipeline_shader) };
@@ -1035,43 +1090,7 @@ void RenderingDeviceOpenGL::draw_list_draw(DrawListID list, bool use_indices, si
 	{
 		if (!dl->state.sets[i].bound)
 		{
-			UniformSet * const us{ VALIDATE((UniformSet *)dl->state.sets[i].uniform_set) };
-
-			for (UniformDescriptor const & ud : us->uniforms)
-			{
-				switch (ud.uniform_type)
-				{
-				case UniformType_Sampler: {
-				} break;
-				case UniformType_SamplerWithTexture: {
-				} break;
-				case UniformType_Texture: {
-					ASSERT(0 < ud.images.size());
-					if (1 == ud.images.size()) {
-						Texture * const t{ VALIDATE((Texture *)ud.images.front()) };
-						glCheck(glBindTextureUnit(ud.binding, t->handle));
-						glCheck(glUniform1iARB(ud.binding, ud.binding));
-					}
-				} break;
-				case UniformType_Image: {
-				} break;
-				case UniformType_TextureBuffer: {
-				} break;
-				case UniformType_SamplerWithTextureBuffer: {
-				} break;
-				case UniformType_ImageBuffer: {
-				} break;
-				case UniformType_UniformBuffer: {
-					ASSERT(1 == ud.buffers.size());
-					UniformBuffer * const ub{ VALIDATE((UniformBuffer *)ud.buffers[0]) };
-					glCheck(glBindBufferRange(GL_UNIFORM_BUFFER, ud.binding, ub->handle, 0, ub->size));
-				} break;
-				case UniformType_StorageBuffer: {
-				} break;
-				case UniformType_InputAttachment: {
-				} break;
-				}
-			}
+			_uniform_set_bind(*VALIDATE((UniformSet *)dl->state.sets[i].uniform_set));
 
 			dl->state.sets[i].bound = true;
 		}

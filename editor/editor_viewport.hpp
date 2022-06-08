@@ -30,7 +30,7 @@ namespace ism
 		auto get_editor_camera() const noexcept { return const_cast<EditorCamera *>(&m_editor_camera); }
 
 	public:
-		virtual void process(Duration const dt) override;
+		virtual void process(Duration const & dt) override;
 	};
 }
 

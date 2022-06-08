@@ -75,7 +75,6 @@ namespace ism
 		virtual Quat camera_get_rotation(RID camera) override;
 		virtual void camera_set_rotation(RID camera, Quat const & value) override;
 		virtual Mat4 camera_get_transform(RID camera) override;
-		virtual void camera_set_transform(RID camera, Mat4 const & value) override;
 
 	public:
 		/* VIEWPORT */

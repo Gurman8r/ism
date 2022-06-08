@@ -26,7 +26,7 @@ namespace ism
 	public:
 		virtual ~EditorPanel();
 
-		virtual void process(Duration const dt) = 0;
+		virtual void process(Duration const & dt) = 0;
 
 	public:
 		auto get_name() const noexcept -> cstring { return m_name; }

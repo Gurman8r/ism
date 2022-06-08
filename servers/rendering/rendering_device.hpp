@@ -8,8 +8,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ShaderLanguage;
-
 	// low-level graphics api
 	class ISM_API RenderingDevice : public Object
 	{
@@ -318,12 +316,11 @@ namespace ism
 			Vector<Attribute> attributes{};
 
 			VertexLayout() noexcept : VertexLayout{
-				{ "attr_position"	, DataType_F32, 4 },
-				{ "attr_normal"		, DataType_F32, 4 },
-				{ "attr_texcoord"	, DataType_F32, 4 },
-				{ "attr_tangent"	, DataType_F32, 4 },
-				{ "attr_bitangent"	, DataType_F32, 4 },
-				{ "attr_blending"	, DataType_I32, 4 },
+				{ "Position"	, DataType_F32, 4 },
+				{ "Normal"		, DataType_F32, 4 },
+				{ "UV"			, DataType_F32, 4 },
+				{ "Tangent"		, DataType_F32, 4 },
+				{ "Bitangent"	, DataType_F32, 4 },
 			} {}
 
 			template <class It> VertexLayout(It first, It last) noexcept : attributes{ first, last } { update(); }
@@ -549,7 +546,7 @@ namespace ism
 	public:
 		/* UNIFORMS */
 		template <class ... _Types
-		> using CBuffer = ConstantBuffer<16, _Types...>;
+		> using UBO_Data = ConstantBuffer<16, _Types...>;
 
 		enum UniformType_
 		{

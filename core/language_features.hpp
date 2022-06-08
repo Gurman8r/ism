@@ -303,6 +303,7 @@
 #	pragma warning(disable: 26498)	// mark as constexpr if desired
 #	pragma warning(disable: 26812)	// unscoped enum
 #	pragma warning(disable: 28251)	// inconsistent annotations
+#	pragma warning(disable: 33101)	// unchecked lower bound for enum type used as index
 #endif
 
 #endif // !_ISM_LANGUAGE_FEATURES_HPP_

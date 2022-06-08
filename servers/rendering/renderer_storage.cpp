@@ -61,7 +61,8 @@ void RendererStorage::material_destroy(RID material)
 
 RID RendererStorage::material_get_shader(RID material)
 {
-	return nullptr;
+	Material * const m{ VALIDATE((Material *)material) };
+	return m->shader;
 }
 
 void RendererStorage::material_set_shader(RID material, RID shader)
@@ -106,15 +107,15 @@ void RendererStorage::material_set_param(RID material, StringName const & key, O
 	}
 }
 
-void RendererStorage::material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params)
+void RendererStorage::_material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params)
 {
 }
 
-void RendererStorage::material_update_textures(RID material, Map<StringName, OBJ> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures)
+void RendererStorage::_material_update_textures(RID material, Map<StringName, OBJ> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures)
 {
 }
 
-void RendererStorage::material_update_parameters(RID material, Map<StringName, OBJ> const & params, bool uniforms_dirty, bool textures_dirty)
+void RendererStorage::_material_update_parameters(RID material, Map<StringName, OBJ> const & params, bool uniforms_dirty, bool textures_dirty)
 {
 }
 
@@ -348,10 +349,6 @@ void RendererStorage::camera_set_rotation(RID camera, Quat const & value)
 Mat4 RendererStorage::camera_get_transform(RID camera)
 {
 	return Mat4();
-}
-
-void RendererStorage::camera_set_transform(RID camera, Mat4 const & value)
-{
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

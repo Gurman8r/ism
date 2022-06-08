@@ -21,7 +21,7 @@ namespace ism
 
 		virtual void initialize();
 
-		virtual bool process(Duration const dt);
+		virtual bool process(Duration const & dt);
 
 		virtual void finalize();
 

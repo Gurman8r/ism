@@ -15,7 +15,7 @@ namespace ism
 		virtual ~EditorHierarchy();
 
 	public:
-		virtual void process(Duration const dt) override;
+		virtual void process(Duration const & dt) override;
 	};
 }
 

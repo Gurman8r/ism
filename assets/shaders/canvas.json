@@ -1,0 +1,20 @@
+{
+    "type": "Shader",
+    "name": "2D/Canvas",
+    "lang": "GLSL",
+    "mode": 0,
+    "vertex":
+    {
+        "input": [{ "type": "Vec2", "name": "Position" }, { "type": "Vec2", "name": "UV" }, { "type": "Vec4", "name": "Color" }],
+        "output": [{ "type": "Vec2", "name": "Pixel_UV" }, { "type": "Vec4", "name": "Pixel_Color" }],
+        "data": [{ "type": "UBO", "name": "VS", "data": [{ "type": "Mat4", "name": "Projection" }] }],
+        "main": [ "Pixel_UV = UV", "Pixel_Color = Color", "gl_Position = Projection * vec4(Position.xy, 0, 1)" ]
+    },
+    "pixel":
+    {
+        "input": [{ "type": "Vec2", "name": "Pixel_UV" }, { "type": "Vec4", "name": "Pixel_Color" }],
+        "output": [{ "type": "Vec4", "name": "Out_Color" }],
+        "data": [{ "type": "Texture2D", "name": "MainTexture" }],
+        "main": [ "Out_Color = Pixel_Color * texture(MainTexture, Pixel_UV.st)" ]
+    }
+}

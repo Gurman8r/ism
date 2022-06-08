@@ -163,6 +163,7 @@ namespace ism
 		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
 		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) override;
 		virtual void uniform_set_destroy(RID uniform_set) override;
+		void _uniform_set_bind(UniformSet const & us);
 
 	public:
 		/* PIPELINE  */
@@ -178,6 +179,7 @@ namespace ism
 
 		virtual RID render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state) override;
 		virtual void render_pipeline_destroy(RID pipeline) override;
+		void _render_pipeline_bind(RenderPipeline const & rp);
 
 	public:
 		/* DRAWLIST  */
@@ -203,6 +205,9 @@ namespace ism
 
 				void const * user_data{};
 				size_t user_data_size{};
+
+				bool scissor_enabled{};
+				IntRect scissor_rect{};
 			}
 			state{};
 		};

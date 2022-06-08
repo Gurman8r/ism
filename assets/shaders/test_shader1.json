@@ -7,91 +7,86 @@
         { "bind": 1, "type": "Vec4f", "name": "Normal"    },
         { "bind": 2, "type": "Vec4f", "name": "Texcoord"  },
         { "bind": 3, "type": "Vec4f", "name": "Tangent"   },
-        { "bind": 4, "type": "Vec4f", "name": "Bitangent" },
-        { "bind": 5, "type": "Vec4i", "name": "Blending"  }
+        { "bind": 4, "type": "Vec4f", "name": "Bitangent" }
     ],
     "params": [
         { "bind": 0, "type": "Sampler2D", "name": "TextureDiffuseMap" }
     ],
-    "vs": {
+    "vertex": {
         "input": {
-            "attr_position" : { "bind": 0, "type": "vec4f" },
-            "attr_normal"   : { "bind": 1, "type": "vec4f" },
-            "attr_texcoord" : { "bind": 2, "type": "vec4f" },
-            "attr_tangent"  : { "bind": 3, "type": "vec4f" },
-            "attr_bitangent": { "bind": 4, "type": "vec4f" },
-            "attr_blending" : { "bind": 5, "type": "vec4i" }
+            "Position": { "bind": 0, "type": "Vec4" },
+            "Normal": { "bind": 1, "type": "Vec4" },
+            "UV": { "bind": 2, "type": "Vec4" },
+            "Tangent": { "bind": 3, "type": "Vec4" },
+            "Bitangent": { "bind": 4, "type": "Vec4" }
         },
         "output": {
-            "pass_position" : { "bind": 0, "type": "vec4f" },
-            "pass_normal"   : { "bind": 1, "type": "vec4f" },
-            "pass_texcoord" : { "bind": 2, "type": "vec4f" },
-            "pass_tangent"  : { "bind": 3, "type": "vec4f" },
-            "pass_bitangent": { "bind": 4, "type": "vec4f" },
-            "pass_blending" : { "bind": 5, "type": "vec4i" }
+            "Pixel_Position": { "bind": 0, "type": "Vec4" },
+            "Pixel_Normal": { "bind": 1, "type": "Vec4" },
+            "Pixel_UV": { "bind": 2, "type": "Vec4" },
+            "Pixel_Tangent" : { "bind": 3, "type": "Vec4" },
+            "Pixel_Bitangent": { "bind": 4, "type": "Vec4" }
         },
         "data": {
             "scene_state": {
                 "type": "UBO",
                 "bind": 0,
                 "data": {
-                    "u_proj": { "bind": 0, "type": "mat4f" },
-                    "u_view": { "bind": 1, "type": "mat4f" }
+                    "Projection": { "bind": 0, "type": "Mat4" },
+                    "View": { "bind": 1, "type": "Mat4" }
                 }
             },
             "render_pass": {
                 "type": "UBO",
                 "bind": 1,
                 "data": {
-                    "u_placeholder": { "bind": 0, "type": "mat4f" }
+                    "Placeholder": { "bind": 0, "type": "Mat4" }
                 }
             },
             "transforms": {
                 "type": "UBO",
                 "bind": 2,
                 "data": {
-                    "u_model": { "bind": 0, "type": "mat4f" }
+                    "Transform": { "bind": 0, "type": "Mat4" }
                 }
             },
             "material": {
                 "type": "UBO",
                 "bind": 3,
                 "data": {
-                    "u_ambient": { "bind": 0, "type": "vec4f" },
-                    "u_diffuse": { "bind": 1, "type": "vec4f" },
-                    "u_specular": { "bind": 2, "type": "vec4f" },
-                    "u_shininess": { "bind": 3, "type": "float" }
+                    "Ambient": { "bind": 0, "type": "Vec4" },
+                    "Diffuse": { "bind": 1, "type": "Vec4" },
+                    "Specular": { "bind": 2, "type": "Vec4" },
+                    "Shininess": { "bind": 3, "type": "Float" }
                 }
             }
         },
         "main": [
-            "pass_position = attr_position;",
-            "pass_normal = attr_normal;",
-            "pass_texcoord = attr_texcoord;",
-            "pass_tangent = attr_tangent;",
-            "pass_bitangent = attr_bitangent;",
-            "pass_blending = attr_blending;",
-            "gl_Position = u_proj * u_view * u_model * pass_position;"
+            "Pixel_Position = Position",
+            "Pixel_Normal = Normal",
+            "Pixel_UV = UV",
+            "Pixel_Tangent = Tangent",
+            "Pixel_Bitangent = Bitangent",
+            "gl_Position = Projection * View * Transform * Pixel_Position"
         ]
     },
-    "ps": {
+    "pixel": {
         "input": {
-            "pass_position" : { "bind": 0, "type": "vec4f" },
-            "pass_normal"   : { "bind": 1, "type": "vec4f" },
-            "pass_texcoord" : { "bind": 2, "type": "vec4f" },
-            "pass_tangent"  : { "bind": 3, "type": "vec4f" },
-            "pass_bitangent": { "bind": 4, "type": "vec4f" },
-            "pass_blending" : { "bind": 5, "type": "vec4i" }
+            "Pixel_Position": { "bind": 0, "type": "Vec4" },
+            "Pixel_Normal": { "bind": 1, "type": "Vec4" },
+            "Pixel_UV": { "bind": 2, "type": "Vec4" },
+            "Pixel_Tangent" : { "bind": 3, "type": "Vec4" },
+            "Pixel_Bitangent": { "bind": 4, "type": "Vec4" }
         },
         "output": {
-            "pass_color": { "bind": 0, "type": "vec4f" }
+            "Out_Color": { "bind": 0, "type": "Vec4" }
         },
         "data": {
-            "u_texture_dm": { "bind": 0, "type": "sampler2D" },
-            "u_texture_sm": { "bind": 1, "type": "sampler2D" }
+            "Diffuse_Map": { "bind": 0, "type": "Texture2D" },
+            "Specular_Map": { "bind": 1, "type": "Texture2D" }
         },
         "main": [
-            "pass_color = texture(u_texture_dm, pass_texcoord.xy);"
+            "Out_Color = texture(Diffuse_Map, Pixel_UV.xy)"
         ]
     }
 }

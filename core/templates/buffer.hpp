@@ -126,7 +126,7 @@ namespace ism
 		}
 
 	public:
-		void * get_to(size_t const index, void * dst, size_t const size_in_bytes)
+		void * get_to(size_t const index, void * dst, size_t const size_in_bytes) const
 		{
 			ASSERT(index + size_in_bytes <= size());
 			copymem(dst, begin() + index, size_in_bytes);
@@ -134,20 +134,20 @@ namespace ism
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(size_t const index, T & value)
+		> T & get_to(size_t const index, T & value) const
 		{
 			get_to(index, std::addressof(value), sizeof(T));
 			return value;
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(T & value)
+		> T & get_to(T & value) const
 		{
 			return get_to<T>(0, value);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> NODISCARD T get(size_t const index = 0)
+		> NODISCARD T get(size_t const index = 0) const
 		{
 			T temp;
 			return get_to<T>(index, temp);
@@ -392,7 +392,7 @@ namespace ism
 		NODISCARD operator void const * () const noexcept { return m_data; }
 
 	public:
-		void * get_to(size_t const index, void * dst, size_t const size_in_bytes)
+		void * get_to(size_t const index, void * dst, size_t const size_in_bytes) const
 		{
 			ASSERT(index + size_in_bytes <= _Size);
 			copymem(dst, begin() + index, size_in_bytes);
@@ -400,20 +400,20 @@ namespace ism
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(size_t const index, T & value)
+		> T & get_to(size_t const index, T & value) const
 		{
 			get_to(index, std::addressof(value), sizeof(T));
 			return value;
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(T & value)
+		> T & get_to(T & value) const
 		{
 			return get_to<T>(0, value);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> NODISCARD T get(size_t const index = 0)
+		> NODISCARD T get(size_t const index = 0) const
 		{
 			T temp;
 			return get_to<T>(index, temp);
@@ -653,7 +653,7 @@ namespace ism
 		NODISCARD operator DynamicBuffer() const noexcept { return { data(), size() }; }
 
 	public:
-		void * get_to(size_t const index, void * dst, size_t const size_in_bytes)
+		void * get_to(size_t const index, void * dst, size_t const size_in_bytes) const
 		{
 			ASSERT(index + size_in_bytes <= _Size);
 			copymem(dst, begin() + index, size_in_bytes);
@@ -661,27 +661,27 @@ namespace ism
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(size_t const index, T & value)
+		> T & get_to(size_t const index, T & value) const
 		{
 			get_to(index, std::addressof(value), sizeof(T));
 			return value;
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(T & value)
+		> T & get_to(T & value) const
 		{
 			return get_to<T>(0, value);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> NODISCARD T get(size_t const index = 0)
+		> NODISCARD T get(size_t const index = 0) const
 		{
 			T temp;
 			return get_to<T>(index, temp);
 		}
 
 		template <size_t I
-		> NODISCARD auto get() -> _type<I>
+		> NODISCARD auto get() const -> _type<I>
 		{
 			return get<_type<I>>(_calculate_index<I>());
 		}

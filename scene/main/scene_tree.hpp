@@ -38,7 +38,7 @@ namespace ism
 	public:
 		virtual void initialize() override;
 
-		virtual bool process(Duration const dt) override;
+		virtual bool process(Duration const & dt) override;
 
 		virtual void finalize() override;
 

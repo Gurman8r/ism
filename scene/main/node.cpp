@@ -29,7 +29,7 @@ Node::~Node() noexcept
 	while (!m_nodes.empty()) { m_nodes.pop_back(); }
 }
 
-void Node::process(Duration const dt)
+void Node::process(Duration const & dt)
 {
 	Vector<size_t> to_remove{};
 
