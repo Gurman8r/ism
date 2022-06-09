@@ -78,9 +78,9 @@ namespace ism
 		virtual void set_should_close(bool value);
 		virtual void set_size(Vec2i const & value);
 		virtual void set_user_pointer(void * value);
-		virtual void set_is_decorated(bool value);
-		virtual void set_is_floating(bool value);
-		virtual void set_is_resizable(bool value);
+		virtual void set_decorated(bool value);
+		virtual void set_floating(bool value);
+		virtual void set_resizable(bool value);
 
 	public:
 		virtual WindowCharCallback set_char_callback(WindowCharCallback value);

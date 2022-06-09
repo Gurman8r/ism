@@ -82,14 +82,14 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Cubemap : public Texture
+	class ISM_API TextureCube : public Texture
 	{
-		OBJECT_COMMON(Cubemap, Texture);
+		OBJECT_COMMON(TextureCube, Texture);
 
 	public:
-		Cubemap();
+		TextureCube();
 
-		virtual ~Cubemap() override;
+		virtual ~TextureCube() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

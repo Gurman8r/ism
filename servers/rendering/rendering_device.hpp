@@ -311,31 +311,27 @@ namespace ism
 				}
 			};
 
-			uint32_t stride{};
-
-			Vector<Attribute> attributes{};
-
-			VertexLayout() noexcept : VertexLayout{
-				{ "Position"	, DataType_F32, 4 },
-				{ "Normal"		, DataType_F32, 4 },
-				{ "UV"			, DataType_F32, 4 },
-				{ "Tangent"		, DataType_F32, 4 },
-				{ "Bitangent"	, DataType_F32, 4 },
-			} {}
+			uint32_t			stride{};
+			Vector<Attribute>	attributes{};
 
 			template <class It> VertexLayout(It first, It last) noexcept : attributes{ first, last } { update(); }
-
 			VertexLayout(std::initializer_list<Attribute> init) noexcept : attributes{ init } { update(); }
-
 			VertexLayout(Vector<Attribute> const & attributes) : attributes{ attributes } { update(); }
-
 			VertexLayout(Vector<Attribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
-
 			template <size_t N> VertexLayout(Attribute const (&arr)[N]) noexcept : attributes{ &arr[0], &arr[N] } { update(); }
+
+			VertexLayout() noexcept : VertexLayout{
+				{ "Position"	, DataType_F32, 4 }, // Vec4f
+				{ "Normal"		, DataType_F32, 4 }, // Vec4f
+				{ "UV"			, DataType_F32, 4 }, // Vec4f
+				{ "Tangent"		, DataType_F32, 4 }, // Vec4f
+				{ "Bitangent"	, DataType_F32, 4 }, // Vec4f
+			}{}
 
 			void update()
 			{
 				uint32_t offset{};
+				stride = 0;
 				for (VertexLayout::Attribute & e : attributes) {
 					e.offset = offset;
 					offset += e.size;

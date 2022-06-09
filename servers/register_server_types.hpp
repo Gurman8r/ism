@@ -5,7 +5,11 @@
 
 namespace ism
 {
+	ISM_API_FUNC(void) preregister_server_types();
+
 	ISM_API_FUNC(void) register_server_types();
+
+	ISM_API_FUNC(void) register_server_singletons();
 
 	ISM_API_FUNC(void) unregister_server_types();
 }

@@ -55,10 +55,10 @@ Texture3D::~Texture3D() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(Cubemap, t) {}
+OBJECT_EMBED(TextureCube, t) {}
 
-Cubemap::Cubemap() {}
+TextureCube::TextureCube() {}
 
-Cubemap::~Cubemap() {}
+TextureCube::~TextureCube() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

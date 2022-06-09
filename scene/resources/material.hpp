@@ -54,8 +54,8 @@ namespace ism
 		NODISCARD Ref<Shader> get_shader() const;
 		void set_shader(Ref<Shader> const & value);
 
-		NODISCARD OBJ get_shader_param(String const & key) const;
-		void set_shader_param(String const & key, OBJ const & value);
+		NODISCARD UniformVariant get_shader_param(StringName const & key) const;
+		void set_shader_param(StringName const & key, UniformVariant const & value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

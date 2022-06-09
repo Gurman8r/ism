@@ -17,6 +17,7 @@
 
 namespace ism
 {
+	// pair
 	template <class First, class Second
 	> ALIAS(Pair) std::pair<First, Second>;
 }

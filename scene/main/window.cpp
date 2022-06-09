@@ -261,17 +261,17 @@ void Window::set_user_pointer(void * value)
 	DISPLAY_SERVER->window_set_user_pointer(m_window_id, value);
 }
 
-void Window::set_is_decorated(bool value)
+void Window::set_decorated(bool value)
 {
 	DISPLAY_SERVER->window_set_decorated(m_window_id, value);
 }
 
-void Window::set_is_floating(bool value)
+void Window::set_floating(bool value)
 {
 	DISPLAY_SERVER->window_set_floating(m_window_id, value);
 }
 
-void Window::set_is_resizable(bool value)
+void Window::set_resizable(bool value)
 {
 	DISPLAY_SERVER->window_set_resizable(m_window_id, value);
 }

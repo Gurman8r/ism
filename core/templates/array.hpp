@@ -34,40 +34,29 @@ namespace ism
 		
 		NODISCARD constexpr auto data() noexcept -> pointer { return m_data; }
 		NODISCARD constexpr auto data() const noexcept -> const_pointer { return m_data; }
-		NODISCARD constexpr bool empty() const noexcept { return false; }
-		NODISCARD constexpr auto max_size() const noexcept -> size_type { return _N; }
-		NODISCARD constexpr auto size() const noexcept -> size_type { return _N; }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		NODISCARD static constexpr bool empty() noexcept { return false; }
+		NODISCARD static constexpr auto max_size() noexcept -> size_type { return _N; }
+		NODISCARD static constexpr auto size() noexcept -> size_type { return _N; }
 
 		NODISCARD constexpr operator pointer() noexcept { return m_data; }
 		NODISCARD constexpr operator const_pointer() const noexcept { return m_data; }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto operator*() & noexcept -> reference { return (*m_data); }
 		NODISCARD constexpr auto operator*() const & noexcept -> const_reference { return (*m_data); }
 		NODISCARD constexpr auto operator*() && noexcept -> value_type && { return std::move(*m_data); }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		NODISCARD constexpr auto at(size_type const i) & noexcept -> reference { return m_data[i]; }
 		NODISCARD constexpr auto at(size_type const i) const & noexcept -> const_reference { return m_data[i]; }
 		NODISCARD constexpr auto at(size_type const i) && noexcept -> value_type && { return std::move(m_data[i]); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto back() & noexcept -> reference { return m_data[_N - 1]; }
 		NODISCARD constexpr auto back() const & noexcept -> const_reference { return m_data[_N - 1]; }
 		NODISCARD constexpr auto back() && noexcept -> value_type && { return std::move(m_data[_N - 1]); }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
 		NODISCARD constexpr auto front() & noexcept -> reference { return m_data[0]; }
 		NODISCARD constexpr auto front() const & noexcept -> const_reference { return m_data[0]; }
 		NODISCARD constexpr auto front() && noexcept -> value_type && { return std::move(m_data[0]); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data; }
 		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data; }
@@ -88,7 +77,7 @@ namespace ism
 		{
 			if (this != std::addressof(other))
 			{
-				for (size_t i = 0; i < _N; ++i)
+				for (size_t i = 0; i < size(); ++i)
 				{
 					ism::util::swap(m_data[i], other.m_data[i]);
 				}

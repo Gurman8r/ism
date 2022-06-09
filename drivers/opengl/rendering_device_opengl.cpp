@@ -157,7 +157,7 @@ MAKE_ENUM_MAPPING(TO_GL, DataType_, uint32_t,
 	// void
 	0,
 	// bool, byte, char
-	GL_BYTE, GL_BYTE, GL_BYTE,
+	GL_BOOL, GL_BYTE, GL_BYTE,
 	// int8, int16, int32, int64
 	GL_BYTE, GL_SHORT, GL_INT, GL_INT64_ARB,
 	// uint8, uint16, uint32, uint64

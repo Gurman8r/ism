@@ -35,7 +35,7 @@ namespace ism
 		virtual RID texture2d_placeholder_create() override;
 		virtual Ref<Image> texture2d_get_image(RID texture) override;
 		virtual RID texture3d_placeholder_create() override;
-		virtual RID cubemap_placeholder_create() override;
+		virtual RID texturecube_placeholder_create() override;
 
 	public:
 		/* SHADER */
@@ -50,8 +50,11 @@ namespace ism
 		virtual void material_destroy(RID material) override;
 		virtual RID material_get_shader(RID material) const override;
 		virtual void material_set_shader(RID material, RID shader) override;
-		virtual OBJ material_get_param(RID material, StringName const & key) const override;
-		virtual void material_set_param(RID material, String const & key, OBJ const & value) override;
+		virtual UniformVariant material_get_param(RID material, StringName const & key) const override;
+		virtual void material_set_param(RID material, StringName const & key, UniformVariant const & value) override;
+		virtual void material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params) override;
+		virtual void material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures) override;
+		virtual void material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty) override;
 
 	public:
 		/* MESH */
@@ -68,12 +71,12 @@ namespace ism
 
 	public:
 		/* CAMERA */
-		virtual RID camera_create() override;
+		virtual RID camera_create(Vec3 const & position = {}, Vec4 const & rotation = {}) override;
 		virtual void camera_destroy(RID camera) override;
 		virtual Vec3 camera_get_position(RID camera) override;
 		virtual void camera_set_position(RID camera, Vec3 const & value) override;
-		virtual Quat camera_get_rotation(RID camera) override;
-		virtual void camera_set_rotation(RID camera, Quat const & value) override;
+		virtual Vec4 camera_get_rotation(RID camera) override;
+		virtual void camera_set_rotation(RID camera, Vec4 const & value) override;
 		virtual Mat4 camera_get_transform(RID camera) override;
 
 	public:

@@ -32,7 +32,7 @@ void ism::register_scene_types()
 		Texture,
 		Texture2D,
 		Texture3D,
-		Cubemap
+		TextureCube
 	>();
 }
 

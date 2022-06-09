@@ -374,15 +374,12 @@ void DisplayServerWindows::window_set_cursor(WindowID id, CursorID value)
 
 void DisplayServerWindows::window_set_cursor_mode(WindowID id, int32_t value)
 {
-	glfwSetInputMode((GLFWwindow *)id, GLFW_CURSOR, std::invoke([value]() noexcept
-	{
-		switch (value)
-		{
-		default: return 0;
+	glfwSetInputMode((GLFWwindow *)id, GLFW_CURSOR, std::invoke([value]() noexcept {
+		switch (value) {
 		case CursorMode_Normal: return GLFW_CURSOR_NORMAL;
 		case CursorMode_Hidden: return GLFW_CURSOR_HIDDEN;
-		case CursorMode_Disabled: return GLFW_CURSOR_DISABLED;
-		}
+		case CursorMode_Disabled: return GLFW_CURSOR_DISABLED; }
+		return 0;
 	}));
 }
 

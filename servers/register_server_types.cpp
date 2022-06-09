@@ -5,6 +5,10 @@
 
 using namespace ism;
 
+void ism::preregister_server_types()
+{
+}
+
 void ism::register_server_types()
 {
 	INTERNALS->install_classes<
@@ -14,6 +18,10 @@ void ism::register_server_types()
 		RenderingServer,
 		TextServer
 	>();
+}
+
+void ism::register_server_singletons()
+{
 }
 
 void ism::unregister_server_types()

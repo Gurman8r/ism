@@ -280,34 +280,15 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr StringView operator "" _sv(cstring str, size_t len)
-	{
-		return StringView{ str, len };
-	}
+	NODISCARD constexpr StringView operator "" _sv(cstring str, size_t len) noexcept { return StringView{ str, len }; }
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	NODISCARD inline String operator "" _s(cstring str, size_t len) noexcept { return String{ str, len }; }
 
-	NODISCARD inline String operator "" _s(cstring str, size_t len)
-	{
-		return String{ str, len };
-	}
+	NODISCARD inline WideString operator "" _s(cwstring str, size_t len) noexcept { return WideString{ str, len }; }
 
-	NODISCARD inline WideString operator "" _s(cwstring str, size_t len)
-	{
-		return WideString{ str, len };
-	}
+	NODISCARD inline StringName operator "" _name(cstring str, size_t len) noexcept { return StringName{ String{ str, len } }; }
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	NODISCARD inline Path operator "" _path(cstring str, size_t len)
-	{
-		return Path{ String{ str, len } };
-	}
-
-	NODISCARD inline Path operator "" _path(cwstring str, size_t len)
-	{
-		return Path{ util::narrow(WideString{ str, len }) };
-	}
+	NODISCARD inline Path operator "" _path(cstring str, size_t len) noexcept { return Path{ String{ str, len } }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

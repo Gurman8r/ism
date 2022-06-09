@@ -23,7 +23,7 @@ RID RendererStorage::texture3d_placeholder_create()
 	return nullptr;
 }
 
-RID RendererStorage::cubemap_placeholder_create()
+RID RendererStorage::texturecube_placeholder_create()
 {
 	return nullptr;
 }
@@ -72,7 +72,7 @@ void RendererStorage::material_set_shader(RID material, RID shader)
 	m->shader = shader;
 }
 
-OBJ RendererStorage::material_get_param(RID material, StringName const & key)
+UniformVariant RendererStorage::material_get_param(RID material, StringName const & key)
 {
 	Material * const m{ VALIDATE((Material *)material) };
 
@@ -86,20 +86,15 @@ OBJ RendererStorage::material_get_param(RID material, StringName const & key)
 	}
 }
 
-void RendererStorage::material_set_param(RID material, StringName const & key, OBJ const & value)
+void RendererStorage::material_set_param(RID material, StringName const & key, UniformVariant const & value)
 {
 	Material * const m{ VALIDATE((Material *)material) };
 
 	if (auto const it{ m->params.find(key) }; it != m->params.end())
 	{
-		if (!value)
-		{
-			m->params.erase(it);
-		}
-		else if (it->second != value)
-		{
-			it->second = value;
-		}
+		if (!value) { m->params.erase(it); }
+
+		else if (it->second != value) { it->second = value; }
 	}
 	else if (value)
 	{
@@ -107,16 +102,18 @@ void RendererStorage::material_set_param(RID material, StringName const & key, O
 	}
 }
 
-void RendererStorage::_material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params)
+void RendererStorage::material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params)
 {
 }
 
-void RendererStorage::_material_update_textures(RID material, Map<StringName, OBJ> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures)
+void RendererStorage::material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures)
 {
 }
 
-void RendererStorage::_material_update_parameters(RID material, Map<StringName, OBJ> const & params, bool uniforms_dirty, bool textures_dirty)
+void RendererStorage::material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty)
 {
+	Material * const m{ VALIDATE((Material *)material) };
+	m->params = params;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -316,7 +313,7 @@ void RendererStorage::render_target_do_clear_request(RID render_target)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RendererStorage::camera_create()
+RID RendererStorage::camera_create(Vec3 const & position, Vec4 const & rotation)
 {
 	Camera * const cam{ memnew(Camera{}) };
 	return (RID)cam;
@@ -337,12 +334,12 @@ void RendererStorage::camera_set_position(RID camera, Vec3 const & value)
 {
 }
 
-Quat RendererStorage::camera_get_rotation(RID camera)
+Vec4 RendererStorage::camera_get_rotation(RID camera)
 {
-	return Quat();
+	return Vec4();
 }
 
-void RendererStorage::camera_set_rotation(RID camera, Quat const & value)
+void RendererStorage::camera_set_rotation(RID camera, Vec4 const & value)
 {
 }
 

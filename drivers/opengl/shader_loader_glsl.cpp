@@ -37,7 +37,7 @@ constexpr cstring macro(cstring str, size_t size)
 	// texture
 	case "Texture2D"_hash: return "sampler2D";
 	case "Texture3D"_hash: return "sampler3D";
-	case "Cubemap"_hash: return "samplerCube";
+	case "TextureCube"_hash: return "samplerCube";
 	}
 	// default
 	return str;

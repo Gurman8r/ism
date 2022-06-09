@@ -4,54 +4,19 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-using Type_ = ShaderBuilder::Type_;
 
-static void test_shader_builder()
+void ShaderLanguageGLSL::load_tokens(Vector<String> & v) const
 {
-	ShaderBuilder::StageDef stage{ RD::ShaderStage_Vertex };
-	
-	stage.inputs = {
-		{ "Position", 0, ShaderBuilder::Type_Vec4 },
-		{ "Normal", 1, ShaderBuilder::Type_Vec4 },
-		{ "UV", 2, ShaderBuilder::Type_Vec4 },
-		{ "Tangent", 3, ShaderBuilder::Type_Vec4 },
-		{ "Bitangent", 4, ShaderBuilder::Type_Vec4 },
-	};
-
-	stage.outputs = {
-		{ "Pixel_Position", 0, ShaderBuilder::Type_Vec4 },
-		{ "Pixel_Normal", 1, ShaderBuilder::Type_Vec4 },
-		{ "Pixel_UV", 2, ShaderBuilder::Type_Vec4 },
-		{ "Pixel_Tangent", 3, ShaderBuilder::Type_Vec4 },
-		{ "Pixel_Bitangent", 4, ShaderBuilder::Type_Vec4 },
-	};
-
-	stage.buffers = {
-		{ "SceneState", 0, {
-			{ "Projection", 0, ShaderBuilder::Type_Mat4 },
-			{ "View", 0, ShaderBuilder::Type_Mat4 },
-		} },
-		{ "RenderPass", 1, {
-			{ "Placeholder", 0, ShaderBuilder::Type_Mat4 },
-		} },
-		{ "Transforms", 1, {
-			{ "Transform", 0, ShaderBuilder::Type_Mat4 },
-		} },
-		{ "Material", 1, {
-			{ "Ambient", 0, ShaderBuilder::Type_Vec4 },
-			{ "Diffuse", 1, ShaderBuilder::Type_Vec4 },
-			{ "Specular", 2, ShaderBuilder::Type_Vec4 },
-			{ "Shininess", 3, ShaderBuilder::Type_Float },
-		} },
-	};
-
-	stage.functions = {
-		{ "test", ShaderBuilder::Type_Void, {}, },
-	};
-
-	stage.main = {
-		"main", ShaderBuilder::Type_Void, {},
-	};
+	v.resize(Token_MAX, String{});
+	v[Token_Void] = "void"_s;
+	v[Token_Bool] = "int"_s;
+	v[Token_Int] = "int"_s; v[Token_Vec2i] = "ivec2"_s; v[Token_Vec3i] = "ivec3"_s; v[Token_Vec4i] = "ivec4"_s; v[Token_Mat2i] = "imat2"_s; v[Token_Mat3i] = "imat3"_s; v[Token_Mat4i] = "imat4"_s;
+	v[Token_Uint] = "uint"_s; v[Token_Vec2u] = "uvec2"_s; v[Token_Vec3u] = "uvec3"_s; v[Token_Vec4u] = "uvec4"_s; v[Token_Mat2u] = "umat2"_s; v[Token_Mat3u] = "umat3"_s; v[Token_Mat4u] = "umat4"_s;
+	v[Token_Float] = "float"_s; v[Token_Vec2f] = "vec2"_s; v[Token_Vec3f] = "vec3"_s; v[Token_Vec4f] = "vec4"_s; v[Token_Mat2f] = "mat2"_s; v[Token_Mat3f] = "mat3"_s; v[Token_Mat4f] = "mat4"_s;
+	v[Token_Double] = "double"_s; v[Token_Vec2d] = "dvec2"_s; v[Token_Vec3d] = "dvec3"_s; v[Token_Vec4d] = "dvec4"_s; v[Token_Mat2d] = "dmat2"_s; v[Token_Mat3d] = "dmat3"_s; v[Token_Mat4d] = "dmat4"_s;
+	v[Token_Texture2D] = "sampler2D"_s; v[Token_Texture3D] = "sampler3D"_s; v[Token_TextureCube] = "samplerCube"_s;
+	v[Token_Sampler] = "sampler2D"_s;
+	v[Token_SamplerBuffer] = "samplerBuffer"_s;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

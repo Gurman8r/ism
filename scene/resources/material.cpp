@@ -43,12 +43,12 @@ void ShaderMaterial::set_shader(Ref<Shader> const & value)
 	RENDERING_SERVER->material_set_shader(get_rid(), get_shader_rid());
 }
 
-OBJ ShaderMaterial::get_shader_param(String const & key) const
+UniformVariant ShaderMaterial::get_shader_param(StringName const & key) const
 {
 	return RENDERING_SERVER->material_get_param(get_rid(), key);
 }
 
-void ShaderMaterial::set_shader_param(String const & key, OBJ const & value)
+void ShaderMaterial::set_shader_param(StringName const & key, UniformVariant const & value)
 {
 	RENDERING_SERVER->material_set_param(get_rid(), key, value);
 }
@@ -80,19 +80,19 @@ void BaseMaterial3D::_update_shader()
 void BaseMaterial3D::set_albedo(Color const & value)
 {
 	m_params.albedo = value;
-	RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Albedo], nullptr);
+	RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Albedo], value.rgba());
 }
 
 void BaseMaterial3D::set_specular(float_t value)
 {
 	m_params.specular = value;
-	RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Specular], nullptr);
+	RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Specular], value);
 }
 
 void BaseMaterial3D::set_metallic(float_t value)
 {
 	m_params.metallic = value;
-	RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Metallic], nullptr);
+	RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Metallic], value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

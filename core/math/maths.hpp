@@ -35,7 +35,7 @@ namespace ism
 		}
 	}
 
-	template <class T = float_t> constexpr T rad2deg(T const radians) noexcept
+	template <class T = float_t> constexpr auto rad2deg(T const radians) noexcept
 	{
 		if constexpr (std::is_floating_point_v<T>)
 		{

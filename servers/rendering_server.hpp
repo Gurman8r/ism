@@ -3,6 +3,7 @@
 
 #include <core/io/image.hpp>
 #include <servers/rendering/rendering_device.hpp>
+#include <servers/rendering/shader_language.hpp>
 
 namespace ism
 {
@@ -35,7 +36,7 @@ namespace ism
 		virtual RID texture2d_placeholder_create() = 0;
 		virtual Ref<Image> texture2d_get_image(RID texture) = 0;
 		virtual RID texture3d_placeholder_create() = 0;
-		virtual RID cubemap_placeholder_create() = 0;
+		virtual RID texturecube_placeholder_create() = 0;
 
 	public:
 		/* SHADER */
@@ -50,8 +51,11 @@ namespace ism
 		virtual void material_destroy(RID material) = 0;
 		virtual RID material_get_shader(RID material) const = 0;
 		virtual void material_set_shader(RID material, RID shader) = 0;
-		virtual OBJ material_get_param(RID material, StringName const & key) const = 0;
-		virtual void material_set_param(RID material, String const & key, OBJ const & value) = 0;
+		virtual UniformVariant material_get_param(RID material, StringName const & key) const = 0;
+		virtual void material_set_param(RID material, StringName const & key, UniformVariant const & value) = 0;
+		virtual void material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params) = 0;
+		virtual void material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures) = 0;
+		virtual void material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty) = 0;
 
 	public:
 		/* MESH */
@@ -91,12 +95,12 @@ namespace ism
 
 	public:
 		/* CAMERA */
-		virtual RID camera_create() = 0;
+		virtual RID camera_create(Vec3 const & position = {}, Vec4 const & rotation = {}) = 0;
 		virtual void camera_destroy(RID camera) = 0;
 		virtual Vec3 camera_get_position(RID camera) = 0;
 		virtual void camera_set_position(RID camera, Vec3 const & value) = 0;
-		virtual Quat camera_get_rotation(RID camera) = 0;
-		virtual void camera_set_rotation(RID camera, Quat const & value) = 0;
+		virtual Vec4 camera_get_rotation(RID camera) = 0;
+		virtual void camera_set_rotation(RID camera, Vec4 const & value) = 0;
 		virtual Mat4 camera_get_transform(RID camera) = 0;
 
 	public:

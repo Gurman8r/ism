@@ -21,6 +21,11 @@ static RID framebuffer{}, backbuffer{};
 static RID render_target{};
 static RID viewport{};
 
+static Mat4 object_matrix[] = // 
+{
+	Mat4::identity(),
+};
+
 static void _setup_pipeline(RID const shader)
 {
 	pipeline = RENDERING_DEVICE->render_pipeline_create
@@ -81,16 +86,6 @@ static void _setup_pipeline(RID const shader)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static Mat4 object_matrix[] = // 
-{
-	{
-		1.f, 0.f, 0.f, 0.f,
-		0.f, 1.f, 0.f, 0.f,
-		0.f, 0.f, 1.f, 0.f,
-		0.f, 0.f, 0.f, 1.f
-	},
-};
-
 MEMBER_IMPL(EditorNode::singleton) {};
 
 OBJECT_EMBED(EditorNode, t) {}
@@ -131,18 +126,20 @@ EditorNode::EditorNode()
 		{ RD::UniformType_Texture, 0, { m_textures["earth_dm_2k"]->get_rid() } },
 		{ RD::UniformType_Texture, 1, { m_textures["earth_sm_2k"]->get_rid() } },
 	}, shader);
-
+	
 	material = RENDERING_SERVER->material_create();
 	RENDERING_SERVER->material_set_shader(material, shader);
-	RENDERING_SERVER->material_set_param(material, "Projection", nullptr);
-	RENDERING_SERVER->material_set_param(material, "View", nullptr);
-	RENDERING_SERVER->material_set_param(material, "Transform", nullptr);
-	RENDERING_SERVER->material_set_param(material, "Ambient", nullptr);
-	RENDERING_SERVER->material_set_param(material, "Diffuse", nullptr);
-	RENDERING_SERVER->material_set_param(material, "Specular", nullptr);
-	RENDERING_SERVER->material_set_param(material, "Shininess", FLT{ 32.f });
-	RENDERING_SERVER->material_set_param(material, "Diffuse_Map", m_textures["earth_dm_2k"]);
-	RENDERING_SERVER->material_set_param(material, "Specular_Map", m_textures["earth_sm_2k"]);
+	RENDERING_SERVER->material_update_parameters(material, {
+		{ "Projection", Mat4::identity() },
+		{ "View", Mat4::identity() },
+		{ "Transform", Mat4::identity() },
+		{ "Ambient", Vec4{ 0.8f, 0.4f, 0.2f, 1.0f } },
+		{ "Diffuse", Vec4{ 0.5f, 0.5f, 0.5f, 1.0f } },
+		{ "Specular", Vec4{ 1.0f, 1.0f, 1.0f, 1.0f } },
+		{ "Shininess", 32.f },
+		{ "Diffuse_Map", m_textures["earth_dm_2k"]->get_rid() },
+		{ "Specular_Map", m_textures["earth_sm_2k"]->get_rid() },
+	}, true, true);
 	
 	// framebuffer
 	Vector<RID> fb_textures{
@@ -213,16 +210,16 @@ void EditorNode::process(Duration const & dt)
 	Mat4 const cam_projection{ editor_camera->get_proj() }, cam_transform{ editor_camera->get_view() };
 
 	{
-		static RD::UBO_Data<Mat4, Mat4> scene_ubo_data;
+		RD::UBO_Data<Mat4, Mat4> scene_ubo_data;
 		scene_ubo_data.set<0>(cam_projection); // projection matrix
 		scene_ubo_data.set<1>(cam_transform); // view matrix
 		RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_ubo_data, sizeof(scene_ubo_data));
 
-		static RD::UBO_Data<Mat4> transforms_ubo_data;
+		RD::UBO_Data<Mat4> transforms_ubo_data;
 		transforms_ubo_data.set<0>(object_matrix[0]); // model matrix
 		RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo_data, sizeof(transforms_ubo_data));
 
-		static RD::UBO_Data<Vec4, Vec4, Vec4, float_t> material_ubo_data;
+		RD::UBO_Data<Vec4, Vec4, Vec4, float_t> material_ubo_data;
 		material_ubo_data.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
 		material_ubo_data.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
 		material_ubo_data.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular

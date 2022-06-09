@@ -24,7 +24,7 @@ namespace ism
 		/* TEXTURE */
 		RID texture2d_placeholder_create();
 		RID texture3d_placeholder_create();
-		RID cubemap_placeholder_create();
+		RID texturecube_placeholder_create();
 
 	public:
 		/* SHADER */
@@ -39,7 +39,7 @@ namespace ism
 			RID uniform_set{};
 			Vector<RID> texture_cache{};
 			DynamicBuffer ubo_data{};
-			Map<StringName, OBJ> params{};
+			Map<StringName, UniformVariant> params{};
 			bool update_requested{};
 		};
 
@@ -48,11 +48,11 @@ namespace ism
 		void material_destroy(RID material);
 		RID material_get_shader(RID material);
 		void material_set_shader(RID material, RID shader);
-		OBJ material_get_param(RID material, StringName const & key);
-		void material_set_param(RID material, StringName const & key, OBJ const & value);
-		void _material_update_uniform_buffer(RID material, Map<StringName, OBJ> const & params);
-		void _material_update_textures(RID material, Map<StringName, OBJ> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures);
-		void _material_update_parameters(RID material, Map<StringName, OBJ> const & params, bool uniforms_dirty, bool textures_dirty);
+		UniformVariant material_get_param(RID material, StringName const & key);
+		void material_set_param(RID material, StringName const & key, UniformVariant const & value);
+		void material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params);
+		void material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures);
+		void material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty);
 
 	public:
 		/* MESH */
@@ -118,17 +118,17 @@ namespace ism
 	public:
 		struct Camera
 		{
-			Vec4 position{};
-			Quat rotation{};
+			Vec3 position{};
+			Vec4 rotation{}; // (quaternion)
 			Mat4 xform{};
 		};
 
-		RID camera_create();
+		RID camera_create(Vec3 const & position = {}, Vec4 const & rotation = {});
 		void camera_destroy(RID camera);
 		Vec3 camera_get_position(RID camera);
 		void camera_set_position(RID camera, Vec3 const & value);
-		Quat camera_get_rotation(RID camera);
-		void camera_set_rotation(RID camera, Quat const & value);
+		Vec4 camera_get_rotation(RID camera);
+		void camera_set_rotation(RID camera, Vec4 const & value);
 		Mat4 camera_get_transform(RID camera);
 
 	public:

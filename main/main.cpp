@@ -44,6 +44,7 @@ static EventBus *			g_bus{};
 static Input *				g_input{};
 static DisplayServer *		g_display{};
 static RenderingServer *	g_renderer{};
+static ImGuiContext *		g_imgui{};
 static TextServer *			g_text{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -62,7 +63,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 
 	//preregister_module_types();
 	
-	//preregister_server_types();
+	preregister_server_types();
 	
 	register_server_types();
 	
@@ -84,7 +85,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 
 	register_core_singletons();
 	
-	//register_server_singletons();
+	register_server_singletons();
 	
 	SYSTEM->set_cmdline(exepath, { argv, argv + argc });
 
@@ -129,23 +130,30 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 		g_input->m_state.is_alt = g_input->m_state.keys_down[KeyCode_LeftAlt] || g_input->m_state.keys_down[KeyCode_RightAlt];
 		g_input->m_state.is_super = g_input->m_state.keys_down[KeyCode_LeftSuper] || g_input->m_state.keys_down[KeyCode_RightSuper];
 	};
-	g_bus->get_delegate<WindowCharEvent>() += [&](WindowCharEvent const & ev) { g_input->m_state.last_char = (char)ev.codepoint; };
-	g_bus->get_delegate<WindowMouseButtonEvent>() += [&](WindowMouseButtonEvent const & ev) { g_input->m_state.mouse_down = ev.action != InputAction_Release; };
-	g_bus->get_delegate<WindowMousePositionEvent>() += [&](WindowMousePositionEvent const & ev) { g_input->m_state.mouse_pos = { (float_t)ev.xpos, (float_t)ev.ypos }; };
-	g_bus->get_delegate<WindowScrollEvent>() += [&](WindowScrollEvent const & ev) { g_input->m_state.scroll = { (float_t)ev.xoffset, (float_t)ev.yoffset }; };
+	g_bus->get_delegate<WindowCharEvent>() += [&](WindowCharEvent const & ev) {
+		g_input->m_state.last_char = (char)ev.codepoint;
+	};
+	g_bus->get_delegate<WindowMouseButtonEvent>() += [&](WindowMouseButtonEvent const & ev) {
+		g_input->m_state.mouse_down = ev.action != InputAction_Release;
+	};
+	g_bus->get_delegate<WindowMousePositionEvent>() += [&](WindowMousePositionEvent const & ev) {
+		g_input->m_state.mouse_pos = { (float_t)ev.xpos, (float_t)ev.ypos };
+	};
+	g_bus->get_delegate<WindowScrollEvent>() += [&](WindowScrollEvent const & ev) {
+		g_input->m_state.scroll = { (float_t)ev.xoffset, (float_t)ev.yoffset };
+	};
 
 	// rendering server
 	g_renderer = memnew(RenderingServerDefault());
 
 	// initialize imgui
-	if (ImGuiContext * ctx{ VALIDATE(ImGui::CreateContext()) }) {
-		ctx->IO.LogFilename = nullptr;
-		ctx->IO.IniFilename = nullptr;
-		ctx->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-		ctx->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-		ctx->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-		ASSERT(ImGui_Init(main_window));
-	}
+	g_imgui = VALIDATE(ImGui::CreateContext());
+	g_imgui->IO.LogFilename = nullptr;
+	g_imgui->IO.IniFilename = nullptr;
+	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	ASSERT(ImGui_Init(main_window));
 
 	return Error_None;
 }
@@ -221,10 +229,10 @@ bool Main::iteration()
 	ImGui::Render();
 
 	RENDERING_DEVICE->draw_list_begin_for_screen(g_display->get_current_context());
-	ImGui_RenderDrawData(&ImGui::GetCurrentContext()->Viewports[0]->DrawDataP);
+	ImGui_RenderDrawData(&g_imgui->Viewports[0]->DrawDataP);
 	RENDERING_DEVICE->draw_list_end();
 
-	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+	if (g_imgui->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
 		WindowID backup_context{ g_display->get_current_context() };
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
@@ -259,7 +267,7 @@ void Main::cleanup()
 	SYSTEM->finalize();
 
 	ImGui_Shutdown();
-	ImGui::DestroyContext();
+	ImGui::DestroyContext(g_imgui);
 
 	g_renderer->finalize();
 	memdelete(g_renderer);

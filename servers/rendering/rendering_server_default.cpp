@@ -141,9 +141,9 @@ RID RenderingServerDefault::texture3d_placeholder_create()
 	return m_storage->texture3d_placeholder_create();
 }
 
-RID RenderingServerDefault::cubemap_placeholder_create()
+RID RenderingServerDefault::texturecube_placeholder_create()
 {
-	return m_storage->cubemap_placeholder_create();
+	return m_storage->texturecube_placeholder_create();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -189,14 +189,29 @@ void RenderingServerDefault::material_set_shader(RID material, RID shader)
 	m_storage->material_set_shader(material, shader);
 }
 
-OBJ RenderingServerDefault::material_get_param(RID material, StringName const & key) const
+UniformVariant RenderingServerDefault::material_get_param(RID material, StringName const & key) const
 {
 	return m_storage->material_get_param(material, key);
 }
 
-void RenderingServerDefault::material_set_param(RID material, String const & key, OBJ const & value)
+void RenderingServerDefault::material_set_param(RID material, StringName const & key, UniformVariant const & value)
 {
 	m_storage->material_set_param(material, key, value);
+}
+
+void RenderingServerDefault::material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params)
+{
+	m_storage->material_update_uniform_buffer(material, params);
+}
+
+void RenderingServerDefault::material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures)
+{
+	m_storage->material_update_textures(material, params, default_textures, texture_uniforms, textures);
+}
+
+void RenderingServerDefault::material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty)
+{
+	m_storage->material_update_parameters(material, params, uniforms_dirty, textures_dirty);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -253,9 +268,9 @@ RID RenderingServerDefault::mesh_surface_get_material(RID mesh, size_t index)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingServerDefault::camera_create()
+RID RenderingServerDefault::camera_create(Vec3 const & position, Vec4 const & rotation)
 {
-	return m_storage->camera_create();
+	return m_storage->camera_create(position, rotation);
 }
 
 void RenderingServerDefault::camera_destroy(RID camera)
@@ -273,12 +288,12 @@ void RenderingServerDefault::camera_set_position(RID camera, Vec3 const & value)
 	m_storage->camera_set_position(camera, value);
 }
 
-Quat RenderingServerDefault::camera_get_rotation(RID camera)
+Vec4 RenderingServerDefault::camera_get_rotation(RID camera)
 {
 	return m_storage->camera_get_rotation(camera);
 }
 
-void RenderingServerDefault::camera_set_rotation(RID camera, Quat const & value)
+void RenderingServerDefault::camera_set_rotation(RID camera, Vec4 const & value)
 {
 	m_storage->camera_set_rotation(camera, value);
 }
