@@ -541,9 +541,6 @@ namespace ism
 
 	public:
 		/* UNIFORMS */
-		template <class ... _Types
-		> using UBO_Data = ConstantBuffer<16, _Types...>;
-
 		enum UniformType_
 		{
 			UniformType_Sampler,

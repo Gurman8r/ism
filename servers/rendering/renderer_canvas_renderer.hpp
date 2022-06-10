@@ -1,7 +1,7 @@
 #ifndef _ISM_RENDERER_CANVAS_RENDERER_HPP_
 #define _ISM_RENDERER_CANVAS_RENDERER_HPP_
 
-#include <servers/rendering_server.hpp>
+#include <servers/rendering/renderer_storage.hpp>
 
 namespace ism
 {
@@ -13,6 +13,9 @@ namespace ism
 		OBJECT_COMMON(RendererCanvasRenderer, Object);
 		
 		friend class RenderingServerDefault;
+
+		RenderingDevice * const m_device;
+		RendererStorage * const m_storage;
 
 	public:
 		using Index2D = typename uint32_t;
@@ -34,7 +37,7 @@ namespace ism
 		};
 
 	public:
-		RendererCanvasRenderer();
+		RendererCanvasRenderer(RenderingDevice * device, RendererStorage * storage);
 
 		virtual ~RendererCanvasRenderer() override;
 

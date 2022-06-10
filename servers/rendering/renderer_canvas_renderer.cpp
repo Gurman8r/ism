@@ -6,7 +6,7 @@ OBJECT_EMBED(RendererCanvasRenderer, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RendererCanvasRenderer::RendererCanvasRenderer()
+RendererCanvasRenderer::RendererCanvasRenderer(RenderingDevice * device, RendererStorage * storage) : m_device{ VALIDATE(device) }, m_storage{ VALIDATE(storage) }
 {
 }
 

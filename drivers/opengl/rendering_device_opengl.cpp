@@ -1088,10 +1088,9 @@ void RenderingDeviceOpenGL::draw_list_draw(DrawListID list, bool use_indices, si
 	// bind uniforms
 	for (uint32_t i = 0; i < dl->state.set_count; ++i)
 	{
-		if (!dl->state.sets[i].bound)
-		{
-			_uniform_set_bind(*VALIDATE((UniformSet *)dl->state.sets[i].uniform_set));
-
+		if (!dl->state.sets[i].bound) {
+			UniformSet * const us{ VALIDATE((UniformSet *)dl->state.sets[i].uniform_set) };
+			_uniform_set_bind(*us);
 			dl->state.sets[i].bound = true;
 		}
 	}
@@ -1108,16 +1107,18 @@ void RenderingDeviceOpenGL::draw_list_draw(DrawListID list, bool use_indices, si
 		glCheck(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ib->handle));
 
 		// draw elements
-		for (RID const vb : va->buffers) {
-			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VALIDATE((VertexBuffer *)vb)->handle));
+		for (RID const vertex_buffer : va->buffers) {
+			VertexBuffer * const vb{ VALIDATE((VertexBuffer *)vertex_buffer) };
+			glCheck(glBindBuffer(GL_ARRAY_BUFFER, vb->handle));
 			glCheck(glDrawElementsInstanced(rp->primitive, ia->index_count, ia->index_type, nullptr, (uint32_t)instances));
 		}
 	}
 	else
 	{
 		// draw arrays
-		for (RID const vb : va->buffers) {
-			glCheck(glBindBuffer(GL_ARRAY_BUFFER, VALIDATE((VertexBuffer *)vb)->handle));
+		for (RID const vertex_buffer : va->buffers) {
+			VertexBuffer * const vb{ VALIDATE((VertexBuffer *)vertex_buffer) };
+			glCheck(glBindBuffer(GL_ARRAY_BUFFER, vb->handle));
 			glCheck(glDrawArraysInstanced(rp->primitive, 0, va->vertex_count, (uint32_t)instances));
 		}
 	}

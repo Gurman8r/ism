@@ -16,9 +16,9 @@ OBJECT_EMBED(RenderingServerDefault, t) {}
 RenderingServerDefault::RenderingServerDefault()
 	: RenderingServer	{}
 	, m_device			{ memnew(RENDERING_DEVICE_DEFAULT()) }
-	, m_storage			{ memnew(RendererStorage) }
-	, m_canvas_renderer	{ memnew(RendererCanvasRenderer) }
-	, m_scene_renderer	{ memnew(RendererSceneRenderer) }
+	, m_storage			{ memnew(RendererStorage(m_device)) }
+	, m_canvas_renderer	{ memnew(RendererCanvasRenderer(m_device, m_storage)) }
+	, m_scene_renderer	{ memnew(RendererSceneRenderer(m_device, m_storage)) }
 {
 }
 
@@ -189,29 +189,19 @@ void RenderingServerDefault::material_set_shader(RID material, RID shader)
 	m_storage->material_set_shader(material, shader);
 }
 
-UniformVariant RenderingServerDefault::material_get_param(RID material, StringName const & key) const
+Variant RenderingServerDefault::material_get_param(RID material, StringName const & key) const
 {
 	return m_storage->material_get_param(material, key);
 }
 
-void RenderingServerDefault::material_set_param(RID material, StringName const & key, UniformVariant const & value)
+void RenderingServerDefault::material_set_param(RID material, StringName const & key, Variant const & value)
 {
 	m_storage->material_set_param(material, key, value);
 }
 
-void RenderingServerDefault::material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params)
+void RenderingServerDefault::material_update(RID material, Map<StringName, Variant> const & params)
 {
-	m_storage->material_update_uniform_buffer(material, params);
-}
-
-void RenderingServerDefault::material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures)
-{
-	m_storage->material_update_textures(material, params, default_textures, texture_uniforms, textures);
-}
-
-void RenderingServerDefault::material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty)
-{
-	m_storage->material_update_parameters(material, params, uniforms_dirty, textures_dirty);
+	m_storage->material_update(material, params);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

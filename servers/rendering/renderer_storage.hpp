@@ -14,8 +14,10 @@ namespace ism
 
 		friend class RenderingServerDefault;
 
+		RenderingDevice * const m_device;
+
 	protected:
-		explicit RendererStorage();
+		explicit RendererStorage(RenderingDevice * device);
 
 	public:
 		virtual ~RendererStorage();
@@ -39,7 +41,7 @@ namespace ism
 			RID uniform_set{};
 			Vector<RID> texture_cache{};
 			DynamicBuffer ubo_data{};
-			Map<StringName, UniformVariant> params{};
+			Map<StringName, Variant> params{};
 			bool update_requested{};
 		};
 
@@ -48,11 +50,9 @@ namespace ism
 		void material_destroy(RID material);
 		RID material_get_shader(RID material);
 		void material_set_shader(RID material, RID shader);
-		UniformVariant material_get_param(RID material, StringName const & key);
-		void material_set_param(RID material, StringName const & key, UniformVariant const & value);
-		void material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params);
-		void material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures);
-		void material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty);
+		Variant material_get_param(RID material, StringName const & key);
+		void material_set_param(RID material, StringName const & key, Variant const & value);
+		void material_update(RID material, Map<StringName, Variant> const & params);
 
 	public:
 		/* MESH */

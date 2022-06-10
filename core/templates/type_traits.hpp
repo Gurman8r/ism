@@ -12,6 +12,7 @@
 #include <utility>
 #include <type_traits>
 #include <tuple>
+#include <variant>
 
 #include <gcem/include/gcem.hpp>
 

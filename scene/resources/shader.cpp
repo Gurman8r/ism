@@ -21,5 +21,4 @@ String Shader::get_code() const
 
 void Shader::set_code(String const & value)
 {
-
 }

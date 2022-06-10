@@ -4,7 +4,7 @@ using namespace ism;
 
 OBJECT_EMBED(RendererSceneRenderer, t) {}
 
-RendererSceneRenderer::RendererSceneRenderer()
+RendererSceneRenderer::RendererSceneRenderer(RenderingDevice * device, RendererStorage * storage) : m_device{ VALIDATE(device) }, m_storage{ VALIDATE(storage) }
 {
 }
 

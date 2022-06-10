@@ -7,9 +7,13 @@ using namespace ism;
 
 OBJECT_EMBED(RendererStorage, t) {}
 
-RendererStorage::RendererStorage() {}
+RendererStorage::RendererStorage(RenderingDevice * device) : m_device{ VALIDATE(device) }
+{
+}
 
-RendererStorage::~RendererStorage() {}
+RendererStorage::~RendererStorage()
+{
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -40,9 +44,6 @@ RID RendererStorage::shader_placeholder_create()
 RID RendererStorage::material_create()
 {
 	Material * const m{ memnew(Material{}) };
-	m->shader = nullptr;
-	m->uniform_buffer = nullptr;
-	m->uniform_set = RENDERING_DEVICE->uniform_set_create({}, nullptr);
 	return (RID)m;
 }
 
@@ -72,7 +73,7 @@ void RendererStorage::material_set_shader(RID material, RID shader)
 	m->shader = shader;
 }
 
-UniformVariant RendererStorage::material_get_param(RID material, StringName const & key)
+Variant RendererStorage::material_get_param(RID material, StringName const & key)
 {
 	Material * const m{ VALIDATE((Material *)material) };
 
@@ -86,34 +87,48 @@ UniformVariant RendererStorage::material_get_param(RID material, StringName cons
 	}
 }
 
-void RendererStorage::material_set_param(RID material, StringName const & key, UniformVariant const & value)
+void RendererStorage::material_set_param(RID material, StringName const & key, Variant const & value)
 {
 	Material * const m{ VALIDATE((Material *)material) };
 
-	if (auto const it{ m->params.find(key) }; it != m->params.end())
+	if (value)
 	{
-		if (!value) { m->params.erase(it); }
-
-		else if (it->second != value) { it->second = value; }
+		m->params[key] = value;
 	}
-	else if (value)
+	else if (auto const it{ m->params.find(key) }; it != m->params.end())
 	{
-		m->params.insert({ key, value });
+		m->params.erase(it);
 	}
 }
 
-void RendererStorage::material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params)
-{
-}
-
-void RendererStorage::material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures)
-{
-}
-
-void RendererStorage::material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty)
+void RendererStorage::material_update(RID material, Map<StringName, Variant> const & params)
 {
 	Material * const m{ VALIDATE((Material *)material) };
-	m->params = params;
+	m->texture_cache.clear();
+
+	Vector<RD::Uniform> uniforms{};
+	size_t buffer_size{};
+
+	for (auto const & [key, value] : params)
+	{
+		if (!key || !value) { continue; }
+
+		m->params[key] = value;
+
+		if (!value.is_rid())
+		{
+			buffer_size += util::align_up(value.size(), 16);
+		}
+		else
+		{
+			m->texture_cache.push_back(value.get<RID>());
+		}
+	}
+
+	//m->uniform_buffer = RENDERING_DEVICE->uniform_buffer_create(buffer_size);
+	//// TODO: write buffer here
+	//if (m->uniform_set) { RENDERING_DEVICE->uniform_set_destroy(m->uniform_set); }
+	//m->uniform_set = RENDERING_DEVICE->uniform_set_create(uniforms, m->shader);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

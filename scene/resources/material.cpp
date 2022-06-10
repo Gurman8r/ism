@@ -43,12 +43,12 @@ void ShaderMaterial::set_shader(Ref<Shader> const & value)
 	RENDERING_SERVER->material_set_shader(get_rid(), get_shader_rid());
 }
 
-UniformVariant ShaderMaterial::get_shader_param(StringName const & key) const
+Variant ShaderMaterial::get_shader_param(StringName const & key) const
 {
 	return RENDERING_SERVER->material_get_param(get_rid(), key);
 }
 
-void ShaderMaterial::set_shader_param(StringName const & key, UniformVariant const & value)
+void ShaderMaterial::set_shader_param(StringName const & key, Variant const & value)
 {
 	RENDERING_SERVER->material_set_param(get_rid(), key, value);
 }

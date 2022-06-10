@@ -5,8 +5,8 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef ISM_MAIN
-#define ISM_MAIN false
+#ifndef IS_STARTUP_PROJECT
+#define IS_STARTUP_PROJECT false
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

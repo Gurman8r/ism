@@ -4,7 +4,6 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
 void ShaderLanguageGLSL::load_tokens(Vector<String> & v) const
 {
 	v.resize(Token_MAX, String{});
@@ -15,8 +14,6 @@ void ShaderLanguageGLSL::load_tokens(Vector<String> & v) const
 	v[Token_Float] = "float"_s; v[Token_Vec2f] = "vec2"_s; v[Token_Vec3f] = "vec3"_s; v[Token_Vec4f] = "vec4"_s; v[Token_Mat2f] = "mat2"_s; v[Token_Mat3f] = "mat3"_s; v[Token_Mat4f] = "mat4"_s;
 	v[Token_Double] = "double"_s; v[Token_Vec2d] = "dvec2"_s; v[Token_Vec3d] = "dvec3"_s; v[Token_Vec4d] = "dvec4"_s; v[Token_Mat2d] = "dmat2"_s; v[Token_Mat3d] = "dmat3"_s; v[Token_Mat4d] = "dmat4"_s;
 	v[Token_Texture2D] = "sampler2D"_s; v[Token_Texture3D] = "sampler3D"_s; v[Token_TextureCube] = "samplerCube"_s;
-	v[Token_Sampler] = "sampler2D"_s;
-	v[Token_SamplerBuffer] = "samplerBuffer"_s;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

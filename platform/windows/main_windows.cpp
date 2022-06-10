@@ -1,6 +1,6 @@
 #include <core/version.hpp>
 
-#if SYSTEM_WINDOWS && ISM_MAIN
+#if (SYSTEM_WINDOWS && IS_STARTUP_PROJECT)
 
 #include <main/main.hpp>
 #include <platform/windows/os_windows.hpp>

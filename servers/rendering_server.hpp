@@ -51,11 +51,9 @@ namespace ism
 		virtual void material_destroy(RID material) = 0;
 		virtual RID material_get_shader(RID material) const = 0;
 		virtual void material_set_shader(RID material, RID shader) = 0;
-		virtual UniformVariant material_get_param(RID material, StringName const & key) const = 0;
-		virtual void material_set_param(RID material, StringName const & key, UniformVariant const & value) = 0;
-		virtual void material_update_uniform_buffer(RID material, Map<StringName, UniformVariant> const & params) = 0;
-		virtual void material_update_textures(RID material, Map<StringName, UniformVariant> const & params, Map<StringName, RID> const & default_textures, Vector<String> const & texture_uniforms, Vector<RID> const & textures) = 0;
-		virtual void material_update_parameters(RID material, Map<StringName, UniformVariant> const & params, bool uniforms_dirty, bool textures_dirty) = 0;
+		virtual Variant material_get_param(RID material, StringName const & key) const = 0;
+		virtual void material_set_param(RID material, StringName const & key, Variant const & value) = 0;
+		virtual void material_update(RID material, Map<StringName, Variant> const & params) = 0;
 
 	public:
 		/* MESH */

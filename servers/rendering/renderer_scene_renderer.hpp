@@ -1,7 +1,7 @@
 #ifndef _ISM_RENDERER_SCENE_RENDERER_HPP_
 #define _ISM_RENDERER_SCENE_RENDERER_HPP_
 
-#include <servers/rendering_server.hpp>
+#include <servers/rendering/renderer_storage.hpp>
 
 namespace ism
 {
@@ -14,8 +14,11 @@ namespace ism
 
 		friend class RenderingServerDefault;
 
+		RenderingDevice * const m_device;
+		RendererStorage * const m_storage;
+
 	public:
-		RendererSceneRenderer();
+		RendererSceneRenderer(RenderingDevice * device, RendererStorage * storage);
 
 		virtual ~RendererSceneRenderer() override;
 	};

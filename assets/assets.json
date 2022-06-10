@@ -1,25 +1,2 @@
 {
-    "data":
-    [
-        {
-            "type": "Font",
-            "name": "Classic Console",
-            "path": "%{wks}assets/fonts/clacon.ttf"
-        },
-        {
-            "type": "Font",
-            "name": "Consolas",
-            "path": "%{wks}assets/fonts/consolas.ttf"
-        },
-        {
-            "type": "Font",
-            "name": "Lucida Console",
-            "path": "%{wks}assets/fonts/lucida_console.ttf"
-        },
-        {
-            "type": "Font",
-            "name": "Minecraft",
-            "path": "%{wks}assets/fonts/minecraft.ttf"
-        }
-    ]
 }
