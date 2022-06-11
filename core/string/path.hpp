@@ -70,12 +70,12 @@ namespace ism
 		NODISCARD operator String() const noexcept { return m_text; }
 	};
 
-	inline void to_json(JSON & json, Path const & value)
+	inline void to_json(Json & json, Path const & value)
 	{
 		json = (String const &)value;
 	}
 
-	inline void from_json(JSON const & json, Path & value)
+	inline void from_json(Json const & json, Path & value)
 	{
 		json.get_to((String &)value);
 	}

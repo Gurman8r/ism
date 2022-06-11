@@ -13,12 +13,8 @@ namespace ism
 		static Error_ load_from_file(Ref<Shader> shader, Path const & path);
 
 		/* load from json */
-		static Error_ load_from_json(Shader & shader, JSON const & json);
-		static Error_ load_from_json(Ref<Shader> shader, JSON const & json);
-
-		/* generate source */
-		static Error_ generate_glsl(RD::ShaderStageData (&spec)[RD::ShaderStage_MAX], JSON const & json);
-		static Error_ generate_hlsl(RD::ShaderStageData (&spec)[RD::ShaderStage_MAX], JSON const & json);
+		static Error_ load_from_json(Shader & shader, Json const & json);
+		static Error_ load_from_json(Ref<Shader> shader, Json const & json);
 	};
 }
 

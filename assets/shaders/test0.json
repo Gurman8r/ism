@@ -1,6 +1,7 @@
 {
     "type": "Shader",
-    "name": "3D",
+    "name": "3D/Test1",
+    "lang": "glsl",
     "vertex":
     {
         "in":
@@ -84,8 +85,8 @@
         },
         "data":
         {
-            "Diffuse_Map": { "sampler2D": 0 },
-            "Specular_Map": { "sampler2D": 1 }
+            "Diffuse_Map": { "type": "sampler2D", "bind": 0 },
+            "Specular_Map": { "type": "sampler2D", "bind": 1 }
         },
         "main":
         [

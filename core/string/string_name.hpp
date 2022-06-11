@@ -68,12 +68,12 @@ namespace ism
 		NODISCARD operator String && () && noexcept { return std::move(*this).string(); }
 	};
 
-	inline void to_json(JSON & json, StringName const & value)
+	inline void to_json(Json & json, StringName const & value)
 	{
 		json = (String const &)value;
 	}
 
-	inline void from_json(JSON const & json, StringName & value)
+	inline void from_json(Json const & json, StringName & value)
 	{
 		json.get_to((String &)value);
 	}

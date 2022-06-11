@@ -500,7 +500,7 @@ namespace ism
 		enum ShaderStage_
 		{
 			ShaderStage_Vertex,
-			ShaderStage_Pixel,
+			ShaderStage_Fragment,
 			ShaderStage_Geometry,
 			ShaderStage_TesselationControl,
 			ShaderStage_TesselationEvaluation,

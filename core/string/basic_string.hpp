@@ -37,13 +37,13 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ch = char
-	> inline void to_json(JSON & json, BasicString<Ch> const & value)
+	> inline void to_json(Json & json, BasicString<Ch> const & value)
 	{
 		json = (std::pmr::basic_string<Ch, std::char_traits<Ch>> const &)value;
 	}
 
 	template <class Ch = char
-	> inline void from_json(JSON const & json, BasicString<Ch> & value)
+	> inline void from_json(Json const & json, BasicString<Ch> & value)
 	{
 		json.get_to((std::pmr::basic_string<Ch, std::char_traits<Ch>> &)value);
 	}

@@ -14,7 +14,7 @@ enum {
 };
 
 static RID uniform_buffers[MAX_UNIFORMS]{};
-static RID uniform_sets[1]{};
+static RID uniform_sets[MAX_UNIFORMS]{};
 static RID material{};
 static RID pipeline{};
 static RID framebuffer{}, backbuffer{};
@@ -104,19 +104,28 @@ EditorNode::EditorNode()
 	m_textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 	m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
 	m_meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-	m_shaders["3D"].instance("../../../assets/shaders/3d.json");
+	m_shaders["3D"].instance("../../../assets/shaders/3D.json");
 
 	RID const shader{ m_shaders["3D"]->get_rid() };
 	_setup_pipeline(shader);
 
 	uniform_buffers[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
-	uniform_buffers[RENDER_PASS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
-	uniform_buffers[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
-	uniform_buffers[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, float_t>));
-	uniform_sets[0] = RENDERING_DEVICE->uniform_set_create({
+	uniform_sets[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, SCENE_STATE_UNIFORMS, { uniform_buffers[SCENE_STATE_UNIFORMS] } },
+	}, shader);
+
+	uniform_buffers[RENDER_PASS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+	uniform_sets[RENDER_PASS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, RENDER_PASS_UNIFORMS, { uniform_buffers[RENDER_PASS_UNIFORMS] } },
+	}, shader);
+
+	uniform_buffers[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+	uniform_sets[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, TRANSFORMS_UNIFORMS, { uniform_buffers[TRANSFORMS_UNIFORMS] } },
+	}, shader);
+
+	uniform_buffers[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, float_t>));
+	uniform_sets[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, MATERIAL_UNIFORMS, { uniform_buffers[MATERIAL_UNIFORMS] } },
 		{ RD::UniformType_Texture, 0, { m_textures["earth_dm_2k"]->get_rid() } },
 		{ RD::UniformType_Texture, 1, { m_textures["earth_sm_2k"]->get_rid() } },
@@ -228,7 +237,10 @@ void EditorNode::process(Duration const & dt)
 
 		RD::DrawListID const dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
 		RENDERING_DEVICE->draw_list_bind_pipeline(dl, pipeline);
-		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[0], 0);
+		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
+		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
+		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
+		RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
 
 		static Mesh * mesh{ *m_meshes["sphere32x24"] };
 		for (size_t i = 0; i < mesh->get_surface_count(); ++i) {

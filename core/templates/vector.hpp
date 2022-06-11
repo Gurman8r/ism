@@ -18,13 +18,13 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> void to_json(JSON & json, Vector<T> const & value)
+	> void to_json(Json & json, Vector<T> const & value)
 	{
 		json = (std::pmr::vector<T> const &)value;
 	}
 
 	template <class T
-	> void from_json(JSON const & json, Vector<T> & value)
+	> void from_json(Json const & json, Vector<T> & value)
 	{
 		json.get_to((std::pmr::vector<T> &)value);
 	}

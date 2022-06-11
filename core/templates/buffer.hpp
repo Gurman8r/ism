@@ -253,6 +253,16 @@ namespace ism
 			return print(size(), str, std::strlen(str));
 		}
 
+		self_type & print(size_t const index, self_type const & str) noexcept
+		{
+			return print(index, str.c_str(), str.size());
+		}
+
+		self_type & print(self_type const & str) noexcept
+		{
+			return print(size(), str.c_str(), str.size());
+		}
+
 		self_type & print(size_t const index, String const & str) noexcept
 		{
 			return print(index, str.data(), str.size());
@@ -527,6 +537,16 @@ namespace ism
 		self_type & print(cstring str) noexcept
 		{
 			return print(_Size, str, std::strlen(str));
+		}
+
+		self_type & print(size_t const index, self_type const & str) noexcept
+		{
+			return print(index, str.c_str(), str.size());
+		}
+
+		self_type & print(self_type const & str) noexcept
+		{
+			return print(size(), str.c_str(), str.size());
 		}
 
 		self_type & print(size_t const index, String const & str) noexcept
@@ -822,6 +842,16 @@ namespace ism
 		self_type & print(cstring str) noexcept
 		{
 			return print(_Size, str, std::strlen(str));
+		}
+
+		self_type & print(size_t const index, self_type const & str) noexcept
+		{
+			return print(index, str.c_str(), str.size());
+		}
+
+		self_type & print(self_type const & str) noexcept
+		{
+			return print(size(), str.c_str(), str.size());
 		}
 
 		self_type & print(size_t const index, String const & str) noexcept
