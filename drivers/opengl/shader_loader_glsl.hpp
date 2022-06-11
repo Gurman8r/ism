@@ -10,7 +10,7 @@ namespace ism
 	class ISM_API ShaderLoaderGLSL final
 	{
 	public:
-		static RD::ShaderCreateInfo load_spec(JSON const & json);
+		static Error_ generate_glsl(RD::ShaderStageData(&spec)[RD::ShaderStage_MAX], JSON const & json);
 	};
 }
 

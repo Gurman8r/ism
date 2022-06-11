@@ -14,7 +14,7 @@ namespace ism
 	class ISM_API FileSystem final
 	{
 	public:
-		static bool get_file_contents(Path const & path, DynamicBuffer & out);
+		static bool get_file_contents(DynamicBuffer & out, Path const & path);
 
 		NODISCARD static Optional<DynamicBuffer> get_file_contents(Path const & path);
 	};

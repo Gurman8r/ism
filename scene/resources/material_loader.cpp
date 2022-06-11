@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-Error_ MaterialLoader::load_material(Material & material, Path const & path)
+Error_ MaterialLoader::load_from_file(Material & material, Path const & path)
 {
 	if (!path) { return Error_Unknown; }
 
@@ -19,8 +19,8 @@ Error_ MaterialLoader::load_material(Material & material, Path const & path)
 	return Error_Unknown;
 }
 
-Error_ MaterialLoader::load_material(Ref<Material> material, Path const & path)
+Error_ MaterialLoader::load_from_file(Ref<Material> material, Path const & path)
 {
 	if (!material) { return Error_Unknown; }
-	return load_material(**material, path);
+	return load_from_file(**material, path);
 }

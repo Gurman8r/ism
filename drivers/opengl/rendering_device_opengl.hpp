@@ -136,7 +136,7 @@ namespace ism
 			Vector<ShaderStageData> stage_data{};
 		};
 
-		virtual RID shader_create(ShaderCreateInfo const & spec) override;
+		virtual RID shader_create(ShaderStageData const (&spec)[ShaderStage_MAX] = {}) override;
 		virtual void shader_destroy(RID shader) override;
 		virtual String shader_get_code(RID shader) override;
 		virtual void shader_set_code(RID shader, String const & value) override;

@@ -9,8 +9,8 @@ namespace ism
 	{
 	public:
 		/* load from file */
-		static Error_ load_mesh(Mesh & mesh, Path const & path);
-		static Error_ load_mesh(Ref<Mesh> mesh, Path const & path);
+		static Error_ load_from_file(Mesh & mesh, Path const & path);
+		static Error_ load_from_file(Ref<Mesh> mesh, Path const & path);
 	};
 }
 

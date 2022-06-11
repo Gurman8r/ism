@@ -38,7 +38,7 @@ Image::Image(int32_t width, int32_t height, Format_ format, DynamicBuffer const 
 
 Error_ Image::reload_from_file()
 {
-	return ImageLoader::load_image(*this, get_path());
+	return ImageLoader::load_from_file(*this, get_path());
 }
 
 void Image::clear()

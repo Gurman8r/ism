@@ -84,12 +84,12 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr hash_t operator "" _hash(cstring str, size_t const len)
+	NODISCARD constexpr hash_t operator ""_hash(cstring str, size_t const len)
 	{
 		return hash(str, len);
 	}
 
-	NODISCARD constexpr hash_t operator "" _hash(cwstring str, size_t const len)
+	NODISCARD constexpr hash_t operator ""_hash(cwstring str, size_t const len)
 	{
 		return hash(str, len);
 	}

@@ -116,7 +116,7 @@ void process_mesh_node(aiScene const * scene, aiNode const * node, Vector<RS::Su
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error_ MeshLoader::load_mesh(Mesh & mesh, Path const & path)
+Error_ MeshLoader::load_from_file(Mesh & mesh, Path const & path)
 {
 	if (!path) { return Error_Unknown; }
 	if (mesh.m_mesh) { RENDERING_SERVER->mesh_destroy(mesh.m_mesh); }
@@ -143,10 +143,10 @@ Error_ MeshLoader::load_mesh(Mesh & mesh, Path const & path)
 	return Error_None;
 }
 
-Error_ MeshLoader::load_mesh(Ref<Mesh> mesh, Path const & path)
+Error_ MeshLoader::load_from_file(Ref<Mesh> mesh, Path const & path)
 {
 	if (!mesh) { return Error_Unknown; }
-	return load_mesh(**mesh, path);
+	return load_from_file(**mesh, path);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

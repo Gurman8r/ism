@@ -4,32 +4,32 @@
     "lang": "GLSL",
     "vertex": {
         "input": [
-            { "type": "Vec4", "name": "Position" },
-            { "type": "Vec4", "name": "UV" }
+            { "type": "vec4", "name": "Attr_Position" },
+            { "type": "vec4", "name": "Attr_Texcoord" }
         ],
         "output": [
-            { "type": "Vec4", "name": "Pixel_Position" },
-            { "type": "Vec4", "name": "Pixel_UV" }
+            { "type": "vec4", "name": "Pixel_Position" },
+            { "type": "vec4", "name": "Pixel_Texcoord" }
         ],
         "main": [
-            "Pixel_Position = Position",
-            "Pixel_UV = UV",
+            "Pixel_Position = Attr_Position",
+            "Pixel_Texcoord = Attr_Texcoord",
             "gl_Position = Pixel_Position"
         ]
     },
     "pixel": {
         "input": [
-            { "type": "Vec4", "name": "Pixel_Position" },
-            { "type": "Vec4", "name": "Pixel_UV" }
+            { "type": "vec4", "name": "Pixel_Position" },
+            { "type": "vec4", "name": "Pixel_Texcoord" }
         ],
         "output": [
-            { "type": "Vec4", "name": "Out_Color" }
+            { "type": "vec4", "name": "Out_Color" }
         ],
         "data": [
-            { "type": "Texture2D", "name": "MainTexture" }
+            { "type": "sampler2D", "name": "MainTexture" }
         ],
         "main": [
-            "Out_Color = texture(MainTexture, Pixel_UV.xy)"
+            "Out_Color = texture(MainTexture, Pixel_Texcoord.xy)"
         ]
     }
 }

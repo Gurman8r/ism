@@ -13,7 +13,7 @@ Mesh::~Mesh()
 
 Error_ Mesh::reload_from_file()
 {
-	return MeshLoader::load_mesh(*this, get_path());
+	return MeshLoader::load_from_file(*this, get_path());
 }
 
 size_t Mesh::get_surface_count() const

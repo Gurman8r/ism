@@ -11,7 +11,7 @@ Shader::~Shader()
 
 Error_ Shader::reload_from_file()
 {
-	return ShaderLoader::load_shader(*this, get_path());
+	return ShaderLoader::load_from_file(*this, get_path());
 }
 
 String Shader::get_code() const

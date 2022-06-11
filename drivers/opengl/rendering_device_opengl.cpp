@@ -733,13 +733,13 @@ void RenderingDeviceOpenGL::sampler_destroy(RID sampler)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::shader_create(ShaderCreateInfo const & shader_info)
+RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderStage_MAX])
 {
 	Shader * const s{ memnew(Shader{}) };
 
 	glCheck(s->handle = glCreateProgramObjectARB());
 
-	for (ShaderStageData const & stage : shader_info.stage_data)
+	for (ShaderStageData const & stage : spec)
 	{
 		if (!stage.code.empty()) { s->stage_data.push_back(stage); }
 	}

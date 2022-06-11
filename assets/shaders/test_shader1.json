@@ -6,11 +6,11 @@
     {
         "in":
         {
-            "Position" : { "bind": 0, "type": "vec4f" },
-            "Normal"   : { "bind": 1, "type": "vec4f" },
-            "Texcoord" : { "bind": 2, "type": "vec4f" },
-            "Tangent"  : { "bind": 3, "type": "vec4f" },
-            "Bitangent": { "bind": 4, "type": "vec4f" }
+            "Attr_Position" : { "bind": 0, "type": "vec4f" },
+            "Attr_Normal"   : { "bind": 1, "type": "vec4f" },
+            "Attr_Texcoord" : { "bind": 2, "type": "vec4f" },
+            "Attr_Tangent"  : { "bind": 3, "type": "vec4f" },
+            "Attr_Bitangent": { "bind": 4, "type": "vec4f" }
         },
         "out":
         {
@@ -65,12 +65,12 @@
         },
         "main":
         [
-            "Pixel_Position = Position",
-            "Pixel_Normal = Normal",
-            "Pixel_Texcoord = Texcoord",
-            "Pixel_Tangent = Tangent",
-            "Pixel_Bitangent = Bitangent",
-            "gl_Position = (CameraProj * CameraView * Transform) * Position"
+            "Pixel_Position = Attr_Position",
+            "Pixel_Normal = Attr_Normal",
+            "Pixel_Texcoord = Attr_Texcoord",
+            "Pixel_Tangent = Attr_Tangent",
+            "Pixel_Bitangent = Attr_Bitangent",
+            "gl_Position = (CameraProj * CameraView * Transform) * Attr_Position"
         ]
     },
     "pixel":
@@ -89,8 +89,8 @@
         },
         "data":
         {
-            "Diffuse_Map": { "bind": 0, "type": "Texture2D" },
-            "Specular_Map": { "bind": 1, "type": "Texture2D" }
+            "Diffuse_Map": { "bind": 0, "type": "sampler2D" },
+            "Specular_Map": { "bind": 1, "type": "sampler2D" }
         },
         "main":
         [

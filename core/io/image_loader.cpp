@@ -11,7 +11,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error_ ImageLoader::load_image(Image & image, Path const & path)
+Error_ ImageLoader::load_from_file(Image & image, Path const & path)
 {
 	if (!path) { return Error_Unknown; }
 
@@ -33,10 +33,10 @@ Error_ ImageLoader::load_image(Image & image, Path const & path)
 	return Error_None;
 }
 
-Error_ ImageLoader::load_image(Ref<Image> image, Path const & path)
+Error_ ImageLoader::load_from_file(Ref<Image> image, Path const & path)
 {
 	if (!image) { return Error_Unknown; }
-	return load_image(**image, path);
+	return load_from_file(**image, path);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

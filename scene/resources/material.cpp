@@ -27,7 +27,7 @@ ShaderMaterial::~ShaderMaterial() {}
 
 Error_ ShaderMaterial::reload_from_file()
 {
-	return MaterialLoader::load_material(*this, get_path());
+	return MaterialLoader::load_from_file(*this, get_path());
 }
 
 RID ShaderMaterial::get_shader_rid() const { return m_shader ? m_shader->get_rid() : nullptr; }
@@ -63,7 +63,7 @@ BaseMaterial3D::~BaseMaterial3D() {}
 
 Error_ BaseMaterial3D::reload_from_file()
 {
-	return MaterialLoader::load_material(*this, get_path());
+	return MaterialLoader::load_from_file(*this, get_path());
 }
 
 RID BaseMaterial3D::get_shader_rid() const

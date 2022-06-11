@@ -11,8 +11,8 @@ namespace ism
 	{
 	public:
 		/* load from file */
-		static Error_ load_image(Image & image, Path const & path);
-		static Error_ load_image(Ref<Image> image, Path const & path);
+		static Error_ load_from_file(Image & image, Path const & path);
+		static Error_ load_from_file(Ref<Image> image, Path const & path);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

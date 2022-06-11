@@ -523,18 +523,10 @@ namespace ism
 
 		struct ShaderCreateInfo
 		{
-			ShaderStageData stage_data[ShaderStage_MAX]
-			{
-				{ ShaderStage_MAX },
-				{ ShaderStage_MAX },
-				{ ShaderStage_MAX },
-				{ ShaderStage_MAX },
-				{ ShaderStage_MAX },
-				{ ShaderStage_MAX },
-			};
+			ShaderStageData stage_data[ShaderStage_MAX]{};
 		};
 
-		virtual RID shader_create(ShaderCreateInfo const & spec) = 0;
+		virtual RID shader_create(ShaderStageData const (&spec)[ShaderStage_MAX] = {}) = 0;
 		virtual void shader_destroy(RID shader) = 0;
 		virtual String shader_get_code(RID shader) = 0;
 		virtual void shader_set_code(RID shader, String const & value) = 0;

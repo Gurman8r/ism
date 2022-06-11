@@ -4,79 +4,79 @@
     "lang": "GLSL",
     "vertex": {
         "input": [
-            { "type": "Vec4", "name": "Position" },
-            { "type": "Vec4", "name": "Normal" },
-            { "type": "Vec4", "name": "UV" },
-            { "type": "Vec4", "name": "Tangent" },
-            { "type": "Vec4", "name": "Bitangent" }
+            { "type": "vec4", "name": "Attr_Position" },
+            { "type": "vec4", "name": "Attr_Normal" },
+            { "type": "vec4", "name": "Attr_Texcoord" },
+            { "type": "vec4", "name": "Attr_Tangent" },
+            { "type": "vec4", "name": "Attr_Bitangent" }
         ],
         "output": [
-            { "type": "Vec4", "name": "Pixel_Position" },
-            { "type": "Vec4", "name": "Pixel_Normal" },
-            { "type": "Vec4", "name": "Pixel_UV" },
-            { "type": "Vec4", "name": "Pixel_Tangent" },
-            { "type": "Vec4", "name": "Pixel_Bitangent" }
+            { "type": "vec4", "name": "Pixel_Position" },
+            { "type": "vec4", "name": "Pixel_Normal" },
+            { "type": "vec4", "name": "Pixel_Texcoord" },
+            { "type": "vec4", "name": "Pixel_Tangent" },
+            { "type": "vec4", "name": "Pixel_Bitangent" }
         ],
         "data": [
             {
-                "type": "UBO",
+                "type": "ubo",
                 "name": "Scene_State_Uniforms",
                 "data": [
-                    { "type": "Mat4", "name": "Projection" },
-                    { "type": "Mat4", "name": "View" }
+                    { "type": "mat4", "name": "Projection" },
+                    { "type": "mat4", "name": "View" }
                 ]
             },
             {
-                "type": "UBO",
+                "type": "ubo",
                 "name": "Render_Pass_Uniforms",
                 "data": [
-                    { "type": "Mat4", "name": "Placeholder" }
+                    { "type": "mat4", "name": "Placeholder" }
                 ]
             },
             {
-                "type": "UBO",
+                "type": "ubo",
                 "name": "Transforms_Uniforms",
                 "data": [
-                    { "type": "Mat4", "name": "Transform" }
+                    { "type": "mat4", "name": "Transform" }
                 ]
             },
             {
-                "type": "UBO",
+                "type": "ubo",
                 "name": "Material_Uniforms",
                 "data": [
-                    { "type": "Vec4", "name": "Ambient" },
-                    { "type": "Vec4", "name": "Diffuse" },
-                    { "type": "Vec4", "name": "Specular" },
-                    { "type": "Float", "name": "Shininess" }
+                    { "type": "vec4", "name": "Ambient" },
+                    { "type": "vec4", "name": "Diffuse" },
+                    { "type": "vec4", "name": "Specular" },
+                    { "type": "float", "name": "Shininess" }
                 ]
             }
         ],
         "main": [
-            "Pixel_Position = Position",
-            "Pixel_Normal = Normal",
-            "Pixel_UV = UV",
-            "Pixel_Tangent = Tangent",
-            "Pixel_Bitangent = Bitangent",
+            "Pixel_Position = Attr_Position",
+            "Pixel_Normal = Attr_Normal",
+            "Pixel_Texcoord = Attr_Texcoord",
+            "Pixel_Tangent = Attr_Tangent",
+            "Pixel_Bitangent = Attr_Bitangent",
             "gl_Position = Projection * View * Transform * Pixel_Position"
         ]
     },
     "pixel": {
         "input": [
-            { "type": "Vec4", "name": "Pixel_Position" },
-            { "type": "Vec4", "name": "Pixel_Normal" },
-            { "type": "Vec4", "name": "Pixel_UV" },
-            { "type": "Vec4", "name": "Pixel_Tangent" },
-            { "type": "Vec4", "name": "Pixel_Bitangent" }
+            { "type": "vec4", "name": "Pixel_Position" },
+            { "type": "vec4", "name": "Pixel_Normal" },
+            { "type": "vec4", "name": "Pixel_Texcoord" },
+            { "type": "vec4", "name": "Pixel_Tangent" },
+            { "type": "vec4", "name": "Pixel_Bitangent" }
         ],
         "output": [
-            { "type": "Vec4", "name": "Out_Color" }
+            { "type": "vec4", "name": "Out_Color" }
         ],
         "data": [
-            { "type": "Texture2D", "name": "Diffuse_Map" },
-            { "type": "Texture2D", "name": "Specular_Map" }
+            { "type": "sampler2D", "name": "Diffuse_Map" },
+            { "type": "sampler2D", "name": "Specular_Map" }
         ],
         "main": [
-            "Out_Color = texture(Diffuse_Map, Pixel_UV.xy)"
+            "Out_Color = texture(Diffuse_Map, Pixel_Texcoord.xy)"
         ]
     }
 }

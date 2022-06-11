@@ -6,242 +6,139 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-constexpr cstring macro(cstring str, size_t size)
+static constexpr cstring _stage_names[RD::ShaderStage_MAX]
 {
-	if (!str || !*str || !size)
-	{
-		return nullptr;
-	}
-	else if (size >= 3 && str[0] == '%' && str[1] == '{' && str[size - 1] == '}')
-	{
-		// TODO...
-	}
-	switch (hash(str, size))
-	{
-	// float
-	case "Double"_hash: case "Float"_hash: return "float";
-	case "Vec2"_hash: case "Vec2d"_hash: case "Vec2f"_hash: return "vec2";
-	case "Vec3"_hash: case "Vec3d"_hash: case "Vec3f"_hash: return "vec3";
-	case "Vec4"_hash: case "Vec4d"_hash: case "Vec4f"_hash: return "vec4";
-	case "Mat3"_hash: case "Mat3d"_hash: case "Mat3f"_hash: return "mat3";
-	case "Mat4"_hash: case "Mat4d"_hash: case "Mat4f"_hash: return "mat4";
-
-	// int
-	case "Bool"_hash: case "Int"_hash: return "int";
-	case "Vec2b"_hash: case "Vec2i"_hash: return "ivec2";
-	case "Vec3b"_hash: case "Vec3i"_hash: return "ivec3";
-	case "Vec4b"_hash: case "Vec4i"_hash: return "ivec4";
-	case "Mat3b"_hash: case "Mat3i"_hash: return "imat3";
-	case "Mat4b"_hash: case "Mat4i"_hash: return "imat4";
-
-	// texture
-	case "Texture2D"_hash: return "sampler2D";
-	case "Texture3D"_hash: return "sampler3D";
-	case "TextureCube"_hash: return "samplerCube";
-	}
-	// default
-	return str;
-}
-
-constexpr cstring macro(cstring value) { return macro(value, util::strlen(value)); }
-
-inline String macro(String const & value) { return macro(value.data(), value.size()); }
-
-inline String macro(JSON const & value)
-{
-	if (value.empty()) { return {}; }
-	
-	else if (value.is_string()) { return macro((String)value); }
-	
-	else { return macro((String)value.dump()); }
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-class NODISCARD ShaderImporterGLSL final
-{
-	static constexpr cstring _StageNames[RD::ShaderStage_MAX]
-	{
-		"vertex",
-		"pixel",
-		"geometry",
-		"tess_eval",
-		"tess_ctrl",
-		"compute",
-	};
-
-	JSON const & m_json;
-	RD::ShaderCreateInfo m_spec{};
-	Vector<Pair<String, String>> m_defines{};
-
-public:
-	operator RD::ShaderCreateInfo const & () const noexcept { return m_spec; }
-
-	explicit ShaderImporterGLSL(JSON const & json) : m_json{ json }
-	{
-		ASSERT(!json.empty());
-		preprocess();
-		process(RD::ShaderStage_Vertex);
-		process(RD::ShaderStage_Pixel);
-		process(RD::ShaderStage_Geometry);
-		process(RD::ShaderStage_TesselationControl);
-		process(RD::ShaderStage_TesselationEvaluation);
-		process(RD::ShaderStage_Compute);
-		postprocess();
-	}
-
-	void preprocess()
-	{
-		// DEFINES
-		if (auto d{ m_json.find("defines") }; d != m_json.end() && !d->empty() && d->is_array())
-		{
-			for (auto & [k, v] : d->items())
-			{
-				if (auto const it{ std::find_if(m_defines.begin(), m_defines.end(),
-					[&, id = hash(k)](auto const & pair) { return hash(pair.first) == id; }
-				) }; it == m_defines.end())
-				{
-					m_defines.push_back({ (String)k, (String)v.dump() });
-				}
-				else
-				{
-					it->second = (String)v.dump();
-				}
-			}
-		}
-	}
-
-	void process(RD::ShaderStage_ shader_stage)
-	{
-		JSON::const_iterator stage{ m_json.find(_StageNames[shader_stage]) };
-		if (stage == m_json.end()) { return; }
-		m_spec.stage_data[(size_t)shader_stage].shader_stage = shader_stage;
-		DynamicBuffer & code{ m_spec.stage_data[(size_t)shader_stage].code };
-
-		// VERSION
-		code.print("#version 460 core\n");
-
-		// DEFINES
-		for (auto & [k, v] : m_defines)
-		{
-			code.printf("#define %.*s %.*s\n", k.size(), k.data(), v.size(), v.data());
-		}
-
-		// INPUT
-		if (auto it{ stage->find("input") }; it != stage->end() && !it->empty() && it->is_array())
-		{
-			for (size_t i = 0; i < it->size(); ++i)
-			{
-				auto const type{ (*it)[i].find("type") }, name{ (*it)[i].find("name") };
-
-				if ((type != (*it)[i].end() && type->is_string()) && (name != (*it)[i].end() && name->is_string()))
-				{
-					size_t index{ i };
-
-					if (auto bind{ (*it)[i].find("bind") }; bind != (*it)[i].end() && bind->is_number_integer()) { bind->get_to(index); }
-
-					String const t{ macro(*type) }, n{ macro(*name) };
-
-					code.printf("layout (location = %zu) in %.*s %.*s;\n", index, t.size(), t.data(), n.size(), n.data());
-				}
-			}
-		}
-
-		// OUTPUT
-		if (auto it{ stage->find("output") }; it != stage->end() && !it->empty() && it->is_array())
-		{
-			for (size_t i = 0; i < it->size(); ++i)
-			{
-				auto const type{ (*it)[i].find("type") }, name{ (*it)[i].find("name") };
-
-				if ((type != (*it)[i].end() && type->is_string()) && (name != (*it)[i].end() && name->is_string()))
-				{
-					size_t index{ i };
-
-					if (auto bind{ (*it)[i].find("bind") }; bind != (*it)[i].end() && bind->is_number_integer()) { bind->get_to(index); }
-
-					String const t{ macro(*type) }, n{ macro(*name) };
-
-					code.printf("layout (location = %zu) out %.*s %.*s;\n", index, t.size(), t.data(), n.size(), n.data());
-				}
-			}
-		}
-
-		// DATA
-		if (auto it{ stage->find("data") }; it != stage->end() && !it->empty() && it->is_array())
-		{
-			for (size_t i = 0; i < it->size(); ++i)
-			{
-				auto const type{ (*it)[i].find("type") }, name{ (*it)[i].find("name") };
-
-				if ((type != (*it)[i].end() && type->is_string()) && (name != (*it)[i].end() && name->is_string()))
-				{
-					size_t index{ i };
-
-					if (auto bind{ (*it)[i].find("bind") }; bind != (*it)[i].end() && bind->is_number_integer()) { bind->get_to(index); }
-
-					String const t{ macro(*type) }, n{ macro(*name) };
-
-					switch (hash(t))
-					{
-					// TEXTURES
-					case "sampler2D"_hash:
-					case "sampler3D"_hash:
-					case "samplerCube"_hash: {
-						code.printf("layout (location = %zu) uniform %.*s %.*s;\n", index, t.size(), t.data(), n.size(), n.data());
-					} break;
-
-					// UNIFORMS
-					case "UBO"_hash: {
-						code.printf("layout (std140, binding = %zu) uniform %.*s {\n", index, n.size(), n.data());
-						if (auto udata{ (*it)[i].find("data") }; udata != (*it)[i].end())
-						{
-							for (size_t j = 0; j < udata->size(); ++j)
-							{
-								auto const utype{ (*udata)[j].find("type") }, uname{ (*udata)[j].find("name") };
-
-								if ((utype != (*udata)[j].end() && utype->is_string()) && (uname != (*udata)[j].end() && uname->is_string()))
-								{
-									String const ut{ macro(*utype) }, un{ macro(*uname) };
-
-									code.printf("%.*s %.*s;\n", ut.size(), ut.data(), un.size(), un.data());
-								}
-							}
-						}
-						code.print("};\n");
-					} break;
-					}
-				}
-			}
-		}
-
-		// MAIN
-		if (auto main{ stage->find("main") }; main != stage->end() && !main->empty() && main->is_array())
-		{
-			code.print("void main() {\n");
-
-			for (String const & s : main->get<Vector<String>>())
-			{
-				code.printf("%.*s;\n", s.size(), s.data());
-			}
-
-			code.print("}\n");
-		}
-
-		// DONE
-		code << '\0';
-	}
-
-	void postprocess()
-	{
-	}
+	"vertex",
+	"pixel",
+	"geometry",
+	"tess_eval",
+	"tess_ctrl",
+	"compute",
 };
 
+void process_shader_stage(RD::ShaderStage_ shader_stage, RD::ShaderStageData(&spec)[RD::ShaderStage_MAX], JSON const & json)
+{
+	JSON::const_iterator stage{ json.find(_stage_names[shader_stage]) };
+	if (stage == json.end()) { return; }
+	spec[shader_stage].shader_stage = shader_stage;
+	DynamicBuffer & code{ spec[shader_stage].code };
+	code.print("#version 460 core\n");
+
+	enum : size_t { IN, OUT, DATA, MAIN, MAX_SECTOR };
+	constexpr cstring section_name[MAX_SECTOR]{ "in", "out", "data", "main", };
+	JSON::const_pointer section[MAX_SECTOR]{};
+	for (size_t i = 0; i < MAX_SECTOR; ++i) {
+		if (auto const it{ stage->find(section_name[i]) }; it != stage->end()) {
+			section[i] = &(*it);
+		}
+	}
+	
+	if (section[IN])
+	{
+		for (auto const & [k, v] : section[IN]->items())
+		{
+			int32_t i{ -1 };
+			if (auto const it{ v.find("bind") }; it != v.end() && it->is_number()) { it->get_to(i); }
+			else { continue; }
+
+			String t{};
+			if (auto const it{ v.find("type") }; it != v.end() && it->is_string()) { it->get_to(t); }
+			else { continue; }
+
+			code.printf("layout (location = %i) in %.*s %.*s;\n", i, t.size(), t.data(), k.size(), k.data());
+		}
+	}
+
+	if (section[OUT])
+	{
+		for (auto const & [k, v] : section[OUT]->items())
+		{
+			int32_t i{ -1 };
+			if (auto const it{ v.find("bind") }; it != v.end() && it->is_number()) { it->get_to(i); }
+			else { continue; }
+
+			String t{};
+			if (auto const it{ v.find("type") }; it != v.end() && it->is_string()) { it->get_to(t); }
+			else { continue; }
+
+			code.printf("layout (location = %i) out %.*s %.*s;\n", i, t.size(), t.data(), k.size(), k.data());
+		}
+	}
+
+	if (section[DATA])
+	{
+		for (auto const & [k, v] : section[DATA]->items())
+		{
+			int32_t i{ -1 };
+			if (auto const it{ v.find("bind") }; it != v.end() && it->is_number()) { it->get_to(i); }
+			else { continue; }
+
+			String t{};
+			if (auto const it{ v.find("type") }; it != v.end() && it->is_string()) { it->get_to(t); }
+			else { continue; }
+
+			JSON::const_pointer d{};
+			if (auto const it{ v.find("data") }; it != v.end()) { d = &(*it); }
+
+			switch (hash(t))
+			{
+			case "sampler2D"_hash:
+			case "sampler3D"_hash:
+			case "samplerCube"_hash: {
+				code.printf("layout (location = %i) uniform %.*s %.*s;\n", i, t.size(), t.data(), k.size(), k.data());
+			} break;
+
+			case "ubo"_hash: {
+				code.printf("layout (std140, binding = %zu) uniform %.*s {\n", i, k.size(), k.data());
+				Vector<String> lines{};
+				lines.resize(d->size());
+				for (auto const & [uk, uv] : d->items())
+				{
+					int32_t ui{ -1 };
+					if (auto const it{ uv.find("bind") }; it != uv.end() && it->is_number()) { it->get_to(ui); }
+					else { continue; }
+
+					String ut{};
+					if (auto const it{ uv.find("type") }; it != uv.end() && it->is_string()) { it->get_to(ut); }
+					else { continue; }
+
+					ASSERT((size_t)ui < lines.size());
+					lines[(size_t)ui] = "    "_s + (String)ut + " "_s + (String)uk + ";\n"_s;
+				}
+				for (String const & line : lines)
+				{
+					code.print(line);
+				}
+				code.print("};\n");
+			} break;
+			}
+		}
+	}
+	
+	code.print("void main() {\n");
+	if (section[MAIN])
+	{
+		for (String const & s : section[MAIN]->get<Vector<String>>())
+		{
+			code.printf("    %.*s\n", s.size(), s.data());
+		}
+	}
+	code.print("}\n");
+
+	code << '\0';
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RD::ShaderCreateInfo ShaderLoaderGLSL::load_spec(JSON const & json)
+Error_ ShaderLoaderGLSL::generate_glsl(RD::ShaderStageData(&spec)[RD::ShaderStage_MAX], JSON const & json)
 {
-	return ShaderImporterGLSL{ json };
+	process_shader_stage(RD::ShaderStage_Vertex, spec, json);
+	process_shader_stage(RD::ShaderStage_Pixel, spec, json);
+	process_shader_stage(RD::ShaderStage_Geometry, spec, json);
+	process_shader_stage(RD::ShaderStage_TesselationControl, spec, json);
+	process_shader_stage(RD::ShaderStage_TesselationEvaluation, spec, json);
+	process_shader_stage(RD::ShaderStage_Compute, spec, json);
+	return Error_None;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
