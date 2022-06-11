@@ -32,10 +32,6 @@ namespace ism
 
 		DynamicBuffer(allocator_type alloc = {}) noexcept : m_data{ alloc } {}
 
-		DynamicBuffer(storage_type const & data, allocator_type alloc = {}) : m_data{ data, alloc } {}
-
-		DynamicBuffer(storage_type && data, allocator_type alloc = {}) noexcept : m_data{ std::move(data), alloc } {}
-
 		DynamicBuffer(size_t const size_in_bytes, byte const value = byte::null, allocator_type alloc = {}) : m_data{ alloc } { resize(size_in_bytes, value); }
 
 		DynamicBuffer(void const * src, size_t const size_in_bytes, allocator_type alloc = {}) : m_data{ alloc } { write(src, size_in_bytes); }
@@ -43,9 +39,55 @@ namespace ism
 		template <class Iter = iterator
 		> DynamicBuffer(Iter first, Iter last, allocator_type alloc = {}) : m_data{ alloc } { write(first, std::distance(first, last) / sizeof(*first)); }
 
-		DynamicBuffer(self_type const & other, allocator_type alloc = {}) : m_data{ other.m_data, alloc } {}
+		DynamicBuffer(storage_type const & data, allocator_type alloc = {}) : m_data{ data, alloc } {}
 
-		self_type & operator=(self_type const & other) { self_type temp{ other }; return swap(temp); }
+		DynamicBuffer(storage_type && data, allocator_type alloc = {}) noexcept : m_data{ std::move(data), alloc } {}
+
+		DynamicBuffer(self_type const & value, allocator_type alloc = {}) : m_data{ alloc } { copy(value); }
+
+		DynamicBuffer(self_type && value, allocator_type alloc = {}) noexcept : m_data{ alloc } { swap(value); }
+
+		self_type & operator=(self_type const & value) { return copy(value); }
+
+		self_type & operator=(self_type && value) noexcept { return swap(value); }
+
+	public:
+		self_type & clear() noexcept
+		{
+			return m_data.clear(), (*this);
+		}
+
+		self_type & copy(storage_type const & value)
+		{
+			return (m_data = value), (*this);
+		}
+
+		self_type & copy(self_type const & value)
+		{
+			if (this != std::addressof(value)) { copy(value.m_data); }
+			return (*this);
+		}
+
+		self_type & resize(size_t const size_in_bytes, byte const value = byte::null)
+		{
+			return m_data.resize(size_in_bytes, value), (*this);
+		}
+
+		self_type & shrink_to_fit()
+		{
+			return m_data.shrink_to_fit(), (*this);
+		}
+
+		self_type & swap(storage_type & value) noexcept
+		{
+			return m_data.swap(value), (*this);
+		}
+
+		self_type & swap(self_type & value) noexcept
+		{
+			if (this != std::addressof(value)) { swap(value.m_data); }
+			return (*this);
+		}
 
 	public:
 		NODISCARD bool empty() const noexcept { return m_data.empty(); }
@@ -95,34 +137,6 @@ namespace ism
 		NODISCARD operator storage_type && () && noexcept { return std::move(m_data); }
 
 	public:
-		self_type & clear() noexcept
-		{
-			return m_data.clear(), (*this);
-		}
-
-		self_type & copy(self_type const & other)
-		{
-			if (this != std::addressof(other)) { m_data = other.m_data; }
-			return (*this);
-		}
-
-		self_type & resize(size_t const size_in_bytes, byte const value = byte::null)
-		{
-			return m_data.resize(size_in_bytes, value), (*this);
-		}
-
-		self_type & shrink_to_fit()
-		{
-			return m_data.shrink_to_fit(), (*this);
-		}
-
-		self_type & swap(self_type & other) noexcept
-		{
-			if (this != std::addressof(other)) { m_data.swap(other.m_data); }
-			return (*this);
-		}
-
-	public:
 		void do_read(size_t const index, void * dst, size_t const size_in_bytes) const
 		{
 			ASSERT(dst && "INVALID DESTINATION");
@@ -152,12 +166,13 @@ namespace ism
 		}
 
 	public:
-		void do_write(size_t const index, void const * src, size_t const size_in_bytes, size_t const alignment = 0)
+		void do_write(size_t const index, void const * src, size_t const size_in_bytes, size_t const align = 0)
 		{
 			ASSERT(src && "INVALID SOURCE");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
-			if (size() < index + size_in_bytes) { resize(index + size_in_bytes); }
-			copymem(data() + index, src, size_in_bytes);
+			size_t const n{ (0 < align && align % 2 == 0) ? SIZE_ROUND_UP(size_in_bytes, align) : size_in_bytes };
+			if (size() < index + n) { resize(index + n); }
+			copymem(data() + index, src, n);
 		}
 
 		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
@@ -220,8 +235,7 @@ namespace ism
 
 		self_type & print(size_t const index, cstring str, size_t const size_in_bytes) noexcept
 		{
-			if (str && *str && size_in_bytes) { do_write(index, str, size_in_bytes); }
-			return (*this);
+			return write(index, str, size_in_bytes);
 		}
 
 		self_type & print(size_t const index, cstring str) noexcept
@@ -291,6 +305,7 @@ namespace ism
 
 	public:
 		using self_type			= typename StaticBuffer<_Size>;
+		using storage_type		= typename decltype(m_data);
 		using reference			= typename byte &;
 		using const_reference	= typename byte const &;
 		using pointer			= typename byte *;
@@ -300,23 +315,28 @@ namespace ism
 
 		StaticBuffer() noexcept {}
 
-		StaticBuffer(self_type const & other) { copy(other); }
-	
-		StaticBuffer(self_type && other) noexcept { swap(std::move(other)); }
-
 		StaticBuffer(size_t const index, void const * src, size_t const size_in_bytes) noexcept { write(index, src, size_in_bytes); }
 
-		StaticBuffer(void const * src, size_t const size_in_bytes) noexcept { write(0, src, size_in_bytes); }
+		StaticBuffer(void const * src, size_t const size_in_bytes) noexcept { write(src, size_in_bytes); }
 
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> StaticBuffer(size_t const index, T const & value) noexcept { write(index, value); }
+		template <class Iter = iterator
+		> StaticBuffer(Iter first, Iter last) { write(first, std::distance(first, last) / sizeof(*first)); }
 
-		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> StaticBuffer(T const & value) noexcept { write(0, value); }
+		StaticBuffer(storage_type const & value) { copy(value); }
+
+		StaticBuffer(storage_type && value) noexcept { swap(value); }
+
+		StaticBuffer(self_type const & value) { copy(value); }
+
+		StaticBuffer(self_type && value) noexcept { swap(value); }
 	
-		self_type & operator=(self_type const & other) { self_type temp{ other }; return swap(temp); }
+		self_type & operator=(storage_type const & value) { return copy(value); }
 	
-		self_type & operator=(self_type && other) noexcept { return swap(std::move(other)); }
+		self_type & operator=(storage_type && value) noexcept { return swap(value); }
+	
+		self_type & operator=(self_type const & value) { return copy(value); }
+	
+		self_type & operator=(self_type && value) noexcept { return swap(value); }
 
 	public:
 		self_type & clear() noexcept
@@ -324,34 +344,42 @@ namespace ism
 			zeromem(m_data, _Size);
 			return (*this);
 		}
-	
-		self_type & copy(self_type const & other)
+
+		self_type & copy(storage_type const & value)
 		{
-			if (this != std::addressof(other)) {
-				copymem(m_data, other.m_data, _Size);
-			}
+			copymem(m_data, value, _Size);
 			return (*this);
 		}
-	
-		self_type & swap(self_type & other) noexcept
+
+		self_type & copy(self_type const & value)
 		{
-			if (this != std::addressof(other)) {
-				byte temp[_Size];
-				copymem(temp, m_data, _Size);
-				copymem(m_data, other.m_data, _Size);
-				copymem(other.m_data, temp, _Size);
-			}
+			if (this != std::addressof(value)) { copy(value.m_data); }
+			return (*this);
+		}
+
+		self_type & swap(storage_type & value) noexcept
+		{
+			storage_type temp;
+			copymem(temp, m_data, _Size);
+			copymem(m_data, value, _Size);
+			copymem(value, temp, _Size);
+			return (*this);
+		}
+
+		self_type & swap(self_type & value) noexcept
+		{
+			if (this != std::addressof(value)) { swap(value.m_data); }
 			return (*this);
 		}
 
 	public:
-		NODISCARD bool empty() const noexcept { return false; }
+		NODISCARD static constexpr bool empty() noexcept { return false; }
 
-		NODISCARD auto capacity() const noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _Size; }
 
-		NODISCARD auto size() const noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto size() noexcept -> size_t { return _Size; }
 
-		NODISCARD auto max_size() const noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _Size; }
 
 		NODISCARD auto data() noexcept -> pointer { return m_data; }
 
@@ -385,7 +413,7 @@ namespace ism
 
 		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
 
-		NODISCARD operator String() const noexcept { return { c_str(), _Size }; }
+		NODISCARD operator String() const noexcept { return { (cstring)m_data, _Size }; }
 
 	public:
 		void do_read(size_t const index, void * dst, size_t const size_in_bytes) const
@@ -393,7 +421,7 @@ namespace ism
 			ASSERT(dst && "INVALID DESTINATION");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
 			ASSERT(index + size_in_bytes <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
-			copymem(dst, data() + index, size_in_bytes);
+			copymem(dst, m_data + index, size_in_bytes);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
@@ -417,12 +445,13 @@ namespace ism
 		}
 
 	public:
-		void do_write(size_t const index, void const * src, size_t const size_in_bytes)
+		void do_write(size_t const index, void const * src, size_t const size_in_bytes, size_t const align = 0)
 		{
 			ASSERT(src && "INVALID SOURCE");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
-			ASSERT(index + size_in_bytes <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
-			copymem(data() + index, src, size_in_bytes);
+			size_t const n{ (0 < align && align % 2 == 0) ? SIZE_ROUND_UP(size_in_bytes, align) : size_in_bytes };
+			ASSERT(index + n <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
+			copymem(m_data + index, src, n);
 		}
 
 		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
@@ -454,13 +483,12 @@ namespace ism
 	public:
 		self_type & vprintf(size_t const index, cstring fmt, va_list args)
 		{
-			std::vsnprintf((char *)data() + index, _Size, fmt, args);
-			return (*this);
+			return std::vsnprintf((char *)m_data + index, _Size - index, fmt, args), (*this);
 		}
 
 		self_type & vprintf(cstring fmt, va_list args)
 		{
-			return vprintf(size(), fmt, args);
+			return vprintf(_Size, fmt, args);
 		}
 
 		self_type & printf(size_t const index, cstring fmt, ...)
@@ -476,15 +504,14 @@ namespace ism
 		{
 			va_list args;
 			va_start(args, fmt);
-			vprintf(size(), fmt, args);
+			vprintf(_Size, fmt, args);
 			va_end(args);
 			return (*this);
 		}
 
 		self_type & print(size_t const index, cstring str, size_t const size_in_bytes) noexcept
 		{
-			if (str && *str && size_in_bytes) { do_write(index, str, size_in_bytes); }
-			return (*this);
+			return write(index, str, size_in_bytes);
 		}
 
 		self_type & print(size_t const index, cstring str) noexcept
@@ -494,22 +521,22 @@ namespace ism
 
 		self_type & print(cstring str, size_t const size_in_bytes) noexcept
 		{
-			return print(size(), str, size_in_bytes);
+			return print(_Size, str, size_in_bytes);
 		}
 
 		self_type & print(cstring str) noexcept
 		{
-			return print(size(), str, std::strlen(str));
+			return print(_Size, str, std::strlen(str));
 		}
 
 		self_type & print(size_t const index, String const & str) noexcept
 		{
-			return print(index, str.data(), str.size());
+			return print(index, str.m_data, str._Size);
 		}
 
 		self_type & print(String const & str) noexcept
 		{
-			return print(size(), str.data(), str.size());
+			return print(_Size, str.m_data, str._Size);
 		}
 	};
 
@@ -525,6 +552,7 @@ namespace ism
 	> class ConstantBuffer
 	{
 		static_assert(0 < _Alignment && _Alignment % 2 == 0);
+
 		static_assert(0 < sizeof...(_Types));
 
 		template <size_t I
@@ -573,13 +601,28 @@ namespace ism
 
 		ConstantBuffer() noexcept {}
 
-		ConstantBuffer(self_type const & other) { copy(other); }
+		ConstantBuffer(size_t const index, void const * src, size_t const size_in_bytes) noexcept { write(index, src, size_in_bytes); }
 
-		ConstantBuffer(self_type && other) noexcept { swap(std::move(other)); }
+		ConstantBuffer(void const * src, size_t const size_in_bytes) noexcept { write(src, size_in_bytes); }
 
-		self_type & operator=(self_type const & other) { self_type temp{ other }; return swap(temp); }
+		template <class Iter = iterator
+		> ConstantBuffer(Iter first, Iter last) { write(first, std::distance(first, last) / sizeof(*first)); }
 
-		self_type & operator=(self_type && other) noexcept { return swap(std::move(other)); }
+		ConstantBuffer(storage_type const & value) { copy(value); }
+
+		ConstantBuffer(storage_type && value) noexcept { swap(value); }
+
+		ConstantBuffer(self_type const & value) { copy(value); }
+
+		ConstantBuffer(self_type && value) noexcept { swap(value); }
+
+		self_type & operator=(storage_type const & value) { return copy(value); }
+
+		self_type & operator=(storage_type && value) noexcept { return swap(value); }
+
+		self_type & operator=(self_type const & value) { return copy(value); }
+
+		self_type & operator=(self_type && value) noexcept { return swap(value); }
 
 	public:
 		self_type & clear() noexcept
@@ -588,33 +631,41 @@ namespace ism
 			return (*this);
 		}
 
-		self_type & copy(self_type const & other)
+		self_type & copy(storage_type const & value)
 		{
-			if (this != std::addressof(other)) {
-				copymem(m_data, other.m_data, _Size);
-			}
+			copymem(m_data, value, _Size);
 			return (*this);
 		}
 
-		self_type & swap(self_type & other) noexcept
+		self_type & copy(self_type const & value)
 		{
-			if (this != std::addressof(other)) {
-				byte temp[_Size];
-				copymem(temp, m_data, _Size);
-				copymem(m_data, other.m_data, _Size);
-				copymem(other.m_data, temp, _Size);
-			}
+			if (this != std::addressof(value)) { copy(value.m_data); }
+			return (*this);
+		}
+
+		self_type & swap(storage_type & value) noexcept
+		{
+			storage_type temp;
+			copymem(temp, m_data, _Size);
+			copymem(m_data, value, _Size);
+			copymem(value, temp, _Size);
+			return (*this);
+		}
+
+		self_type & swap(self_type & value) noexcept
+		{
+			if (this != std::addressof(value)) { swap(value.m_data); }
 			return (*this);
 		}
 
 	public:
-		NODISCARD bool empty() const noexcept { return false; }
+		NODISCARD static constexpr bool empty() noexcept { return false; }
 
-		NODISCARD auto capacity() const noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _Size; }
 
-		NODISCARD auto size() const noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto size() noexcept -> size_t { return _Size; }
 
-		NODISCARD auto max_size() const noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _Size; }
 
 		NODISCARD auto data() noexcept -> pointer { return m_data; }
 
@@ -648,7 +699,7 @@ namespace ism
 
 		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
 
-		NODISCARD operator String() const noexcept { return { c_str(), _Size }; }
+		NODISCARD operator String() const noexcept { return { (cstring)m_data, _Size }; }
 
 	public:
 		void do_read(size_t const index, void * dst, size_t const size_in_bytes) const
@@ -656,7 +707,7 @@ namespace ism
 			ASSERT(dst && "INVALID DESTINATION");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
 			ASSERT(index + size_in_bytes <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
-			copymem(dst, data() + index, size_in_bytes);
+			copymem(dst, m_data + index, size_in_bytes);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
@@ -691,7 +742,7 @@ namespace ism
 			ASSERT(src && "INVALID SOURCE");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
 			ASSERT(index + size_in_bytes <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
-			copymem(data() + index, src, size_in_bytes);
+			copymem(m_data + index, src, size_in_bytes);
 		}
 
 		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
@@ -727,13 +778,12 @@ namespace ism
 	public:
 		self_type & vprintf(size_t const index, cstring fmt, va_list args)
 		{
-			std::vsnprintf((char *)data() + index, _Size, fmt, args);
-			return (*this);
+			return std::vsnprintf((char *)m_data + index, _Size - index, fmt, args), (*this);
 		}
 
 		self_type & vprintf(cstring fmt, va_list args)
 		{
-			return vprintf(size(), fmt, args);
+			return vprintf(_Size, fmt, args);
 		}
 
 		self_type & printf(size_t const index, cstring fmt, ...)
@@ -749,15 +799,14 @@ namespace ism
 		{
 			va_list args;
 			va_start(args, fmt);
-			vprintf(size(), fmt, args);
+			vprintf(_Size, fmt, args);
 			va_end(args);
 			return (*this);
 		}
 
 		self_type & print(size_t const index, cstring str, size_t const size_in_bytes) noexcept
 		{
-			if (str && *str && size_in_bytes) { do_write(index, str, size_in_bytes); }
-			return (*this);
+			return write(index, str, size_in_bytes);
 		}
 
 		self_type & print(size_t const index, cstring str) noexcept
@@ -767,22 +816,22 @@ namespace ism
 
 		self_type & print(cstring str, size_t const size_in_bytes) noexcept
 		{
-			return print(size(), str, size_in_bytes);
+			return print(_Size, str, size_in_bytes);
 		}
 
 		self_type & print(cstring str) noexcept
 		{
-			return print(size(), str, std::strlen(str));
+			return print(_Size, str, std::strlen(str));
 		}
 
 		self_type & print(size_t const index, String const & str) noexcept
 		{
-			return print(index, str.data(), str.size());
+			return print(index, str.m_data, str._Size);
 		}
 
 		self_type & print(String const & str) noexcept
 		{
-			return print(size(), str.data(), str.size());
+			return print(_Size, str.m_data, str._Size);
 		}
 	};
 

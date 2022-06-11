@@ -6,19 +6,19 @@
     {
         "in":
         {
-            "Position" : { "bind": 0, "type": "vec4f", "data": {} },
-            "Normal"   : { "bind": 1, "type": "vec4f", "data": {} },
-            "Texcoord" : { "bind": 2, "type": "vec4f", "data": {} },
-            "Tangent"  : { "bind": 3, "type": "vec4f", "data": {} },
-            "Bitangent": { "bind": 4, "type": "vec4f", "data": {} }
+            "Position" : { "bind": 0, "type": "vec4f" },
+            "Normal"   : { "bind": 1, "type": "vec4f" },
+            "Texcoord" : { "bind": 2, "type": "vec4f" },
+            "Tangent"  : { "bind": 3, "type": "vec4f" },
+            "Bitangent": { "bind": 4, "type": "vec4f" }
         },
         "out":
         {
-            "Pixel_Position" : { "bind": 0, "type": "vec4f", "data": {} },
-            "Pixel_Normal"   : { "bind": 1, "type": "vec4f", "data": {} },
-            "Pixel_Texcoord" : { "bind": 2, "type": "vec4f", "data": {} },
-            "Pixel_Tangent"  : { "bind": 3, "type": "vec4f", "data": {} },
-            "Pixel_Bitangent": { "bind": 4, "type": "vec4f", "data": {} }
+            "Pixel_Position" : { "bind": 0, "type": "vec4f" },
+            "Pixel_Normal"   : { "bind": 1, "type": "vec4f" },
+            "Pixel_Texcoord" : { "bind": 2, "type": "vec4f" },
+            "Pixel_Tangent"  : { "bind": 3, "type": "vec4f" },
+            "Pixel_Bitangent": { "bind": 4, "type": "vec4f" }
         },
         "data":
         {
@@ -28,8 +28,8 @@
                 "type": "ubo",
                 "data":
                 {
-                    "CameraProj": { "bind": 0, "type": "mat4f", "data": {} },
-                    "CameraView": { "bind": 0, "type": "mat4f", "data": {} }
+                    "CameraProj": { "bind": 0, "type": "mat4f" },
+                    "CameraView": { "bind": 0, "type": "mat4f" }
                 }
             },
             "Render_Pass_Uniforms":
@@ -38,7 +38,7 @@
                 "type": "ubo",
                 "data":
                 {
-                    "Placeholder": { "bind": 0, "type": "mat4f", "data": {} }
+                    "Placeholder": { "bind": 0, "type": "mat4f" }
                 }
             },
             "Transforms_Uniforms":
@@ -47,7 +47,7 @@
                 "type": "ubo",
                 "data":
                 {
-                    "Transform": { "bind": 0, "type": "mat4f", "data": {} }
+                    "Transform": { "bind": 0, "type": "mat4f" }
                 }
             },
             "Material_Uniforms":
@@ -56,10 +56,10 @@
                 "type": "ubo",
                 "data":
                 {
-                    "Ambient"  : { "bind": 0, "type": "vec4f", "data": {} },
-                    "Diffuse"  : { "bind": 1, "type": "vec4f", "data": {} },
-                    "Specular" : { "bind": 2, "type": "vec4f", "data": {} },
-                    "Shininess": { "bind": 3, "type": "float", "data": {} }
+                    "Ambient"  : { "bind": 0, "type": "vec4f" },
+                    "Diffuse"  : { "bind": 1, "type": "vec4f" },
+                    "Specular" : { "bind": 2, "type": "vec4f" },
+                    "Shininess": { "bind": 3, "type": "float" }
                 }
             }
         },
@@ -77,20 +77,20 @@
     {
         "in":
         {
-            "Pixel_Position" : { "bind": 0, "type": "vec4f", "data": {} },
-            "Pixel_Normal"   : { "bind": 1, "type": "vec4f", "data": {} },
-            "Pixel_Texcoord" : { "bind": 2, "type": "vec4f", "data": {} },
-            "Pixel_Tangent"  : { "bind": 3, "type": "vec4f", "data": {} },
-            "Pixel_Bitangent": { "bind": 4, "type": "vec4f", "data": {} }
+            "Pixel_Position" : { "bind": 0, "type": "vec4f" },
+            "Pixel_Normal"   : { "bind": 1, "type": "vec4f" },
+            "Pixel_Texcoord" : { "bind": 2, "type": "vec4f" },
+            "Pixel_Tangent"  : { "bind": 3, "type": "vec4f" },
+            "Pixel_Bitangent": { "bind": 4, "type": "vec4f" }
         },
         "out":
         {
-            "Out_Color": { "bind": 0, "type": "vec4f", "data": {} }
+            "Out_Color": { "bind": 0, "type": "vec4f" }
         },
         "data":
         {
-            "Diffuse_Map": { "bind": 0, "type": "Texture2D", "data": {} },
-            "Specular_Map": { "bind": 1, "type": "Texture2D", "data": {} }
+            "Diffuse_Map": { "bind": 0, "type": "Texture2D" },
+            "Specular_Map": { "bind": 1, "type": "Texture2D" }
         },
         "main":
         [
