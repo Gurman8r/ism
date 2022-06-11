@@ -1,6 +1,6 @@
 #include <scene/resources/shader_loader.hpp>
 #include <servers/rendering_server.hpp>
-#include <fstream>
+#include <core/io/file_system.hpp>
 
 #if DIRECTX_ENABLED
 #include <drivers/directx/shader_loader_hlsl.hpp>
@@ -66,22 +66,7 @@ Error_ ShaderLoader::load_shader(Shader & shader, Path const & path)
 
 Error_ ShaderLoader::load_shader(Ref<Shader> shader, Path const & path)
 {
-	if (!shader) { return Error_Unknown; }
-	return load_shader(**shader, path);
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-Error_ ShaderLoader::load_shader(Shader & shader, DynamicBuffer const & code)
-{
-	// TODO: load shader binary
-	return Error_None;
-}
-
-Error_ ShaderLoader::load_shader(Ref<Shader> shader, DynamicBuffer const & code)
-{
-	if (!shader) { return Error_Unknown; }
-	return load_shader(**shader, code);
+	return shader ? load_shader(**shader, path) : Error_Unknown;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

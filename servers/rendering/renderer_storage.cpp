@@ -117,7 +117,7 @@ void RendererStorage::material_update(RID material, Map<StringName, Variant> con
 
 		if (!value.is_rid())
 		{
-			buffer_size += util::align_up(value.size(), 16);
+			buffer_size += SIZE_ROUND_UP(value.size(), 16);
 		}
 		else
 		{

@@ -1,92 +1,100 @@
 {
     "type": "Shader",
     "name": "3D/Test1",
-    "lang": "GLSL",
-    "layout": [
-        { "bind": 0, "type": "Vec4f", "name": "Position"  },
-        { "bind": 1, "type": "Vec4f", "name": "Normal"    },
-        { "bind": 2, "type": "Vec4f", "name": "Texcoord"  },
-        { "bind": 3, "type": "Vec4f", "name": "Tangent"   },
-        { "bind": 4, "type": "Vec4f", "name": "Bitangent" }
-    ],
-    "params": [
-        { "bind": 0, "type": "Sampler2D", "name": "TextureDiffuseMap" }
-    ],
-    "vertex": {
-        "input": {
-            "Position": { "bind": 0, "type": "Vec4" },
-            "Normal": { "bind": 1, "type": "Vec4" },
-            "UV": { "bind": 2, "type": "Vec4" },
-            "Tangent": { "bind": 3, "type": "Vec4" },
-            "Bitangent": { "bind": 4, "type": "Vec4" }
+    "mode": 1,
+    "vertex":
+    {
+        "in":
+        {
+            "Position" : { "bind": 0, "type": "vec4f", "data": {} },
+            "Normal"   : { "bind": 1, "type": "vec4f", "data": {} },
+            "Texcoord" : { "bind": 2, "type": "vec4f", "data": {} },
+            "Tangent"  : { "bind": 3, "type": "vec4f", "data": {} },
+            "Bitangent": { "bind": 4, "type": "vec4f", "data": {} }
         },
-        "output": {
-            "Pixel_Position": { "bind": 0, "type": "Vec4" },
-            "Pixel_Normal": { "bind": 1, "type": "Vec4" },
-            "Pixel_UV": { "bind": 2, "type": "Vec4" },
-            "Pixel_Tangent" : { "bind": 3, "type": "Vec4" },
-            "Pixel_Bitangent": { "bind": 4, "type": "Vec4" }
+        "out":
+        {
+            "Pixel_Position" : { "bind": 0, "type": "vec4f", "data": {} },
+            "Pixel_Normal"   : { "bind": 1, "type": "vec4f", "data": {} },
+            "Pixel_Texcoord" : { "bind": 2, "type": "vec4f", "data": {} },
+            "Pixel_Tangent"  : { "bind": 3, "type": "vec4f", "data": {} },
+            "Pixel_Bitangent": { "bind": 4, "type": "vec4f", "data": {} }
         },
-        "data": {
-            "scene_state": {
-                "type": "UBO",
+        "data":
+        {
+            "Scene_State_Uniforms":
+            {
                 "bind": 0,
-                "data": {
-                    "Projection": { "bind": 0, "type": "Mat4" },
-                    "View": { "bind": 1, "type": "Mat4" }
+                "type": "ubo",
+                "data":
+                {
+                    "CameraProj": { "bind": 0, "type": "mat4f", "data": {} },
+                    "CameraView": { "bind": 0, "type": "mat4f", "data": {} }
                 }
             },
-            "render_pass": {
-                "type": "UBO",
+            "Render_Pass_Uniforms":
+            {
                 "bind": 1,
-                "data": {
-                    "Placeholder": { "bind": 0, "type": "Mat4" }
+                "type": "ubo",
+                "data":
+                {
+                    "Placeholder": { "bind": 0, "type": "mat4f", "data": {} }
                 }
             },
-            "transforms": {
-                "type": "UBO",
+            "Transforms_Uniforms":
+            {
                 "bind": 2,
-                "data": {
-                    "Transform": { "bind": 0, "type": "Mat4" }
+                "type": "ubo",
+                "data":
+                {
+                    "Transform": { "bind": 0, "type": "mat4f", "data": {} }
                 }
             },
-            "material": {
-                "type": "UBO",
+            "Material_Uniforms":
+            {
                 "bind": 3,
-                "data": {
-                    "Ambient": { "bind": 0, "type": "Vec4" },
-                    "Diffuse": { "bind": 1, "type": "Vec4" },
-                    "Specular": { "bind": 2, "type": "Vec4" },
-                    "Shininess": { "bind": 3, "type": "Float" }
+                "type": "ubo",
+                "data":
+                {
+                    "Ambient"  : { "bind": 0, "type": "vec4f", "data": {} },
+                    "Diffuse"  : { "bind": 1, "type": "vec4f", "data": {} },
+                    "Specular" : { "bind": 2, "type": "vec4f", "data": {} },
+                    "Shininess": { "bind": 3, "type": "float", "data": {} }
                 }
             }
         },
-        "main": [
+        "main":
+        [
             "Pixel_Position = Position",
             "Pixel_Normal = Normal",
-            "Pixel_UV = UV",
+            "Pixel_Texcoord = Texcoord",
             "Pixel_Tangent = Tangent",
             "Pixel_Bitangent = Bitangent",
-            "gl_Position = Projection * View * Transform * Pixel_Position"
+            "gl_Position = (CameraProj * CameraView * Transform) * Position"
         ]
     },
-    "pixel": {
-        "input": {
-            "Pixel_Position": { "bind": 0, "type": "Vec4" },
-            "Pixel_Normal": { "bind": 1, "type": "Vec4" },
-            "Pixel_UV": { "bind": 2, "type": "Vec4" },
-            "Pixel_Tangent" : { "bind": 3, "type": "Vec4" },
-            "Pixel_Bitangent": { "bind": 4, "type": "Vec4" }
+    "pixel":
+    {
+        "in":
+        {
+            "Pixel_Position" : { "bind": 0, "type": "vec4f", "data": {} },
+            "Pixel_Normal"   : { "bind": 1, "type": "vec4f", "data": {} },
+            "Pixel_Texcoord" : { "bind": 2, "type": "vec4f", "data": {} },
+            "Pixel_Tangent"  : { "bind": 3, "type": "vec4f", "data": {} },
+            "Pixel_Bitangent": { "bind": 4, "type": "vec4f", "data": {} }
         },
-        "output": {
-            "Out_Color": { "bind": 0, "type": "Vec4" }
+        "out":
+        {
+            "Out_Color": { "bind": 0, "type": "vec4f", "data": {} }
         },
-        "data": {
-            "Diffuse_Map": { "bind": 0, "type": "Texture2D" },
-            "Specular_Map": { "bind": 1, "type": "Texture2D" }
+        "data":
+        {
+            "Diffuse_Map": { "bind": 0, "type": "Texture2D", "data": {} },
+            "Specular_Map": { "bind": 1, "type": "Texture2D", "data": {} }
         },
-        "main": [
-            "Out_Color = texture(Diffuse_Map, Pixel_UV.xy)"
+        "main":
+        [
+            "Out_Color = texture(Diffuse_Map, Pixel_Texcoord.xy)"
         ]
     }
 }

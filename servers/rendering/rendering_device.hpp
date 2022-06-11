@@ -563,6 +563,9 @@ namespace ism
 			Vector<RID> ids{};
 		};
 
+		template <class ... Ts
+		> using Std140 = ConstantBuffer<16, Ts...>;
+
 		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) = 0;
 		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) = 0;
 		virtual void uniform_set_destroy(RID uniform_set) = 0;

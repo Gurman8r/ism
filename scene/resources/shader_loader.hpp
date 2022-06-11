@@ -11,10 +11,6 @@ namespace ism
 		/* load from file */
 		static Error_ load_shader(Shader & shader, Path const & path);
 		static Error_ load_shader(Ref<Shader> shader, Path const & path);
-
-		/* load from memory */
-		static Error_ load_shader(Shader & shader, DynamicBuffer const & code);
-		static Error_ load_shader(Ref<Shader> shader, DynamicBuffer const & code);
 	};
 }
 

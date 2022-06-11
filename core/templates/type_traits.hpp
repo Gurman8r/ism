@@ -1,7 +1,6 @@
 #ifndef _ISM_TYPE_TRAITS_HPP_
 #define _ISM_TYPE_TRAITS_HPP_
 
-#include <core/typedefs.hpp>
 #include <core/os/copymem.hpp>
 
 #include <stdarg.h>
@@ -21,16 +20,20 @@ namespace ism
 	// pair
 	template <class First, class Second
 	> ALIAS(Pair) std::pair<First, Second>;
+
+	// tuple
+	template <class First, class ... Rest
+	> ALIAS(Tuple) std::tuple<First, Rest...>;
 }
 
+// compose
 namespace ism::impl
 {
-	// compose helper
-	template <class T> struct ComposerHelper final
+	template <class T> struct ComposeHelper final
 	{
 		T value;
 
-		constexpr ComposerHelper(T && value) noexcept : value{ FWD(value) } {}
+		constexpr ComposeHelper(T && value) noexcept : value{ FWD(value) } {}
 
 		template <class Fn = void(*)(T &)
 		> constexpr decltype(auto) operator+(Fn && fn) && noexcept
@@ -40,13 +43,13 @@ namespace ism::impl
 	};
 
 #define COMPOSE_EX(m_class, ...) \
-		(ism::impl::ComposerHelper<m_class>(m_class{ ##__VA_ARGS__ }))
+		(ism::impl::ComposeHelper<m_class>(m_class{ ##__VA_ARGS__ }))
 
 #define COMPOSE(m_class, m_var, ...) \
 		COMPOSE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
 }
 
-// operators
+// operator structures
 namespace ism
 {
 	template <class _Ty> struct Plus
@@ -125,18 +128,6 @@ namespace ism
 // utility
 namespace ism::util
 {
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	constexpr size_t align_up(size_t const value, size_t const alignment)
-	{
-		return !alignment ? value : (IS_ALIGNED(value, alignment) ? value : SIZE_ROUND_UP(value, alignment));
-	}
-
-	constexpr size_t align_down(size_t const value, size_t const alignment)
-	{
-		return !alignment ? value : (IS_ALIGNED(value, alignment) ? value : SIZE_ROUND_DOWN(value, alignment));
-	}
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class ... Ts

@@ -54,36 +54,39 @@
 		decltype(expr) expr
 
 // map enum to array of constant values
-#define MAKE_ENUM_MAPPING(m_func, m_from, m_to, ...)							\
-		static constexpr m_to _MAP_##m_from##_TO_##m_to##_[] = { ##__VA_ARGS__ };	\
-		NODISCARD static constexpr m_to m_func(m_from i) noexcept					\
-		{																			\
-			return _MAP_##m_from##_TO_##m_to##_[(size_t)i];							\
-		}																			\
+#define MAKE_ENUM_MAPPING(m_func, m_from, m_to, ...)				\
+		static constexpr m_to _MAP_##m_from##_TO_##m_to##_[] =		\
+		{															\
+			##__VA_ARGS__											\
+		};															\
+		NODISCARD static constexpr m_to m_func(m_from i) noexcept	\
+		{															\
+			return _MAP_##m_from##_TO_##m_to##_[(size_t)i];			\
+		}															\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// Below "a" is a power of 2.
+// below "a" is a power of 2:
 
-// Round down size "n" to be a multiple of "a".
-#define SIZE_ROUND_DOWN(n, a) \
-		((size_t)(n) & ~(size_t)((a) - 1))
+// round down size "n" to be a multiple of "a"
+#define SIZE_ROUND_DOWN(num, alignment) \
+		((size_t)(num) & ~(size_t)((alignment) - 1))
 
-// Round up size "n" to be a multiple of "a".
-#define SIZE_ROUND_UP(n, a) \
-		(((size_t)(n) + (size_t)((a) - 1)) & ~(size_t)((a) - 1))
+// round up size "num" to be alignment multiple of "alignment"
+#define SIZE_ROUND_UP(num, alignment) \
+		(((size_t)(num) + (size_t)((alignment) - 1)) & ~(size_t)((alignment) - 1))
 
-// Round pointer "p" down to the closest "a"-aligned address <= "p".
-#define ALIGN_DOWN(p, a) \
-		((void *)((uintptr_t)(p) & ~(uintptr_t)((a) - 1)))
+// round pointer "ptr" down to the closest "alignment"-aligned address <= "ptr"
+#define ALIGN_DOWN(ptr, alignment) \
+		((void *)((uintptr_t)(ptr) & ~(uintptr_t)((alignment) - 1)))
 
-// Round pointer "p" up to the closest "a"-aligned address >= "p".
-#define ALIGN_UP(p, a) \
-		((void *)(((uintptr_t)(p) + (uintptr_t)((a) - 1)) & ~(uintptr_t)((a) - 1)))
+// round pointer "ptr" up to the closest "alignment"-aligned address >= "ptr"
+#define ALIGN_UP(ptr, alignment) \
+		((void *)(((uintptr_t)(ptr) + (uintptr_t)((alignment) - 1)) & ~(uintptr_t)((alignment) - 1)))
 
-// Check if pointer "p" is aligned to "a"-bytes boundary.
-#define IS_ALIGNED(p, a) \
-		(!((uintptr_t)(p) & (uintptr_t)((a) - 1)))
+// check if pointer "ptr" is aligned to "alignment"-bytes boundary
+#define IS_ALIGNED(ptr, alignment) \
+		(!((uintptr_t)(ptr) & (uintptr_t)((alignment) - 1)))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -116,7 +116,12 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum class byte : uint8_t { zero, one, min = zero, max = 255 };
+	enum class byte : uint8_t
+	{
+		zero, one,
+		min = 0, null = 0,
+		max = 255, npos = 255
+	};
 
 	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
 	> NODISCARD constexpr byte operator<<(byte const a, I const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) << b)); }

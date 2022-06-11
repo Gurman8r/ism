@@ -108,11 +108,11 @@ namespace ism
 		};
 
 		virtual RID texture_create(TextureCreateInfo const & spec, DynamicBuffer const & data = {}) override;
-		virtual void texture_destroy(RID rid) override;
-		virtual void texture_update(RID rid, DynamicBuffer const & data = {}) override;
-		void _texture_update(RID rid, void const * data);
+		virtual void texture_destroy(RID texture) override;
+		virtual void texture_update(RID texture, DynamicBuffer const & data = {}) override;
+		void _texture_update(Texture & t, void const * data);
 		virtual void * texture_get_handle(RID texture) override;
-		virtual DynamicBuffer texture_get_data(RID rid) override;
+		virtual DynamicBuffer texture_get_data(RID texture) override;
 
 	public:
 		/* FRAMEBUFFER  */

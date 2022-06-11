@@ -1,6 +1,6 @@
 #include <scene/resources/text_file.hpp>
 #include <servers/text_server.hpp>
-#include <fstream>
+#include <core/io/file_system.hpp>
 
 using namespace ism;
 

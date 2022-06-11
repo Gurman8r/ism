@@ -106,7 +106,7 @@ namespace ism
 			return 0;
 		}
 
-		NODISCARD static void const * get_data_static(Type_ const type, storage_type const & data) noexcept
+		NODISCARD static constexpr void const * get_data_static(Type_ const type, storage_type const & data) noexcept
 		{
 			switch (type) {
 			case Type_Bool: return &std::get<bool>(data);

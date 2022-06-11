@@ -105,10 +105,10 @@ EditorNode::EditorNode()
 	RID const shader{ m_shaders["3D"]->get_rid() };
 	_setup_pipeline(shader);
 
-	uniform_buffers[SCENE_STATE_UBO] = RENDERING_DEVICE->uniform_buffer_create(sizeof(ConstantBuffer<16, Mat4, Mat4>));
-	uniform_buffers[RENDER_PASS_UBO] = RENDERING_DEVICE->uniform_buffer_create(sizeof(ConstantBuffer<16, Mat4>));
-	uniform_buffers[TRANSFORMS_UBO] = RENDERING_DEVICE->uniform_buffer_create(sizeof(ConstantBuffer<16, Mat4>));
-	uniform_buffers[MATERIAL_UBO] = RENDERING_DEVICE->uniform_buffer_create(sizeof(ConstantBuffer<16, Vec4, Vec4, Vec4, float_t>));
+	uniform_buffers[SCENE_STATE_UBO] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
+	uniform_buffers[RENDER_PASS_UBO] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+	uniform_buffers[TRANSFORMS_UBO] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+	uniform_buffers[MATERIAL_UBO] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, float_t>));
 	uniform_sets[0] = RENDERING_DEVICE->uniform_set_create({
 		{ RD::UniformType_UniformBuffer, SCENE_STATE_UBO, { uniform_buffers[SCENE_STATE_UBO] } },
 		{ RD::UniformType_UniformBuffer, RENDER_PASS_UBO, { uniform_buffers[RENDER_PASS_UBO] } },
@@ -199,25 +199,25 @@ void EditorNode::process(Duration const & dt)
 	editor_camera->recalculate();
 
 	{
-		ConstantBuffer<16, Mat4, Mat4> scene_ubo_data;
-		scene_ubo_data.set<0>(editor_camera->get_proj()); // camera projection
-		scene_ubo_data.set<1>(editor_camera->get_view()); // camera view
-		RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE_STATE_UBO], 0, scene_ubo_data, sizeof(scene_ubo_data));
+		RD::Std140<Mat4, Mat4> scene_state_ubo;
+		scene_state_ubo.set<0>(editor_camera->get_proj()); // camera projection
+		scene_state_ubo.set<1>(editor_camera->get_view()); // camera view
+		RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE_STATE_UBO], 0, scene_state_ubo, sizeof(scene_state_ubo));
 
-		ConstantBuffer<16, Mat4> render_pass_ubo_data;
-		render_pass_ubo_data.set<0>(Mat4::identity()); // placeholder
-		RENDERING_DEVICE->buffer_update(uniform_buffers[RENDER_PASS_UBO], 0, render_pass_ubo_data, sizeof(render_pass_ubo_data));
+		RD::Std140<Mat4> render_pass_ubo;
+		render_pass_ubo.set<0>(Mat4::identity()); // placeholder
+		RENDERING_DEVICE->buffer_update(uniform_buffers[RENDER_PASS_UBO], 0, render_pass_ubo, sizeof(render_pass_ubo));
 
-		ConstantBuffer<16, Mat4> transforms_ubo_data;
-		transforms_ubo_data.set<0>(object_matrix[0]); // model transform
-		RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS_UBO], 0, transforms_ubo_data, sizeof(transforms_ubo_data));
+		RD::Std140<Mat4> transforms_ubo;
+		transforms_ubo.set<0>(object_matrix[0]); // model transform
+		RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS_UBO], 0, transforms_ubo, sizeof(transforms_ubo));
 
-		ConstantBuffer<16, Vec4, Vec4, Vec4, float_t> material_ubo_data;
-		material_ubo_data.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
-		material_ubo_data.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
-		material_ubo_data.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
-		material_ubo_data.set<3>(32.f); // shininess
-		RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL_UBO], 0, material_ubo_data, sizeof(material_ubo_data));
+		RD::Std140<Vec4, Vec4, Vec4, float_t> material_ubo;
+		material_ubo.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
+		material_ubo.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
+		material_ubo.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
+		material_ubo.set<3>(32.f); // shininess
+		RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL_UBO], 0, material_ubo, sizeof(material_ubo));
 
 		static Vector<Color> clear_colors{ Colors::magenta };
 		clear_colors[0] = rotate_hue(clear_colors[0], (float_t)dt * 10.f);

@@ -512,7 +512,7 @@ RID RenderingDeviceOpenGL::texture_create(TextureCreateInfo const & spec, Dynami
 		(spec.swizzle_b == TextureSwizzle_Identity) ? GL_BLUE : TO_GL(spec.swizzle_b),
 		(spec.swizzle_a == TextureSwizzle_Identity) ? GL_ALPHA : TO_GL(spec.swizzle_a) };
 	get_image_info(t->color_format, &t->image_format, 0, 0, 0);
-	_texture_update((RID)t, data.data());
+	_texture_update(*t, data.data());
 	return (RID)t;
 }
 
@@ -527,25 +527,23 @@ void RenderingDeviceOpenGL::texture_update(RID texture, DynamicBuffer const & da
 {
 	Texture * const t{ VALIDATE((Texture *)texture) };
 	if (t->handle) { glCheck(glDeleteTextures(1, &t->handle)); }
-	_texture_update((RID)t, data.data());
+	_texture_update(*t, data.data());
 }
 
-void RenderingDeviceOpenGL::_texture_update(RID texture, void const * data)
+void RenderingDeviceOpenGL::_texture_update(Texture & t, void const * data)
 {
-	Texture * const t{ VALIDATE((Texture *)texture) };
-
 	uint32_t _internal_format, _format, _type;
-	get_image_info(t->color_format, nullptr, &_internal_format, &_format, &_type);
+	get_image_info(t.color_format, nullptr, &_internal_format, &_format, &_type);
 
-	glCheck(glGenTextures(1, &t->handle));
-	glCheck(glBindTexture(t->texture_type, t->handle));
+	glCheck(glGenTextures(1, &t.handle));
+	glCheck(glBindTexture(t.texture_type, t.handle));
 
-	switch (t->texture_type) {
+	switch (t.texture_type) {
 	default: {
 		CRASH("INVALID TEXTURE TYPE");
 	} break;
 	case GL_TEXTURE_2D: {
-		glCheck(glTexImage2D(GL_TEXTURE_2D, 0, _internal_format, t->width, t->height, 0, _format, _type, data));
+		glCheck(glTexImage2D(GL_TEXTURE_2D, 0, _internal_format, t.width, t.height, 0, _format, _type, data));
 	} break;
 	case GL_TEXTURE_3D: {
 		// TODO: load texture3d...
@@ -555,12 +553,12 @@ void RenderingDeviceOpenGL::_texture_update(RID texture, void const * data)
 	} break;
 	}
 
-	if (0 < t->mipmaps) { glCheck(glGenerateMipmap(t->texture_type)); }
-	glCheck(glTexParameteri(t->texture_type, GL_TEXTURE_WRAP_S, t->repeat_s));
-	glCheck(glTexParameteri(t->texture_type, GL_TEXTURE_WRAP_T, t->repeat_t));
-	glCheck(glTexParameteri(t->texture_type, GL_TEXTURE_MIN_FILTER, t->min_filter));
-	glCheck(glTexParameteri(t->texture_type, GL_TEXTURE_MAG_FILTER, t->mag_filter));
-	glCheck(glTexParameteriv(t->texture_type, GL_TEXTURE_SWIZZLE_RGBA, t->swizzle_mask));
+	if (0 < t.mipmaps) { glCheck(glGenerateMipmap(t.texture_type)); }
+	glCheck(glTexParameteri(t.texture_type, GL_TEXTURE_WRAP_S, t.repeat_s));
+	glCheck(glTexParameteri(t.texture_type, GL_TEXTURE_WRAP_T, t.repeat_t));
+	glCheck(glTexParameteri(t.texture_type, GL_TEXTURE_MIN_FILTER, t.min_filter));
+	glCheck(glTexParameteri(t.texture_type, GL_TEXTURE_MAG_FILTER, t.mag_filter));
+	glCheck(glTexParameteriv(t.texture_type, GL_TEXTURE_SWIZZLE_RGBA, t.swizzle_mask));
 }
 
 void * RenderingDeviceOpenGL::texture_get_handle(RID texture)
