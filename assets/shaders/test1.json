@@ -1,100 +1,30 @@
 {
-    "type": "Shader",
-    "name": "3D/Test1",
-    "mode": 1,
     "vertex":
     {
         "in":
         {
-            "Attr_Position" : { "bind": 0, "type": "vec4f" },
-            "Attr_Normal"   : { "bind": 1, "type": "vec4f" },
-            "Attr_Texcoord" : { "bind": 2, "type": "vec4f" },
-            "Attr_Tangent"  : { "bind": 3, "type": "vec4f" },
-            "Attr_Bitangent": { "bind": 4, "type": "vec4f" }
+            "Attr_Position": [ "vec4", 0 ]
         },
         "out":
         {
-            "Pixel_Position" : { "bind": 0, "type": "vec4f" },
-            "Pixel_Normal"   : { "bind": 1, "type": "vec4f" },
-            "Pixel_Texcoord" : { "bind": 2, "type": "vec4f" },
-            "Pixel_Tangent"  : { "bind": 3, "type": "vec4f" },
-            "Pixel_Bitangent": { "bind": 4, "type": "vec4f" }
-        },
-        "data":
-        {
-            "Scene_State_Uniforms":
-            {
-                "bind": 0,
-                "type": "ubo",
-                "data":
-                {
-                    "CameraProj": { "bind": 0, "type": "mat4f" },
-                    "CameraView": { "bind": 0, "type": "mat4f" }
-                }
-            },
-            "Render_Pass_Uniforms":
-            {
-                "bind": 1,
-                "type": "ubo",
-                "data":
-                {
-                    "Placeholder": { "bind": 0, "type": "mat4f" }
-                }
-            },
-            "Transforms_Uniforms":
-            {
-                "bind": 2,
-                "type": "ubo",
-                "data":
-                {
-                    "Transform": { "bind": 0, "type": "mat4f" }
-                }
-            },
-            "Material_Uniforms":
-            {
-                "bind": 3,
-                "type": "ubo",
-                "data":
-                {
-                    "Ambient"  : { "bind": 0, "type": "vec4f" },
-                    "Diffuse"  : { "bind": 1, "type": "vec4f" },
-                    "Specular" : { "bind": 2, "type": "vec4f" },
-                    "Shininess": { "bind": 3, "type": "float" }
-                }
-            }
+            "Frag_Position": [ "vec4", 0 ]
         },
         "main":
         [
-            "Pixel_Position = Attr_Position",
-            "Pixel_Normal = Attr_Normal",
-            "Pixel_Texcoord = Attr_Texcoord",
-            "Pixel_Tangent = Attr_Tangent",
-            "Pixel_Bitangent = Attr_Bitangent",
-            "gl_Position = (CameraProj * CameraView * Transform) * Attr_Position"
         ]
     },
     "pixel":
     {
         "in":
         {
-            "Pixel_Position" : { "bind": 0, "type": "vec4f" },
-            "Pixel_Normal"   : { "bind": 1, "type": "vec4f" },
-            "Pixel_Texcoord" : { "bind": 2, "type": "vec4f" },
-            "Pixel_Tangent"  : { "bind": 3, "type": "vec4f" },
-            "Pixel_Bitangent": { "bind": 4, "type": "vec4f" }
+            "Frag_Position": [ "vec4", 0 ]
         },
         "out":
         {
-            "Out_Color": { "bind": 0, "type": "vec4f" }
-        },
-        "data":
-        {
-            "Diffuse_Map": { "bind": 0, "type": "sampler2D" },
-            "Specular_Map": { "bind": 1, "type": "sampler2D" }
+            "Out_Color": [ "vec4", 0 ]
         },
         "main":
         [
-            "Out_Color = texture(Diffuse_Map, Pixel_Texcoord.xy)"
         ]
     }
 }

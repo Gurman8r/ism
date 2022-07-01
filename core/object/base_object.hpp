@@ -1,7 +1,7 @@
 #ifndef _ISM_BASE_OBJECT_HPP_
 #define _ISM_BASE_OBJECT_HPP_
 
-#include <core/object/detail/common.hpp>
+#include <core/object/detail/ref.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

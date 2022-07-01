@@ -30,10 +30,11 @@ Glyph::Glyph(DynamicBuffer const & buffer, IntRect const & bounds, uint32_t adva
 	: m_bounds{ bounds }
 	, m_advance{ advance }
 {
-	m_texture = RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
-		t.color_format = RD::DataFormat_R8_UNORM;
-		t.width = bounds.width();
-		t.height = bounds.height();
+	m_texture = RENDERING_DEVICE->texture_create(RD::TextureCreateInfo{
+		RD::TextureType_2D,
+		RD::DataFormat_R8_UNORM,
+		(uint32_t)bounds.width(),
+		(uint32_t)bounds.height()
 	}, buffer);
 }
 

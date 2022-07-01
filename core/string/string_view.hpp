@@ -72,6 +72,8 @@ namespace ism
 
 		NODISCARD constexpr StringView substr(size_type off = 0, size_type count = npos) const { return StringView{ m_data.substr(off, npos) }; }
 
+		NODISCARD String string() const noexcept { return String{ begin(), end() }; }
+
 		NODISCARD operator String() const noexcept { return String{ begin(), end() }; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

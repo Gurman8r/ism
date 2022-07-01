@@ -26,6 +26,14 @@ namespace ism::util
 		return temp;
 	}
 
+	template <class Ch = char
+	> BasicString<Ch> & trim(BasicString<Ch> & s) noexcept
+	{
+		while (!s.empty() && std::isspace(s.back())) { s.pop_back(); }
+		while (!s.empty() && std::isspace(s.front())) { s.erase(s.begin()); }
+		return s;
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ch = char
@@ -158,17 +166,15 @@ namespace ism::util
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Ch = char
-	> NODISCARD BasicString<Ch> to_lower(BasicString<Ch> value) noexcept
-	{
-		for (Ch & elem : value) { elem = std::tolower(elem); }
+	template <class Str = BasicString<char>
+	> NODISCARD Str to_lower(Str value) {
+		for (auto & elem : value) { elem = std::tolower(elem); }
 		return value;
 	}
 
-	template <class Ch = char
-	> NODISCARD BasicString<Ch> to_upper(BasicString<Ch> value) noexcept
-	{
-		for (Ch & elem : value) { elem = std::toupper(elem); }
+	template <class Str = BasicString<char>
+	> NODISCARD Str to_upper(Str value) {
+		for (auto & elem : value) { elem = std::toupper(elem); }
 		return value;
 	}
 

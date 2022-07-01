@@ -3,7 +3,7 @@
 
 #include <core/templates/array.hpp>
 
-// MATRIX
+// TYPES
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -110,6 +110,12 @@ namespace ism
 	ALIAS(Vec4s) TVector4<size_t>;
 	ALIAS(Vec4) Vec4f;
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// MATRIX
+namespace ism
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Matrix

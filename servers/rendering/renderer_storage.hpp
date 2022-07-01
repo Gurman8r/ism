@@ -34,7 +34,7 @@ namespace ism
 
 	public:
 		/* MATERIAL */
-		struct Material
+		struct _Material
 		{
 			RID shader{};
 			RID uniform_buffer{};
@@ -56,9 +56,9 @@ namespace ism
 
 	public:
 		/* MESH */
-		struct Mesh
+		struct _Mesh
 		{
-			struct Surface
+			struct _Surface
 			{
 				RS::Primitive_ primitive{};
 
@@ -74,7 +74,7 @@ namespace ism
 				RID uniform_set{};
 			};
 
-			Vector<Surface *> surfaces{};
+			Vector<_Surface *> surfaces{};
 		};
 
 		RID mesh_create(Vector<RS::SurfaceData> const & surfaces = {});
@@ -90,7 +90,7 @@ namespace ism
 
 	public:
 		/* RENDER TARGET */
-		struct RenderTarget
+		struct _RenderTarget
 		{
 			Vec2i size{};
 			RID framebuffer{}, backbuffer{};
@@ -116,10 +116,11 @@ namespace ism
 		void render_target_do_clear_request(RID render_target);
 
 	public:
-		struct Camera
+		/* CAMERA */
+		struct _Camera
 		{
 			Vec3 position{};
-			Vec4 rotation{}; // (quaternion)
+			Vec4 rotation{}; // (quat)
 			Mat4 xform{};
 		};
 
@@ -132,7 +133,8 @@ namespace ism
 		Mat4 camera_get_transform(RID camera);
 
 	public:
-		struct Viewport
+		/* VIEWPORT */
+		struct _Viewport
 		{
 			RID self{}, parent{};
 			Vec2i size{};

@@ -74,14 +74,14 @@ namespace ism
 
 		using FontFace = void *;
 
-		struct FontPage final
+		struct FontPage
 		{
 			uint32_t character_size{};
 
 			Map<uint32_t, Glyph> glyphs{};
 		};
 
-		struct Font final
+		struct Font
 		{
 			Path path{};
 

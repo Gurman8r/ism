@@ -22,7 +22,7 @@ namespace ism
 
 	public:
 		/* BUFFER  */
-		struct BufferBase
+		struct _BufferBase
 		{
 			uint32_t handle{};
 			uint32_t buffer_type{};
@@ -38,9 +38,9 @@ namespace ism
 
 	public:
 		/* VERTEXARRAY  */
-		struct VertexBuffer : BufferBase {};
+		struct _VertexBuffer : _BufferBase {};
 
-		struct VertexArray
+		struct _VertexArray
 		{
 			uint32_t handle{};
 			uint32_t vertex_count{};
@@ -48,13 +48,13 @@ namespace ism
 			Vector<RID> buffers{};
 		};
 
-		struct IndexBuffer : BufferBase
+		struct _IndexBuffer : _BufferBase
 		{
 			uint32_t index_count{};
 			uint32_t index_type{};
 		};
 
-		struct IndexArray
+		struct _IndexArray
 		{
 			RID index_buffer{};
 			uint32_t index_offset{};
@@ -72,7 +72,7 @@ namespace ism
 
 	public:
 		/* SAMPLER  */
-		struct Sampler
+		struct _Sampler
 		{
 			uint32_t handle{};
 			uint32_t mag_filter{}, min_filter{}, mip_filter{};
@@ -92,7 +92,7 @@ namespace ism
 
 	public:
 		/* TEXTURE  */
-		struct Texture
+		struct _Texture
 		{
 			uint32_t handle{};
 			uint32_t texture_type{};
@@ -110,13 +110,13 @@ namespace ism
 		virtual RID texture_create(TextureCreateInfo const & spec, DynamicBuffer const & data = {}) override;
 		virtual void texture_destroy(RID texture) override;
 		virtual void texture_update(RID texture, DynamicBuffer const & data = {}) override;
-		void _texture_update(Texture & t, void const * data);
+		void _texture_update(_Texture & t, void const * data);
 		virtual void * texture_get_handle(RID texture) override;
 		virtual DynamicBuffer texture_get_data(RID texture) override;
 
 	public:
 		/* FRAMEBUFFER  */
-		struct Framebuffer
+		struct _Framebuffer
 		{
 			uint32_t handle{};
 			int32_t width{}, height{};
@@ -129,7 +129,7 @@ namespace ism
 
 	public:
 		/* SHADER  */
-		struct Shader
+		struct _Shader
 		{
 			uint32_t handle{};
 			FlatMap<hash_t, int32_t> bindings{};
@@ -143,9 +143,9 @@ namespace ism
 
 	public:
 		/* UNIFORM  */
-		struct UniformBuffer : BufferBase {};
+		struct _UniformBuffer : _BufferBase {};
 
-		struct UniformDescriptor
+		struct _UniformDescriptor
 		{
 			UniformType_ uniform_type{};
 			uint32_t binding{};
@@ -154,20 +154,20 @@ namespace ism
 			Vector<RID> images{};
 		};
 
-		struct UniformSet
+		struct _UniformSet
 		{
 			RID shader{};
-			Vector<UniformDescriptor> uniforms{};
+			Vector<_UniformDescriptor> uniforms{};
 		};
 
 		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
 		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) override;
 		virtual void uniform_set_destroy(RID uniform_set) override;
-		void _uniform_set_bind(UniformSet const & us);
+		void _uniform_set_bind(_UniformSet const & us);
 
 	public:
 		/* PIPELINE  */
-		struct RenderPipeline
+		struct _RenderPipeline
 		{
 			RID shader{};
 			uint32_t primitive{};
@@ -179,23 +179,23 @@ namespace ism
 
 		virtual RID render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state) override;
 		virtual void render_pipeline_destroy(RID pipeline) override;
-		void _render_pipeline_bind(RenderPipeline const & rp);
+		void _render_pipeline_bind(_RenderPipeline const & rp);
 
 	public:
 		/* DRAWLIST  */
-		struct DrawList
+		struct _DrawList
 		{
 			IntRect viewport{};
 
-			struct SetState
+			struct _SetState
 			{
 				RID uniform_set{};
 				bool bound{ true };
 			};
 
-			struct State
+			struct _State
 			{
-				SetState sets[32]{};
+				_SetState sets[32]{};
 				uint32_t set_count{};
 
 				RID pipeline{};
@@ -212,7 +212,7 @@ namespace ism
 			state{};
 		};
 
-		Vector<DrawList> m_draw_list{};
+		Vector<_DrawList> m_draw_list{};
 
 		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
 		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;

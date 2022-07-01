@@ -46,7 +46,7 @@ namespace ism
 
 		StringObject(Path const & value) : m_string{ value.string() } {}
 
-		StringObject(StringView const & value) : m_string{ (String)value } {}
+		StringObject(StringView const value) : m_string{ (String)value } {}
 
 		StringObject(std::initializer_list<char> init) : m_string{ init } {}
 

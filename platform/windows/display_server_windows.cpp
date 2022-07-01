@@ -453,121 +453,87 @@ void DisplayServerWindows::window_set_floating(WindowID id, bool value)
 
 WindowCharCallback DisplayServerWindows::window_set_char_callback(WindowID id, WindowCharCallback value)
 {
-	return reinterpret_cast<WindowCharCallback>(
-		glfwSetCharCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWcharfun>(value)));
+	return reinterpret_cast<WindowCharCallback>(glfwSetCharCallback((GLFWwindow *)id, reinterpret_cast<GLFWcharfun>(value)));
 }
 
 WindowCharModsCallback DisplayServerWindows::window_set_char_mods_callback(WindowID id, WindowCharModsCallback value)
 {
-	return reinterpret_cast<WindowCharModsCallback>(
-		glfwSetCharModsCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWcharmodsfun>(value)));
+	return reinterpret_cast<WindowCharModsCallback>(glfwSetCharModsCallback((GLFWwindow *)id, reinterpret_cast<GLFWcharmodsfun>(value)));
 }
 
 WindowCloseCallback DisplayServerWindows::window_set_close_callback(WindowID id, WindowCloseCallback value)
 {
-	return reinterpret_cast<WindowCloseCallback>(
-		glfwSetWindowCloseCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowclosefun>(value)));
+	return reinterpret_cast<WindowCloseCallback>(glfwSetWindowCloseCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowclosefun>(value)));
 }
 
 WindowContentCallback DisplayServerWindows::window_set_content_scale_callback(WindowID id, WindowContentCallback value)
 {
-	return reinterpret_cast<WindowContentCallback>(
-		glfwSetWindowContentScaleCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowcontentscalefun>(value)));
+	return reinterpret_cast<WindowContentCallback>(glfwSetWindowContentScaleCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowcontentscalefun>(value)));
 }
 
 WindowDropCallback DisplayServerWindows::window_set_drop_callback(WindowID id, WindowDropCallback value)
 {
-	return reinterpret_cast<WindowDropCallback>(
-		glfwSetDropCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWdropfun>(value)));
+	return reinterpret_cast<WindowDropCallback>(glfwSetDropCallback((GLFWwindow *)id, reinterpret_cast<GLFWdropfun>(value)));
 }
 
 WindowFocusCallback DisplayServerWindows::window_set_focus_callback(WindowID id, WindowFocusCallback value)
 {
-	return reinterpret_cast<WindowFocusCallback>(
-		glfwSetWindowFocusCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowfocusfun>(value)));
+	return reinterpret_cast<WindowFocusCallback>(glfwSetWindowFocusCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowfocusfun>(value)));
 }
 
 WindowFramebufferResizeCallback DisplayServerWindows::window_set_framebuffer_resize_callback(WindowID id, WindowFramebufferResizeCallback value)
 {
-	return reinterpret_cast<WindowFramebufferResizeCallback>(
-		glfwSetFramebufferSizeCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWframebuffersizefun>(value)));
+	return reinterpret_cast<WindowFramebufferResizeCallback>(glfwSetFramebufferSizeCallback((GLFWwindow *)id, reinterpret_cast<GLFWframebuffersizefun>(value)));
 }
 
 WindowIconifyCallback DisplayServerWindows::window_set_iconify_callback(WindowID id, WindowIconifyCallback value)
 {
-	return reinterpret_cast<WindowIconifyCallback>(
-		glfwSetWindowIconifyCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowiconifyfun>(value)));
+	return reinterpret_cast<WindowIconifyCallback>(glfwSetWindowIconifyCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowiconifyfun>(value)));
 }
 
 WindowKeyCallback DisplayServerWindows::window_set_key_callback(WindowID id, WindowKeyCallback value)
 {
-	return reinterpret_cast<WindowKeyCallback>(
-		glfwSetKeyCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWkeyfun>(value)));
+	return reinterpret_cast<WindowKeyCallback>(glfwSetKeyCallback((GLFWwindow *)id, reinterpret_cast<GLFWkeyfun>(value)));
 }
 
 WindowMaximizeCallback DisplayServerWindows::window_set_maximize_callback(WindowID id, WindowMaximizeCallback value)
 {
-	return reinterpret_cast<WindowMaximizeCallback>(
-		glfwSetWindowMaximizeCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowmaximizefun>(value)));
+	return reinterpret_cast<WindowMaximizeCallback>(glfwSetWindowMaximizeCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowmaximizefun>(value)));
 }
 
 WindowMouseButtonCallback DisplayServerWindows::window_set_mouse_button_callback(WindowID id, WindowMouseButtonCallback value)
 {
-	return reinterpret_cast<WindowMouseButtonCallback>(
-		glfwSetMouseButtonCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWmousebuttonfun>(value)));
+	return reinterpret_cast<WindowMouseButtonCallback>(glfwSetMouseButtonCallback((GLFWwindow *)id, reinterpret_cast<GLFWmousebuttonfun>(value)));
 }
 
 WindowMouseEnterCallback DisplayServerWindows::window_set_mouse_enter_callback(WindowID id, WindowMouseEnterCallback value)
 {
-	return reinterpret_cast<WindowMouseEnterCallback>(
-		glfwSetCursorEnterCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWcursorenterfun>(value)));
+	return reinterpret_cast<WindowMouseEnterCallback>(glfwSetCursorEnterCallback((GLFWwindow *)id, reinterpret_cast<GLFWcursorenterfun>(value)));
 }
 
 WindowMousePositionCallback DisplayServerWindows::window_set_mouse_position_callback(WindowID id, WindowMousePositionCallback value)
 {
-	return reinterpret_cast<WindowMousePositionCallback>(
-		glfwSetCursorPosCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWcursorposfun>(value)));
+	return reinterpret_cast<WindowMousePositionCallback>(glfwSetCursorPosCallback((GLFWwindow *)id, reinterpret_cast<GLFWcursorposfun>(value)));
 }
 
 WindowPositionCallback DisplayServerWindows::window_set_position_callback(WindowID id, WindowPositionCallback value)
 {
-	return reinterpret_cast<WindowPositionCallback>(
-		glfwSetWindowPosCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowposfun>(value)));
+	return reinterpret_cast<WindowPositionCallback>(glfwSetWindowPosCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowposfun>(value)));
 }
 
 WindowRefreshCallback DisplayServerWindows::window_set_refresh_callback(WindowID id, WindowRefreshCallback value)
 {
-	return reinterpret_cast<WindowRefreshCallback>(
-		glfwSetWindowRefreshCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowrefreshfun>(value)));
+	return reinterpret_cast<WindowRefreshCallback>(glfwSetWindowRefreshCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowrefreshfun>(value)));
 }
 
 WindowScrollCallback DisplayServerWindows::window_set_scroll_callback(WindowID id, WindowScrollCallback value)
 {
-	return reinterpret_cast<WindowScrollCallback>(
-		glfwSetScrollCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWscrollfun>(value)));
+	return reinterpret_cast<WindowScrollCallback>(glfwSetScrollCallback((GLFWwindow *)id, reinterpret_cast<GLFWscrollfun>(value)));
 }
 
 WindowSizeCallback DisplayServerWindows::window_set_size_callback(WindowID id, WindowSizeCallback value)
 {
-	return reinterpret_cast<WindowSizeCallback>(
-		glfwSetWindowSizeCallback((GLFWwindow *)id,
-			reinterpret_cast<GLFWwindowposfun>(value)));
+	return reinterpret_cast<WindowSizeCallback>(glfwSetWindowSizeCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowposfun>(value)));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,23 +1,28 @@
 {
-    "type": "Shader",
-    "name": "3D",
+    "defines":
+    [
+        "SCENE_STATE_UNIFORM_BUFFER=0",
+        "RENDER_PASS_UNIFORM_BUFFER=1",
+        "TRANSFORMS_UNIFORM_BUFFER=2",
+        "MATERIAL_UNIFORM_BUFFER=3"
+    ],
     "vertex":
     {
         "in":
         {
-            "Attr_Position" : { "vec4": 0 },
-            "Attr_Normal"   : { "vec4": 1 },
-            "Attr_Texcoord" : { "vec4": 2 },
-            "Attr_Tangent"  : { "vec4": 3 },
-            "Attr_Bitangent": { "vec4": 4 }
+            "Attr_Position" : { "vec4": "POSITION"  },
+            "Attr_Normal"   : { "vec4": "NORMAL"    },
+            "Attr_Texcoord" : { "vec4": "TEXCOORD"  },
+            "Attr_Tangent"  : { "vec4": "TANGENT"   },
+            "Attr_Bitangent": { "vec4": "BITANGENT" }
         },
         "out":
         {
-            "Frag_Position" : { "vec4": 0 },
-            "Frag_Normal"   : { "vec4": 1 },
-            "Frag_Texcoord" : { "vec4": 2 },
-            "Frag_Tangent"  : { "vec4": 3 },
-            "Frag_Bitangent": { "vec4": 4 }
+            "Frag_Position" : { "vec4": "POSITION"  },
+            "Frag_Normal"   : { "vec4": "NORMAL"    },
+            "Frag_Texcoord" : { "vec4": "TEXCOORD"  },
+            "Frag_Tangent"  : { "vec4": "TANGENT"   },
+            "Frag_Bitangent": { "vec4": "BITANGENT" }
         },
         "data":
         {
@@ -60,23 +65,23 @@
         },
         "main":
         [
-            "Frag_Position = Attr_Position;",
+            "Frag_Position = (CameraProj * CameraView * Transform) * Attr_Position;",
             "Frag_Normal = Attr_Normal;",
             "Frag_Texcoord = Attr_Texcoord;",
             "Frag_Tangent = Attr_Tangent;",
             "Frag_Bitangent = Attr_Bitangent;",
-            "gl_Position = (CameraProj * CameraView * Transform) * Attr_Position;"
+            "gl_Position = Frag_Position;"
         ]
     },
     "fragment":
     {
         "in":
         {
-            "Frag_Position" : { "vec4": 0 },
-            "Frag_Normal"   : { "vec4": 1 },
-            "Frag_Texcoord" : { "vec4": 2 },
-            "Frag_Tangent"  : { "vec4": 3 },
-            "Frag_Bitangent": { "vec4": 4 }
+            "Frag_Position" : { "vec4": "POSITION"  },
+            "Frag_Normal"   : { "vec4": "NORMAL"    },
+            "Frag_Texcoord" : { "vec4": "TEXCOORD"  },
+            "Frag_Tangent"  : { "vec4": "TANGENT"   },
+            "Frag_Bitangent": { "vec4": "BITANGENT" }
         },
         "out":
         {

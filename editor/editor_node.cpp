@@ -244,8 +244,8 @@ void EditorNode::process(Duration const & dt)
 
 		static Mesh * mesh{ *m_meshes["sphere32x24"] };
 		for (size_t i = 0; i < mesh->get_surface_count(); ++i) {
-			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, VALIDATE(mesh->surface_get_vertex_array(i)));
-			RENDERING_DEVICE->draw_list_bind_index_array(dl, VALIDATE(mesh->surface_get_index_array(i)));
+			RENDERING_DEVICE->draw_list_bind_vertex_array(dl, mesh->surface_get_vertex_array(i));
+			RENDERING_DEVICE->draw_list_bind_index_array(dl, mesh->surface_get_index_array(i));
 			RENDERING_DEVICE->draw_list_draw(dl, true, 1, 0);
 		}
 

@@ -8,7 +8,8 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // alias
-#define ALIAS(type)	using type = 
+#define ALIAS(m_type)	\
+	using m_type = 
 
 // strong typedef
 #define STRONG_TYPEDEF(m_to, m_from)																			\
@@ -119,8 +120,8 @@ namespace ism
 	enum class byte : uint8_t
 	{
 		zero, one,
-		min = 0, null = 0,
-		max = 255, npos = 255
+		min = 0, null = min,
+		max = 255, npos = max
 	};
 
 	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0

@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API MainLoop : public EventHandler
 	{
-		OBJECT_COMMON(MainLoop, Object);
+		OBJECT_COMMON(MainLoop, EventHandler);
 
 		OBJ m_script{};
 

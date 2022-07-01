@@ -88,10 +88,10 @@ private:
 
 		explicit EventHandler(EventBus * bus = nullptr) noexcept;
 
-		template <class Ev0, class ... Evs
+		template <class Event0, class ... Events
 		> void subscribe() noexcept;
 
-		template <class ... Evs
+		template <class ... Events
 		> void unsubscribe() noexcept;
 	};
 
@@ -273,12 +273,12 @@ private:
 
 		NODISCARD auto const & get_all_dummy_handlers() const noexcept { return m_dummy_handlers; }
 
-		template <class ... Evs, class Fn
+		template <class ... Events, class Fn
 		> auto & add_dummy_handler(Fn && fn) noexcept
 		{
 			Ref<DummyHandler> dummy{ memnew(DummyHandler(this, FWD(fn))) };
 
-			if constexpr (0 < sizeof...(Evs)) { dummy->subscribe<Evs...>(); }
+			if constexpr (0 < sizeof...(Events)) { dummy->subscribe<Events...>(); }
 
 			return m_dummy_handlers.emplace_back(dummy);
 		}
@@ -310,12 +310,12 @@ private:
 			}));
 		}
 
-		template <class ... Evs
+		template <class ... Events
 		> void remove_delegates() noexcept
 		{
-			if constexpr (0 < sizeof...(Evs))
+			if constexpr (0 < sizeof...(Events))
 			{
-				mpl::for_types<Evs...>([&](auto tag) noexcept
+				mpl::for_types<Events...>([&](auto tag) noexcept
 				{
 					using T = TAG_TYPE(tag);
 
@@ -345,25 +345,25 @@ private:
 	{
 	}
 
-	template <class Ev0, class ... Evs
+	template <class Event0, class ... Events
 	> void EventHandler::subscribe() noexcept
 	{
 		ASSERT(m_event_bus);
 
-		mpl::for_types<Ev0, Evs...>([&](auto tag) noexcept
+		mpl::for_types<Event0, Events...>([&](auto tag) noexcept
 		{
 			m_event_bus->add_event_handler<TAG_TYPE(tag)>(this);
 		});
 	}
 
-	template <class ... Evs
+	template <class ... Events
 	> void EventHandler::unsubscribe() noexcept
 	{
 		ASSERT(m_event_bus);
 
-		if constexpr (0 < sizeof...(Evs))
+		if constexpr (0 < sizeof...(Events))
 		{
-			mpl::for_types<Evs...>([&](auto tag) noexcept
+			mpl::for_types<Events...>([&](auto tag) noexcept
 			{
 				m_event_bus->remove_event_handler<TAG_TYPE(tag)>(this);
 			});
