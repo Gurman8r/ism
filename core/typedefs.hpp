@@ -8,7 +8,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // alias
-#define ALIAS(m_type)	\
+#define ALIAS(m_type) \
 	using m_type = 
 
 // strong typedef
@@ -56,7 +56,7 @@ namespace ism
 
 	struct void_type {};
 
-#ifdef COMPILER_MSVC
+#ifdef CC_MSVC
 	ALIAS(int8_t)		signed __int8;
 	ALIAS(int16_t)		signed __int16;
 	ALIAS(int32_t)		signed __int32;
@@ -107,7 +107,7 @@ namespace ism
 
 	ALIAS(cstring)		char const *;
 	ALIAS(cwstring)		wchar_t const *;
-#if (ISM_CXX_20)
+#if (CXX_20)
 	ALIAS(c8string)		char8_t const *;
 #else
 	ALIAS(c8string)		char const *;

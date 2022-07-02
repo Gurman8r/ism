@@ -77,7 +77,7 @@ private:
 	/* construct type object */																	\
 	MEMBER_IMPL(m_class::g_type_static) =														\
 																								\
-	COMPOSE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
+	MAKE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
 																								\
 	+ ism::EmbedObjectClassHelper<m_class>::embed;												\
 																								\

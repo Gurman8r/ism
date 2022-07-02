@@ -53,6 +53,12 @@
 #define MEMBER_IMPL(expr) \
 		decltype(expr) expr
 
+// sentinal
+#define SENTINAL \
+		{}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // map enum to array of constant values
 #define MAKE_ENUM_MAPPING(m_func, m_from, m_to, ...)				\
 		static constexpr m_to _MAP_##m_from##_TO_##m_to##_[] =		\

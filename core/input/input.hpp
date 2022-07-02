@@ -10,7 +10,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// input action
-	enum InputAction_
+	ALIAS(InputAction) int32_t;
+	enum InputAction_ : InputAction
 	{
 		InputAction_Press,
 		InputAction_Release,
@@ -18,7 +19,8 @@ namespace ism
 	};
 
 	// input mode
-	enum InputMode_
+	ALIAS(InputMode) int32_t;
+	enum InputMode_ : InputMode
 	{
 		InputMode_Cursor,
 		InputMode_StickyKeys,
@@ -28,7 +30,8 @@ namespace ism
 	};
 
 	// mouse button
-	enum MouseButton_
+	ALIAS(MouseButton) int32_t;
+	enum MouseButton_ : MouseButton
 	{
 		MouseButton_0,
 		MouseButton_1,

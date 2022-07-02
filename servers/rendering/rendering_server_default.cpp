@@ -105,7 +105,7 @@ RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
 		swizzle_a = RD::TextureSwizzle_A;
 	} break;
 	}
-	return m_device->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
+	return m_device->texture_create(MAKE(RD::TextureCreateInfo, t) {
 		t.color_format = color_format;
 		t.color_format_srgb = color_format_srgb;
 		t.width = (uint32_t)image->get_width();

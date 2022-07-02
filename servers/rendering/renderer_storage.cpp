@@ -240,7 +240,7 @@ RID RendererStorage::render_target_create()
 	rt.color_format = RD::DataFormat_R8G8B8_UNORM;
 	rt.color_format_srgb = RD::DataFormat_R8G8B8_UNORM;
 	
-	rt.color = m_device->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
+	rt.color = m_device->texture_create(MAKE(RD::TextureCreateInfo, t) {
 		t.color_format = rt.color_format;
 		t.color_format_srgb = rt.color_format_srgb;
 		t.width = (uint32_t)rt.size[0];

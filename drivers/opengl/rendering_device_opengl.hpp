@@ -211,15 +211,15 @@ namespace ism
 
 		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
 		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
-		virtual void draw_list_bind_pipeline(DrawListID list, RID pipeline) override;
-		virtual void draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index) override;
-		virtual void draw_list_bind_vertex_array(DrawListID list, RID vertex_array) override;
-		virtual void draw_list_bind_index_array(DrawListID list, RID index_array) override;
-		virtual void draw_list_set_line_width(DrawListID list, float_t width) override;
-		virtual void draw_list_set_push_constant(DrawListID list, void const * data, size_t data_size) override;
-		virtual void draw_list_enable_scissor(DrawListID list, IntRect const & rect) override;
-		virtual void draw_list_disable_scissor(DrawListID list) override;
-		virtual void draw_list_draw(DrawListID list, bool use_indices, size_t instances, size_t procedural_vertices) override;
+		virtual void draw_list_bind_pipeline(DrawListID draw_list, RID pipeline) override;
+		virtual void draw_list_bind_uniform_set(DrawListID draw_list, RID uniform_set, size_t index) override;
+		virtual void draw_list_bind_vertex_array(DrawListID draw_list, RID vertex_array) override;
+		virtual void draw_list_bind_index_array(DrawListID draw_list, RID index_array) override;
+		virtual void draw_list_set_line_width(DrawListID draw_list, float_t width) override;
+		virtual void draw_list_set_push_constant(DrawListID draw_list, void const * data, size_t data_size) override;
+		virtual void draw_list_enable_scissor(DrawListID draw_list, IntRect const & rect) override;
+		virtual void draw_list_disable_scissor(DrawListID draw_list) override;
+		virtual void draw_list_draw(DrawListID draw_list, bool use_indices, size_t instances, size_t procedural_vertices) override;
 		virtual void draw_list_end() override;
 	};
 

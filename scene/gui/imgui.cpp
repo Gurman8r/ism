@@ -3,7 +3,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if SYSTEM_WINDOWS
+#if OS_WINDOWS
 #include <imgui/backends/imgui_impl_glfw.h>
 #define IMGUI_PLATFORM_INIT(window, install_callbacks) ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *)window, install_callbacks)
 #define IMGUI_PLATFORM_SHUTDOWN() ImGui_ImplGlfw_Shutdown()

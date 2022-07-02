@@ -57,7 +57,7 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 	rec->args.reserve(argc_in);
 	for (size_t i = 0; i < argc_in; ++i)
 	{
-		rec->args.push_back(COMPOSE(ArgumentRecord, arg)
+		rec->args.push_back(MAKE(ArgumentRecord, arg)
 		{
 			// TODO: generate better argument info
 			arg.name = "arg"_s + util::to_string(i);

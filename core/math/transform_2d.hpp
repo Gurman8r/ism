@@ -1,67 +1,32 @@
 #ifndef _ISM_TRANSFORM_2D_HPP_
 #define _ISM_TRANSFORM_2D_HPP_
 
-#include <core/math/color.hpp>
-#include <core/math/rect.hpp>
-#include <core/math/quat.hpp>
+#include <core/math/transform.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class Transform;
-
-	class Transform2D
+	class ISM_API Transform2D : public Transform
 	{
-		Mat4 m_matrix;
-
 	public:
-		using self_type					= typename Transform2D;
-		using storage_type				= typename decltype(m_matrix);
-		using value_type				= typename storage_type::value_type;
-		using pointer					= typename storage_type::pointer;
-		using const_pointer				= typename storage_type::const_pointer;
-		using reference					= typename storage_type::reference;
-		using const_reference			= typename storage_type::const_reference;
-		using iterator					= typename storage_type::iterator;
-		using const_iterator			= typename storage_type::const_iterator;
-		using reverse_iterator			= typename storage_type::reverse_iterator;
-		using const_reverse_iterator	= typename storage_type::const_reverse_iterator;
+		explicit Transform2D(
+			float_t a00, float_t a01, float_t a02,
+			float_t a10, float_t a11, float_t a12,
+			float_t a20, float_t a21, float_t a22
+		) noexcept : Transform{
+			a00, a01, a02,
+			a10, a11, a12,
+			a20, a21, a22
+		} {}
 
-	public:
-		constexpr Transform2D() noexcept : m_matrix{} {}
+		Transform2D() noexcept : Transform{} {}
 
-		constexpr Transform2D(
-			float_t m00, float_t m01, float_t m02, float_t m03,
-			float_t m10, float_t m11, float_t m12, float_t m13,
-			float_t m20, float_t m21, float_t m22, float_t m23,
-			float_t m30, float_t m31, float_t m32, float_t m33
-		) : m_matrix{ m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33 } {}
+		Transform2D(Mat4 const & value) : Transform{ value } {}
 
-		constexpr Transform2D(storage_type const & value) : m_matrix{ value } {}
+		Transform2D(Transform const & value) : Transform{ value } {}
 
-		constexpr Transform2D(storage_type && value) noexcept : m_matrix{ std::move(value) } {}
-		
-		constexpr Transform2D(Transform2D const & other) : m_matrix{ other.m_matrix } {}
-
-		constexpr self_type & operator=(self_type const & other) { self_type temp{ other }; return swap(temp); }
-
-		constexpr self_type & operator=(self_type && other) noexcept { return swap(other); }
-
-		constexpr self_type & swap(self_type & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
-				util::swap(m_matrix, other.m_matrix);
-			}
-			return (*this);
-		}
-
-	public:
-		// define additional code
-#ifdef ISM_TRANSFORM2D_EXTRA
-		ISM_TRANSFORM2D_EXTRA
-#endif // ISM_TRANSFORM2D_EXTRA
+		Transform2D & operator=(Transform const & value) { return (Transform2D &)Transform::operator=(value); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -4,7 +4,6 @@
 #include <core/typedefs.hpp>
 #include <core/string/path.hpp>
 #include <core/string/print_string.hpp>
-#include <core/math/transform.hpp>
 #include <core/math/transform_2d.hpp>
 #include <core/templates/atomic.hpp>
 #include <core/templates/buffer.hpp>
@@ -61,6 +60,7 @@ namespace ism
 	class PropertyObject;
 	class CppFunctionObject;
 	class ModuleObject;
+	class GenericObject;
 
 	template <class T
 	> constexpr bool is_base_object_v{ std::is_base_of_v<Object, mpl::intrinsic_t<T>> };
@@ -88,6 +88,7 @@ namespace ism
 	class PROPERTY;
 	class CPP_FUNCTION;
 	class MODULE;
+	class GENERIC;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -125,10 +126,13 @@ namespace ism
 	ALIAS(lenfunc)			ssize_t(*)(OBJ obj);
 	ALIAS(reprfunc)			STR(*)(OBJ obj);
 	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argc, size_t argv);
+	ALIAS(getter)			OBJ(*)(OBJ obj, void * closure);
+	ALIAS(setter)			Error_(*)(OBJ obj, OBJ value, void * closure);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum TypeFlags_
+	ALIAS(TypeFlags) int32_t;
+	enum TypeFlags_ : TypeFlags
 	{
 		TypeFlags_None,
 
@@ -150,7 +154,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum ReturnValuePolicy_
+	ALIAS(ReturnValuePolicy) int32_t;
+	enum ReturnValuePolicy_ : ReturnValuePolicy
 	{
 		ReturnValuePolicy_Automatic,
 		ReturnValuePolicy_AutomaticReference,
@@ -165,17 +170,32 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum DataType_
+	ALIAS(DataType) int32_t;
+	enum DataType_ : DataType
 	{
-		DataType_Void,
-		DataType_Bool, DataType_Byte, DataType_Char,
-		DataType_I8, DataType_I16, DataType_I32, DataType_I64,
-		DataType_U8, DataType_U16, DataType_U32, DataType_U64,
-		DataType_F32, DataType_F64,
-		DataType_String, DataType_Object,
+		DataType_Void, // void
+
+		DataType_Bool, DataType_Byte, DataType_Char, // small data
+
+		DataType_I8, DataType_I16, DataType_I32, DataType_I64, // signed
+
+		DataType_U8, DataType_U16, DataType_U32, DataType_U64, // unsigned
+
+		DataType_F32, DataType_F64, // floating point
+
+		DataType_String, DataType_Object, // big data
 		
 		DataType_MAX
 	};
+
+#if ARCHITECTURE == 32
+	constexpr DataType_ DataType_SizeT{ DataType_U32 }; // size_t (32-bit)
+	constexpr DataType_ DataType_SSizeT{ DataType_I32 }; // ssize_t (32-bit)
+#else
+	constexpr DataType_ DataType_SizeT{ DataType_U64 }; // size_t (64-bit)
+	constexpr DataType_ DataType_SSizeT{ DataType_I64 }; // ssize_t (64-bit)
+#endif
+
 
 	NODISCARD constexpr size_t get_data_type_size(DataType_ type) noexcept
 	{
@@ -212,7 +232,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum CompareOperator_
+	ALIAS(CompareOperator) int32_t;
+	enum CompareOperator_ : CompareOperator
 	{
 		CompareOperator_Never,
 		CompareOperator_Less,
@@ -227,7 +248,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum LogicOperation_
+	ALIAS(LogicOperation) int32_t;
+	enum LogicOperation_ : LogicOperation
 	{
 		LogicOperation_Clear,
 		LogicOperation_And,
@@ -246,6 +268,34 @@ namespace ism
 		LogicOperation_Nand,
 		LogicOperation_Set,
 		LogicOperation_MAX
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	struct NODISCARD MemberDef
+	{
+		cstring		name{};
+		DataType_	type{};
+		ssize_t		offset{};
+		int32_t		flags{};
+		cstring		doc{};
+	};
+
+	struct NODISCARD MethodDef
+	{
+		cstring		name{};
+		binaryfunc	func{};
+		int32_t		flags{};
+		cstring		doc{};
+	};
+
+	struct NODISCARD GetSetDef
+	{
+		cstring		name{};
+		getter		get{};
+		setter		set{};
+		void *		closure{};
+		cstring		doc{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

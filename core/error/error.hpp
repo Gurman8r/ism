@@ -7,7 +7,8 @@
 
 namespace ism
 {
-	enum Error_
+	ALIAS(Error) int32_t;
+	enum Error_ : Error
 	{
 		Error_Unknown = -1,
 		Error_None = 0,

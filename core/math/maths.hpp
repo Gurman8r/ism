@@ -11,16 +11,12 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <glm/glm/gtx/quaternion.hpp>
 
-namespace ism
+namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class Math final
-	{
-	public:
-		template <class T = float32_t, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> static constexpr T pi{ static_cast<T>(3.14159265358979323846) };
-	};
+	template <class T = float32_t, class = std::enable_if_t<std::is_floating_point_v<T>>
+	> constexpr T pi{ static_cast<T>(3.14159265358979323846) };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -46,34 +42,6 @@ namespace ism
 		{
 			return rad2deg(static_cast<float_t>(radians));
 		}
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T = float_t
-	> constexpr auto cross(TVector3<T> const & a, TVector3<T> const & b) noexcept -> TVector3<T>
-	{
-		static_assert(std::is_floating_point_v<T>);
-
-		return { a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0] };
-	}
-
-	template <class T = float_t
-	> constexpr auto dot(TVector3<T> const & a, TVector3<T> const & b) noexcept -> T
-	{
-		static_assert(std::is_floating_point_v<T>);
-
-		return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-	}
-
-	template <class T = float_t
-	> constexpr auto normalize(TVector3<T> const & a) noexcept -> TVector3<T>
-	{
-		static_assert(std::is_floating_point_v<T>);
-
-		float_t const il{ 1.f / (gcem::sqrt(dot(a, a)) + FLT_EPSILON) };
-
-		return { a[0] * il, a[1] * il, a[2] * il };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

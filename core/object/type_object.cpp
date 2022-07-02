@@ -23,6 +23,24 @@ TYPE TypeObject::get_type_static() noexcept { return &g_type_static; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+static MemberDef type_members[]
+{
+	{"__dictoffset__", DataType_SSizeT, offsetof(TypeObject, tp_dictoffset) },
+	{/* sentinal */}
+};
+
+static MethodDef type_methods[]
+{
+	{ "", binaryfunc{} },
+	{/* sentinal */}
+};
+
+static GetSetDef type_getsets[]
+{
+	{ "", getter{}, setter{} },
+	{/* sentinal */}
+};
+
 OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
 {
 	t.tp_dictoffset = offsetof(TypeObject, tp_dict);

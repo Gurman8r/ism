@@ -32,7 +32,7 @@ static void _setup_pipeline(RID const shader)
 	(
 		shader,
 		RD::RenderPrimitive_Triangles,
-		COMPOSE(RD::RasterizationState, r)
+		MAKE(RD::RasterizationState, r)
 		{
 			r.enable_depth_clamp = false;
 			r.discard_primitives = false;
@@ -46,7 +46,7 @@ static void _setup_pipeline(RID const shader)
 			r.line_width = 1.f;
 			r.patch_control_points = 1;
 		},
-		COMPOSE(RD::MultisampleState, m)
+		MAKE(RD::MultisampleState, m)
 		{
 			m.sample_count = RD::TextureSamples_1;
 			m.enable_sample_shading = false;
@@ -54,7 +54,7 @@ static void _setup_pipeline(RID const shader)
 			m.enable_alpha_to_coverage = false;
 			m.enable_alpha_to_one = false;
 		},
-		COMPOSE(RD::DepthStencilState, d)
+		MAKE(RD::DepthStencilState, d)
 		{
 			d.enable_depth_test = true;
 			d.enable_depth_write = true;
@@ -71,7 +71,7 @@ static void _setup_pipeline(RID const shader)
 			d.front_op.write_mask = d.back_op.write_mask = 0;
 			d.front_op.reference = d.back_op.reference = 0;
 		},
-		COMPOSE(RD::ColorBlendState, c)
+		MAKE(RD::ColorBlendState, c)
 		{
 			c.enable_logic_op = true;
 			c.logic_op = LogicOperation_Clear;
@@ -126,6 +126,7 @@ EditorNode::EditorNode()
 		{ RD::UniformType_Texture, 1, { m_textures["earth_sm_2k"]->get_rid() } },
 	}, shader);
 	
+	// material (WIP)
 	material = RENDERING_SERVER->material_create();
 	RENDERING_SERVER->material_set_shader(material, shader);
 	RENDERING_SERVER->material_update(material, {
@@ -139,11 +140,11 @@ EditorNode::EditorNode()
 	
 	// framebuffer
 	Vector<RID> fb_textures{
-		RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
+		RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_R8G8B8_UNORM;
 			t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
 		}),
-		RENDERING_DEVICE->texture_create(COMPOSE(RD::TextureCreateInfo, t) {
+		RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_D24_UNORM_S8_UINT;
 			t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_DepthStencilAttachment;
 		}),

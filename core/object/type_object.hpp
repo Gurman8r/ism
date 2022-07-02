@@ -70,6 +70,10 @@ namespace ism
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
 
+		MemberDef *			tp_members			{};
+		MethodDef *			tp_methods			{};
+		GetSetDef *			tp_getsets			{};
+
 		getattrfunc			tp_getattr			{};
 		setattrfunc			tp_setattr			{};
 		getattrofunc		tp_getattro			{};

@@ -3,36 +3,38 @@
 
 #include <core/math/vector4.hpp>
 
-namespace ism
+namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace util
+	template <class To, class From
+	> NODISCARD constexpr TVector4<To> color_cast(const TVector4<From> & value) noexcept
 	{
-		template <class To, class From
-		> NODISCARD constexpr TVector4<To> color_cast(const TVector4<From> & value) noexcept
-		{
-			return (TVector4<To>)value;
-		}
+		return (TVector4<To>)value;
+	}
 
-		NODISCARD constexpr Vec4b color_cast(Vec4f const & value) noexcept
-		{
-			return (Vec4b)(value * 255.f);
-		}
+	NODISCARD constexpr Vec4b color_cast(Vec4f const & value) noexcept
+	{
+		return (Vec4b)(value * 255.f);
+	}
 
-		NODISCARD constexpr Vec4f color_cast(Vec4b const & value) noexcept
-		{
-			return ((Vec4f)value) / 255.f;
-		}
+	NODISCARD constexpr Vec4f color_cast(Vec4b const & value) noexcept
+	{
+		return ((Vec4f)value) / 255.f;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
-	template <class _T> struct NODISCARD basic_color final
+	template <class _T> struct NODISCARD BasicColor final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using self_type					= typename basic_color<_T>;
+		using self_type					= typename BasicColor<_T>;
 		using value_type				= typename _T;
 		using rgb_type					= typename TVector3<value_type>;
 		using rgba_type					= typename TVector4<value_type>;
@@ -49,23 +51,23 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr basic_color(rgba_type const & value)
+		constexpr BasicColor(rgba_type const & value)
 			: m_data{ value }
 		{
 		}
 
-		constexpr basic_color(rgb_type const & rgb, value_type a)
+		constexpr BasicColor(rgb_type const & rgb, value_type a)
 			: self_type{ rgb[0], rgb[1], rgb[2], a }
 		{
 		}
 
-		constexpr basic_color(value_type rgba)
+		constexpr BasicColor(value_type rgba)
 			: m_data{ rgba, rgba, rgba, rgba }
 		{
 		}
 
 		template <class R, class G, class B, class A
-		> constexpr basic_color(R r, G g, B b, A a) : m_data{
+		> constexpr BasicColor(R r, G g, B b, A a) : m_data{
 			static_cast<value_type>(r),
 			static_cast<value_type>(g),
 			static_cast<value_type>(b),
@@ -75,21 +77,21 @@ namespace ism
 		}
 
 		template <class R, class G, class B
-		> constexpr basic_color(R r, G g, B b) : self_type{ r, g, b, 1 }
+		> constexpr BasicColor(R r, G g, B b) : self_type{ r, g, b, 1 }
 		{
 		}
 
-		template <class U> constexpr basic_color(TVector4<U> const & value)
+		template <class U> constexpr BasicColor(TVector4<U> const & value)
 			: m_data{ util::color_cast(value) }
 		{
 		}
 
-		template <class U> constexpr basic_color(basic_color<U> const & value)
+		template <class U> constexpr BasicColor(BasicColor<U> const & value)
 			: m_data{ util::color_cast(value.rgba()) }
 		{
 		}
 
-		constexpr basic_color()
+		constexpr BasicColor()
 			: m_data{ 0 }
 		{
 		}
@@ -170,7 +172,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(Color) basic_color<float_t>;
+	ALIAS(Color) BasicColor<float_t>;
 	
 	ALIAS(Color32) uint32_t;
 
@@ -220,7 +222,7 @@ namespace ism
 	NODISCARD inline Color rotate_hue(Color const & v, float_t degrees) noexcept
 	{
 		// https://stackoverflow.com/a/8510751
-		float_t const c{ std::cos(deg2rad(degrees)) }, s{ std::sin(deg2rad(degrees)) };
+		float_t const c{ std::cos(util::deg2rad(degrees)) }, s{ std::sin(util::deg2rad(degrees)) };
 		auto m{ Mat3::identity() };
 		m.at(0, 0) = c + (1.0f - c) / 3.0f;
 		m.at(0, 1) = 1.f / 3.f * (1.0f - c) - std::sqrt(1.f / 3.f) * s;

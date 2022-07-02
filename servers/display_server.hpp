@@ -37,7 +37,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// cursor mode
-	enum CursorMode_
+	ALIAS(CursorMode) int32_t;
+	enum CursorMode_ : CursorMode
 	{
 		CursorMode_Normal		, // normal
 		CursorMode_Hidden		, // hidden
@@ -45,7 +46,8 @@ namespace ism
 	};
 
 	// cursor shape
-	enum CursorShape_
+	ALIAS(CursorShape) int32_t;
+	enum CursorShape_ : CursorShape
 	{
 		CursorShape_Arrow			, // arrow
 		CursorShape_IBeam			, // ibeam
@@ -65,7 +67,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window flags
-	enum WindowFlags_
+	ALIAS(WindowFlags) int32_t;
+	enum WindowFlags_ : WindowFlags
 	{
 		WindowFlags_None			= 0		, // none
 		WindowFlags_AutoIconify		= 1 << 0, // auto iconify
@@ -101,7 +104,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// renderer api
-	enum RendererAPI_
+	ALIAS(RendererAPI) int32_t;
+	enum RendererAPI_ : RendererAPI
 	{
 		RendererAPI_Unknown		, // unknown
 		RendererAPI_OpenGL		, // opengl
@@ -110,7 +114,8 @@ namespace ism
 	};
 
 	// renderer profile
-	enum RendererProfile_
+	ALIAS(RendererProfile) int32_t;
+	enum RendererProfile_ : RendererProfile
 	{
 		RendererProfile_Any		, // any
 		RendererProfile_Core	, // core

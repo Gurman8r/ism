@@ -15,6 +15,7 @@
 
 #include <gcem/include/gcem.hpp>
 
+// pair/tuple
 namespace ism
 {
 	// pair
@@ -26,27 +27,26 @@ namespace ism
 	> ALIAS(Tuple) std::tuple<First, Rest...>;
 }
 
-// compose
+// make
 namespace ism::impl
 {
-	template <class T> struct ComposeHelper final
+	template <class T> struct MakerHelper final
 	{
 		T value;
 
-		constexpr ComposeHelper(T && value) noexcept : value{ FWD(value) } {}
+		constexpr MakerHelper(T && value) noexcept : value{ FWD(value) } {}
 
 		template <class Fn = void(*)(T &)
-		> constexpr decltype(auto) operator+(Fn && fn) && noexcept
-		{
+		> constexpr decltype(auto) operator+(Fn && fn) && noexcept {
 			return fn(value), std::move(value);
 		}
 	};
 
-#define COMPOSE_EX(m_class, ...) \
-		(ism::impl::ComposeHelper<m_class>(m_class{ ##__VA_ARGS__ }))
+#define MAKE_EX(m_class, ...) \
+		(ism::impl::MakerHelper<m_class>(m_class{ ##__VA_ARGS__ }))
 
-#define COMPOSE(m_class, m_var, ...) \
-		COMPOSE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
+#define MAKE(m_class, m_var, ...) \
+		MAKE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
 }
 
 // operator structures
@@ -125,16 +125,13 @@ namespace ism
 	};
 }
 
-// utility
-namespace ism::util
+// traits
+namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class ... Ts
-	> constexpr bool is_any_of_v
-	{
-		std::disjunction_v<std::is_same<T, Ts>...>
-	};
+	> constexpr bool is_any_of_v{ std::disjunction_v<std::is_same<T, Ts>...> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -148,52 +145,6 @@ namespace ism::util
 		&& (std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)
 	};
 
-	template <class To, class From, class = std::enable_if_t<is_trivially_convertible_v<To, From>>
-	> NODISCARD To bit_cast(From const & value) noexcept
-	{
-		To temp;
-		copymem(&temp, &value, sizeof(To));
-		return temp;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T
-	> constexpr void swap(T & lhs, T & rhs) noexcept
-	{
-		T tmp = std::move(lhs);
-		lhs = std::move(rhs);
-		rhs = std::move(tmp);
-	}
-
-	template <class A, class B
-	> constexpr int32_t compare(A const & a, B const & b) noexcept
-	{
-		return CMP(a, b);
-	}
-
-	template <class LI, class RI
-	> NODISCARD constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
-	{
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin == *rBegin) && util::range_equal(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
-	}
-
-	template <class LI, class RI
-	> NODISCARD constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
-	{
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// traits
-namespace ism::mpl
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class ...> struct void_t_impl { using type = void; };
@@ -222,7 +173,7 @@ namespace ism::mpl
 
 	template <class Ch> constexpr bool is_char_v{ any_of_v<
 		std::is_same<Ch, char>,
-#if ISM_CXX_20
+#if CXX_20
 		std::is_same<Ch, char8_t>,
 #endif
 		std::is_same<Ch, char16_t>,
@@ -341,7 +292,7 @@ namespace ism::mpl
 	};
 
 	template <template<class...> class Base, class T>
-#if !COMPILER_MSVC
+#if !CC_MSVC
 	using is_template_base_of = decltype(is_template_base_of_impl<Base>::check((intrinsic_t<T> *)nullptr));
 #else
 	struct is_template_base_of : decltype(is_template_base_of_impl<Base>::check((intrinsic_t<T> *)nullptr)) {};
@@ -526,6 +477,52 @@ namespace ism::mpl
 
 	template <class itype, class SFINAE = void
 	> struct polymorphic_type_hook : public polymorphic_type_hook_base<itype> {};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// utility
+namespace ism::util
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class To, class From, class = std::enable_if_t<mpl::is_trivially_convertible_v<To, From>>
+	> NODISCARD To bit_cast(From const & value) noexcept
+	{
+		To temp;
+		copymem(&temp, &value, sizeof(To));
+		return temp;
+	}
+
+	template <class T
+	> constexpr void swap(T & lhs, T & rhs) noexcept
+	{
+		T tmp = std::move(lhs);
+		lhs = std::move(rhs);
+		rhs = std::move(tmp);
+	}
+
+	template <class A, class B
+	> constexpr int32_t compare(A const & a, B const & b) noexcept
+	{
+		return CMP(a, b);
+	}
+
+	template <class LI, class RI
+	> NODISCARD constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
+	{
+		return (lBegin != lEnd && rBegin != rEnd)
+			? ((*lBegin == *rBegin) && util::range_equal(lBegin + 1, lEnd, rBegin + 1, rEnd))
+			: (lBegin == lEnd && rBegin == rEnd);
+	}
+
+	template <class LI, class RI
+	> NODISCARD constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
+	{
+		return (lBegin != lEnd && rBegin != rEnd)
+			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))
+			: (lBegin == lEnd && rBegin == rEnd);
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

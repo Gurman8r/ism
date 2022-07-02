@@ -13,17 +13,17 @@ namespace ism
 	// compile time type info
 	namespace ctti
 	{
-#if defined(COMPILER_MSVC)
+#if defined(CC_MSVC)
 #	define PRETTY_FUNCTION		__FUNCSIG__
 #	define PRETTY_TYPE_PREFIX	"class ism::StringView __cdecl ism::ctti::name<"
 #	define PRETTY_TYPE_SUFFIX	">(void)"
 
-#elif defined(COMPILER_CLANG)
+#elif defined(CC_CLANG)
 #	define PRETTY_FUNCTION		__PRETTY_FUNCTION__
 #	define PRETTY_TYPE_PREFIX	"ism::StringView ism::ctti::name() [T = "
 #	define PRETTY_TYPE_SUFFIX	"]"
 
-#elif defined(COMPILER_GCC)
+#elif defined(CC_GCC)
 #	define PRETTY_FUNCTION		__PRETTY_FUNCTION__
 #	define PRETTY_TYPE_PREFIX	"constexpr ism::StringView ism::ctti::name() [with T = "
 #	define PRETTY_TYPE_SUFFIX	"]"

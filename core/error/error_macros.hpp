@@ -10,9 +10,9 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // generate trap
-#if defined(COMPILER_MSVC)
+#if defined(CC_MSVC)
 #	define DEBUG_BREAK			(_CSTD __debugbreak)
-#elif defined(COMPILER_CLANG)
+#elif defined(CC_CLANG)
 #	define DEBUG_BREAK			(_CSTD __builtin_debugtrap)
 #else
 #	define DEBUG_BREAK()		(_CSTD raise(SIGTRAP))
@@ -25,7 +25,7 @@ namespace ism
 	// fatal error implementation (wide)
 	inline void _wide_assert(cwstring message, cwstring file, uint32_t line) noexcept
 	{
-#if defined(COMPILER_MSVC)
+#if defined(CC_MSVC)
 		_wassert(message, file, line);
 
 #elif defined(assert)
@@ -60,7 +60,8 @@ namespace ism
 
 namespace ism
 {
-	enum ErrorHandlerType_
+	ALIAS(ErrorHandlerType) int32_t;
+	enum ErrorHandlerType_ : ErrorHandlerType
 	{
 		ErrorHandlerType_Error,
 		ErrorHandlerType_Warning,

@@ -173,11 +173,9 @@ namespace ism
 		NODISCARD constexpr auto at(size_t const i) & noexcept -> reference { return m_data.at(i); }
 		NODISCARD constexpr auto at(size_t const i) const & noexcept -> const_reference { return m_data.at(i); }
 		NODISCARD constexpr auto at(size_t const i) && noexcept -> value_type && { return std::move(m_data.at(i)); }
-
 		NODISCARD constexpr auto at(size_t const x, size_t const y) & noexcept -> reference { return at(y * _Width + x); }
 		NODISCARD constexpr auto at(size_t const x, size_t const y) const & noexcept -> const_reference { return at(y * _Width + x); }
 		NODISCARD constexpr auto at(size_t const x, size_t const y) && noexcept -> value_type && { return std::move(at(y * _Width + x)); }
-
 		NODISCARD constexpr auto at(coord_type const & loc) & noexcept -> reference { return at(loc[0], loc[1]); }
 		NODISCARD constexpr auto at(coord_type const & loc) const & noexcept -> const_reference { return at(loc[0], loc[1]); }
 		NODISCARD constexpr auto at(coord_type const & loc) && noexcept -> value_type && { return std::move(at(loc[0], loc[1])); }
@@ -185,7 +183,6 @@ namespace ism
 		NODISCARD constexpr auto back() & noexcept -> reference { return m_data.back(); }
 		NODISCARD constexpr auto back() const & noexcept -> const_reference { return m_data.back(); }
 		NODISCARD constexpr auto back() && noexcept -> value_type && { return std::move(m_data.back()); }
-
 		NODISCARD constexpr auto front() & noexcept -> reference { return m_data.front(); }
 		NODISCARD constexpr auto front() const & noexcept -> const_reference { return m_data.front(); }
 		NODISCARD constexpr auto front() && noexcept -> value_type && { return std::move(m_data.front()); }
@@ -205,25 +202,30 @@ namespace ism
 		
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		constexpr self_type & swap(self_type & other) noexcept {
-			if (this != std::addressof(other)) {
-				m_data.swap(other.m_data);
-			}
-			return (*this);
+		constexpr self_type & swap(self_type & other) noexcept
+		{
+			return m_data.swap(other.m_data), (*this);
 		}
 
-		NODISCARD static constexpr self_type one() noexcept {
-			self_type temp;
+		NODISCARD static constexpr self_type fill(value_type value) noexcept
+		{
+			self_type temp{};
 			for (value_type & e : temp) {
-				e = static_cast<value_type>(1);
+				e = value;
 			}
 			return temp;
 		}
 
-		NODISCARD static constexpr self_type identity() noexcept {
-			self_type temp;
-			for (size_t i = 0; i < _Width * _Height; ++i) {
-				temp[i] = static_cast<value_type>(i % _Width == i / _Height);
+		NODISCARD static constexpr self_type one() noexcept
+		{
+			return fill(1);
+		}
+
+		NODISCARD static constexpr self_type identity() noexcept
+		{
+			self_type temp{};
+			for (size_t i = 0; i < size(); ++i) {
+				temp[i] = static_cast<value_type>(i % width() == i / height());
 			}
 			return temp;
 		}
@@ -322,8 +324,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr auto operator+=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept -> auto &
+	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
+	> constexpr auto & operator+=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
 	{
 		for (auto & e : lhs) {
 			e += static_cast<Tx>(rhs);
@@ -331,8 +333,8 @@ namespace ism
 		return lhs;
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr auto operator-=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept -> auto &
+	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
+	> constexpr auto & operator-=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
 	{
 		for (auto & e : lhs) {
 			e -= static_cast<Tx>(rhs);
@@ -340,8 +342,8 @@ namespace ism
 		return lhs;
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr auto operator*=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept -> auto &
+	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
+	> constexpr auto & operator*=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
 	{
 		for (auto & e : lhs) {
 			e *= static_cast<Tx>(rhs);
@@ -349,8 +351,8 @@ namespace ism
 		return lhs;
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr auto operator/=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept -> auto &
+	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
+	> constexpr auto & operator/=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
 	{
 		for (auto & e : lhs) {
 			e /= static_cast<Tx>(rhs);
@@ -360,28 +362,28 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Tx, class Ty, size_t W, size_t H
+	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
 	> NODISCARD constexpr auto operator+(Matrix<Tx, W, H> const & lhs, Ty const rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp += static_cast<Tx>(rhs);
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
+	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
 	> NODISCARD constexpr auto operator-(Matrix<Tx, W, H> const & lhs, Ty const rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp -= static_cast<Tx>(rhs);
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
+	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
 	> NODISCARD constexpr auto operator*(Matrix<Tx, W, H> const & lhs, Ty const rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp *= static_cast<Tx>(rhs);
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
+	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
 	> NODISCARD constexpr auto operator/(Matrix<Tx, W, H> const & lhs, Ty const rhs) noexcept
 	{
 		auto temp{ lhs };

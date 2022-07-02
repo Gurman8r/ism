@@ -2,7 +2,7 @@
 #include <scene/main/scene_tree.hpp>
 #include <scene/gui/imgui.hpp>
 
-#if SYSTEM_WINDOWS
+#if OS_WINDOWS
 #include <platform/windows/display_server_windows.hpp>
 #define WINDOW_IMPL ism::DisplayServerWindows
 #endif
