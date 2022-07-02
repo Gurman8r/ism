@@ -58,7 +58,7 @@ namespace ism
 		/* MESH */
 		struct _Mesh
 		{
-			struct _Surface
+			struct Surface
 			{
 				RS::Primitive_ primitive{};
 
@@ -74,7 +74,7 @@ namespace ism
 				RID uniform_set{};
 			};
 
-			Vector<_Surface *> surfaces{};
+			Vector<Surface *> surfaces{};
 		};
 
 		RID mesh_create(Vector<RS::SurfaceData> const & surfaces = {});
