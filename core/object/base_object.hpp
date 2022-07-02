@@ -1,6 +1,7 @@
 #ifndef _ISM_BASE_OBJECT_HPP_
 #define _ISM_BASE_OBJECT_HPP_
 
+#include <core/object/detail/accessors.hpp>
 #include <core/object/detail/ref.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -21,7 +22,7 @@ private:																			\
 protected:																			\
 	static void initialize_class()													\
 	{																				\
-		if (static bool once{}; !once && (once = true))								\
+		static SCOPE_ENTER(&)														\
 		{																			\
 			ism::Internals::get_singleton()->add_class(&m_class::g_type_static);	\
 																					\
@@ -70,7 +71,7 @@ private:
 	/* declare binder */																		\
 	template <> class ism::EmbedObjectClassHelper<m_class> final								\
 	{																							\
-	public: static void embed(ism::TypeObject & m_var);											\
+	public: static void embed(ism::TypeObject &);												\
 	};																							\
 																								\
 	/* construct type object */																	\
@@ -158,7 +159,7 @@ namespace ism
 
 		template <class T> NODISCARD T cast() &&; // cast.hpp
 
-		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); } // 8)
+		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); } // :^]
 
 	public:
 		NODISCARD static OBJ generic_getattr(OBJ obj, OBJ name) noexcept;

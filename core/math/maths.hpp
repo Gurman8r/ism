@@ -17,6 +17,7 @@ namespace ism
 
 	class Math final
 	{
+	public:
 		template <class T = float32_t, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> static constexpr T pi{ static_cast<T>(3.14159265358979323846) };
 	};

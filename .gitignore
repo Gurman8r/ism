@@ -4,6 +4,7 @@
 /bin-obj
 /proj
 /project
+/workspace
 __pycache__/
 imgui.ini
 imgui.log

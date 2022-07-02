@@ -33,7 +33,7 @@ OBJ MethodObject::method_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 	}
 	else
 	{
-		ASSERT((argc + 1) < MAX_ARGUMENTS);
+		ASSERT("too many arguments" && (argc + 1) < MAX_ARGUMENTS);
 		
 		OBJ stack[MAX_ARGUMENTS]{};
 

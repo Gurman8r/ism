@@ -38,13 +38,10 @@ OBJECT_EMBED(CppFunctionObject, t)
 
 CppFunctionObject::~CppFunctionObject()
 {
-	while (m_record)
-	{
-		FunctionRecord * next{ m_record->next };
-
+	while (m_record) {
+		FunctionRecord * const it{ m_record->next };
 		memdelete(m_record);
-
-		m_record = next;
+		m_record = it;
 	}
 }
 
@@ -52,7 +49,7 @@ CppFunctionObject::~CppFunctionObject()
 
 void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info const * const * info_in, size_t argc_in, bool prepend)
 {
-	ASSERT("BAD FUNCTION RECORD" && rec && !rec->next);
+	ASSERT("BAD FUNCTION RECORD" && (rec && !rec->next));
 	m_record = rec;
 
 	// argument info
@@ -62,31 +59,29 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 	{
 		rec->args.push_back(COMPOSE(ArgumentRecord, arg)
 		{
-			// TODO: generate argument info
-
-			arg.name = ("arg" + util::to_string(i));
+			// TODO: generate better argument info
+			arg.name = "arg"_s + util::to_string(i);
 		});
 	}
 
 	// overload chaining
 	if (CPP_FUNCTION::check_(rec->sibling))
 	{
-		FunctionRecord *& existing{ ((CppFunctionObject *)(rec->sibling))->m_record };
-
-		if (rec->scope == existing->scope)
+		if (CppFunctionObject & sibling{ *VALIDATE((CppFunctionObject *)rec->sibling) }
+		; sibling.m_record->scope == rec->scope)
 		{
 			if (prepend)
 			{
-				rec->next = existing;
-				existing = nullptr;
+				rec->next = sibling.m_record;
+				sibling.m_record = nullptr;
 			}
 			else
 			{
-				FunctionRecord * it{ existing };
+				FunctionRecord * it{ sibling.m_record };
 				while (it->next) { it = it->next; }
 				it->next = rec;
-				m_record = existing;
-				existing = nullptr;
+				m_record = sibling.m_record;
+				sibling.m_record = nullptr;
 			}
 		}
 	}
@@ -142,10 +137,8 @@ OBJ CppFunctionObject::cppfunction_vectorcall(OBJ callable, OBJ const * argv, si
 			if (num_copied < num_args)
 			{
 				if (overloaded) { continue; }
-				else
-				{
-					CRASH("NOT ENOUGH ARGUMENTS");
-				}
+
+				CRASH("NOT ENOUGH ARGUMENTS");
 			}
 		}
 

@@ -84,31 +84,31 @@ namespace ism
 
 		FORCE_INLINE static Input * get_singleton() noexcept { return singleton; }
 
+	public:
 		NODISCARD InputState const & get_state() const noexcept { return m_state; }
 
-	public:
-		NODISCARD char get_char() const { return m_state.last_char; }
+		NODISCARD char get_char() const noexcept { return m_state.last_char; }
 
-		NODISCARD bool is_shift() const { return m_state.is_shift; }
-		NODISCARD bool is_ctrl() const { return m_state.is_ctrl; }
-		NODISCARD bool is_alt() const { return m_state.is_alt; }
-		NODISCARD bool is_super() const { return m_state.is_super; }
+		NODISCARD bool is_shift() const noexcept { return m_state.is_shift; }
+		NODISCARD bool is_ctrl() const noexcept { return m_state.is_ctrl; }
+		NODISCARD bool is_alt() const noexcept { return m_state.is_alt; }
+		NODISCARD bool is_super() const noexcept { return m_state.is_super; }
 
-		NODISCARD bool is_shift(KeyCode_ value) const { return m_state.is_shift && m_state.keys_down.read(value); }
-		NODISCARD bool is_ctrl(KeyCode_ value) const { return m_state.is_ctrl && m_state.keys_down.read(value); }
-		NODISCARD bool is_alt(KeyCode_ value) const { return m_state.is_alt && m_state.keys_down.read(value); }
-		NODISCARD bool is_super(KeyCode_ value) const { return m_state.is_super && m_state.keys_down.read(value); }
+		NODISCARD bool is_shift(KeyCode_ value) const noexcept { return m_state.is_shift && m_state.keys_down.read(value); }
+		NODISCARD bool is_ctrl(KeyCode_ value) const noexcept { return m_state.is_ctrl && m_state.keys_down.read(value); }
+		NODISCARD bool is_alt(KeyCode_ value) const noexcept { return m_state.is_alt && m_state.keys_down.read(value); }
+		NODISCARD bool is_super(KeyCode_ value) const noexcept { return m_state.is_super && m_state.keys_down.read(value); }
 
-		NODISCARD bool get_key_up(KeyCode_ value) const { return !m_state.keys_down.read(value); }
-		NODISCARD bool get_key_down(KeyCode_ value) const { return m_state.keys_down.read(value); }
-		NODISCARD auto get_key_down_duration(KeyCode_ value) const { return m_state.keys_down_duration[value]; }
+		NODISCARD bool get_key_up(KeyCode_ value) const noexcept { return !m_state.keys_down.read(value); }
+		NODISCARD bool get_key_down(KeyCode_ value) const noexcept { return m_state.keys_down.read(value); }
+		NODISCARD auto get_key_down_duration(KeyCode_ value) const noexcept { return m_state.keys_down_duration[value]; }
 
-		NODISCARD auto get_mouse_pos() const -> Vec2 const & { return m_state.mouse_pos; }
-		NODISCARD bool get_mouse_up(MouseButton_ value) const { return !m_state.mouse_down.read(value); }
-		NODISCARD bool get_mouse_down(MouseButton_ value) const { return m_state.mouse_down.read(value); }
-		NODISCARD auto get_mouse_down_duration(MouseButton_ value) const { return m_state.mouse_down_duration[value]; }
-		NODISCARD auto get_mouse_delta() const -> Vec2 const & { return m_state.mouse_delta; }
-		NODISCARD auto get_scroll() const -> Vec2 const & { return m_state.scroll; }
+		NODISCARD auto get_mouse_pos() const noexcept -> Vec2 const & { return m_state.mouse_pos; }
+		NODISCARD bool get_mouse_up(MouseButton_ value) const noexcept { return !m_state.mouse_down.read(value); }
+		NODISCARD bool get_mouse_down(MouseButton_ value) const noexcept { return m_state.mouse_down.read(value); }
+		NODISCARD auto get_mouse_down_duration(MouseButton_ value) const noexcept { return m_state.mouse_down_duration[value]; }
+		NODISCARD auto get_mouse_delta() const noexcept -> Vec2 const & { return m_state.mouse_delta; }
+		NODISCARD auto get_scroll() const noexcept -> Vec2 const & { return m_state.scroll; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

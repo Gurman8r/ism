@@ -160,7 +160,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 
 bool Main::start()
 {
-	String script{};
+	Path script{};
 
 	Ref<MainLoop> main_loop{};
 
@@ -168,7 +168,7 @@ bool Main::start()
 
 	TYPE main_loop_type{};
 
-	if (script != "") { /* TODO */ }
+	if (script) { /* TODO: load main loop from script */ }
 
 	if (!main_loop && !main_loop_type) { main_loop_type = typeof<SceneTree>(); }
 

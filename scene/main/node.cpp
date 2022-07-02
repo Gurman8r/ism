@@ -35,7 +35,7 @@ void Node::process(Duration const & dt)
 
 	for (size_t i = 0, imax = get_child_count(); i < imax; ++i)
 	{
-		if (NODE node{ get_child(i) })
+		if (Ref<Node> node{ get_child(i) })
 		{
 			node->process(dt);
 		}
@@ -63,7 +63,7 @@ void Node::detach_children()
 {
 	if (m_owner)
 	{
-		for (NODE const & node : m_nodes)
+		for (Ref<Node> const & node : m_nodes)
 		{
 			node->m_owner = m_owner;
 
@@ -72,7 +72,7 @@ void Node::detach_children()
 	}
 	else
 	{
-		for (NODE const & node : m_nodes)
+		for (Ref<Node> const & node : m_nodes)
 		{
 			node->m_owner = nullptr;
 		}
@@ -116,7 +116,7 @@ void Node::set_sibling_index(size_t const i)
 
 	ASSERT(i < siblings.size());
 
-	NODE self{ this };
+	Ref<Node> self{ this };
 
 	siblings.erase(siblings.begin() + get_sibling_index());
 
@@ -147,7 +147,7 @@ bool Node::is_parent_of(Node const * other, bool recursive) const noexcept
 	else if (this == other->m_owner) { return true; }
 	else if (recursive)
 	{
-		for (NODE const & node : m_nodes)
+		for (Ref<Node> const & node : m_nodes)
 		{
 			if (node->is_parent_of(other, true))
 			{

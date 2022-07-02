@@ -23,7 +23,8 @@ void ism::register_core_types()
 	ASSERT(typeof<PropertyObject>().ready());
 	ASSERT(typeof<ModuleObject>().ready());
 
-	INTERNALS->install_classes<
+	INTERNALS->install_class
+	<
 		CppFunctionObject, // <- cppfunction must go first
 		Object,
 		TypeObject,
@@ -54,6 +55,7 @@ void ism::register_core_types()
 		EventBus,
 
 		MainLoop
+
 	>();
 }
 

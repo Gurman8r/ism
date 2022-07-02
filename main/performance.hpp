@@ -15,8 +15,8 @@ namespace ism
 
 		NODISCARD operator float_t() const noexcept { return value; }
 
-		FrameRateTracker(size_t count = 120, PolymorphicAllocator<byte> alloc = {}) noexcept
-			: value{}, accum{}, index{}, times{ count, 0.f, alloc }
+		FrameRateTracker(size_t count = 120) noexcept
+			: value{}, accum{}, index{}, times{ count, 0.f, decltype(times)::allocator_type{} }
 		{
 		}
 

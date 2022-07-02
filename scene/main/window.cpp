@@ -11,13 +11,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(Window, t)
-{
-	t.tp_install = CLASS_INSTALLER(Window, t)
-	{
-		return t;
-	};
-}
+OBJECT_EMBED(Window, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

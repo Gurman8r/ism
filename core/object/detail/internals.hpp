@@ -30,10 +30,10 @@ namespace ism
 		OBJ modules; // module dictionary
 
 	public:
-		template <class First, class ... Rest
-		> void install_classes()
+		template <class Class0, class ... Classes
+		> void install_class()
 		{
-			mpl::for_types<First, Rest...>([&](auto tag) noexcept
+			mpl::for_types<Class0, Classes...>([&](auto tag) noexcept
 			{
 				TAG_TYPE(tag)::initialize_class();
 			});

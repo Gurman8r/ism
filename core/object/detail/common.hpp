@@ -117,7 +117,7 @@ namespace ism
 	ALIAS(descrgetfunc)		OBJ(*)(OBJ descr, OBJ obj, OBJ cls);
 	ALIAS(descrsetfunc)		Error_(*)(OBJ descr, OBJ obj, OBJ value);
 
-	ALIAS(bindfunc)			TYPE(*)(TYPE type);
+	ALIAS(installerfunc)	TYPE(*)(TYPE type);
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
 	ALIAS(delfunc)			void(*)(Object * ptr);
 	ALIAS(cmpfunc)			int32_t(*)(OBJ lhs, OBJ rhs);
@@ -159,6 +159,8 @@ namespace ism
 		ReturnValuePolicy_Move,
 		ReturnValuePolicy_Reference,
 		ReturnValuePolicy_ReferenceInternal,
+
+		ReturnValuePolicy_MAX
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -171,14 +173,8 @@ namespace ism
 		DataType_U8, DataType_U16, DataType_U32, DataType_U64,
 		DataType_F32, DataType_F64,
 		DataType_String, DataType_Object,
-
-#if ARCHITECTURE < 64
-		DataType_SizeT = DataType_U32,
-		DataType_SSizeT = DataType_I32,
-#else
-		DataType_SizeT = DataType_U64,
-		DataType_SSizeT = DataType_I64,
-#endif
+		
+		DataType_MAX
 	};
 
 	NODISCARD constexpr size_t get_data_type_size(DataType_ type) noexcept

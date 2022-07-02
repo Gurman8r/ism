@@ -7,12 +7,12 @@ using namespace ism;
 
 void Object::initialize_class()
 {
-	if (static bool once{}; !once && (once = true))
+	static SCOPE_ENTER(&)
 	{
-		Internals::get_singleton()->add_class(&g_type_static);
-
-		ASSERT(VALIDATE(g_type_static.tp_install)(&g_type_static));
-	}
+		INTERNALS->add_class(&g_type_static);
+		ASSERT(g_type_static.tp_install);
+		ASSERT(g_type_static.tp_install(&g_type_static));
+	};
 }
 
 void Object::_initialize_classv() { initialize_class(); }
@@ -69,11 +69,17 @@ OBJECT_EMBED(Object, t, TypeFlags_IsAbstract)
 	t.tp_install = CLASS_INSTALLER(Object, t)
 	{
 		return t
+
 			.def("init_ref", &Object::init_ref)
+		
 			.def("reference", &Object::reference)
+
 			.def("unreference", &Object::unreference)
+
 			.def("get_ref_count", &Object::get_ref_count)
+
 			.def("has_references", &Object::has_references)
+
 			;
 	};
 }

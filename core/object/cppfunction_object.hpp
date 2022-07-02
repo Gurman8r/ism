@@ -82,7 +82,7 @@ namespace ism
 
 			if (sizeof(Capture) <= sizeof(rec->data))
 			{
-				::new((Capture *)&rec->data) Capture{ FWD(func) };
+				::new ((Capture *)&rec->data) Capture{ FWD(func) };
 
 				if constexpr (!std::is_trivially_destructible_v<Func>)
 				{
@@ -103,7 +103,7 @@ namespace ism
 
 				if (!args.load_args(call.args)) { call.try_next_overload = true; return nullptr; }
 
-				attr::process_attributes<Extra...>::precall(call);
+				attr::process_attributes<Extra...>::precall(call); // precall
 
 				auto data{ (sizeof(Capture) <= sizeof(call.record.data) ? &call.record.data : call.record.data[0]) };
 
@@ -117,13 +117,12 @@ namespace ism
 
 				OBJ result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
 
-				attr::process_attributes<Extra...>::postcall(call, result);
+				attr::process_attributes<Extra...>::postcall(call, result); // postcall
 
 				return result;
 			};
 
-			// process function attributes
-			attr::process_attributes<Extra...>::init(*rec, FWD(extra)...);
+			attr::process_attributes<Extra...>::init(*rec, FWD(extra)...); // init
 
 			// collect type info
 			constexpr size_t argc{ sizeof...(Args) };

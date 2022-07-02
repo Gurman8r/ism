@@ -7,11 +7,11 @@ using namespace ism;
 
 void TypeObject::initialize_class()
 {
-	if (static bool once{}; !once && (once = true))
+	static SCOPE_ENTER(&)
 	{
-		Internals::get_singleton()->add_class(&g_type_static);
-
-		ASSERT(VALIDATE(g_type_static.tp_install)(&g_type_static));
+		INTERNALS->add_class(&g_type_static);
+		ASSERT(g_type_static.tp_install);
+		ASSERT(g_type_static.tp_install(&g_type_static));
 	};
 }
 

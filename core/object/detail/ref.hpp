@@ -1,7 +1,7 @@
 #ifndef _ISM_REF_HPP_
 #define _ISM_REF_HPP_
 
-#include <core/object/detail/accessors.hpp>
+#include <core/object/detail/object_api.hpp>
 
 // ref
 namespace ism

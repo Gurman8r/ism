@@ -9,15 +9,15 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// class interface
-	template <class _type, class ... _options
+	template <class _Type, class ... _Options
 	> class CLASS_ : public TYPE
 	{
 	public:
-		using holder_type = std::conditional_t<is_base_object_v<_type>, Ref<_type>, _type>;
+		using holder_type = std::conditional_t<is_base_object_v<_Type>, Ref<_Type>, _Type>;
 
-		using value_type = std::conditional_t<is_base_object_v<_type>, _type, typename holder_type::value_type>;
+		using value_type = std::conditional_t<is_base_object_v<_Type>, _Type, typename holder_type::value_type>;
 		
-		using type = _type;
+		using type = _Type;
 
 	public:
 		CLASS_(TYPE target) : TYPE{ VALIDATE(target) } {}
@@ -160,7 +160,7 @@ namespace ism
 
 			NODISCARD constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
 			{
-				return static_cast<bindfunc>(static_cast<void *>(fn));
+				return static_cast<installerfunc>(static_cast<void *>(fn));
 			}
 		};
 	}

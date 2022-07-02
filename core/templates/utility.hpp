@@ -1,5 +1,5 @@
-#ifndef _ISM_TYPE_TRAITS_HPP_
-#define _ISM_TYPE_TRAITS_HPP_
+#ifndef _ISM_UTILITY_HPP_
+#define _ISM_UTILITY_HPP_
 
 #include <core/os/copymem.hpp>
 
@@ -350,13 +350,13 @@ namespace ism::mpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <template<class...> class C, class T
-	> struct is_instantiation : std::false_type {};
+	> struct is_instantiation_t : std::false_type {};
 
 	template <template<class...> class C, class... Us
-	> struct is_instantiation<C, C<Us...>> : std::true_type {};
+	> struct is_instantiation_t<C, C<Us...>> : std::true_type {};
 
 	template <template<class...> class C, class... Us
-	> constexpr bool is_instantiation_v{ is_instantiation<C, Us...>::value };
+	> constexpr bool is_instantiation_v{ is_instantiation_t<C, Us...>::value };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -884,4 +884,4 @@ namespace ism::mpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_TYPE_TRAITS_HPP_
+#endif // !_ISM_UTILITY_HPP_

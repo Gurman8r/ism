@@ -3,14 +3,17 @@
 
 #include <core/object/detail/call.hpp>
 
-// I hate this system, but I can't think of a better solution.
+// This is basically just ripped straight from pybind11.
+// I can't think of a better solution, so I'm rolling with this until I do.
 
 namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// process attribute
 	template <class T, class SFINAE = void> struct process_attribute;
 
+	// process attribute default
 	template <class T> struct process_attribute_default
 	{
 		using type = typename T;
@@ -20,14 +23,9 @@ namespace ism::attr
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism::attr
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// name
-	class name { public: cstring value; name(cstring value) : value{ value } {} };
+	struct name { cstring value; name(cstring value) : value{ value } {} };
 	template <> struct process_attribute<name> : process_attribute_default<name>
 	{
 		static void init(FunctionRecord & r, name && a) noexcept { r.name = a.value; }
@@ -40,59 +38,73 @@ namespace ism::attr
 	};
 
 	// sibling
-	class sibling { public: Object * value; sibling(Object * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
+	struct sibling { Object * value; sibling(Object * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<sibling> : process_attribute_default<sibling>
 	{
 		static void init(FunctionRecord & r, sibling && a) noexcept { r.sibling = a.value; }
 	};
 
 	// is_method
-	class is_method { public: Object * value; is_method(Object * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
+	struct is_method { Object * value; is_method(Object * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<is_method> : process_attribute_default<is_method>
 	{
 		static void init(FunctionRecord & r, is_method && a) noexcept { r.is_method = true; r.scope = a.value; }
 	};
 
 	// scope
-	class scope { public: Object * value; scope(Object * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
+	struct scope { Object * value; scope(Object * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<scope> : process_attribute_default<scope>
 	{
 		static void init(FunctionRecord & r, scope && a) noexcept { r.scope = a.value; }
 	};
 
 	// is_operator
-	class is_operator { public: };
+	struct is_operator {};
 	template <> struct process_attribute<is_operator> : process_attribute_default<is_operator>
 	{
 		static void init(FunctionRecord & r, is_operator && a) noexcept { r.is_operator = true; }
 	};
 
 	// is_constructor
-	class is_constructor { public: };
+	struct is_constructor {};
 	template <> struct process_attribute<is_constructor> : process_attribute_default<is_constructor>
 	{
 		static void init(FunctionRecord & r, is_constructor && a) noexcept { r.is_constructor = true; }
 	};
 
 	// prepend
-	class prepend { public: };
+	struct prepend {};
 	template <> struct process_attribute<prepend> : process_attribute_default<prepend> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// call guard
+	/*
+	A call policy which places one or more guard variables (``Ts...``) around the function call.
+	
+	For example, this definition:
+		m.def("foo", foo, attr::call_guard<T>());
+	
+	is equivalent to the following pseudocode:
+		m.def("foo", [](args...) {
+			T scope_guard;
+			return foo(args...); // forwarded arguments
+		});
+	*/
 	template <class... Ts> struct call_guard;
 
 	template <> struct call_guard<> { using type = void_type; };
 
-	template <class T> struct call_guard<T>
+	template <class T
+	> struct call_guard<T>
 	{
 		static_assert(std::is_default_constructible_v<T>, "The guard type must be default constructible");
 
 		using type = T;
 	};
 
-	template <class T, class ... Ts> struct call_guard<T, Ts...>
+	template <class T, class ... Ts
+	> struct call_guard<T, Ts...>
 	{
 		struct type
 		{
@@ -102,19 +114,17 @@ namespace ism::attr
 		};
 	};
 
-	template <class ... Ts> struct process_attribute<call_guard<Ts...>> : process_attribute_default<call_guard<Ts...>> {};
+	template <class ... Ts
+	> struct process_attribute<call_guard<Ts...>> : process_attribute_default<call_guard<Ts...>> {};
 
+	// is call guard
 	template <class T
-	> using is_call_guard = mpl::is_instantiation<call_guard, T>;
-
+	> using is_call_guard_t = mpl::is_instantiation_t<call_guard, T>;
+	
+	// extract call guard
 	template <class ... Extra
-	> using extract_guard_t = typename mpl::exactly_one_t<is_call_guard, call_guard<>, Extra...>::type;
+	> using extract_guard_t = typename mpl::exactly_one_t<is_call_guard_t, call_guard<>, Extra...>::type;
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism::attr
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// process attributes

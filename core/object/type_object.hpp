@@ -45,7 +45,7 @@ namespace ism
 			tp_flags = flags;
 			tp_base = ism::baseof<T>();
 			tp_del = (delfunc)ism::memdelete<T>;
-			tp_install = (bindfunc)[](TYPE t) -> TYPE { return t; };
+			tp_install = (installerfunc)[](TYPE t) -> TYPE { return t; };
 			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return ism::Hasher<intptr_t>{}((intptr_t)*o); };
 			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> int32_t { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
@@ -66,7 +66,7 @@ namespace ism
 		String				tp_name				{};
 		ssize_t				tp_size				{};
 		int32_t				tp_flags			{};
-		bindfunc			tp_install			{};
+		installerfunc		tp_install			{};
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
 

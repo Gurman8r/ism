@@ -3,12 +3,12 @@
 #include <core/templates/batch.hpp>
 #include <core/error/error_macros.hpp>
 
-#ifndef LEAK_DISPLAY_ENABLED
-#define LEAK_DISPLAY_ENABLED 1
+#ifndef SHOW_FINAL_ALLOCATIONS
+#define SHOW_FINAL_ALLOCATIONS 1
 #endif
 
-#ifndef LEAK_CLEANUP_ENABLED
-#define LEAK_CLEANUP_ENABLED 0
+#ifndef CLEAR_FINAL_ALLOCATIONS
+#define CLEAR_FINAL_ALLOCATIONS 0
 #endif
 
 using namespace ism;
@@ -19,13 +19,13 @@ static struct NODISCARD MemoryTracker final
 {
 	size_t index{};
 
-	enum { Index, Size, Addr, Desc };
+	enum { ID_Index, ID_Size, ID_Addr, ID_Desc };
 
 	Batch<size_t, size_t, void *, cstring> records{};
 
 	~MemoryTracker()
 	{
-#if LEAK_DISPLAY_ENABLED
+#if SHOW_FINAL_ALLOCATIONS
 		if (!records.empty())
 		{
 			std::cerr << "\nMEMORY LEAKS DETECTED:\n";
@@ -42,8 +42,8 @@ static struct NODISCARD MemoryTracker final
 		}
 #endif
 
-#if LEAK_CLEANUP_ENABLED
-		while (!records.empty()) { memfree(records.back<Addr>()); }
+#if CLEAR_FINAL_ALLOCATIONS
+		while (!records.empty()) { memfree(records.back<ID_Addr>()); }
 #else
 		ASSERT("MEMORY LEAKS DETECTED" && g_memory_tracker.records.empty());
 #endif
@@ -55,7 +55,7 @@ g_memory_tracker{};
 
 void * Memory::alloc_static(size_t size, cstring desc)
 {
-	return std::get<MemoryTracker::Addr>(g_memory_tracker.records.push_back
+	return std::get<MemoryTracker::ID_Addr>(g_memory_tracker.records.push_back
 	(
 		++g_memory_tracker.index,
 		size,
@@ -95,10 +95,10 @@ void * Memory::realloc_static(void * ptr, size_t oldsz, size_t newsz)
 
 void Memory::free_static(void * ptr)
 {
-	if (size_t const i{ g_memory_tracker.records.index_of<MemoryTracker::Addr>(ptr) }
+	if (size_t const i{ g_memory_tracker.records.index_of<MemoryTracker::ID_Addr>(ptr) }
 	; i != g_memory_tracker.records.npos)
 	{
-		size_t const size{ g_memory_tracker.records.get<MemoryTracker::Size>(i) };
+		size_t const size{ g_memory_tracker.records.get<MemoryTracker::ID_Size>(i) };
 
 		std::pmr::get_default_resource()->deallocate(ptr, size);
 

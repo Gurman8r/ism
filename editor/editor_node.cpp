@@ -94,12 +94,7 @@ EditorNode::EditorNode()
 {
 	ASSERT(!singleton); singleton = this;
 
-	subscribe<
-		WindowKeyEvent,
-		WindowMouseButtonEvent,
-		WindowMousePositionEvent,
-		WindowScrollEvent
-	>();
+	subscribe<WindowKeyEvent, WindowMouseButtonEvent, WindowMousePositionEvent, WindowScrollEvent>();
 	
 	m_textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 	m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");

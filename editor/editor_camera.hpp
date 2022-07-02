@@ -28,7 +28,7 @@ namespace ism
 	public:
 		static void perspective(float_t fov_in_degrees, float_t aspect_ratio, float_t znear, float_t zfar, float_t * m16)
 		{
-			static auto frustum = [](float_t left, float_t right, float_t bottom, float_t top, float_t znear, float_t zfar, float_t * m16)
+			static auto _frustum = [](float_t left, float_t right, float_t bottom, float_t top, float_t znear, float_t zfar, float_t * m16)
 			{
 				float_t temp, temp2, temp3, temp4;
 				temp = 2.0f * znear;
@@ -56,7 +56,7 @@ namespace ism
 			float_t ymax, xmax;
 			ymax = znear * std::tanf(fov_in_degrees * 3.141592f / 180.0f);
 			xmax = ymax * aspect_ratio;
-			frustum(-xmax, xmax, -ymax, ymax, znear, zfar, m16);
+			_frustum(-xmax, xmax, -ymax, ymax, znear, zfar, m16);
 		}
 
 		static void orthographic(float_t l, float_t r, float_t b, float_t t, float_t zn, float_t const zf, float_t * m16)
@@ -81,18 +81,18 @@ namespace ism
 
 		static void look_at(float_t const * eye, float_t const * at, float_t const * up, float_t * m16)
 		{
-			static auto cross = [](float_t const * a, float_t const * b, float_t * r) noexcept {
+			static auto _cross = [](float_t const * a, float_t const * b, float_t * r) noexcept {
 				r[0] = a[1] * b[2] - a[2] * b[1];
 				r[1] = a[2] * b[0] - a[0] * b[2];
 				r[2] = a[0] * b[1] - a[1] * b[0];
 			};
 
-			static auto dot = [](float_t const * a, float_t const * b) noexcept {
+			static auto _dot = [](float_t const * a, float_t const * b) noexcept {
 				return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 			};
 
-			static auto normalize = [](float_t const * a, float_t * r) noexcept {
-				float_t il{ 1.f / (std::sqrtf(dot(a, a)) + FLT_EPSILON) };
+			static auto _normalize = [](float_t const * a, float_t * r) noexcept {
+				float_t il{ 1.f / (std::sqrtf(_dot(a, a)) + FLT_EPSILON) };
 				r[0] = a[0] * il;
 				r[1] = a[1] * il;
 				r[2] = a[2] * il;
@@ -103,14 +103,14 @@ namespace ism
 			tmp[1] = eye[1] - at[1];
 			tmp[2] = eye[2] - at[2];
 
-			normalize(tmp, Z);
-			normalize(up, Y);
+			_normalize(tmp, Z);
+			_normalize(up, Y);
 
-			cross(Y, Z, tmp);
-			normalize(tmp, X);
+			_cross(Y, Z, tmp);
+			_normalize(tmp, X);
 
-			cross(Z, X, tmp);
-			normalize(tmp, Y);
+			_cross(Z, X, tmp);
+			_normalize(tmp, Y);
 
 			m16[0] = X[0];
 			m16[1] = Y[0];
@@ -124,9 +124,9 @@ namespace ism
 			m16[9] = Y[2];
 			m16[10] = Z[2];
 			m16[11] = 0.0f;
-			m16[12] = -dot(X, eye);
-			m16[13] = -dot(Y, eye);
-			m16[14] = -dot(Z, eye);
+			m16[12] = -_dot(X, eye);
+			m16[13] = -_dot(Y, eye);
+			m16[14] = -_dot(Z, eye);
 			m16[15] = 1.0f;
 		}
 

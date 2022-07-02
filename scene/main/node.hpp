@@ -12,8 +12,6 @@ namespace ism
 
 	class Node;
 
-	ALIAS(NODE) Ref<Node>;
-
 	ALIAS(EntityID) entt::entity;
 
 	ALIAS(EntityRegistry) entt::registry;
@@ -29,7 +27,7 @@ namespace ism
 	protected:
 		SceneTree *		m_tree	{};
 		Node *			m_owner	{};
-		Vector<NODE>	m_nodes	{};
+		Vector<Ref<Node>>	m_nodes	{};
 
 		Node(SceneTree * tree = nullptr) noexcept;
 
@@ -43,7 +41,7 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		NODISCARD auto get_child(size_t const i) const -> NODE { return m_nodes[i]; }
+		NODISCARD auto get_child(size_t const i) const -> Ref<Node> { return m_nodes[i]; }
 
 		NODISCARD auto get_child_count() const noexcept -> size_t { return m_nodes.size(); }
 
@@ -51,12 +49,12 @@ namespace ism
 
 		NODISCARD auto get_tree() const noexcept -> SceneTree * { return m_tree; }
 
-		NODE add_child(Node * value) noexcept { return (value && value->set_parent(this)) ? value : nullptr; }
+		Ref<Node> add_child(Node * value) noexcept { return (value && value->set_parent(this)) ? value : nullptr; }
 
-		NODE add_child(NODE const & value) noexcept { return add_child(*value); }
+		Ref<Node> add_child(Ref<Node> const & value) noexcept { return add_child(*value); }
 
 		template <class T, class ... Args
-		> NODE add_child(Args && ... args) noexcept { return add_child(memnew(T(FWD(args)...))); }
+		> Ref<Node> add_child(Args && ... args) noexcept { return add_child(memnew(T(FWD(args)...))); }
 
 		void destroy_child(size_t const i) { m_nodes.erase(m_nodes.begin() + i); }
 
@@ -64,7 +62,7 @@ namespace ism
 
 		bool set_parent(Node * value);
 
-		bool set_parent(NODE const & value) noexcept { return set_parent(*value); }
+		bool set_parent(Ref<Node> const & value) noexcept { return set_parent(*value); }
 
 		NODISCARD size_t get_sibling_index() const noexcept;
 
@@ -72,14 +70,14 @@ namespace ism
 
 		NODISCARD bool is_child_of(Node const * other, bool recursive = false) const noexcept;
 
-		NODISCARD bool is_child_of(NODE const & other, bool recursive = false) const noexcept { return is_child_of(*other, recursive); }
+		NODISCARD bool is_child_of(Ref<Node> const & other, bool recursive = false) const noexcept { return is_child_of(*other, recursive); }
 
 		NODISCARD bool is_parent_of(Node const * other, bool recursive = false) const noexcept;
 
-		NODISCARD bool is_parent_of(NODE const & other, bool recursive = false) const noexcept { return is_parent_of(*other, recursive); }
+		NODISCARD bool is_parent_of(Ref<Node> const & other, bool recursive = false) const noexcept { return is_parent_of(*other, recursive); }
 
 	public:
-		template <class Fn = void(*)(NODE &)
+		template <class Fn = void(*)(Ref<Node> &)
 		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false)
 		{
 			auto _for_nodes = [](auto first, auto last, auto fn, bool recursive, bool reverse)
@@ -106,10 +104,10 @@ namespace ism
 		}
 
 	public:
-		template <class Pr = bool(*)(NODE const &)
-		> NODISCARD NODE find_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
+		template <class Pr = bool(*)(Ref<Node> const &)
+		> NODISCARD Ref<Node> find_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
 		{
-			auto _find_node_if = [](auto first, auto last, auto pr, bool recursive, bool reverse) noexcept -> NODE
+			auto _find_node_if = [](auto first, auto last, auto pr, bool recursive, bool reverse) noexcept -> Ref<Node>
 			{
 				if (auto const it{ std::find_if(first, last, pr) }; it != last)
 				{
@@ -119,7 +117,7 @@ namespace ism
 				{
 					for (; first != last; ++first)
 					{
-						if (NODE found{ (*first)->find_node_if(pr, true, reverse) })
+						if (Ref<Node> found{ (*first)->find_node_if(pr, true, reverse) })
 						{
 							return found;
 						}
@@ -141,7 +139,7 @@ namespace ism
 		template <class T
 		> NODISCARD Ref<T> find(bool recursive = true, bool reverse = false) const noexcept
 		{
-			return find_if([](NODE const & node) noexcept { return Ref<T>(node).is_valid(); }, recursive, reverse);
+			return find_if([](Ref<Node> const & node) noexcept { return Ref<T>(node).is_valid(); }, recursive, reverse);
 		}
 	};
 

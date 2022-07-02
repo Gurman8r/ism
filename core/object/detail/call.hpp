@@ -203,20 +203,27 @@ namespace ism
 	// function call
 	struct NODISCARD FunctionCall final
 	{
+		explicit FunctionCall(FunctionRecord const & record, OBJ const & parent)
+			: record{ record }
+			, parent{ parent }
+			, args{ record.argument_count }
+			, try_next_overload{}
+		{
+		}
+
 		FunctionRecord const & record;
 		
-		OBJ parent{};
+		OBJ parent;
 
-		Batch<OBJ, bool> args{ record.argument_count };
+		Batch<OBJ, bool> args;
 
 		bool try_next_overload : 1;
 
 		OBJ operator()()
 		{
-			OBJ result{};
+			OBJ result;
 			{
 				LoaderLifeSupport guard{};
-
 				result = record.impl(*this);
 			}
 			return result;

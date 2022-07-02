@@ -11,15 +11,11 @@ OBJECT_EMBED(ListObject, t)
 
 	t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> int32_t
 	{
-		if (self.is(other)) {
-			return 0;
-		}
-		else if (LIST::check_(self) && LIST::check_(other)) {
-			return util::compare(***(LIST &)self, ***(LIST &)other);
-		}
-		else {
-			return util::compare((intptr_t)*self, (intptr_t)*other);
-		}
+		if (self.is(other)) { return 0; }
+		
+		else if (LIST::check_(self) && LIST::check_(other)) { return util::compare(***(LIST &)self, ***(LIST &)other); }
+		
+		else { return util::compare((intptr_t)*self, (intptr_t)*other); }
 	};
 
 	t.tp_install = CLASS_INSTALLER(ListObject, t)

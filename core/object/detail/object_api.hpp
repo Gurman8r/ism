@@ -36,27 +36,23 @@ namespace ism
 		> NODISCARD bool is(O const & other) const noexcept { return derived().ptr() == other.ptr(); }
 		
 	public:
-		NODISCARD bool equal_to(ObjectAPI const & other) const noexcept { return compare(other) == 0; }
+		NODISCARD bool equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) == 0; }
 		
-		NODISCARD bool not_equal_to(ObjectAPI const & other) const noexcept { return compare(other) != 0; }
+		NODISCARD bool not_equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) != 0; }
 		
-		NODISCARD bool less(ObjectAPI const & other) const noexcept { return compare(other) < 0; }
+		NODISCARD bool less(ObjectAPI const & other) const noexcept { return rich_compare(other) < 0; }
 		
-		NODISCARD bool less_equal(ObjectAPI const & other) const noexcept { return compare(other) <= 0; }
+		NODISCARD bool less_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) <= 0; }
 		
-		NODISCARD bool greater(ObjectAPI const & other) const noexcept { return compare(other) > 0; }
+		NODISCARD bool greater(ObjectAPI const & other) const noexcept { return rich_compare(other) > 0; }
 		
-		NODISCARD bool greater_equal(ObjectAPI const & other) const noexcept { return compare(other) >= 0; }
+		NODISCARD bool greater_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) >= 0; }
 
 	private:
-		NODISCARD auto compare(ObjectAPI const & o) const
+		NODISCARD auto rich_compare(ObjectAPI const & o) const
 		{
 			Object * self{ derived().ptr() }, * other{ o.derived().ptr() };
-			
-			if (self == other)
-			{
-				return 0;
-			}
+			if (self == other) { return 0; }
 			else if (self && other)
 			{
 				TYPE type{ typeof(self) };
@@ -70,7 +66,6 @@ namespace ism
 					return util::compare(hf(self), hf(other));
 				}
 			}
-			
 			return CMP((intptr_t)self, (intptr_t)other);
 		}
 	};

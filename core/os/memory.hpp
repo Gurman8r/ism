@@ -1,7 +1,7 @@
 #ifndef _ISM_MEMORY_HPP_
 #define _ISM_MEMORY_HPP_
 
-#include <core/templates/type_traits.hpp>
+#include <core/templates/utility.hpp>
 
 #include <memory>
 #include <memory_resource>

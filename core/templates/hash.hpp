@@ -1,7 +1,7 @@
 #ifndef _ISM_HASH_HPP_
 #define _ISM_HASH_HPP_
 
-#include <core/templates/type_traits.hpp>
+#include <core/templates/utility.hpp>
 
 namespace ism
 {

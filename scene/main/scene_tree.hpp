@@ -54,10 +54,10 @@ namespace ism
 		NODISCARD auto get_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
 
 	public:
-		template <class Fn = void(*)(NODE &)
+		template <class Fn = void(*)(Ref<Node> &)
 		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false) noexcept {
 			if (!m_root) { return; }
-			fn((NODE &)m_root);
+			fn((Ref<Node> &)m_root);
 			m_root->for_nodes(fn, recursive, reverse);
 		}
 
