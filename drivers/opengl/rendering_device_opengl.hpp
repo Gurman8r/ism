@@ -187,27 +187,22 @@ namespace ism
 		{
 			IntRect viewport{};
 
-			struct _SetState
+			Vector<std::function<void()>> command_buffer{};
+
+			struct SetState
 			{
 				RID uniform_set{};
 				bool bound{ true };
 			};
 
-			struct _State
+			struct State
 			{
-				_SetState sets[32]{};
+				SetState sets[32]{};
 				uint32_t set_count{};
-
 				RID pipeline{};
 				RID pipeline_shader{};
 				RID vertex_array{};
 				RID index_array{};
-
-				void const * user_data{};
-				size_t user_data_size{};
-
-				bool scissor_enabled{};
-				IntRect scissor_rect{};
 			}
 			state{};
 		};
@@ -220,6 +215,7 @@ namespace ism
 		virtual void draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index) override;
 		virtual void draw_list_bind_vertex_array(DrawListID list, RID vertex_array) override;
 		virtual void draw_list_bind_index_array(DrawListID list, RID index_array) override;
+		virtual void draw_list_set_line_width(DrawListID list, float_t width) override;
 		virtual void draw_list_set_push_constant(DrawListID list, void const * data, size_t data_size) override;
 		virtual void draw_list_enable_scissor(DrawListID list, IntRect const & rect) override;
 		virtual void draw_list_disable_scissor(DrawListID list) override;

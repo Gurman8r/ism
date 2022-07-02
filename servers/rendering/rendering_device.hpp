@@ -764,6 +764,7 @@ namespace ism
 		virtual void draw_list_bind_uniform_set(DrawListID list, RID uniform_set, size_t index) = 0;
 		virtual void draw_list_bind_vertex_array(DrawListID list, RID vertex_array) = 0;
 		virtual void draw_list_bind_index_array(DrawListID list, RID index_array) = 0;
+		virtual void draw_list_set_line_width(DrawListID list, float_t width) = 0;
 		virtual void draw_list_set_push_constant(DrawListID list, void const * data, size_t size) = 0;
 		virtual void draw_list_enable_scissor(DrawListID list, IntRect const & rect) = 0;
 		virtual void draw_list_disable_scissor(DrawListID list) = 0;

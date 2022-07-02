@@ -16,7 +16,7 @@ namespace ism
 	public:
 		ConfigFile() noexcept {}
 
-		explicit ConfigFile(Path const & path);
+		explicit ConfigFile(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
 		virtual ~ConfigFile();
 

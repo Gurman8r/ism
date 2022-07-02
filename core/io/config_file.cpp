@@ -8,13 +8,6 @@ using namespace ism;
 
 OBJECT_EMBED(ConfigFile, t) {}
 
-ConfigFile::ConfigFile(Path const & path)
-{
-	set_path(path);
-
-	reload_from_file();
-}
-
 ConfigFile::~ConfigFile()
 {
 	if (m_ini) { memdelete(m_ini); m_ini = nullptr; }

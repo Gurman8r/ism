@@ -39,6 +39,7 @@ namespace ism
 
 	public:
 		EditorNode();
+
 		~EditorNode();
 
 		FORCE_INLINE static EditorNode * get_singleton() noexcept { return singleton; }
