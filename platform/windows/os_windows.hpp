@@ -20,11 +20,9 @@ namespace ism
 
 	public:
 		explicit OS_Windows(HINSTANCE hInstance);
-
 		virtual ~OS_Windows() override;
 
 		HINSTANCE get_instance() { return m_hinstance; }
-
 		void set_main_window(HWND value) { m_main_window = value; }
 
 	protected:

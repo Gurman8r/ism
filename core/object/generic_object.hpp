@@ -1,7 +1,7 @@
 #ifndef _ISM_GENERIC_OBJECT_HPP_
 #define _ISM_GENERIC_OBJECT_HPP_
 
-// PLACEHOLDER
+// NYI / PLACEHOLDER
 
 #include <core/object/type_object.hpp>
 
