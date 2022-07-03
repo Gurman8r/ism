@@ -86,13 +86,13 @@ static void _setup_pipeline(RID const shader)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMPL(EditorNode::singleton) {};
+MEMBER_IMPL(EditorNode::g_singleton) {};
 
 OBJECT_EMBED(EditorNode, t) {}
 
 EditorNode::EditorNode()
 {
-	ASSERT(!singleton); singleton = this;
+	ASSERT(!g_singleton); g_singleton = this;
 
 	subscribe<WindowKeyEvent, WindowMouseButtonEvent, WindowMousePositionEvent, WindowScrollEvent>();
 	
@@ -155,7 +155,7 @@ EditorNode::EditorNode()
 
 EditorNode::~EditorNode()
 {
-	ASSERT(this == singleton); SCOPE_EXIT(&) { singleton = nullptr; };
+	ASSERT(this == g_singleton); SCOPE_EXIT(&) { g_singleton = nullptr; };
 
 	if (material) { RENDERING_SERVER->material_destroy(material); }
 

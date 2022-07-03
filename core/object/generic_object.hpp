@@ -1,16 +1,16 @@
 #ifndef _ISM_GENERIC_OBJECT_HPP_
 #define _ISM_GENERIC_OBJECT_HPP_
 
-// WIP
+// PLACEHOLDER
 
 #include <core/object/type_object.hpp>
 
 namespace ism
 {
 	// generic object
-	class GenericObject : public Object
+	class GenericObject : public BaseObject
 	{
-		OBJECT_COMMON(GenericObject, Object);
+		OBJECT_COMMON(GenericObject, BaseObject);
 
 		friend class GENERIC;
 
@@ -18,10 +18,10 @@ namespace ism
 	};
 
 	// generic delete
-	template <> struct DefaultDelete<GenericObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<GenericObject> : DefaultDelete<BaseObject> {};
 
 	// generic check
-#define OBJECT_CHECK_GENERIC(o) (ism::isinstance<ism::GENERIC>(o))
+#define OBJECT_CHECK_GENERIC(o) (isinstance<GENERIC>(o))
 
 	// generic ref
 	class GENERIC : public Ref<GenericObject>

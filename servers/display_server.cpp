@@ -40,8 +40,12 @@ OBJECT_EMBED(WindowSizeEvent, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMPL(DisplayServer::singleton) {};
+MEMBER_IMPL(DisplayServer::g_singleton) {};
 
 OBJECT_EMBED(DisplayServer, t, TypeFlags_IsAbstract) {}
+
+DisplayServer::DisplayServer() { g_singleton = this; }
+
+DisplayServer::~DisplayServer() {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

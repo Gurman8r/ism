@@ -8,7 +8,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// Ref<Object> 
+	// Ref<BaseObject> 
 	template <class T
 	> class NOVTABLE Ref : public _Ref_Tag, public ObjectAPI<Ref<T>>
 	{
@@ -101,7 +101,7 @@ namespace ism
 
 		template <class U> void reset(Ref<U> const & value)
 		{
-			Object * other{ static_cast<Object *>(value.ptr()) };
+			BaseObject * other{ static_cast<BaseObject *>(value.ptr()) };
 			if (!other) { unref(); return; }
 			Ref r;
 			r.m_ptr = dynamic_cast<T *>(other);
@@ -145,7 +145,7 @@ namespace ism
 public:																									\
 	ALIAS(base_type) ism::Ref<value_type>;																\
 																										\
-	static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }		\
+	static bool check_(ism::Ref<BaseObject> const & o) { return o && (bool)(m_check(o)); }		\
 																										\
 	~m_class() noexcept = default;																		\
 																										\

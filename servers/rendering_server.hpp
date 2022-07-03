@@ -10,19 +10,19 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// high-level graphics api
-	class ISM_API RenderingServer : public Object
+	class ISM_API RenderingServer : public BaseObject
 	{
-		OBJECT_COMMON(RenderingServer, Object);
+		OBJECT_COMMON(RenderingServer, BaseObject);
 
-		static RenderingServer * singleton;
+		static RenderingServer * g_singleton;
 
 	protected:
-		explicit RenderingServer() noexcept { singleton = this; }
+		explicit RenderingServer();
 
 	public:
 		virtual ~RenderingServer() override;
 
-		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return g_singleton; }
 
 	public:
 		virtual void initialize() = 0;

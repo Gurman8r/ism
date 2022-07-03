@@ -2,6 +2,7 @@
 #define _ISM_RATIO_HPP_
 
 #include <core/templates/utility.hpp>
+
 #include <ratio>
 
 namespace ism

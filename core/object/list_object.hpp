@@ -7,9 +7,9 @@
 namespace ism
 {
 	// list object
-	class ISM_API ListObject : public Object
+	class ISM_API ListObject : public BaseObject
 	{
-		OBJECT_COMMON(ListObject, Object);
+		OBJECT_COMMON(ListObject, BaseObject);
 
 		friend class LIST;
 
@@ -125,7 +125,7 @@ namespace ism
 	};
 
 	// list delete
-	template <> struct DefaultDelete<ListObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<ListObject> : DefaultDelete<BaseObject> {};
 
 	// list check
 #define OBJECT_CHECK_LIST(o) (ism::typeof(o).has_feature(ism::TypeFlags_List_Subclass))
@@ -140,57 +140,57 @@ namespace ism
 		using iterator			= value_type::iterator;
 		using const_iterator	= value_type::const_iterator;
 
-		operator storage_type & () const { return m_ptr->operator storage_type & (); }
+		operator storage_type & () const { return VALIDATE(m_ptr)->operator storage_type & (); }
 
 		template <class Index = OBJ
-		> auto del(Index && i) const -> Error_ { return m_ptr->del(FWD(i)); }
+		> auto del(Index && i) const -> Error_ { return VALIDATE(m_ptr)->del(FWD(i)); }
 
-		void clear() const { m_ptr->clear(); }
+		void clear() const { VALIDATE(m_ptr)->clear(); }
 
-		void reserve(size_t count) const { m_ptr->reserve(count); }
+		void reserve(size_t count) const { VALIDATE(m_ptr)->reserve(count); }
 
-		void resize(size_t count) const { m_ptr->resize(count); }
-
-		template <class Value = OBJ
-		> void resize(size_t count, Value && value) const { m_ptr->resize(count, FWD(value)); }
+		void resize(size_t count) const { VALIDATE(m_ptr)->resize(count); }
 
 		template <class Value = OBJ
-		> auto append(Value && v) const -> OBJ & { return m_ptr->append(FWD(v)); }
+		> void resize(size_t count, Value && value) const { VALIDATE(m_ptr)->resize(count, FWD(value)); }
+
+		template <class Value = OBJ
+		> auto append(Value && v) const -> OBJ & { return VALIDATE(m_ptr)->append(FWD(v)); }
 
 		template <class Index = OBJ, class Value = OBJ
-		> void insert(Index && i, Value && v) { return m_ptr->insert(FWD(i), FWD(v)); }
+		> void insert(Index && i, Value && v) { return VALIDATE(m_ptr)->insert(FWD(i), FWD(v)); }
 
 		template <class Value = OBJ
-		> bool contains(Value && v) const { return m_ptr->contains(FWD(v)); }
+		> bool contains(Value && v) const { return VALIDATE(m_ptr)->contains(FWD(v)); }
 
 		template <class Value = OBJ
-		> auto find(Value && v) -> iterator { return m_ptr->find(FWD(v)); }
+		> auto find(Value && v) -> iterator { return VALIDATE(m_ptr)->find(FWD(v)); }
 
 		template <class Value = OBJ
-		> auto find(Value && v) const -> const_iterator { return m_ptr->find(FWD(v)); }
+		> auto find(Value && v) const -> const_iterator { return VALIDATE(m_ptr)->find(FWD(v)); }
 
 		template <class Value = OBJ
-		> auto lookup(Value && v) const -> OBJ { return m_ptr->lookup(FWD(v)); }
+		> auto lookup(Value && v) const -> OBJ { return VALIDATE(m_ptr)->lookup(FWD(v)); }
 
 		template <class Value = OBJ, class Defval = OBJ
-		> auto lookup(Value && v, Defval && dv) const -> OBJ { return m_ptr->lookup(FWD(v), FWD(dv)); }
+		> auto lookup(Value && v, Defval && dv) const -> OBJ { return VALIDATE(m_ptr)->lookup(FWD(v), FWD(dv)); }
 
 		template <class Index = OBJ
-		> auto operator[](Index && i) const -> OBJ { return m_ptr->operator[](FWD(i)); }
+		> auto operator[](Index && i) const -> OBJ { return VALIDATE(m_ptr)->operator[](FWD(i)); }
 
-		auto data() const { return m_ptr->data(); }
+		auto data() const { return VALIDATE(m_ptr)->data(); }
 
-		bool empty() const { return m_ptr->empty(); }
+		bool empty() const { return VALIDATE(m_ptr)->empty(); }
 
-		auto size() const { return m_ptr->size(); }
+		auto size() const { return VALIDATE(m_ptr)->size(); }
 
-		auto begin() -> iterator { return m_ptr->begin(); }
+		auto begin() -> iterator { return VALIDATE(m_ptr)->begin(); }
 
-		auto begin() const -> const_iterator { return m_ptr->begin(); }
+		auto begin() const -> const_iterator { return VALIDATE(m_ptr)->begin(); }
 
-		auto end() -> iterator { return m_ptr->end(); }
+		auto end() -> iterator { return VALIDATE(m_ptr)->end(); }
 
-		auto end() const -> const_iterator { return m_ptr->end(); }
+		auto end() const -> const_iterator { return VALIDATE(m_ptr)->end(); }
 	};
 }
 

@@ -10,31 +10,49 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// hash_map
-	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>
-	> ALIAS(HashMap) std::unordered_map<K, V, H, Eq, PolymorphicAllocator<Pair<K const, V>>>;
+	// hash map base
+	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
+	> ALIAS(_HashMapBase) std::unordered_map<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
 
-	// hash multi map
-	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>
-	> ALIAS(HashMultiMap) std::unordered_multimap<K, V, H, Eq, PolymorphicAllocator<Pair<K const, V>>>;
+	// hash map
+	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
+	> class HashMap : public _HashMapBase<K, V, H, E> {
+	public:
+		using base_type = typename _HashMapBase<K, V, H, E>;
+		using base_type::base_type;
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>, class T
-	> bool has(HashMap<K, V, H, Eq> const & m, T && value)
+	// multi hash map base
+	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
+	> ALIAS(_MultiHashMapBase) std::unordered_multimap<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
+
+	// multi hash map
+	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
+	> class MultiHashMap : public _MultiHashMapBase<K, V, H, E> {
+	public:
+		using base_type = typename _MultiHashMapBase<K, V, H, E>;
+		using base_type::base_type;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
+	> bool has(HashMap<K, V, H, E> const & m, T && value)
 	{
 		return m.find(FWD(value)) != m.end();
 	}
 
-	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>, class T
-	> V * getptr(HashMap<K, V, H, Eq> & m, T && value)
+	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
+	> V * getptr(HashMap<K, V, H, E> & m, T && value)
 	{
 		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
 		else { return nullptr; }
 	}
 
-	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>, class T
-	> V const * getptr(HashMap<K, V, H, Eq> const & m, T && value)
+	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
+	> V const * getptr(HashMap<K, V, H, E> const & m, T && value)
 	{
 		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
 		else { return nullptr; }

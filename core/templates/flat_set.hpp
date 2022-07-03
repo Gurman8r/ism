@@ -11,11 +11,11 @@ namespace ism
 		class	_Pr,	// comparator predicate type
 		bool	_Mt,	// true if multiple equivalent values are permitted
 		size_t	_Th		// search heuristic
-	> struct basic_flat_set
+	> struct BasicFlatSet
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using self_type			= typename basic_flat_set<_Ty, _Pr, _Mt, _Th>;
+		using self_type			= typename BasicFlatSet<_Ty, _Pr, _Mt, _Th>;
 		using value_type		= typename _Ty;
 		using compare_type		= typename _Pr;
 		using allocator_type	= typename PolymorphicAllocator<byte>;
@@ -43,42 +43,42 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		basic_flat_set(allocator_type alloc = {}) noexcept
+		BasicFlatSet(allocator_type alloc = {}) noexcept
 			: m_data{ alloc }
 		{
 		}
 
-		basic_flat_set(init_type value, allocator_type alloc = {})
+		BasicFlatSet(init_type value, allocator_type alloc = {})
 			: m_data{ value, alloc }
 		{
 			this->impl_sort();
 		}
 
 		template <class It
-		> basic_flat_set(It first, It last, allocator_type alloc = {})
+		> BasicFlatSet(It first, It last, allocator_type alloc = {})
 			: m_data{ first, last, alloc }
 		{
 			this->impl_sort();
 		}
 
-		basic_flat_set(storage_type const & value, allocator_type alloc = {})
+		BasicFlatSet(storage_type const & value, allocator_type alloc = {})
 			: m_data{ value, alloc }
 		{
 			this->impl_sort();
 		}
 
-		basic_flat_set(storage_type && value, allocator_type alloc = {}) noexcept
+		BasicFlatSet(storage_type && value, allocator_type alloc = {}) noexcept
 			: m_data{ std::move(value), alloc }
 		{
 			this->impl_sort();
 		}
 
-		basic_flat_set(self_type const & value, allocator_type alloc = {})
+		BasicFlatSet(self_type const & value, allocator_type alloc = {})
 			: m_data{ value.m_data, alloc }
 		{
 		}
 
-		basic_flat_set(self_type && value, allocator_type alloc = {}) noexcept
+		BasicFlatSet(self_type && value, allocator_type alloc = {}) noexcept
 			: m_data{ std::move(value.m_data), alloc }
 		{
 		}
@@ -498,10 +498,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class _Ty, class _Pr = Less<_Ty>, size_t _Th = 42
-	> ALIAS(FlatSet) basic_flat_set<_Ty, _Pr, false, _Th>;
+	> ALIAS(FlatSet) BasicFlatSet<_Ty, _Pr, false, _Th>;
 
 	template <class _Ty, class _Pr = Less<_Ty>, size_t _Th = 42
-	> ALIAS(FlatMultiset) basic_flat_set<_Ty, _Pr, true, _Th>;
+	> ALIAS(FlatMultiset) BasicFlatSet<_Ty, _Pr, true, _Th>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

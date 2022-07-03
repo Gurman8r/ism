@@ -8,9 +8,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// renderer storage
-	class ISM_API RendererStorage : public Object
+	class ISM_API RendererStorage : public BaseObject
 	{
-		OBJECT_COMMON(RendererStorage, Object);
+		OBJECT_COMMON(RendererStorage, BaseObject);
 
 		friend class RenderingServerDefault;
 

@@ -1,16 +1,16 @@
 #ifndef _ISM_TUPLE_OBJECT_HPP_
 #define _ISM_TUPLE_OBJECT_HPP_
 
-// WIP
+// PLACEHOLDER
 
 #include <core/object/type_object.hpp>
 
 namespace ism
 {
 	// tuple object
-	class TupleObject : public Object
+	class TupleObject : public BaseObject
 	{
-		OBJECT_COMMON(TupleObject, Object);
+		OBJECT_COMMON(TupleObject, BaseObject);
 
 		friend class TUPLE;
 
@@ -18,7 +18,7 @@ namespace ism
 	};
 
 	// tuple delete
-	template <> struct DefaultDelete<TupleObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<TupleObject> : DefaultDelete<BaseObject> {};
 
 	// tuple check
 #define OBJECT_CHECK_TUPLE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Tuple_Subclass))

@@ -3,11 +3,11 @@
 
 using namespace ism;
 
-MEMBER_IMPL(Internals::singleton) {};
+MEMBER_IMPL(Internals::g_singleton) {};
 
 Internals::Internals()
 {
-	singleton = this;
+	g_singleton = this;
 
 	modules = DICT::new_();
 }

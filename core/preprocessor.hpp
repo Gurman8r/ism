@@ -55,7 +55,7 @@
 
 // sentinal
 #define SENTINAL \
-		{}
+		{0}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -156,7 +156,7 @@ namespace ism::impl
 
 // scope enter ex
 #define SCOPE_ENTER_EX(...) \
-		(::ism::impl::OnScopeEnterTag{}) + [##__VA_ARGS__]() noexcept -> void
+		(ism::impl::OnScopeEnterTag{}) + [##__VA_ARGS__]() noexcept -> void
 
 // scope enter
 #define SCOPE_ENTER(...) \
@@ -187,7 +187,7 @@ namespace ism::impl
 
 // scope exit ex
 #define SCOPE_EXIT_EX(...) \
-		(::ism::impl::OnScopeExitTag{}) + [##__VA_ARGS__]() noexcept -> void
+		(ism::impl::OnScopeExitTag{}) + [##__VA_ARGS__]() noexcept -> void
 
 // scope exit
 #define SCOPE_EXIT(...) \

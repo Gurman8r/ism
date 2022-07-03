@@ -5,9 +5,9 @@
 
 namespace ism
 {
-	class ISM_API EditorCamera : public Object
+	class ISM_API EditorCamera : public BaseObject
 	{
-		OBJECT_COMMON(EditorCamera, Object);
+		OBJECT_COMMON(EditorCamera, BaseObject);
 
 		Mat4		m_proj;
 		bool		m_is_ortho;

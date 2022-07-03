@@ -55,18 +55,18 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API TextServer : public Object
+	class ISM_API TextServer : public BaseObject
 	{
-		OBJECT_COMMON(TextServer, Object);
+		OBJECT_COMMON(TextServer, BaseObject);
 
-		static TextServer * singleton;
+		static TextServer * g_singleton;
 
 	public:
 		explicit TextServer();
 
-		virtual ~TextServer();
+		virtual ~TextServer() override;
 
-		FORCE_INLINE static TextServer * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static TextServer * get_singleton() noexcept { return g_singleton; }
 
 	public:
 		/* FONT API */

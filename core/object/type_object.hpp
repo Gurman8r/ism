@@ -9,7 +9,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type object
-	class ISM_API TypeObject : public Object
+	class ISM_API TypeObject : public BaseObject
 	{
 	private:
 		friend class TYPE;
@@ -17,7 +17,7 @@ namespace ism
 		friend class EmbedObjectClassHelper<TypeObject>;
 		friend struct DefaultDelete<TypeObject>;
 
-		static constexpr StringView __class_static{ "TypeObject" };
+		static constexpr StringView g_name_static{ "TypeObject" };
 
 		static TypeObject g_type_static;
 
@@ -31,7 +31,7 @@ namespace ism
 		virtual TYPE _get_typev() const noexcept override;
 
 	public:
-		static constexpr StringView get_class_static() noexcept { return __class_static; }
+		static constexpr StringView get_class_static() noexcept { return g_name_static; }
 
 		static TYPE get_type_static() noexcept;
 
@@ -43,10 +43,10 @@ namespace ism
 			tp_name = name;
 			tp_size = sizeof(T);
 			tp_flags = flags;
-			tp_base = ism::baseof<T>();
-			tp_del = (delfunc)ism::memdelete<T>;
+			tp_base = baseof<T>();
+			tp_del = (delfunc)memdelete<T>;
 			tp_install = (installerfunc)[](TYPE t) -> TYPE { return t; };
-			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return ism::Hasher<intptr_t>{}((intptr_t)*o); };
+			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return Hasher<intptr_t>{}((intptr_t)*o); };
 			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> int32_t { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
 			if constexpr (std::is_default_constructible_v<T>) {
@@ -140,7 +140,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type delete
-	template <> struct DefaultDelete<TypeObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<TypeObject> : DefaultDelete<BaseObject> {};
 
 	// type check
 #define OBJECT_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))

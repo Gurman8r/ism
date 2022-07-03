@@ -30,10 +30,10 @@ namespace ism
 	};
 
 	// method delete
-	template <> struct DefaultDelete<MethodObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<MethodObject> : DefaultDelete<BaseObject> {};
 
 	// method check
-#define OBJECT_CHECK_METHOD(o) (ism::isinstance<ism::METHOD>(o))
+#define OBJECT_CHECK_METHOD(o) (isinstance<METHOD>(o))
 
 	// method ref
 	class METHOD : public Ref<MethodObject>

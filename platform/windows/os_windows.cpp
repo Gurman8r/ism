@@ -57,17 +57,17 @@ String OS_Windows::get_stdin_string(bool block)
 	return {};
 }
 
-String OS_Windows::get_environment(String const & key) const
+String OS_Windows::get_env(String const & key) const
 {
 	return String{};
 }
 
-bool OS_Windows::has_environment(String const & key) const
+bool OS_Windows::has_env(String const & key) const
 {
 	return false;
 }
 
-bool OS_Windows::set_environment(String const & key, String const & value) const
+bool OS_Windows::set_env(String const & key, String const & value) const
 {
 	return false;
 }

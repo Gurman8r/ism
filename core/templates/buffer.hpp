@@ -6,8 +6,8 @@
 #include <core/templates/vector.hpp>
 #include <core/string/basic_string.hpp>
 
-#ifndef DYNAMICBUFFER_VPRINTF_STRING_SIZE
-#define DYNAMICBUFFER_VPRINTF_STRING_SIZE 1024
+#ifndef DYNAMICBUFFER_PRINTV_STRING_SIZE
+#define DYNAMICBUFFER_PRINTV_STRING_SIZE 1024
 #endif
 
 // dynamic buffer
@@ -204,9 +204,9 @@ namespace ism
 	public:
 		self_type & printv(size_t const index, cstring fmt, va_list args)
 		{
-			char str[DYNAMICBUFFER_VPRINTF_STRING_SIZE]{};
-			if (int32_t const len{ std::vsnprintf(str, sizeof(str), fmt, args) }
-			; 0 < len) { do_write(index, str, (size_t)len); }
+			char s[DYNAMICBUFFER_PRINTV_STRING_SIZE]{};
+			if (int32_t const n{ std::vsnprintf(s, sizeof(s), fmt, args) }
+			; 0 < n) { do_write(index, s, (size_t)n); }
 			return (*this);
 		}
 

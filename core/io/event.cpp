@@ -39,7 +39,7 @@ OBJECT_EMBED(EventDelegate<Event>, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMPL(EventBus::singleton) {};
+MEMBER_IMPL(EventBus::g_singleton) {};
 
 OBJECT_EMBED(EventBus, t) {}
 

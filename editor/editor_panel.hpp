@@ -11,9 +11,9 @@
 namespace ism
 {
 	// base class for editor windows
-	class ISM_API EditorPanel : public Object
+	class ISM_API EditorPanel : public BaseObject
 	{
-		OBJECT_COMMON(EditorPanel, Object);
+		OBJECT_COMMON(EditorPanel, BaseObject);
 
 		cstring				m_name;
 		bool				m_is_open;

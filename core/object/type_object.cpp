@@ -10,7 +10,9 @@ void TypeObject::initialize_class()
 	static SCOPE_ENTER(&)
 	{
 		INTERNALS->add_class(&g_type_static);
+
 		ASSERT(g_type_static.tp_install);
+
 		ASSERT(g_type_static.tp_install(&g_type_static));
 	};
 }
@@ -26,19 +28,19 @@ TYPE TypeObject::get_type_static() noexcept { return &g_type_static; }
 static MemberDef type_members[]
 {
 	{"__dictoffset__", DataType_SSizeT, offsetof(TypeObject, tp_dictoffset) },
-	{/* sentinal */}
+	SENTINAL
 };
 
 static MethodDef type_methods[]
 {
 	{ "", binaryfunc{} },
-	{/* sentinal */}
+	SENTINAL
 };
 
 static GetSetDef type_getsets[]
 {
 	{ "", getter{}, setter{} },
-	{/* sentinal */}
+	SENTINAL
 };
 
 OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
@@ -47,11 +49,17 @@ OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
 
 	t.tp_vectorcalloffset = offsetof(TypeObject, tp_vectorcall);
 
+	t.tp_members = type_members;
+	
+	t.tp_methods = type_methods;
+
+	t.tp_getsets = type_getsets;
+
 	t.tp_getattro = (getattrofunc)&TypeObject::type_getattro;
 
 	t.tp_setattro = (setattrofunc)&TypeObject::type_setattro;
 
-	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return ism::hash(TYPE(self)->tp_name); };
+	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return hash(TYPE(self)->tp_name); };
 
 	t.tp_repr = (reprfunc)[](OBJ self) -> STR { return STR(TYPE(self)->tp_name); };
 
@@ -68,7 +76,7 @@ OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
 	{
 		return t
 
-			.def_static("__instancecheck__", [](OBJ const & obj, OBJ const & type) { return ism::isinstance(obj, type); })
+			.def_static("__instancecheck__", [](OBJ const & obj, OBJ const & type) { return isinstance(obj, type); })
 
 			.def("__contains__", [](TypeObject const & self, OBJ const & value) { return DICT(self.tp_dict).contains(value); })
 
@@ -316,7 +324,7 @@ Error_ TypeObject::update_slot(STR const & name)
 	} break;
 
 	case "__del__"_hash: {
-		tp_del = (delfunc)[](Object * obj) -> void {
+		tp_del = (delfunc)[](BaseObject * obj) -> void {
 			STR_IDENTIFIER(__del__);
 			if (OBJ f{ typeof(obj).lookup(&ID___del__) }) { /* TODO */ }
 		};
@@ -431,7 +439,7 @@ Error_ TypeObject::type_setattro(TYPE type, OBJ name, OBJ value)
 	{
 		type->modified();
 
-		if (ism::is_dunder_name(name))
+		if (is_dunder_name(name))
 		{
 			err = type->update_slot(name);
 		}

@@ -4,13 +4,13 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMPL(OS::singleton) {};
+MEMBER_IMPL(OS::g_singleton) {};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 OS::OS()
 {
-	singleton = this;
+	g_singleton = this;
 
 	Vector<Logger *> temp{};
 	temp.push_back(memnew(StdLogger));
@@ -38,16 +38,16 @@ void OS::add_logger(Logger * value)
 	}
 }
 
-void OS::set_cmdline(cstring exepath, Vector<String> const & args)
-{
-	m_exepath = exepath;
-	m_cmdline = args;
-}
-
 void OS::set_logger(CompositeLogger * value)
 {
 	if (m_logger) { memdelete(m_logger); }
 	m_logger = value;
+}
+
+void OS::set_cmdline(cstring exepath, Vector<String> const & args)
+{
+	m_exepath = exepath;
+	m_cmdline = args;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -65,19 +65,14 @@ void OS::printf(cstring fmt, ...)
 	va_end(args);
 }
 
-void OS::print(cstring str, size_t size)
-{
-	printf("%.*s", size, str);
-}
-
 void OS::print(cstring str)
 {
-	print(str, std::strlen(str));
+	printf("%s", str);
 }
 
 void OS::print(String const & str)
 {
-	print(str.data(), str.size());
+	printf("%s.*", str.data(), str.size());
 }
 
 void OS::errorv(cstring fmt, va_list args)
@@ -93,19 +88,14 @@ void OS::errorf(cstring fmt, ...)
 	va_end(args);
 }
 
-void OS::error(cstring str, size_t size)
-{
-	errorf("%.*s", size, str);
-}
-
 void OS::error(cstring str)
 {
-	error(str, std::strlen(str));
+	errorf("%s", str);
 }
 
 void OS::error(String const & str)
 {
-	error(str.data(), str.size());
+	errorf("%s.*", str.data(), str.size());
 }
 
 void OS::error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)

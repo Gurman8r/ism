@@ -37,9 +37,9 @@ namespace ism
 	public:
 		virtual String get_name() const override;
 		virtual String get_stdin_string(bool block = true) override;
-		virtual String get_environment(String const & key) const override;
-		virtual bool has_environment(String const & key) const override;
-		virtual bool set_environment(String const & key, String const & value) const override;
+		virtual String get_env(String const & key) const override;
+		virtual bool has_env(String const & key) const override;
+		virtual bool set_env(String const & key, String const & value) const override;
 		virtual Path get_cwd() const override;
 		virtual Error_ set_cwd(Path const & path) override;
 		virtual Ref<MainLoop> get_main_loop() const override;

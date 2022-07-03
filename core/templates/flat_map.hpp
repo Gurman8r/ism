@@ -12,11 +12,11 @@ namespace ism
 		class	_Vt,	// value type
 		class	_Pr,	// key comparator predicate type
 		size_t	_Th		// search heuristic
-	> struct basic_flat_map
+	> struct BasicFlatMap
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using self_type			= typename basic_flat_map<_Kt, _Vt, _Pr, _Th>;
+		using self_type			= typename BasicFlatMap<_Kt, _Vt, _Pr, _Th>;
 		using key_type			= typename _Kt;
 		using value_type		= typename _Vt;
 		using compare_type		= typename _Pr;
@@ -72,12 +72,12 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		basic_flat_map(allocator_type alloc = {})
+		BasicFlatMap(allocator_type alloc = {})
 			: m_pair{ key_storage{ alloc }, value_storage{ alloc } }
 		{
 		}
 
-		basic_flat_map(Vector<key_type> && k, Vector<value_type> && v, allocator_type alloc = {}) noexcept
+		BasicFlatMap(Vector<key_type> && k, Vector<value_type> && v, allocator_type alloc = {}) noexcept
 			: self_type{ alloc }
 		{
 			for (size_t i = 0, imax = ML_min(k.size(), v.size()); i < imax; ++i)
@@ -86,19 +86,19 @@ namespace ism
 			}
 		}
 
-		basic_flat_map(init_type value, allocator_type alloc = {})
+		BasicFlatMap(init_type value, allocator_type alloc = {})
 			: self_type{ alloc }
 		{
 			this->assign(value);
 		}
 
-		basic_flat_map(self_type const & value, allocator_type alloc = {})
+		BasicFlatMap(self_type const & value, allocator_type alloc = {})
 			: self_type{ alloc }
 		{
 			this->assign(value);
 		}
 
-		basic_flat_map(self_type && value, allocator_type alloc = {}) noexcept
+		BasicFlatMap(self_type && value, allocator_type alloc = {}) noexcept
 			: self_type{ alloc }
 		{
 			this->swap(std::move(value));
@@ -594,7 +594,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class _Kt, class _Vt, class _Pr = Less<_Kt>, size_t _Th = 42
-	> ALIAS(FlatMap) basic_flat_map<_Kt, _Vt, _Pr, _Th>;
+	> ALIAS(FlatMap) BasicFlatMap<_Kt, _Vt, _Pr, _Th>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

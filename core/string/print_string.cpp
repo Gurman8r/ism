@@ -5,10 +5,10 @@ using namespace ism;
 
 void ism::print_line(String const & s)
 {
-	SYS->printf("%.*s\n", s.size(), s.data());
+	SYSTEM->printf("%.*s\n", s.size(), s.data());
 }
 
 void ism::print_error(String const & s)
 {
-	SYS->errorf("%.*s\n", s.size(), s.data());
+	SYSTEM->errorf("%.*s\n", s.size(), s.data());
 }

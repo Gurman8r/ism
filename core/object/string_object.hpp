@@ -7,9 +7,9 @@
 namespace ism
 {
 	// string object
-	class ISM_API StringObject : public Object
+	class ISM_API StringObject : public BaseObject
 	{
-		OBJECT_COMMON(StringObject, Object);
+		OBJECT_COMMON(StringObject, BaseObject);
 
 		friend class STR;
 
@@ -86,7 +86,7 @@ namespace ism
 	};
 
 	// string delete
-	template <> struct DefaultDelete<StringObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<StringObject> : DefaultDelete<BaseObject> {};
 
 	// string check
 #define OBJECT_CHECK_STR(o) (ism::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))
@@ -101,34 +101,34 @@ namespace ism
 		using iterator			= value_type::iterator;
 		using const_iterator	= value_type::const_iterator;
 
-		operator storage_type & () const { return m_ptr->operator storage_type & (); }
+		operator storage_type & () const { return VALIDATE(m_ptr)->operator storage_type & (); }
 
-		void reserve(size_t count) { m_ptr->reserve(count); }
+		void reserve(size_t count) { VALIDATE(m_ptr)->reserve(count); }
 
-		void resize(size_t count) { m_ptr->resize(count); }
+		void resize(size_t count) { VALIDATE(m_ptr)->resize(count); }
 
-		auto & string() const { return m_ptr->string(); }
+		auto & string() const { return VALIDATE(m_ptr)->string(); }
 
-		auto c_str() const { return m_ptr->c_str(); }
+		auto c_str() const { return VALIDATE(m_ptr)->c_str(); }
 
-		auto data() const { return m_ptr->data(); }
+		auto data() const { return VALIDATE(m_ptr)->data(); }
 
-		bool empty() const { return m_ptr->empty(); }
+		bool empty() const { return VALIDATE(m_ptr)->empty(); }
 
-		auto size() const { return m_ptr->size(); }
+		auto size() const { return VALIDATE(m_ptr)->size(); }
 
-		auto begin() -> iterator { return m_ptr->begin(); }
+		auto begin() -> iterator { return VALIDATE(m_ptr)->begin(); }
 
-		auto begin() const -> const_iterator { return m_ptr->begin(); }
+		auto begin() const -> const_iterator { return VALIDATE(m_ptr)->begin(); }
 
-		auto end() -> iterator { return m_ptr->end(); }
+		auto end() -> iterator { return VALIDATE(m_ptr)->end(); }
 
-		auto end() const -> const_iterator { return m_ptr->end(); }
+		auto end() const -> const_iterator { return VALIDATE(m_ptr)->end(); }
 
 		template <class T, class = std::enable_if_t<mpl::is_string_v<T>> // std::is_convertible_v<T, storage_type>
 		> STR & operator=(T && value) noexcept
 		{
-			if (m_ptr) { m_ptr->m_string = FWD(value); }
+			if (VALIDATE(m_ptr)) { VALIDATE(m_ptr)->m_string = FWD(value); }
 			else { instance(FWD(value)); }
 			return (*this);
 		}

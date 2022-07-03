@@ -15,7 +15,7 @@ private:																			\
 																					\
 	friend struct ism::DefaultDelete<m_class>;										\
 																					\
-	static constexpr ism::StringView __class_static{ TOSTR(m_class) };				\
+	static constexpr ism::StringView g_name_static{ TOSTR(m_class) };				\
 																					\
 	static ism::TypeObject g_type_static;											\
 																					\
@@ -53,7 +53,7 @@ public:																				\
 																					\
 	FORCE_INLINE static constexpr ism::StringView get_class_static() noexcept		\
 	{																				\
-		return m_class::__class_static;												\
+		return m_class::g_name_static;												\
 	}																				\
 																					\
 	FORCE_INLINE static ism::TYPE get_type_static() noexcept						\
@@ -66,24 +66,24 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // class embedding utility
-#define OBJECT_EMBED(m_class, m_var, ...)														\
-																								\
-	/* declare binder */																		\
-	template <> class ism::EmbedObjectClassHelper<m_class> final								\
-	{																							\
-	public: static void embed(ism::TypeObject &);												\
-	};																							\
-																								\
-	/* construct type object */																	\
-	MEMBER_IMPL(m_class::g_type_static) =														\
-																								\
+#define OBJECT_EMBED(m_class, m_var, ...)													\
+																							\
+	/* declare binder */																	\
+	template <> class ism::EmbedObjectClassHelper<m_class> final							\
+	{																						\
+	public: static void embed(ism::TypeObject &);											\
+	};																						\
+																							\
+	/* construct type object */																\
+	MEMBER_IMPL(m_class::g_type_static) =													\
+																							\
 	MAKE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
-																								\
-	+ ism::EmbedObjectClassHelper<m_class>::embed;												\
-																								\
-	/* implement binder function body */														\
-	void ism::EmbedObjectClassHelper<m_class>::embed(ism::TypeObject & m_var)					\
-																								\
+																							\
+	+ ism::EmbedObjectClassHelper<m_class>::embed;											\
+																							\
+	/* implement binder function body */													\
+	void ism::EmbedObjectClassHelper<m_class>::embed(ism::TypeObject & m_var)				\
+																							\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -92,18 +92,18 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// object object
-	class ISM_API Object : public ObjectAPI<Object>
+	// base object
+	class ISM_API BaseObject : public ObjectAPI<BaseObject>
 	{
 	private:
 		friend class OBJ;
 		friend class Internals;
-		friend class EmbedObjectClassHelper<Object>;
-		friend struct DefaultDelete<Object>;
-		friend bool predelete_handler(Object *);
-		friend void postinitialize_handler(Object *);
+		friend class EmbedObjectClassHelper<BaseObject>;
+		friend struct DefaultDelete<BaseObject>;
+		friend bool predelete_handler(BaseObject *);
+		friend void postinitialize_handler(BaseObject *);
 
-		static constexpr StringView __class_static{ "Object" };
+		static constexpr StringView g_name_static{ "BaseObject" };
 
 		static TypeObject g_type_static;
 
@@ -120,20 +120,20 @@ namespace ism
 
 		FORCE_INLINE virtual TYPE _get_typev() const noexcept;
 
-		explicit Object() noexcept;
+		explicit BaseObject() noexcept;
 
-		virtual void _postinitialize() {}
+		virtual void _postinitialize();
 
-		virtual bool _predelete() { return true; }
+		virtual bool _predelete();
 
-		virtual void on_reference() {}
+		virtual void _reference();
 
-		virtual void on_unreference() {}
+		virtual void _unreference();
 
 	public:
 		using base_type = typename void;
 
-		virtual ~Object();
+		virtual ~BaseObject();
 
 		bool init_ref();
 
@@ -145,7 +145,8 @@ namespace ism
 
 		bool has_references() const { return m_refcount_init.get() != 1; }
 
-		static constexpr StringView get_class_static() noexcept { return __class_static; }
+	public:
+		static constexpr StringView get_class_static() noexcept { return g_name_static; }
 
 		static TYPE get_type_static() noexcept;
 
@@ -159,28 +160,28 @@ namespace ism
 
 		template <class T> T cast() &&; // cast.hpp
 
-		Object * ptr() const noexcept { return const_cast<Object *>(this); } // :^]
+		BaseObject * ptr() const noexcept { return const_cast<BaseObject *>(this); } // :^]
 
 	public:
-		static OBJ generic_getattr(OBJ obj, OBJ name) noexcept;
-
 		static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
 
-		static Error_ generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept;
+		static OBJ generic_getattr(OBJ obj, OBJ name);
 
 		static Error_ generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
+
+		static Error_ generic_setattr(OBJ obj, OBJ name, OBJ value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// object delete
-	template <> struct DefaultDelete<Object>
+	template <> struct DefaultDelete<BaseObject>
 	{
 		template <class U> void operator()(U * ptr) const
 		{
 			if (!ptr) { return; }
 
-			Object * obj{ (Object *)ptr };
+			BaseObject * obj{ (BaseObject *)ptr };
 
 			TYPE type{ typeof(obj) };
 
@@ -190,13 +191,11 @@ namespace ism
 		}
 	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// no check
 #define OBJECT_NO_CHECK(o) (true)
 
 	// object ref
-	class OBJ : public Ref<Object>
+	class OBJ : public Ref<BaseObject>
 	{
 		REF_COMMON(OBJ, OBJECT_NO_CHECK);
 	};
@@ -207,9 +206,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline bool predelete_handler(Object * value) { return value->_predelete(); }
+	inline bool predelete_handler(BaseObject * value) { return value->_predelete(); }
 
-	inline void postinitialize_handler(Object * value) { value->_postinitialize(); }
+	inline void postinitialize_handler(BaseObject * value) { value->_postinitialize(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -258,11 +257,11 @@ namespace ism
 	}
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> Object * pointerof(T const & o) noexcept
+	> BaseObject * pointerof(T const & o) noexcept
 	{
 		if constexpr (std::is_pointer_v<std::decay_t<decltype(o)>>)
 		{
-			return (Object *)o;
+			return (BaseObject *)o;
 		}
 		else
 		{
@@ -368,9 +367,9 @@ namespace ism
 		{
 			return false;
 		}
-		else if (type->tp_getattro == Object::generic_getattr)
+		else if (type->tp_getattro == BaseObject::generic_getattr)
 		{
-			return Object::generic_getattr(obj, str_name).is_valid();
+			return BaseObject::generic_getattr(obj, str_name).is_valid();
 		}
 		else if (type->tp_getattro)
 		{

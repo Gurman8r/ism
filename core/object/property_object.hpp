@@ -7,9 +7,9 @@
 namespace ism
 {
 	// property object
-	class ISM_API PropertyObject : public Object
+	class ISM_API PropertyObject : public BaseObject
 	{
-		OBJECT_COMMON(PropertyObject, Object);
+		OBJECT_COMMON(PropertyObject, BaseObject);
 
 		friend class PROPERTY;
 
@@ -36,10 +36,10 @@ namespace ism
 	};
 
 	// property delete
-	template <> struct DefaultDelete<PropertyObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<PropertyObject> : DefaultDelete<BaseObject> {};
 
 	// property check
-#define OBJECT_CHECK_PROPERTY(o) (ism::isinstance<ism::PROPERTY>(o))
+#define OBJECT_CHECK_PROPERTY(o) (isinstance<PROPERTY>(o))
 
 	// property ref
 	class PROPERTY : public Ref<PropertyObject>
@@ -47,9 +47,9 @@ namespace ism
 		REF_COMMON(PROPERTY, OBJECT_CHECK_PROPERTY);
 
 	public:
-		OBJ get(OBJ const & self) const { return m_ptr->m_get(self); }
+		OBJ get(OBJ const & self) const { return VALIDATE(m_ptr)->m_get(self); }
 
-		Error_ set(OBJ const & self, OBJ const & value) const { return m_ptr->m_set(self, value), Error_None; }
+		Error_ set(OBJ const & self, OBJ const & value) const { return VALIDATE(m_ptr)->m_set(self, value), Error_None; }
 	};
 }
 

@@ -3,8 +3,6 @@
 
 #include <core/math/matrix.hpp>
 
-#include <gcem.hpp>
-
 #define GLM_FORCE_SIZE_T_LENGTH
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>

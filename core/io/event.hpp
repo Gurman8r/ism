@@ -57,7 +57,7 @@ private:																					\
 	OBJECT_COMMON(m_class, m_inherits);														\
 																							\
 public:																						\
-	enum : ism::EventID { ID = ism::hash(m_class::__class_static) };						\
+	enum : ism::EventID { ID = ism::hash(m_class::g_name_static) };						\
 																							\
 	virtual ism::EventID get_event_id() const override { return m_class::ID; }	\
 																							\
@@ -66,9 +66,9 @@ private:
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event handler
-	class ISM_API EventHandler : public Object
+	class ISM_API EventHandler : public BaseObject
 	{
-		OBJECT_COMMON(EventHandler, Object);
+		OBJECT_COMMON(EventHandler, BaseObject);
 
 		EventBus * const m_event_bus;
 		
@@ -201,11 +201,11 @@ private:
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event bus
-	class ISM_API EventBus : public Object
+	class ISM_API EventBus : public BaseObject
 	{
-		OBJECT_COMMON(EventBus, Object);
+		OBJECT_COMMON(EventBus, BaseObject);
 
-		static EventBus * singleton;
+		static EventBus * g_singleton;
 
 		int32_t m_next_handler_id{};
 		FlatMap<EventID, FlatSet<EventHandler *>> m_event_handlers{};
@@ -218,11 +218,11 @@ private:
 		auto next_handler_id() noexcept { return ++m_next_handler_id; }
 
 	public:
-		EventBus() noexcept { singleton = this; }
+		EventBus() noexcept { g_singleton = this; }
 
 		virtual ~EventBus() noexcept override = default;
 
-		FORCE_INLINE static EventBus * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static EventBus * get_singleton() noexcept { return g_singleton; }
 
 	public:
 		/* DISPATCH API */
@@ -334,7 +334,7 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event bus singleton
+	// event bus g_singleton
 #define BUS (ism::EventBus::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

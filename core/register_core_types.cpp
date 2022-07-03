@@ -8,7 +8,7 @@ using namespace ism;
 
 void ism::register_core_types()
 {
-	ASSERT(typeof<Object>().ready());
+	ASSERT(typeof<BaseObject>().ready());
 	ASSERT(typeof<TypeObject>().ready());
 	ASSERT(typeof<IntObject>().ready());
 	ASSERT(typeof<FloatObject>().ready());
@@ -22,11 +22,12 @@ void ism::register_core_types()
 	ASSERT(typeof<CppFunctionObject>().ready());
 	ASSERT(typeof<PropertyObject>().ready());
 	ASSERT(typeof<ModuleObject>().ready());
+	ASSERT(typeof<GenericObject>().ready());
 
 	INTERNALS->install_class
 	<
 		CppFunctionObject, // <- cppfunction must go first
-		Object,
+		BaseObject,
 		TypeObject,
 		IntObject,
 		FloatObject,
@@ -39,6 +40,7 @@ void ism::register_core_types()
 		MethodObject,
 		PropertyObject,
 		ModuleObject,
+		GenericObject,
 
 		Resource,
 		ConfigFile,

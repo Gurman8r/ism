@@ -7,9 +7,9 @@
 namespace ism
 {
 	// capsule object
-	class ISM_API CapsuleObject : public Object
+	class ISM_API CapsuleObject : public BaseObject
 	{
-		OBJECT_COMMON(CapsuleObject, Object);
+		OBJECT_COMMON(CapsuleObject, BaseObject);
 
 		friend class CAPSULE;
 
@@ -35,7 +35,7 @@ namespace ism
 		{
 			m_pointer = value;
 			m_context = closure;
-			m_closure = [](Object * obj)
+			m_closure = [](BaseObject * obj)
 			{
 				if (auto self{ dynamic_cast<CapsuleObject *>(obj) })
 				{
@@ -50,7 +50,7 @@ namespace ism
 		{
 			m_pointer = closure;
 			m_context = nullptr;
-			m_closure = (delfunc)[](Object * obj)
+			m_closure = (delfunc)[](BaseObject * obj)
 			{
 				if (auto self{ dynamic_cast<CapsuleObject *>(obj) })
 				{
@@ -63,10 +63,10 @@ namespace ism
 	};
 
 	// capsule delete
-	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<BaseObject> {};
 
 	// capsule check
-#define OBJECT_CHECK_CAPSULE(o) (ism::isinstance<ism::CAPSULE>(o))
+#define OBJECT_CHECK_CAPSULE(o) (isinstance<CAPSULE>(o))
 
 	// capsule ref
 	class CAPSULE : public Ref<CapsuleObject>
@@ -78,9 +78,9 @@ namespace ism
 		> operator T * () const { return get_pointer<T>(); }
 
 		template <class T = void
-		> auto get_pointer() const { return static_cast<T *>((void *)m_ptr->m_pointer); }
+		> auto get_pointer() const { return static_cast<T *>((void *)VALIDATE(m_ptr)->m_pointer); }
 
-		void set_pointer(void const * value) const { m_ptr->m_pointer = value; }
+		void set_pointer(void const * value) const { VALIDATE(m_ptr)->m_pointer = value; }
 	};
 }
 

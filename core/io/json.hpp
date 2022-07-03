@@ -12,7 +12,9 @@ namespace ism
 	ALIAS(Json) nlohmann::basic_json
 	<
 		std::map,
-		std::vector, std::string, bool, int64_t, uint64_t, double_t,
+		std::vector,
+		std::string,
+		bool, int64_t, uint64_t, double_t,
 		std::allocator,
 		nlohmann::adl_serializer,
 		std::vector<uint8_t>

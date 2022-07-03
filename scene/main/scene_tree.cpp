@@ -4,7 +4,7 @@
 
 using namespace ism;
 
-MEMBER_IMPL(SceneTree::singleton) {};
+MEMBER_IMPL(SceneTree::g_singleton) {};
 
 OBJECT_EMBED(SceneTree, t)
 {
@@ -23,7 +23,7 @@ OBJECT_EMBED(SceneTree, t)
 
 SceneTree::SceneTree(SceneSettings const & settings) : MainLoop{}
 {
-	if (singleton == nullptr) { singleton = this; }
+	if (g_singleton == nullptr) { g_singleton = this; }
 
 	m_root = memnew(Window);
 }
@@ -32,7 +32,7 @@ SceneTree::~SceneTree()
 {
 	memdelete(m_root);
 
-	if (singleton == this) { singleton = nullptr; }
+	if (g_singleton == this) { g_singleton = nullptr; }
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

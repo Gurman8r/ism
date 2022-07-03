@@ -443,19 +443,19 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API DisplayServer : public Object
+	class ISM_API DisplayServer : public BaseObject
 	{
-		OBJECT_COMMON(DisplayServer, Object);
+		OBJECT_COMMON(DisplayServer, BaseObject);
 
-		static DisplayServer * singleton;
+		static DisplayServer * g_singleton;
 
 	protected:
-		explicit DisplayServer() noexcept { singleton = this; }
+		explicit DisplayServer();
 		
 	public:
-		virtual ~DisplayServer() override {}
+		virtual ~DisplayServer() override;
 
-		FORCE_INLINE static DisplayServer * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static DisplayServer * get_singleton() noexcept { return g_singleton; }
 
 	public:
 		virtual VideoMode const & get_desktop_video_mode() const = 0;

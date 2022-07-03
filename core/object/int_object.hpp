@@ -12,9 +12,9 @@
 namespace ism
 {
 	// int object
-	class ISM_API IntObject : public Object
+	class ISM_API IntObject : public BaseObject
 	{
-		OBJECT_COMMON(IntObject, Object);
+		OBJECT_COMMON(IntObject, BaseObject);
 
 		friend class INT;
 
@@ -43,7 +43,7 @@ namespace ism
 	};
 
 	// int delete
-	template <> struct DefaultDelete<IntObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<IntObject> : DefaultDelete<BaseObject> {};
 
 	// int check
 #define OBJECT_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))
@@ -60,7 +60,7 @@ namespace ism
 		> INT(T const value) noexcept { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> operator T () const { return (T)(**m_ptr); }
+		> operator T () const { return (T)(**VALIDATE(m_ptr)); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> INT & operator=(T const value) noexcept

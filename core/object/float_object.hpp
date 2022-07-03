@@ -7,9 +7,9 @@
 namespace ism
 {
 	// float object
-	class ISM_API FloatObject : public Object
+	class ISM_API FloatObject : public BaseObject
 	{
-		OBJECT_COMMON(FloatObject, Object);
+		OBJECT_COMMON(FloatObject, BaseObject);
 
 		friend class FLT;
 
@@ -33,7 +33,7 @@ namespace ism
 	};
 
 	// float delete
-	template <> struct DefaultDelete<FloatObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<FloatObject> : DefaultDelete<BaseObject> {};
 
 	// float check
 #define OBJECT_CHECK_FLOAT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
@@ -50,7 +50,7 @@ namespace ism
 		> FLT(T const value) noexcept { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> operator T () const { return (T)(**m_ptr); }
+		> operator T () const { return (T)(**VALIDATE(m_ptr)); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> FLT & operator=(T const value) noexcept

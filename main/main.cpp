@@ -29,6 +29,7 @@
 
 #include <servers/rendering/rendering_server_default.hpp>
 
+#include <servers/audio_server.hpp>
 #include <servers/text_server.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -42,6 +43,7 @@ MEMBER_IMPL(Main::g_iterating) {};
 static Internals *			g_internals{};
 static EventBus *			g_bus{};
 static Input *				g_input{};
+static AudioServer *		g_audio{};
 static DisplayServer *		g_display{};
 static RenderingServer *	g_renderer{};
 static ImGuiContext *		g_imgui{};
@@ -51,7 +53,7 @@ static TextServer *			g_text{};
 
 Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	SYS->initialize();
+	SYSTEM->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -77,7 +79,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	//register_module_types();
 
-	//g_audio = memnew(AudioServer);
+	g_audio = memnew(AudioServer);
 	
 	register_driver_types();
 	
@@ -87,7 +89,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	register_server_singletons();
 	
-	SYS->set_cmdline(exepath, { argv, argv + argc });
+	SYSTEM->set_cmdline(exepath, { argv, argv + argc });
 
 	// event system
 	g_bus = memnew(EventBus);
@@ -106,40 +108,40 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 		WindowFlags_Default_Maximized & ~(WindowFlags_Doublebuffer)
 		}));
 	WindowID main_window{ g_display->get_current_context() };
-	g_display->window_set_char_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharEvent(x...)); });
-	g_display->window_set_char_mods_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharModsEvent(x...)); });
-	g_display->window_set_close_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCloseEvent(x...)); });
-	g_display->window_set_content_scale_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowContentScaleEvent(x...)); });
-	g_display->window_set_drop_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowDropEvent(x...)); });
-	g_display->window_set_focus_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFocusEvent(x...)); });
-	g_display->window_set_framebuffer_resize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFramebufferResizeEvent(x...)); });
-	g_display->window_set_iconify_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowIconifyEvent(x...)); });
-	g_display->window_set_key_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowKeyEvent(x...)); });
-	g_display->window_set_maximize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMaximizeEvent(x...)); });
-	g_display->window_set_mouse_button_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseButtonEvent(x...)); });
-	g_display->window_set_mouse_enter_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseEnterEvent(x...)); });
-	g_display->window_set_mouse_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMousePositionEvent(x...)); });
-	g_display->window_set_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowPositionEvent(x...)); });
-	g_display->window_set_refresh_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowRefreshEvent(x...)); });
-	g_display->window_set_scroll_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowScrollEvent(x...)); });
-	g_display->window_set_size_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowSizeEvent(x...)); });
-	g_bus->get_delegate<WindowKeyEvent>() += [&](WindowKeyEvent const & ev) {
+	g_display->window_set_char_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharEvent{ x... }); });
+	g_display->window_set_char_mods_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCharModsEvent{ x... }); });
+	g_display->window_set_close_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowCloseEvent{ x... }); });
+	g_display->window_set_content_scale_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowContentScaleEvent{ x... }); });
+	g_display->window_set_drop_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowDropEvent{ x... }); });
+	g_display->window_set_focus_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFocusEvent{ x... }); });
+	g_display->window_set_framebuffer_resize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowFramebufferResizeEvent{ x... }); });
+	g_display->window_set_iconify_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowIconifyEvent{ x... }); });
+	g_display->window_set_key_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowKeyEvent{ x... }); });
+	g_display->window_set_maximize_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMaximizeEvent{ x... }); });
+	g_display->window_set_mouse_button_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseButtonEvent{ x... }); });
+	g_display->window_set_mouse_enter_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMouseEnterEvent{ x... }); });
+	g_display->window_set_mouse_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowMousePositionEvent{ x... }); });
+	g_display->window_set_position_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowPositionEvent{ x... }); });
+	g_display->window_set_refresh_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowRefreshEvent{ x... }); });
+	g_display->window_set_scroll_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowScrollEvent{ x... }); });
+	g_display->window_set_size_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowSizeEvent{ x... }); });
+	g_bus->get_delegate<WindowKeyEvent>() += [](WindowKeyEvent const & ev) {
 		g_input->m_state.keys_down.write(ev.key, ev.action != InputAction_Release);
 		g_input->m_state.is_shift = g_input->m_state.keys_down[KeyCode_LeftShift] || g_input->m_state.keys_down[KeyCode_RightShift];
 		g_input->m_state.is_ctrl = g_input->m_state.keys_down[KeyCode_LeftCtrl] || g_input->m_state.keys_down[KeyCode_RightCtrl];
 		g_input->m_state.is_alt = g_input->m_state.keys_down[KeyCode_LeftAlt] || g_input->m_state.keys_down[KeyCode_RightAlt];
 		g_input->m_state.is_super = g_input->m_state.keys_down[KeyCode_LeftSuper] || g_input->m_state.keys_down[KeyCode_RightSuper];
 	};
-	g_bus->get_delegate<WindowCharEvent>() += [&](WindowCharEvent const & ev) {
+	g_bus->get_delegate<WindowCharEvent>() += [](WindowCharEvent const & ev) {
 		g_input->m_state.last_char = (char)ev.codepoint;
 	};
-	g_bus->get_delegate<WindowMouseButtonEvent>() += [&](WindowMouseButtonEvent const & ev) {
+	g_bus->get_delegate<WindowMouseButtonEvent>() += [](WindowMouseButtonEvent const & ev) {
 		g_input->m_state.mouse_down = ev.action != InputAction_Release;
 	};
-	g_bus->get_delegate<WindowMousePositionEvent>() += [&](WindowMousePositionEvent const & ev) {
+	g_bus->get_delegate<WindowMousePositionEvent>() += [](WindowMousePositionEvent const & ev) {
 		g_input->m_state.mouse_pos = { (float_t)ev.xpos, (float_t)ev.ypos };
 	};
-	g_bus->get_delegate<WindowScrollEvent>() += [&](WindowScrollEvent const & ev) {
+	g_bus->get_delegate<WindowScrollEvent>() += [](WindowScrollEvent const & ev) {
 		g_input->m_state.scroll = { (float_t)ev.xoffset, (float_t)ev.yoffset };
 	};
 
@@ -192,7 +194,7 @@ bool Main::start()
 #endif
 	}
 	
-	SYS->set_main_loop(main_loop);
+	SYSTEM->set_main_loop(main_loop);
 
 	main_loop->initialize();
 
@@ -225,7 +227,7 @@ bool Main::iteration()
 	SCOPE_EXIT(&) { g_input->m_state.scroll = {}; g_input->m_state.last_char = 0; };
 
 	ImGui_NewFrame();
-	if (SYS->get_main_loop()->process(delta_time)) { should_close = true; }
+	if (SYSTEM->get_main_loop()->process(delta_time)) { should_close = true; }
 	ImGui::Render();
 
 	RENDERING_DEVICE->draw_list_begin_for_screen(g_display->get_current_context());
@@ -247,8 +249,8 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	SYS->get_main_loop()->finalize();
-	SYS->delete_main_loop();
+	SYSTEM->get_main_loop()->finalize();
+	SYSTEM->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -262,9 +264,9 @@ void Main::cleanup()
 	unregister_server_types();
 	unregister_scene_types();
 
-	//memdelete(g_audio);
+	memdelete(g_audio);
 
-	SYS->finalize();
+	SYSTEM->finalize();
 
 	ImGui_Shutdown();
 	ImGui::DestroyContext(g_imgui);
@@ -281,7 +283,7 @@ void Main::cleanup()
 	unregister_core_types();
 
 	memdelete(g_internals);
-	SYS->finalize_core();
+	SYSTEM->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

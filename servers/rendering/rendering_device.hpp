@@ -9,19 +9,19 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// low-level graphics api
-	class ISM_API RenderingDevice : public Object
+	class ISM_API RenderingDevice : public BaseObject
 	{
-		OBJECT_COMMON(RenderingDevice, Object);
+		OBJECT_COMMON(RenderingDevice, BaseObject);
 
-		static RenderingDevice * singleton;
+		static RenderingDevice * g_singleton;
 
 	protected:
-		explicit RenderingDevice() noexcept { singleton = this; }
+		explicit RenderingDevice() noexcept { g_singleton = this; }
 
 	public:
 		virtual ~RenderingDevice() noexcept override = default;
 
-		FORCE_INLINE static RenderingDevice * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static RenderingDevice * get_singleton() noexcept { return g_singleton; }
 
 	public:
 		virtual void initialize() = 0;
@@ -262,7 +262,12 @@ namespace ism
 
 		static constexpr bool is_depth_stencil_format(DataFormat_ const f) noexcept
 		{
-			return f == DataFormat_D16_UNORM || f == DataFormat_X8_D24_UNORM_PACK32 || f == DataFormat_D32_SFLOAT || f == DataFormat_D16_UNORM_S8_UINT || f == DataFormat_D24_UNORM_S8_UINT || f == DataFormat_D32_SFLOAT_S8_UINT;
+			return f == DataFormat_D16_UNORM
+				|| f == DataFormat_X8_D24_UNORM_PACK32
+				|| f == DataFormat_D32_SFLOAT
+				|| f == DataFormat_D16_UNORM_S8_UINT
+				|| f == DataFormat_D24_UNORM_S8_UINT
+				|| f == DataFormat_D32_SFLOAT_S8_UINT;
 		}
 
 		enum BarrierMask_
@@ -311,14 +316,8 @@ namespace ism
 				}
 			};
 
-			uint32_t			stride{};
-			Vector<Attribute>	attributes{};
-
-			template <class It> VertexLayout(It first, It last) noexcept : attributes{ first, last } { update(); }
-			VertexLayout(std::initializer_list<Attribute> init) noexcept : attributes{ init } { update(); }
-			VertexLayout(Vector<Attribute> const & attributes) : attributes{ attributes } { update(); }
-			VertexLayout(Vector<Attribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
-			template <size_t N> VertexLayout(Attribute const (&arr)[N]) noexcept : attributes{ &arr[0], &arr[N] } { update(); }
+			uint32_t stride{};
+			Vector<Attribute> attributes{};
 
 			VertexLayout() noexcept : VertexLayout{
 				{ "Position"	, DataType_F32, 4 }, // Vec4f
@@ -326,7 +325,7 @@ namespace ism
 				{ "UV"			, DataType_F32, 4 }, // Vec4f
 				{ "Tangent"		, DataType_F32, 4 }, // Vec4f
 				{ "Bitangent"	, DataType_F32, 4 }, // Vec4f
-			}{}
+			} {}
 
 			void update()
 			{
@@ -338,6 +337,12 @@ namespace ism
 					stride += e.size;
 				}
 			}
+
+			template <class It> VertexLayout(It first, It last) noexcept : attributes{ first, last } { update(); }
+			VertexLayout(std::initializer_list<Attribute> init) noexcept : attributes{ init } { update(); }
+			VertexLayout(Vector<Attribute> const & attributes) : attributes{ attributes } { update(); }
+			VertexLayout(Vector<Attribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
+			template <size_t N> VertexLayout(Attribute const (&arr)[N]) noexcept : attributes{ &arr[0], &arr[N] } { update(); }
 		};
 
 		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) = 0;

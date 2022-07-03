@@ -26,14 +26,14 @@ namespace ism
 		friend class Node;
 		friend class Entity;
 
-		static SceneTree * singleton;
+		static SceneTree * g_singleton;
 
 	public:
 		explicit SceneTree(SceneSettings const & settings = {});
 
 		virtual ~SceneTree() override;
 
-		FORCE_INLINE static SceneTree * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static SceneTree * get_singleton() noexcept { return g_singleton; }
 
 	public:
 		virtual void initialize() override;
@@ -78,7 +78,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// scene tree singleton
+	// scene tree g_singleton
 #define SCENE_TREE (ism::SceneTree::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

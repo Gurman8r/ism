@@ -2,7 +2,7 @@
 #define _ISM_COMMON_HPP_
 
 #include <core/typedefs.hpp>
-#include <core/os/atomic.hpp>
+#include <core/os/safe_ref_count.hpp>
 #include <core/string/path.hpp>
 #include <core/string/print_string.hpp>
 #include <core/math/transform_2d.hpp>
@@ -21,7 +21,7 @@
 #endif
 
 #define FWD_OBJ(expr) \
-	(::ism::object_or_cast(FWD(expr)))
+	(ism::object_or_cast(FWD(expr)))
 
 #define STR_IDENTIFIER(m_name) \
 	static ism::StringObject CAT(ID_, m_name) { TOSTR(m_name) }
@@ -37,7 +37,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct _API_Tag { /* used to determine if type derives ObjectAPI<> */ };
+	// API
+
+	struct _API_Tag { /* used to determine if type derives ObjectAPI */ };
 	
 	template <class T
 	> constexpr bool is_api_v{ std::is_base_of_v<_API_Tag, mpl::intrinsic_t<T>> };
@@ -46,7 +48,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class Object;
+	// OBJECT
+
+	class BaseObject;
 	class TypeObject;
 	class IntObject;
 	class FloatObject;
@@ -63,11 +67,13 @@ namespace ism
 	class GenericObject;
 
 	template <class T
-	> constexpr bool is_base_object_v{ std::is_base_of_v<Object, mpl::intrinsic_t<T>> };
+	> constexpr bool is_base_object_v{ std::is_base_of_v<BaseObject, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct _Ref_Tag { /* used to determine if type derives Ref<> */ };
+	// REF
+
+	struct _Ref_Tag { /* used to determine if type derives Ref */ };
 
 	template <class T
 	> constexpr bool is_ref_v{ std::is_base_of_v<_Ref_Tag, mpl::intrinsic_t<T>> };
@@ -92,11 +98,16 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// ACCESSOR
+
 	template <class Policy> class Accessor;
-	namespace accessor_policies {
+
+	namespace accessor_policies
+	{
 		template <class I> struct AttrPolicy;
 		template <class I> struct ItemPolicy;
 	}
+
 	template <class I> ALIAS(AttrAccessor) Accessor<accessor_policies::AttrPolicy<I>>;
 	template <class I> ALIAS(ItemAccessor) Accessor<accessor_policies::ItemPolicy<I>>;
 
@@ -120,7 +131,7 @@ namespace ism
 
 	ALIAS(installerfunc)	TYPE(*)(TYPE type);
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
-	ALIAS(delfunc)			void(*)(Object * ptr);
+	ALIAS(delfunc)			void(*)(BaseObject * ptr);
 	ALIAS(cmpfunc)			int32_t(*)(OBJ lhs, OBJ rhs);
 	ALIAS(hashfunc)			hash_t(*)(OBJ obj);
 	ALIAS(lenfunc)			ssize_t(*)(OBJ obj);
@@ -154,8 +165,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(ReturnValuePolicy) int32_t;
-	enum ReturnPolicy_ : ReturnValuePolicy
+	ALIAS(ReturnPolicy) int32_t;
+	enum ReturnPolicy_ : ReturnPolicy
 	{
 		ReturnPolicy_Automatic,
 		ReturnPolicy_AutomaticReference,

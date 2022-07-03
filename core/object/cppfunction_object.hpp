@@ -148,10 +148,10 @@ namespace ism
 	};
 
 	// cppfunction delete
-	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<CppFunctionObject> : DefaultDelete<BaseObject> {};
 
 	// cppfunction check
-#define OBJECT_CHECK_CPPFUNCTION(o) (ism::isinstance<ism::CPP_FUNCTION>(o))
+#define OBJECT_CHECK_CPPFUNCTION(o) (isinstance<CPP_FUNCTION>(o))
 
 	// cppfunction ref
 	class CPP_FUNCTION : public Ref<CppFunctionObject>

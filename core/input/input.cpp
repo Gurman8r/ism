@@ -2,7 +2,7 @@
 
 using namespace ism;
 
-MEMBER_IMPL(Input::singleton) {};
+MEMBER_IMPL(Input::g_singleton) {};
 
 OBJECT_EMBED(Input, t)
 {

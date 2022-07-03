@@ -5,80 +5,91 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void Object::initialize_class()
+void BaseObject::initialize_class()
 {
 	static SCOPE_ENTER(&)
 	{
 		INTERNALS->add_class(&g_type_static);
+
 		ASSERT(g_type_static.tp_install);
+
 		ASSERT(g_type_static.tp_install(&g_type_static));
 	};
 }
 
-void Object::_initialize_classv() { initialize_class(); }
+void BaseObject::_initialize_classv() { initialize_class(); }
 
-Object::Object() noexcept { m_refcount.init(); m_refcount_init.init(); }
+void BaseObject::_postinitialize() {}
 
-Object::~Object() { m_type = nullptr; }
+bool BaseObject::_predelete() { return true; }
 
-bool Object::init_ref()
+void BaseObject::_reference() {}
+
+void BaseObject::_unreference() {}
+
+BaseObject::BaseObject() noexcept { m_refcount.init(); m_refcount_init.init(); }
+
+BaseObject::~BaseObject() { m_type = nullptr; }
+
+bool BaseObject::init_ref()
 {
 	if (reference())
 	{
 		if (!has_references() && m_refcount_init.unref())
 		{
-			unreference(); // first referencing is already 1, so compensate for the ref above
+			// first referencing is already 1, so compensate for the ref above
+			unreference();
 		}
 		return true;
 	}
 	return false;
 }
 
-bool Object::reference()
+bool BaseObject::reference()
 {
-	uint32_t rc_val{ m_refcount.refval() };
-	bool success{ rc_val != 0 };
-	if (success && rc_val <= 2 /* higher is not relevant */) { on_reference(); }
+	uint32_t const rc_val{ m_refcount.refval() };
+	bool const success{ rc_val != 0 };
+	if (success && rc_val <= 2 /* higher is not relevant */) { _reference(); }
 	return success;
 }
 
-bool Object::unreference()
+bool BaseObject::unreference()
 {
-	uint32_t rc_val{ m_refcount.unrefval() };
-	bool die{ rc_val == 0 };
-	if (rc_val <= 1 /* higher is not relevant */) { on_unreference(); }
+	uint32_t const rc_val{ m_refcount.unrefval() };
+	bool const die{ rc_val == 0 };
+	if (rc_val <= 1 /* higher is not relevant */) { _unreference(); }
 	return die;
 }
 
-TYPE Object::_get_typev() const noexcept { return get_type_static(); }
+TYPE BaseObject::_get_typev() const noexcept { return get_type_static(); }
 
-TYPE Object::get_type_static() noexcept { return &g_type_static; }
+TYPE BaseObject::get_type_static() noexcept { return &g_type_static; }
 
-TYPE Object::get_type() const noexcept { return ((!!m_type) || (m_type = _get_typev())), m_type; }
+TYPE BaseObject::get_type() const noexcept { return ((!!m_type) || (m_type = _get_typev())), m_type; }
 
-void Object::set_type(TYPE const & value) noexcept { m_type = value; }
+void BaseObject::set_type(TYPE const & value) noexcept { m_type = value; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(Object, t, TypeFlags_IsAbstract)
+OBJECT_EMBED(BaseObject, t, TypeFlags_IsAbstract)
 {
-	t.tp_getattro = (getattrofunc)&Object::generic_getattr;
+	t.tp_getattro = (getattrofunc)&BaseObject::generic_getattr;
 
-	t.tp_setattro = (setattrofunc)&Object::generic_setattr;
+	t.tp_setattro = (setattrofunc)&BaseObject::generic_setattr;
 
-	t.tp_install = CLASS_INSTALLER(Object, t)
+	t.tp_install = CLASS_INSTALLER(BaseObject, t)
 	{
 		return t
 
-			.def("init_ref", &Object::init_ref)
+			.def("init_ref", &BaseObject::init_ref)
 		
-			.def("reference", &Object::reference)
+			.def("reference", &BaseObject::reference)
 
-			.def("unreference", &Object::unreference)
+			.def("unreference", &BaseObject::unreference)
 
-			.def("get_ref_count", &Object::get_ref_count)
+			.def("get_ref_count", &BaseObject::get_ref_count)
 
-			.def("has_references", &Object::has_references)
+			.def("has_references", &BaseObject::has_references)
 
 			;
 	};
@@ -86,9 +97,7 @@ OBJECT_EMBED(Object, t, TypeFlags_IsAbstract)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJ Object::generic_getattr(OBJ obj, OBJ name) noexcept { return generic_getattr_with_dict(obj, name, nullptr); }
-
-OBJ Object::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
+OBJ BaseObject::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 {
 	TYPE type{ ism::typeof(obj) };
 
@@ -127,11 +136,14 @@ OBJ Object::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 	return nullptr;
 }
 
+OBJ BaseObject::generic_getattr(OBJ obj, OBJ name)
+{
+	return generic_getattr_with_dict(obj, name, nullptr);
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error_ Object::generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept { return generic_setattr_with_dict(obj, name, value, nullptr); }
-
-Error_ Object::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
+Error_ BaseObject::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 {
 	TYPE type{ typeof(obj) };
 
@@ -168,6 +180,11 @@ Error_ Object::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
 	{
 		return (((DICT &)dict)[name] = value), Error_None;
 	}
+}
+
+Error_ BaseObject::generic_setattr(OBJ obj, OBJ name, OBJ value)
+{
+	return generic_setattr_with_dict(obj, name, value, nullptr);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

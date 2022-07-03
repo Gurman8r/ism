@@ -7,9 +7,9 @@
 namespace ism
 {
 	// function object
-	class ISM_API FunctionObject : public Object
+	class ISM_API FunctionObject : public BaseObject
 	{
-		OBJECT_COMMON(FunctionObject, Object);
+		OBJECT_COMMON(FunctionObject, BaseObject);
 
 		friend class FUNCTION;
 
@@ -28,10 +28,10 @@ namespace ism
 	};
 
 	// function delete
-	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<BaseObject> {};
 
 	// function check
-#define OBJECT_CHECK_FUNCTION(o) (ism::isinstance<ism::FUNCTION>(o))
+#define OBJECT_CHECK_FUNCTION(o) (isinstance<FUNCTION>(o))
 
 	// function ref
 	class FUNCTION : public Ref<FunctionObject>
@@ -39,9 +39,9 @@ namespace ism
 		REF_COMMON(FUNCTION, OBJECT_CHECK_FUNCTION);
 
 	public:
-		OBJ cpp_function() const { return m_ptr->cpp_function(); }
+		OBJ cpp_function() const { return VALIDATE(m_ptr)->cpp_function(); }
 
-		bool is_cpp_function() const noexcept { return m_ptr->is_cpp_function(); }
+		bool is_cpp_function() const noexcept { return VALIDATE(m_ptr)->is_cpp_function(); }
 	};
 }
 

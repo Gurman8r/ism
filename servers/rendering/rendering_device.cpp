@@ -4,7 +4,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MEMBER_IMPL(RenderingDevice::singleton) {};
+MEMBER_IMPL(RenderingDevice::g_singleton) {};
 
 OBJECT_EMBED(RenderingDevice, t, TypeFlags_IsAbstract) {}
 

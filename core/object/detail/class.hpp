@@ -154,9 +154,9 @@ namespace ism
 
 	namespace impl
 	{
-		template <class T> struct ClassBinderHelper final
+		template <class T> struct ClassInstallerHelper final
 		{
-			constexpr ClassBinderHelper() noexcept = default;
+			constexpr ClassInstallerHelper() noexcept = default;
 
 			constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
 			{
@@ -167,7 +167,7 @@ namespace ism
 
 	// class binder helper
 #define CLASS_INSTALLER(m_class, m_var) \
-	(ism::impl::ClassBinderHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
+	(ism::impl::ClassInstallerHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

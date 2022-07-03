@@ -91,7 +91,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 	} break;
 	}
 
-	SYS->errorf(
+	SYSTEM->errorf(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -164,7 +164,7 @@ MAKE_ENUM_MAPPING(TO_GL, DataType_, uint32_t,
 	GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT, GL_UNSIGNED_INT64_ARB,
 	// F32, F64
 	GL_FLOAT, GL_DOUBLE,
-	// String, Object
+	// String, BaseObject
 	GL_NONE, GL_NONE);
 
 MAKE_ENUM_MAPPING(TO_GL, CompareOperator_, uint32_t,
@@ -760,7 +760,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderSta
 			glCheck(glDeleteObjectARB(obj));
 			glCheck(glDeleteProgramsARB(1, &s->handle));
 			memdelete(s);
-			SYS->error(String{ log_str, (size_t)log_len });
+			SYSTEM->error(String{ log_str, (size_t)log_len });
 			return nullptr;
 		}
 
@@ -778,7 +778,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderSta
 		glCheck(glGetInfoLogARB(s->handle, sizeof(log_str), &log_len, log_str));
 		glCheck(glDeleteProgramsARB(1, &s->handle));
 		memdelete(s);
-		SYS->error(String{ log_str, (size_t)log_len });
+		SYSTEM->error(String{ log_str, (size_t)log_len });
 		return nullptr;
 	}
 

@@ -19,7 +19,7 @@ namespace ism
 	template <class T
 	> class Vector : public _VectorBase<T> {
 	public:
-		using base_type = _VectorBase<T>;
+		using base_type = typename _VectorBase<T>;
 		using base_type::base_type;
 	};
 

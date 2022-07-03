@@ -3,15 +3,13 @@
 
 #include <core/io/resource.hpp>
 
-class INIReader;
-
 namespace ism
 {
 	class ISM_API ConfigFile : public Resource
 	{
 		OBJECT_COMMON(ConfigFile, Resource);
 
-		INIReader * m_ini;
+		RID m_ini;
 
 	public:
 		ConfigFile() noexcept {}
@@ -20,7 +18,7 @@ namespace ism
 
 		virtual ~ConfigFile();
 
-		virtual RID get_rid() const override { return (RID)m_ini; }
+		virtual RID get_rid() const override { return m_ini; }
 
 		virtual Error_ reload_from_file() override;
 

@@ -7,9 +7,9 @@
 namespace ism
 {
 	// module object
-	class ISM_API ModuleObject : public Object
+	class ISM_API ModuleObject : public BaseObject
 	{
-		OBJECT_COMMON(ModuleObject, Object);
+		OBJECT_COMMON(ModuleObject, BaseObject);
 
 		friend class MODULE;
 
@@ -26,7 +26,7 @@ namespace ism
 		> void add_object(cstring name, Value && value, bool overwrite = false)
 		{
 			STR str_name{ name };
-			ASSERT(overwrite || !ism::hasattr(this, str_name));
+			ASSERT(overwrite || !hasattr(this, str_name));
 			m_dict[str_name] = FWD(value);
 		}
 
@@ -37,7 +37,7 @@ namespace ism
 				FWD(func),
 				attr::name(name),
 				attr::scope(this),
-				attr::sibling(ism::getattr(this, name, nullptr)),
+				attr::sibling(getattr(this, name, nullptr)),
 				FWD(extra)... });
 			return add_object(name, cf, true), (*this);
 		}
@@ -51,10 +51,10 @@ namespace ism
 	};
 
 	// module delete
-	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<BaseObject> {};
 
 	// module check
-#define OBJECT_CHECK_MODULE(o) (ism::isinstance<ism::MODULE>(o))
+#define OBJECT_CHECK_MODULE(o) (isinstance<MODULE>(o))
 
 	// module ref
 	class MODULE : public Ref<ModuleObject>
@@ -63,18 +63,26 @@ namespace ism
 
 	public:
 		template <class Value = OBJ
-		> void add_object(cstring name, Value && value, bool overwrite = false) {
-			m_ptr->add_object(name, FWD(value), overwrite);
+		> void add_object(cstring name, Value && value, bool overwrite = false)
+		{
+			VALIDATE(m_ptr)->add_object(name, FWD(value), overwrite);
 		}
 
 		template <class Func, class ... Extra
-		> MODULE & def(cstring name, Func && func, Extra && ... extra) {
-			return m_ptr->def(name, FWD(func), FWD(extra)...), (*this);
+		> MODULE & def(cstring name, Func && func, Extra && ... extra)
+		{
+			return VALIDATE(m_ptr)->def(name, FWD(func), FWD(extra)...), (*this);
 		}
 
-		MODULE def_submodule(cstring name) { return m_ptr->def_submodule(name); }
+		MODULE def_submodule(cstring name)
+		{
+			return VALIDATE(m_ptr)->def_submodule(name);
+		}
 
-		void reload() { m_ptr->reload(); }
+		void reload()
+		{
+			VALIDATE(m_ptr)->reload();
+		}
 	};
 }
 

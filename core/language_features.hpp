@@ -144,26 +144,26 @@ static_assert((ARCHITECTURE == 32 || ARCHITECTURE == 64), "invalid architecture"
 
 #if _MSC_VER
 //	Visual Studio
-#	define CC_MSVC			_MSC_VER
+#	define CC_MSVC _MSC_VER
 
 #elif __clang__
 //	Clang / LLVM
-#	define CC_CLANG			__clang__
+#	define CC_CLANG __clang__
 
 #elif (__GNUC__ || __GNUG__) && !__clang__
 //	GCC
 #	ifdef __GNUC__
-#		define CC_GCC			__GNUC__
+#		define CC_GCC __GNUC__
 #	else
-#		define CC_GCC			__GNUG__
+#		define CC_GCC __GNUG__
 #	endif
 
 #elif __ICC || __INTEL_COMPILER
 //	Intel
 #	ifdef __ICC
-#		define COMPILER_INTEL		__ICC
+#		define COMPILER_INTEL __ICC
 #	else
-#		define COMPILER_INTEL		__INTEL_COMPILER
+#		define COMPILER_INTEL __INTEL_COMPILER
 #	endif
 
 #elif __MINGW32__ || __MINGW64__

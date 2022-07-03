@@ -7,9 +7,9 @@
 namespace ism
 {
 	// dict object
-	class ISM_API DictObject : public Object
+	class ISM_API DictObject : public BaseObject
 	{
-		OBJECT_COMMON(DictObject, Object);
+		OBJECT_COMMON(DictObject, BaseObject);
 
 		friend class DICT;
 
@@ -85,7 +85,7 @@ namespace ism
 	};
 
 	// dict delete
-	template <> struct DefaultDelete<DictObject> : DefaultDelete<Object> {};
+	template <> struct DefaultDelete<DictObject> : DefaultDelete<BaseObject> {};
 
 	// dict check
 #define OBJECT_CHECK_DICT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
@@ -102,47 +102,47 @@ namespace ism
 		using iterator			= value_type::iterator;
 		using const_iterator	= value_type::const_iterator;
 
-		operator storage_type & () const { return m_ptr->operator storage_type &(); }
+		operator storage_type & () const { return VALIDATE(m_ptr)->operator storage_type &(); }
 
-		void clear() const { m_ptr->clear(); }
+		void clear() const { VALIDATE(m_ptr)->clear(); }
 
-		void reserve(size_t count) const { m_ptr->reserve(count); }
+		void reserve(size_t count) const { VALIDATE(m_ptr)->reserve(count); }
 
 		template <class Index = OBJ
-		> auto del(Index && i) const -> Error_ { return m_ptr->del(FWD(i)); }
+		> auto del(Index && i) const -> Error_ { return VALIDATE(m_ptr)->del(FWD(i)); }
 
 		template <class Index = OBJ, class Value = OBJ
-		> bool insert(Index && i, Value && v) const { return m_ptr->insert(FWD(i), FWD(v)); }
+		> bool insert(Index && i, Value && v) const { return VALIDATE(m_ptr)->insert(FWD(i), FWD(v)); }
 
 		template <class Index = OBJ
-		> bool contains(Index && i) const { return m_ptr->contains(FWD(i)); }
+		> bool contains(Index && i) const { return VALIDATE(m_ptr)->contains(FWD(i)); }
 
 		template <class Index = OBJ
-		> auto find(Index && i) -> iterator { return m_ptr->find(FWD(i)); }
+		> auto find(Index && i) -> iterator { return VALIDATE(m_ptr)->find(FWD(i)); }
 
 		template <class Index = OBJ
-		> auto find(Index && i) const -> const_iterator { return m_ptr->find(FWD(i)); }
+		> auto find(Index && i) const -> const_iterator { return VALIDATE(m_ptr)->find(FWD(i)); }
 
 		template <class Index = OBJ
-		> auto lookup(Index && i) const -> OBJ { return m_ptr->lookup(FWD(i)); }
+		> auto lookup(Index && i) const -> OBJ { return VALIDATE(m_ptr)->lookup(FWD(i)); }
 
 		template <class Index = OBJ, class Defval = OBJ
-		> auto lookup(Index && i, Defval && dv) const -> OBJ { return m_ptr->lookup(FWD(i), FWD(dv)); }
+		> auto lookup(Index && i, Defval && dv) const -> OBJ { return VALIDATE(m_ptr)->lookup(FWD(i), FWD(dv)); }
 
 		template <class Index = OBJ
-		> auto operator[](Index && i) const -> OBJ & { return m_ptr->operator[](i); }
+		> auto operator[](Index && i) const -> OBJ & { return VALIDATE(m_ptr)->operator[](i); }
 
-		bool empty() const { return m_ptr->empty(); }
+		bool empty() const { return VALIDATE(m_ptr)->empty(); }
 
-		auto size() const { return m_ptr->size(); }
+		auto size() const { return VALIDATE(m_ptr)->size(); }
 
-		auto begin() -> iterator { return m_ptr->begin(); }
+		auto begin() -> iterator { return VALIDATE(m_ptr)->begin(); }
 
-		auto begin() const -> const_iterator { return m_ptr->begin(); }
+		auto begin() const -> const_iterator { return VALIDATE(m_ptr)->begin(); }
 
-		auto end() -> iterator { return m_ptr->end(); }
+		auto end() -> iterator { return VALIDATE(m_ptr)->end(); }
 
-		auto end() const -> const_iterator { return m_ptr->end(); }
+		auto end() const -> const_iterator { return VALIDATE(m_ptr)->end(); }
 	};
 }
 

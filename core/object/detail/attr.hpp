@@ -38,21 +38,21 @@ namespace ism::attr
 	};
 
 	// sibling
-	struct sibling { Object * value; sibling(Object * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
+	struct sibling { BaseObject * value; sibling(BaseObject * value) : value{ value } {} sibling(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<sibling> : process_attribute_default<sibling>
 	{
 		static void init(FunctionRecord & r, sibling && a) noexcept { r.sibling = a.value; }
 	};
 
 	// is_method
-	struct is_method { Object * value; is_method(Object * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
+	struct is_method { BaseObject * value; is_method(BaseObject * value) : value{ value } {} is_method(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<is_method> : process_attribute_default<is_method>
 	{
 		static void init(FunctionRecord & r, is_method && a) noexcept { r.is_method = true; r.scope = a.value; }
 	};
 
 	// scope
-	struct scope { Object * value; scope(Object * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
+	struct scope { BaseObject * value; scope(BaseObject * value) : value{ value } {} scope(OBJ value) : value{ *value } {} };
 	template <> struct process_attribute<scope> : process_attribute_default<scope>
 	{
 		static void init(FunctionRecord & r, scope && a) noexcept { r.scope = a.value; }

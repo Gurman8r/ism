@@ -70,22 +70,22 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// input
-	class ISM_API Input : public Object
+	class ISM_API Input : public BaseObject
 	{
-		OBJECT_COMMON(Input, Object);
+		OBJECT_COMMON(Input, BaseObject);
 
 		friend class Main;
 
-		static Input * singleton;
+		static Input * g_singleton;
 
 		InputState m_state{};
 
 	public:
-		explicit Input() noexcept { singleton = this; }
+		explicit Input() noexcept { g_singleton = this; }
 
 		virtual ~Input() override {}
 
-		FORCE_INLINE static Input * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static Input * get_singleton() noexcept { return g_singleton; }
 
 	public:
 		InputState const & get_state() const noexcept { return m_state; }
