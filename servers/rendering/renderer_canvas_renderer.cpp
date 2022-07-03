@@ -109,11 +109,11 @@ void RendererCanvasRenderer::prim_reserve(uint32_t index_count, uint32_t vertex_
 	Command2D & cmd{ m_cmd_buffer.emplace_back(Command2D{}) };
 	cmd.element_count += index_count;
 
-	uint32_t const old_vertex_buffer_size{ m_vertex_buffer.size() };
+	uint32_t const old_vertex_buffer_size{ (uint32_t)m_vertex_buffer.size() };
 	m_vertex_buffer.resize((size_t)(old_vertex_buffer_size + vertex_count));
 	m_vertex_write_ptr = m_vertex_buffer.data() + old_vertex_buffer_size;
 
-	uint32_t const old_index_buffer_size{ m_index_buffer.size() };
+	uint32_t const old_index_buffer_size{ (uint32_t)m_index_buffer.size() };
 	m_index_buffer.resize((size_t)(old_index_buffer_size + index_count));
 	m_index_write_ptr = m_index_buffer.data() + old_index_buffer_size;
 }
@@ -123,10 +123,10 @@ void RendererCanvasRenderer::prim_unreserve(uint32_t index_count, uint32_t verte
 	Command2D & cmd{ m_cmd_buffer.back() };
 	cmd.element_count -= index_count;
 
-	uint32_t const old_vertex_buffer_size{ m_vertex_buffer.size() };
+	uint32_t const old_vertex_buffer_size{ (uint32_t)m_vertex_buffer.size() };
 	m_vertex_buffer.resize((size_t)(old_vertex_buffer_size - vertex_count));
 
-	uint32_t const old_index_buffer_size{ m_index_buffer.size() };
+	uint32_t const old_index_buffer_size{ (uint32_t)m_index_buffer.size() };
 	m_index_buffer.resize((size_t)(old_index_buffer_size - index_count));
 }
 

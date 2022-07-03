@@ -96,23 +96,23 @@ namespace ism
 		void flip_horizontally();
 
 	public:
-		NODISCARD virtual RID get_rid() const override { return RID{}; }
+		virtual RID get_rid() const override { return RID{}; }
 
-		NODISCARD int32_t get_width() const noexcept { return m_width; }
+		int32_t get_width() const noexcept { return m_width; }
 
-		NODISCARD int32_t get_height() const noexcept { return m_height; }
+		int32_t get_height() const noexcept { return m_height; }
 
-		NODISCARD int32_t get_depth() const noexcept { return m_depth; }
+		int32_t get_depth() const noexcept { return m_depth; }
 
-		NODISCARD int32_t get_capacity() const noexcept { return m_width * m_height * m_depth; }
+		int32_t get_capacity() const noexcept { return m_width * m_height * m_depth; }
 
-		NODISCARD Format_ get_format() const noexcept { return m_format; }
+		Format_ get_format() const noexcept { return m_format; }
 
-		NODISCARD DynamicBuffer const & get_data() const noexcept { return m_pixels; }
+		DynamicBuffer const & get_data() const noexcept { return m_pixels; }
 
-		NODISCARD Color32 get_pixel(size_t index) const;
+		Color32 get_pixel(size_t index) const;
 
-		NODISCARD Color32 get_pixel(size_t x, size_t y) const noexcept { return get_pixel((x + y * m_width) * m_depth); }
+		Color32 get_pixel(size_t x, size_t y) const noexcept { return get_pixel((x + y * m_width) * m_depth); }
 
 		void set_pixel(size_t index, Color32 value);
 
@@ -121,7 +121,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr size_t get_image_depth(Image::Format_ image_format) noexcept
+	constexpr size_t get_image_depth(Image::Format_ image_format) noexcept
 	{
 		switch (image_format) {
 		case Image::Format_R8: return 1;

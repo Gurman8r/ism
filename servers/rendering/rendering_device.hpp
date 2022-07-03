@@ -21,7 +21,7 @@ namespace ism
 	public:
 		virtual ~RenderingDevice() noexcept override = default;
 
-		NODISCARD static RenderingDevice * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static RenderingDevice * get_singleton() noexcept { return singleton; }
 
 	public:
 		virtual void initialize() = 0;
@@ -305,7 +305,7 @@ namespace ism
 					, type		{ type }
 					, count		{ (uint32_t)count }
 					, normalized{ normalized }
-					, size		{ (uint32_t)ism::get_data_type_size(type) * count }
+					, size		{ (uint32_t)(ism::get_data_type_size(type) * count) }
 					, offset	{}
 				{
 				}
@@ -709,7 +709,7 @@ namespace ism
 			
 			Vector<Attachment> attachments{};
 
-			NODISCARD static ColorBlendState create_disabled(int32_t num_attachments = 1)
+			static ColorBlendState create_disabled(int32_t num_attachments = 1)
 			{
 				ColorBlendState temp{};
 				temp.attachments.reserve(num_attachments);
@@ -719,7 +719,7 @@ namespace ism
 				return temp;
 			}
 
-			NODISCARD static ColorBlendState create_blend(int32_t num_attachments = 1)
+			static ColorBlendState create_blend(int32_t num_attachments = 1)
 			{
 				ColorBlendState temp{};
 				temp.attachments.reserve(num_attachments);

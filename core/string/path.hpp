@@ -7,12 +7,12 @@ namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr bool is_slash(char c) noexcept
+	constexpr bool is_slash(char c) noexcept
 	{
 		return c == '/' || c == '\\';
 	}
 
-	NODISCARD constexpr bool is_drive_prefix(cstring first)
+	constexpr bool is_drive_prefix(cstring first)
 	{
 		// test if first points to a prefix of the form X:
 		return (first && *first)
@@ -21,12 +21,12 @@ namespace ism::util
 			&& (first[1] == ':');
 	}
 
-	NODISCARD constexpr bool has_drive_letter_prefix(cstring first, cstring last)
+	constexpr bool has_drive_letter_prefix(cstring first, cstring last)
 	{
 		return (last - first >= 2) && is_drive_prefix(first);
 	}
 
-	NODISCARD inline cstring find_root_name_end(cstring first, cstring last)
+	inline cstring find_root_name_end(cstring first, cstring last)
 	{
 		// attempt to parse [first, last) as a path and return the end of root-name if it exists; otherwise, first
 		if (last - first < 2) { return first; }
@@ -54,19 +54,19 @@ namespace ism::util
 		return first;
 	}
 
-	NODISCARD inline cstring find_relative_path(cstring first, cstring last)
+	inline cstring find_relative_path(cstring first, cstring last)
 	{
 		return std::find_if_not(find_root_name_end(first, last), last, is_slash);
 	}
 
-	NODISCARD inline cstring find_filename(cstring first, cstring last)
+	inline cstring find_filename(cstring first, cstring last)
 	{
 		auto const relative_path{ find_relative_path(first, last) };
 		while (relative_path != last && !is_slash(last[-1])) { --last; }
 		return last;
 	}
 
-	NODISCARD constexpr cstring find_extension(cstring filename, cstring ads)
+	constexpr cstring find_extension(cstring filename, cstring ads)
 	{
 		// find dividing point between stem and extension in a generic format filename consisting of [filename, ads)
 		auto extension{ ads };
@@ -110,14 +110,14 @@ namespace ism::util
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline StringView parse_root_name(StringView const value)
+	inline StringView parse_root_name(StringView const value)
 	{
 		auto const first{ value.data() };
 		auto const last{ first + value.size() };
 		return { first, static_cast<size_t>(find_root_name_end(first, last) - first) };
 	}
 
-	NODISCARD inline StringView parse_root_directory(StringView const value)
+	inline StringView parse_root_directory(StringView const value)
 	{
 		auto const first{ value.data() };
 		auto const last{ first + value.size() };
@@ -126,14 +126,14 @@ namespace ism::util
 		return { root_name_end, static_cast<size_t>(relative_path - root_name_end) };
 	}
 
-	NODISCARD inline StringView parse_root_path(StringView const value)
+	inline StringView parse_root_path(StringView const value)
 	{
 		auto const first{ value.data() };
 		auto const last{ first + value.size() };
 		return { first, static_cast<size_t>(find_relative_path(first, last) - first) };
 	}
 
-	NODISCARD inline StringView parse_relative_path(StringView const value)
+	inline StringView parse_relative_path(StringView const value)
 	{
 		auto const first{ value.data() };
 		auto const last{ first + value.size() };
@@ -141,7 +141,7 @@ namespace ism::util
 		return { relative_path, static_cast<size_t>(last - relative_path) };
 	}
 
-	NODISCARD inline StringView parse_parent_path(StringView const value)
+	inline StringView parse_parent_path(StringView const value)
 	{
 		auto const first{ value.data() };
 		auto last{ first + value.size() };
@@ -151,7 +151,7 @@ namespace ism::util
 		return { first, static_cast<size_t>(last - first) };
 	}
 
-	NODISCARD inline StringView parse_filename(StringView const value)
+	inline StringView parse_filename(StringView const value)
 	{
 		auto const first{ value.data() };
 		auto const last{ first + value.size() };
@@ -159,7 +159,7 @@ namespace ism::util
 		return { filename, static_cast<size_t>(last - filename) };
 	}
 
-	NODISCARD inline StringView parse_stem(StringView const value)
+	inline StringView parse_stem(StringView const value)
 	{
 		auto const first{ value.data() };
 		auto const last{ first + value.size() };
@@ -169,7 +169,7 @@ namespace ism::util
 		return { filename, static_cast<size_t>(extension - filename) };
 	}
 
-	NODISCARD inline StringView parse_extension(StringView const value)
+	inline StringView parse_extension(StringView const value)
 	{
 		auto const first{ value.data() };
 		auto const last{ first + value.size() };
@@ -237,96 +237,96 @@ namespace ism
 		self_type & swap(self_type & value) noexcept { return m_text.swap(value.m_text), (*this); }
 
 	public:
-		NODISCARD operator void * () const noexcept { return !m_text.empty() ? (void *)m_text.data() : nullptr; }
+		operator void * () const noexcept { return !m_text.empty() ? (void *)m_text.data() : nullptr; }
 
-		NODISCARD bool operator==(storage_type const & value) { return m_text == value; }
+		bool operator==(storage_type const & value) { return m_text == value; }
 
-		NODISCARD bool operator==(const_pointer value) { return m_text == value; }
+		bool operator==(const_pointer value) { return m_text == value; }
 
-		NODISCARD bool operator!=(storage_type const & value) { return m_text != value; }
+		bool operator!=(storage_type const & value) { return m_text != value; }
 
-		NODISCARD bool operator<(self_type const & value) { return m_text < value.m_text; }
+		bool operator<(self_type const & value) { return m_text < value.m_text; }
 
-		NODISCARD bool operator>(self_type const & value) { return m_text > value.m_text; }
+		bool operator>(self_type const & value) { return m_text > value.m_text; }
 
-		NODISCARD bool operator==(self_type const & value) { return m_text == value.m_text; }
+		bool operator==(self_type const & value) { return m_text == value.m_text; }
 
-		NODISCARD auto data() noexcept -> pointer { return m_text.data(); }
+		auto data() noexcept -> pointer { return m_text.data(); }
 
-		NODISCARD auto data() const noexcept -> const_pointer { return m_text.data(); }
+		auto data() const noexcept -> const_pointer { return m_text.data(); }
 
-		NODISCARD auto c_str() const noexcept -> const_pointer { return m_text.data(); }
+		auto c_str() const noexcept -> const_pointer { return m_text.data(); }
 
-		NODISCARD auto length() const noexcept -> size_t { return m_text.size(); }
+		auto length() const noexcept -> size_t { return m_text.size(); }
 
-		NODISCARD auto size() const noexcept -> size_t { return m_text.size(); }
+		auto size() const noexcept -> size_t { return m_text.size(); }
 
-		NODISCARD auto hash_code() const noexcept -> hash_t { return hash(m_text); }
+		auto hash_code() const noexcept -> hash_t { return hash(m_text); }
 
-		NODISCARD bool empty() const noexcept { return m_text.empty(); }
+		bool empty() const noexcept { return m_text.empty(); }
 
-		NODISCARD auto view() const noexcept -> view_type { return { m_text.data(), m_text.size() }; }
+		auto view() const noexcept -> view_type { return { m_text.data(), m_text.size() }; }
 
-		NODISCARD auto string() & noexcept -> storage_type & { return m_text; }
+		auto string() & noexcept -> storage_type & { return m_text; }
 
-		NODISCARD auto string() const & noexcept -> storage_type const & { return m_text; }
+		auto string() const & noexcept -> storage_type const & { return m_text; }
 
-		NODISCARD auto string() && noexcept -> storage_type && { return std::move(m_text); }
+		auto string() && noexcept -> storage_type && { return std::move(m_text); }
 
-		NODISCARD operator view_type () noexcept { return { m_text.data(), m_text.size() }; }
+		operator view_type () noexcept { return { m_text.data(), m_text.size() }; }
 
-		NODISCARD operator storage_type & () & noexcept { return m_text; }
+		operator storage_type & () & noexcept { return m_text; }
 		
-		NODISCARD operator storage_type const & () const & noexcept { return m_text; }
+		operator storage_type const & () const & noexcept { return m_text; }
 		
-		NODISCARD operator storage_type && () && noexcept { return std::move(m_text); }
+		operator storage_type && () && noexcept { return std::move(m_text); }
 
 	public:
-		NODISCARD auto root_name() const noexcept -> self_type { return util::parse_root_name(view()); }
+		auto root_name() const noexcept -> self_type { return util::parse_root_name(view()); }
 		
-		NODISCARD auto root_directory() const noexcept -> self_type { return util::parse_root_directory(view()); }
+		auto root_directory() const noexcept -> self_type { return util::parse_root_directory(view()); }
 		
-		NODISCARD auto root_path() const noexcept -> self_type { return util::parse_root_path(view()); }
+		auto root_path() const noexcept -> self_type { return util::parse_root_path(view()); }
 		
-		NODISCARD auto relative_path() const noexcept -> self_type { return util::parse_relative_path(view()); }
+		auto relative_path() const noexcept -> self_type { return util::parse_relative_path(view()); }
 		
-		NODISCARD auto parent_path() const noexcept -> self_type { return util::parse_parent_path(view()); }
+		auto parent_path() const noexcept -> self_type { return util::parse_parent_path(view()); }
 		
-		NODISCARD auto filename() const noexcept -> self_type { return util::parse_filename(view()); }
+		auto filename() const noexcept -> self_type { return util::parse_filename(view()); }
 		
-		NODISCARD auto stem() const noexcept -> self_type { return util::parse_stem(view()); }
+		auto stem() const noexcept -> self_type { return util::parse_stem(view()); }
 		
-		NODISCARD auto extension() const noexcept -> self_type { return util::parse_extension(view()); }
+		auto extension() const noexcept -> self_type { return util::parse_extension(view()); }
 
 	public:
-		NODISCARD bool has_root_name() const noexcept { return !util::parse_root_name(view()).empty(); }
+		bool has_root_name() const noexcept { return !util::parse_root_name(view()).empty(); }
 		
-		NODISCARD bool has_root_directory() const noexcept { return !util::parse_root_directory(view()).empty(); }
+		bool has_root_directory() const noexcept { return !util::parse_root_directory(view()).empty(); }
 		
-		NODISCARD bool has_root_path() const noexcept { return !util::parse_root_path(view()).empty(); }
+		bool has_root_path() const noexcept { return !util::parse_root_path(view()).empty(); }
 		
-		NODISCARD bool has_relative_path() const noexcept { return !util::parse_relative_path(view()).empty(); }
+		bool has_relative_path() const noexcept { return !util::parse_relative_path(view()).empty(); }
 		
-		NODISCARD bool has_parent_path() const noexcept { return !util::parse_parent_path(view()).empty(); }
+		bool has_parent_path() const noexcept { return !util::parse_parent_path(view()).empty(); }
 		
-		NODISCARD bool has_filename() const noexcept { return !util::parse_filename(view()).empty(); }
+		bool has_filename() const noexcept { return !util::parse_filename(view()).empty(); }
 		
-		NODISCARD bool has_stem() const noexcept { return !util::parse_stem(view()).empty(); }
+		bool has_stem() const noexcept { return !util::parse_stem(view()).empty(); }
 		
-		NODISCARD bool has_extension() const noexcept { return !util::parse_extension(view()).empty(); }
+		bool has_extension() const noexcept { return !util::parse_extension(view()).empty(); }
 
 	public:
-		NODISCARD auto begin() noexcept -> iterator { return m_text.begin(); }
+		auto begin() noexcept -> iterator { return m_text.begin(); }
 		
-		NODISCARD auto begin() const noexcept -> const_iterator { return m_text.begin(); }
+		auto begin() const noexcept -> const_iterator { return m_text.begin(); }
 		
-		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
+		auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
 
-		NODISCARD auto end() noexcept -> iterator { return m_text.end(); }
+		auto end() noexcept -> iterator { return m_text.end(); }
 		
-		NODISCARD auto end() const noexcept -> const_iterator { return m_text.end(); }
+		auto end() const noexcept -> const_iterator { return m_text.end(); }
 		
-		NODISCARD auto cend() const noexcept -> const_iterator { return m_text.cend(); }
+		auto cend() const noexcept -> const_iterator { return m_text.cend(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

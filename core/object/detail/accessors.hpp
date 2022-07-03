@@ -36,14 +36,14 @@ namespace ism
 			return (get_cache() = object_or_cast(value)), (*this);
 		}
 
-		NODISCARD auto ptr() const { return const_cast<Object *>(get_cache().ptr()); }
+		auto ptr() const { return const_cast<Object *>(get_cache().ptr()); }
 
-		template <class T> NODISCARD operator Ref<T>() const { return get_cache(); }
+		template <class T> operator Ref<T>() const { return get_cache(); }
 
-		template <class T> NODISCARD auto cast() const -> T { return get_cache().cast<T>(); }
+		template <class T> auto cast() const -> T { return get_cache().cast<T>(); }
 
 	protected:
-		NODISCARD obj_type & get_cache() const { return ((!!m_cache) || (m_cache = Policy::get(m_obj, m_key))), m_cache; }
+		obj_type & get_cache() const { return ((!!m_cache) || (m_cache = Policy::get(m_obj, m_key))), m_cache; }
 
 	private:
 		obj_type m_obj;

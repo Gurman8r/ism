@@ -37,15 +37,15 @@ namespace ism
 			return (*this);
 		}
 
-		NODISCARD uint32_t get_advance() const noexcept { return m_advance; }
+		uint32_t get_advance() const noexcept { return m_advance; }
 
-		NODISCARD virtual RID get_rid() const override { return m_texture; }
+		virtual RID get_rid() const override { return m_texture; }
 
-		NODISCARD virtual int32_t get_width() const override { return m_bounds.width(); }
+		virtual int32_t get_width() const override { return m_bounds.width(); }
 
-		NODISCARD virtual int32_t get_height() const override { return m_bounds.height(); }
+		virtual int32_t get_height() const override { return m_bounds.height(); }
 
-		NODISCARD virtual Ref<Image> get_image() const override;
+		virtual Ref<Image> get_image() const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -66,7 +66,7 @@ namespace ism
 
 		virtual ~TextServer();
 
-		NODISCARD static TextServer * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static TextServer * get_singleton() noexcept { return singleton; }
 
 	public:
 		/* FONT API */

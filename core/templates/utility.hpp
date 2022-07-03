@@ -57,7 +57,7 @@ namespace ism
 		using result_type = typename _Ty;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs + rhs; }
+		constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs + rhs; }
 	};
 
 	template <class _Ty> struct Minus
@@ -65,7 +65,7 @@ namespace ism
 		using result_type = typename _Ty;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs - rhs; }
+		constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs - rhs; }
 	};
 
 	template <class _Ty> struct Multiplies
@@ -73,7 +73,7 @@ namespace ism
 		using result_type = typename _Ty;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs * rhs; }
+		constexpr _Ty operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs * rhs; }
 	};
 
 	template <class _Ty> struct EqualTo
@@ -81,7 +81,7 @@ namespace ism
 		using result_type = typename bool;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs == rhs; }
+		constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs == rhs; }
 	};
 
 	template <class _Ty> struct NotEqualTo
@@ -89,7 +89,7 @@ namespace ism
 		using result_type = typename bool;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs != rhs; }
+		constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs != rhs; }
 	};
 
 	template <class _Ty> struct Less
@@ -97,7 +97,7 @@ namespace ism
 		using result_type = typename bool;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs < rhs; }
+		constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs < rhs; }
 	};
 
 	template <class _Ty> struct Greater
@@ -105,7 +105,7 @@ namespace ism
 		using result_type = typename bool;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs > rhs; }
+		constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs > rhs; }
 	};
 
 	template <class _Ty> struct LessEqual
@@ -113,7 +113,7 @@ namespace ism
 		using result_type = typename bool;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs <= rhs; }
+		constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs <= rhs; }
 	};
 
 	template <class _Ty> struct GreaterEqual
@@ -121,7 +121,7 @@ namespace ism
 		using result_type = typename bool;
 		using first_argument_type = typename _Ty;
 		using second_argument_type = typename _Ty;
-		NODISCARD constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs >= rhs; }
+		constexpr bool operator()(_Ty const & lhs, _Ty const & rhs) const { return lhs >= rhs; }
 	};
 }
 
@@ -487,7 +487,7 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class To, class From, class = std::enable_if_t<mpl::is_trivially_convertible_v<To, From>>
-	> NODISCARD To bit_cast(From const & value) noexcept
+	> To bit_cast(From const & value) noexcept
 	{
 		To temp;
 		copymem(&temp, &value, sizeof(To));
@@ -509,7 +509,7 @@ namespace ism::util
 	}
 
 	template <class LI, class RI
-	> NODISCARD constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
+	> constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
 	{
 		return (lBegin != lEnd && rBegin != rEnd)
 			? ((*lBegin == *rBegin) && util::range_equal(lBegin + 1, lEnd, rBegin + 1, rEnd))
@@ -517,7 +517,7 @@ namespace ism::util
 	}
 
 	template <class LI, class RI
-	> NODISCARD constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
+	> constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
 	{
 		return (lBegin != lEnd && rBegin != rEnd)
 			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))

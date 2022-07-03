@@ -31,9 +31,9 @@ namespace ism
 		virtual TYPE _get_typev() const noexcept override;
 
 	public:
-		NODISCARD static constexpr StringView get_class_static() noexcept { return __class_static; }
+		static constexpr StringView get_class_static() noexcept { return __class_static; }
 
-		NODISCARD static TYPE get_type_static() noexcept;
+		static TYPE get_type_static() noexcept;
 
 		TypeObject() noexcept {}
 
@@ -98,11 +98,11 @@ namespace ism
 		OBJ					tp_subclasses		{ /* DICT */ };
 
 	public:
-		NODISCARD bool ready();
+		bool ready();
 
-		NODISCARD OBJ lookup(OBJ const & name) const;
+		OBJ lookup(OBJ const & name) const;
 
-		NODISCARD bool is_subtype(TYPE const & value) const;
+		bool is_subtype(TYPE const & value) const;
 
 	protected:
 		bool check_consistency() const;
@@ -132,7 +132,7 @@ namespace ism
 		}
 
 	public:
-		NODISCARD static OBJ type_getattro(TYPE type, OBJ name);
+		static OBJ type_getattro(TYPE type, OBJ name);
 
 		static Error_ type_setattro(TYPE type, OBJ name, OBJ value);
 	};
@@ -153,13 +153,13 @@ namespace ism
 		REF_COMMON(TYPE, OBJECT_CHECK_TYPE);
 
 	public:
-		NODISCARD bool ready() const { return m_ptr->ready(); }
+		bool ready() const { return m_ptr->ready(); }
 
-		NODISCARD bool has_feature(TypeFlags_ flag) const { return FLAG_READ(m_ptr->tp_flags, flag); }
+		bool has_feature(TypeFlags_ flag) const { return FLAG_READ(m_ptr->tp_flags, flag); }
 
-		NODISCARD bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
+		bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
 
-		NODISCARD OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
+		OBJ lookup(OBJ const & name) const { return m_ptr->lookup(name); }
 
 		template <class Name = cstring, class Value = OBJ
 		> void add_object(Name && name, Value && value) noexcept
@@ -187,7 +187,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class = std::enable_if_t<is_ref_v<T>>
-	> NODISCARD hash_t hash(T const & o) noexcept
+	> hash_t hash(T const & o) noexcept
 	{
 		if (!o) { return 0; }
 		TYPE t{ typeof(o) };
@@ -195,7 +195,7 @@ namespace ism
 	}
 
 	template <class T, class = std::enable_if_t<is_ref_v<T>>
-	> NODISCARD ssize_t len(T const & o) noexcept
+	> ssize_t len(T const & o) noexcept
 	{
 		if (!o) { return -1; }
 		TYPE t{ typeof(o) };
@@ -204,7 +204,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_dict_ptr(TYPE const & t, OBJ const & o) -> OBJ *
+	inline auto get_dict_ptr(TYPE const & t, OBJ const & o) -> OBJ *
 	{
 		if (t && o && 0 < t->tp_dictoffset)
 		{
@@ -216,14 +216,14 @@ namespace ism
 		}
 	}
 
-	NODISCARD inline auto get_dict_ptr(OBJ const & o) noexcept -> OBJ *
+	inline auto get_dict_ptr(OBJ const & o) noexcept -> OBJ *
 	{
 		return get_dict_ptr(typeof(o), o);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD inline auto get_vectorcall_func(TYPE const & t, OBJ const & o) -> vectorcallfunc
+	inline auto get_vectorcall_func(TYPE const & t, OBJ const & o) -> vectorcallfunc
 	{
 		if (t && o && 0 < t->tp_vectorcalloffset)
 		{
@@ -235,7 +235,7 @@ namespace ism
 		}
 	}
 
-	NODISCARD inline auto get_vectorcall_func(OBJ const & o) noexcept -> vectorcallfunc
+	inline auto get_vectorcall_func(OBJ const & o) noexcept -> vectorcallfunc
 	{
 		return get_vectorcall_func(typeof(o), o);
 	}

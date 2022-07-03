@@ -21,11 +21,11 @@ namespace ism
 		~DisplayServerWindows();
 
 	public:
-		NODISCARD virtual VideoMode const & get_desktop_video_mode() const override;
-		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
+		virtual VideoMode const & get_desktop_video_mode() const override;
+		virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
 
 	public:
-		NODISCARD virtual WindowID get_current_context() const override;
+		virtual WindowID get_current_context() const override;
 		virtual void set_current_context(WindowID id) override;
 		virtual void poll_events() override;
 		virtual void swap_buffers(WindowID id) override;
@@ -38,34 +38,34 @@ namespace ism
 		virtual void request_window_attention(WindowID id) override;
 
 	public:
-		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
-		NODISCARD virtual CursorID create_standard_cursor(CursorShape_ shape) override;
+		virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
+		virtual CursorID create_standard_cursor(CursorShape_ shape) override;
 		virtual void destroy_cursor(CursorID value) override;
 
 	public:
-		NODISCARD virtual String window_get_clipboard(WindowID id) const override;
-		NODISCARD virtual Vec2f window_get_content_scale(WindowID id) const override;
-		NODISCARD virtual IntRect window_get_frame_size(WindowID id) const override;
-		NODISCARD virtual Vec2i window_get_framebuffer_size(WindowID id) const override;
-		NODISCARD virtual int32_t window_get_input_mode(WindowID id, InputMode_ value) const override;
-		NODISCARD virtual InputAction_ window_get_key(WindowID id, KeyCode_ value) const override;
-		NODISCARD virtual InputAction_ window_get_mouse_button(WindowID id, MouseButton_ value) const override;
-		NODISCARD virtual Vec2d window_get_mouse_position(WindowID id) const override;
-		NODISCARD virtual void * window_get_native_handle(WindowID id) const override;
-		NODISCARD virtual float_t window_get_opacity(WindowID id) const override;
-		NODISCARD virtual Vec2i window_get_position(WindowID id) const override;
-		NODISCARD virtual Vec2i window_get_size(WindowID id) const override;
-		NODISCARD virtual bool window_get_should_close(WindowID id) const override;
-		NODISCARD virtual void * window_get_user_pointer(WindowID id) const override;
-		NODISCARD virtual bool window_is_decorated(WindowID id) const override;
-		NODISCARD virtual bool window_is_floating(WindowID id) const override;
-		NODISCARD virtual bool window_is_focused(WindowID id) const override;
-		NODISCARD virtual bool window_is_hovered(WindowID id) const override;
-		NODISCARD virtual bool window_is_iconified(WindowID id) const override;
-		NODISCARD virtual bool window_is_maximized(WindowID id) const override;
-		NODISCARD virtual bool window_is_resizable(WindowID id) const override;
-		NODISCARD virtual bool window_is_transparent(WindowID id) const override;
-		NODISCARD virtual bool window_is_visible(WindowID id) const override;
+		virtual String window_get_clipboard(WindowID id) const override;
+		virtual Vec2f window_get_content_scale(WindowID id) const override;
+		virtual IntRect window_get_frame_size(WindowID id) const override;
+		virtual Vec2i window_get_framebuffer_size(WindowID id) const override;
+		virtual int32_t window_get_input_mode(WindowID id, InputMode_ value) const override;
+		virtual InputAction_ window_get_key(WindowID id, KeyCode_ value) const override;
+		virtual InputAction_ window_get_mouse_button(WindowID id, MouseButton_ value) const override;
+		virtual Vec2d window_get_mouse_position(WindowID id) const override;
+		virtual void * window_get_native_handle(WindowID id) const override;
+		virtual float_t window_get_opacity(WindowID id) const override;
+		virtual Vec2i window_get_position(WindowID id) const override;
+		virtual Vec2i window_get_size(WindowID id) const override;
+		virtual bool window_get_should_close(WindowID id) const override;
+		virtual void * window_get_user_pointer(WindowID id) const override;
+		virtual bool window_is_decorated(WindowID id) const override;
+		virtual bool window_is_floating(WindowID id) const override;
+		virtual bool window_is_focused(WindowID id) const override;
+		virtual bool window_is_hovered(WindowID id) const override;
+		virtual bool window_is_iconified(WindowID id) const override;
+		virtual bool window_is_maximized(WindowID id) const override;
+		virtual bool window_is_resizable(WindowID id) const override;
+		virtual bool window_is_transparent(WindowID id) const override;
+		virtual bool window_is_visible(WindowID id) const override;
 
 	public:
 		virtual void window_set_clipboard(WindowID id, String const & value) override;

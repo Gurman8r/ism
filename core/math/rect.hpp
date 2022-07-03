@@ -80,59 +80,59 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr operator storage_type & () & noexcept { return m_data; }
+		constexpr operator storage_type & () & noexcept { return m_data; }
 
-		NODISCARD constexpr operator storage_type const & () const & noexcept { return m_data; }
+		constexpr operator storage_type const & () const & noexcept { return m_data; }
 
-		NODISCARD constexpr operator storage_type && () && noexcept { return std::move(m_data); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		NODISCARD constexpr operator pointer() noexcept { return m_data; }
-
-		NODISCARD constexpr operator const_pointer() const noexcept { return m_data; }
+		constexpr operator storage_type && () && noexcept { return std::move(m_data); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr coord_type & min() & noexcept { return *(coord_type *)&m_data[0]; }
+		constexpr operator pointer() noexcept { return m_data; }
 
-		NODISCARD constexpr coord_type const & min() const & noexcept { return *(coord_type const *)&m_data[0]; }
+		constexpr operator const_pointer() const noexcept { return m_data; }
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		constexpr coord_type & min() & noexcept { return *(coord_type *)&m_data[0]; }
+
+		constexpr coord_type const & min() const & noexcept { return *(coord_type const *)&m_data[0]; }
 
 		template <class Value = coord_type
 		> coord_type & min(Value && value) & noexcept { return min() = FWD(value); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr coord_type & max() & noexcept { return *(coord_type *)&m_data[2]; }
+		constexpr coord_type & max() & noexcept { return *(coord_type *)&m_data[2]; }
 
-		NODISCARD constexpr coord_type const & max() const & noexcept { return *(coord_type const *)&m_data[2]; }
+		constexpr coord_type const & max() const & noexcept { return *(coord_type const *)&m_data[2]; }
 
 		template <class Value = coord_type
 		> coord_type & max(Value && value) & noexcept { return max() = FWD(value); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr value_type & at(size_t i) & noexcept { return m_data[i]; }
+		constexpr value_type & at(size_t i) & noexcept { return m_data[i]; }
 
-		NODISCARD constexpr value_type & left() & noexcept { return m_data[0]; }
+		constexpr value_type & left() & noexcept { return m_data[0]; }
 
-		NODISCARD constexpr value_type & top() & noexcept { return m_data[1]; }
+		constexpr value_type & top() & noexcept { return m_data[1]; }
 
-		NODISCARD constexpr value_type & right() & noexcept { return m_data[2]; }
+		constexpr value_type & right() & noexcept { return m_data[2]; }
 
-		NODISCARD constexpr value_type & bottom() & noexcept { return m_data[3]; }
+		constexpr value_type & bottom() & noexcept { return m_data[3]; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr value_type const & at(size_t i) const & noexcept { return m_data[i]; }
+		constexpr value_type const & at(size_t i) const & noexcept { return m_data[i]; }
 
-		NODISCARD constexpr value_type const & left() const & noexcept { return m_data[0]; }
+		constexpr value_type const & left() const & noexcept { return m_data[0]; }
 
-		NODISCARD constexpr value_type const & top() const & noexcept { return m_data[1]; }
+		constexpr value_type const & top() const & noexcept { return m_data[1]; }
 
-		NODISCARD constexpr value_type const & right() const & noexcept { return m_data[2]; }
+		constexpr value_type const & right() const & noexcept { return m_data[2]; }
 
-		NODISCARD constexpr value_type const & bottom() const & noexcept { return m_data[3]; }
+		constexpr value_type const & bottom() const & noexcept { return m_data[3]; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -153,49 +153,49 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr value_type width() const noexcept { return m_data[2] - m_data[0]; }
+		constexpr value_type width() const noexcept { return m_data[2] - m_data[0]; }
 
-		NODISCARD constexpr value_type height() const noexcept { return m_data[3] - m_data[1]; }
+		constexpr value_type height() const noexcept { return m_data[3] - m_data[1]; }
 
-		NODISCARD constexpr coord_type size() const noexcept { return { m_data[2] - m_data[0], m_data[3] - m_data[1] }; }
+		constexpr coord_type size() const noexcept { return { m_data[2] - m_data[0], m_data[3] - m_data[1] }; }
 
-		NODISCARD constexpr coord_type center() const noexcept { return (min() + max()) / 2; }
+		constexpr coord_type center() const noexcept { return (min() + max()) / 2; }
 
-		NODISCARD constexpr coord_type position() const noexcept { return min(); }
+		constexpr coord_type position() const noexcept { return min(); }
 
-		NODISCARD constexpr coord_type top_left() const noexcept { return min(); }
+		constexpr coord_type top_left() const noexcept { return min(); }
 
-		NODISCARD constexpr coord_type top_right() const noexcept { return { m_data[2], m_data[1] }; }
+		constexpr coord_type top_right() const noexcept { return { m_data[2], m_data[1] }; }
 
-		NODISCARD constexpr coord_type bottom_left() const noexcept { return { m_data[0], m_data[3] }; }
+		constexpr coord_type bottom_left() const noexcept { return { m_data[0], m_data[3] }; }
 
-		NODISCARD constexpr coord_type bottom_right() const noexcept { return max(); }
+		constexpr coord_type bottom_right() const noexcept { return max(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
-		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
+		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
 
-		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
+		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
 
-		NODISCARD constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
+		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
 
-		NODISCARD constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
+		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
 
-		NODISCARD constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
+		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
 
-		NODISCARD constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
+		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
 
-		NODISCARD constexpr auto end() noexcept -> iterator { return m_data.end(); }
+		constexpr auto end() noexcept -> iterator { return m_data.end(); }
 
-		NODISCARD constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
+		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
 
-		NODISCARD constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
+		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
 
-		NODISCARD constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
+		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
 
-		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
+		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
 
-		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
+		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -9,41 +9,31 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if 1
 	// map
-	template <class _Kt, class _Vt, class _Pr = Less<_Kt>
-	> ALIAS(Map) std::pmr::map<_Kt, _Vt, _Pr>;
-#else
-	// map
-	template <class _Kt, class _Vt, class _Pr = Less<_Kt>
-	> class Map : public std::map<_Kt, _Vt, _Pr, PolymorphicAllocator<Pair<_Kt const, _Vt>>>
-	{
-		using _Mybase = std::map<_Kt, _Vt, _Pr, PolymorphicAllocator<Pair<_Kt const, _Vt>>>;
-	public:
-		using _Mybase::map;
-		NODISCARD operator _Mybase & () & noexcept { return static_cast<_Mybase &>(*this); }
-		NODISCARD operator _Mybase const & () const & noexcept { return static_cast<_Mybase const &>(*this); }
-		NODISCARD operator _Mybase && () && noexcept { return static_cast<_Mybase &&>(std::move(*this)); }
-	};
-#endif
+	template <class K, class V, class Pr = Less<K>
+	> ALIAS(Map) std::map<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
+
+	// multi map
+	template <class K, class V, class Pr = Less<K>
+	> ALIAS(MultiMap) std::multimap<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class _Kt, class _Vt, class _Pr = Less<_Kt>, class T
-	> NODISCARD bool contains(Map<_Kt, _Vt, _Pr> const & m, T && value)
+	template <class K, class V, class Pr = Less<K>, class T
+	> bool contains(Map<K, V, Pr> const & m, T && value)
 	{
 		return m.find(FWD(value)) != m.end();
 	}
 
-	template <class _Kt, class _Vt, class _Pr = Less<_Kt>, class T
-	> NODISCARD _Vt * getptr(Map<_Kt, _Vt, _Pr> & m, T && value)
+	template <class K, class V, class Pr = Less<K>, class T
+	> V * getptr(Map<K, V, Pr> & m, T && value)
 	{
 		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
 		else { return nullptr; }
 	}
 
-	template <class _Kt, class _Vt, class _Pr = Less<_Kt>, class T
-	> NODISCARD _Vt const * getptr(Map<_Kt, _Vt, _Pr> const & m, T && value)
+	template <class K, class V, class Pr = Less<K>, class T
+	> V const * getptr(Map<K, V, Pr> const & m, T && value)
 	{
 		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
 		else { return nullptr; }

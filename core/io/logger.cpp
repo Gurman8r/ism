@@ -38,6 +38,14 @@ CompositeLogger::CompositeLogger(Vector<Logger *> loggers) : m_loggers{ std::mov
 {
 }
 
+CompositeLogger::~CompositeLogger()
+{
+	for (size_t i = 0; i < m_loggers.size(); ++i)
+	{
+		memdelete(m_loggers[i]);
+	}
+}
+
 void CompositeLogger::logv(cstring fmt, va_list args, bool is_error)
 {
 	for (size_t i = 0; i < m_loggers.size(); ++i)
@@ -54,14 +62,6 @@ void CompositeLogger::add_logger(Logger * value)
 	if (value)
 	{
 		m_loggers.push_back(value);
-	}
-}
-
-CompositeLogger::~CompositeLogger()
-{
-	for (size_t i = 0; i < m_loggers.size(); ++i)
-	{
-		memdelete(m_loggers[i]);
 	}
 }
 

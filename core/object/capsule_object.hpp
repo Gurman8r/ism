@@ -75,10 +75,10 @@ namespace ism
 
 	public:
 		template <class T
-		> NODISCARD operator T * () const { return get_pointer<T>(); }
+		> operator T * () const { return get_pointer<T>(); }
 
 		template <class T = void
-		> NODISCARD auto get_pointer() const { return static_cast<T *>((void *)m_ptr->m_pointer); }
+		> auto get_pointer() const { return static_cast<T *>((void *)m_ptr->m_pointer); }
 
 		void set_pointer(void const * value) const { m_ptr->m_pointer = value; }
 	};

@@ -52,62 +52,62 @@ namespace ism
 		self_type & swap(self_type & value) noexcept { return m_text.swap(value.m_text), (*this); }
 
 	public:
-		NODISCARD operator void * () const noexcept { return !m_text.empty() ? (void *)m_text.data() : nullptr; }
+		operator void * () const noexcept { return !m_text.empty() ? (void *)m_text.data() : nullptr; }
 
-		NODISCARD bool operator==(storage_type const & value) { return m_text == value; }
+		bool operator==(storage_type const & value) { return m_text == value; }
 
-		NODISCARD bool operator==(const_pointer value) { return m_text == value; }
+		bool operator==(const_pointer value) { return m_text == value; }
 
-		NODISCARD bool operator!=(storage_type const & value) { return m_text != value; }
+		bool operator!=(storage_type const & value) { return m_text != value; }
 
-		NODISCARD bool operator<(self_type const & value) { return m_text < value.m_text; }
+		bool operator<(self_type const & value) { return m_text < value.m_text; }
 
-		NODISCARD bool operator>(self_type const & value) { return m_text > value.m_text; }
+		bool operator>(self_type const & value) { return m_text > value.m_text; }
 
-		NODISCARD bool operator==(self_type const & value) { return m_text == value.m_text; }
+		bool operator==(self_type const & value) { return m_text == value.m_text; }
 
-		NODISCARD auto data() noexcept -> pointer { return m_text.data(); }
+		auto data() noexcept -> pointer { return m_text.data(); }
 
-		NODISCARD auto data() const noexcept -> const_pointer { return m_text.data(); }
+		auto data() const noexcept -> const_pointer { return m_text.data(); }
 
-		NODISCARD auto c_str() const noexcept -> const_pointer { return m_text.data(); }
+		auto c_str() const noexcept -> const_pointer { return m_text.data(); }
 
-		NODISCARD auto length() const noexcept -> size_t { return m_text.size(); }
+		auto length() const noexcept -> size_t { return m_text.size(); }
 
-		NODISCARD auto size() const noexcept -> size_t { return m_text.size(); }
+		auto size() const noexcept -> size_t { return m_text.size(); }
 
-		NODISCARD auto hash_code() const noexcept -> hash_t { return hash(m_text); }
+		auto hash_code() const noexcept -> hash_t { return hash(m_text); }
 
-		NODISCARD bool empty() const noexcept { return m_text.empty(); }
+		bool empty() const noexcept { return m_text.empty(); }
 
-		NODISCARD auto view() const noexcept -> view_type { return { m_text.data(), m_text.size() }; }
+		auto view() const noexcept -> view_type { return { m_text.data(), m_text.size() }; }
 
-		NODISCARD auto string() & noexcept -> storage_type & { return m_text; }
+		auto string() & noexcept -> storage_type & { return m_text; }
 
-		NODISCARD auto string() const & noexcept -> storage_type const & { return m_text; }
+		auto string() const & noexcept -> storage_type const & { return m_text; }
 
-		NODISCARD auto string() && noexcept -> storage_type && { return std::move(m_text); }
+		auto string() && noexcept -> storage_type && { return std::move(m_text); }
 
-		NODISCARD operator view_type () noexcept { return { m_text.data(), m_text.size() }; }
+		operator view_type () noexcept { return { m_text.data(), m_text.size() }; }
 
-		NODISCARD operator storage_type & () & noexcept { return m_text; }
+		operator storage_type & () & noexcept { return m_text; }
 
-		NODISCARD operator storage_type const & () const & noexcept { return m_text; }
+		operator storage_type const & () const & noexcept { return m_text; }
 
-		NODISCARD operator storage_type && () && noexcept { return std::move(m_text); }
+		operator storage_type && () && noexcept { return std::move(m_text); }
 
 	public:
-		NODISCARD auto begin() noexcept -> iterator { return m_text.begin(); }
+		auto begin() noexcept -> iterator { return m_text.begin(); }
 
-		NODISCARD auto begin() const noexcept -> const_iterator { return m_text.begin(); }
+		auto begin() const noexcept -> const_iterator { return m_text.begin(); }
 
-		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
+		auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
 
-		NODISCARD auto end() noexcept -> iterator { return m_text.end(); }
+		auto end() noexcept -> iterator { return m_text.end(); }
 
-		NODISCARD auto end() const noexcept -> const_iterator { return m_text.end(); }
+		auto end() const noexcept -> const_iterator { return m_text.end(); }
 
-		NODISCARD auto cend() const noexcept -> const_iterator { return m_text.cend(); }
+		auto cend() const noexcept -> const_iterator { return m_text.cend(); }
 	};
 
 	inline void to_json(Json & json, StringName const & value)

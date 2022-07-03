@@ -22,9 +22,9 @@ namespace ism
 
 		FunctionObject(vectorcallfunc vectorcall = nullptr);
 
-		NODISCARD OBJ cpp_function() const; // cppfunction_object.hpp
+		OBJ cpp_function() const; // cppfunction_object.hpp
 
-		NODISCARD bool is_cpp_function() const noexcept { return cpp_function().is_valid(); }
+		bool is_cpp_function() const noexcept { return cpp_function().is_valid(); }
 	};
 
 	// function delete
@@ -39,9 +39,9 @@ namespace ism
 		REF_COMMON(FUNCTION, OBJECT_CHECK_FUNCTION);
 
 	public:
-		NODISCARD OBJ cpp_function() const { return m_ptr->cpp_function(); }
+		OBJ cpp_function() const { return m_ptr->cpp_function(); }
 
-		NODISCARD bool is_cpp_function() const noexcept { return m_ptr->is_cpp_function(); }
+		bool is_cpp_function() const noexcept { return m_ptr->is_cpp_function(); }
 	};
 }
 

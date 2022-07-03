@@ -42,6 +42,11 @@ void OS_Windows::delete_main_loop()
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+String OS_Windows::get_name() const
+{
+	return "Windows"_s;
+}
+
 String OS_Windows::get_stdin_string(bool block)
 {
 	if (block) {
@@ -52,14 +57,14 @@ String OS_Windows::get_stdin_string(bool block)
 	return {};
 }
 
-bool OS_Windows::has_environment(String const & key) const
-{
-	return false;
-}
-
 String OS_Windows::get_environment(String const & key) const
 {
 	return String{};
+}
+
+bool OS_Windows::has_environment(String const & key) const
+{
+	return false;
 }
 
 bool OS_Windows::set_environment(String const & key, String const & value) const
@@ -75,11 +80,6 @@ Path OS_Windows::get_cwd() const
 Error_ OS_Windows::set_cwd(Path const & path)
 {
 	return std::filesystem::current_path((std::wstring)util::widen(path.string())), Error_None;
-}
-
-String OS_Windows::get_name() const
-{
-	return "Windows"_s;
 }
 
 Ref<MainLoop> OS_Windows::get_main_loop() const
@@ -103,7 +103,7 @@ Error_ OS_Windows::close_dynamic_library(void * instance)
 	return Error_None;
 }
 
-Error_ OS_Windows::get_dynamic_library_symbol_handle(void * instance, String const & name, void *& symbol, bool is_optional)
+Error_ OS_Windows::get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional)
 {
 	if (!instance || name.empty()) { return Error_Unknown; }
 	symbol = GetProcAddress((HMODULE)instance, name.c_str());

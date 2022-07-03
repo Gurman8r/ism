@@ -141,30 +141,30 @@ namespace ism
 
 		bool unreference();
 
-		NODISCARD int32_t get_ref_count() const { return m_refcount.get(); }
+		int32_t get_ref_count() const { return m_refcount.get(); }
 
-		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
+		bool has_references() const { return m_refcount_init.get() != 1; }
 
-		NODISCARD static constexpr StringView get_class_static() noexcept { return __class_static; }
+		static constexpr StringView get_class_static() noexcept { return __class_static; }
 
-		NODISCARD static TYPE get_type_static() noexcept;
+		static TYPE get_type_static() noexcept;
 
-		NODISCARD StringView get_class() const noexcept { return _get_classv(); }
+		StringView get_class() const noexcept { return _get_classv(); }
 
-		NODISCARD TYPE get_type() const noexcept;
+		TYPE get_type() const noexcept;
 
 		void set_type(TYPE const & value) noexcept;
 
-		template <class T> NODISCARD T cast() const &; // cast.hpp
+		template <class T> T cast() const &; // cast.hpp
 
-		template <class T> NODISCARD T cast() &&; // cast.hpp
+		template <class T> T cast() &&; // cast.hpp
 
-		NODISCARD Object * ptr() const noexcept { return const_cast<Object *>(this); } // :^]
+		Object * ptr() const noexcept { return const_cast<Object *>(this); } // :^]
 
 	public:
-		NODISCARD static OBJ generic_getattr(OBJ obj, OBJ name) noexcept;
+		static OBJ generic_getattr(OBJ obj, OBJ name) noexcept;
 
-		NODISCARD static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
+		static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
 
 		static Error_ generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept;
 
@@ -220,31 +220,31 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD auto object_or_cast(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
+	> auto object_or_cast(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
-	> NODISCARD OBJ object_or_cast(T && o);
+	> OBJ object_or_cast(T && o);
 
 	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
-	> NODISCARD inline OBJ object_or_cast(T const * o) { return Ref<T>{ (T *)o }; }
+	> inline OBJ object_or_cast(T const * o) { return Ref<T>{ (T *)o }; }
 
-	NODISCARD inline OBJ object_or_cast(cstring s) { return object_or_cast(String{ s }); }
+	inline OBJ object_or_cast(cstring s) { return object_or_cast(String{ s }); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof() noexcept { return T::get_type_static(); }
+	> TYPE typeof() noexcept { return T::get_type_static(); }
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o) noexcept { return VALIDATE(FWD(o))->get_type(); } // this function is not allowed to fail
+	> TYPE typeof(T && o) noexcept { return VALIDATE(FWD(o))->get_type(); }
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
-	> NODISCARD TYPE typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }
+	> TYPE typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
-	> NODISCARD TYPE baseof() noexcept
+	> TYPE baseof() noexcept
 	{
 		if constexpr (std::is_void_v<T::base_type>) { return nullptr; }
 
@@ -252,13 +252,13 @@ namespace ism
 	}
 
 	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
-	> NODISCARD constexpr StringView nameof() noexcept
+	> constexpr StringView nameof() noexcept
 	{
 		return T::get_class_static();
 	}
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD Object * pointerof(T const & o) noexcept
+	> Object * pointerof(T const & o) noexcept
 	{
 		if constexpr (std::is_pointer_v<std::decay_t<decltype(o)>>)
 		{
@@ -273,13 +273,13 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class O = OBJ, std::enable_if_t<is_api_v<T>, int> = 0
-	> NODISCARD bool isinstance(O && obj) noexcept
+	> bool isinstance(O && obj) noexcept
 	{
 		return isinstance(FWD_OBJ(obj), typeof<T>());
 	}
 
 	template <class A = OBJ, class B = OBJ
-	> NODISCARD bool isinstance(A const & obj, B const & type)
+	> bool isinstance(A const & obj, B const & type)
 	{
 		return typeof(obj).is_subtype(TYPE::check_(type) ? (TYPE)type : typeof(type));
 	}
@@ -288,7 +288,7 @@ namespace ism
 
 	// getattr
 	template <class Index = OBJ
-	> NODISCARD OBJ getattr(OBJ const & obj, Index && index)
+	> OBJ getattr(OBJ const & obj, Index && index)
 	{
 		if (!obj) { return nullptr; }
 
@@ -314,7 +314,7 @@ namespace ism
 
 	// getattr (default)
 	template <class Index = OBJ, class Value = OBJ
-	> NODISCARD OBJ getattr(OBJ const & obj, Index && index, Value && defval)
+	> OBJ getattr(OBJ const & obj, Index && index, Value && defval)
 	{
 		if (!obj)
 		{
@@ -358,7 +358,7 @@ namespace ism
 
 	// hasattr
 	template <class Index = OBJ
-	> NODISCARD bool hasattr(OBJ const & obj, Index && index)
+	> bool hasattr(OBJ const & obj, Index && index)
 	{
 		if (!obj) { return false; }
 
@@ -390,7 +390,7 @@ namespace ism
 
 	// getitem
 	template <class Index = OBJ
-	> NODISCARD OBJ getitem(OBJ const & obj, Index && index)
+	> OBJ getitem(OBJ const & obj, Index && index)
 	{
 		STR_IDENTIFIER(__getitem__);
 

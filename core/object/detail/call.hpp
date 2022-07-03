@@ -85,8 +85,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// argument collector
-	template <ReturnValuePolicy_ Policy = ReturnValuePolicy_AutomaticReference
-	> struct NODISCARD ArgumentCollector final
+	template <ReturnPolicy_ Policy = ReturnPolicy_AutomaticReference
+	> struct ArgumentCollector final
 	{
 		template <class ... Args
 		> explicit ArgumentCollector(Args && ... args) noexcept : m_argc{ sizeof...(Args) }
@@ -100,11 +100,11 @@ namespace ism
 			, FWD(args)...);
 		}
 
-		NODISCARD OBJ const * argv() const { return m_argv; }
+		OBJ const * argv() const { return m_argv; }
 
-		NODISCARD size_t argc() const { return m_argc; }
+		size_t argc() const { return m_argc; }
 
-		NODISCARD OBJ call(OBJ const & callable) noexcept { return call_object(callable, m_argv, m_argc); }
+		OBJ call(OBJ const & callable) noexcept { return call_object(callable, m_argv, m_argc); }
 
 	private:
 		OBJ m_argv[MAX_ARGUMENTS]{};
@@ -115,7 +115,7 @@ namespace ism
 
 	// argument loader
 	template <class ... Args
-	> struct NODISCARD ArgumentLoader final
+	> struct ArgumentLoader final
 	{
 		template <class Return, class Guard, class Func
 		> using return_type = std::conditional_t<std::is_void_v<Return>, void_type, Return>;
@@ -126,10 +126,10 @@ namespace ism
 
 		std::tuple<make_caster<Args>...> argcasters{};
 
-		NODISCARD bool load_args(Batch<OBJ, bool> & args) { return impl_load_args(args, indices); }
+		bool load_args(Batch<OBJ, bool> & args) { return impl_load_args(args, indices); }
 
 		template <class Return, class Guard, class Func
-		> NODISCARD auto call(Func && func) && -> return_type<Return, void_type, Return>
+		> auto call(Func && func) && -> return_type<Return, void_type, Return>
 		{
 			if constexpr (std::is_void_v<Return>)
 			{
@@ -161,7 +161,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// argument record
-	struct NODISCARD ArgumentRecord final
+	struct ArgumentRecord final
 	{
 		String name{};
 
@@ -173,7 +173,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// function record
-	struct NODISCARD FunctionRecord final
+	struct FunctionRecord final
 	{
 		~FunctionRecord() { if (free_data) { free_data(this); } }
 
@@ -189,7 +189,7 @@ namespace ism
 
 		Vector<ArgumentRecord> args{};
 
-		ReturnValuePolicy_ policy{ ReturnValuePolicy_AutomaticReference };
+		ReturnPolicy_ policy{ ReturnPolicy_AutomaticReference };
 
 		Object * scope{}, * sibling{};
 
@@ -201,7 +201,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// function call
-	struct NODISCARD FunctionCall final
+	struct FunctionCall final
 	{
 		explicit FunctionCall(FunctionRecord const & record, OBJ const & parent)
 			: record{ record }
@@ -257,7 +257,7 @@ namespace ism
 
 	// object call operator
 	template <class Derived
-	> template <ReturnValuePolicy_ Policy, class ...Args
+	> template <ReturnPolicy_ Policy, class ...Args
 	> inline OBJ ObjectAPI<Derived>::operator()(Args && ... args) const
 	{
 		return ArgumentCollector<Policy>(FWD(args)...).call(derived().ptr());

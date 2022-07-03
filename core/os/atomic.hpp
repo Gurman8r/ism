@@ -139,24 +139,17 @@ namespace ism
 		uint32_t m_count{};
 
 	public:
-		// destroy() is called when weak_count_ drops to zero.
-
 		FORCE_INLINE void init(uint32_t p_value = 1) { m_count = p_value; }
 
-		// true on success
-		FORCE_INLINE bool ref() { return atomic_conditional_increment(&m_count) != 0; }
+		FORCE_INLINE bool ref() { return atomic_conditional_increment(&m_count) != 0; } // true on success
 
-		// nullptr-zero on success
-		FORCE_INLINE uint32_t refval() { return atomic_conditional_increment(&m_count); }
+		FORCE_INLINE auto refval() -> uint32_t { return atomic_conditional_increment(&m_count); } // nullptr-zero on success
 
-		// true if must be disposed of
-		FORCE_INLINE bool unref() { return atomic_decrement(&m_count) == 0; }
+		FORCE_INLINE bool unref() { return atomic_decrement(&m_count) == 0; } // true if must be disposed of
 
-		// 0 if must be disposed of
-		FORCE_INLINE uint32_t unrefval() { return atomic_decrement(&m_count); }
+		FORCE_INLINE auto unrefval() -> uint32_t { return atomic_decrement(&m_count); } // 0 if must be disposed of
 
-		// nothrow
-		FORCE_INLINE uint32_t get() const { return m_count; }
+		FORCE_INLINE auto get() const -> uint32_t { return m_count; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

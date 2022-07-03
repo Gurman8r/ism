@@ -18,7 +18,7 @@ namespace ism
 
 		using storage_type = decltype(m_float);
 
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_float); }
+		auto & operator*() const { return const_cast<storage_type &>(m_float); }
 
 		FloatObject() noexcept {}
 
@@ -29,7 +29,7 @@ namespace ism
 		> FloatObject & operator=(T const value) { m_float = static_cast<storage_type>(value); return (*this); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> NODISCARD operator T() const & { return static_cast<T>(m_float); }
+		> operator T() const & { return static_cast<T>(m_float); }
 	};
 
 	// float delete

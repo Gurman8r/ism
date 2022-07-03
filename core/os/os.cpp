@@ -46,34 +46,18 @@ void OS::set_cmdline(cstring exepath, Vector<String> const & args)
 
 void OS::set_logger(CompositeLogger * value)
 {
-	memdelete_nonzero(m_logger);
-
+	if (m_logger) { memdelete(m_logger); }
 	m_logger = value;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void OS::pause()
+void OS::printv(cstring fmt, va_list args)
 {
-#if OS_WINDOWS
-	std::system("pause");
-#else
-	this->print("\nPress enter to continue . . .");
-	this->get_stdin_string(true);
-#endif
+	m_logger->logv(fmt, args, false);
 }
 
-void OS::print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
-{
-	m_logger->log_error(func, file, line, desc, message, type);
-}
-
-void OS::print(String const & s)
-{
-	print("%s", s.c_str());
-}
-
-void OS::print(cstring fmt, ...)
+void OS::printf(cstring fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
@@ -81,27 +65,52 @@ void OS::print(cstring fmt, ...)
 	va_end(args);
 }
 
-void OS::printv(cstring fmt, va_list args)
+void OS::print(cstring str, size_t size)
 {
-	m_logger->logv(fmt, args, false);
+	printf("%.*s", size, str);
 }
 
-void OS::printerr(String const & s)
+void OS::print(cstring str)
 {
-	printerr("%s", s.c_str());
+	print(str, std::strlen(str));
 }
 
-void OS::printerr(cstring fmt, ...)
+void OS::print(String const & str)
+{
+	print(str.data(), str.size());
+}
+
+void OS::errorv(cstring fmt, va_list args)
+{
+	m_logger->logv(fmt, args, true);
+}
+
+void OS::errorf(cstring fmt, ...)
 {
 	va_list args;
 	va_start(args, fmt);
-	printerrv(fmt, args);
+	errorv(fmt, args);
 	va_end(args);
 }
 
-void OS::printerrv(cstring fmt, va_list args)
+void OS::error(cstring str, size_t size)
 {
-	m_logger->logv(fmt, args, true);
+	errorf("%.*s", size, str);
+}
+
+void OS::error(cstring str)
+{
+	error(str, std::strlen(str));
+}
+
+void OS::error(String const & str)
+{
+	error(str.data(), str.size());
+}
+
+void OS::error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
+{
+	m_logger->log_error(func, file, line, desc, message, type);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

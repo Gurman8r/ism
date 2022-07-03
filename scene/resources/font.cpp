@@ -23,7 +23,7 @@ Error_ Font::reload_from_file()
 	return Error_None;
 }
 
-NODISCARD Glyph * Font::get_glyph(uint32_t character, uint32_t character_size)
+Glyph * Font::get_glyph(uint32_t character, uint32_t character_size)
 {
 	if (!m_font || !character || !character_size) { return nullptr; }
 

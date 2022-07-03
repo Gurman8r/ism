@@ -43,7 +43,7 @@ namespace ism::ecs::detail
 {
 	// Tags
 	template <class ... _Tags
-	> struct NODISCARD Tags final
+	> struct Tags final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -88,7 +88,7 @@ namespace ism::ecs::detail
 {
 	// Components
 	template <class ... _Components
-	> struct NODISCARD Components final
+	> struct Components final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -135,7 +135,7 @@ namespace ism::ecs::detail
 {
 	// Signatures
 	template <class ... _Signatures
-	> struct NODISCARD Signatures final
+	> struct Signatures final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -172,7 +172,7 @@ namespace ism::ecs::detail
 {
 	// Systems
 	template <template <class> class ... _Systems
-	> struct NODISCARD Systems final
+	> struct Systems final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -214,7 +214,7 @@ namespace ism::ecs::detail
 	template <
 		size_t	GrowBase = 5,
 		class	GrowMult = std::ratio<2, 1>
-	> struct NODISCARD Options final
+	> struct Options final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -245,7 +245,7 @@ namespace ism::ecs::detail
 		class S = Signatures	<>,	// Signatures
 		class X = Systems		<>,	// Systems
 		class O = Options		<>	// Options
-	> struct NODISCARD traits final
+	> struct traits final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
@@ -432,7 +432,7 @@ namespace ism::ecs
 		{
 			/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-			NODISCARD operator bool() const noexcept
+			operator bool() const noexcept
 			{
 				ASSERT(m_manager);
 				return m_manager->is_valid_handle(*this);
@@ -440,7 +440,7 @@ namespace ism::ecs
 
 			/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-			NODISCARD bool is_alive() const noexcept
+			bool is_alive() const noexcept
 			{
 				ASSERT(m_manager);
 				return m_manager->is_alive(*this);
@@ -503,21 +503,21 @@ namespace ism::ecs
 			}
 
 			template <class C
-			> NODISCARD auto & get_component() noexcept
+			> auto & get_component() noexcept
 			{
 				ASSERT(m_manager);
 				return m_manager->template get_component<C>(*this);
 			}
 
 			template <class C
-			> NODISCARD auto const & get_component() const noexcept
+			> auto const & get_component() const noexcept
 			{
 				ASSERT(m_manager);
 				return m_manager->template get_component<C>(*this);
 			}
 
 			template <class C
-			> NODISCARD bool has_component() const noexcept
+			> bool has_component() const noexcept
 			{
 				ASSERT(m_manager);
 				return m_manager->template has_component<C>(*this);
@@ -526,14 +526,14 @@ namespace ism::ecs
 			/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 			template <class S
-			> NODISCARD bool matches_signature() const noexcept
+			> bool matches_signature() const noexcept
 			{
 				ASSERT(m_manager);
 				return m_manager->template matches_signature<S>(*this);
 			}
 
 			template <template <class> class X
-			> NODISCARD bool matches_system() const noexcept
+			> bool matches_system() const noexcept
 			{
 				ASSERT(m_manager);
 				return m_manager->template matches_system<X>();
@@ -738,7 +738,7 @@ namespace ism::ecs
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD size_t new_entity()
+		size_t new_entity()
 		{
 			// grow if needed
 			if (m_capacity <= m_size_next)
@@ -752,12 +752,12 @@ namespace ism::ecs
 			return i;
 		}
 
-		NODISCARD bool is_alive(size_t const i) const
+		bool is_alive(size_t const i) const
 		{
 			return m_entities.get<id_alive>(i);
 		}
 
-		NODISCARD bool is_alive(handle const & h) const
+		bool is_alive(handle const & h) const
 		{
 			return this->is_alive(h.m_entity);
 		}
@@ -775,7 +775,7 @@ namespace ism::ecs
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD handle create_handle()
+		handle create_handle()
 		{
 			size_t const i{ this->new_entity() };
 			size_t const e{ m_entities.get<id_handle>(i) };
@@ -790,27 +790,27 @@ namespace ism::ecs
 			return temp;
 		}
 
-		NODISCARD bool is_valid_handle(handle const & h) const noexcept
+		bool is_valid_handle(handle const & h) const noexcept
 		{
 			return (h.m_counter == this->get_handle(h).m_counter);
 		}
 
-		NODISCARD handle & get_handle(size_t const i)
+		handle & get_handle(size_t const i)
 		{
 			return m_handles[i];
 		}
 
-		NODISCARD handle const & get_handle(size_t const i) const
+		handle const & get_handle(size_t const i) const
 		{
 			return m_handles[i];
 		}
 
-		NODISCARD handle & get_handle(handle const & h)
+		handle & get_handle(handle const & h)
 		{
 			return this->get_handle(h.m_self);
 		}
 
-		NODISCARD handle const & get_handle(handle const & h) const
+		handle const & get_handle(handle const & h) const
 		{
 			return this->get_handle(h.m_self);
 		}
@@ -848,13 +848,13 @@ namespace ism::ecs
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class T
-		> NODISCARD bool has_tag(size_t const i) const noexcept
+		> bool has_tag(size_t const i) const noexcept
 		{
 			return m_entities.get<id_bitset>(i).read(traits::template tag_bit<T>());
 		}
 
 		template <class T
-		> NODISCARD bool has_tag(handle const & h) const noexcept
+		> bool has_tag(handle const & h) const noexcept
 		{
 			return this->has_tag(h.m_entity);
 		}
@@ -907,25 +907,25 @@ namespace ism::ecs
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class C
-		> NODISCARD auto & get_component(size_t const i) noexcept
+		> auto & get_component(size_t const i) noexcept
 		{
 			return m_components.get<C>(m_entities.get<id_index>(i));
 		}
 
 		template <class C
-		> NODISCARD auto const & get_component(size_t const i) const noexcept
+		> auto const & get_component(size_t const i) const noexcept
 		{
 			return m_components.get<C>(m_entities.get<id_index>(i));
 		}
 
 		template <class C
-		> NODISCARD auto & get_component(handle const & h) noexcept
+		> auto & get_component(handle const & h) noexcept
 		{
 			return this->get_component<C>(h.m_entity);
 		}
 
 		template <class C
-		> NODISCARD auto const & get_component(handle const & h) const noexcept
+		> auto const & get_component(handle const & h) const noexcept
 		{
 			return this->get_component<C>(h.m_entity);
 		}
@@ -933,44 +933,44 @@ namespace ism::ecs
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class C
-		> NODISCARD bool has_component(size_t const i) const noexcept
+		> bool has_component(size_t const i) const noexcept
 		{
 			return this->get_signature(i).read(traits::template component_bit<C>());
 		}
 
 		template <class C
-		> NODISCARD bool has_component(handle const & h) const noexcept
+		> bool has_component(handle const & h) const noexcept
 		{
 			return this->has_component<C>(h.m_entity);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD signature const & get_signature(size_t const i) const noexcept
+		signature const & get_signature(size_t const i) const noexcept
 		{
 			return m_entities.get<id_bitset>(i);
 		}
 
-		NODISCARD signature const & get_signature(handle const & h) const noexcept
+		signature const & get_signature(handle const & h) const noexcept
 		{
 			return this->get_signature(h.m_entity);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD bool matches_signature(size_t const i, signature const & s) const noexcept
+		bool matches_signature(size_t const i, signature const & s) const noexcept
 		{
 			return (s & this->get_signature(i)) == s;
 		}
 
 		template <class S
-		> NODISCARD bool matches_signature(size_t const i) const noexcept
+		> bool matches_signature(size_t const i) const noexcept
 		{
 			return this->matches_signature(i, traits::template signature_bitset<S>());
 		}
 
 		template <class S
-		> NODISCARD bool matches_signature(handle const & h) const noexcept
+		> bool matches_signature(handle const & h) const noexcept
 		{
 			return this->matches_signature<S>(h.m_entity);
 		}
@@ -978,13 +978,13 @@ namespace ism::ecs
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <template <class> class X
-		> NODISCARD bool matches_system(size_t const i) const noexcept
+		> bool matches_system(size_t const i) const noexcept
 		{
 			return this->matches_signature<typename X<traits>::signature_type>(i);
 		}
 
 		template <template <class> class X
-		> NODISCARD bool matches_system(handle const & h) const noexcept
+		> bool matches_system(handle const & h) const noexcept
 		{
 			return this->matches_system<X>(h.m_entity);
 		}

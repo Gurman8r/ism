@@ -69,7 +69,7 @@ namespace ism
 		template <> static constexpr Type_ type_v<Mat4d>{ Type_Mat4d };
 		template <> static constexpr Type_ type_v<RID>{ Type_RID };
 
-		NODISCARD static constexpr size_t get_size_static(Type_ const type) noexcept
+		static constexpr size_t get_size_static(Type_ const type) noexcept
 		{
 			switch (type) {
 			case Type_Bool: return sizeof(bool);
@@ -106,7 +106,7 @@ namespace ism
 			return 0;
 		}
 
-		NODISCARD static constexpr void const * get_data_static(Type_ const type, storage_type const & data) noexcept
+		static constexpr void const * get_data_static(Type_ const type, storage_type const & data) noexcept
 		{
 			switch (type) {
 			case Type_Bool: return &std::get<bool>(data);
@@ -208,37 +208,37 @@ namespace ism
 		}
 
 	public:
-		NODISCARD operator bool() const noexcept { return is_valid(); }
+		operator bool() const noexcept { return is_valid(); }
 
-		NODISCARD void const * data() const noexcept { return get_data_static(m_type, m_data); }
+		void const * data() const noexcept { return get_data_static(m_type, m_data); }
 
-		NODISCARD size_t size() const noexcept { return get_size_static(m_type); }
+		size_t size() const noexcept { return get_size_static(m_type); }
 
-		NODISCARD Type_ type() const noexcept { return m_type; }
+		Type_ type() const noexcept { return m_type; }
 		
-		NODISCARD bool holds(Type_ const t) const noexcept { return m_type == t; }
+		bool holds(Type_ const t) const noexcept { return m_type == t; }
 
 		template <Type_ T
-		> NODISCARD bool holds() const noexcept { return m_type == T; }
+		> bool holds() const noexcept { return m_type == T; }
 
 		template <class T, std::enable_if_t<is_valid_type_v<T>, int> = 0
-		> NODISCARD bool holds() const noexcept { return m_type == type_v<T>; }
+		> bool holds() const noexcept { return m_type == type_v<T>; }
 		
-		NODISCARD bool is_valid() const { return m_type < Type_MAX; }
+		bool is_valid() const { return m_type < Type_MAX; }
 
-		NODISCARD bool is_bool() const { return m_type == Type_Bool; }
+		bool is_bool() const { return m_type == Type_Bool; }
 
-		NODISCARD bool is_int() const noexcept { return m_type == Type_Int; }
+		bool is_int() const noexcept { return m_type == Type_Int; }
 		
-		NODISCARD bool is_uint() const noexcept { return m_type == Type_Uint; }
+		bool is_uint() const noexcept { return m_type == Type_Uint; }
 		
-		NODISCARD bool is_float() const noexcept { return m_type == Type_Float; }
+		bool is_float() const noexcept { return m_type == Type_Float; }
 		
-		NODISCARD bool is_double() const noexcept { return m_type == Type_Double; }
+		bool is_double() const noexcept { return m_type == Type_Double; }
 
-		NODISCARD bool is_rid() const noexcept { return m_type == Type_RID; }
+		bool is_rid() const noexcept { return m_type == Type_RID; }
 
-		NODISCARD bool is_vector() const noexcept
+		bool is_vector() const noexcept
 		{
 			return
 				m_type == Type_Vec2i || m_type == Type_Vec3i || m_type == Type_Vec4i ||
@@ -247,7 +247,7 @@ namespace ism
 				m_type == Type_Vec2d || m_type == Type_Vec3d || m_type == Type_Vec4d;
 		}
 
-		NODISCARD bool is_matrix() const noexcept
+		bool is_matrix() const noexcept
 		{
 			return
 				m_type == Type_Mat2i || m_type == Type_Mat3i || m_type == Type_Mat4i ||
@@ -258,40 +258,40 @@ namespace ism
 
 	public:
 		template <class T, std::enable_if_t<is_valid_type_v<T>, int> = 0
-		> NODISCARD auto get() noexcept -> T &
+		> auto get() noexcept -> T &
 		{
 			ASSERT(holds<T>());
 			return std::get<T>(m_data);
 		}
 
 		template <class T, std::enable_if_t<is_valid_type_v<T>, int> = 0
-		> NODISCARD auto get() const noexcept -> T const &
+		> auto get() const noexcept -> T const &
 		{
 			ASSERT(holds<T>());
 			return std::get<T>(m_data);
 		}
 
 		template <Type_ T, std::enable_if_t<(T < Type_MAX), int> = 0
-		> NODISCARD auto get() noexcept -> type_t<T> &
+		> auto get() noexcept -> type_t<T> &
 		{
 			ASSERT(holds<T>());
 			return get<type_t<T>>();
 		}
 
 		template <Type_ T, std::enable_if_t<(T < Type_MAX), int> = 0
-		> NODISCARD auto get() const noexcept -> type_t<T> const &
+		> auto get() const noexcept -> type_t<T> const &
 		{
 			ASSERT(holds<T>());
 			return get<type_t<T>>();
 		}
 
 	public:
-		NODISCARD friend bool operator==(Variant const & a, Variant const & b) noexcept
+		friend bool operator==(Variant const & a, Variant const & b) noexcept
 		{
 			return (std::addressof(a) == std::addressof(b)) || (a.m_type == b.m_type && a.m_data == b.m_data);
 		}
 
-		NODISCARD friend bool operator!=(Variant const & a, Variant const & b) noexcept
+		friend bool operator!=(Variant const & a, Variant const & b) noexcept
 		{
 			return (std::addressof(a) != std::addressof(b)) && (a.m_type != b.m_type || a.m_data != b.m_data);
 		}
@@ -330,7 +330,7 @@ namespace ism
 
 		virtual void load_tokens(Vector<String> & v) const = 0;
 
-		NODISCARD String const & get_token(Token_ i) const noexcept {
+		String const & get_token(Token_ i) const noexcept {
 			ASSERT(i < Token_MAX);
 			if (m_tokens.empty()) { load_tokens(m_tokens); }
 			ASSERT(i < m_tokens.size());

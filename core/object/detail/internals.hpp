@@ -20,7 +20,7 @@ namespace ism
 
 		NON_MOVABLE(Internals);
 
-		NODISCARD static Internals * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static Internals * get_singleton() noexcept { return singleton; }
 
 	public:
 		Batch<hash_t, StringName, TYPE> class_db; // class database

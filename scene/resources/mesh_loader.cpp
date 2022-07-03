@@ -121,7 +121,6 @@ Error_ MeshLoader::load_from_file(Mesh & mesh, Path const & path)
 	if (!path) { return Error_Unknown; }
 	if (mesh.m_mesh) { RENDERING_SERVER->mesh_destroy(mesh.m_mesh); }
 
-	// open file
 	Assimp::Importer ai;
 	aiScene const * scene{ ai.ReadFile(path.c_str(),
 		aiProcess_CalcTangentSpace |
@@ -132,14 +131,10 @@ Error_ MeshLoader::load_from_file(Mesh & mesh, Path const & path)
 		aiProcess_GenUVCoords) };
 	SCOPE_EXIT(&ai) { ai.FreeScene(); };
 
-	// generate spec
 	Vector<RS::SurfaceData> spec;
 	process_mesh_node(scene, scene->mRootNode, spec);
-
-	// create mesh
 	mesh.m_mesh = RENDERING_SERVER->mesh_create(spec);
 	if (!mesh.m_mesh) { return Error_Unknown; }
-
 	return Error_None;
 }
 

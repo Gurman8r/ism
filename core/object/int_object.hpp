@@ -23,7 +23,7 @@ namespace ism
 
 		using storage_type = decltype(m_int);
 
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_int); }
+		auto & operator*() const { return const_cast<storage_type &>(m_int); }
 
 		IntObject() noexcept {}
 
@@ -34,7 +34,7 @@ namespace ism
 		> IntObject & operator=(T const value) { m_int = static_cast<storage_type>(value); return (*this); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> NODISCARD operator T() const & { return static_cast<T>(m_int); }
+		> operator T() const & { return static_cast<T>(m_int); }
 
 	public:
 		static IntObject g_true; // global true

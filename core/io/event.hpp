@@ -38,13 +38,13 @@ namespace ism
 
 		virtual ~Event() noexcept override = default;
 
-		NODISCARD virtual EventID get_event_id() const = 0;
+		virtual EventID get_event_id() const = 0;
 
-		NODISCARD operator EventID() const { return get_event_id(); }
+		operator EventID() const { return get_event_id(); }
 
-		NODISCARD bool operator==(EventID const id) const noexcept { return id == get_event_id(); }
+		bool operator==(EventID const id) const noexcept { return id == get_event_id(); }
 
-		NODISCARD bool operator!=(EventID const id) const noexcept { return id != get_event_id(); }
+		bool operator!=(EventID const id) const noexcept { return id != get_event_id(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -59,7 +59,7 @@ private:																					\
 public:																						\
 	enum : ism::EventID { ID = ism::hash(m_class::__class_static) };						\
 																							\
-	NODISCARD virtual ism::EventID get_event_id() const override { return m_class::ID; }	\
+	virtual ism::EventID get_event_id() const override { return m_class::ID; }	\
 																							\
 private:
 
@@ -79,9 +79,9 @@ private:
 
 		virtual void handle_event(Event const &) = 0; // <- HANDLE EVENT
 
-		NODISCARD auto get_event_bus() const noexcept -> EventBus * { return m_event_bus; }
+		auto get_event_bus() const noexcept -> EventBus * { return m_event_bus; }
 
-		NODISCARD auto get_handler_index() const noexcept -> int32_t { return m_handler_index; }
+		auto get_handler_index() const noexcept -> int32_t { return m_handler_index; }
 
 	protected:
 		friend class EventBus;
@@ -100,7 +100,7 @@ private:
 	// handler comparator
 	template <> struct Less<EventHandler *>
 	{
-		NODISCARD bool operator()(EventHandler * a, EventHandler * b) const noexcept
+		bool operator()(EventHandler * a, EventHandler * b) const noexcept
 		{
 			if (a == b) { return false; }
 
@@ -125,7 +125,7 @@ private:
 
 		void handle_event(Event const & event) final { m_callback(event); }
 
-		NODISCARD auto get_callback() const noexcept -> EventCallback const & { return m_callback; }
+		auto get_callback() const noexcept -> EventCallback const & { return m_callback; }
 
 		template <class Fn> void set_callback(Fn && fn) noexcept { m_callback = FWD(fn); }
 
@@ -178,9 +178,9 @@ private:
 			}
 		}
 
-		NODISCARD auto operator[](size_t i) noexcept -> Callback & { return m_callbacks[i]; }
+		auto operator[](size_t i) noexcept -> Callback & { return m_callbacks[i]; }
 
-		NODISCARD auto operator[](size_t i) const noexcept -> Callback const & { return m_callbacks[i]; }
+		auto operator[](size_t i) const noexcept -> Callback const & { return m_callbacks[i]; }
 
 		void clear() noexcept { m_callbacks.clear(); }
 
@@ -215,14 +215,14 @@ private:
 	protected:
 		friend class EventHandler;
 
-		NODISCARD auto next_handler_id() noexcept { return ++m_next_handler_id; }
+		auto next_handler_id() noexcept { return ++m_next_handler_id; }
 
 	public:
 		EventBus() noexcept { singleton = this; }
 
 		virtual ~EventBus() noexcept override = default;
 
-		NODISCARD static EventBus * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static EventBus * get_singleton() noexcept { return singleton; }
 
 	public:
 		/* DISPATCH API */
@@ -271,7 +271,7 @@ private:
 	public:
 		/* DUMMY API */
 
-		NODISCARD auto const & get_all_dummy_handlers() const noexcept { return m_dummy_handlers; }
+		auto const & get_all_dummy_handlers() const noexcept { return m_dummy_handlers; }
 
 		template <class ... Events, class Fn
 		> auto & add_dummy_handler(Fn && fn) noexcept
@@ -300,10 +300,10 @@ private:
 	public:
 		/* DELEGATE API */
 
-		NODISCARD auto const & get_all_delegates() const noexcept { return m_event_delegates; }
+		auto const & get_all_delegates() const noexcept { return m_event_delegates; }
 
 		template <class Ev
-		> NODISCARD auto get_delegate() noexcept -> EventDelegate<Ev> &
+		> auto get_delegate() noexcept -> EventDelegate<Ev> &
 		{
 			return **((Ref<EventDelegate<Ev>> &)m_event_delegates.find_or_add_fn(Ev::ID, [&]() noexcept {
 				return memnew(EventDelegate<Ev>(this));

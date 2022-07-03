@@ -8,6 +8,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// memory
 namespace ism
 {
 	class ISM_API Memory final
@@ -21,32 +22,43 @@ namespace ism
 	};
 }
 
-#define memalloc (ism::Memory::alloc_static)
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define memrealloc(ptr, size) (ism::Memory::realloc_static(ptr, size, size))
+#define memalloc \
+		(ism::Memory::alloc_static)
 
-#define memrealloc_sized(ptr, oldsz, newsz) (ism::Memory::realloc_static(ptr, oldsz, newsz))
+#define memrealloc(ptr, size) \
+		(ism::Memory::realloc_static(ptr, size, size))
 
-#define memfree (ism::Memory::free_static)
+#define memrealloc_sized(ptr, oldsz, newsz) \
+		(ism::Memory::realloc_static(ptr, oldsz, newsz))
+
+#define memfree \
+		(ism::Memory::free_static)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_API_FUNC(void *) operator new(size_t size, char const * desc);
+// new
+
+ISM_API_FUNC(void *) operator new(size_t size, ism::cstring desc);
 
 ISM_API_FUNC(void *) operator new(size_t size, void * (*alloc_fn)(size_t));
 
-FORCE_INLINE void * operator new(size_t size, void * ptr, size_t check, char const * desc) { return ptr; }
+FORCE_INLINE void * operator new(size_t size, void * ptr, size_t check, ism::cstring desc) { return ptr; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-ISM_API_FUNC(void) operator delete(void * ptr, char const * desc);
+// delete
+
+ISM_API_FUNC(void) operator delete(void * ptr, ism::cstring desc);
 
 ISM_API_FUNC(void) operator delete(void * ptr, void * (*alloc_fn)(size_t));
 
-FORCE_INLINE void operator delete(void * placement, void * ptr, size_t check, char const * desc) {}
+FORCE_INLINE void operator delete(void * placement, void * ptr, size_t check, ism::cstring desc) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// postinitialize / predelete
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -55,16 +67,13 @@ namespace ism
 
 	template <class T> T * _post_initialize(T * value)
 	{
-		::ism::postinitialize_handler(value);
+		postinitialize_handler(value);
 
 		return value;
 	}
 
-#ifndef MEMNEW_DESC
-#define MEMNEW_DESC(T) TOSTR(T)
-#endif
-
-#define memnew(T) (::ism::_post_initialize(new (MEMNEW_DESC(T)) T))
+#define memnew(T) \
+		(ism::_post_initialize(new (TOSTR(T)) T))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -72,28 +81,50 @@ namespace ism
 
 	template <class T> void memdelete(T * ptr)
 	{
-		if (!::ism::predelete_handler(ptr)) { return; }
+		if (!predelete_handler(ptr)) { return; }
 
 		if constexpr (!std::is_trivially_destructible_v<T>) { ptr->~T(); }
 
 		memfree(ptr);
 	}
 
-#define memdelete_nonzero(ptr)		\
-	do {							\
-		if (ptr)					\
-		{							\
-			ism::memdelete(ptr);	\
-		}							\
-	} while (0)
+#define memdelete_nonzero(ptr)			\
+		do {							\
+			if (ptr)					\
+			{							\
+				ism::memdelete(ptr);	\
+			}							\
+		} while (0)
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// allocators / deleters
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T = byte
+	> struct PolymorphicAllocator : public std::pmr::polymorphic_allocator<T>
+	{
+		using base_type = std::pmr::polymorphic_allocator<T>;
+		using base_type::base_type;
+		using base_type::allocate;
+		using base_type::deallocate;
+		using base_type::construct;
+#if CXX_20
+		using base_type::destroy;
+		using base_type::allocate_bytes;
+		using base_type::deallocate_bytes;
+		using base_type::allocate_object;
+		using base_type::deallocate_object;
+		using base_type::new_object;
+		using base_type::delete_object;
+#endif
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// Polymorphic Allocator
-	template <class T = byte
-	> ALIAS(PolymorphicAllocator) std::pmr::polymorphic_allocator<T>;
-
-	// Default Allocator
 	struct DefaultAllocator final
 	{
 		static void * allocate(size_t size) { return memalloc(size); }
@@ -103,16 +134,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// global delete
-	struct GlobalDelete final
-	{
-		void operator()(void * const ptr) const
-		{
-			::operator delete(ptr);
-		}
-	};
-
-	// default delete
 	template <class T> struct DefaultDelete
 	{
 		template <class U> void operator()(U * value) const
@@ -121,7 +142,6 @@ namespace ism
 		}
 	};
 
-	// default delete (void)
 	template <> struct DefaultDelete<void>
 	{
 		void operator()(void * value) const
@@ -135,12 +155,19 @@ namespace ism
 		DefaultDelete<mpl::intrinsic_t<decltype(value)>>{}(value);
 	}
 
-	// No Delete
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct NoDelete final
 	{
 		template <class U> void operator()(U *) const {}
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// test memory resource
+namespace ism
+{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// passthrough for getting information about an upstream memory resource
@@ -165,26 +192,26 @@ namespace ism
 		{
 		}
 
-		NODISCARD bool is_default_resource() const noexcept { return this == std::pmr::get_default_resource(); }
-		NODISCARD auto upstream_resource() const noexcept -> std::pmr::memory_resource * const { return m_upstream_resource; }
-		NODISCARD auto data() const noexcept -> pointer { return m_buffer_data; }
-		NODISCARD auto size() const noexcept -> size_t { return m_buffer_size; }
-		NODISCARD auto num_allocations() const noexcept -> size_t { return m_num_allocations; }
-		NODISCARD auto bytes_used() const noexcept -> size_t { return m_bytes_used; }
-		NODISCARD auto bytes_free() const noexcept -> size_t { return m_buffer_size - m_bytes_used; }
+		bool is_default_resource() const noexcept { return this == std::pmr::get_default_resource(); }
+		auto upstream_resource() const noexcept -> std::pmr::memory_resource * const { return m_upstream_resource; }
+		auto data() const noexcept -> pointer { return m_buffer_data; }
+		auto size() const noexcept -> size_t { return m_buffer_size; }
+		auto num_allocations() const noexcept -> size_t { return m_num_allocations; }
+		auto bytes_used() const noexcept -> size_t { return m_bytes_used; }
+		auto bytes_free() const noexcept -> size_t { return m_buffer_size - m_bytes_used; }
 
-		NODISCARD auto begin() noexcept -> iterator { return m_buffer_data; }
-		NODISCARD auto begin() const noexcept -> const_iterator { return m_buffer_data; }
-		NODISCARD auto cbegin() const noexcept -> const_iterator { return begin(); }
-		NODISCARD auto end() noexcept -> iterator { return m_buffer_data + m_buffer_size; }
-		NODISCARD auto end() const noexcept -> const_iterator { return m_buffer_data + m_buffer_size; }
-		NODISCARD auto cend() const noexcept -> const_iterator { return end(); }
-		NODISCARD auto rbegin() noexcept -> reverse_iterator { return std::make_reverse_iterator(end()); }
-		NODISCARD auto rbegin() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(end()); }
-		NODISCARD auto crbegin() const noexcept -> const_reverse_iterator { return rbegin(); }
-		NODISCARD auto rend() noexcept -> reverse_iterator { return std::make_reverse_iterator(begin()); }
-		NODISCARD auto rend() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(begin()); }
-		NODISCARD auto crend() const noexcept -> const_reverse_iterator { return crend(); }
+		auto begin() noexcept -> iterator { return m_buffer_data; }
+		auto begin() const noexcept -> const_iterator { return m_buffer_data; }
+		auto cbegin() const noexcept -> const_iterator { return begin(); }
+		auto end() noexcept -> iterator { return m_buffer_data + m_buffer_size; }
+		auto end() const noexcept -> const_iterator { return m_buffer_data + m_buffer_size; }
+		auto cend() const noexcept -> const_iterator { return end(); }
+		auto rbegin() noexcept -> reverse_iterator { return std::make_reverse_iterator(end()); }
+		auto rbegin() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(end()); }
+		auto crbegin() const noexcept -> const_reverse_iterator { return rbegin(); }
+		auto rend() noexcept -> reverse_iterator { return std::make_reverse_iterator(begin()); }
+		auto rend() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(begin()); }
+		auto crend() const noexcept -> const_reverse_iterator { return crend(); }
 
 	private:
 		void * do_allocate(size_t bytes, size_t align) override

@@ -11,30 +11,30 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// hash_map
-	template <class _Kt, class _Vt, class _Hash = Hasher<_Kt>, class _KeyEq = EqualTo<_Kt>
-	> ALIAS(HashMap) std::pmr::unordered_map<_Kt, _Vt, _Hash, _KeyEq>;
+	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>
+	> ALIAS(HashMap) std::unordered_map<K, V, H, Eq, PolymorphicAllocator<Pair<K const, V>>>;
 
-	// hash_multimap
-	template <class _Kt, class _Vt, class _Hash = Hasher<_Kt>, class _KeyEq = EqualTo<_Kt>
-	> ALIAS(HashMultimap) std::pmr::unordered_multimap<_Kt, _Vt, _Hash, _KeyEq>;
+	// hash multi map
+	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>
+	> ALIAS(HashMultiMap) std::unordered_multimap<K, V, H, Eq, PolymorphicAllocator<Pair<K const, V>>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class _Kt, class _Vt, class _Hash = Hasher<_Kt>, class _KeyEq = EqualTo<_Kt>, class T
-	> NODISCARD bool has(HashMap<_Kt, _Vt, _Hash, _KeyEq> const & m, T && value)
+	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>, class T
+	> bool has(HashMap<K, V, H, Eq> const & m, T && value)
 	{
 		return m.find(FWD(value)) != m.end();
 	}
 
-	template <class _Kt, class _Vt, class _Hash = Hasher<_Kt>, class _KeyEq = EqualTo<_Kt>, class T
-	> NODISCARD _Vt * getptr(HashMap<_Kt, _Vt, _Hash, _KeyEq> & m, T && value)
+	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>, class T
+	> V * getptr(HashMap<K, V, H, Eq> & m, T && value)
 	{
 		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
 		else { return nullptr; }
 	}
 
-	template <class _Kt, class _Vt, class _Hash = Hasher<_Kt>, class _KeyEq = EqualTo<_Kt>, class T
-	> NODISCARD _Vt const * getptr(HashMap<_Kt, _Vt, _Hash, _KeyEq> const & m, T && value)
+	template <class K, class V, class H = Hasher<K>, class Eq = EqualTo<K>, class T
+	> V const * getptr(HashMap<K, V, H, Eq> const & m, T && value)
 	{
 		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
 		else { return nullptr; }

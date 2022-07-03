@@ -61,13 +61,13 @@ namespace ism
 		template <class ... Args
 		> static auto new_(Args && ... args) { return Ref<T>{ T{ FWD(args)... } }; }
 
-		template <class U> NODISCARD U cast() const &; // cast.hpp
+		template <class U> U cast() const &; // cast.hpp
 
-		template <class U> NODISCARD U cast() &&; // cast.hpp
+		template <class U> U cast() &&; // cast.hpp
 
-		NODISCARD static constexpr auto get_class_static() noexcept { return T::get_class_static(); }
+		static constexpr auto get_class_static() noexcept { return T::get_class_static(); }
 
-		NODISCARD static auto get_type_static() noexcept { return T::get_type_static(); }
+		static auto get_type_static() noexcept { return T::get_type_static(); }
 
 	public:
 		template <class U = T, class ... Args
@@ -110,16 +110,16 @@ namespace ism
 		}
 
 	public:
-		NODISCARD operator bool() const noexcept { return m_ptr != nullptr; }
-		NODISCARD bool is_null() const noexcept { return m_ptr == nullptr; }
-		NODISCARD bool is_valid() const noexcept { return m_ptr != nullptr; }
-		NODISCARD auto ptr() const noexcept { return const_cast<T *>(m_ptr); }
+		operator bool() const noexcept { return m_ptr != nullptr; }
+		bool is_null() const noexcept { return m_ptr == nullptr; }
+		bool is_valid() const noexcept { return m_ptr != nullptr; }
+		auto ptr() const noexcept { return const_cast<T *>(m_ptr); }
 
-		NODISCARD auto operator*() noexcept { return m_ptr; }
-		NODISCARD auto operator*() const noexcept { return m_ptr; }
+		auto operator*() noexcept { return m_ptr; }
+		auto operator*() const noexcept { return m_ptr; }
 
-		NODISCARD auto operator->() noexcept { return m_ptr; }
-		NODISCARD auto operator->() const noexcept { return m_ptr; }
+		auto operator->() noexcept { return m_ptr; }
+		auto operator->() const noexcept { return m_ptr; }
 
 		template <class U> friend bool operator==(Ref const & lhs, U const * rhs) noexcept { return (void *)lhs.m_ptr == (void *)rhs; }
 		template <class U> friend bool operator!=(Ref const & lhs, U const * rhs) noexcept { return (void *)lhs.m_ptr != (void *)rhs; }
@@ -145,7 +145,7 @@ namespace ism
 public:																									\
 	ALIAS(base_type) ism::Ref<value_type>;																\
 																										\
-	NODISCARD static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }		\
+	static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }		\
 																										\
 	~m_class() noexcept = default;																		\
 																										\

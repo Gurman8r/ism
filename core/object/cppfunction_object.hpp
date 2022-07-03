@@ -16,9 +16,9 @@ namespace ism
 	public:
 		FunctionRecord * m_record{};
 
-		NODISCARD auto & operator*() const { return const_cast<FunctionRecord &>(*m_record); }
+		auto & operator*() const { return const_cast<FunctionRecord &>(*m_record); }
 
-		NODISCARD auto * operator->() const { return const_cast<FunctionRecord *>(m_record); }
+		auto * operator->() const { return const_cast<FunctionRecord *>(m_record); }
 
 		virtual ~CppFunctionObject() override;
 
@@ -109,7 +109,7 @@ namespace ism
 
 				auto capture{ const_cast<Capture *>(reinterpret_cast<Capture const *>(data)) };
 
-				ReturnValuePolicy_ policy{ return_policy_override<Return>::policy(call.record.policy) };
+				ReturnPolicy_ policy{ return_policy_override<Return>::policy(call.record.policy) };
 
 				using Guard = attr::extract_guard_t<Extra...>;
 
@@ -159,9 +159,9 @@ namespace ism
 		REF_COMMON(CPP_FUNCTION, OBJECT_CHECK_CPPFUNCTION);
 
 	public:
-		NODISCARD auto name() const { return attr("__name__"); }
+		auto name() const { return attr("__name__"); }
 
-		NODISCARD auto signature() const { return attr("__text_signature__"); }
+		auto signature() const { return attr("__text_signature__"); }
 	};
 }
 

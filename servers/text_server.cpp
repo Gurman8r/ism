@@ -56,25 +56,25 @@ RID TextServer::font_create(FontCreateInfo const & spec)
 	FT_Stroker stroker;
 
 	if (FT_Init_FreeType(&library)) {
-		SYSTEM->printerr("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
+		SYS->errorf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
 		return nullptr;
 	}
 
 	if (FT_New_Face(library, spec.path.c_str(), 0, &face)) {
-		SYSTEM->printerr("FAILED LOADING FONT FACE: %s", spec.path.c_str());
+		SYS->errorf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
 		FT_Done_FreeType(library);
 		return nullptr;
 	}
 
 	if (FT_Stroker_New(library, &stroker)) {
-		SYSTEM->printerr("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
+		SYS->errorf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
 		FT_Done_Face(face);
 		FT_Done_FreeType(library);
 		return nullptr;
 	}
 
 	if (FT_Select_Charmap(face, FT_ENCODING_UNICODE)) {
-		SYSTEM->printerr("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
+		SYS->errorf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
 		FT_Stroker_Done(stroker);
 		FT_Done_Face(face);
 		FT_Done_FreeType(library);
@@ -111,7 +111,7 @@ Glyph * TextServer::font_get_glyph(RID font, uint32_t character, uint32_t charac
 		FT_Face const face{ (FT_Face)f->font_face };
 		FT_Set_Pixel_Sizes(face, 0, character_size);
 		if (FT_Load_Char(face, character, FT_LOAD_RENDER)) {
-			SYSTEM->printerr("FAILED LOADING GLYPH: %s", f->path.c_str());
+			SYS->errorf("FAILED LOADING GLYPH: %s", f->path.c_str());
 			return nullptr;
 		}
 

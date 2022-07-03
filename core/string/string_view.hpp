@@ -44,37 +44,37 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	public:
-		NODISCARD constexpr auto size() const noexcept -> size_type { return m_data.size(); }
+		constexpr auto size() const noexcept -> size_type { return m_data.size(); }
 
-		NODISCARD constexpr auto length() const noexcept -> size_type { return m_data.length(); }
+		constexpr auto length() const noexcept -> size_type { return m_data.length(); }
 
-		NODISCARD constexpr bool empty() const noexcept { return m_data.empty(); }
+		constexpr bool empty() const noexcept { return m_data.empty(); }
 
-		NODISCARD constexpr auto data() const noexcept -> const_pointer { return m_data.data(); }
+		constexpr auto data() const noexcept -> const_pointer { return m_data.data(); }
 
-		NODISCARD constexpr auto max_size() const noexcept -> size_type { return m_data.max_size(); }
+		constexpr auto max_size() const noexcept -> size_type { return m_data.max_size(); }
 
-		NODISCARD constexpr auto operator[](size_type i) const noexcept { return m_data.operator[](i); }
+		constexpr auto operator[](size_type i) const noexcept { return m_data.operator[](i); }
 
-		NODISCARD constexpr auto at(size_type i) const noexcept -> const_reference { return m_data.at(i); }
+		constexpr auto at(size_type i) const noexcept -> const_reference { return m_data.at(i); }
 
-		NODISCARD constexpr auto front() const noexcept -> const_reference { return m_data.front(); }
+		constexpr auto front() const noexcept -> const_reference { return m_data.front(); }
 
-		NODISCARD constexpr auto back() const noexcept -> const_reference { return m_data.back(); }
+		constexpr auto back() const noexcept -> const_reference { return m_data.back(); }
 
 		constexpr StringView & remove_prefix(size_type count) noexcept { m_data.remove_prefix(count); return (*this); }
 
 		constexpr StringView & remove_suffix(size_type count) noexcept { m_data.remove_suffix(count); return (*this); }
 
-		NODISCARD auto copy(pointer ptr, size_type count, size_type off = 0) -> size_type { return m_data.copy(ptr, count, off); }
+		auto copy(pointer ptr, size_type count, size_type off = 0) -> size_type { return m_data.copy(ptr, count, off); }
 
 		constexpr void swap(StringView & other) noexcept { m_data.swap(other.m_data); }
 
-		NODISCARD constexpr StringView substr(size_type off = 0, size_type count = npos) const { return StringView{ m_data.substr(off, npos) }; }
+		constexpr StringView substr(size_type off = 0, size_type count = npos) const { return StringView{ m_data.substr(off, npos) }; }
 
-		NODISCARD String string() const noexcept { return String{ begin(), end() }; }
+		String string() const noexcept { return String{ begin(), end() }; }
 
-		NODISCARD operator String() const noexcept { return String{ begin(), end() }; }
+		operator String() const noexcept { return String{ begin(), end() }; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -108,79 +108,79 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr auto find(StringView const & other, size_type off = 0) const noexcept -> size_type { return m_data.find(other.m_data, off); }
+		constexpr auto find(StringView const & other, size_type off = 0) const noexcept -> size_type { return m_data.find(other.m_data, off); }
 
-		NODISCARD constexpr auto find(value_type c, size_type off = 0) const noexcept -> size_type { return m_data.find(c, off); }
+		constexpr auto find(value_type c, size_type off = 0) const noexcept -> size_type { return m_data.find(c, off); }
 
-		NODISCARD constexpr auto find(const_pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find(ptr, off, count); }
+		constexpr auto find(const_pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find(ptr, off, count); }
 
-		NODISCARD constexpr auto find(const_pointer ptr, size_type off = 0) const noexcept -> size_type { return m_data.find(ptr, off); }
+		constexpr auto find(const_pointer ptr, size_type off = 0) const noexcept -> size_type { return m_data.find(ptr, off); }
 
-		NODISCARD constexpr auto rfind(StringView const & other, size_type off = 0) const noexcept -> size_type { return m_data.rfind(other.m_data, off); }
+		constexpr auto rfind(StringView const & other, size_type off = 0) const noexcept -> size_type { return m_data.rfind(other.m_data, off); }
 
-		NODISCARD constexpr auto rfind(value_type c, size_type off = 0) const noexcept -> size_type { return m_data.rfind(c, off); }
+		constexpr auto rfind(value_type c, size_type off = 0) const noexcept -> size_type { return m_data.rfind(c, off); }
 
-		NODISCARD constexpr auto rfind(const_pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.rfind(ptr, off, count); }
+		constexpr auto rfind(const_pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.rfind(ptr, off, count); }
 
-		NODISCARD constexpr auto rfind(const_pointer ptr, size_type off = 0) const noexcept -> size_type { return m_data.rfind(ptr, off); }
+		constexpr auto rfind(const_pointer ptr, size_type off = 0) const noexcept -> size_type { return m_data.rfind(ptr, off); }
 
-		NODISCARD constexpr auto find_first_of(StringView other, size_type off = 0) const noexcept -> size_type { return m_data.find_first_of(other.m_data, off); }
+		constexpr auto find_first_of(StringView other, size_type off = 0) const noexcept -> size_type { return m_data.find_first_of(other.m_data, off); }
 
-		NODISCARD constexpr auto find_first_of(value_type c, size_type off = 0) const noexcept -> size_type { return m_data.find_first_of(c, off); }
+		constexpr auto find_first_of(value_type c, size_type off = 0) const noexcept -> size_type { return m_data.find_first_of(c, off); }
 
-		NODISCARD constexpr auto find_first_of(pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find_first_of(ptr, off, count); }
+		constexpr auto find_first_of(pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find_first_of(ptr, off, count); }
 
-		NODISCARD constexpr auto find_first_of(pointer ptr, size_type off = 0) const noexcept -> size_type { return m_data.find_first_of(ptr, off); }
+		constexpr auto find_first_of(pointer ptr, size_type off = 0) const noexcept -> size_type { return m_data.find_first_of(ptr, off); }
 
-		NODISCARD constexpr auto find_last_of(StringView other, size_type off = npos) const noexcept -> size_type { return m_data.find_last_of(other.m_data, off); }
+		constexpr auto find_last_of(StringView other, size_type off = npos) const noexcept -> size_type { return m_data.find_last_of(other.m_data, off); }
 
-		NODISCARD constexpr auto find_last_of(value_type c, size_type off = npos) const noexcept -> size_type { return m_data.find_last_of(c, off); }
+		constexpr auto find_last_of(value_type c, size_type off = npos) const noexcept -> size_type { return m_data.find_last_of(c, off); }
 
-		NODISCARD constexpr auto find_last_of(pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find_last_of(ptr, off, count); }
+		constexpr auto find_last_of(pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find_last_of(ptr, off, count); }
 
-		NODISCARD constexpr auto find_last_of(pointer ptr, size_type off = npos) const noexcept -> size_type { return m_data.find_last_of(ptr, off); }
+		constexpr auto find_last_of(pointer ptr, size_type off = npos) const noexcept -> size_type { return m_data.find_last_of(ptr, off); }
 
-		NODISCARD constexpr auto find_first_not_of(StringView other, size_type off = 0) const noexcept -> size_type { return m_data.find_first_not_of(other.m_data, off); }
+		constexpr auto find_first_not_of(StringView other, size_type off = 0) const noexcept -> size_type { return m_data.find_first_not_of(other.m_data, off); }
 
-		NODISCARD constexpr auto find_first_not_of(value_type c, size_type off = 0) const noexcept -> size_type { return m_data.find_first_not_of(c, off); }
+		constexpr auto find_first_not_of(value_type c, size_type off = 0) const noexcept -> size_type { return m_data.find_first_not_of(c, off); }
 
-		NODISCARD constexpr auto find_first_not_of(pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find_first_not_of(ptr, off, count); }
+		constexpr auto find_first_not_of(pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find_first_not_of(ptr, off, count); }
 
-		NODISCARD constexpr auto find_first_not_of(pointer ptr, size_type off = 0) const noexcept -> size_type { return m_data.find_first_not_of(ptr, off); }
+		constexpr auto find_first_not_of(pointer ptr, size_type off = 0) const noexcept -> size_type { return m_data.find_first_not_of(ptr, off); }
 
-		NODISCARD constexpr auto find_last_not_of(StringView other, size_type off = npos) const noexcept -> size_type { return m_data.find_last_not_of(other.m_data, off); }
+		constexpr auto find_last_not_of(StringView other, size_type off = npos) const noexcept -> size_type { return m_data.find_last_not_of(other.m_data, off); }
 
-		NODISCARD constexpr auto find_last_not_of(value_type c, size_type off = npos) const noexcept -> size_type { return m_data.find_last_not_of(c, off); }
+		constexpr auto find_last_not_of(value_type c, size_type off = npos) const noexcept -> size_type { return m_data.find_last_not_of(c, off); }
 
-		NODISCARD constexpr auto find_last_not_of(pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find_last_not_of(ptr, off, count); }
+		constexpr auto find_last_not_of(pointer ptr, size_type off, size_type count) const noexcept -> size_type { return m_data.find_last_not_of(ptr, off, count); }
 
-		NODISCARD constexpr auto find_last_not_of(pointer ptr, size_type off = npos) const noexcept -> size_type { return m_data.find_last_not_of(ptr, off); }
+		constexpr auto find_last_not_of(pointer ptr, size_type off = npos) const noexcept -> size_type { return m_data.find_last_not_of(ptr, off); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
+		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
 
-		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
+		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
 
-		NODISCARD constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
+		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
 
-		NODISCARD constexpr auto end() noexcept -> iterator { return m_data.end(); }
+		constexpr auto end() noexcept -> iterator { return m_data.end(); }
 
-		NODISCARD constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
+		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
 
-		NODISCARD constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
+		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
 
-		NODISCARD constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
+		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
 
-		NODISCARD constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
+		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
 
-		NODISCARD constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
+		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
 
-		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
+		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
 
-		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
+		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
 
-		NODISCARD constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
+		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

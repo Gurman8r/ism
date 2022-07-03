@@ -10,13 +10,13 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ch = char
-	> NODISCARD constexpr size_t strlen(Ch const * s)
+	> constexpr size_t strlen(Ch const * s)
 	{
 		return *s ? (1 + strlen(s + 1)) : 0;
 	}
 
 	template <class Ch = char
-	> NODISCARD Ch * strdup(Ch const * src)
+	> Ch * strdup(Ch const * src)
 	{
 		int32_t n{};
 		while (src[n]) { n++; }
@@ -37,7 +37,7 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ch = char
-	> NODISCARD constexpr Ch const * single_str(Ch const * items_separated_by_zeroes, size_t index)
+	> constexpr Ch const * single_str(Ch const * items_separated_by_zeroes, size_t index)
 	{
 		Ch const * items{ (Ch const *)items_separated_by_zeroes };
 		Ch const * ptr{ items };
@@ -53,7 +53,7 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class Fn, class ... Args
-	> NODISCARD Optional<T> parse_answer(cstring ptr, Fn && fn, Args && ... args) noexcept
+	> Optional<T> parse_answer(cstring ptr, Fn && fn, Args && ... args) noexcept
 	{
 		// from <string>
 
@@ -70,7 +70,7 @@ namespace ism::util
 	}
 
 	template <class T
-	> NODISCARD String integral_to_string(T const value) noexcept
+	> String integral_to_string(T const value) noexcept
 	{
 		// from <string>
 
@@ -119,7 +119,7 @@ namespace ism::util
 	}
 
 	template <class T
-	> NODISCARD String floating_point_to_string(T const value) noexcept
+	> String floating_point_to_string(T const value) noexcept
 	{
 		// from <string>
 
@@ -133,7 +133,7 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ch = char
-	> NODISCARD WideString widen(BasicString<Ch> const & value) noexcept
+	> WideString widen(BasicString<Ch> const & value) noexcept
 	{
 		if constexpr (std::is_convertible_v<BasicString<Ch>, WideString>)
 		{
@@ -149,7 +149,7 @@ namespace ism::util
 	}
 
 	template <class Ch = wchar_t
-	> NODISCARD String narrow(BasicString<Ch> const & value) noexcept
+	> String narrow(BasicString<Ch> const & value) noexcept
 	{
 		if constexpr (std::is_convertible_v<BasicString<Ch>, String>)
 		{
@@ -167,13 +167,13 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Str = BasicString<char>
-	> NODISCARD Str to_lower(Str value) {
+	> Str to_lower(Str value) {
 		for (auto & elem : value) { elem = std::tolower(elem); }
 		return value;
 	}
 
 	template <class Str = BasicString<char>
-	> NODISCARD Str to_upper(Str value) {
+	> Str to_upper(Str value) {
 		for (auto & elem : value) { elem = std::toupper(elem); }
 		return value;
 	}
@@ -181,7 +181,7 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Ch = char
-	> NODISCARD Optional<bool> to_bool(BasicString<Ch> const & value) noexcept
+	> Optional<bool> to_bool(BasicString<Ch> const & value) noexcept
 	{
 		switch (hash(to_lower(value)))
 		{
@@ -198,67 +198,67 @@ namespace ism::util
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<int8_t> to_i8(BasicString<Ch> const & value, int32_t base = 10) noexcept
+	> Optional<int8_t> to_i8(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
 		return parse_answer<int8_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<int16_t> to_i16(BasicString<Ch> const & value, int32_t base = 10) noexcept
+	> Optional<int16_t> to_i16(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
 		return parse_answer<int16_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<int32_t> to_i32(BasicString<Ch> const & value, int32_t base = 10) noexcept
+	> Optional<int32_t> to_i32(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
 		return parse_answer<int32_t>(value.c_str(), &_CSTD strtol, base);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<int64_t> to_i64(BasicString<Ch> const & value, int32_t base = 10) noexcept
+	> Optional<int64_t> to_i64(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
 		return parse_answer<int64_t>(value.c_str(), &_CSTD strtoll, base);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<uint8_t> to_u8(BasicString<Ch> const & value, int32_t base = 10) noexcept
+	> Optional<uint8_t> to_u8(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
 		return parse_answer<uint8_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<uint16_t> to_u16(BasicString<Ch> const & value, int32_t base = 10) noexcept
+	> Optional<uint16_t> to_u16(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
 		return parse_answer<uint16_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<uint32_t> to_u32(BasicString<Ch> const & value, int32_t base = 10) noexcept
+	> Optional<uint32_t> to_u32(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
 		return parse_answer<uint32_t>(value.c_str(), &_CSTD strtoul, base);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<uint64_t> to_u64(BasicString<Ch> const & value, int32_t base = 10) noexcept
+	> Optional<uint64_t> to_u64(BasicString<Ch> const & value, int32_t base = 10) noexcept
 	{
 		return parse_answer<uint64_t>(value.c_str(), &_CSTD strtoull, base);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<float32_t> to_f32(BasicString<Ch> const & value) noexcept
+	> Optional<float32_t> to_f32(BasicString<Ch> const & value) noexcept
 	{
 		return parse_answer<float32_t>(value.c_str(), &_CSTD strtod);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<float64_t> to_f64(BasicString<Ch> const & value) noexcept
+	> Optional<float64_t> to_f64(BasicString<Ch> const & value) noexcept
 	{
 		return parse_answer<float64_t>(value.c_str(), &_CSTD strtod);
 	}
 
 	template <class Ch = char
-	> NODISCARD Optional<float80_t> to_f80(BasicString<Ch> const & value) noexcept
+	> Optional<float80_t> to_f80(BasicString<Ch> const & value) noexcept
 	{
 		return parse_answer<float80_t>(value.c_str(), &_CSTD strtold);
 	}
@@ -266,13 +266,13 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class Ch = char, std::enable_if_t<mpl::is_string_v<T>, int> = 0
-	> NODISCARD auto to_string(T && value) noexcept -> BasicString<Ch>
+	> auto to_string(T && value) noexcept -> BasicString<Ch>
 	{
 		return BasicString<Ch>{ FWD(value) };
 	}
 
 	template <class T, class Ch = char, std::enable_if_t<!mpl::is_string_v<T>, int> = 0
-	> NODISCARD auto to_string(T && value) noexcept -> BasicString<Ch>
+	> auto to_string(T && value) noexcept -> BasicString<Ch>
 	{
 		BasicStringStream<Ch> ss{};
 		ss << FWD(value);
@@ -286,15 +286,15 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr StringView operator "" _sv(cstring str, size_t len) noexcept { return StringView{ str, len }; }
+	constexpr StringView operator "" _sv(cstring str, size_t len) noexcept { return StringView{ str, len }; }
 
-	NODISCARD inline String operator "" _s(cstring str, size_t len) noexcept { return String{ str, len }; }
+	inline String operator "" _s(cstring str, size_t len) noexcept { return String{ str, len }; }
 
-	NODISCARD inline WideString operator "" _s(cwstring str, size_t len) noexcept { return WideString{ str, len }; }
+	inline WideString operator "" _s(cwstring str, size_t len) noexcept { return WideString{ str, len }; }
 
-	NODISCARD inline StringName operator "" _name(cstring str, size_t len) noexcept { return StringName{ String{ str, len } }; }
+	inline StringName operator "" _name(cstring str, size_t len) noexcept { return StringName{ String{ str, len } }; }
 
-	NODISCARD inline Path operator "" _path(cstring str, size_t len) noexcept { return Path{ String{ str, len } }; }
+	inline Path operator "" _path(cstring str, size_t len) noexcept { return Path{ String{ str, len } }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

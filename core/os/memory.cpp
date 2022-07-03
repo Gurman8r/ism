@@ -15,7 +15,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-static struct NODISCARD MemoryTracker final
+static struct MemoryTracker final
 {
 	size_t index{};
 
@@ -37,8 +37,6 @@ static struct NODISCARD MemoryTracker final
 					std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr << " | desc:\"" << desc << "\"\n";
 				});
 			}
-
-			SYSTEM->pause();
 		}
 #endif
 
@@ -108,7 +106,7 @@ void Memory::free_static(void * ptr)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void * operator new(size_t size, char const * desc)
+void * operator new(size_t size, ism::cstring desc)
 {
 	return ism::Memory::alloc_static(size, desc);
 }
@@ -118,7 +116,7 @@ void * operator new(size_t size, void * (*alloc_fn)(size_t))
 	return alloc_fn(size);
 }
 
-void operator delete(void * ptr, char const * desc)
+void operator delete(void * ptr, ism::cstring desc)
 {
 	CRASH("this should never be called");
 }

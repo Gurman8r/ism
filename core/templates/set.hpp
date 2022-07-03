@@ -9,23 +9,13 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if 1
 	// set
-	template <class _Ty, class _Pr = Less<_Ty>
-	> ALIAS(Set) std::pmr::set<_Ty, _Pr>;
-#else
-	// set
-	template <class _Ty, class _Pr = Less<_Ty>
-	> class Set : public std::set<_Ty, _Pr, PolymorphicAllocator<_Ty>>
-	{
-		using _Mybase = std::set<_Ty, _Pr, PolymorphicAllocator<_Ty>>;
-	public:
-		using _Mybase::set;
-		NODISCARD operator _Mybase & () & noexcept { return static_cast<_Mybase &>(*this); }
-		NODISCARD operator _Mybase const & () const & noexcept { return static_cast<_Mybase const &>(*this); }
-		NODISCARD operator _Mybase && () && noexcept { return static_cast<_Mybase &&>(std::move(*this)); }
-	};
-#endif
+	template <class T, class Pr = Less<T>
+	> ALIAS(Set) std::set<T, Pr, PolymorphicAllocator<T>>;
+
+	// multi set
+	template <class T, class Pr = Less<T>
+	> ALIAS(MultiSet) std::multiset<T, Pr, PolymorphicAllocator<T>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

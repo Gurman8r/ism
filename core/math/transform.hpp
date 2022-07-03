@@ -88,7 +88,7 @@ namespace ism
 		auto get_scale() const noexcept -> Vec3 const & { return m_scale; }
 		void set_scale(Vec3 const & value) noexcept { if (m_scale != value) { m_scale = value; m_changed = true; } }
 
-		NODISCARD Mat4 const & get_matrix() const;
+		Mat4 const & get_matrix() const;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

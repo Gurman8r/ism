@@ -30,11 +30,11 @@ namespace ism
 	public:
 		virtual ~Texture2D() noexcept override = default;
 
-		NODISCARD virtual int32_t get_width() const = 0;
+		virtual int32_t get_width() const = 0;
 		
-		NODISCARD virtual int32_t get_height() const = 0;
+		virtual int32_t get_height() const = 0;
 		
-		NODISCARD virtual Ref<Image> get_image() const { return nullptr; }
+		virtual Ref<Image> get_image() const { return nullptr; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -57,13 +57,13 @@ namespace ism
 		
 		virtual ~ImageTexture() override;
 
-		NODISCARD virtual RID get_rid() const override { return m_texture; }
+		virtual RID get_rid() const override { return m_texture; }
 		
-		NODISCARD virtual int32_t get_width() const override { return m_width; }
+		virtual int32_t get_width() const override { return m_width; }
 		
-		NODISCARD virtual int32_t get_height() const override { return m_height; }
+		virtual int32_t get_height() const override { return m_height; }
 		
-		NODISCARD virtual Ref<Image> get_image() const override;
+		virtual Ref<Image> get_image() const override;
 
 		void update(Ref<Image> const & image, bool immediate = false);
 	};

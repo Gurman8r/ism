@@ -12,9 +12,23 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#if 1
 	// basic string
 	template <class Ch = char
-	> ALIAS(BasicString) std::pmr::basic_string<Ch, std::char_traits<Ch>>;
+	> ALIAS(BasicString) std::basic_string<Ch, std::char_traits<Ch>, PolymorphicAllocator<Ch>>;
+#else
+	// string base
+	template <class Ch = char
+	> ALIAS(_StringBase) std::basic_string<Ch, std::char_traits<Ch>, PolymorphicAllocator<Ch>>;
+
+	// basic string
+	template <class Ch = char
+	> class BasicString : public _StringBase<Ch> {
+	public:
+		using base_type = _StringBase<Ch>;
+		using base_type::base_type;
+	};
+#endif
 
 	// string
 	ALIAS(String) BasicString<char>;

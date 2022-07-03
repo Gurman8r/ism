@@ -20,11 +20,11 @@ namespace ism
 		using iterator			= storage_type::iterator;
 		using const_iterator	= storage_type::const_iterator;
 
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_string); }
+		auto & operator*() const { return const_cast<storage_type &>(m_string); }
 
-		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_string); }
+		auto * operator->() const { return const_cast<storage_type *>(&m_string); }
 
-		NODISCARD operator storage_type & () const & noexcept { return const_cast<storage_type &>(m_string); }
+		operator storage_type & () const & noexcept { return const_cast<storage_type &>(m_string); }
 
 		StringObject() noexcept : m_string{} {}
 
@@ -66,23 +66,23 @@ namespace ism
 
 		void resize(size_t count) { m_string.resize(count); }
 
-		NODISCARD auto & string() const { return const_cast<storage_type &>(m_string); }
+		auto & string() const { return const_cast<storage_type &>(m_string); }
 
-		NODISCARD auto c_str() const { return m_string.c_str(); }
+		auto c_str() const { return m_string.c_str(); }
 
-		NODISCARD auto data() const { return m_string.data(); }
+		auto data() const { return m_string.data(); }
 
-		NODISCARD bool empty() const { return m_string.empty(); }
+		bool empty() const { return m_string.empty(); }
 
-		NODISCARD auto size() const { return m_string.size(); }
+		auto size() const { return m_string.size(); }
 
-		NODISCARD auto begin() -> iterator { return m_string.begin(); }
+		auto begin() -> iterator { return m_string.begin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return m_string.begin(); }
+		auto begin() const -> const_iterator { return m_string.begin(); }
 
-		NODISCARD auto end() -> iterator { return m_string.end(); }
+		auto end() -> iterator { return m_string.end(); }
 
-		NODISCARD auto end() const -> const_iterator { return m_string.end(); }
+		auto end() const -> const_iterator { return m_string.end(); }
 	};
 
 	// string delete
@@ -101,29 +101,29 @@ namespace ism
 		using iterator			= value_type::iterator;
 		using const_iterator	= value_type::const_iterator;
 
-		NODISCARD operator storage_type & () const { return m_ptr->operator storage_type & (); }
+		operator storage_type & () const { return m_ptr->operator storage_type & (); }
 
 		void reserve(size_t count) { m_ptr->reserve(count); }
 
 		void resize(size_t count) { m_ptr->resize(count); }
 
-		NODISCARD auto & string() const { return m_ptr->string(); }
+		auto & string() const { return m_ptr->string(); }
 
-		NODISCARD auto c_str() const { return m_ptr->c_str(); }
+		auto c_str() const { return m_ptr->c_str(); }
 
-		NODISCARD auto data() const { return m_ptr->data(); }
+		auto data() const { return m_ptr->data(); }
 
-		NODISCARD bool empty() const { return m_ptr->empty(); }
+		bool empty() const { return m_ptr->empty(); }
 
-		NODISCARD auto size() const { return m_ptr->size(); }
+		auto size() const { return m_ptr->size(); }
 
-		NODISCARD auto begin() -> iterator { return m_ptr->begin(); }
+		auto begin() -> iterator { return m_ptr->begin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return m_ptr->begin(); }
+		auto begin() const -> const_iterator { return m_ptr->begin(); }
 
-		NODISCARD auto end() -> iterator { return m_ptr->end(); }
+		auto end() -> iterator { return m_ptr->end(); }
 
-		NODISCARD auto end() const -> const_iterator { return m_ptr->end(); }
+		auto end() const -> const_iterator { return m_ptr->end(); }
 
 		template <class T, class = std::enable_if_t<mpl::is_string_v<T>> // std::is_convertible_v<T, storage_type>
 		> STR & operator=(T && value) noexcept
@@ -140,7 +140,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> NODISCARD STR repr(Ref<T> const & o) noexcept
+	template <class T> STR repr(Ref<T> const & o) noexcept
 	{
 		if (!o) { return nullptr; }
 

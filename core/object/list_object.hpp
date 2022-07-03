@@ -20,11 +20,11 @@ namespace ism
 		using iterator			= storage_type::iterator;
 		using const_iterator	= storage_type::const_iterator;
 
-		NODISCARD auto & operator*() const { return const_cast<storage_type &>(m_list); }
+		auto & operator*() const { return const_cast<storage_type &>(m_list); }
 
-		NODISCARD auto * operator->() const { return const_cast<storage_type *>(&m_list); }
+		auto * operator->() const { return const_cast<storage_type *>(&m_list); }
 
-		NODISCARD operator storage_type & () const { return const_cast<storage_type &>(m_list); }
+		operator storage_type & () const { return const_cast<storage_type &>(m_list); }
 
 		template <class Iter
 		> ListObject(Iter first, Iter last) : m_list{ first, last } {}
@@ -78,26 +78,26 @@ namespace ism
 		}
 
 		template <class Value = OBJ
-		> NODISCARD bool contains(Value && v) const { return ism::has(m_list, FWD_OBJ(v)); }
+		> bool contains(Value && v) const { return ism::has(m_list, FWD_OBJ(v)); }
 
 		template <class Value = OBJ
-		> NODISCARD auto find(Value && v) -> iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
+		> auto find(Value && v) -> iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
 
 		template <class Value = OBJ
-		> NODISCARD auto find(Value && v) const -> const_iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
+		> auto find(Value && v) const -> const_iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
 
 		template <class Value = OBJ
-		> NODISCARD auto lookup(Value && v) const -> OBJ { return this->lookup(FWD_OBJ(v), OBJ{}); }
+		> auto lookup(Value && v) const -> OBJ { return this->lookup(FWD_OBJ(v), OBJ{}); }
 
 		template <class Value = OBJ, class Defval = OBJ
-		> NODISCARD auto lookup(Value && v, Defval && dv) const -> OBJ
+		> auto lookup(Value && v, Defval && dv) const -> OBJ
 		{
 			if (auto const ptr{ ism::getptr(m_list, FWD_OBJ(v)) }) { return *ptr; }
 			else { return FWD_OBJ(dv); }
 		}
 
 		template <class Index = OBJ
-		> NODISCARD auto operator[](Index && i) const -> OBJ
+		> auto operator[](Index && i) const -> OBJ
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
@@ -109,19 +109,19 @@ namespace ism
 			}
 		}
 
-		NODISCARD auto data() const { return m_list.data(); }
+		auto data() const { return m_list.data(); }
 
-		NODISCARD bool empty() const { return m_list.empty(); }
+		bool empty() const { return m_list.empty(); }
 
-		NODISCARD auto size() const { return m_list.size(); }
+		auto size() const { return m_list.size(); }
 
-		NODISCARD auto begin() -> iterator { return m_list.begin(); }
+		auto begin() -> iterator { return m_list.begin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return m_list.begin(); }
+		auto begin() const -> const_iterator { return m_list.begin(); }
 
-		NODISCARD auto end() -> iterator { return m_list.end(); }
+		auto end() -> iterator { return m_list.end(); }
 
-		NODISCARD auto end() const -> const_iterator { return m_list.end(); }
+		auto end() const -> const_iterator { return m_list.end(); }
 	};
 
 	// list delete
@@ -140,7 +140,7 @@ namespace ism
 		using iterator			= value_type::iterator;
 		using const_iterator	= value_type::const_iterator;
 
-		NODISCARD operator storage_type & () const { return m_ptr->operator storage_type & (); }
+		operator storage_type & () const { return m_ptr->operator storage_type & (); }
 
 		template <class Index = OBJ
 		> auto del(Index && i) const -> Error_ { return m_ptr->del(FWD(i)); }
@@ -161,36 +161,36 @@ namespace ism
 		> void insert(Index && i, Value && v) { return m_ptr->insert(FWD(i), FWD(v)); }
 
 		template <class Value = OBJ
-		> NODISCARD bool contains(Value && v) const { return m_ptr->contains(FWD(v)); }
+		> bool contains(Value && v) const { return m_ptr->contains(FWD(v)); }
 
 		template <class Value = OBJ
-		> NODISCARD auto find(Value && v) -> iterator { return m_ptr->find(FWD(v)); }
+		> auto find(Value && v) -> iterator { return m_ptr->find(FWD(v)); }
 
 		template <class Value = OBJ
-		> NODISCARD auto find(Value && v) const -> const_iterator { return m_ptr->find(FWD(v)); }
+		> auto find(Value && v) const -> const_iterator { return m_ptr->find(FWD(v)); }
 
 		template <class Value = OBJ
-		> NODISCARD auto lookup(Value && v) const -> OBJ { return m_ptr->lookup(FWD(v)); }
+		> auto lookup(Value && v) const -> OBJ { return m_ptr->lookup(FWD(v)); }
 
 		template <class Value = OBJ, class Defval = OBJ
-		> NODISCARD auto lookup(Value && v, Defval && dv) const -> OBJ { return m_ptr->lookup(FWD(v), FWD(dv)); }
+		> auto lookup(Value && v, Defval && dv) const -> OBJ { return m_ptr->lookup(FWD(v), FWD(dv)); }
 
 		template <class Index = OBJ
-		> NODISCARD auto operator[](Index && i) const -> OBJ { return m_ptr->operator[](FWD(i)); }
+		> auto operator[](Index && i) const -> OBJ { return m_ptr->operator[](FWD(i)); }
 
-		NODISCARD auto data() const { return m_ptr->data(); }
+		auto data() const { return m_ptr->data(); }
 
-		NODISCARD bool empty() const { return m_ptr->empty(); }
+		bool empty() const { return m_ptr->empty(); }
 
-		NODISCARD auto size() const { return m_ptr->size(); }
+		auto size() const { return m_ptr->size(); }
 
-		NODISCARD auto begin() -> iterator { return m_ptr->begin(); }
+		auto begin() -> iterator { return m_ptr->begin(); }
 
-		NODISCARD auto begin() const -> const_iterator { return m_ptr->begin(); }
+		auto begin() const -> const_iterator { return m_ptr->begin(); }
 
-		NODISCARD auto end() -> iterator { return m_ptr->end(); }
+		auto end() -> iterator { return m_ptr->end(); }
 
-		NODISCARD auto end() const -> const_iterator { return m_ptr->end(); }
+		auto end() const -> const_iterator { return m_ptr->end(); }
 	};
 }
 

@@ -192,61 +192,61 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD key_storage const & keys() const & noexcept
+		key_storage const & keys() const & noexcept
 		{
 			return m_pair.first;
 		}
 
-		NODISCARD value_storage const & values() const & noexcept
+		value_storage const & values() const & noexcept
 		{
 			return m_pair.second;
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD size_type capacity() const noexcept
+		size_type capacity() const noexcept
 		{
 			return m_pair.first.capacity();
 		}
 
-		NODISCARD bool empty() const noexcept
+		bool empty() const noexcept
 		{
 			return m_pair.first.empty();
 		}
 
-		NODISCARD size_type max_size() const noexcept
+		size_type max_size() const noexcept
 		{
 			return m_pair.first.max_size();
 		}
 
-		NODISCARD size_type size() const noexcept
+		size_type size() const noexcept
 		{
 			return m_pair.first.size();
 		}
 
-		NODISCARD allocator_type get_allocator() const noexcept
+		allocator_type get_allocator() const noexcept
 		{
 			return m_pair.first.get_allocator();
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD reference_pair back() noexcept
+		reference_pair back() noexcept
 		{
 			return { m_pair.first.back(), m_pair.second.back() };
 		}
 
-		NODISCARD const_reference_pair back() const noexcept
+		const_reference_pair back() const noexcept
 		{
 			return { m_pair.first.back(), m_pair.second.back() };
 		}
 
-		NODISCARD reference_pair front() noexcept
+		reference_pair front() noexcept
 		{
 			return { m_pair.first.front(), m_pair.second.front() };
 		}
 
-		NODISCARD const_reference_pair front() const noexcept
+		const_reference_pair front() const noexcept
 		{
 			return { m_pair.first.front(), m_pair.second.front() };
 		}
@@ -254,47 +254,47 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Out = difference_type
-		> NODISCARD Out distance(key_const_iterator it) const noexcept
+		> Out distance(key_const_iterator it) const noexcept
 		{
 			return m_pair.first.distance<Out>(it);
 		}
 
 		template <class Out = difference_type
-		> NODISCARD Out distance(key_const_reverse_iterator it) const noexcept
+		> Out distance(key_const_reverse_iterator it) const noexcept
 		{
 			return m_pair.first.distance<Out>(it);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD value_iterator fetch(key_const_iterator it) noexcept
+		value_iterator fetch(key_const_iterator it) noexcept
 		{
 			return std::next(m_pair.second.begin(), this->distance(it));
 		}
 
-		NODISCARD value_const_iterator fetch(key_const_iterator it) const noexcept
+		value_const_iterator fetch(key_const_iterator it) const noexcept
 		{
 			return std::next(m_pair.second.cbegin(), this->distance(it));
 		}
 
-		NODISCARD value_const_iterator cfetch(key_const_iterator it) const noexcept
+		value_const_iterator cfetch(key_const_iterator it) const noexcept
 		{
 			return this->fetch(it);
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD value_reverse_iterator rfetch(key_const_reverse_iterator it) noexcept
+		value_reverse_iterator rfetch(key_const_reverse_iterator it) noexcept
 		{
 			return std::next(m_pair.second.rbegin(), this->distance(it));
 		}
 
-		NODISCARD value_const_reverse_iterator rfetch(key_const_reverse_iterator it) const noexcept
+		value_const_reverse_iterator rfetch(key_const_reverse_iterator it) const noexcept
 		{
 			return std::next(m_pair.second.crbegin(), this->distance(it));
 		}
 
-		NODISCARD value_const_reverse_iterator crfetch(key_const_reverse_iterator it) const noexcept
+		value_const_reverse_iterator crfetch(key_const_reverse_iterator it) const noexcept
 		{
 			return this->rfetch(it);
 		}
@@ -327,7 +327,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Key = key_type
-		> NODISCARD bool contains(Key && key) const noexcept
+		> bool contains(Key && key) const noexcept
 		{
 			return m_pair.first.contains(FWD(key));
 		}
@@ -335,7 +335,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Key = key_type
-		> NODISCARD optl_iterator_pair find(Key && key) noexcept
+		> optl_iterator_pair find(Key && key) noexcept
 		{
 			if (auto const k{ m_pair.first.find(FWD(key)) }; k != m_pair.first.end())
 			{
@@ -348,7 +348,7 @@ namespace ism
 		}
 
 		template <class Key = key_type
-		> NODISCARD optl_const_iterator_pair find(Key && key) const noexcept
+		> optl_const_iterator_pair find(Key && key) const noexcept
 		{
 			if (auto const k{ m_pair.first.find(FWD(key)) }; k != m_pair.first.cend())
 			{
@@ -396,7 +396,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Key = key_type
-		> NODISCARD value_type & operator[](Key && key) & noexcept
+		> value_type & operator[](Key && key) & noexcept
 		{
 			return this->at(FWD(key));
 		}
@@ -404,7 +404,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Key = key_type
-		> NODISCARD value_type & at(Key && key) noexcept
+		> value_type & at(Key && key) noexcept
 		{
 			return this->find_or_add(FWD(key), value_type{});
 		}
@@ -412,7 +412,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Key = key_type, class Value = value_type
-		> NODISCARD value_type & find_or_add(Key && key, Value && value) noexcept
+		> value_type & find_or_add(Key && key, Value && value) noexcept
 		{
 			if (auto const it{ this->find(FWD(key)) })
 			{
@@ -427,7 +427,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Key, class Fn, class ... Args
-		> NODISCARD value_type & find_or_add_fn(Key && key, Fn && fn, Args && ... args) noexcept
+		> value_type & find_or_add_fn(Key && key, Fn && fn, Args && ... args) noexcept
 		{
 			if (auto const it{ this->find(FWD(key)) })
 			{
@@ -534,7 +534,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class U = self_type
-		> NODISCARD auto compare(U const & value) const noexcept
+		> auto compare(U const & value) const noexcept
 		{
 			if constexpr (std::is_same_v<U, self_type>)
 			{
@@ -548,22 +548,22 @@ namespace ism
 		}
 
 		template <class U = self_type
-		> NODISCARD bool operator==(U const & value) const noexcept { return this->compare(value) == 0; }
+		> bool operator==(U const & value) const noexcept { return this->compare(value) == 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator!=(U const & value) const noexcept { return this->compare(value) != 0; }
+		> bool operator!=(U const & value) const noexcept { return this->compare(value) != 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator<(U const & value) const noexcept { return this->compare(value) < 0; }
+		> bool operator<(U const & value) const noexcept { return this->compare(value) < 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator>(U const & value) const noexcept { return this->compare(value) > 0; }
+		> bool operator>(U const & value) const noexcept { return this->compare(value) > 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator<=(U const & value) const noexcept { return this->compare(value) <= 0; }
+		> bool operator<=(U const & value) const noexcept { return this->compare(value) <= 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator>=(U const & value) const noexcept { return this->compare(value) >= 0; }
+		> bool operator>=(U const & value) const noexcept { return this->compare(value) >= 0; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -200,13 +200,13 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Out = difference_type
-		> NODISCARD Out distance(const_iterator it) const noexcept
+		> Out distance(const_iterator it) const noexcept
 		{
 			return static_cast<Out>(std::distance(cbegin(), it));
 		}
 
 		template <class Out = difference_type
-		> NODISCARD Out distance(const_reverse_iterator it) const noexcept
+		> Out distance(const_reverse_iterator it) const noexcept
 		{
 			return static_cast<Out>(std::distance(crbegin(), it));
 		}
@@ -226,7 +226,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Value = value_type
-		> NODISCARD bool contains(Value && value) const noexcept
+		> bool contains(Value && value) const noexcept
 		{
 			return self_type::impl_contains(begin(), end(), FWD(value));
 		}
@@ -234,13 +234,13 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Value = value_type
-		> NODISCARD iterator find(Value && value) noexcept
+		> iterator find(Value && value) noexcept
 		{
 			return self_type::impl_find(begin(), end(), FWD(value));
 		}
 
 		template <class Value = value_type
-		> NODISCARD const_iterator find(Value && value) const noexcept
+		> const_iterator find(Value && value) const noexcept
 		{
 			return self_type::impl_find(cbegin(), cend(), FWD(value));
 		}
@@ -248,13 +248,13 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Fn
-		> NODISCARD iterator find_if(Fn && fn) noexcept
+		> iterator find_if(Fn && fn) noexcept
 		{
 			return std::find_if(begin(), end(), FWD(fn));
 		}
 
 		template <class Fn
-		> NODISCARD const_iterator find_if(Fn && fn) const noexcept
+		> const_iterator find_if(Fn && fn) const noexcept
 		{
 			return std::find_if(cbegin(), cend(), FWD(fn));
 		}
@@ -270,7 +270,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class Value = value_type
-		> NODISCARD auto & find_or_add(Value && value) noexcept
+		> auto & find_or_add(Value && value) noexcept
 		{
 			if (auto const it{ this->find(FWD(value)) }; it != this->end())
 			{
@@ -288,66 +288,66 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD auto operator[](size_type const i) noexcept -> reference { return m_data[i]; }
+		auto operator[](size_type const i) noexcept -> reference { return m_data[i]; }
 
-		NODISCARD auto operator[](size_type const i) const noexcept -> const_reference { return m_data[i]; }
+		auto operator[](size_type const i) const noexcept -> const_reference { return m_data[i]; }
 
-		NODISCARD auto at(size_type const i) -> reference { return m_data.at(i); }
+		auto at(size_type const i) -> reference { return m_data.at(i); }
 
-		NODISCARD auto at(size_type const i) const -> const_reference { return m_data.at(i); }
+		auto at(size_type const i) const -> const_reference { return m_data.at(i); }
 
-		NODISCARD auto back() noexcept -> reference { return m_data.back(); }
+		auto back() noexcept -> reference { return m_data.back(); }
 
-		NODISCARD auto back() const noexcept -> const_reference { return m_data.back(); }
+		auto back() const noexcept -> const_reference { return m_data.back(); }
 
-		NODISCARD auto begin() noexcept -> iterator { return m_data.begin(); }
+		auto begin() noexcept -> iterator { return m_data.begin(); }
 
-		NODISCARD auto begin() const noexcept -> const_iterator { return m_data.begin(); }
+		auto begin() const noexcept -> const_iterator { return m_data.begin(); }
 
-		NODISCARD auto capacity() const noexcept -> size_type { return m_data.capacity(); }
+		auto capacity() const noexcept -> size_type { return m_data.capacity(); }
 
-		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
+		auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
 
-		NODISCARD auto cend() const noexcept -> const_iterator { return m_data.cend(); }
+		auto cend() const noexcept -> const_iterator { return m_data.cend(); }
 
-		NODISCARD auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
+		auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
 
-		NODISCARD auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
+		auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
 
-		NODISCARD auto data() noexcept -> pointer { return m_data.data(); }
+		auto data() noexcept -> pointer { return m_data.data(); }
 
-		NODISCARD auto data() const noexcept -> const_pointer { return m_data.data(); }
+		auto data() const noexcept -> const_pointer { return m_data.data(); }
 
-		NODISCARD auto elements() const noexcept -> storage_type const & { return m_data; }
+		auto elements() const noexcept -> storage_type const & { return m_data; }
 
-		NODISCARD bool empty() const noexcept { return m_data.empty(); }
+		bool empty() const noexcept { return m_data.empty(); }
 
-		NODISCARD auto end() noexcept -> iterator { return m_data.end(); }
+		auto end() noexcept -> iterator { return m_data.end(); }
 
-		NODISCARD auto end() const noexcept -> const_iterator { return m_data.end(); }
+		auto end() const noexcept -> const_iterator { return m_data.end(); }
 
-		NODISCARD auto front() noexcept -> reference { return m_data.front(); }
+		auto front() noexcept -> reference { return m_data.front(); }
 
-		NODISCARD auto front() const noexcept -> const_reference { return m_data.front(); }
+		auto front() const noexcept -> const_reference { return m_data.front(); }
 		
-		NODISCARD auto get_allocator() const noexcept -> allocator_type { return {}; }
+		auto get_allocator() const noexcept -> allocator_type { return {}; }
 
-		NODISCARD auto max_size() const noexcept -> size_type { return m_data.max_size(); }
+		auto max_size() const noexcept -> size_type { return m_data.max_size(); }
 
-		NODISCARD auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
+		auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
 
-		NODISCARD auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
+		auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
 
-		NODISCARD auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
+		auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
 
-		NODISCARD auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
+		auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
 
-		NODISCARD auto size() const noexcept -> size_type { return m_data.size(); }
+		auto size() const noexcept -> size_type { return m_data.size(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class U = self_type
-		> NODISCARD auto compare(U const & value) const noexcept
+		> auto compare(U const & value) const noexcept
 		{
 			if constexpr (std::is_same_v<U, self_type>)
 			{
@@ -361,22 +361,22 @@ namespace ism
 		}
 
 		template <class U = self_type
-		> NODISCARD bool operator==(U const & value) const noexcept { return this->compare(value) == 0; }
+		> bool operator==(U const & value) const noexcept { return this->compare(value) == 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator!=(U const & value) const noexcept { return this->compare(value) != 0; }
+		> bool operator!=(U const & value) const noexcept { return this->compare(value) != 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator<(U const & value) const noexcept { return this->compare(value) < 0; }
+		> bool operator<(U const & value) const noexcept { return this->compare(value) < 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator>(U const & value) const noexcept { return this->compare(value) > 0; }
+		> bool operator>(U const & value) const noexcept { return this->compare(value) > 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator<=(U const & value) const noexcept { return this->compare(value) <= 0; }
+		> bool operator<=(U const & value) const noexcept { return this->compare(value) <= 0; }
 
 		template <class U = self_type
-		> NODISCARD bool operator>=(U const & value) const noexcept { return this->compare(value) >= 0; }
+		> bool operator>=(U const & value) const noexcept { return this->compare(value) >= 0; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

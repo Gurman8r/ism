@@ -1,6 +1,6 @@
 #include <scene/resources/shader_loader.hpp>
 #include <servers/rendering_server.hpp>
-#include <core/io/file_system.hpp>
+#include <fstream>
 
 using namespace ism;
 
@@ -50,7 +50,7 @@ public:
 		int32_t index{ -1 };
 		Json::const_pointer data{};
 
-		NODISCARD operator bool() const noexcept { return (-1 < index) && !name.empty() && !type.empty(); }
+		operator bool() const noexcept { return (-1 < index) && !name.empty() && !type.empty(); }
 
 		explicit Def(Json::string_t const & key, Json const & value)
 		{
@@ -272,7 +272,7 @@ public:
 
 			// end shader
 			if (code.back() != byte::null) { code << byte::null; }
-			SYSTEM->print("%.*s\n", code.size(), code.data());
+			SYS->printf("%.*s\n", code.size(), code.data());
 		}
 	}
 };

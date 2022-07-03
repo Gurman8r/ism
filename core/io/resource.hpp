@@ -32,13 +32,13 @@ namespace ism
 
 		virtual Error_ reload_from_file();
 
-		NODISCARD virtual RID get_rid() const { return {}; }
+		virtual RID get_rid() const { return {}; }
 
-		NODISCARD int32_t get_subindex() const { return m_subindex; }
+		int32_t get_subindex() const { return m_subindex; }
 		
-		NODISCARD String const & get_name() const { return m_name; }
+		String const & get_name() const { return m_name; }
 
-		NODISCARD Path const & get_path() const { return m_path_cache; }
+		Path const & get_path() const { return m_path_cache; }
 
 		void set_subindex(int32_t value) { m_subindex = value; }
 

@@ -30,7 +30,7 @@ namespace ism
 
 		~LoaderLifeSupport() noexcept
 		{
-			Vector<OBJ> & stack{ Internals::get_singleton()->loader_stack };
+			Vector<OBJ> & stack{ INTERNALS->loader_stack };
 			ASSERT(!stack.empty());
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
@@ -39,7 +39,7 @@ namespace ism
 
 		static void add(OBJ const & value) noexcept
 		{
-			Vector<OBJ> & stack{ Internals::get_singleton()->loader_stack };
+			Vector<OBJ> & stack{ INTERNALS->loader_stack };
 			ASSERT(!stack.empty());
 			LIST & list{ (LIST &)stack.back() };
 			if (!list) { list = LIST::new_(); }
@@ -126,10 +126,10 @@ public:																							\
 	template <class T_> ALIAS(cast_op_type) movable_cast_op_type<T_>;							\
 																								\
 	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0	\
-	> static OBJ cast(T_ * src, ReturnValuePolicy_ policy, OBJ const & parent)					\
+	> static OBJ cast(T_ * src, ReturnPolicy_ policy, OBJ const & parent)					\
 	{																							\
 		if (!src) { return nullptr; }															\
-		else if (policy == ReturnValuePolicy_TakeOwnership)										\
+		else if (policy == ReturnPolicy_TakeOwnership)										\
 		{																						\
 			OBJ h{ cast(std::move(*src), policy, parent) };										\
 			memdelete(src);																		\
@@ -175,7 +175,7 @@ public:																							\
 			else { return false; }
 		}
 
-		static OBJ cast(T src, ReturnValuePolicy_, OBJ const &)
+		static OBJ cast(T src, ReturnPolicy_, OBJ const &)
 		{
 			if constexpr (std::is_floating_point_v<T>) { return FLT(static_cast<_ftype>(src)); }
 
@@ -198,7 +198,7 @@ public:																							\
 			else { return false; }
 		}
 
-		static OBJ cast(Duration const & src, ReturnValuePolicy_, OBJ const &)
+		static OBJ cast(Duration const & src, ReturnPolicy_, OBJ const &)
 		{
 			return FLT(src.count());
 		}
@@ -212,7 +212,7 @@ public:																							\
 	{
 		bool load(OBJ const & src, bool) { return src.is_valid(); }
 
-		static OBJ cast(T, ReturnValuePolicy_, OBJ const &) { return OBJ{}; }
+		static OBJ cast(T, ReturnPolicy_, OBJ const &) { return OBJ{}; }
 
 		TYPE_CASTER_COMMON(T, "none");
 	};
@@ -234,7 +234,7 @@ public:																							\
 			else { return false; }
 		}
 
-		static OBJ cast(void const * src, ReturnValuePolicy_, OBJ const &)
+		static OBJ cast(void const * src, ReturnPolicy_, OBJ const &)
 		{
 			return src ? CAPSULE({ static_cast<void const *>(src) }) : nullptr;
 		}
@@ -243,7 +243,7 @@ public:																							\
 		
 		template <typename T> using cast_op_type = void *&;
 		
-		NODISCARD operator void *& () { return value; }
+		operator void *& () { return value; }
 
 	private:
 		void * value{};
@@ -262,7 +262,7 @@ public:																							\
 			else { return (value = src.is_valid()), true; }
 		}
 
-		static OBJ cast(bool src, ReturnValuePolicy_, OBJ const &) { return BOOL_OBJ(src); }
+		static OBJ cast(bool src, ReturnPolicy_, OBJ const &) { return BOOL_OBJ(src); }
 
 		TYPE_CASTER_COMMON(bool, "bool");
 	};
@@ -289,9 +289,9 @@ public:																							\
 			}
 		}
 
-		static OBJ cast(T const & src, ReturnValuePolicy_, OBJ const &) { return STR({ src }); }
+		static OBJ cast(T const & src, ReturnPolicy_, OBJ const &) { return STR({ src }); }
 
-		static OBJ cast(T && src, ReturnValuePolicy_, OBJ const &) noexcept { return STR({ std::move(src) }); }
+		static OBJ cast(T && src, ReturnPolicy_, OBJ const &) noexcept { return STR({ std::move(src) }); }
 
 		template <class U> operator U * () { return (U *)(&***value); }
 
@@ -326,9 +326,9 @@ public:																							\
 			return str_caster.load(src, convert);
 		}
 
-		static OBJ cast(T const * src, ReturnValuePolicy_, OBJ const &) { return STR({ src }); }
+		static OBJ cast(T const * src, ReturnPolicy_, OBJ const &) { return STR({ src }); }
 
-		static OBJ cast(T const src, ReturnValuePolicy_, OBJ const &) { return INT({ src }); }
+		static OBJ cast(T const src, ReturnPolicy_, OBJ const &) { return INT({ src }); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -342,7 +342,7 @@ public:																							\
 			else { return (value = src), true; }
 		}
 
-		static OBJ cast(OBJ const & src, ReturnValuePolicy_, OBJ const &) { return src; }
+		static OBJ cast(OBJ const & src, ReturnPolicy_, OBJ const &) { return src; }
 
 		TYPE_CASTER_COMMON(T, "ref");
 	};
@@ -364,9 +364,9 @@ public:																							\
 			}
 		}
 
-		static OBJ cast(T && src, ReturnValuePolicy_, OBJ const &) noexcept { return Ref<T>{ std::move(src) }; }
-		static OBJ cast(T const * src, ReturnValuePolicy_, OBJ const &) { return Ref<T>{ (T *)src }; }
-		static OBJ cast(T const & src, ReturnValuePolicy_, OBJ const &) { return Ref<T>{ (T *)&src }; }
+		static OBJ cast(T && src, ReturnPolicy_, OBJ const &) noexcept { return Ref<T>{ std::move(src) }; }
+		static OBJ cast(T const * src, ReturnPolicy_, OBJ const &) { return Ref<T>{ (T *)src }; }
+		static OBJ cast(T const & src, ReturnPolicy_, OBJ const &) { return Ref<T>{ (T *)&src }; }
 
 		template <class U> operator U ()
 		{
@@ -439,11 +439,11 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class T, class SFINAE = void
-	> struct return_policy_override { static ReturnValuePolicy_ policy(ReturnValuePolicy_ p) { return p; } };
+	> struct return_policy_override { static ReturnPolicy_ policy(ReturnPolicy_ p) { return p; } };
 
 	template <class T> struct return_policy_override<T, std::enable_if_t<std::is_base_of_v<TypeCasterGeneric, make_caster<T>>, void>>
 	{
-		static ReturnValuePolicy_ policy(ReturnValuePolicy_ p) { return !std::is_lvalue_reference_v<T> && !std::is_pointer_v<T> ? ReturnValuePolicy_Move : p; }
+		static ReturnPolicy_ policy(ReturnPolicy_ p) { return !std::is_lvalue_reference_v<T> && !std::is_pointer_v<T> ? ReturnPolicy_Move : p; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -469,11 +469,11 @@ namespace ism
 
 	// api -> c++
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
-	> NODISCARD T cast(OBJ const & o) { return cast_op<T>(load_type<T>(o)); }
+	> T cast(OBJ const & o) { return cast_op<T>(load_type<T>(o)); }
 
 	// api -> api
 	template <class T, class O, std::enable_if_t<is_api_v<T> && is_api_v<O>, int> = 0
-	> NODISCARD T cast(O && o) noexcept
+	> T cast(O && o) noexcept
 	{
 		if constexpr (is_base_object_v<T>)
 		{
@@ -487,23 +487,23 @@ namespace ism
 
 	// c++ -> api
 	template <class T, std::enable_if_t<!is_api_v<T>, int> = 0
-	> NODISCARD OBJ cast(T && o, ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference, OBJ const & parent = {})
+	> OBJ cast(T && o, ReturnPolicy_ policy = ReturnPolicy_AutomaticReference, OBJ const & parent = {})
 	{
-		if (policy == ReturnValuePolicy_Automatic)
+		if (policy == ReturnPolicy_Automatic)
 		{
 			policy = (std::is_pointer_v<std::remove_reference_t<T>>
-				? ReturnValuePolicy_TakeOwnership
+				? ReturnPolicy_TakeOwnership
 				: (std::is_lvalue_reference_v<T>
-					? ReturnValuePolicy_Copy
-					: ReturnValuePolicy_Move));
+					? ReturnPolicy_Copy
+					: ReturnPolicy_Move));
 		}
-		else if (policy == ReturnValuePolicy_AutomaticReference)
+		else if (policy == ReturnPolicy_AutomaticReference)
 		{
 			policy = (std::is_pointer_v<std::remove_reference_t<T>>
-				? ReturnValuePolicy_Reference
+				? ReturnPolicy_Reference
 				: (std::is_lvalue_reference_v<T>
-					? ReturnValuePolicy_Copy
-					: ReturnValuePolicy_Move));
+					? ReturnPolicy_Copy
+					: ReturnPolicy_Move));
 		}
 		return OBJ{ make_caster<T>::cast(FWD(o), policy, parent) };
 	}
@@ -548,7 +548,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int>
-	> NODISCARD OBJ object_or_cast(T && o) { return ism::cast(FWD(o)); }
+	> OBJ object_or_cast(T && o) { return ism::cast(FWD(o)); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	

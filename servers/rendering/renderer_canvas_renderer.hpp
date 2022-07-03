@@ -48,10 +48,10 @@ namespace ism
 		void push_texture(RID texture);
 		void pop_texture();
 
-		NODISCARD FloatRect const & get_rect() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back(); }
-		NODISCARD Vec2 const & get_rect_min() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back().min(); }
-		NODISCARD Vec2 const & get_rect_max() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back().max(); }
-		NODISCARD RID get_texture() const { ASSERT(!m_texture_stack.empty()); return m_texture_stack.back(); }
+		FloatRect const & get_rect() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back(); }
+		Vec2 const & get_rect_min() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back().min(); }
+		Vec2 const & get_rect_max() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back().max(); }
+		RID get_texture() const { ASSERT(!m_texture_stack.empty()); return m_texture_stack.back(); }
 
 	public:
 		void add_line(Vec2 const & p1, Vec2 const & p2, Color const & color, float_t thickness = 1.f);

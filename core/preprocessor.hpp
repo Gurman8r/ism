@@ -23,7 +23,7 @@
 
 // max
 #define MAX(lhs, rhs) \
-		((lhs) > (rhs) ? (lhs) : (rhs))
+		((lhs) < (rhs) ? (rhs) : (lhs))
 
 // expression to string
 #define TOSTR(expr) \
@@ -65,7 +65,7 @@
 		{															\
 			##__VA_ARGS__											\
 		};															\
-		NODISCARD static constexpr m_to m_func(m_from i) noexcept	\
+		static constexpr m_to m_func(m_from i) noexcept	\
 		{															\
 			return _MAP_##m_from##_TO_##m_to##_[(size_t)i];			\
 		}															\

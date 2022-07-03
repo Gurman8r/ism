@@ -91,7 +91,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 	} break;
 	}
 
-	SYSTEM->printerr(
+	SYS->errorf(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -392,7 +392,7 @@ void RenderingDeviceOpenGL::buffer_update(RID buffer, size_t offset, void const 
 {
 	_BufferBase & b{ *VALIDATE((_BufferBase *)buffer) };
 	b.data.write(offset, data, size_in_bytes);
-	if (b.size < offset + size_in_bytes) { b.size = offset + size_in_bytes; }
+	if (b.size < offset + size_in_bytes) { b.size = (uint32_t)(offset + size_in_bytes); }
 	glCheck(glBindBuffer(b.buffer_type, b.handle));
 	glCheck(glBufferSubData(b.buffer_type, (uint32_t)offset, b.size, b.data.data()));
 	glCheck(glBindBuffer(b.buffer_type, NULL));
@@ -411,7 +411,7 @@ RID RenderingDeviceOpenGL::vertex_array_create(size_t vertex_count, VertexLayout
 	ASSERT(0 < vertex_count);
 	RID const vertex_array{ (RID)memnew(_VertexArray{}) };
 	_VertexArray & va{ *VALIDATE((_VertexArray *)vertex_array) };
-	va.vertex_count = vertex_count;
+	va.vertex_count = (uint32_t)vertex_count;
 	va.layout = layout;
 	va.buffers = buffers;
 
@@ -760,7 +760,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderSta
 			glCheck(glDeleteObjectARB(obj));
 			glCheck(glDeleteProgramsARB(1, &s->handle));
 			memdelete(s);
-			SYSTEM->printerr(String{ log_str, (size_t)log_len });
+			SYS->error(String{ log_str, (size_t)log_len });
 			return nullptr;
 		}
 
@@ -778,7 +778,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderSta
 		glCheck(glGetInfoLogARB(s->handle, sizeof(log_str), &log_len, log_str));
 		glCheck(glDeleteProgramsARB(1, &s->handle));
 		memdelete(s);
-		SYSTEM->printerr(String{ log_str, (size_t)log_len });
+		SYS->error(String{ log_str, (size_t)log_len });
 		return nullptr;
 	}
 
@@ -826,7 +826,7 @@ RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, 
 		case UniformType_SamplerWithTexture: {
 		} break;
 		case UniformType_Texture: {
-			ud.length = uniforms[i].ids.size();
+			ud.length = (uint32_t)uniforms[i].ids.size();
 			for (RID const texture : uniforms[i].ids) { ud.images.push_back(texture); }
 		} break;
 		case UniformType_Image: {

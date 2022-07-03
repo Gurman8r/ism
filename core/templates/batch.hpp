@@ -145,42 +145,42 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD decltype(auto) data() & noexcept { return m_data; }
+		decltype(auto) data() & noexcept { return m_data; }
 
-		NODISCARD decltype(auto) data() const & noexcept { return m_data; }
+		decltype(auto) data() const & noexcept { return m_data; }
 
-		NODISCARD decltype(auto) data() && noexcept { return std::move(m_data); }
+		decltype(auto) data() && noexcept { return std::move(m_data); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I> NODISCARD decltype(auto) get() & noexcept
+		template <size_t I> decltype(auto) get() & noexcept
 		{
 			return std::get<I>(m_data);
 		}
 
-		template <size_t I> NODISCARD decltype(auto) get() const & noexcept
+		template <size_t I> decltype(auto) get() const & noexcept
 		{
 			return std::get<I>(m_data);
 		}
 
-		template <size_t I> NODISCARD decltype(auto) get() && noexcept
+		template <size_t I> decltype(auto) get() && noexcept
 		{
 			return std::move(std::get<I>(m_data));
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <class T> NODISCARD decltype(auto) get() & noexcept
+		template <class T> decltype(auto) get() & noexcept
 		{
 			return std::get<vector_t<T>>(m_data);
 		}
 
-		template <class T> NODISCARD decltype(auto) get() const & noexcept
+		template <class T> decltype(auto) get() const & noexcept
 		{
 			return std::get<vector_t<T>>(m_data);
 		}
 
-		template <class T> NODISCARD decltype(auto) get() && noexcept
+		template <class T> decltype(auto) get() && noexcept
 		{
 			return std::move(std::get<vector_t<T>>(m_data));
 		}
@@ -188,7 +188,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) get(size_t const i, std::index_sequence<Is...>) noexcept
+		> decltype(auto) get(size_t const i, std::index_sequence<Is...>) noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -201,7 +201,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) get(size_t const i, std::index_sequence<Is...>) const noexcept
+		> decltype(auto) get(size_t const i, std::index_sequence<Is...>) const noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -214,7 +214,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) get(size_t const i) noexcept
+		> decltype(auto) get(size_t const i) noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -227,7 +227,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) get(size_t const i) const noexcept
+		> decltype(auto) get(size_t const i) const noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -240,7 +240,7 @@ namespace ism
 		}
 
 		template <class ... Ts
-		> NODISCARD decltype(auto) get(size_t const i) noexcept
+		> decltype(auto) get(size_t const i) noexcept
 		{
 			if constexpr (1 == sizeof...(Ts))
 			{
@@ -253,7 +253,7 @@ namespace ism
 		}
 
 		template <class ... Ts
-		> NODISCARD decltype(auto) get(size_t const i) const noexcept
+		> decltype(auto) get(size_t const i) const noexcept
 		{
 			if constexpr (1 == sizeof...(Ts))
 			{
@@ -265,12 +265,12 @@ namespace ism
 			}
 		}
 
-		NODISCARD decltype(auto) get(size_t const i) noexcept
+		decltype(auto) get(size_t const i) noexcept
 		{
 			return this->get(i, indices);
 		}
 
-		NODISCARD decltype(auto) get(size_t const i) const noexcept
+		decltype(auto) get(size_t const i) const noexcept
 		{
 			return this->get(i, indices);
 		}
@@ -278,7 +278,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) back(std::index_sequence<Is...>) noexcept
+		> decltype(auto) back(std::index_sequence<Is...>) noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -291,7 +291,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) back(std::index_sequence<Is...>) const noexcept
+		> decltype(auto) back(std::index_sequence<Is...>) const noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -304,7 +304,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) back() noexcept
+		> decltype(auto) back() noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -317,7 +317,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) back() const noexcept
+		> decltype(auto) back() const noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -330,7 +330,7 @@ namespace ism
 		}
 
 		template <class ... Ts
-		> NODISCARD decltype(auto) back() noexcept
+		> decltype(auto) back() noexcept
 		{
 			if constexpr (1 == sizeof...(Ts))
 			{
@@ -343,7 +343,7 @@ namespace ism
 		}
 
 		template <class ... Ts
-		> NODISCARD decltype(auto) back() const noexcept
+		> decltype(auto) back() const noexcept
 		{
 			if constexpr (1 == sizeof...(Ts))
 			{
@@ -355,12 +355,12 @@ namespace ism
 			}
 		}
 
-		NODISCARD decltype(auto) back() noexcept
+		decltype(auto) back() noexcept
 		{
 			return this->back(indices);
 		}
 
-		NODISCARD decltype(auto) back() const noexcept
+		decltype(auto) back() const noexcept
 		{
 			return this->back(indices);
 		}
@@ -368,7 +368,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) front(std::index_sequence<Is...>) noexcept
+		> decltype(auto) front(std::index_sequence<Is...>) noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -381,7 +381,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) front(std::index_sequence<Is...>) const noexcept
+		> decltype(auto) front(std::index_sequence<Is...>) const noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -394,7 +394,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) front() noexcept
+		> decltype(auto) front() noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -407,7 +407,7 @@ namespace ism
 		}
 
 		template <size_t ... Is
-		> NODISCARD decltype(auto) front() const noexcept
+		> decltype(auto) front() const noexcept
 		{
 			if constexpr (1 == sizeof...(Is))
 			{
@@ -420,7 +420,7 @@ namespace ism
 		}
 
 		template <class ... Ts
-		> NODISCARD decltype(auto) front() noexcept
+		> decltype(auto) front() noexcept
 		{
 			if constexpr (1 == sizeof...(Ts))
 			{
@@ -433,7 +433,7 @@ namespace ism
 		}
 
 		template <class ... Ts
-		> NODISCARD decltype(auto) front() const noexcept
+		> decltype(auto) front() const noexcept
 		{
 			if constexpr (1 == sizeof...(Ts))
 			{
@@ -445,12 +445,12 @@ namespace ism
 			}
 		}
 
-		NODISCARD decltype(auto) front() noexcept
+		decltype(auto) front() noexcept
 		{
 			return this->front(indices);
 		}
 
-		NODISCARD decltype(auto) front() const noexcept
+		decltype(auto) front() const noexcept
 		{
 			return this->front(indices);
 		}
@@ -595,48 +595,48 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I = 0> NODISCARD size_t capacity() const noexcept
+		template <size_t I = 0> size_t capacity() const noexcept
 		{
 			return this->get<I>().capacity();
 		}
 
-		template <class T> NODISCARD size_t capacity() const noexcept
+		template <class T> size_t capacity() const noexcept
 		{
 			return this->get<T>().capacity();
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I = 0> NODISCARD bool empty() const noexcept
+		template <size_t I = 0> bool empty() const noexcept
 		{
 			return this->get<I>().empty();
 		}
 
-		template <class T> NODISCARD bool empty() const noexcept
+		template <class T> bool empty() const noexcept
 		{
 			return this->get<T>().empty();
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I = 0> NODISCARD size_t max_size() const noexcept
+		template <size_t I = 0> size_t max_size() const noexcept
 		{
 			return this->get<I>().max_size();
 		}
 
-		template <class T> NODISCARD size_t max_size() const noexcept
+		template <class T> size_t max_size() const noexcept
 		{
 			return this->get<T>().max_size();
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I = 0> NODISCARD size_t size() const noexcept
+		template <size_t I = 0> size_t size() const noexcept
 		{
 			return this->get<I>().size();
 		}
 
-		template <class T> NODISCARD size_t size() const noexcept
+		template <class T> size_t size() const noexcept
 		{
 			return this->get<T>().size();
 		}
@@ -796,25 +796,25 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class U = element_i<I>
-		> NODISCARD auto find(U && value) noexcept -> iterator_i<I>
+		> auto find(U && value) noexcept -> iterator_i<I>
 		{
 			return std::find(this->begin<I>(), this->end<I>(), FWD(value));
 		}
 
 		template <size_t I, class U = element_i<I>
-		> NODISCARD auto find(U && value) const noexcept -> const_iterator_i<I>
+		> auto find(U && value) const noexcept -> const_iterator_i<I>
 		{
 			return std::find(this->cbegin<I>(), this->cend<I>(), FWD(value));
 		}
 
 		template <class T, class U = element_t<T>
-		> NODISCARD auto find(U && value) noexcept -> iterator_t<T>
+		> auto find(U && value) noexcept -> iterator_t<T>
 		{
 			return std::find(this->begin<T>(), this->end<T>(), FWD(value));
 		}
 
 		template <class T, class U = element_t<T>
-		> NODISCARD auto find(U && value) const noexcept -> const_iterator_t<T>
+		> auto find(U && value) const noexcept -> const_iterator_t<T>
 		{
 			return std::find(this->cbegin<T>(), this->cend<T>(), FWD(value));
 		}
@@ -822,25 +822,25 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class Pr
-		> NODISCARD auto find_if(Pr && pr) noexcept -> iterator_i<I>
+		> auto find_if(Pr && pr) noexcept -> iterator_i<I>
 		{
 			return std::find_if(this->begin<I>(), this->end<I>(), FWD(pr));
 		}
 
 		template <size_t I, class Pr
-		> NODISCARD auto find_if(Pr && pr) const noexcept -> const_iterator_i<I>
+		> auto find_if(Pr && pr) const noexcept -> const_iterator_i<I>
 		{
 			return std::find_if(this->cbegin<I>(), this->cend<I>(), FWD(pr));
 		}
 
 		template <class T, class Pr
-		> NODISCARD auto find_if(Pr && pr) noexcept -> iterator_t<T>
+		> auto find_if(Pr && pr) noexcept -> iterator_t<T>
 		{
 			return std::find_if(this->begin<T>(), this->end<T>(), FWD(pr));
 		}
 
 		template <class T, class Pr
-		> NODISCARD auto find_if(Pr && pr) const noexcept -> const_iterator_t<T>
+		> auto find_if(Pr && pr) const noexcept -> const_iterator_t<T>
 		{
 			return std::find_if(this->cbegin<T>(), this->cend<T>(), FWD(pr));
 		}
@@ -848,13 +848,13 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class U = element_i<I>
-		> NODISCARD bool binary_search(U && value) const noexcept
+		> bool binary_search(U && value) const noexcept
 		{
 			return std::binary_search(this->cbegin<I>(), this->cend<I>(), FWD(value));
 		}
 
 		template <class T, class U = element_t<T>
-		> NODISCARD bool binary_search(U && value) const noexcept
+		> bool binary_search(U && value) const noexcept
 		{
 			return std::binary_search(this->cbegin<T>(), this->cend<T>(), FWD(value));
 		}
@@ -862,25 +862,25 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class U = element_i<I>
-		> NODISCARD bool contains(U && value) const noexcept
+		> bool contains(U && value) const noexcept
 		{
 			return this->end<I>() != this->find<I>(FWD(value));
 		}
 
 		template <class T, class U = element_t<T>
-		> NODISCARD bool contains(U && value) const noexcept
+		> bool contains(U && value) const noexcept
 		{
 			return this->end<T>() != this->find<T>(FWD(value));
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I> NODISCARD size_t distance(const_iterator_i<I> it) const noexcept
+		template <size_t I> size_t distance(const_iterator_i<I> it) const noexcept
 		{
 			return (size_t)std::distance(this->cbegin<I>(), it);
 		}
 
-		template <class T> NODISCARD size_t distance(const_iterator_t<T> it) const noexcept
+		template <class T> size_t distance(const_iterator_t<T> it) const noexcept
 		{
 			return (size_t)std::distance(this->cbegin<T>(), it);
 		}
@@ -888,14 +888,14 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class U = element_i<I>
-		> NODISCARD size_t index_of(U && value) const noexcept
+		> size_t index_of(U && value) const noexcept
 		{
 			if (auto const it{ this->find<I>(FWD(value)) }; it == this->end<I>()) { return npos; }
 			else { return this->distance<I>(it); }
 		}
 
 		template <class T, class U = element_t<T>
-		> NODISCARD size_t index_of(U && value) const noexcept
+		> size_t index_of(U && value) const noexcept
 		{
 			if (auto const it{ this->find<T>(FWD(value)) }; it == this->end<T>()) { return npos; }
 			else { return this->distance<T>(it); }
@@ -904,14 +904,14 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class Pr
-		> NODISCARD size_t index_of_if(Pr && pr) const noexcept
+		> size_t index_of_if(Pr && pr) const noexcept
 		{
 			if (auto const it{ this->find_if<I>(FWD(pr)) }; it == this->end<I>()) { return npos; }
 			else { return this->distance<I>(it); }
 		}
 
 		template <class T, class Pr
-		> NODISCARD size_t index_of_if(Pr && pr) const noexcept
+		> size_t index_of_if(Pr && pr) const noexcept
 		{
 			if (auto const it{ this->find_if<T>(FWD(pr)) }; it == this->end<T>()) { return npos; }
 			else { return this->distance<T>(it); }
@@ -1030,49 +1030,49 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t From, size_t To
-		> NODISCARD auto map_unchecked(element_i<From> const & from) -> element_i<To> &
+		> auto map_unchecked(element_i<From> const & from) -> element_i<To> &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <size_t From, size_t To
-		> NODISCARD auto map_unchecked(element_i<From> const & from) const -> element_i<To> const &
+		> auto map_unchecked(element_i<From> const & from) const -> element_i<To> const &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <size_t From, class To
-		> NODISCARD auto map_unchecked(element_i<From> const & from) -> To &
+		> auto map_unchecked(element_i<From> const & from) -> To &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <size_t From, class To
-		> NODISCARD auto map_unchecked(element_i<From> const & from) const -> To const &
+		> auto map_unchecked(element_i<From> const & from) const -> To const &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <class From, size_t To
-		> NODISCARD auto map_unchecked(From const & from) -> element_i<To> &
+		> auto map_unchecked(From const & from) -> element_i<To> &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <class From, size_t To
-		> NODISCARD auto map_unchecked(From const & from) const -> element_i<To> const &
+		> auto map_unchecked(From const & from) const -> element_i<To> const &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <class From, class To
-		> NODISCARD auto map_unchecked(From const & from) -> To &
+		> auto map_unchecked(From const & from) -> To &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}
 
 		template <class From, class To
-		> NODISCARD auto map_unchecked(From const & from) const -> To const &
+		> auto map_unchecked(From const & from) const -> To const &
 		{
 			return this->get<To>(this->index_of<From>(from));
 		}
@@ -1080,7 +1080,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t From, size_t To
-		> NODISCARD auto map(element_i<From> const & from) -> element_i<To> *
+		> auto map(element_i<From> const & from) -> element_i<To> *
 		{
 			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
@@ -1093,7 +1093,7 @@ namespace ism
 		}
 
 		template <size_t From, size_t To
-		> NODISCARD auto map(element_i<From> const & from) const -> element_i<To> const *
+		> auto map(element_i<From> const & from) const -> element_i<To> const *
 		{
 			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
@@ -1106,7 +1106,7 @@ namespace ism
 		}
 
 		template <size_t From, class To
-		> NODISCARD auto map(element_i<From> const & from) -> To *
+		> auto map(element_i<From> const & from) -> To *
 		{
 			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
@@ -1119,7 +1119,7 @@ namespace ism
 		}
 
 		template <size_t From, class To
-		> NODISCARD auto map(element_i<From> const & from) const -> To const *
+		> auto map(element_i<From> const & from) const -> To const *
 		{
 			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
@@ -1132,7 +1132,7 @@ namespace ism
 		}
 
 		template <class From, size_t To
-		> NODISCARD auto map(From const & from) -> element_i<To> *
+		> auto map(From const & from) -> element_i<To> *
 		{
 			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
@@ -1145,7 +1145,7 @@ namespace ism
 		}
 
 		template <class From, size_t To
-		> NODISCARD auto map(From const & from) const -> element_i<To> const *
+		> auto map(From const & from) const -> element_i<To> const *
 		{
 			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
@@ -1158,7 +1158,7 @@ namespace ism
 		}
 
 		template <class From, class To
-		> NODISCARD auto map(From const & from) -> To *
+		> auto map(From const & from) -> To *
 		{
 			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
@@ -1171,7 +1171,7 @@ namespace ism
 		}
 
 		template <class From, class To
-		> NODISCARD auto map(From const & from) const -> To const *
+		> auto map(From const & from) const -> To const *
 		{
 			if (size_t const i{ this->index_of<From>(from) }; i != npos)
 			{
@@ -1186,7 +1186,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <size_t I, class It = iterator_i<I>
-		> NODISCARD auto get_iterator(It && it) const noexcept -> iterator_i<I>
+		> auto get_iterator(It && it) const noexcept -> iterator_i<I>
 		{
 			if constexpr (std::is_scalar_v<std::decay_t<decltype(it)>>)
 			{
@@ -1199,7 +1199,7 @@ namespace ism
 		}
 
 		template <class T, class It = iterator_t<T>
-		> NODISCARD auto get_iterator(It && it) const noexcept -> iterator_t<T>
+		> auto get_iterator(It && it) const noexcept -> iterator_t<T>
 		{
 			if constexpr (std::is_scalar_v<std::decay_t<decltype(it)>>)
 			{
@@ -1212,7 +1212,7 @@ namespace ism
 		}
 
 		template <size_t I, class It = const_iterator_i<I>
-		> NODISCARD auto get_const_iterator(It && it) const noexcept -> const_iterator_i<I>
+		> auto get_const_iterator(It && it) const noexcept -> const_iterator_i<I>
 		{
 			if constexpr (std::is_scalar_v<std::decay_t<decltype(it)>>)
 			{
@@ -1225,7 +1225,7 @@ namespace ism
 		}
 
 		template <class T, class It = const_iterator_t<T>
-		> NODISCARD auto get_const_iterator(It && it) const noexcept -> const_iterator_t<T>
+		> auto get_const_iterator(It && it) const noexcept -> const_iterator_t<T>
 		{
 			if constexpr (std::is_scalar_v<std::decay_t<decltype(it)>>)
 			{
@@ -1239,90 +1239,90 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I> NODISCARD auto begin() noexcept { return this->get<I>().begin(); }
+		template <size_t I> auto begin() noexcept { return this->get<I>().begin(); }
 
-		template <size_t I> NODISCARD auto begin() const noexcept { return this->get<I>().begin(); }
+		template <size_t I> auto begin() const noexcept { return this->get<I>().begin(); }
 
-		template <size_t I> NODISCARD auto cbegin() const noexcept { return this->get<I>().cbegin(); }
+		template <size_t I> auto cbegin() const noexcept { return this->get<I>().cbegin(); }
 
-		template <class T> NODISCARD auto begin() noexcept { return this->get<T>().begin(); }
+		template <class T> auto begin() noexcept { return this->get<T>().begin(); }
 
-		template <class T> NODISCARD auto begin() const noexcept { return this->get<T>().begin(); }
+		template <class T> auto begin() const noexcept { return this->get<T>().begin(); }
 
-		template <class T> NODISCARD auto cbegin() const noexcept { return this->get<T>().cbegin(); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		template <size_t I> NODISCARD auto end() noexcept { return this->get<I>().end(); }
-
-		template <size_t I> NODISCARD auto end() const noexcept { return this->get<I>().end(); }
-
-		template <size_t I> NODISCARD auto cend() const noexcept { return this->get<I>().cend(); }
-
-		template <class T> NODISCARD auto end() noexcept { return this->get<T>().end(); }
-
-		template <class T> NODISCARD auto end() const noexcept { return this->get<T>().end(); }
-
-		template <class T> NODISCARD auto cend() const noexcept { return this->get<T>().cend(); }
+		template <class T> auto cbegin() const noexcept { return this->get<T>().cbegin(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I> NODISCARD auto rbegin() noexcept { return this->get<I>().rbegin(); }
+		template <size_t I> auto end() noexcept { return this->get<I>().end(); }
 
-		template <size_t I> NODISCARD auto rbegin() const noexcept { return this->get<I>().rbegin(); }
+		template <size_t I> auto end() const noexcept { return this->get<I>().end(); }
 
-		template <size_t I> NODISCARD auto crbegin() const noexcept { return this->get<I>().crbegin(); }
+		template <size_t I> auto cend() const noexcept { return this->get<I>().cend(); }
 
-		template <class T> NODISCARD auto rbegin() noexcept { return this->get<T>().rbegin(); }
+		template <class T> auto end() noexcept { return this->get<T>().end(); }
 
-		template <class T> NODISCARD auto rbegin() const noexcept { return this->get<T>().rbegin(); }
+		template <class T> auto end() const noexcept { return this->get<T>().end(); }
 
-		template <class T> NODISCARD auto crbegin() const noexcept { return this->get<T>().crbegin(); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		template <size_t I> NODISCARD auto rend() noexcept { return this->get<I>().rend(); }
-
-		template <size_t I> NODISCARD auto rend() const noexcept { return this->get<I>().rend(); }
-
-		template <size_t I> NODISCARD auto crend() const noexcept { return this->get<I>().crend(); }
-
-		template <class T> NODISCARD auto rend() noexcept { return this->get<T>().rend(); }
-
-		template <class T> NODISCARD auto rend() const noexcept { return this->get<T>().rend(); }
-
-		template <class T> NODISCARD auto crend() const noexcept { return this->get<T>().crend(); }
+		template <class T> auto cend() const noexcept { return this->get<T>().cend(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I> NODISCARD auto begin_move_iterator() noexcept { return std::make_move_iterator(this->begin<I>()); }
+		template <size_t I> auto rbegin() noexcept { return this->get<I>().rbegin(); }
 
-		template <size_t I> NODISCARD auto begin_move_iterator() const noexcept { return std::make_move_iterator(this->begin<I>()); }
+		template <size_t I> auto rbegin() const noexcept { return this->get<I>().rbegin(); }
 
-		template <size_t I> NODISCARD auto cbegin_move_iterator() const noexcept { return std::make_move_iterator(this->cbegin<I>()); }
+		template <size_t I> auto crbegin() const noexcept { return this->get<I>().crbegin(); }
 
-		template <size_t I> NODISCARD auto end_move_iterator() noexcept { return std::make_move_iterator(this->end<I>()); }
+		template <class T> auto rbegin() noexcept { return this->get<T>().rbegin(); }
 
-		template <size_t I> NODISCARD auto end_move_iterator() const noexcept { return std::make_move_iterator(this->end<I>()); }
+		template <class T> auto rbegin() const noexcept { return this->get<T>().rbegin(); }
 
-		template <size_t I> NODISCARD auto cend_move_iterator() const noexcept { return std::make_move_iterator(this->cend<I>()); }
+		template <class T> auto crbegin() const noexcept { return this->get<T>().crbegin(); }
 
-		template <class T> NODISCARD auto begin_move_iterator() noexcept { return std::make_move_iterator(this->begin<T>()); }
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <class T> NODISCARD auto begin_move_iterator() const noexcept { return std::make_move_iterator(this->begin<T>()); }
+		template <size_t I> auto rend() noexcept { return this->get<I>().rend(); }
 
-		template <class T> NODISCARD auto cbegin_move_iterator() const noexcept { return std::make_move_iterator(this->cbegin<T>()); }
+		template <size_t I> auto rend() const noexcept { return this->get<I>().rend(); }
 
-		template <class T> NODISCARD auto end_move_iterator() noexcept { return std::make_move_iterator(this->end<T>()); }
+		template <size_t I> auto crend() const noexcept { return this->get<I>().crend(); }
 
-		template <class T> NODISCARD auto end_move_iterator() const noexcept { return std::make_move_iterator(this->end<T>()); }
+		template <class T> auto rend() noexcept { return this->get<T>().rend(); }
 
-		template <class T> NODISCARD auto cend_move_iterator() const noexcept { return std::make_move_iterator(this->cend<T>()); }
+		template <class T> auto rend() const noexcept { return this->get<T>().rend(); }
+
+		template <class T> auto crend() const noexcept { return this->get<T>().crend(); }
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		template <size_t I> auto begin_move_iterator() noexcept { return std::make_move_iterator(this->begin<I>()); }
+
+		template <size_t I> auto begin_move_iterator() const noexcept { return std::make_move_iterator(this->begin<I>()); }
+
+		template <size_t I> auto cbegin_move_iterator() const noexcept { return std::make_move_iterator(this->cbegin<I>()); }
+
+		template <size_t I> auto end_move_iterator() noexcept { return std::make_move_iterator(this->end<I>()); }
+
+		template <size_t I> auto end_move_iterator() const noexcept { return std::make_move_iterator(this->end<I>()); }
+
+		template <size_t I> auto cend_move_iterator() const noexcept { return std::make_move_iterator(this->cend<I>()); }
+
+		template <class T> auto begin_move_iterator() noexcept { return std::make_move_iterator(this->begin<T>()); }
+
+		template <class T> auto begin_move_iterator() const noexcept { return std::make_move_iterator(this->begin<T>()); }
+
+		template <class T> auto cbegin_move_iterator() const noexcept { return std::make_move_iterator(this->cbegin<T>()); }
+
+		template <class T> auto end_move_iterator() noexcept { return std::make_move_iterator(this->end<T>()); }
+
+		template <class T> auto end_move_iterator() const noexcept { return std::make_move_iterator(this->end<T>()); }
+
+		template <class T> auto cend_move_iterator() const noexcept { return std::make_move_iterator(this->cend<T>()); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class U = self_type
-		> NODISCARD auto compare(U const & value) const noexcept
+		> auto compare(U const & value) const noexcept
 		{
 			if constexpr (std::is_same_v<U, self_type>)
 			{
@@ -1336,37 +1336,37 @@ namespace ism
 		}
 
 		template <class U = self_type
-		> NODISCARD bool operator==(U const & value) const noexcept
+		> bool operator==(U const & value) const noexcept
 		{
 			return this->compare(value) == 0;
 		}
 
 		template <class U = self_type
-		> NODISCARD bool operator!=(U const & value) const noexcept
+		> bool operator!=(U const & value) const noexcept
 		{
 			return this->compare(value) != 0;
 		}
 
 		template <class U = self_type
-		> NODISCARD bool operator<(U const & value) const noexcept
+		> bool operator<(U const & value) const noexcept
 		{
 			return this->compare(value) < 0;
 		}
 
 		template <class U = self_type
-		> NODISCARD bool operator>(U const & value) const noexcept
+		> bool operator>(U const & value) const noexcept
 		{
 			return this->compare(value) > 0;
 		}
 
 		template <class U = self_type
-		> NODISCARD bool operator<=(U const & value) const noexcept
+		> bool operator<=(U const & value) const noexcept
 		{
 			return this->compare(value) <= 0;
 		}
 
 		template <class U = self_type
-		> NODISCARD bool operator>=(U const & value) const noexcept
+		> bool operator>=(U const & value) const noexcept
 		{
 			return this->compare(value) >= 0;
 		}

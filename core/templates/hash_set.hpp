@@ -10,13 +10,13 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// hash_set
-	template <class _Ty, class _Hash = Hasher<_Ty>, class _KeyEq = EqualTo<_Ty>
-	> ALIAS(HashSet) std::pmr::unordered_set<_Ty, _Hash, _KeyEq>;
+	// hash set
+	template <class T, class H = Hasher<T>, class Eq = EqualTo<T>
+	> ALIAS(HashSet) std::unordered_set<T, H, Eq, PolymorphicAllocator<T>>;
 
-	// hash_multiset
-	template <class _Ty, class _Hash = Hasher<_Ty>, class _KeyEq = EqualTo<_Ty>
-	> ALIAS(HashMultiset) std::pmr::unordered_multiset<_Ty, _Hash, _KeyEq>;
+	// hash multi set
+	template <class T, class H = Hasher<T>, class Eq = EqualTo<T>
+	> ALIAS(HashMultiSet) std::unordered_multiset<T, H, Eq, PolymorphicAllocator<T>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

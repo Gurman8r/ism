@@ -23,9 +23,9 @@ namespace ism
 
 		virtual ~Window();
 
-		NODISCARD WindowID get_window_id() const noexcept { return m_window_id; }
+		WindowID get_window_id() const noexcept { return m_window_id; }
 
-		NODISCARD operator WindowID() const noexcept { return m_window_id; }
+		operator WindowID() const noexcept { return m_window_id; }
 
 	public:
 		virtual void make_current_context();
@@ -39,30 +39,30 @@ namespace ism
 		virtual void request_attention();
 
 	public:
-		NODISCARD inline IntRect get_bounds() const noexcept { return { get_position(), get_size() }; }
-		NODISCARD virtual String get_clipboard() const;
-		NODISCARD virtual Vec2f get_content_scale() const;
-		NODISCARD virtual IntRect get_frame_size() const;
-		NODISCARD virtual Vec2i get_framebuffer_size() const;
-		NODISCARD virtual int32_t get_input_mode(InputMode_ value) const;
-		NODISCARD virtual InputAction_ get_key(KeyCode_ value) const;
-		NODISCARD virtual InputAction_ get_mouse_button(MouseButton_ value) const;
-		NODISCARD virtual Vec2d get_mouse_position() const;
-		NODISCARD virtual void * get_native_handle() const;
-		NODISCARD virtual float_t get_opacity() const;
-		NODISCARD virtual Vec2i get_position() const;
-		NODISCARD virtual Vec2i get_size() const;
-		NODISCARD virtual bool get_should_close() const;
-		NODISCARD virtual void * get_user_pointer() const;
-		NODISCARD virtual bool is_decorated() const;
-		NODISCARD virtual bool is_floating() const;
-		NODISCARD virtual bool is_focused() const;
-		NODISCARD virtual bool is_hovered() const;
-		NODISCARD virtual bool is_iconified() const;
-		NODISCARD virtual bool is_maximized() const;
-		NODISCARD virtual bool is_resizable() const;
-		NODISCARD virtual bool is_transparent() const;
-		NODISCARD virtual bool is_visible() const;
+		inline IntRect get_bounds() const noexcept { return { get_position(), get_size() }; }
+		virtual String get_clipboard() const;
+		virtual Vec2f get_content_scale() const;
+		virtual IntRect get_frame_size() const;
+		virtual Vec2i get_framebuffer_size() const;
+		virtual int32_t get_input_mode(InputMode_ value) const;
+		virtual InputAction_ get_key(KeyCode_ value) const;
+		virtual InputAction_ get_mouse_button(MouseButton_ value) const;
+		virtual Vec2d get_mouse_position() const;
+		virtual void * get_native_handle() const;
+		virtual float_t get_opacity() const;
+		virtual Vec2i get_position() const;
+		virtual Vec2i get_size() const;
+		virtual bool get_should_close() const;
+		virtual void * get_user_pointer() const;
+		virtual bool is_decorated() const;
+		virtual bool is_floating() const;
+		virtual bool is_focused() const;
+		virtual bool is_hovered() const;
+		virtual bool is_iconified() const;
+		virtual bool is_maximized() const;
+		virtual bool is_resizable() const;
+		virtual bool is_transparent() const;
+		virtual bool is_visible() const;
 
 	public:
 		virtual void set_clipboard(String const & value);

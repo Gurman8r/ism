@@ -8,17 +8,17 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class To, class From
-	> NODISCARD constexpr TVector4<To> color_cast(const TVector4<From> & value) noexcept
+	> constexpr TVector4<To> color_cast(const TVector4<From> & value) noexcept
 	{
 		return (TVector4<To>)value;
 	}
 
-	NODISCARD constexpr Vec4b color_cast(Vec4f const & value) noexcept
+	constexpr Vec4b color_cast(Vec4f const & value) noexcept
 	{
 		return (Vec4b)(value * 255.f);
 	}
 
-	NODISCARD constexpr Vec4f color_cast(Vec4b const & value) noexcept
+	constexpr Vec4f color_cast(Vec4b const & value) noexcept
 	{
 		return ((Vec4f)value) / 255.f;
 	}
@@ -30,7 +30,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
-	template <class _T> struct NODISCARD BasicColor final
+	template <class _T> struct BasicColor final
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -219,7 +219,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
-	NODISCARD inline Color rotate_hue(Color const & v, float_t degrees) noexcept
+	inline Color rotate_hue(Color const & v, float_t degrees) noexcept
 	{
 		// https://stackoverflow.com/a/8510751
 		float_t const c{ std::cos(util::deg2rad(degrees)) }, s{ std::sin(util::deg2rad(degrees)) };

@@ -21,9 +21,9 @@ namespace ism
 
 		virtual void initialize();
 
-		virtual bool process(Duration const & dt);
-
 		virtual void finalize();
+
+		virtual bool process(Duration const & dt);
 
 		virtual void handle_event(Event const & value) override;
 

@@ -2,10 +2,10 @@
 #define _ISM_COMMON_HPP_
 
 #include <core/typedefs.hpp>
+#include <core/os/atomic.hpp>
 #include <core/string/path.hpp>
 #include <core/string/print_string.hpp>
 #include <core/math/transform_2d.hpp>
-#include <core/templates/atomic.hpp>
 #include <core/templates/buffer.hpp>
 #include <core/templates/duration.hpp>
 #include <core/templates/ecs.hpp>
@@ -155,17 +155,17 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(ReturnValuePolicy) int32_t;
-	enum ReturnValuePolicy_ : ReturnValuePolicy
+	enum ReturnPolicy_ : ReturnValuePolicy
 	{
-		ReturnValuePolicy_Automatic,
-		ReturnValuePolicy_AutomaticReference,
-		ReturnValuePolicy_TakeOwnership,
-		ReturnValuePolicy_Copy,
-		ReturnValuePolicy_Move,
-		ReturnValuePolicy_Reference,
-		ReturnValuePolicy_ReferenceInternal,
+		ReturnPolicy_Automatic,
+		ReturnPolicy_AutomaticReference,
+		ReturnPolicy_TakeOwnership,
+		ReturnPolicy_Copy,
+		ReturnPolicy_Move,
+		ReturnPolicy_Reference,
+		ReturnPolicy_ReferenceInternal,
 
-		ReturnValuePolicy_MAX
+		ReturnPolicy_MAX
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -197,7 +197,7 @@ namespace ism
 #endif
 
 
-	NODISCARD constexpr size_t get_data_type_size(DataType_ type) noexcept
+	constexpr size_t get_data_type_size(DataType_ type) noexcept
 	{
 		switch (type)
 		{
@@ -225,7 +225,7 @@ namespace ism
 	}
 
 	template <DataType_ type
-	> NODISCARD constexpr size_t get_data_type_size() noexcept
+	> constexpr size_t get_data_type_size() noexcept
 	{
 		return get_data_type_size(type);
 	}
@@ -272,7 +272,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct NODISCARD MemberDef
+	struct MemberDef
 	{
 		cstring		name{};
 		DataType_	type{};
@@ -281,7 +281,7 @@ namespace ism
 		cstring		doc{};
 	};
 
-	struct NODISCARD MethodDef
+	struct MethodDef
 	{
 		cstring		name{};
 		binaryfunc	func{};
@@ -289,7 +289,7 @@ namespace ism
 		cstring		doc{};
 	};
 
-	struct NODISCARD GetSetDef
+	struct GetSetDef
 	{
 		cstring		name{};
 		getter		get{};

@@ -126,13 +126,13 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// video mode
-	struct NODISCARD VideoMode
+	struct VideoMode
 	{
 		Vec2i	size			{ 1280, 720 };
 		Vec4b	bits_per_pixel	{ 8, 8, 8, 8 };
 		int32_t	refresh_rate	{ -1 };
 
-		NODISCARD int32_t compare(VideoMode const & other) const noexcept {
+		int32_t compare(VideoMode const & other) const noexcept {
 			if (this == std::addressof(other)) { return 0; }
 			if (auto cmp{ CMP(size, other.size) }; cmp != 0) { return cmp; }
 			if (auto cmp{ CMP(bits_per_pixel, other.bits_per_pixel) }; cmp != 0) { return cmp; }
@@ -140,18 +140,18 @@ namespace ism
 			return 0;
 		}
 
-		NODISCARD bool operator==(VideoMode const & other) const noexcept { return compare(other) == 0; }
-		NODISCARD bool operator!=(VideoMode const & other) const noexcept { return compare(other) != 0; }
-		NODISCARD bool operator< (VideoMode const & other) const noexcept { return compare(other) < 0; }
-		NODISCARD bool operator> (VideoMode const & other) const noexcept { return compare(other) > 0; }
-		NODISCARD bool operator<=(VideoMode const & other) const noexcept { return compare(other) <= 0; }
-		NODISCARD bool operator>=(VideoMode const & other) const noexcept { return compare(other) >= 0; }
+		bool operator==(VideoMode const & other) const noexcept { return compare(other) == 0; }
+		bool operator!=(VideoMode const & other) const noexcept { return compare(other) != 0; }
+		bool operator< (VideoMode const & other) const noexcept { return compare(other) < 0; }
+		bool operator> (VideoMode const & other) const noexcept { return compare(other) > 0; }
+		bool operator<=(VideoMode const & other) const noexcept { return compare(other) <= 0; }
+		bool operator>=(VideoMode const & other) const noexcept { return compare(other) >= 0; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// context settings
-	struct NODISCARD ContextSettings
+	struct ContextSettings
 	{
 		RendererAPI_ api{ RendererAPI_OpenGL };
 		
@@ -170,7 +170,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window settings
-	struct NODISCARD DisplayServerSettings
+	struct DisplayServerSettings
 	{
 		String			title	{ "New Window" };
 		VideoMode		video	{};
@@ -455,14 +455,14 @@ namespace ism
 	public:
 		virtual ~DisplayServer() override {}
 
-		NODISCARD static DisplayServer * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static DisplayServer * get_singleton() noexcept { return singleton; }
 
 	public:
-		NODISCARD virtual VideoMode const & get_desktop_video_mode() const = 0;
-		NODISCARD virtual Vector<VideoMode> const & get_fullscreen_video_modes() const = 0;
+		virtual VideoMode const & get_desktop_video_mode() const = 0;
+		virtual Vector<VideoMode> const & get_fullscreen_video_modes() const = 0;
 
 	public:
-		NODISCARD virtual WindowID get_current_context() const = 0;
+		virtual WindowID get_current_context() const = 0;
 		virtual void set_current_context(WindowID window) = 0;
 		virtual void poll_events() = 0;
 		virtual void swap_buffers(WindowID window) = 0;
@@ -475,35 +475,35 @@ namespace ism
 		virtual void request_window_attention(WindowID window) = 0;
 		
 	public:
-		NODISCARD virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) = 0;
-		NODISCARD virtual CursorID create_standard_cursor(CursorShape_ shape) = 0;
+		virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) = 0;
+		virtual CursorID create_standard_cursor(CursorShape_ shape) = 0;
 		virtual void destroy_cursor(CursorID value) = 0;
 
 	public:
-		NODISCARD inline IntRect window_get_bounds(WindowID window) const { return { window_get_position(window), window_get_size(window) }; }
-		NODISCARD virtual String window_get_clipboard(WindowID window) const = 0;
-		NODISCARD virtual Vec2f window_get_content_scale(WindowID window) const = 0;
-		NODISCARD virtual IntRect window_get_frame_size(WindowID window) const = 0;
-		NODISCARD virtual Vec2i window_get_framebuffer_size(WindowID window) const = 0;
-		NODISCARD virtual int32_t window_get_input_mode(WindowID window, InputMode_ value) const = 0;
-		NODISCARD virtual InputAction_ window_get_key(WindowID window, KeyCode_ value) const = 0;
-		NODISCARD virtual InputAction_ window_get_mouse_button(WindowID window, MouseButton_ value) const = 0;
-		NODISCARD virtual Vec2d window_get_mouse_position(WindowID window) const = 0;
-		NODISCARD virtual void * window_get_native_handle(WindowID window) const = 0;
-		NODISCARD virtual float_t window_get_opacity(WindowID window) const = 0;
-		NODISCARD virtual Vec2i window_get_position(WindowID window) const = 0;
-		NODISCARD virtual Vec2i window_get_size(WindowID window) const = 0;
-		NODISCARD virtual bool window_get_should_close(WindowID window) const = 0;
-		NODISCARD virtual void * window_get_user_pointer(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_decorated(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_floating(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_focused(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_hovered(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_iconified(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_maximized(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_resizable(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_transparent(WindowID window) const = 0;
-		NODISCARD virtual bool window_is_visible(WindowID window) const = 0;
+		inline IntRect window_get_bounds(WindowID window) const { return { window_get_position(window), window_get_size(window) }; }
+		virtual String window_get_clipboard(WindowID window) const = 0;
+		virtual Vec2f window_get_content_scale(WindowID window) const = 0;
+		virtual IntRect window_get_frame_size(WindowID window) const = 0;
+		virtual Vec2i window_get_framebuffer_size(WindowID window) const = 0;
+		virtual int32_t window_get_input_mode(WindowID window, InputMode_ value) const = 0;
+		virtual InputAction_ window_get_key(WindowID window, KeyCode_ value) const = 0;
+		virtual InputAction_ window_get_mouse_button(WindowID window, MouseButton_ value) const = 0;
+		virtual Vec2d window_get_mouse_position(WindowID window) const = 0;
+		virtual void * window_get_native_handle(WindowID window) const = 0;
+		virtual float_t window_get_opacity(WindowID window) const = 0;
+		virtual Vec2i window_get_position(WindowID window) const = 0;
+		virtual Vec2i window_get_size(WindowID window) const = 0;
+		virtual bool window_get_should_close(WindowID window) const = 0;
+		virtual void * window_get_user_pointer(WindowID window) const = 0;
+		virtual bool window_is_decorated(WindowID window) const = 0;
+		virtual bool window_is_floating(WindowID window) const = 0;
+		virtual bool window_is_focused(WindowID window) const = 0;
+		virtual bool window_is_hovered(WindowID window) const = 0;
+		virtual bool window_is_iconified(WindowID window) const = 0;
+		virtual bool window_is_maximized(WindowID window) const = 0;
+		virtual bool window_is_resizable(WindowID window) const = 0;
+		virtual bool window_is_transparent(WindowID window) const = 0;
+		virtual bool window_is_visible(WindowID window) const = 0;
 
 	public:
 		virtual void window_set_clipboard(WindowID window, String const & value) = 0;

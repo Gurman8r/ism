@@ -33,7 +33,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class R, class T = float_t
-	> NODISCARD constexpr auto ratio_cast(T v = T{ 1 }) noexcept
+	> constexpr auto ratio_cast(T v = T{ 1 }) noexcept
 	{
 		if constexpr (((T)R::num == (T)1) && ((T)R::den == (T)1))
 		{
@@ -56,7 +56,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, int64_t Num, int64_t Den
-	> NODISCARD constexpr auto ratio_cast(T v, Ratio<Num, Den> const & r)
+	> constexpr auto ratio_cast(T v, Ratio<Num, Den> const & r)
 	{
 		auto const
 			one{ static_cast<T>(1) },
@@ -74,7 +74,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> NODISCARD constexpr auto power_of_2(T v)
+	> constexpr auto power_of_2(T v)
 	{
 		// https://stackoverflow.com/questions/466204/rounding-up-to-next-power-of-2
 		if constexpr (std::is_floating_point_v<T>)
@@ -104,12 +104,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// kibibyte
-	NODISCARD constexpr uint64_t operator"" _KiB(uint64_t n) noexcept
+	constexpr uint64_t operator"" _KiB(uint64_t n) noexcept
 	{
 		return power_of_2(ratio_cast(n, std::kilo{}));
 	}
 
-	NODISCARD constexpr uint64_t operator"" _KiB(float80_t n) noexcept
+	constexpr uint64_t operator"" _KiB(float80_t n) noexcept
 	{
 		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::kilo{})));
 	}
@@ -117,12 +117,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// mebibyte
-	NODISCARD constexpr uint64_t operator"" _MiB(uint64_t n) noexcept
+	constexpr uint64_t operator"" _MiB(uint64_t n) noexcept
 	{
 		return power_of_2(ratio_cast(n, std::mega{}));
 	}
 
-	NODISCARD constexpr uint64_t operator"" _MiB(float80_t n) noexcept
+	constexpr uint64_t operator"" _MiB(float80_t n) noexcept
 	{
 		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::mega{})));
 	}
@@ -130,12 +130,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// gibibyte
-	NODISCARD constexpr uint64_t operator"" _GiB(uint64_t n) noexcept
+	constexpr uint64_t operator"" _GiB(uint64_t n) noexcept
 	{
 		return power_of_2(ratio_cast(n, std::giga{}));
 	}
 
-	NODISCARD constexpr uint64_t operator"" _GiB(float80_t n) noexcept
+	constexpr uint64_t operator"" _GiB(float80_t n) noexcept
 	{
 		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::giga{})));
 	}
@@ -143,12 +143,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// tebibyte
-	NODISCARD constexpr uint64_t operator"" _TiB(uint64_t n) noexcept
+	constexpr uint64_t operator"" _TiB(uint64_t n) noexcept
 	{
 		return power_of_2(ratio_cast(n, std::tera{}));
 	}
 
-	NODISCARD constexpr uint64_t operator"" _TiB(float80_t n) noexcept
+	constexpr uint64_t operator"" _TiB(float80_t n) noexcept
 	{
 		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::tera{})));
 	}
@@ -156,12 +156,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// pebibyte
-	NODISCARD constexpr uint64_t operator"" _PiB(uint64_t n) noexcept
+	constexpr uint64_t operator"" _PiB(uint64_t n) noexcept
 	{
 		return power_of_2(ratio_cast(n, std::peta{}));
 	}
 
-	NODISCARD constexpr uint64_t operator"" _PiB(float80_t n) noexcept
+	constexpr uint64_t operator"" _PiB(float80_t n) noexcept
 	{
 		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::peta{})));
 	}
@@ -169,12 +169,12 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// exbibyte
-	NODISCARD constexpr uint64_t operator"" _EiB(uint64_t n) noexcept
+	constexpr uint64_t operator"" _EiB(uint64_t n) noexcept
 	{
 		return power_of_2(ratio_cast(n, std::exa{}));
 	}
 
-	NODISCARD constexpr uint64_t operator"" _EiB(float80_t n) noexcept
+	constexpr uint64_t operator"" _EiB(float80_t n) noexcept
 	{
 		return static_cast<uint64_t>(power_of_2(ratio_cast(n, std::exa{})));
 	}

@@ -41,13 +41,13 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		NODISCARD auto get_child(size_t const i) const -> Ref<Node> { return m_nodes[i]; }
+		auto get_child(size_t const i) const -> Ref<Node> { return m_nodes[i]; }
 
-		NODISCARD auto get_child_count() const noexcept -> size_t { return m_nodes.size(); }
+		auto get_child_count() const noexcept -> size_t { return m_nodes.size(); }
 
-		NODISCARD auto get_parent() const noexcept -> Node * { return m_owner; }
+		auto get_parent() const noexcept -> Node * { return m_owner; }
 
-		NODISCARD auto get_tree() const noexcept -> SceneTree * { return m_tree; }
+		auto get_tree() const noexcept -> SceneTree * { return m_tree; }
 
 		Ref<Node> add_child(Node * value) noexcept { return (value && value->set_parent(this)) ? value : nullptr; }
 
@@ -64,17 +64,17 @@ namespace ism
 
 		bool set_parent(Ref<Node> const & value) noexcept { return set_parent(*value); }
 
-		NODISCARD size_t get_sibling_index() const noexcept;
+		size_t get_sibling_index() const noexcept;
 
 		void set_sibling_index(size_t const i);
 
-		NODISCARD bool is_child_of(Node const * other, bool recursive = false) const noexcept;
+		bool is_child_of(Node const * other, bool recursive = false) const noexcept;
 
-		NODISCARD bool is_child_of(Ref<Node> const & other, bool recursive = false) const noexcept { return is_child_of(*other, recursive); }
+		bool is_child_of(Ref<Node> const & other, bool recursive = false) const noexcept { return is_child_of(*other, recursive); }
 
-		NODISCARD bool is_parent_of(Node const * other, bool recursive = false) const noexcept;
+		bool is_parent_of(Node const * other, bool recursive = false) const noexcept;
 
-		NODISCARD bool is_parent_of(Ref<Node> const & other, bool recursive = false) const noexcept { return is_parent_of(*other, recursive); }
+		bool is_parent_of(Ref<Node> const & other, bool recursive = false) const noexcept { return is_parent_of(*other, recursive); }
 
 	public:
 		template <class Fn = void(*)(Ref<Node> &)
@@ -105,7 +105,7 @@ namespace ism
 
 	public:
 		template <class Pr = bool(*)(Ref<Node> const &)
-		> NODISCARD Ref<Node> find_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
+		> Ref<Node> find_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
 		{
 			auto _find_node_if = [](auto first, auto last, auto pr, bool recursive, bool reverse) noexcept -> Ref<Node>
 			{
@@ -137,7 +137,7 @@ namespace ism
 		}
 
 		template <class T
-		> NODISCARD Ref<T> find(bool recursive = true, bool reverse = false) const noexcept
+		> Ref<T> find(bool recursive = true, bool reverse = false) const noexcept
 		{
 			return find_if([](Ref<Node> const & node) noexcept { return Ref<T>(node).is_valid(); }, recursive, reverse);
 		}

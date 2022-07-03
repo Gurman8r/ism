@@ -20,9 +20,9 @@ namespace ism
 
 		virtual Error_ reload_from_file() override;
 
-		NODISCARD virtual RID get_rid() const override { return m_font; }
+		virtual RID get_rid() const override { return m_font; }
 
-		NODISCARD virtual Glyph * get_glyph(uint32_t character, uint32_t character_size);
+		virtual Glyph * get_glyph(uint32_t character, uint32_t character_size);
 	};
 }
 

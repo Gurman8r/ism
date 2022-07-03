@@ -194,11 +194,11 @@ namespace ism
 
 	public:
 		/* PROJECTION */
-		NODISCARD auto get_proj() const noexcept -> Mat4 const & { return m_proj; }
-		NODISCARD bool is_orthographic() const noexcept { return m_is_ortho; }
-		NODISCARD auto get_fov() const noexcept -> float_t { return m_fov[m_is_ortho]; }
-		NODISCARD auto get_clip() const noexcept -> Vec2 const & { return m_clip[m_is_ortho]; }
-		NODISCARD auto get_res() const noexcept -> Vec2 const & { return m_resolution; }
+		auto get_proj() const noexcept -> Mat4 const & { return m_proj; }
+		bool is_orthographic() const noexcept { return m_is_ortho; }
+		auto get_fov() const noexcept -> float_t { return m_fov[m_is_ortho]; }
+		auto get_clip() const noexcept -> Vec2 const & { return m_clip[m_is_ortho]; }
+		auto get_res() const noexcept -> Vec2 const & { return m_resolution; }
 		void set_orthographic(bool const value) noexcept { m_is_ortho = value; }
 		void set_fov(float_t const value) noexcept { m_fov[m_is_ortho] = value; }
 		void set_clip(Vec2 const & value) noexcept { m_clip[m_is_ortho] = value; }
@@ -206,20 +206,20 @@ namespace ism
 
 	public:
 		/* VIEW */
-		NODISCARD auto get_view() const noexcept -> Mat4 const & { return m_view; }
-		NODISCARD auto get_eye() const noexcept -> Vec3 const & { return m_eye; }
-		NODISCARD auto get_target() const noexcept -> Vec3 const & { return m_target; }
-		NODISCARD auto get_up() const noexcept -> Vec3 const & { return m_up; }
+		auto get_view() const noexcept -> Mat4 const & { return m_view; }
+		auto get_eye() const noexcept -> Vec3 const & { return m_eye; }
+		auto get_target() const noexcept -> Vec3 const & { return m_target; }
+		auto get_up() const noexcept -> Vec3 const & { return m_up; }
 		void set_eye(Vec3 const & value) noexcept { m_eye = value; }
 		void set_target(Vec3 const & value) noexcept { m_target = value; }
 		void set_up(Vec3 const & value) noexcept { m_up = value; }
 
 	public:
 		/* CONTROL */
-		NODISCARD auto get_yaw() const noexcept -> float_t { return m_yaw; }
-		NODISCARD auto get_pitch() const noexcept -> float_t { return m_pitch; }
-		NODISCARD auto get_roll() const noexcept -> float_t { return m_roll; }
-		NODISCARD auto get_zoom() const noexcept -> float_t { return m_zoom; }
+		auto get_yaw() const noexcept -> float_t { return m_yaw; }
+		auto get_pitch() const noexcept -> float_t { return m_pitch; }
+		auto get_roll() const noexcept -> float_t { return m_roll; }
+		auto get_zoom() const noexcept -> float_t { return m_zoom; }
 		void set_yaw(float_t const value) noexcept { m_yaw = value; }
 		void set_pitch(float_t const value) noexcept { m_pitch = value; }
 		void set_roll(float_t const value) noexcept { m_roll = value; }

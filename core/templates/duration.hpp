@@ -13,106 +13,106 @@ namespace ism
 	{
 		using std::chrono::duration<float_t>::duration;
 
-		NODISCARD constexpr operator float_t() const noexcept { return count(); }
+		constexpr operator float_t() const noexcept { return count(); }
 
-		template <class T> NODISCARD constexpr operator T() const noexcept { return (T)count(); }
+		template <class T> constexpr operator T() const noexcept { return (T)count(); }
 
-		NODISCARD constexpr auto nanoseconds() const noexcept -> Duration {
+		constexpr auto nanoseconds() const noexcept -> Duration {
 			return std::chrono::duration_cast<std::chrono::duration<float_t, Nano>>(*this);
 		}
 
-		NODISCARD constexpr auto microseconds() const noexcept -> Duration {
+		constexpr auto microseconds() const noexcept -> Duration {
 			return std::chrono::duration_cast<std::chrono::duration<float_t, Micro>>(*this);
 		}
 
-		NODISCARD constexpr auto milliseconds() const noexcept -> Duration {
+		constexpr auto milliseconds() const noexcept -> Duration {
 			return std::chrono::duration_cast<std::chrono::duration<float_t, Milli>>(*this);
 		}
 
-		NODISCARD constexpr auto seconds() const noexcept -> Duration {
+		constexpr auto seconds() const noexcept -> Duration {
 			return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<1>>>(*this);
 		}
 
-		NODISCARD constexpr auto minutes() const noexcept -> Duration {
+		constexpr auto minutes() const noexcept -> Duration {
 			return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60>>>(*this);
 		}
 
-		NODISCARD constexpr auto hours() const noexcept -> Duration {
+		constexpr auto hours() const noexcept -> Duration {
 			return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60 * 60>>>(*this);
 		}
 
-		NODISCARD constexpr auto days() const noexcept -> Duration {
+		constexpr auto days() const noexcept -> Duration {
 			return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60 * 60 * 24>>>(*this);
 		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr auto operator"" _ns(float80_t value) noexcept {
+	constexpr auto operator"" _ns(float80_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Nano()) };
 	}
 
-	NODISCARD constexpr auto operator"" _ns(uint64_t value) noexcept {
+	constexpr auto operator"" _ns(uint64_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Nano()) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr auto operator"" _us(float80_t value) noexcept {
+	constexpr auto operator"" _us(float80_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Micro()) };
 	}
 
-	NODISCARD constexpr auto operator"" _us(uint64_t value) noexcept {
+	constexpr auto operator"" _us(uint64_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Micro()) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr auto operator"" _ms(float80_t value) noexcept {
+	constexpr auto operator"" _ms(float80_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Milli()) };
 	}
 
-	NODISCARD constexpr auto operator"" _ms(uint64_t value) noexcept {
+	constexpr auto operator"" _ms(uint64_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Milli()) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr auto operator"" _s(float80_t value) noexcept {
+	constexpr auto operator"" _s(float80_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<1>()) };
 	}
 
-	NODISCARD constexpr auto operator"" _s(uint64_t value) noexcept {
+	constexpr auto operator"" _s(uint64_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<1>()) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr auto operator"" _min(float80_t value) noexcept {
+	constexpr auto operator"" _min(float80_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60>()) };
 	}
 
-	NODISCARD constexpr auto operator"" _min(uint64_t value) noexcept {
+	constexpr auto operator"" _min(uint64_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60>()) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr auto operator"" _hrs(float80_t value) noexcept {
+	constexpr auto operator"" _hrs(float80_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60>()) };
 	}
 
-	NODISCARD constexpr auto operator"" _hrs(uint64_t value) noexcept {
+	constexpr auto operator"" _hrs(uint64_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60>()) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	NODISCARD constexpr auto operator"" _days(float80_t value) noexcept {
+	constexpr auto operator"" _days(float80_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60 * 24>()) };
 	}
 
-	NODISCARD constexpr auto operator"" _days(uint64_t value) noexcept {
+	constexpr auto operator"" _days(uint64_t value) noexcept {
 		return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60 * 24>()) };
 	}
 
@@ -130,7 +130,7 @@ namespace ism
 
 		using time_point = std::chrono::high_resolution_clock::time_point;
 
-		NODISCARD static time_point now() noexcept { return std::chrono::high_resolution_clock::now(); }
+		static time_point now() noexcept { return std::chrono::high_resolution_clock::now(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -150,12 +150,12 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD bool running() const noexcept
+		bool running() const noexcept
 		{
 			return m_running;
 		}
 
-		NODISCARD Duration elapsed() const noexcept
+		Duration elapsed() const noexcept
 		{
 			if (m_running) { return now() - m_start_time; }
 

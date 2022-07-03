@@ -51,7 +51,7 @@ static TextServer *			g_text{};
 
 Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	SYSTEM->initialize();
+	SYS->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -87,7 +87,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	register_server_singletons();
 	
-	SYSTEM->set_cmdline(exepath, { argv, argv + argc });
+	SYS->set_cmdline(exepath, { argv, argv + argc });
 
 	// event system
 	g_bus = memnew(EventBus);
@@ -192,7 +192,7 @@ bool Main::start()
 #endif
 	}
 	
-	SYSTEM->set_main_loop(main_loop);
+	SYS->set_main_loop(main_loop);
 
 	main_loop->initialize();
 
@@ -225,7 +225,7 @@ bool Main::iteration()
 	SCOPE_EXIT(&) { g_input->m_state.scroll = {}; g_input->m_state.last_char = 0; };
 
 	ImGui_NewFrame();
-	if (SYSTEM->get_main_loop()->process(delta_time)) { should_close = true; }
+	if (SYS->get_main_loop()->process(delta_time)) { should_close = true; }
 	ImGui::Render();
 
 	RENDERING_DEVICE->draw_list_begin_for_screen(g_display->get_current_context());
@@ -247,8 +247,8 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	SYSTEM->get_main_loop()->finalize();
-	SYSTEM->delete_main_loop();
+	SYS->get_main_loop()->finalize();
+	SYS->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -264,7 +264,7 @@ void Main::cleanup()
 
 	//memdelete(g_audio);
 
-	SYSTEM->finalize();
+	SYS->finalize();
 
 	ImGui_Shutdown();
 	ImGui::DestroyContext(g_imgui);
@@ -281,7 +281,7 @@ void Main::cleanup()
 	unregister_core_types();
 
 	memdelete(g_internals);
-	SYSTEM->finalize_core();
+	SYS->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

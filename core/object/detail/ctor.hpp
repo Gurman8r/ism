@@ -75,10 +75,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class ... Args
-	> NODISCARD auto init() -> initimpl::Constructor<Args...> { return {}; }
+	> auto init() -> initimpl::Constructor<Args...> { return {}; }
 
 	template <class Func, class Ret = initimpl::Factory<Func>
-	> NODISCARD auto init(Func && fn) -> Ret { return { FWD(fn) }; }
+	> auto init(Func && fn) -> Ret { return { FWD(fn) }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

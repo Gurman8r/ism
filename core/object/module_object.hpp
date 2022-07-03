@@ -94,7 +94,7 @@ namespace ism
 	}
 
 	template <class Name = cstring
-	> NODISCARD MODULE import_module(Name && name) noexcept
+	> MODULE import_module(Name && name) noexcept
 	{
 		DICT modules{ Internals::get_singleton()->modules };
 
@@ -103,7 +103,7 @@ namespace ism
 		return modules.lookup(name);
 	}
 
-	NODISCARD inline DICT globals() noexcept
+	inline DICT globals() noexcept
 	{
 		STR_IDENTIFIER(__main__);
 		STR_IDENTIFIER(__dict__);

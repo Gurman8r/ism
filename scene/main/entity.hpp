@@ -21,9 +21,9 @@ namespace ism
 	public:
 		virtual ~Entity() override;
 
-		NODISCARD operator EntityID() const noexcept { return m_entity_id; }
+		operator EntityID() const noexcept { return m_entity_id; }
 
-		NODISCARD auto get_entity_id() const noexcept -> EntityID { return m_entity_id; }
+		auto get_entity_id() const noexcept -> EntityID { return m_entity_id; }
 
 		template <class T, class ... Args
 		> T & add_component(Args && ... args) noexcept
@@ -35,14 +35,14 @@ namespace ism
 		}
 
 		template <class ... T
-		> NODISCARD decltype(auto) get_component()
+		> decltype(auto) get_component()
 		{
 			auto & tree{ *VALIDATE(m_tree) };
 			return tree.m_entt.get<T...>(m_entity_id);
 		}
 
 		template <class ... T
-		> NODISCARD bool has_component() const
+		> bool has_component() const
 		{
 			auto & tree{ *VALIDATE(m_tree) };
 			return tree.m_entt.has<T...>(m_entity_id);

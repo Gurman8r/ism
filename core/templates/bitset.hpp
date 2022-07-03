@@ -142,21 +142,21 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr operator bool() const noexcept { return m_words; }
+		constexpr operator bool() const noexcept { return m_words; }
 
-		NODISCARD constexpr operator storage_type const & () const & noexcept { return m_words; }
+		constexpr operator storage_type const & () const & noexcept { return m_words; }
 
-		NODISCARD constexpr bool operator[](size_t const i) const noexcept { return read(i); }
+		constexpr bool operator[](size_t const i) const noexcept { return read(i); }
 
-		NODISCARD constexpr auto words() noexcept -> storage_type & { return m_words; }
+		constexpr auto words() noexcept -> storage_type & { return m_words; }
 
-		NODISCARD constexpr auto words() const noexcept -> storage_type const & { return m_words; }
+		constexpr auto words() const noexcept -> storage_type const & { return m_words; }
 
-		NODISCARD constexpr auto size() const noexcept -> size_t { return bit_count; }
+		constexpr auto size() const noexcept -> size_t { return bit_count; }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr bool read(size_t const i) const noexcept
+		constexpr bool read(size_t const i) const noexcept
 		{
 			return (1ULL & (m_words[i / bits_per_word] >> 1ULL)) == 1ULL;
 
@@ -192,7 +192,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <size_t I> NODISCARD constexpr bool read() const noexcept
+		template <size_t I> constexpr bool read() const noexcept
 		{
 			return this->read(I);
 		}
@@ -214,7 +214,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD constexpr array_type arr() const noexcept
+		constexpr array_type arr() const noexcept
 		{
 			array_type temp;
 			for (size_t i = 0; i < bit_count; ++i)
@@ -240,37 +240,37 @@ namespace ism
 		}
 
 		template <class Other = self_type
-		> NODISCARD constexpr bool operator==(Other const & other) const
+		> constexpr bool operator==(Other const & other) const
 		{
 			return this->compare(other) == 0;
 		}
 
 		template <class Other = self_type
-		> NODISCARD constexpr bool operator!=(Other const & other) const
+		> constexpr bool operator!=(Other const & other) const
 		{
 			return this->compare(other) != 0;
 		}
 
 		template <class Other = self_type
-		> NODISCARD constexpr bool operator<(Other const & other) const
+		> constexpr bool operator<(Other const & other) const
 		{
 			return this->compare(other) < 0;
 		}
 
 		template <class Other = self_type
-		> NODISCARD constexpr bool operator>(Other const & other) const
+		> constexpr bool operator>(Other const & other) const
 		{
 			return this->compare(other) > 0;
 		}
 
 		template <class Other = self_type
-		> NODISCARD constexpr bool operator<=(Other const & other) const
+		> constexpr bool operator<=(Other const & other) const
 		{
 			return this->compare(other) <= 0;
 		}
 
 		template <class Other = self_type
-		> NODISCARD constexpr bool operator>=(Other const & other) const
+		> constexpr bool operator>=(Other const & other) const
 		{
 			return this->compare(other) >= 0;
 		}

@@ -6,14 +6,14 @@
 
 namespace ism
 {
-	struct NODISCARD FrameRateTracker final
+	struct FrameRateTracker final
 	{
 		float_t			value{};
 		float_t			accum{};
 		size_t			index{};
 		Vector<float_t>	times{};
 
-		NODISCARD operator float_t() const noexcept { return value; }
+		operator float_t() const noexcept { return value; }
 
 		FrameRateTracker(size_t count = 120) noexcept
 			: value{}, accum{}, index{}, times{ count, 0.f, decltype(times)::allocator_type{} }

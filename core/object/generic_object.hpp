@@ -21,12 +21,12 @@ namespace ism
 	template <> struct DefaultDelete<GenericObject> : DefaultDelete<Object> {};
 
 	// generic check
-#define OBJECT_CHECK_TUPLE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Tuple_Subclass))
+#define OBJECT_CHECK_GENERIC(o) (ism::isinstance<ism::GENERIC>(o))
 
 	// generic ref
 	class GENERIC : public Ref<GenericObject>
 	{
-		REF_COMMON(GENERIC, OBJECT_CHECK_TUPLE);
+		REF_COMMON(GENERIC, OBJECT_CHECK_GENERIC);
 
 	public:
 	};

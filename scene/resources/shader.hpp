@@ -35,12 +35,12 @@ namespace ism
 
 		virtual Error_ reload_from_file() override;
 
-		NODISCARD virtual RID get_rid() const { return m_shader; }
+		virtual RID get_rid() const { return m_shader; }
 
-		NODISCARD virtual Mode_ get_mode() const { return m_mode; }
+		virtual Mode_ get_mode() const { return m_mode; }
 
 	public:
-		NODISCARD String get_code() const;
+		String get_code() const;
 		void set_code(const String & value);
 	};
 }

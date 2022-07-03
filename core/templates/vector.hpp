@@ -11,9 +11,17 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// vector base
+	template <class T
+	> ALIAS(_VectorBase) std::vector<T, PolymorphicAllocator<T>>;
+
 	// vector
 	template <class T
-	> ALIAS(Vector) std::pmr::vector<T>;
+	> class Vector : public _VectorBase<T> {
+	public:
+		using base_type = _VectorBase<T>;
+		using base_type::base_type;
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -33,14 +41,14 @@ namespace ism
 
 	// has
 	template <class TValue, class TKey
-	> NODISCARD bool has(Vector<TValue> const & l, TKey && value)
+	> bool has(Vector<TValue> const & l, TKey && value)
 	{
 		return l.end() != std::find(l.begin(), l.end(), FWD(value));
 	}
 
 	// getptr
 	template <class TValue, class TKey
-	> NODISCARD auto getptr(Vector<TValue> const & l, TKey && value)
+	> auto getptr(Vector<TValue> const & l, TKey && value)
 	{
 		if (auto const it{ std::find(l.begin(), l.end(), FWD(value)) }; it != l.end())
 		{

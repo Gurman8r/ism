@@ -20,22 +20,22 @@ namespace ism
 
 		virtual ~ConfigFile();
 
-		NODISCARD virtual RID get_rid() const override { return (RID)m_ini; }
+		virtual RID get_rid() const override { return (RID)m_ini; }
 
 		virtual Error_ reload_from_file() override;
 
 	public:
-		NODISCARD bool get_bool(String const & section, String const & name, bool dv) const;
+		bool get_bool(String const & section, String const & name, bool dv = {}) const;
 		
-		NODISCARD double_t get_double(String const & section, String const & name, double_t dv) const;
+		double_t get_double(String const & section, String const & name, double_t dv = {}) const;
 		
-		NODISCARD float_t get_float(String const & section, String const & name, float_t dv) const;
+		float_t get_float(String const & section, String const & name, float_t dv = {}) const;
 		
-		NODISCARD int32_t get_int(String const & section, String const & name, int32_t dv) const;
+		int32_t get_int(String const & section, String const & name, int32_t dv = {}) const;
 		
-		NODISCARD uint32_t get_uint(String const & section, String const & name, uint32_t dv) const;
+		uint32_t get_uint(String const & section, String const & name, uint32_t dv = {}) const;
 		
-		NODISCARD String get_string(String const & section, String const & name, String const & dv) const;
+		String get_string(String const & section, String const & name, String const & dv = {}) const;
 
 		bool set_string(String const & section, String const & name, String const & value);
 	};

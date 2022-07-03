@@ -11,7 +11,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
-	struct NODISCARD SceneSettings final
+	struct SceneSettings final
 	{
 		String name{ "New Scene" };
 	};
@@ -33,7 +33,7 @@ namespace ism
 
 		virtual ~SceneTree() override;
 
-		NODISCARD static SceneTree * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static SceneTree * get_singleton() noexcept { return singleton; }
 
 	public:
 		virtual void initialize() override;
@@ -45,13 +45,13 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		NODISCARD auto get_fps() const noexcept -> FrameRateTracker const & { return m_fps; }
+		auto get_fps() const noexcept -> FrameRateTracker const & { return m_fps; }
 
-		NODISCARD auto get_registry() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
+		auto get_registry() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
 
-		NODISCARD auto get_root() const noexcept -> Window * { return m_root; }
+		auto get_root() const noexcept -> Window * { return m_root; }
 
-		NODISCARD auto get_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
+		auto get_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
 
 	public:
 		template <class Fn = void(*)(Ref<Node> &)

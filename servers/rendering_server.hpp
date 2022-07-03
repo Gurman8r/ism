@@ -22,7 +22,7 @@ namespace ism
 	public:
 		virtual ~RenderingServer() override;
 
-		NODISCARD static RenderingServer * get_singleton() noexcept { return singleton; }
+		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return singleton; }
 
 	public:
 		virtual void initialize() = 0;

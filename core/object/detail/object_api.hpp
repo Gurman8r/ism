@@ -11,45 +11,45 @@ namespace ism
 	template <class Derived
 	> class ObjectAPI : public _API_Tag
 	{
-		NODISCARD auto derived() const & noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
+		auto derived() const & noexcept -> Derived const & { return static_cast<Derived const &>(*this); }
 
 	public:
 		template <class Index = cstring
-		> NODISCARD auto attr(Index && i) const { return AttrAccessor<Index>{ derived().ptr(), FWD(i) }; }
+		> auto attr(Index && i) const { return AttrAccessor<Index>{ derived().ptr(), FWD(i) }; }
 
 		template <class Index = cstring
-		> NODISCARD auto operator[](Index && i) const { return ItemAccessor<Index>{ derived().ptr(), FWD(i) }; }
+		> auto operator[](Index && i) const { return ItemAccessor<Index>{ derived().ptr(), FWD(i) }; }
 
 		template <class Value = OBJ
-		> NODISCARD bool contains(Value && value) const { return attr("__contains__")(FWD(value)).cast<bool>(); }
+		> bool contains(Value && value) const { return attr("__contains__")(FWD(value)).cast<bool>(); }
 
-		template <ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference, class ... Args
+		template <ReturnPolicy_ policy = ReturnPolicy_AutomaticReference, class ... Args
 		> OBJ operator()(Args && ... args) const; // call.hpp
 
 	public:
-		NODISCARD bool is(ObjectAPI const & other) const noexcept { return derived().ptr() == other.derived().ptr(); }
+		bool is(ObjectAPI const & other) const noexcept { return derived().ptr() == other.derived().ptr(); }
 
 		template <class O, class = std::enable_if_t<is_base_object_v<O>>
-		> NODISCARD bool is(O const * other) const noexcept { return derived().ptr() == other; }
+		> bool is(O const * other) const noexcept { return derived().ptr() == other; }
 
 		template <class O, class = std::enable_if_t<is_api_v<O>>
-		> NODISCARD bool is(O const & other) const noexcept { return derived().ptr() == other.ptr(); }
+		> bool is(O const & other) const noexcept { return derived().ptr() == other.ptr(); }
 		
 	public:
-		NODISCARD bool equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) == 0; }
+		bool equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) == 0; }
 		
-		NODISCARD bool not_equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) != 0; }
+		bool not_equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) != 0; }
 		
-		NODISCARD bool less(ObjectAPI const & other) const noexcept { return rich_compare(other) < 0; }
+		bool less(ObjectAPI const & other) const noexcept { return rich_compare(other) < 0; }
 		
-		NODISCARD bool less_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) <= 0; }
+		bool less_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) <= 0; }
 		
-		NODISCARD bool greater(ObjectAPI const & other) const noexcept { return rich_compare(other) > 0; }
+		bool greater(ObjectAPI const & other) const noexcept { return rich_compare(other) > 0; }
 		
-		NODISCARD bool greater_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) >= 0; }
+		bool greater_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) >= 0; }
 
 	private:
-		NODISCARD auto rich_compare(ObjectAPI const & o) const
+		auto rich_compare(ObjectAPI const & o) const
 		{
 			Object * self{ derived().ptr() }, * other{ o.derived().ptr() };
 			if (self == other) { return 0; }
@@ -73,22 +73,22 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> NODISCARD bool operator==(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.equal_to(b); }
+	> bool operator==(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.equal_to(b); }
 
 	template <class T
-	> NODISCARD bool operator!=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.not_equal_to(b); }
+	> bool operator!=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.not_equal_to(b); }
 
 	template <class T
-	> NODISCARD bool operator<(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less(b); }
+	> bool operator<(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less(b); }
 
 	template <class T
-	> NODISCARD bool operator<=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less_equal(b); }
+	> bool operator<=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less_equal(b); }
 
 	template <class T
-	> NODISCARD bool operator>(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater(b); }
+	> bool operator>(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater(b); }
 
 	template <class T
-	> NODISCARD bool operator>=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater_equal(b); }
+	> bool operator>=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater_equal(b); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

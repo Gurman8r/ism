@@ -43,7 +43,7 @@ namespace ism
 
 	template <class T> constexpr hash_t hash_v{ hash(ctti::name<T>()) };
 
-	template <class T> NODISCARD constexpr hash_t hash() noexcept { return hash_v<T>; }
+	template <class T> constexpr hash_t hash() noexcept { return hash_v<T>; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

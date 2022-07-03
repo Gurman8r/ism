@@ -53,7 +53,7 @@ void CppFunctionObject::initialize_generic(FunctionRecord * rec, std::type_info 
 	m_record = rec;
 
 	// argument info
-	rec->argument_count = argc_in;
+	rec->argument_count = (uint16_t)argc_in;
 	rec->args.reserve(argc_in);
 	for (size_t i = 0; i < argc_in; ++i)
 	{

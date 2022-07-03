@@ -11,13 +11,13 @@ namespace ism
 	class ISM_API Logger
 	{
 	public:
-		virtual void logv(cstring fmt, va_list args, bool is_error = false) = 0;
+		virtual ~Logger() noexcept = default;
 
 		virtual void log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
 
-		void logf(cstring fmt, ...);
+		virtual void logv(cstring fmt, va_list args, bool is_error = false) = 0;
 
-		virtual ~Logger() {}
+		void logf(cstring fmt, ...);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -25,9 +25,9 @@ namespace ism
 	class ISM_API StdLogger : public Logger
 	{
 	public:
-		virtual void logv(cstring fmt, va_list args, bool is_error = false) override;
+		virtual ~StdLogger() noexcept override = default;
 
-		virtual ~StdLogger() override {}
+		virtual void logv(cstring fmt, va_list args, bool is_error = false) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -39,11 +39,11 @@ namespace ism
 	public:
 		CompositeLogger(Vector<Logger *> loggers);
 
+		virtual ~CompositeLogger() override;
+
 		virtual void logv(cstring fmt, va_list args, bool is_error = false) override;
 
 		void add_logger(Logger * value);
-
-		virtual ~CompositeLogger();
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
