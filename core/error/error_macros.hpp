@@ -22,38 +22,29 @@
 
 namespace ism
 {
-	// fatal error implementation (wide)
-	inline void _wide_assert(cwstring message, cwstring file, uint32_t line) noexcept
-	{
-#if defined(CC_MSVC)
-		_wassert(message, file, line);
-
-#elif defined(assert)
-		assert(message);
-
-#else
-#		error "wassert is unavailable"
-#endif
-	}
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// crash
+	ISM_API_FUNC(void) _crash(cwstring message, cwstring file, uint32_t line);
+
 #define CRASH(message) \
-	(ism::_wide_assert)(WIDE(message), WIDE(__FILE__), (unsigned)__LINE__)
+	(ism::_crash)(WIDE(message), WIDE(__FILE__), (unsigned)__LINE__)
 
 	// assert
 #define ASSERT(expr) \
 	((void)((!!(expr)) || (CRASH(TOSTR(expr)), 0)))
 
-	// validate implementation
+	// validate
 	template <class T
-	> auto _wide_validate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
+	> auto _validate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
 	{
-		return ((void)((!!(expr)) || (_wide_assert(message, file, line), 0))), FWD(expr);
+		return ((void)((!!(expr)) || (_crash(message, file, line), 0))), FWD(expr);
 	}
 
-	// validate
 #define VALIDATE(expr) \
-	(ism::_wide_validate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), __LINE__)
+	(ism::_validate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), __LINE__)
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -42,10 +42,12 @@ namespace ism
 	public:
 		void printv(cstring fmt, va_list args);
 		void printf(cstring fmt, ...);
+		void print(cstring str, size_t size);
 		void print(cstring str);
 		void print(String const & str);
 		void errorv(cstring fmt, va_list args);
 		void errorf(cstring fmt, ...);
+		void error(cstring str, size_t size);
 		void error(cstring str);
 		void error(String const & str);
 		void error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);

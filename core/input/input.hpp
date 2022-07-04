@@ -81,7 +81,7 @@ namespace ism
 		InputState m_state{};
 
 	public:
-		explicit Input() noexcept { g_singleton = this; }
+		Input() noexcept { g_singleton = this; }
 
 		virtual ~Input() override {}
 

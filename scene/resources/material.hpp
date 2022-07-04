@@ -38,7 +38,7 @@ namespace ism
 		Ref<Shader> m_shader;
 
 	public:
-		explicit ShaderMaterial();
+		ShaderMaterial();
 
 		explicit ShaderMaterial(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
@@ -83,7 +83,7 @@ namespace ism
 		};
 
 	public:
-		explicit BaseMaterial3D();
+		BaseMaterial3D();
 
 		explicit BaseMaterial3D(Path const & path) noexcept { set_path(path); reload_from_file(); }
 

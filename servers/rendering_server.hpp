@@ -17,7 +17,7 @@ namespace ism
 		static RenderingServer * g_singleton;
 
 	protected:
-		explicit RenderingServer();
+		RenderingServer();
 
 	public:
 		virtual ~RenderingServer() override;

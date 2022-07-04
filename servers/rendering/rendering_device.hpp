@@ -16,7 +16,7 @@ namespace ism
 		static RenderingDevice * g_singleton;
 
 	protected:
-		explicit RenderingDevice() noexcept { g_singleton = this; }
+		RenderingDevice() noexcept { g_singleton = this; }
 
 	public:
 		virtual ~RenderingDevice() noexcept override = default;
@@ -781,7 +781,7 @@ namespace ism
 
 	ALIAS(RD) RenderingDevice;
 
-#define RENDERING_DEVICE (ism::RenderingDevice::get_singleton())
+#define RENDERING_DEVICE (ism::RD::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -30,8 +30,6 @@ namespace ism
 	template <class Ch = char
 	> ALIAS(BasicString) _StringBase<Ch>;
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// string
 	ALIAS(String) BasicString<char>;
 

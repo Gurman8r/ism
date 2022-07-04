@@ -1,20 +1,13 @@
 {
-    "defines":
-    [
-        "SCENE_STATE_UNIFORM_BUFFER=0",
-        "RENDER_PASS_UNIFORM_BUFFER=1",
-        "TRANSFORMS_UNIFORM_BUFFER=2",
-        "MATERIAL_UNIFORM_BUFFER=3"
-    ],
     "vertex":
     {
         "in":
         {
-            "Attr_Position" : { "vec4": "POSITION"  },
-            "Attr_Normal"   : { "vec4": "NORMAL"    },
-            "Attr_Texcoord" : { "vec4": "TEXCOORD"  },
-            "Attr_Tangent"  : { "vec4": "TANGENT"   },
-            "Attr_Bitangent": { "vec4": "BITANGENT" }
+            "Vertex_Position" : { "vec4": "POSITION"  },
+            "Vertex_Normal"   : { "vec4": "NORMAL"    },
+            "Vertex_Texcoord" : { "vec4": "TEXCOORD"  },
+            "Vertex_Tangent"  : { "vec4": "TANGENT"   },
+            "Vertex_Bitangent": { "vec4": "BITANGENT" }
         },
         "out":
         {
@@ -65,11 +58,11 @@
         },
         "main":
         [
-            "Frag_Position = (CameraProj * CameraView * Transform) * Attr_Position;",
-            "Frag_Normal = Attr_Normal;",
-            "Frag_Texcoord = Attr_Texcoord;",
-            "Frag_Tangent = Attr_Tangent;",
-            "Frag_Bitangent = Attr_Bitangent;",
+            "Frag_Position = (CameraProj * CameraView * Transform) * Vertex_Position;",
+            "Frag_Normal = Vertex_Normal;",
+            "Frag_Texcoord = Vertex_Texcoord;",
+            "Frag_Tangent = Vertex_Tangent;",
+            "Frag_Bitangent = Vertex_Bitangent;",
             "gl_Position = Frag_Position;"
         ]
     },

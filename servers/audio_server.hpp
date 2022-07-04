@@ -16,7 +16,7 @@ namespace ism
 		static AudioServer * g_singleton;
 
 	public:
-		explicit AudioServer();
+		AudioServer();
 
 		virtual ~AudioServer() override;
 

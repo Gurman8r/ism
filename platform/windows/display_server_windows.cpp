@@ -140,7 +140,7 @@ WindowID DisplayServerWindows::get_current_context() const
 
 void DisplayServerWindows::set_current_context(WindowID id)
 {
-	glfwMakeContextCurrent((GLFWwindow *)id);
+	glfwMakeContextCurrent(VALIDATE((GLFWwindow *)id));
 }
 
 void DisplayServerWindows::poll_events()
@@ -150,7 +150,7 @@ void DisplayServerWindows::poll_events()
 
 void DisplayServerWindows::swap_buffers(WindowID id)
 {
-	glfwSwapBuffers((GLFWwindow *)id);
+	glfwSwapBuffers(VALIDATE((GLFWwindow *)id));
 }
 
 void DisplayServerWindows::swap_interval(int32_t value)
@@ -158,34 +158,36 @@ void DisplayServerWindows::swap_interval(int32_t value)
 	glfwSwapInterval(value);
 }
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 void DisplayServerWindows::focus_window(WindowID id)
 {
-	glfwFocusWindow((GLFWwindow *)id);
+	glfwFocusWindow(VALIDATE((GLFWwindow *)id));
 }
 
 void DisplayServerWindows::hide_window(WindowID id)
 {
-	glfwHideWindow((GLFWwindow *)id);
+	glfwHideWindow(VALIDATE((GLFWwindow *)id));
 }
 
 void DisplayServerWindows::iconify_window(WindowID id)
 {
-	glfwIconifyWindow((GLFWwindow *)id);
+	glfwIconifyWindow(VALIDATE((GLFWwindow *)id));
 }
 
 void DisplayServerWindows::maximize_window(WindowID id)
 {
-	glfwMaximizeWindow((GLFWwindow *)id);
+	glfwMaximizeWindow(VALIDATE((GLFWwindow *)id));
 }
 
 void DisplayServerWindows::restore_window(WindowID id)
 {
-	glfwRestoreWindow((GLFWwindow *)id);
+	glfwRestoreWindow(VALIDATE((GLFWwindow *)id));
 }
 
 void DisplayServerWindows::request_window_attention(WindowID id)
 {
-	glfwRequestWindowAttention((GLFWwindow *)id);
+	glfwRequestWindowAttention(VALIDATE((GLFWwindow *)id));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -231,150 +233,150 @@ void DisplayServerWindows::destroy_cursor(CursorID value)
 
 String DisplayServerWindows::window_get_clipboard(WindowID id) const
 {
-	return glfwGetClipboardString((GLFWwindow *)id);
+	return glfwGetClipboardString(VALIDATE((GLFWwindow *)id));
 }
 
 Vec2f DisplayServerWindows::window_get_content_scale(WindowID id) const
 {
 	float_t x, y;
-	glfwGetWindowContentScale((GLFWwindow *)id, &x, &y);
+	glfwGetWindowContentScale(VALIDATE((GLFWwindow *)id), &x, &y);
 	return { x, y };
 }
 
 IntRect DisplayServerWindows::window_get_frame_size(WindowID id) const
 {
 	int32_t l, r, t, b;
-	glfwGetWindowFrameSize((GLFWwindow *)id, &l, &r, &t, &b);
+	glfwGetWindowFrameSize(VALIDATE((GLFWwindow *)id), &l, &r, &t, &b);
 	return { l, t, r, b };
 }
 
 Vec2i DisplayServerWindows::window_get_framebuffer_size(WindowID id) const
 {
 	int32_t x, y;
-	glfwGetFramebufferSize((GLFWwindow *)id, &x, &y);
+	glfwGetFramebufferSize(VALIDATE((GLFWwindow *)id), &x, &y);
 	return { x, y };
 }
 
 int32_t DisplayServerWindows::window_get_input_mode(WindowID id, InputMode_ value) const
 {
-	return glfwGetInputMode((GLFWwindow *)id, value);
+	return glfwGetInputMode(VALIDATE((GLFWwindow *)id), value);
 }
 
 InputAction_ DisplayServerWindows::window_get_key(WindowID id, KeyCode_ value) const
 {
-	return (InputAction_)glfwGetKey((GLFWwindow *)id, value);
+	return (InputAction_)glfwGetKey(VALIDATE((GLFWwindow *)id), value);
 }
 
 InputAction_ DisplayServerWindows::window_get_mouse_button(WindowID id, MouseButton_ value) const
 {
-	return (InputAction_)glfwGetMouseButton((GLFWwindow *)id, value);
+	return (InputAction_)glfwGetMouseButton(VALIDATE((GLFWwindow *)id), value);
 }
 
 Vec2d DisplayServerWindows::window_get_mouse_position(WindowID id) const
 {
 	double_t x, y;
-	glfwGetCursorPos((GLFWwindow *)id, &x, &y);
+	glfwGetCursorPos(VALIDATE((GLFWwindow *)id), &x, &y);
 	return { x, y };
 }
 
 void * DisplayServerWindows::window_get_native_handle(WindowID id) const
 {
 #if OS_WINDOWS
-	return (WindowID)glfwGetWin32Window((GLFWwindow *)id);
+	return (WindowID)glfwGetWin32Window(VALIDATE((GLFWwindow *)id));
 #else
-	return (WindowID)(GLFWwindow *)id;
+	return (WindowID)VALIDATE((GLFWwindow *)id);
 #endif
 }
 
 float_t DisplayServerWindows::window_get_opacity(WindowID id) const
 {
-	return glfwGetWindowOpacity((GLFWwindow *)id);
+	return glfwGetWindowOpacity(VALIDATE((GLFWwindow *)id));
 }
 
 Vec2i DisplayServerWindows::window_get_position(WindowID id) const
 {
 	int32_t x, y;
-	glfwGetWindowPos((GLFWwindow *)id, &x, &y);
+	glfwGetWindowPos(VALIDATE((GLFWwindow *)id), &x, &y);
 	return { x, y };
 }
 
 Vec2i DisplayServerWindows::window_get_size(WindowID id) const
 {
 	int32_t x, y;
-	glfwGetWindowSize((GLFWwindow *)id, &x, &y);
+	glfwGetWindowSize(VALIDATE((GLFWwindow *)id), &x, &y);
 	return { x, y };
 }
 
 bool DisplayServerWindows::window_get_should_close(WindowID id) const
 {
-	return id && glfwWindowShouldClose((GLFWwindow *)id);
+	return glfwWindowShouldClose(VALIDATE((GLFWwindow *)id));
 }
 
 void * DisplayServerWindows::window_get_user_pointer(WindowID id) const
 {
-	return glfwGetWindowUserPointer((GLFWwindow *)id);
+	return glfwGetWindowUserPointer(VALIDATE((GLFWwindow *)id));
 }
 
 bool DisplayServerWindows::window_is_decorated(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_DECORATED);
 }
 
 bool DisplayServerWindows::window_is_floating(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_FLOATING);
 }
 
 bool DisplayServerWindows::window_is_focused(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_FOCUS_ON_SHOW);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_FOCUS_ON_SHOW);
 }
 
 bool DisplayServerWindows::window_is_hovered(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_HOVERED);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_HOVERED);
 }
 
 bool DisplayServerWindows::window_is_iconified(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_ICONIFIED);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_ICONIFIED);
 }
 
 bool DisplayServerWindows::window_is_maximized(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_MAXIMIZED);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_MAXIMIZED);
 }
 
 bool DisplayServerWindows::window_is_resizable(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_RESIZABLE);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_RESIZABLE);
 }
 
 bool DisplayServerWindows::window_is_transparent(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_TRANSPARENT_FRAMEBUFFER);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_TRANSPARENT_FRAMEBUFFER);
 }
 
 bool DisplayServerWindows::window_is_visible(WindowID id) const
 {
-	return id && glfwGetWindowAttrib((GLFWwindow *)id, GLFW_VISIBLE);
+	return glfwGetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_VISIBLE);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 void DisplayServerWindows::window_set_clipboard(WindowID id, String const & value)
 {
-	glfwSetClipboardString((GLFWwindow *)id, value.c_str());
+	glfwSetClipboardString(VALIDATE((GLFWwindow *)id), value.c_str());
 }
 
 void DisplayServerWindows::window_set_cursor(WindowID id, CursorID value)
 {
-	glfwSetCursor((GLFWwindow *)id, (GLFWcursor *)value);
+	glfwSetCursor(VALIDATE((GLFWwindow *)id), (GLFWcursor *)value);
 }
 
 void DisplayServerWindows::window_set_cursor_mode(WindowID id, int32_t value)
 {
-	glfwSetInputMode((GLFWwindow *)id, GLFW_CURSOR, std::invoke([value]() noexcept {
+	glfwSetInputMode(VALIDATE((GLFWwindow *)id), GLFW_CURSOR, std::invoke([value]() noexcept {
 		switch (value) {
 		case CursorMode_Normal: return GLFW_CURSOR_NORMAL;
 		case CursorMode_Hidden: return GLFW_CURSOR_HIDDEN;
@@ -387,12 +389,12 @@ void DisplayServerWindows::window_set_icons(WindowID id, int32_t width, int32_t 
 {
 	GLFWimage img{ width, height, pixels };
 
-	glfwSetWindowIcon((GLFWwindow *)id, count, &img);
+	glfwSetWindowIcon(VALIDATE((GLFWwindow *)id), count, &img);
 }
 
 void DisplayServerWindows::window_set_input_mode(WindowID id, int32_t mode, int32_t value)
 {
-	glfwSetInputMode((GLFWwindow *)id, mode, value);
+	glfwSetInputMode(VALIDATE((GLFWwindow *)id), mode, value);
 }
 
 void DisplayServerWindows::window_set_monitor(WindowID id, MonitorID monitor, IntRect const & bounds)
@@ -401,139 +403,139 @@ void DisplayServerWindows::window_set_monitor(WindowID id, MonitorID monitor, In
 
 void DisplayServerWindows::window_set_mouse_position(WindowID id, Vec2d const & value)
 {
-	glfwSetCursorPos((GLFWwindow *)id, value[0], value[1]);
+	glfwSetCursorPos(VALIDATE((GLFWwindow *)id), value[0], value[1]);
 }
 
 void DisplayServerWindows::window_set_opacity(WindowID id, float_t value)
 {
-	glfwSetWindowOpacity((GLFWwindow *)id, value);
+	glfwSetWindowOpacity(VALIDATE((GLFWwindow *)id), value);
 }
 
 void DisplayServerWindows::window_set_position(WindowID id, Vec2i const & value)
 {
-	glfwSetWindowPos((GLFWwindow *)id, (int32_t)value[0], (int32_t)value[1]);
+	glfwSetWindowPos(VALIDATE((GLFWwindow *)id), (int32_t)value[0], (int32_t)value[1]);
 }
 
 void DisplayServerWindows::window_set_resizable(WindowID id, bool value)
 {
-	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_RESIZABLE, value);
+	glfwSetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_RESIZABLE, value);
 }
 
 void DisplayServerWindows::window_set_should_close(WindowID id, bool value)
 {
-	glfwSetWindowShouldClose((GLFWwindow *)id, value);
+	glfwSetWindowShouldClose(VALIDATE((GLFWwindow *)id), value);
 }
 
 void DisplayServerWindows::window_set_size(WindowID id, Vec2i const & value)
 {
-	glfwSetWindowSize((GLFWwindow *)id, (int32_t)value[0], (int32_t)value[1]);
+	glfwSetWindowSize(VALIDATE((GLFWwindow *)id), (int32_t)value[0], (int32_t)value[1]);
 }
 
 void DisplayServerWindows::window_set_title(WindowID id, String const & value)
 {
-	glfwSetWindowTitle((GLFWwindow *)id, value.c_str());
+	glfwSetWindowTitle(VALIDATE((GLFWwindow *)id), value.c_str());
 }
 
 void DisplayServerWindows::window_set_user_pointer(WindowID id, void * value)
 {
-	glfwSetWindowUserPointer((GLFWwindow *)id, value);
+	glfwSetWindowUserPointer(VALIDATE((GLFWwindow *)id), value);
 }
 
 void DisplayServerWindows::window_set_decorated(WindowID id, bool value)
 {
-	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_DECORATED, value);
+	glfwSetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_DECORATED, value);
 }
 
 void DisplayServerWindows::window_set_floating(WindowID id, bool value)
 {
-	glfwSetWindowAttrib((GLFWwindow *)id, GLFW_FLOATING, value);
+	glfwSetWindowAttrib(VALIDATE((GLFWwindow *)id), GLFW_FLOATING, value);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 WindowCharCallback DisplayServerWindows::window_set_char_callback(WindowID id, WindowCharCallback value)
 {
-	return reinterpret_cast<WindowCharCallback>(glfwSetCharCallback((GLFWwindow *)id, reinterpret_cast<GLFWcharfun>(value)));
+	return reinterpret_cast<WindowCharCallback>(glfwSetCharCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWcharfun>(value)));
 }
 
 WindowCharModsCallback DisplayServerWindows::window_set_char_mods_callback(WindowID id, WindowCharModsCallback value)
 {
-	return reinterpret_cast<WindowCharModsCallback>(glfwSetCharModsCallback((GLFWwindow *)id, reinterpret_cast<GLFWcharmodsfun>(value)));
+	return reinterpret_cast<WindowCharModsCallback>(glfwSetCharModsCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWcharmodsfun>(value)));
 }
 
 WindowCloseCallback DisplayServerWindows::window_set_close_callback(WindowID id, WindowCloseCallback value)
 {
-	return reinterpret_cast<WindowCloseCallback>(glfwSetWindowCloseCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowclosefun>(value)));
+	return reinterpret_cast<WindowCloseCallback>(glfwSetWindowCloseCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWwindowclosefun>(value)));
 }
 
 WindowContentCallback DisplayServerWindows::window_set_content_scale_callback(WindowID id, WindowContentCallback value)
 {
-	return reinterpret_cast<WindowContentCallback>(glfwSetWindowContentScaleCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowcontentscalefun>(value)));
+	return reinterpret_cast<WindowContentCallback>(glfwSetWindowContentScaleCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWwindowcontentscalefun>(value)));
 }
 
 WindowDropCallback DisplayServerWindows::window_set_drop_callback(WindowID id, WindowDropCallback value)
 {
-	return reinterpret_cast<WindowDropCallback>(glfwSetDropCallback((GLFWwindow *)id, reinterpret_cast<GLFWdropfun>(value)));
+	return reinterpret_cast<WindowDropCallback>(glfwSetDropCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWdropfun>(value)));
 }
 
 WindowFocusCallback DisplayServerWindows::window_set_focus_callback(WindowID id, WindowFocusCallback value)
 {
-	return reinterpret_cast<WindowFocusCallback>(glfwSetWindowFocusCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowfocusfun>(value)));
+	return reinterpret_cast<WindowFocusCallback>(glfwSetWindowFocusCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWwindowfocusfun>(value)));
 }
 
 WindowFramebufferResizeCallback DisplayServerWindows::window_set_framebuffer_resize_callback(WindowID id, WindowFramebufferResizeCallback value)
 {
-	return reinterpret_cast<WindowFramebufferResizeCallback>(glfwSetFramebufferSizeCallback((GLFWwindow *)id, reinterpret_cast<GLFWframebuffersizefun>(value)));
+	return reinterpret_cast<WindowFramebufferResizeCallback>(glfwSetFramebufferSizeCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWframebuffersizefun>(value)));
 }
 
 WindowIconifyCallback DisplayServerWindows::window_set_iconify_callback(WindowID id, WindowIconifyCallback value)
 {
-	return reinterpret_cast<WindowIconifyCallback>(glfwSetWindowIconifyCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowiconifyfun>(value)));
+	return reinterpret_cast<WindowIconifyCallback>(glfwSetWindowIconifyCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWwindowiconifyfun>(value)));
 }
 
 WindowKeyCallback DisplayServerWindows::window_set_key_callback(WindowID id, WindowKeyCallback value)
 {
-	return reinterpret_cast<WindowKeyCallback>(glfwSetKeyCallback((GLFWwindow *)id, reinterpret_cast<GLFWkeyfun>(value)));
+	return reinterpret_cast<WindowKeyCallback>(glfwSetKeyCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWkeyfun>(value)));
 }
 
 WindowMaximizeCallback DisplayServerWindows::window_set_maximize_callback(WindowID id, WindowMaximizeCallback value)
 {
-	return reinterpret_cast<WindowMaximizeCallback>(glfwSetWindowMaximizeCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowmaximizefun>(value)));
+	return reinterpret_cast<WindowMaximizeCallback>(glfwSetWindowMaximizeCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWwindowmaximizefun>(value)));
 }
 
 WindowMouseButtonCallback DisplayServerWindows::window_set_mouse_button_callback(WindowID id, WindowMouseButtonCallback value)
 {
-	return reinterpret_cast<WindowMouseButtonCallback>(glfwSetMouseButtonCallback((GLFWwindow *)id, reinterpret_cast<GLFWmousebuttonfun>(value)));
+	return reinterpret_cast<WindowMouseButtonCallback>(glfwSetMouseButtonCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWmousebuttonfun>(value)));
 }
 
 WindowMouseEnterCallback DisplayServerWindows::window_set_mouse_enter_callback(WindowID id, WindowMouseEnterCallback value)
 {
-	return reinterpret_cast<WindowMouseEnterCallback>(glfwSetCursorEnterCallback((GLFWwindow *)id, reinterpret_cast<GLFWcursorenterfun>(value)));
+	return reinterpret_cast<WindowMouseEnterCallback>(glfwSetCursorEnterCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWcursorenterfun>(value)));
 }
 
 WindowMousePositionCallback DisplayServerWindows::window_set_mouse_position_callback(WindowID id, WindowMousePositionCallback value)
 {
-	return reinterpret_cast<WindowMousePositionCallback>(glfwSetCursorPosCallback((GLFWwindow *)id, reinterpret_cast<GLFWcursorposfun>(value)));
+	return reinterpret_cast<WindowMousePositionCallback>(glfwSetCursorPosCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWcursorposfun>(value)));
 }
 
 WindowPositionCallback DisplayServerWindows::window_set_position_callback(WindowID id, WindowPositionCallback value)
 {
-	return reinterpret_cast<WindowPositionCallback>(glfwSetWindowPosCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowposfun>(value)));
+	return reinterpret_cast<WindowPositionCallback>(glfwSetWindowPosCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWwindowposfun>(value)));
 }
 
 WindowRefreshCallback DisplayServerWindows::window_set_refresh_callback(WindowID id, WindowRefreshCallback value)
 {
-	return reinterpret_cast<WindowRefreshCallback>(glfwSetWindowRefreshCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowrefreshfun>(value)));
+	return reinterpret_cast<WindowRefreshCallback>(glfwSetWindowRefreshCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWwindowrefreshfun>(value)));
 }
 
 WindowScrollCallback DisplayServerWindows::window_set_scroll_callback(WindowID id, WindowScrollCallback value)
 {
-	return reinterpret_cast<WindowScrollCallback>(glfwSetScrollCallback((GLFWwindow *)id, reinterpret_cast<GLFWscrollfun>(value)));
+	return reinterpret_cast<WindowScrollCallback>(glfwSetScrollCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWscrollfun>(value)));
 }
 
 WindowSizeCallback DisplayServerWindows::window_set_size_callback(WindowID id, WindowSizeCallback value)
 {
-	return reinterpret_cast<WindowSizeCallback>(glfwSetWindowSizeCallback((GLFWwindow *)id, reinterpret_cast<GLFWwindowposfun>(value)));
+	return reinterpret_cast<WindowSizeCallback>(glfwSetWindowSizeCallback(VALIDATE((GLFWwindow *)id), reinterpret_cast<GLFWwindowposfun>(value)));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

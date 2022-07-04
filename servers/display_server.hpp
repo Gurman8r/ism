@@ -450,7 +450,7 @@ namespace ism
 		static DisplayServer * g_singleton;
 
 	protected:
-		explicit DisplayServer();
+		DisplayServer();
 		
 	public:
 		virtual ~DisplayServer() override;
@@ -467,6 +467,8 @@ namespace ism
 		virtual void poll_events() = 0;
 		virtual void swap_buffers(WindowID window) = 0;
 		virtual void swap_interval(int32_t value) = 0;
+
+	public:
 		virtual void focus_window(WindowID window) = 0;
 		virtual void hide_window(WindowID window) = 0;
 		virtual void iconify_window(WindowID window) = 0;

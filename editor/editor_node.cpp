@@ -99,7 +99,7 @@ EditorNode::EditorNode()
 	m_textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 	m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
 	m_meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-	m_shaders["3D"].instance("../../../assets/shaders/3D.json");
+	m_shaders["3D"].instance("../../../assets/shaders/3d.json");
 
 	RID const shader{ m_shaders["3D"]->get_rid() };
 	_setup_pipeline(shader);

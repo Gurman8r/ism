@@ -6,40 +6,6 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-class ShaderBuilder
-{
-public:
-	struct VarNode
-	{
-	};
-
-	struct InputNode
-	{
-	};
-
-	struct OutputNode
-	{
-	};
-	
-	struct DataNode
-	{
-	};
-
-	struct Stage
-	{
-		explicit Stage(Json const & json)
-		{
-		}
-	};
-
-public:
-	ShaderBuilder(Json const & json)
-	{
-	}
-};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 class ImplShaderLoader
 {
 public:

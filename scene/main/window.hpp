@@ -1,36 +1,36 @@
 #ifndef _ISM_WINDOW_HPP_
 #define _ISM_WINDOW_HPP_
 
-#include <scene/main/node.hpp>
-#include <servers/display_server.hpp>
-#include <servers/rendering_server.hpp>
+#include <scene/main/viewport.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// window
-	class ISM_API Window : public Node
+	class ISM_API Window : public Viewport
 	{
-		OBJECT_COMMON(Window, Node);
+		OBJECT_COMMON(Window, Viewport);
 
 		friend class SceneTree;
 
-		WindowID m_window_id{};
+		WindowID m_window{};
 
 	public:
-		explicit Window() noexcept;
+		Window();
 
 		virtual ~Window();
 
-		WindowID get_window_id() const noexcept { return m_window_id; }
+		WindowID get_window_id() const noexcept { return m_window; }
 
-		operator WindowID() const noexcept { return m_window_id; }
+		operator WindowID() const noexcept { return m_window; }
 
 	public:
 		virtual void make_current_context();
 		virtual void poll_events();
 		virtual void swap_buffers();
+
+	public:
 		virtual void focus();
 		virtual void hide();
 		virtual void iconify();

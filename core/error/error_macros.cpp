@@ -5,6 +5,17 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+void ism::_crash(cwstring message, cwstring file, uint32_t line)
+{
+#if CC_MSVC
+	_wassert(message, file, line);
+#else
+
+#endif
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 void ism::_err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType_ log_type)
 {
 	SYSTEM->error(func, file, line, desc, "", log_type);

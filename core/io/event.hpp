@@ -335,7 +335,7 @@ private:
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event bus g_singleton
-#define BUS (ism::EventBus::get_singleton())
+#define EVENT_BUS (ism::EventBus::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

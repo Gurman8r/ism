@@ -125,6 +125,10 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	g_display->window_set_refresh_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowRefreshEvent{ x... }); });
 	g_display->window_set_scroll_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowScrollEvent{ x... }); });
 	g_display->window_set_size_callback(main_window, [](auto ... x) { g_bus->fire_event(WindowSizeEvent{ x... }); });
+	g_bus->get_delegate<WindowCharEvent>() += [](WindowCharEvent const & ev) { g_input->m_state.last_char = (char)ev.codepoint; };
+	g_bus->get_delegate<WindowMouseButtonEvent>() += [](WindowMouseButtonEvent const & ev) { g_input->m_state.mouse_down = ev.action != InputAction_Release; };
+	g_bus->get_delegate<WindowMousePositionEvent>() += [](WindowMousePositionEvent const & ev) { g_input->m_state.mouse_pos = { (float_t)ev.xpos, (float_t)ev.ypos }; };
+	g_bus->get_delegate<WindowScrollEvent>() += [](WindowScrollEvent const & ev) { g_input->m_state.scroll = { (float_t)ev.xoffset, (float_t)ev.yoffset }; };
 	g_bus->get_delegate<WindowKeyEvent>() += [](WindowKeyEvent const & ev) {
 		g_input->m_state.keys_down.write(ev.key, ev.action != InputAction_Release);
 		g_input->m_state.is_shift = g_input->m_state.keys_down[KeyCode_LeftShift] || g_input->m_state.keys_down[KeyCode_RightShift];
@@ -132,23 +136,11 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 		g_input->m_state.is_alt = g_input->m_state.keys_down[KeyCode_LeftAlt] || g_input->m_state.keys_down[KeyCode_RightAlt];
 		g_input->m_state.is_super = g_input->m_state.keys_down[KeyCode_LeftSuper] || g_input->m_state.keys_down[KeyCode_RightSuper];
 	};
-	g_bus->get_delegate<WindowCharEvent>() += [](WindowCharEvent const & ev) {
-		g_input->m_state.last_char = (char)ev.codepoint;
-	};
-	g_bus->get_delegate<WindowMouseButtonEvent>() += [](WindowMouseButtonEvent const & ev) {
-		g_input->m_state.mouse_down = ev.action != InputAction_Release;
-	};
-	g_bus->get_delegate<WindowMousePositionEvent>() += [](WindowMousePositionEvent const & ev) {
-		g_input->m_state.mouse_pos = { (float_t)ev.xpos, (float_t)ev.ypos };
-	};
-	g_bus->get_delegate<WindowScrollEvent>() += [](WindowScrollEvent const & ev) {
-		g_input->m_state.scroll = { (float_t)ev.xoffset, (float_t)ev.yoffset };
-	};
 
 	// rendering server
 	g_renderer = memnew(RenderingServerDefault());
 
-	// initialize imgui
+	// imgui
 	g_imgui = VALIDATE(ImGui::CreateContext());
 	g_imgui->IO.LogFilename = nullptr;
 	g_imgui->IO.IniFilename = nullptr;

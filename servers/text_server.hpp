@@ -62,7 +62,7 @@ namespace ism
 		static TextServer * g_singleton;
 
 	public:
-		explicit TextServer();
+		TextServer();
 
 		virtual ~TextServer() override;
 

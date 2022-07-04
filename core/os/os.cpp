@@ -65,14 +65,19 @@ void OS::printf(cstring fmt, ...)
 	va_end(args);
 }
 
+void OS::print(cstring str, size_t size)
+{
+	printf("%.*s", str, size);
+}
+
 void OS::print(cstring str)
 {
-	printf("%s", str);
+	print(str, std::strlen(str));
 }
 
 void OS::print(String const & str)
 {
-	printf("%s.*", str.data(), str.size());
+	print(str.data(), str.size());
 }
 
 void OS::errorv(cstring fmt, va_list args)
@@ -88,14 +93,19 @@ void OS::errorf(cstring fmt, ...)
 	va_end(args);
 }
 
+void OS::error(cstring str, size_t size)
+{
+	errorf("%.*s", str, size);
+}
+
 void OS::error(cstring str)
 {
-	errorf("%s", str);
+	error(str, std::strlen(str));
 }
 
 void OS::error(String const & str)
 {
-	errorf("%s.*", str.data(), str.size());
+	error(str.data(), str.size());
 }
 
 void OS::error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)

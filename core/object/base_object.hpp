@@ -120,7 +120,7 @@ namespace ism
 
 		FORCE_INLINE virtual TYPE _get_typev() const noexcept;
 
-		explicit BaseObject() noexcept;
+		BaseObject() noexcept;
 
 		virtual void _postinitialize();
 

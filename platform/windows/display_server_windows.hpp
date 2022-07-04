@@ -30,6 +30,8 @@ namespace ism
 		virtual void poll_events() override;
 		virtual void swap_buffers(WindowID id) override;
 		virtual void swap_interval(int32_t value) override;
+
+	public:
 		virtual void focus_window(WindowID id) override;
 		virtual void hide_window(WindowID id) override;
 		virtual void iconify_window(WindowID id) override;
