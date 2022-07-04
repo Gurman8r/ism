@@ -58,11 +58,11 @@ FORCE_INLINE void operator delete(void * placement, void * ptr, size_t check, is
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// postinitialize / predelete
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// postinitialize
 	FORCE_INLINE void postinitialize_handler(void *) {}
 
 	template <class T> T * _post_initialize(T * value)
@@ -77,6 +77,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// predelete
 	FORCE_INLINE bool predelete_handler(void *) { return true; }
 
 	template <class T> void memdelete(T * ptr)
@@ -97,34 +98,24 @@ namespace ism
 		} while (0)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// allocators / deleters
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	// polymorphic allocator base
+	template <class T
+	> ALIAS(_PolymorphicAllocatorBase) std::pmr::polymorphic_allocator<T>;
 
+	// polymorphic allocator
 	template <class T = byte
-	> struct PolymorphicAllocator : public std::pmr::polymorphic_allocator<T>
+	> class PolymorphicAllocator : public _PolymorphicAllocatorBase<T>
 	{
-		using base_type = std::pmr::polymorphic_allocator<T>;
+	public:
+		using base_type = _PolymorphicAllocatorBase<T>;
 		using base_type::base_type;
-		using base_type::allocate;
-		using base_type::deallocate;
-		using base_type::construct;
-#if CXX_20
-		using base_type::destroy;
-		using base_type::allocate_bytes;
-		using base_type::deallocate_bytes;
-		using base_type::allocate_object;
-		using base_type::deallocate_object;
-		using base_type::new_object;
-		using base_type::delete_object;
-#endif
+		using base_type::operator=;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// default allocator
 	struct DefaultAllocator final
 	{
 		static void * allocate(size_t size) { return memalloc(size); }
@@ -134,6 +125,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// default delete
 	template <class T> struct DefaultDelete
 	{
 		template <class U> void operator()(U * value) const
@@ -142,6 +134,7 @@ namespace ism
 		}
 	};
 
+	// default delete (void)
 	template <> struct DefaultDelete<void>
 	{
 		void operator()(void * value) const
@@ -157,9 +150,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// no delete
 	struct NoDelete final
 	{
-		template <class U> void operator()(U *) const {}
+		template <class U> void operator()(U *) const noexcept {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

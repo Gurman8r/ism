@@ -24,7 +24,7 @@ public:
 			name = (String)key;
 			for (auto const & [k, v] : value.items())
 			{
-				switch (hash(k.data(), k.size())) {
+				switch (ism::hash(k.data(), k.size())) {
 				// bool
 				case "bool"_hash: case "bvec2"_hash: case "bvec3"_hash: case "bvec4"_hash:
 				// int
@@ -75,7 +75,7 @@ public:
 					if (v.is_number()) { v.get_to(index); }
 					else if (v.is_string())
 					{
-						switch (String const s{ v }; hash(s.data(), s.size())) {
+						switch (String const s{ v }; ism::hash(s.data(), s.size())) {
 						default:				{ index = -1; } break;
 						case "POSITION"_hash:	{ index = 0; } break;
 						case "NORMAL"_hash:		{ index = 1; } break;
@@ -200,7 +200,7 @@ public:
 				{
 					Def const def{ key, value };
 					if (!def) { continue; }
-					switch (hash(def.type.data(), def.type.size()))
+					switch (ism::hash(def.type.data(), def.type.size()))
 					{
 					// DEFAULT
 					default: {

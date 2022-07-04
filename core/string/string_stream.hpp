@@ -9,22 +9,26 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// stringstream base
+	// string stream base
 	template <class Ch = char
 	> ALIAS(_StringStreamBase) std::basic_stringstream<Ch, std::char_traits<Ch>, PolymorphicAllocator<Ch>>;
 
-	// basic stringstream
+	// basic string stream
 	template <class Ch = char
-	> class BasicStringStream : public _StringStreamBase<Ch> {
+	> class BasicStringStream : public _StringStreamBase<Ch>
+	{
 	public:
 		using base_type = _StringStreamBase<Ch>;
 		using base_type::base_type;
+		using base_type::operator=;
 	};
 
-	// stringstream
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// string stream
 	ALIAS(StringStream) BasicStringStream<char>;
 
-	// wide stringstream
+	// wide string stream
 	ALIAS(WideStringStream) BasicStringStream<wchar_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

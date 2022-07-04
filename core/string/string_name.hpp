@@ -1,7 +1,7 @@
 #ifndef _ISM_STRING_NAME_HPP_
 #define _ISM_STRING_NAME_HPP_
 
-#include <core/string/string_view.hpp>
+#include <core/string/string.hpp>
 
 namespace ism
 {
@@ -35,7 +35,7 @@ namespace ism
 		StringName(const_pointer first, const_pointer last) : m_text{ first, last } {}
 		StringName(storage_type const & value) : m_text{ value } {}
 		StringName(storage_type && value) noexcept : m_text{ std::move(value) } {}
-		StringName(view_type const value) : m_text{ value.string() } {}
+		StringName(view_type const value) : m_text{ value.data(), value.size() } {}
 		StringName(self_type const & value) : m_text{ value } {}
 		StringName(self_type && value) noexcept : m_text{ std::move(value) } {}
 		self_type & operator=(self_type const & value) { return copy(value); }
@@ -60,7 +60,7 @@ namespace ism
 		bool empty() const noexcept { return m_text.empty(); }
 		auto length() const noexcept -> size_type { return m_text.size(); }
 		auto size() const noexcept -> size_type { return m_text.size(); }
-		auto hash_code() const noexcept -> hash_t { return hash(m_text.data(), m_text.size()); }
+		auto hash_code() const noexcept -> hash_t { return m_text.hash_code(); }
 
 		char & operator[](size_type i) & noexcept { return m_text[i]; }
 		char operator[](size_type i) const & noexcept { return m_text[i]; }
@@ -95,38 +95,24 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline StringName operator "" _name(cstring s, size_t n) noexcept { return StringName{ String{ s, n } }; }
+	namespace mpl { template <> constexpr bool is_string_v<StringName>{ true }; }
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	inline StringName operator "" _name(cstring s, size_t n) noexcept { return StringName{ String{ s, n } }; }
 
 	template <> struct Hasher<StringName>
 	{
 		hash_t operator()(StringName const & value) const { return value.hash_code(); }
 	};
 
-	inline bool operator==(String const & lhs, StringName const & rhs)
-	{
-		return lhs == rhs.string();
-	}
+	inline bool operator==(String const & lhs, StringName const & rhs) { return lhs == rhs.string(); }
 
-	inline bool operator!=(String const & lhs, StringName const & rhs)
-	{
-		return lhs != rhs.string();
-	}
+	inline bool operator!=(String const & lhs, StringName const & rhs) { return lhs != rhs.string(); }
 
-	inline bool operator==(cstring lhs, StringName const & rhs)
-	{
-		return lhs == rhs.string();
-	}
+	inline bool operator==(cstring lhs, StringName const & rhs) { return lhs == rhs.string(); }
 
-	inline bool operator!=(cstring lhs, StringName const & rhs)
-	{
-		return lhs != rhs.string();
-	}
+	inline bool operator!=(cstring lhs, StringName const & rhs) { return lhs != rhs.string(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
-
-template <> constexpr bool ism::mpl::is_string_v<ism::StringName>{ true };
 
 #endif // !_ISM_STRING_NAME_HPP_

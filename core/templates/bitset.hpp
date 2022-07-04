@@ -6,36 +6,46 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // read flag at index
-#define FLAG_READ(value, index)				(((index) & (value)) == (index))
+#define FLAG_READ(value, index) \
+		(((index) & (value)) == (index))
 
 // set flag at index
-#define FLAG_SET(value, index)				((value) |= (index))
+#define FLAG_SET(value, index) \
+		((value) |= (index))
 
 // clear flag at index
-#define FLAG_CLEAR(value, index)			((value) &= ~(index))
+#define FLAG_CLEAR(value, index) \
+		((value) &= ~(index))
 
 // conditional set or clear flag
-#define FLAG_WRITE(value, index, boolean)	((boolean) ? FLAG_SET(value, index) : FLAG_CLEAR(value, index))
+#define FLAG_WRITE(value, index, boolean) \
+		((boolean) ? FLAG_SET(value, index) : FLAG_CLEAR(value, index))
 
 // map between flag bits
-#define FLAG_MAP(dst, dindex, src, sindex)	FLAG_WRITE(dst, dindex, FLAG_READ(src, sindex))
+#define FLAG_MAP(dst, dst_index, src, src_index) \
+		FLAG_WRITE(dst, dst_index, FLAG_READ(src, src_index))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // read bit at index
-#define BIT_READ(value, index)				FLAG_READ(value >> index, 1)
+#define BIT_READ(value, index) \
+		FLAG_READ(value >> index, 1)
 
 // set bit at index
-#define BIT_SET(value, index)				FLAG_SET(value, 1 << index)
+#define BIT_SET(value, index) \
+		FLAG_SET(value, 1 << index)
 
 // clear bit at index
-#define BIT_CLEAR(value, index)				FLAG_CLEAR(value, 1 << index)
+#define BIT_CLEAR(value, index) \
+		FLAG_CLEAR(value, 1 << index)
 
 // conditional set or clear bit
-#define BIT_WRITE(value, index, boolean)	FLAG_WRITE(value, 1 << index, boolean)
+#define BIT_WRITE(value, index, boolean) \
+		FLAG_WRITE(value, 1 << index, boolean)
 
 // map between bits
-#define BIT_MAP(dst, dindex, src, sindex)	BIT_WRITE(dst, dindex, BIT_READ(src, sindex))
+#define BIT_MAP(dst, dst_index, src, src_index) \
+		BIT_WRITE(dst, dst_index, BIT_READ(src, src_index))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

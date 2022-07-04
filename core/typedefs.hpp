@@ -7,44 +7,44 @@
 
 // alias
 #define ALIAS(m_type) \
-	using m_type = 
+		using m_type = 
 
 // strong typedef
-#define STRONG_TYPEDEF(m_to, m_from)																			\
-class m_to final {																								\
-private:																										\
-	m_from value;																								\
-public:																											\
-	inline m_to() = default;																					\
-	inline m_to(m_to const & other) = default;																	\
-	inline m_to(m_to && other) = default;																		\
-	inline m_to & operator=(m_to const & other) = default;														\
-	inline m_to & operator=(m_to && other) = default;															\
-	inline constexpr explicit m_to(m_from other) noexcept : value{ other } {}									\
-	inline constexpr m_to & operator=(m_from other) noexcept { value = other; return (*this); }					\
-	inline constexpr operator m_from const & () const noexcept { return value; }								\
-	inline constexpr operator m_from & () noexcept { return value; }											\
-	inline constexpr decltype(auto) operator==(m_to const & other) noexcept { return value == other.value; }	\
-	inline constexpr decltype(auto) operator!=(m_to const & other) noexcept { return value != other.value; }	\
-	inline constexpr decltype(auto) operator<(m_to const & other) noexcept { return value < other.value; }		\
-	inline constexpr decltype(auto) operator>(m_to const & other) noexcept { return value > other.value; }		\
-	inline constexpr decltype(auto) operator<=(m_to const & other) noexcept { return value <= other.value; }	\
-	inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
-}																												\
+#define STRONG_TYPEDEF(m_to, m_from)																					\
+		class m_to final {																								\
+		private:																										\
+			m_from value;																								\
+		public:																											\
+			inline m_to() = default;																					\
+			inline m_to(m_to const & other) = default;																	\
+			inline m_to(m_to && other) = default;																		\
+			inline m_to & operator=(m_to const & other) = default;														\
+			inline m_to & operator=(m_to && other) = default;															\
+			inline constexpr explicit m_to(m_from other) noexcept : value{ other } {}									\
+			inline constexpr m_to & operator=(m_from other) noexcept { value = other; return (*this); }					\
+			inline constexpr operator m_from const & () const noexcept { return value; }								\
+			inline constexpr operator m_from & () noexcept { return value; }											\
+			inline constexpr decltype(auto) operator==(m_to const & other) noexcept { return value == other.value; }	\
+			inline constexpr decltype(auto) operator!=(m_to const & other) noexcept { return value != other.value; }	\
+			inline constexpr decltype(auto) operator<(m_to const & other) noexcept { return value < other.value; }		\
+			inline constexpr decltype(auto) operator>(m_to const & other) noexcept { return value > other.value; }		\
+			inline constexpr decltype(auto) operator<=(m_to const & other) noexcept { return value <= other.value; }	\
+			inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
+		}	
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // declare opaque handle type
 #define DECL_HANDLE(m_name) \
-	struct CAT(__, m_name) { int unused; }; \
-	ALIAS(m_name) CAT(__, m_name) *
+		struct CAT(__, m_name) { int unused; }; \
+		ALIAS(m_name) CAT(__, m_name) *
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // declare tag object type
 #define DECL_TAG(m_type, m_var) \
-	struct m_type { struct _Tag {}; constexpr explicit m_type(_Tag) {} }; \
-	inline constexpr m_type m_var{ m_type::_Tag{} }; \
+		struct m_type { struct _Tag {}; constexpr explicit m_type(_Tag) {} }; \
+		inline constexpr m_type m_var{ m_type::_Tag{} }; \
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -86,7 +86,7 @@ namespace ism
 	ALIAS(float_t)		float32_t;
 	ALIAS(double_t)		float64_t;
 
-#if (ARCHITECTURE == 32)
+#if (32 == ARCHITECTURE)
 	ALIAS(intmax_t)		int32_t;
 	ALIAS(uintmax_t)	uint32_t;
 #else
@@ -95,11 +95,11 @@ namespace ism
 #endif
 
 	ALIAS(max_align_t)	double_t;
-	ALIAS(hash_t)		uintmax_t;
 	ALIAS(intptr_t)		intmax_t;
 	ALIAS(ptrdiff_t)	intmax_t;
 	ALIAS(ssize_t)		intmax_t;
 	ALIAS(size_t)		uintmax_t;
+	ALIAS(hash_t)		uintmax_t;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

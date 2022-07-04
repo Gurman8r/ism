@@ -344,9 +344,9 @@ namespace ism
 	template <class H = FNV1A, class T
 	> constexpr hash_t hash(T const * data, size_t size) { return H{}(data, size); }
 
-	constexpr hash_t operator ""_hash(cstring data, size_t size) { return hash(data, size); }
+	constexpr hash_t operator ""_hash(cstring data, size_t size) { return ism::hash(data, size); }
 
-	constexpr hash_t operator ""_hash(cwstring data, size_t size) { return hash(data, size); }
+	constexpr hash_t operator ""_hash(cwstring data, size_t size) { return ism::hash(data, size); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

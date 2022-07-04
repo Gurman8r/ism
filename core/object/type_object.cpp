@@ -59,7 +59,7 @@ OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
 
 	t.tp_setattro = (setattrofunc)&TypeObject::type_setattro;
 
-	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return hash(((TYPE)self)->tp_name.data(), ((TYPE)self)->tp_name.size()); };
+	t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return ((TYPE)self)->tp_name.hash_code(); };
 
 	t.tp_repr = (reprfunc)[](OBJ self) -> STR { return STR(TYPE(self)->tp_name); };
 
@@ -303,7 +303,7 @@ bool TypeObject::mro_internal(OBJ * in_old_mro)
 Error_ TypeObject::update_slot(STR const & name)
 {
 	if (!name || name.empty()) { return Error_Unknown; }
-	switch (hash(name.data(), name.size()))
+	switch (name.hash_code())
 	{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

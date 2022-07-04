@@ -1,20 +1,21 @@
 #ifndef _ISM_BATCH_HPP_
 #define _ISM_BATCH_HPP_
 
+#include <core/templates/mpl.hpp>
 #include <core/templates/vector.hpp>
 
 namespace ism
 {
 	// tuple<vector<T>...>
-	template <class ... _Ts
+	template <class ... _Types
 	> class Batch
 	{
 	public:
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using self_type			= typename Batch<_Ts...>;
+		using self_type			= typename Batch<_Types...>;
 		using allocator_type	= typename PolymorphicAllocator<byte>;
-		using value_types		= typename mpl::type_list<_Ts...>;
+		using value_types		= typename mpl::type_list<_Types...>;
 		using value_tuple		= typename mpl::tuple<value_types>;
 		using vector_types		= typename mpl::remap<ism::Vector, value_types>;
 		using vector_tuple		= typename mpl::tuple<vector_types>;

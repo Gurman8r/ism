@@ -15,10 +15,12 @@ namespace ism
 
 	// hashset
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
-	> class HashSet : public _HashSetBase<T, H, E> {
+	> class HashSet : public _HashSetBase<T, H, E>
+	{
 	public:
 		using base_type = _HashSetBase<T, H, E>;
 		using base_type::base_type;
+		using base_type::operator=;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -29,10 +31,12 @@ namespace ism
 
 	// multi hashset
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
-	> class MultiHashSet : public _MultiHashSetBase<T, H, E> {
+	> class MultiHashSet : public _MultiHashSetBase<T, H, E>
+	{
 	public:
 		using base_type = _MultiHashSetBase<T, H, E>;
 		using base_type::base_type;
+		using base_type::operator=;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

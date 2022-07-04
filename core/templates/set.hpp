@@ -15,10 +15,12 @@ namespace ism
 
 	// set
 	template <class T, class Pr = Less<T>
-	> class Set : public _SetBase<T, Pr> {
+	> class Set : public _SetBase<T, Pr>
+	{
 	public:
 		using base_type = _SetBase<T, Pr>;
 		using base_type::base_type;
+		using base_type::operator=;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -29,10 +31,12 @@ namespace ism
 
 	// multi set
 	template <class T, class Pr = Less<T>
-	> class MultiSet : public _MultiSetBase<T, Pr> {
+	> class MultiSet : public _MultiSetBase<T, Pr>
+	{
 	public:
 		using base_type = _MultiSetBase<T, Pr>;
 		using base_type::base_type;
+		using base_type::operator=;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

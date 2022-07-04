@@ -93,11 +93,11 @@
 #	define OS_FREEBSD true
 
 #	else
-	static_assert(!"unsupported unix operating system");
+#	error "unsupported unix operating system"
 #	endif
 
 #else
-static_assert(!"unsupported operating system");
+#error "unsupported operating system"
 #endif
 
 
@@ -135,9 +135,13 @@ static_assert(!"unsupported operating system");
 #		define ARCHITECTURE 32
 #	endif
 
+#else
+#error "unsupported cpu"
 #endif
 
-static_assert((ARCHITECTURE == 32 || ARCHITECTURE == 64), "invalid architecture");
+#if !(ARCHITECTURE == 32 || ARCHITECTURE == 64)
+#error "unsupported architecture"
+#endif
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -189,7 +193,7 @@ static_assert((ARCHITECTURE == 32 || ARCHITECTURE == 64), "invalid architecture"
 #define COMPILER_WASM __wasm__
 
 #else
-static_assert(!"invalid compiler");
+#error "unsupported compiler"
 #endif
 
 

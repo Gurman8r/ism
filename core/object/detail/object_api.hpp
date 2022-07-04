@@ -94,7 +94,7 @@ namespace ism
 
 	template <class T> struct Hasher<ObjectAPI<T>>
 	{
-		template <class U> hash_t operator()(U const & o) const { return hash(o); }
+		template <class U> hash_t operator()(U const & o) const { return ism::hash(o); }
 	};
 
 	template <class T> struct EqualTo<ObjectAPI<T>>

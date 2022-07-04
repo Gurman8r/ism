@@ -15,10 +15,12 @@ namespace ism
 
 	// vector
 	template <class T
-	> class Vector : public _VectorBase<T> {
+	> class Vector : public _VectorBase<T>
+	{
 	public:
 		using base_type = _VectorBase<T>;
 		using base_type::base_type;
+		using base_type::operator=;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

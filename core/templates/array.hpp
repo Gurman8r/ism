@@ -1,7 +1,7 @@
 #ifndef _ISM_ARRAY_HPP_
 #define _ISM_ARRAY_HPP_
 
-#include <core/templates/mpl.hpp>
+#include <core/templates/utility.hpp>
 
 // FIXED SIZE ARRAY
 namespace ism

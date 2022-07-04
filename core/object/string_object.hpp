@@ -46,7 +46,7 @@ namespace ism
 
 		StringObject(Path const & value) : m_string{ value.string() } {}
 
-		StringObject(StringView const value) : m_string{ (String)value } {}
+		StringObject(StringView const value) : m_string{ value.data(), value.size() } {}
 
 		StringObject(std::initializer_list<char> init) : m_string{ init } {}
 
@@ -76,7 +76,7 @@ namespace ism
 
 		auto size() const { return m_string.size(); }
 
-		auto hash_code() const { return hash(m_string.data(), m_string.size()); }
+		auto hash_code() const { return m_string.hash_code(); }
 
 		auto begin() -> iterator { return m_string.begin(); }
 

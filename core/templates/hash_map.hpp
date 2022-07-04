@@ -15,10 +15,12 @@ namespace ism
 
 	// hashmap
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
-	> class HashMap : public _HashMapBase<K, V, H, E> {
+	> class HashMap : public _HashMapBase<K, V, H, E>
+	{
 	public:
 		using base_type = _HashMapBase<K, V, H, E>;
 		using base_type::base_type;
+		using base_type::operator=;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -29,10 +31,12 @@ namespace ism
 
 	// multi hashmap
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
-	> class MultiHashMap : public _MultiHashMapBase<K, V, H, E> {
+	> class MultiHashMap : public _MultiHashMapBase<K, V, H, E>
+	{
 	public:
 		using base_type = _MultiHashMapBase<K, V, H, E>;
 		using base_type::base_type;
+		using base_type::operator=;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

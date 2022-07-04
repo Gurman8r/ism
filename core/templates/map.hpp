@@ -9,13 +9,35 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// map base
+	template <class K, class V, class Pr = Less<K>
+	> ALIAS(_MapBase) std::map<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
+
 	// map
 	template <class K, class V, class Pr = Less<K>
-	> ALIAS(Map) std::map<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
+	> class Map : public _MapBase<K, V, Pr>
+	{
+	public:
+		using base_type = _MapBase<K, V, Pr>;
+		using base_type::base_type;
+		using base_type::operator=;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// multi map base
+	template <class K, class V, class Pr = Less<K>
+	> ALIAS(_MultiMapBase) std::multimap<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
 
 	// multi map
 	template <class K, class V, class Pr = Less<K>
-	> ALIAS(MultiMap) std::multimap<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
+	> class MultiMap : public _MultiMapBase<K, V, Pr>
+	{
+	public:
+		using base_type = _MultiMapBase<K, V, Pr>;
+		using base_type::base_type;
+		using base_type::operator=;
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

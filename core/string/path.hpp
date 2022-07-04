@@ -1,7 +1,7 @@
 #ifndef _ISM_PATH_HPP_
 #define _ISM_PATH_HPP_
 
-#include <core/string/string_view.hpp>
+#include <core/string/string.hpp>
 
 namespace ism::util
 {
@@ -214,7 +214,7 @@ namespace ism
 		Path(const_pointer first, const_pointer last) : m_text{ first, last } {}
 		Path(storage_type const & value) : m_text{ value } {}
 		Path(storage_type && value) noexcept : m_text{ std::move(value) } {}
-		Path(view_type const value) : m_text{ value.string() } {}
+		Path(view_type const value) : m_text{ value.data(), value.size() } {}
 		Path(self_type const & value) : m_text{ value } {}
 		Path(self_type && value) noexcept : m_text{ std::move(value.m_text) } {}
 		self_type & operator=(self_type const & value) { return copy(value); }
@@ -239,7 +239,7 @@ namespace ism
 		bool empty() const noexcept { return m_text.empty(); }
 		auto length() const noexcept -> size_type { return m_text.size(); }
 		auto size() const noexcept -> size_type { return m_text.size(); }
-		auto hash_code() const noexcept -> hash_t { return hash(m_text.data(), m_text.size()); }
+		auto hash_code() const noexcept -> hash_t { return m_text.hash_code(); }
 
 		char & operator[](size_type i) & noexcept { return m_text[i]; }
 		char operator[](size_type i) const & noexcept { return m_text[i]; }
@@ -294,38 +294,24 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline Path operator "" _path(cstring s, size_t n) noexcept { return Path{ String{ s, n } }; }
+	namespace mpl { template <> constexpr bool is_string_v<Path>{ true }; }
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	inline Path operator "" _path(cstring s, size_t n) noexcept { return Path{ String{ s, n } }; }
 
 	template <> struct Hasher<Path>
 	{
 		hash_t operator()(Path const & value) const { return value.hash_code(); }
 	};
 
-	inline bool operator==(String const & lhs, Path const & rhs)
-	{
-		return lhs == rhs.string();
-	}
+	inline bool operator==(String const & lhs, Path const & rhs) { return lhs == rhs.string(); }
 
-	inline bool operator!=(String const & lhs, Path const & rhs)
-	{
-		return lhs != rhs.string();
-	}
+	inline bool operator!=(String const & lhs, Path const & rhs) { return lhs != rhs.string(); }
 
-	inline bool operator==(cstring lhs, Path const & rhs)
-	{
-		return lhs == rhs.string();
-	}
+	inline bool operator==(cstring lhs, Path const & rhs) { return lhs == rhs.string(); }
 
-	inline bool operator!=(cstring lhs, Path const & rhs)
-	{
-		return lhs != rhs.string();
-	}
+	inline bool operator!=(cstring lhs, Path const & rhs) { return lhs != rhs.string(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
-
-template <> constexpr bool ism::mpl::is_string_v<ism::Path>{ true };
 
 #endif // !_ISM_PATH_HPP_

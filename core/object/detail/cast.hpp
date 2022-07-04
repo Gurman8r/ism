@@ -307,6 +307,10 @@ public:																							\
 		STR value{};
 	};
 
+	template <class Ch
+	> struct TypeCaster<BasicString<Ch>, std::enable_if_t<mpl::is_char_v<Ch>>>
+		: StringCaster<BasicString<Ch>> {};
+
 	template <class Ch, class Tr, class Al
 	> struct TypeCaster<std::basic_string<Ch, Tr, Al>, std::enable_if_t<mpl::is_char_v<Ch>>>
 		: StringCaster<std::basic_string<Ch, Tr, Al>> {};
