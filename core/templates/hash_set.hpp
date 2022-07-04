@@ -2,7 +2,6 @@
 #define _ISM_HASH_SET_HPP_
 
 #include <core/os/memory.hpp>
-#include <core/templates/hash.hpp>
 
 #include <unordered_set>
 
@@ -10,29 +9,29 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// hash set base
+	// hashset base
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
 	> ALIAS(_HashSetBase) std::unordered_set<T, H, E, PolymorphicAllocator<T>>;
 
-	// hash set
+	// hashset
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
 	> class HashSet : public _HashSetBase<T, H, E> {
 	public:
-		using base_type = typename _HashSetBase<T, H, E>;
+		using base_type = _HashSetBase<T, H, E>;
 		using base_type::base_type;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// multi hash set base
+	// multi hashset base
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
 	> ALIAS(_MultiHashSetBase) std::unordered_multiset<T, H, E, PolymorphicAllocator<T>>;
 
-	// multi hash set
+	// multi hashset
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
 	> class MultiHashSet : public _MultiHashSetBase<T, H, E> {
 	public:
-		using base_type = typename _MultiHashSetBase<T, H, E>;
+		using base_type = _MultiHashSetBase<T, H, E>;
 		using base_type::base_type;
 	};
 

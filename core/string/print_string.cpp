@@ -5,6 +5,9 @@ using namespace ism;
 
 void ism::print_line(String const & s)
 {
+	StringStream test{};
+	test << "TEST";
+
 	SYSTEM->printf("%.*s\n", s.size(), s.data());
 }
 

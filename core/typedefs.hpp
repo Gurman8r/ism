@@ -3,8 +3,6 @@
 
 #include <core/version.hpp>
 
-#include <cstddef>
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // alias
@@ -120,8 +118,8 @@ namespace ism
 	enum class byte : uint8_t
 	{
 		zero, one,
-		min = 0, null = min,
-		max = 255, npos = max
+		min = 0, null = 0,
+		max = 255, npos = 255,
 	};
 
 	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0

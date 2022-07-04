@@ -50,17 +50,17 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event common
-#define EVENT_COMMON(m_class, m_inherits)													\
-private:																					\
-	static_assert(std::is_base_of_v<ism::Event, m_inherits>);								\
-																							\
-	OBJECT_COMMON(m_class, m_inherits);														\
-																							\
-public:																						\
-	enum : ism::EventID { ID = ism::hash(m_class::g_name_static) };						\
-																							\
+#define EVENT_COMMON(m_class, m_inherits)										\
+private:																		\
+	static_assert(std::is_base_of_v<ism::Event, m_inherits>);					\
+																				\
+	OBJECT_COMMON(m_class, m_inherits);											\
+																				\
+public:																			\
+	enum : ism::EventID { ID = m_class::g_name_static.hash_code() };			\
+																				\
 	virtual ism::EventID get_event_id() const override { return m_class::ID; }	\
-																							\
+																				\
 private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

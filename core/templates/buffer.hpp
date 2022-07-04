@@ -4,7 +4,7 @@
 #include <core/error/error_macros.hpp>
 #include <core/templates/array.hpp>
 #include <core/templates/vector.hpp>
-#include <core/string/basic_string.hpp>
+#include <core/string/string.hpp>
 
 #ifndef DYNAMICBUFFER_PRINTV_STRING_SIZE
 #define DYNAMICBUFFER_PRINTV_STRING_SIZE 1024

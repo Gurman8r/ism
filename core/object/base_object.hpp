@@ -24,7 +24,7 @@ protected:																			\
 	{																				\
 		static SCOPE_ENTER(&)														\
 		{																			\
-			ism::Internals::get_singleton()->add_class(&m_class::g_type_static);	\
+			INTERNALS->add_class(&m_class::g_type_static);							\
 																					\
 			if (m_class::g_type_static.tp_install)									\
 			{																		\

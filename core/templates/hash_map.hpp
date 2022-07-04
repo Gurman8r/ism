@@ -2,7 +2,6 @@
 #define _ISM_HASH_MAP_HPP_
 
 #include <core/os/memory.hpp>
-#include <core/templates/hash.hpp>
 
 #include <unordered_map>
 
@@ -10,29 +9,29 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// hash map base
+	// hashmap base
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
 	> ALIAS(_HashMapBase) std::unordered_map<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
 
-	// hash map
+	// hashmap
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
 	> class HashMap : public _HashMapBase<K, V, H, E> {
 	public:
-		using base_type = typename _HashMapBase<K, V, H, E>;
+		using base_type = _HashMapBase<K, V, H, E>;
 		using base_type::base_type;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// multi hash map base
+	// multi hashmap base
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
 	> ALIAS(_MultiHashMapBase) std::unordered_multimap<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
 
-	// multi hash map
+	// multi hashmap
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
 	> class MultiHashMap : public _MultiHashMapBase<K, V, H, E> {
 	public:
-		using base_type = typename _MultiHashMapBase<K, V, H, E>;
+		using base_type = _MultiHashMapBase<K, V, H, E>;
 		using base_type::base_type;
 	};
 

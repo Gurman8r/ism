@@ -76,6 +76,8 @@ namespace ism
 
 		auto size() const { return m_string.size(); }
 
+		auto hash_code() const { return hash(m_string.data(), m_string.size()); }
+
 		auto begin() -> iterator { return m_string.begin(); }
 
 		auto begin() const -> const_iterator { return m_string.begin(); }
@@ -116,6 +118,8 @@ namespace ism
 		bool empty() const { return VALIDATE(m_ptr)->empty(); }
 
 		auto size() const { return VALIDATE(m_ptr)->size(); }
+
+		auto hash_code() const { return VALIDATE(m_ptr)->hash_code(); }
 
 		auto begin() -> iterator { return VALIDATE(m_ptr)->begin(); }
 

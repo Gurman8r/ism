@@ -3,6 +3,8 @@
 
 #include <core/io/resource.hpp>
 
+#include <variant>
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

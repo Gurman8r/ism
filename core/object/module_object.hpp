@@ -94,7 +94,7 @@ namespace ism
 	template <class Name = cstring
 	> MODULE create_extension_module(Name && name) noexcept
 	{
-		DICT modules{ Internals::get_singleton()->modules };
+		DICT modules{ INTERNALS->modules };
 
 		STR str_name{ FWD_OBJ(name) };
 
@@ -104,7 +104,7 @@ namespace ism
 	template <class Name = cstring
 	> MODULE import_module(Name && name) noexcept
 	{
-		DICT modules{ Internals::get_singleton()->modules };
+		DICT modules{ INTERNALS->modules };
 
 		STR str_name{ FWD_OBJ(name) };
 

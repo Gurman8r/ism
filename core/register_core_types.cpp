@@ -79,7 +79,7 @@ void ism::unregister_core_driver_types()
 
 void ism::unregister_core_types()
 {
-	auto & db{ Internals::get_singleton()->class_db };
+	auto & db{ INTERNALS->class_db };
 
 	for (size_t i = 0; i < db.size(); ++i)
 	{

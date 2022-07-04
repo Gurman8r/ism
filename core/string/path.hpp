@@ -1,7 +1,7 @@
 #ifndef _ISM_PATH_HPP_
 #define _ISM_PATH_HPP_
 
-#include <core/string/string_name.hpp>
+#include <core/string/string_view.hpp>
 
 namespace ism::util
 {
@@ -191,162 +191,116 @@ namespace ism
 		String m_text;
 
 	public:
-		using self_type			= typename Path;
-		using storage_type		= typename String;
-		using view_type			= typename StringView;
-		using value_type		= typename storage_type::value_type;
-		using reference			= typename storage_type::reference;
-		using pointer			= typename storage_type::pointer;
-		using const_reference	= typename storage_type::const_reference;
-		using const_pointer		= typename storage_type::const_pointer;
-		using iterator			= typename storage_type::iterator;
-		using const_iterator	= typename storage_type::const_iterator;
+		using self_type					= typename Path;
+		using storage_type				= typename String;
+		using view_type					= typename StringView;
+		using value_type				= typename storage_type::value_type;
+		using pointer					= typename storage_type::pointer;
+		using const_pointer				= typename storage_type::const_pointer;
+		using reference					= typename storage_type::reference;
+		using const_reference			= typename storage_type::const_reference;
+		using iterator					= typename storage_type::iterator;
+		using const_iterator			= typename storage_type::const_iterator;
+		using reverse_iterator			= typename storage_type::reverse_iterator;
+		using const_reverse_iterator	= typename storage_type::const_reverse_iterator;
+		using size_type					= typename storage_type::size_type;
+		using difference_type			= typename storage_type::difference_type;
 
 	public:
 		Path() noexcept : m_text{} {}
-
 		Path(nullptr_t) : m_text{} {}
-
 		Path(const_pointer value) : m_text{ value } {}
-
-		Path(const_pointer value, size_t size) : m_text{ value, size } {}
-		
+		Path(const_pointer value, size_type size) : m_text{ value, size } {}
 		Path(const_pointer first, const_pointer last) : m_text{ first, last } {}
-
 		Path(storage_type const & value) : m_text{ value } {}
-
 		Path(storage_type && value) noexcept : m_text{ std::move(value) } {}
-
-		Path(StringName const & value) : m_text{ value.string() } {}
-
-		Path(StringName && value) noexcept : m_text{ std::move(value).string() } {}
-
 		Path(view_type const value) : m_text{ value.string() } {}
-
 		Path(self_type const & value) : m_text{ value } {}
-
 		Path(self_type && value) noexcept : m_text{ std::move(value.m_text) } {}
-
 		self_type & operator=(self_type const & value) { return copy(value); }
 
 	public:
 		self_type & clear() noexcept { return m_text.clear(), (*this); }
-
 		self_type & copy(self_type const & value) noexcept { return (m_text = value.m_text), (*this); }
-
 		self_type & swap(self_type & value) noexcept { return m_text.swap(value.m_text), (*this); }
 
 	public:
 		operator void * () const noexcept { return !m_text.empty() ? (void *)m_text.data() : nullptr; }
-
 		bool operator==(storage_type const & value) { return m_text == value; }
-
 		bool operator==(const_pointer value) { return m_text == value; }
-
 		bool operator!=(storage_type const & value) { return m_text != value; }
-
 		bool operator<(self_type const & value) { return m_text < value.m_text; }
-
 		bool operator>(self_type const & value) { return m_text > value.m_text; }
-
 		bool operator==(self_type const & value) { return m_text == value.m_text; }
 
 		auto data() noexcept -> pointer { return m_text.data(); }
-
 		auto data() const noexcept -> const_pointer { return m_text.data(); }
-
 		auto c_str() const noexcept -> const_pointer { return m_text.data(); }
-
-		auto length() const noexcept -> size_t { return m_text.size(); }
-
-		auto size() const noexcept -> size_t { return m_text.size(); }
-
-		auto hash_code() const noexcept -> hash_t { return hash(m_text); }
-
 		bool empty() const noexcept { return m_text.empty(); }
+		auto length() const noexcept -> size_type { return m_text.size(); }
+		auto size() const noexcept -> size_type { return m_text.size(); }
+		auto hash_code() const noexcept -> hash_t { return hash(m_text.data(), m_text.size()); }
+
+		char & operator[](size_type i) & noexcept { return m_text[i]; }
+		char operator[](size_type i) const & noexcept { return m_text[i]; }
 
 		auto view() const noexcept -> view_type { return { m_text.data(), m_text.size() }; }
-
 		auto string() & noexcept -> storage_type & { return m_text; }
-
 		auto string() const & noexcept -> storage_type const & { return m_text; }
-
 		auto string() && noexcept -> storage_type && { return std::move(m_text); }
 
 		operator view_type () noexcept { return { m_text.data(), m_text.size() }; }
-
 		operator storage_type & () & noexcept { return m_text; }
-		
 		operator storage_type const & () const & noexcept { return m_text; }
-		
 		operator storage_type && () && noexcept { return std::move(m_text); }
 
 	public:
 		auto root_name() const noexcept -> self_type { return util::parse_root_name(view()); }
-		
 		auto root_directory() const noexcept -> self_type { return util::parse_root_directory(view()); }
-		
 		auto root_path() const noexcept -> self_type { return util::parse_root_path(view()); }
-		
 		auto relative_path() const noexcept -> self_type { return util::parse_relative_path(view()); }
-		
 		auto parent_path() const noexcept -> self_type { return util::parse_parent_path(view()); }
-		
 		auto filename() const noexcept -> self_type { return util::parse_filename(view()); }
-		
 		auto stem() const noexcept -> self_type { return util::parse_stem(view()); }
-		
 		auto extension() const noexcept -> self_type { return util::parse_extension(view()); }
 
 	public:
 		bool has_root_name() const noexcept { return !util::parse_root_name(view()).empty(); }
-		
 		bool has_root_directory() const noexcept { return !util::parse_root_directory(view()).empty(); }
-		
 		bool has_root_path() const noexcept { return !util::parse_root_path(view()).empty(); }
-		
 		bool has_relative_path() const noexcept { return !util::parse_relative_path(view()).empty(); }
-		
 		bool has_parent_path() const noexcept { return !util::parse_parent_path(view()).empty(); }
-		
 		bool has_filename() const noexcept { return !util::parse_filename(view()).empty(); }
-		
 		bool has_stem() const noexcept { return !util::parse_stem(view()).empty(); }
-		
 		bool has_extension() const noexcept { return !util::parse_extension(view()).empty(); }
 
 	public:
 		auto begin() noexcept -> iterator { return m_text.begin(); }
-		
 		auto begin() const noexcept -> const_iterator { return m_text.begin(); }
-		
 		auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
 
 		auto end() noexcept -> iterator { return m_text.end(); }
-		
 		auto end() const noexcept -> const_iterator { return m_text.end(); }
-		
 		auto cend() const noexcept -> const_iterator { return m_text.cend(); }
+
+		auto rbegin() noexcept -> reverse_iterator { return m_text.rbegin(); }
+		auto rbegin() const noexcept -> const_reverse_iterator { return m_text.rbegin(); }
+		auto crbegin() const noexcept -> const_reverse_iterator { return m_text.crbegin(); }
+
+		auto rend() noexcept -> reverse_iterator { return m_text.rend(); }
+		auto rend() const noexcept -> const_reverse_iterator { return m_text.rend(); }
+		auto crend() const noexcept -> const_reverse_iterator { return m_text.crend(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline void to_json(Json & json, Path const & value)
-	{
-		json = (String const &)value;
-	}
+	inline Path operator "" _path(cstring s, size_t n) noexcept { return Path{ String{ s, n } }; }
 
-	inline void from_json(Json const & json, Path & value)
-	{
-		json.get_to((String &)value);
-	}
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <> struct Hasher<Path>
 	{
-		hash_t operator()(Path const & value) const
-		{
-			return value.hash_code();
-		}
+		hash_t operator()(Path const & value) const { return value.hash_code(); }
 	};
 
 	inline bool operator==(String const & lhs, Path const & rhs)

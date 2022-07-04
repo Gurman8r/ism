@@ -1,0 +1,6 @@
+#ifndef _REGISTER_LAUNCHER_TYPES_HPP_
+#define _REGISTER_LAUNCHER_TYPES_HPP_
+
+namespace ism {}
+
+#endif // !_REGISTER_LAUNCHER_TYPES_HPP_

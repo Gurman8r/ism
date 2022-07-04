@@ -17,7 +17,7 @@ namespace ism
 	template <class T, class Pr = Less<T>
 	> class Set : public _SetBase<T, Pr> {
 	public:
-		using base_type = typename _SetBase<T, Pr>;
+		using base_type = _SetBase<T, Pr>;
 		using base_type::base_type;
 	};
 
@@ -31,7 +31,7 @@ namespace ism
 	template <class T, class Pr = Less<T>
 	> class MultiSet : public _MultiSetBase<T, Pr> {
 	public:
-		using base_type = typename _MultiSetBase<T, Pr>;
+		using base_type = _MultiSetBase<T, Pr>;
 		using base_type::base_type;
 	};
 

@@ -1,7 +1,7 @@
 #ifndef _ISM_ARRAY_HPP_
 #define _ISM_ARRAY_HPP_
 
-#include <core/templates/utility.hpp>
+#include <core/templates/mpl.hpp>
 
 // FIXED SIZE ARRAY
 namespace ism
@@ -243,19 +243,6 @@ namespace std
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// MAKE ARRAY
-namespace ism
-{
-	template <class D, class... Args
-	> using array_return_type = Array<typename mpl::return_type_t<D, Args...>, sizeof...(Args)>;
-
-	template <class D = void, class... Args
-	> constexpr array_return_type<D, Args...> make_array(Args && ... args)
-	{
-		return { FWD(args)... };
-	}
 }
 
 #endif // !_ISM_ARRAY_HPP_

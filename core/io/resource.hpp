@@ -7,10 +7,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class Resource;
-
-	ALIAS(RES) Ref<Resource>;
-
 	DECL_HANDLE(RID);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -46,6 +42,10 @@ namespace ism
 
 		virtual void set_path(Path const & value, bool take_over = true);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ALIAS(RES) Ref<Resource>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -1,13 +1,7 @@
 #ifndef _ISM_VERSION_HPP_
 #define _ISM_VERSION_HPP_
 
-#include <core/preprocessor.hpp>
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#ifndef IS_STARTUP_PROJECT
-#define IS_STARTUP_PROJECT false
-#endif
+#include <core/language_features.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

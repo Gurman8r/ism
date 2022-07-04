@@ -58,7 +58,7 @@ public:
 			name = (String)key;
 			for (auto const & [k, v] : value.items())
 			{
-				switch (hash(k)) {
+				switch (hash(k.data(), k.size())) {
 				// bool
 				case "bool"_hash: case "bvec2"_hash: case "bvec3"_hash: case "bvec4"_hash:
 				// int
@@ -109,7 +109,7 @@ public:
 					if (v.is_number()) { v.get_to(index); }
 					else if (v.is_string())
 					{
-						switch (String const s{ v }; hash(s)) {
+						switch (String const s{ v }; hash(s.data(), s.size())) {
 						default:				{ index = -1; } break;
 						case "POSITION"_hash:	{ index = 0; } break;
 						case "NORMAL"_hash:		{ index = 1; } break;
@@ -234,7 +234,7 @@ public:
 				{
 					Def const def{ key, value };
 					if (!def) { continue; }
-					switch (hash(def.type))
+					switch (hash(def.type.data(), def.type.size()))
 					{
 					// DEFAULT
 					default: {
@@ -286,7 +286,7 @@ Error_ ShaderLoader::load_from_file(Shader & shader, Path const & path)
 	SCOPE_EXIT(&file) { file.close(); };
 	if (!file) { return Error_Unknown; }
 
-	switch (hash(util::to_lower(path.extension())))
+	switch (path.extension().hash_code())
 	{
 	case ".glsl"_hash: {} break;
 	case ".hlsl"_hash: {} break;

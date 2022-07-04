@@ -25,7 +25,7 @@ namespace ism
 	{
 		LoaderLifeSupport() noexcept
 		{
-			Internals::get_singleton()->loader_stack.push_back(nullptr);
+			INTERNALS->loader_stack.push_back(nullptr);
 		}
 
 		~LoaderLifeSupport() noexcept
@@ -404,6 +404,42 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// is_copy_constructible
+	template <class T, class SFINAE = void
+	> struct is_copy_constructible : std::is_copy_constructible<T> {};
+
+	template <class Container
+	> struct is_copy_constructible<Container, std::enable_if_t<mpl::all_of_v<
+		std::is_copy_constructible<Container>,
+		std::is_same<typename Container::value_type &,
+		typename Container::reference>,
+		std::negation<std::is_same<Container, typename Container::value_type>>
+		>>> : is_copy_constructible<typename Container::value_type> {};
+
+	template <class T1, class T2
+	> struct is_copy_constructible<Pair<T1, T2>> : mpl::all_of<is_copy_constructible<T1>, is_copy_constructible<T2>> {};
+
+	template <class T> constexpr bool is_copy_constructible_v{ is_copy_constructible<T>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// is_copy_assignable
+	template <class T, class SFINAE = void
+	> struct is_copy_assignable : std::is_copy_assignable<T> {};
+
+	template <class Container
+	> struct is_copy_assignable<Container, std::enable_if_t<mpl::all_of_v<
+		std::is_copy_assignable<Container>,
+		std::is_same<typename Container::value_type &, typename Container::reference>
+		>>> : is_copy_assignable<typename Container::value_type> {};
+
+	template <class T1, class T2
+	> struct is_copy_assignable<Pair<T1, T2>> : mpl::all_of<is_copy_assignable<T1>, is_copy_assignable<T2>> {};
+
+	template <class T> constexpr bool is_copy_assignable_v{ is_copy_assignable<T>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// move_is_plain_type
 	template <class T> using move_is_plain_type = mpl::satisfies_none_of<T,
 		std::is_void,
@@ -416,7 +452,7 @@ namespace ism
 	template <class T, class SFINAE = void> struct move_always : std::false_type {};
 	template <class T> struct move_always<T, std::enable_if_t<mpl::all_of_v<
 		move_is_plain_type<T>,
-		std::negation<mpl::is_copy_constructible<T>>,
+		std::negation<is_copy_constructible<T>>,
 		std::is_move_constructible<T>,
 		std::is_same<decltype(std::declval<make_caster<T>>().operator T & ()), T &>
 		>>> : std::true_type {};
