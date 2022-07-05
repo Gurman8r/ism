@@ -10,5 +10,5 @@ void ism::print_line(String const & s)
 
 void ism::print_error(String const & s)
 {
-	SYSTEM->errorf("%.*s\n", s.size(), s.data());
+	SYSTEM->printerrf("%.*s\n", s.size(), s.data());
 }

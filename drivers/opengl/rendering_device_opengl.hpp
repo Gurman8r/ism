@@ -45,7 +45,7 @@ namespace ism
 			uint32_t handle{};
 			uint32_t vertex_count{};
 			VertexLayout layout{};
-			Vector<RID> buffers{};
+			List<RID> buffers{};
 		};
 
 		struct _IndexBuffer : _BufferBase
@@ -63,7 +63,7 @@ namespace ism
 		};
 
 		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
-		virtual RID vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers) override;
+		virtual RID vertex_array_create(size_t vertex_count, VertexLayout const & layout, List<RID> const & buffers) override;
 		virtual void vertex_array_destroy(RID rid) override;
 
 		virtual RID index_buffer_create(size_t index_count, DataType_ index_type = DataType_U32, DynamicBuffer const & data = {}) override;
@@ -120,10 +120,10 @@ namespace ism
 		{
 			uint32_t handle{};
 			int32_t width{}, height{};
-			Vector<RID> texture_attachments{};
+			List<RID> texture_attachments{};
 		};
 
-		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) override;
+		virtual RID framebuffer_create(List<RID> const & texture_attachments) override;
 		virtual void framebuffer_destroy(RID framebuffer) override;
 		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) override;
 
@@ -133,7 +133,7 @@ namespace ism
 		{
 			uint32_t handle{};
 			FlatMap<hash_t, int32_t> bindings{};
-			Vector<ShaderStageData> stage_data{};
+			List<ShaderStageData> stage_data{};
 		};
 
 		virtual RID shader_create(ShaderStageData const (&spec)[ShaderStage_MAX] = {}) override;
@@ -150,18 +150,18 @@ namespace ism
 			UniformType_ uniform_type{};
 			uint32_t binding{};
 			uint32_t length{};
-			Vector<RID> buffers{};
-			Vector<RID> images{};
+			List<RID> buffers{};
+			List<RID> images{};
 		};
 
 		struct _UniformSet
 		{
 			RID shader{};
-			Vector<_UniformDescriptor> uniforms{};
+			List<_UniformDescriptor> uniforms{};
 		};
 
 		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
-		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) override;
+		virtual RID uniform_set_create(List<Uniform> const & uniforms, RID shader) override;
 		virtual void uniform_set_destroy(RID uniform_set) override;
 		void _uniform_set_bind(_UniformSet const & us);
 
@@ -185,7 +185,7 @@ namespace ism
 		/* DRAWLIST  */
 		struct _DrawList
 		{
-			Vector<std::function<void()>> command_buffer{};
+			List<std::function<void()>> command_buffer{};
 
 			IntRect viewport{};
 
@@ -207,10 +207,10 @@ namespace ism
 			state{};
 		};
 
-		Vector<_DrawList> m_draw_list{};
+		List<_DrawList> m_draw_list{};
 
 		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
-		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
+		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, List<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
 		virtual void draw_list_bind_pipeline(DrawListID draw_list, RID pipeline) override;
 		virtual void draw_list_bind_uniform_set(DrawListID draw_list, RID uniform_set, size_t index) override;
 		virtual void draw_list_bind_vertex_array(DrawListID draw_list, RID vertex_array) override;

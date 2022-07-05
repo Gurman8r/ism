@@ -31,7 +31,7 @@ Node::~Node() noexcept
 
 void Node::process(Duration const & dt)
 {
-	Vector<size_t> to_remove{};
+	List<size_t> to_remove{};
 
 	for (size_t i = 0, imax = get_child_count(); i < imax; ++i)
 	{

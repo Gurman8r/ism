@@ -22,7 +22,7 @@
 #include <editor/register_editor_types.hpp>
 #endif
 
-#if ISM_OS_WINDOWS
+#if SYSTEM_WINDOWS
 #include <platform/windows/display_server_windows.hpp>
 #define DISPLAY_SERVER_DEFAULT DisplayServerWindows
 #endif
@@ -177,7 +177,7 @@ bool Main::start()
 
 	if (isinstance<SceneTree>(main_loop))
 	{
-		Ref<SceneTree> tree{ main_loop };
+		SceneTree * tree{ (SceneTree *)*main_loop };
 
 		Window * root{ tree->get_root() };
 

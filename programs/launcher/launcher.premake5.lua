@@ -17,7 +17,7 @@ dependson{ "ism", }
 links{ "ism", "assimp", "glew", "glfw", "imgui", }
 
 defines{
-	"ISM_STARTUP_PROJECT=true",
+	"MAIN_ENABLED=true",
 	"TOOLS_ENABLED=true",
 	"OPENGL_ENABLED=true",
 	"OPENGL_LOADER_GLEW=true",

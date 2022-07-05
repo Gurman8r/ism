@@ -30,7 +30,7 @@ namespace ism
 
 		~LoaderLifeSupport() noexcept
 		{
-			Vector<OBJ> & stack{ INTERNALS->loader_stack };
+			List<OBJ> & stack{ INTERNALS->loader_stack };
 			ASSERT(!stack.empty());
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
@@ -39,7 +39,7 @@ namespace ism
 
 		static void add(OBJ const & value) noexcept
 		{
-			Vector<OBJ> & stack{ INTERNALS->loader_stack };
+			List<OBJ> & stack{ INTERNALS->loader_stack };
 			ASSERT(!stack.empty());
 			LIST & list{ (LIST &)stack.back() };
 			if (!list) { list = LIST::new_(); }

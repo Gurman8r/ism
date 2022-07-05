@@ -1,6 +1,6 @@
 #include <core/version.hpp>
 
-#if (ISM_OS_WINDOWS && ISM_STARTUP_PROJECT)
+#if (SYSTEM_WINDOWS && MAIN_ENABLED)
 
 #include <main/main.hpp>
 #include <platform/windows/os_windows.hpp>
@@ -36,4 +36,4 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLin
 	return main(0, nullptr);
 }
 
-#endif // ISM_OS_WINDOWS
+#endif // SYSTEM_WINDOWS

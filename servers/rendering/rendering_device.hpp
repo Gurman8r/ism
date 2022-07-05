@@ -317,7 +317,7 @@ namespace ism
 			};
 
 			uint32_t stride{};
-			Vector<Attribute> attributes{};
+			List<Attribute> attributes{};
 
 			VertexLayout() noexcept : VertexLayout{
 				{ "Position"	, DataType_F32, 4 }, // Vec4f
@@ -340,13 +340,13 @@ namespace ism
 
 			template <class It> VertexLayout(It first, It last) noexcept : attributes{ first, last } { update(); }
 			VertexLayout(std::initializer_list<Attribute> init) noexcept : attributes{ init } { update(); }
-			VertexLayout(Vector<Attribute> const & attributes) : attributes{ attributes } { update(); }
-			VertexLayout(Vector<Attribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
+			VertexLayout(List<Attribute> const & attributes) : attributes{ attributes } { update(); }
+			VertexLayout(List<Attribute> && attributes) noexcept : attributes{ std::move(attributes) } { update(); }
 			template <size_t N> VertexLayout(Attribute const (&arr)[N]) noexcept : attributes{ &arr[0], &arr[N] } { update(); }
 		};
 
 		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) = 0;
-		virtual RID vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers) = 0;
+		virtual RID vertex_array_create(size_t vertex_count, VertexLayout const & layout, List<RID> const & buffers) = 0;
 		virtual void vertex_array_destroy(RID vertex_array) = 0;
 
 		virtual RID index_buffer_create(size_t index_count, DataType_ index_type = DataType_U32, DynamicBuffer const & data = {}) = 0;
@@ -489,7 +489,7 @@ namespace ism
 
 	public:
 		/* FRAMEBUFFER */
-		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
+		virtual RID framebuffer_create(List<RID> const & texture_attachments) = 0;
 		virtual void framebuffer_destroy(RID framebuffer) = 0;
 		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) = 0;
 
@@ -557,14 +557,14 @@ namespace ism
 		{
 			UniformType_ uniform_type{ UniformType_Image };
 			int32_t binding{};
-			Vector<RID> ids{};
+			List<RID> ids{};
 		};
 
 		template <class ... Ts
 		> using Std140 = ConstantBuffer<16, Ts...>;
 
 		virtual RID uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) = 0;
-		virtual RID uniform_set_create(Vector<Uniform> const & uniforms, RID shader) = 0;
+		virtual RID uniform_set_create(List<Uniform> const & uniforms, RID shader) = 0;
 		virtual void uniform_set_destroy(RID uniform_set) = 0;
 
 	public:
@@ -618,7 +618,7 @@ namespace ism
 			TextureSamples_ sample_count{ TextureSamples_1 };
 			bool enable_sample_shading{ false };
 			float_t min_sample_shading{ 0.f };
-			Vector<uint32_t> sample_mask{};
+			List<uint32_t> sample_mask{};
 			bool enable_alpha_to_coverage{ false };
 			bool enable_alpha_to_one{ false };
 		};
@@ -712,7 +712,7 @@ namespace ism
 
 			Color blend_constant{};
 			
-			Vector<Attachment> attachments{};
+			List<Attachment> attachments{};
 
 			static ColorBlendState create_disabled(int32_t num_attachments = 1)
 			{
@@ -764,7 +764,7 @@ namespace ism
 		};
 
 		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) = 0;
-		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
+		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, List<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
 		virtual void draw_list_bind_pipeline(DrawListID draw_list, RID pipeline) = 0;
 		virtual void draw_list_bind_uniform_set(DrawListID draw_list, RID uniform_set, size_t index) = 0;
 		virtual void draw_list_bind_vertex_array(DrawListID draw_list, RID vertex_array) = 0;

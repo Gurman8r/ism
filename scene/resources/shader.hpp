@@ -41,7 +41,7 @@ namespace ism
 
 	public:
 		String get_code() const;
-		void set_code(const String & value);
+		void set_code(String const & value);
 	};
 }
 

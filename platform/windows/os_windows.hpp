@@ -5,7 +5,7 @@
 
 #include <platform/windows/windows.hpp>
 
-static_assert(ISM_OS_WINDOWS);
+static_assert(SYSTEM_WINDOWS);
 
 namespace ism
 {
@@ -25,27 +25,39 @@ namespace ism
 		HINSTANCE get_instance() { return m_hinstance; }
 		void set_main_window(HWND value) { m_main_window = value; }
 
-	protected:
 		virtual void initialize() override;
 		virtual void finalize() override;
 		virtual void finalize_core() override;
-		virtual void set_main_loop(Ref<MainLoop> value) override;
-		virtual void delete_main_loop() override;
 
-	public:
-		virtual String get_name() const override;
 		virtual String get_stdin_string(bool block = true) override;
-		virtual String get_env(String const & key) const override;
-		virtual bool has_env(String const & key) const override;
-		virtual bool set_env(String const & key, String const & value) const override;
-		virtual Path get_cwd() const override;
-		virtual Error_ set_cwd(Path const & path) override;
-		virtual Ref<MainLoop> get_main_loop() const override;
 
-	public:
 		virtual Error_ open_dynamic_library(Path const & path, void *& instance) override;
 		virtual Error_ close_dynamic_library(void * instance) override;
 		virtual Error_ get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional = false) override;
+
+		virtual Error_ execute(Path const & path, List<String> const & args, String * pipe = nullptr, int32_t * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) override;
+		virtual Error_ create_process(Path const & path, List<String> const & args, ProcessID * child_id = nullptr) override;
+		virtual Error_ kill(ProcessID const & pid) override;
+		virtual int32_t get_process_id() const override;
+
+		virtual Path get_cwd() const override;
+		virtual Error_ set_cwd(Path const & path) override;
+		virtual Error_ shell_open(Path uri) override;
+
+		virtual String get_env(String const & key) const override;
+		virtual bool has_env(String const & key) const override;
+		virtual bool set_env(String const & key, String const & value) const override;
+
+		virtual String get_name() const override;
+		virtual String get_model_name() const;
+
+		virtual Ref<MainLoop> get_main_loop() const override;
+		virtual void set_main_loop(Ref<MainLoop> value) override;
+		virtual void delete_main_loop() override;
+
+		virtual Date get_date(bool local = false) const override;
+		virtual Time get_time(bool local = false) const override;
+		virtual TimeZoneInfo get_time_zone() const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

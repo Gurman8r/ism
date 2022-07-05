@@ -8,7 +8,7 @@
 #endif
 
 #include <glfw/glfw3.h>
-#if defined(ISM_OS_WINDOWS)
+#if defined(SYSTEM_WINDOWS)
 #	undef APIENTRY
 #	include <Windows.h>
 #	define GLFW_EXPOSE_NATIVE_WIN32
@@ -111,9 +111,9 @@ VideoMode const & DisplayServerWindows::get_desktop_video_mode() const
 	return result;
 }
 
-Vector<VideoMode> const & DisplayServerWindows::get_fullscreen_video_modes() const
+List<VideoMode> const & DisplayServerWindows::get_fullscreen_video_modes() const
 {
-	static Vector<VideoMode> result{};
+	static List<VideoMode> result{};
 	if (static bool once{}; !once && (once = true))
 	{
 		DEVMODE dm;
@@ -125,7 +125,7 @@ Vector<VideoMode> const & DisplayServerWindows::get_fullscreen_video_modes() con
 				util::bit_cast<Vec4b>(dm.dmBitsPerPel),
 				-1
 			};
-			if (!ism::has(result, mode)) { result.push_back(mode); }
+			if (!result.contains(mode)) { result.push_back(mode); }
 		}
 	}
 	return result;
@@ -281,7 +281,7 @@ Vec2d DisplayServerWindows::window_get_mouse_position(WindowID id) const
 
 void * DisplayServerWindows::window_get_native_handle(WindowID id) const
 {
-#if ISM_OS_WINDOWS
+#if SYSTEM_WINDOWS
 	return (WindowID)glfwGetWin32Window(VALIDATE((GLFWwindow *)id));
 #else
 	return (WindowID)VALIDATE((GLFWwindow *)id);

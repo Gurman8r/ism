@@ -22,7 +22,9 @@ OBJECT_EMBED(MainLoop, t)
 
 void MainLoop::initialize()
 {
-	if (STR_IDENTIFIER(initialize); m_script)
+	STR_IDENTIFIER(initialize);
+
+	if (m_script)
 	{
 		if (OBJ callback{ getattr(m_script, &ID_initialize) })
 		{
@@ -31,22 +33,13 @@ void MainLoop::initialize()
 	}
 }
 
-void MainLoop::finalize()
-{
-	if (STR_IDENTIFIER(finalize); m_script)
-	{
-		if (OBJ callback{ getattr(m_script, &ID_finalize) })
-		{
-			call_object(callback);
-		}
-	}
-}
-
 bool MainLoop::process(Duration const & dt)
 {
+	STR_IDENTIFIER(process);
+
 	bool should_close{};
 
-	if (STR_IDENTIFIER(process); m_script)
+	if (m_script)
 	{
 		if (OBJ callback{ getattr(m_script, &ID_process) })
 		{
@@ -63,9 +56,24 @@ bool MainLoop::process(Duration const & dt)
 	return should_close;
 }
 
+void MainLoop::finalize()
+{
+	STR_IDENTIFIER(finalize);
+
+	if (m_script)
+	{
+		if (OBJ callback{ getattr(m_script, &ID_finalize) })
+		{
+			call_object(callback);
+		}
+	}
+}
+
 void MainLoop::handle_event(Event const & event)
 {
-	if (STR_IDENTIFIER(handle_event); m_script)
+	STR_IDENTIFIER(handle_event);
+
+	if (m_script)
 	{
 		if (OBJ callback{ getattr(m_script, &ID_handle_event) })
 		{

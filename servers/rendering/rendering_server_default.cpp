@@ -206,7 +206,7 @@ void RenderingServerDefault::material_update(RID material, Map<StringName, Varia
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingServerDefault::mesh_create(Vector<SurfaceData> const & surfaces)
+RID RenderingServerDefault::mesh_create(List<SurfaceData> const & surfaces)
 {
 	return m_storage->mesh_create(surfaces);
 }

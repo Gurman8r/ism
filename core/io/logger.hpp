@@ -2,7 +2,7 @@
 #define _ISM_LOGGER_HPP_
 
 #include <core/string/string.hpp>
-#include <core/templates/vector.hpp>
+#include <core/templates/list.hpp>
 
 namespace ism
 {
@@ -34,10 +34,10 @@ namespace ism
 
 	class ISM_API CompositeLogger : public Logger
 	{
-		Vector<Logger *> m_loggers;
+		List<Logger *> m_loggers;
 
 	public:
-		CompositeLogger(Vector<Logger *> loggers);
+		CompositeLogger(List<Logger *> loggers);
 
 		virtual ~CompositeLogger() override;
 

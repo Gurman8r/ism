@@ -56,7 +56,7 @@ namespace ism
 
 	public:
 		/* MESH */
-		virtual RID mesh_create(Vector<SurfaceData> const & surfaces = {}) override;
+		virtual RID mesh_create(List<SurfaceData> const & surfaces = {}) override;
 		virtual RID mesh_placeholder_create() override;
 		virtual void mesh_destroy(RID mesh) override;
 		virtual void mesh_clear(RID mesh) override;

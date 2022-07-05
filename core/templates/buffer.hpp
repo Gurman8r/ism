@@ -2,7 +2,7 @@
 #define _ISM_BUFFER_HPP_
 
 #include <core/templates/array.hpp>
-#include <core/templates/vector.hpp>
+#include <core/templates/list.hpp>
 #include <core/string/string.hpp>
 #include <core/templates/mpl.hpp>
 
@@ -17,7 +17,7 @@ namespace ism
 
 	class DynamicBuffer
 	{
-		Vector<byte> m_data{};
+		List<byte> m_data{};
 
 	public:
 		using self_type			= typename DynamicBuffer;

@@ -14,7 +14,7 @@ namespace ism
 		friend class LIST;
 
 	public:
-		Vector<OBJ> m_list{};
+		List<OBJ> m_list{};
 
 		using storage_type		= decltype(m_list);
 		using iterator			= storage_type::iterator;
@@ -78,7 +78,7 @@ namespace ism
 		}
 
 		template <class Value = OBJ
-		> bool contains(Value && v) const { return ism::has(m_list, FWD_OBJ(v)); }
+		> bool contains(Value && v) const { return m_list.contains(FWD_OBJ(v)); }
 
 		template <class Value = OBJ
 		> auto find(Value && v) -> iterator { return std::find(begin(), end(), FWD_OBJ(v)); }

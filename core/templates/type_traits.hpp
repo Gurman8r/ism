@@ -61,7 +61,7 @@ namespace ism::mpl
 
 	template <class Ch> constexpr bool is_char_v{ any_of_v<
 		std::is_same<Ch, char>,
-#if ISM_CXX_20
+#if CXX_20
 		std::is_same<Ch, char8_t>,
 #endif
 		std::is_same<Ch, char16_t>,
@@ -180,7 +180,7 @@ namespace ism::mpl
 	};
 
 	template <template<class...> class Base, class T>
-#if !ISM_CC_MSVC
+#if !CC_MSVC
 	using is_template_base_of = decltype(is_template_base_of_impl<Base>::check((intrinsic_t<T> *)nullptr));
 #else
 	struct is_template_base_of : decltype(is_template_base_of_impl<Base>::check((intrinsic_t<T> *)nullptr)) {};

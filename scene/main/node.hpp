@@ -27,7 +27,7 @@ namespace ism
 	protected:
 		SceneTree *			m_tree{};
 		Node *				m_owner{};
-		Vector<Ref<Node>>	m_nodes{};
+		List<Ref<Node>>	m_nodes{};
 
 		Node(SceneTree * tree = nullptr) noexcept;
 
@@ -78,9 +78,9 @@ namespace ism
 
 	public:
 		template <class Fn = void(*)(Ref<Node> &)
-		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false)
+		> void each_child(Fn && fn, bool recursive = true, bool reverse = false)
 		{
-			auto _for_nodes = [](auto first, auto last, auto fn, bool recursive, bool reverse)
+			auto _each_child = [](auto first, auto last, auto fn, bool recursive, bool reverse)
 			{
 				for (; first != last; ++first)
 				{
@@ -95,18 +95,18 @@ namespace ism
 
 			if (!reverse)
 			{
-				_for_nodes(m_nodes.begin(), m_nodes.end(), FWD(fn), recursive, reverse);
+				_each_child(m_nodes.begin(), m_nodes.end(), FWD(fn), recursive, reverse);
 			}
 			else
 			{
-				_for_nodes(m_nodes.rbegin(), m_nodes.rend(), FWD(fn), recursive, reverse);
+				_each_child(m_nodes.rbegin(), m_nodes.rend(), FWD(fn), recursive, reverse);
 			}
 		}
 
 		template <class Pr = bool(*)(Ref<Node> const &)
-		> Ref<Node> find_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
+		> Ref<Node> find_child_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
 		{
-			auto _find_node_if = [](auto first, auto last, auto pr, bool recursive, bool reverse) noexcept -> Ref<Node>
+			auto _find_child_if = [](auto first, auto last, auto pr, bool recursive, bool reverse) noexcept -> Ref<Node>
 			{
 				if (auto const it{ std::find_if(first, last, pr) }; it != last)
 				{
@@ -127,18 +127,18 @@ namespace ism
 
 			if (!reverse)
 			{
-				return _find_node_if(m_nodes.begin(), m_nodes.end(), FWD(pr), recursive, reverse);
+				return _find_child_if(m_nodes.begin(), m_nodes.end(), FWD(pr), recursive, reverse);
 			}
 			else
 			{
-				return _find_node_if(m_nodes.rbegin(), m_nodes.rend(), FWD(pr), recursive, reverse);
+				return _find_child_if(m_nodes.rbegin(), m_nodes.rend(), FWD(pr), recursive, reverse);
 			}
 		}
 
 		template <class T
 		> Ref<T> find(bool recursive = true, bool reverse = false) const noexcept
 		{
-			return find_if([](Ref<Node> const & node) noexcept { return Ref<T>(node).is_valid(); }, recursive, reverse);
+			return find_child_if([](Ref<Node> const & node) noexcept { return Ref<T>(node).is_valid(); }, recursive, reverse);
 		}
 	};
 

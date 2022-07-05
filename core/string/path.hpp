@@ -264,7 +264,6 @@ namespace ism
 		auto stem() const noexcept -> self_type { return util::parse_stem(view()); }
 		auto extension() const noexcept -> self_type { return util::parse_extension(view()); }
 
-	public:
 		bool has_root_name() const noexcept { return !util::parse_root_name(view()).empty(); }
 		bool has_root_directory() const noexcept { return !util::parse_root_directory(view()).empty(); }
 		bool has_root_path() const noexcept { return !util::parse_root_path(view()).empty(); }

@@ -22,7 +22,7 @@ namespace ism
 
 	public:
 		virtual VideoMode const & get_desktop_video_mode() const override;
-		virtual Vector<VideoMode> const & get_fullscreen_video_modes() const override;
+		virtual List<VideoMode> const & get_fullscreen_video_modes() const override;
 
 	public:
 		virtual WindowID get_current_context() const override;

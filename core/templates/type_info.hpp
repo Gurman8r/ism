@@ -24,15 +24,15 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if ISM_CC_MSVC
+#if CC_MSVC
 #define PRETTY_FUNCTION		__FUNCSIG__
 #define PRETTY_TYPE_PREFIX	"class ism::ctti::NameView __cdecl ism::ctti::nameof<"
 #define PRETTY_TYPE_SUFFIX	">(void)"
-#elif ISM_CC_CLANG
+#elif CC_CLANG
 #define PRETTY_FUNCTION		__PRETTY_FUNCTION__
 #define PRETTY_TYPE_PREFIX	"ism::ctti::NameView ism::ctti::nameof() [T = "
 #define PRETTY_TYPE_SUFFIX	"]"
-#elif ISM_CC_GCC
+#elif CC_GCC
 #define PRETTY_FUNCTION		__PRETTY_FUNCTION__
 #define PRETTY_TYPE_PREFIX	"constexpr ism::ctti::NameView ism::ctti::nameof() [with T = "
 #define PRETTY_TYPE_SUFFIX	"]"

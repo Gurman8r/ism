@@ -459,7 +459,7 @@ namespace ism
 
 	public:
 		virtual VideoMode const & get_desktop_video_mode() const = 0;
-		virtual Vector<VideoMode> const & get_fullscreen_video_modes() const = 0;
+		virtual List<VideoMode> const & get_fullscreen_video_modes() const = 0;
 
 	public:
 		virtual WindowID get_current_context() const = 0;

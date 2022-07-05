@@ -72,7 +72,7 @@ size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
 	return data.size() / sizeof(uint32_t);
 }
 
-void load_material_textures(aiMaterial const * material, Vector<Ref<Texture>> & textures)
+void load_material_textures(aiMaterial const * material, List<Ref<Texture>> & textures)
 {
 	if (!material) { return; }
 
@@ -93,7 +93,7 @@ void load_material_textures(aiMaterial const * material, Vector<Ref<Texture>> & 
 	_load_material_texture(aiTextureType_SPECULAR, "sm"); // specular
 }
 
-void process_mesh_node(aiScene const * scene, aiNode const * node, Vector<RS::SurfaceData> & spec)
+void process_mesh_node(aiScene const * scene, aiNode const * node, List<RS::SurfaceData> & spec)
 {
 	for (size_t i = 0; i < (size_t)node->mNumMeshes; ++i)
 	{
@@ -104,7 +104,7 @@ void process_mesh_node(aiScene const * scene, aiNode const * node, Vector<RS::Su
 		s.vertex_count = load_mesh_vertices(m, s.vertex_data);
 		s.index_count = load_mesh_indices(m, s.index_data);
 
-		//Vector<Ref<Texture>> textures;
+		//List<Ref<Texture>> textures;
 		//load_material_textures(scene->mMaterials[m->mMaterialIndex], textures);
 	}
 
@@ -131,7 +131,7 @@ Error_ MeshLoader::load_from_file(Mesh & mesh, Path const & path)
 		aiProcess_GenUVCoords) };
 	SCOPE_EXIT(&ai) { ai.FreeScene(); };
 
-	Vector<RS::SurfaceData> spec;
+	List<RS::SurfaceData> spec;
 	process_mesh_node(scene, scene->mRootNode, spec);
 	mesh.m_mesh = RENDERING_SERVER->mesh_create(spec);
 	if (!mesh.m_mesh) { return Error_Unknown; }

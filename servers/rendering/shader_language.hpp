@@ -312,7 +312,7 @@ namespace ism
 
 	class ISM_API ShaderLanguage
 	{
-		mutable Vector<String> m_tokens;
+		mutable List<String> m_tokens;
 
 	public:
 		virtual ~ShaderLanguage() noexcept = default;
@@ -330,7 +330,7 @@ namespace ism
 			Token_MAX
 		};
 
-		virtual void load_tokens(Vector<String> & v) const = 0;
+		virtual void load_tokens(List<String> & v) const = 0;
 
 		String const & get_token(Token_ i) const noexcept {
 			ASSERT(i < Token_MAX);
@@ -362,7 +362,7 @@ namespace ism
 	public:
 		virtual ~ShaderLanguageGLSL() noexcept override = default;
 
-		virtual void load_tokens(Vector<String> & v) const override;
+		virtual void load_tokens(List<String> & v) const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

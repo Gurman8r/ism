@@ -25,7 +25,7 @@ namespace ism
 	public:
 		Batch<hash_t, StringName, TYPE> class_db; // class database
 
-		Vector<OBJ> loader_stack; // loader life support stack
+		List<OBJ> loader_stack; // loader life support stack
 
 		OBJ modules; // module dictionary
 

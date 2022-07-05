@@ -1,7 +1,7 @@
 #ifndef _ISM_FLAT_SET_HPP_
 #define _ISM_FLAT_SET_HPP_
 
-#include <core/templates/vector.hpp>
+#include <core/templates/list.hpp>
 
 namespace ism
 {
@@ -28,7 +28,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using storage_type				= typename Vector<value_type>;
+		using storage_type				= typename List<value_type>;
 		using init_type					= typename std::initializer_list<value_type>;
 		using pointer					= typename storage_type::pointer;
 		using const_pointer				= typename storage_type::const_pointer;

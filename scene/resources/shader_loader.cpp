@@ -95,7 +95,7 @@ public:
 
 	RD::ShaderStageData spec[RD::ShaderStage_MAX]{};
 
-	Vector<Pair<String, String>> global_defines{};
+	List<Pair<String, String>> global_defines{};
 
 	ImplShaderLoader(Json const & json)
 	{
@@ -104,7 +104,7 @@ public:
 		// global defines
 		if (auto const it{ json.find("defines") }; it != json.end() && it->is_array())
 		{
-			for (String line : it->get<Vector<String>>())
+			for (String line : it->get<List<String>>())
 			{
 				if (util::trim(line).empty()) { continue; }
 				if (size_t const i{ line.find_first_of('=') }
@@ -150,7 +150,7 @@ public:
 			// local defines
 			if (section[DEFINES] && section[DEFINES]->is_array())
 			{
-				for (String line : section[DEFINES]->get<Vector<String>>())
+				for (String line : section[DEFINES]->get<List<String>>())
 				{
 					if (util::trim(line).empty()) { continue; }
 					if (size_t const i{ line.find_first_of('=') }
@@ -168,7 +168,7 @@ public:
 			// in
 			if (section[IN] && section[IN]->is_object())
 			{
-				Vector<DynamicBuffer> order; order.resize(section[IN]->size());
+				List<DynamicBuffer> order; order.resize(section[IN]->size());
 				for (auto const & [key, value] : section[IN]->items())
 				{
 					Def const def{ key, value };
@@ -182,7 +182,7 @@ public:
 			// out
 			if (section[OUT] && section[OUT]->is_object())
 			{
-				Vector<DynamicBuffer> order; order.resize(section[OUT]->size());
+				List<DynamicBuffer> order; order.resize(section[OUT]->size());
 				for (auto const & [key, value] : section[OUT]->items())
 				{
 					Def const def{ key, value };
@@ -210,7 +210,7 @@ public:
 					// UNIFORM BUFFER
 					case "ubo"_hash: {
 						if (!def.data) { continue; }
-						Vector<DynamicBuffer> uorder; uorder.resize(def.data->size());
+						List<DynamicBuffer> uorder; uorder.resize(def.data->size());
 						for (auto const & [ukey, uvalue] : def.data->items())
 						{
 							Def const udef{ ukey, uvalue };
@@ -230,7 +230,7 @@ public:
 			if (section[MAIN] && section[MAIN]->is_array())
 			{
 				code.print("void main() {\n");
-				for (String const & line : section[MAIN]->get<Vector<String>>()) {
+				for (String const & line : section[MAIN]->get<List<String>>()) {
 					code.printf("   %.*s\n", line.size(), line.data());
 				}
 				code.print("}\n");

@@ -2,7 +2,7 @@
 #define _ISM_PERFORMANCE_HPP_
 
 #include <core/templates/duration.hpp>
-#include <core/templates/vector.hpp>
+#include <core/templates/list.hpp>
 
 namespace ism
 {
@@ -11,7 +11,7 @@ namespace ism
 		float_t			value{};
 		float_t			accum{};
 		size_t			index{};
-		Vector<float_t>	times{};
+		List<float_t>	times{};
 
 		operator float_t() const noexcept { return value; }
 

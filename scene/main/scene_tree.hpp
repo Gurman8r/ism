@@ -45,9 +45,9 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		auto get_fps() const noexcept -> FrameRateTracker const & { return m_fps; }
+		auto get_ecs() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
 
-		auto get_registry() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
+		auto get_fps() const noexcept -> FrameRateTracker const & { return m_fps; }
 
 		auto get_root() const noexcept -> Window * { return m_root; }
 

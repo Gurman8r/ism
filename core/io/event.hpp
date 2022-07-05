@@ -159,7 +159,7 @@ private:
 	// event delegate
 	template <class Ev> class EventDelegate final : public EventDelegate<Event>
 	{
-		Vector<std::function<void(Ev const &)>> m_callbacks{};
+		List<std::function<void(Ev const &)>> m_callbacks{};
 
 	public:
 		enum : EventID { ID = Ev::ID };
@@ -210,7 +210,7 @@ private:
 		int32_t m_next_handler_id{};
 		FlatMap<EventID, FlatSet<EventHandler *>> m_event_handlers{};
 		FlatMap<EventID, Ref<EventDelegate<Event>>> m_event_delegates{};
-		Vector<Ref<DummyHandler>> m_dummy_handlers{};
+		List<Ref<DummyHandler>> m_dummy_handlers{};
 
 	protected:
 		friend class EventHandler;

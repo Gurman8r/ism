@@ -80,7 +80,7 @@ namespace ism
 			RID material{};
 		};
 
-		virtual RID mesh_create(Vector<SurfaceData> const & surfaces = {}) = 0;
+		virtual RID mesh_create(List<SurfaceData> const & surfaces = {}) = 0;
 		virtual RID mesh_placeholder_create() = 0;
 		virtual void mesh_destroy(RID mesh) = 0;
 		virtual void mesh_clear(RID mesh) = 0;

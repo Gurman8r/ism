@@ -34,7 +34,7 @@ void StdLogger::logv(cstring fmt, va_list args, bool is_error)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-CompositeLogger::CompositeLogger(Vector<Logger *> loggers) : m_loggers{ std::move(loggers) }
+CompositeLogger::CompositeLogger(List<Logger *> loggers) : m_loggers{ std::move(loggers) }
 {
 }
 

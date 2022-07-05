@@ -139,7 +139,7 @@ EditorNode::EditorNode()
 	});
 	
 	// framebuffer
-	Vector<RID> fb_textures{
+	List<RID> fb_textures{
 		RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_R8G8B8_UNORM;
 			t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
@@ -228,7 +228,7 @@ void EditorNode::process(Duration const & dt)
 		material_ubo.set<3>(32.f); // shininess
 		RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
 
-		static Vector<Color> clear_colors{ Colors::magenta };
+		static List<Color> clear_colors{ Colors::magenta };
 		clear_colors[0] = rotate_hue(clear_colors[0], (float_t)dt * 10.f);
 
 		RD::DrawListID const dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };

@@ -75,12 +75,12 @@ namespace ism
 
 	private:
 		Command2D m_cmd_head{};
-		Vector<Command2D> m_cmd_buffer{};
-		Vector<FloatRect> m_rect_stack{};
-		Vector<RID> m_texture_stack{};
+		List<Command2D> m_cmd_buffer{};
+		List<FloatRect> m_rect_stack{};
+		List<RID> m_texture_stack{};
 
-		Vector<Vertex2D> m_vertex_buffer{};
-		Vector<Index2D> m_index_buffer{};
+		List<Vertex2D> m_vertex_buffer{};
+		List<Index2D> m_index_buffer{};
 		Index2D m_vertex_current_index{};
 		Vertex2D * m_vertex_write_ptr{};
 		Index2D * m_index_write_ptr{};

@@ -1,5 +1,5 @@
-#ifndef _ISM_VECTOR_HPP_
-#define _ISM_VECTOR_HPP_
+#ifndef _ISM_LIST_HPP_
+#define _ISM_LIST_HPP_
 
 #include <core/os/memory.hpp>
 
@@ -9,32 +9,28 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// vector base
+	// list base
 	template <class T
-	> ALIAS(_VectorBase) std::vector<T, PolymorphicAllocator<T>>;
+	> ALIAS(_ListBase) std::vector<T, PolymorphicAllocator<T>>;
 
-	// vector
+	// list
 	template <class T
-	> class Vector : public _VectorBase<T>
+	> class List : public _ListBase<T>
 	{
 	public:
-		using base_type = _VectorBase<T>;
+		using base_type = _ListBase<T>;
 		using base_type::base_type;
 		using base_type::operator=;
+
+		NODISCARD bool contains(T const & value) const { return end() != std::find(begin(), end(), value); }
+		NODISCARD bool contains(T && value) const noexcept { return end() != std::find(begin(), end(), FWD(value)); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// has
-	template <class V, class K
-	> bool has(Vector<V> const & l, K && value)
-	{
-		return l.end() != std::find(l.begin(), l.end(), FWD(value));
-	}
-
 	// getptr
 	template <class V, class K
-	> auto getptr(Vector<V> const & l, K && value)
+	> auto getptr(List<V> const & l, K && value)
 	{
 		if (auto const it{ std::find(l.begin(), l.end(), FWD(value)) }; it != l.end())
 		{
@@ -49,4 +45,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_VECTOR_HPP_
+#endif // !_ISM_LIST_HPP_

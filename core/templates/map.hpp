@@ -21,6 +21,9 @@ namespace ism
 		using base_type = _MapBase<K, V, Pr>;
 		using base_type::base_type;
 		using base_type::operator=;
+
+		NODISCARD bool contains(K const & key) const { return end() != find(key); }
+		NODISCARD bool contains(K && key) const noexcept { return end() != find(FWD(key)); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -41,8 +41,6 @@ void SceneTree::initialize()
 {
 	m_initialized = true;
 
-	//m_root->set_tree(this);
-
 	MainLoop::initialize();
 }
 

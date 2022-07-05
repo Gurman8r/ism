@@ -412,7 +412,7 @@ namespace ism::ecs
 
 		struct handle;
 
-		using handle_storage = typename Vector<handle>;
+		using handle_storage = typename List<handle>;
 
 		enum : size_t { id_alive, id_index, id_handle, id_bitset };
 

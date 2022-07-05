@@ -21,6 +21,9 @@ namespace ism
 		using base_type = _HashMapBase<K, V, H, E>;
 		using base_type::base_type;
 		using base_type::operator=;
+
+		NODISCARD bool contains(K const & key) const { return end() != find(key); }
+		NODISCARD bool contains(K && key) const noexcept { return end() != find(FWD(key)); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -40,12 +43,6 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
-	> bool has(HashMap<K, V, H, E> const & m, T && value)
-	{
-		return m.find(FWD(value)) != m.end();
-	}
 
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
 	> V * getptr(HashMap<K, V, H, E> & m, T && value)

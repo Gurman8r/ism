@@ -54,7 +54,7 @@ namespace ism
 
 	struct void_type {};
 
-#ifdef ISM_CC_MSVC
+#ifdef CC_MSVC
 	ALIAS(int8_t)		signed __int8;
 	ALIAS(int16_t)		signed __int16;
 	ALIAS(int32_t)		signed __int32;
@@ -86,7 +86,7 @@ namespace ism
 	ALIAS(float_t)		float32_t;
 	ALIAS(double_t)		float64_t;
 
-#if (32 == ISM_ARCH)
+#if (32 == ARCHITECTURE)
 	ALIAS(intmax_t)		int32_t;
 	ALIAS(uintmax_t)	uint32_t;
 #else
@@ -105,7 +105,7 @@ namespace ism
 
 	ALIAS(cstring)		char const *;
 	ALIAS(cwstring)		wchar_t const *;
-#if (ISM_CXX_20)
+#if (CXX_20)
 	ALIAS(c8string)		char8_t const *;
 #else
 	ALIAS(c8string)		char const *;
@@ -117,9 +117,7 @@ namespace ism
 
 	enum class byte : uint8_t
 	{
-		zero, one,
-		min = 0, null = 0,
-		max = 255, npos = 255,
+		null, one, max = 255
 	};
 
 	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
@@ -147,6 +145,20 @@ namespace ism
 	constexpr byte & operator&=(byte & a, byte const b) noexcept { return a = a & b; }
 
 	constexpr byte & operator^=(byte & a, byte const b) noexcept { return a = a ^ b; }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ALIAS(I8)	int8_t;
+	ALIAS(I16)	int16_t;
+	ALIAS(I32)	int32_t;
+	ALIAS(I64)	int64_t;
+	ALIAS(U8)	uint8_t;
+	ALIAS(U16)	uint16_t;
+	ALIAS(U32)	uint32_t;
+	ALIAS(U64)	uint64_t;
+	ALIAS(F32)	float32_t;
+	ALIAS(F64)	float64_t;
+	ALIAS(F80)	float80_t;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
