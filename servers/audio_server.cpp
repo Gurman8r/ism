@@ -1,15 +1,16 @@
 #include <servers/audio_server.hpp>
 
-using namespace ism;
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	MEMBER_IMPL(AudioServer::g_singleton) {};
 
-MEMBER_IMPL(AudioServer::g_singleton) {};
+	OBJECT_EMBED(AudioServer, t) {}
 
-OBJECT_EMBED(AudioServer, t) {}
+	AudioServer::AudioServer() { g_singleton = this; }
 
-AudioServer::AudioServer() { g_singleton = this; }
+	AudioServer::~AudioServer() {}
 
-AudioServer::~AudioServer() {}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}

@@ -44,11 +44,11 @@ namespace ism
 		virtual void delete_main_loop() = 0;
 
 	public:
-		void printf(cstring fmt, ...);
 		void printv(cstring fmt, va_list args);
+		void printf(cstring fmt, ...);
 		void printerr(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
-		void printerrf(cstring fmt, ...);
 		void printerrv(cstring fmt, va_list args);
+		void printerrf(cstring fmt, ...);
 
 		virtual String get_stdin_string(bool block = true) = 0;
 
@@ -66,9 +66,9 @@ namespace ism
 		virtual Error_ set_cwd(Path const & path);
 		virtual Error_ shell_open(Path uri);
 
-		virtual String get_env(String const & key) const = 0;
+		virtual Path get_env(String const & key) const = 0;
 		virtual bool has_env(String const & key) const = 0;
-		virtual bool set_env(String const & key, String const & value) const = 0;
+		virtual bool set_env(String const & key, Path const & value) const = 0;
 
 		virtual String get_name() const = 0;
 		virtual List<String> get_cmdline_args() const;
@@ -76,31 +76,31 @@ namespace ism
 
 		virtual Ref<MainLoop> get_main_loop() const = 0;
 
-		enum Weekday
+		enum class Weekday
 		{
-			Weekday_Sunday,
-			Weekday_Monday,
-			Weekday_Tuesday,
-			Weekday_Wednesday,
-			Weekday_Thursday,
-			Weekday_Friday,
-			Weekday_Saturday,
+			Sunday,
+			Monday,
+			Tuesday,
+			Wednesday,
+			Thursday,
+			Friday,
+			Saturday,
 		};
 
-		enum Month
+		enum class Month
 		{
-			Month_January,
-			Month_February,
-			Month_March,
-			Month_April,
-			Month_May,
-			Month_June,
-			Month_July,
-			Month_August,
-			Month_September,
-			Month_October,
-			Month_November,
-			Month_December,
+			January,
+			February,
+			March,
+			April,
+			May,
+			June,
+			July,
+			August,
+			September,
+			October,
+			November,
+			December,
 		};
 
 		struct Date

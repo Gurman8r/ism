@@ -98,7 +98,9 @@ namespace ism
 
 		STR str_name{ FWD_OBJ(name) };
 
-		return !modules.contains(str_name) ? (modules[str_name] = MODULE({ str_name })) : nullptr;
+		if (modules.contains(str_name)) { return nullptr; }
+
+		return modules[str_name] = MODULE({ str_name });
 	}
 
 	template <class Name = cstring

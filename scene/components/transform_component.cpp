@@ -1,7 +1,12 @@
 #include <scene/components/transform_component.hpp>
 
-using namespace ism;
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(TransformComponent, t) {}
+	OBJECT_EMBED(TransformComponent, t) {}
 
-TransformComponent::TransformComponent(Entity * entity) noexcept : Component{ entity } {}
+	TransformComponent::TransformComponent(Entity * entity) noexcept : Component{ entity } {}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}

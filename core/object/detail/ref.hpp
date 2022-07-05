@@ -111,20 +111,27 @@ namespace ism
 
 	public:
 		operator bool() const noexcept { return m_ptr != nullptr; }
+		
 		bool is_null() const noexcept { return m_ptr == nullptr; }
+		
 		bool is_valid() const noexcept { return m_ptr != nullptr; }
+		
 		auto ptr() const noexcept { return const_cast<T *>(m_ptr); }
 
 		auto operator*() noexcept { return m_ptr; }
+		
 		auto operator*() const noexcept { return m_ptr; }
 
 		auto operator->() noexcept { return m_ptr; }
+		
 		auto operator->() const noexcept { return m_ptr; }
 
 		template <class U> friend bool operator==(Ref const & lhs, U const * rhs) noexcept { return (void *)lhs.m_ptr == (void *)rhs; }
+		
 		template <class U> friend bool operator!=(Ref const & lhs, U const * rhs) noexcept { return (void *)lhs.m_ptr != (void *)rhs; }
 
 		template <class U> friend bool operator==(U const * lhs, Ref const & rhs) noexcept { return (void *)lhs == (void *)rhs.m_ptr; }
+		
 		template <class U> friend bool operator!=(U const * lhs, Ref const & rhs) noexcept { return (void *)lhs != (void *)rhs.m_ptr; }
 	};
 
@@ -145,7 +152,7 @@ namespace ism
 public:																									\
 	ALIAS(base_type) ism::Ref<value_type>;																\
 																										\
-	static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }		\
+	static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }					\
 																										\
 	~m_class() noexcept = default;																		\
 																										\

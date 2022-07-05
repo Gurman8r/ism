@@ -16,6 +16,8 @@ namespace ism
 
 	public:
 		virtual ~Texture() noexcept override = default;
+
+		virtual RID get_rid() const = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -30,11 +32,19 @@ namespace ism
 	public:
 		virtual ~Texture2D() noexcept override = default;
 
+		virtual RID get_rid() const = 0;
+
 		virtual int32_t get_width() const = 0;
-		
+
 		virtual int32_t get_height() const = 0;
-		
-		virtual Ref<Image> get_image() const { return nullptr; }
+
+		virtual Vec2i get_size() const;
+
+		virtual bool is_pixel_opaque(int32_t x, int32_t y) const;
+
+		virtual bool has_alpha() const = 0;
+
+		virtual Ref<Image> get_image() const;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -46,7 +56,7 @@ namespace ism
 		RID			m_texture{};
 		int32_t		m_width{};
 		int32_t		m_height{};
-		Ref<Image>	m_image{};
+		Ref<Image>	m_image_cache{};
 
 	public:
 		ImageTexture() noexcept {}
@@ -57,12 +67,14 @@ namespace ism
 		
 		virtual ~ImageTexture() override;
 
-		virtual RID get_rid() const override { return m_texture; }
+		virtual RID get_rid() const override;
+
+		virtual int32_t get_width() const override;
 		
-		virtual int32_t get_width() const override { return m_width; }
-		
-		virtual int32_t get_height() const override { return m_height; }
-		
+		virtual int32_t get_height() const override;
+
+		virtual bool has_alpha() const override;
+
 		virtual Ref<Image> get_image() const override;
 
 		void update(Ref<Image> const & image, bool immediate = false);
@@ -78,6 +90,8 @@ namespace ism
 		Texture3D();
 
 		virtual ~Texture3D() override;
+
+		virtual RID get_rid() const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -90,6 +104,8 @@ namespace ism
 		TextureCube();
 
 		virtual ~TextureCube() override;
+
+		virtual RID get_rid() const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

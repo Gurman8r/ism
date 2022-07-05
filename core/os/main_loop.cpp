@@ -1,85 +1,86 @@
 #include <core/os/main_loop.hpp>
 
-using namespace ism;
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-OBJECT_EMBED(MainLoop, t)
+namespace ism
 {
-	t.tp_install = CLASS_INSTALLER(MainLoop, t)
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	OBJECT_EMBED(MainLoop, t)
 	{
-		return t
-			.def("initialize", &MainLoop::initialize)
-			.def("process", &MainLoop::process)
-			.def("finalize", &MainLoop::finalize)
-			.def("handle_event", &MainLoop::handle_event)
-			.def("set_startup_script", &MainLoop::set_startup_script)
-			;
-	};
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void MainLoop::initialize()
-{
-	STR_IDENTIFIER(initialize);
-
-	if (m_script)
-	{
-		if (OBJ callback{ getattr(m_script, &ID_initialize) })
+		t.tp_install = CLASS_INSTALLER(MainLoop, t)
 		{
-			call_object(callback);
-		}
+			return t
+				.def("initialize", &MainLoop::initialize)
+				.def("process", &MainLoop::process)
+				.def("finalize", &MainLoop::finalize)
+				.def("handle_event", &MainLoop::handle_event)
+				.def("set_startup_script", &MainLoop::set_startup_script)
+				;
+		};
 	}
-}
 
-bool MainLoop::process(Duration const & dt)
-{
-	STR_IDENTIFIER(process);
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool should_close{};
-
-	if (m_script)
+	void MainLoop::initialize()
 	{
-		if (OBJ callback{ getattr(m_script, &ID_process) })
+		STR_IDENTIFIER(initialize);
+
+		if (m_script)
 		{
-			static FloatObject arg0; arg0 = dt.count();
-			static ListObject args{ &arg0, };
-			OBJ result{ call_object(callback, &args) };
-			if (result && result.cast<bool>())
+			if (OBJ callback{ getattr(m_script, &ID_initialize) })
 			{
-				should_close = true;
+				call_object(callback);
 			}
 		}
 	}
 
-	return should_close;
-}
-
-void MainLoop::finalize()
-{
-	STR_IDENTIFIER(finalize);
-
-	if (m_script)
+	bool MainLoop::process(Duration const & dt)
 	{
-		if (OBJ callback{ getattr(m_script, &ID_finalize) })
+		STR_IDENTIFIER(process);
+
+		bool should_close{};
+
+		if (m_script)
 		{
-			call_object(callback);
+			if (OBJ callback{ getattr(m_script, &ID_process) })
+			{
+				static FloatObject arg0; arg0 = dt.count();
+				static ListObject args{ &arg0, };
+				OBJ result{ call_object(callback, &args) };
+				if (result && result.cast<bool>())
+				{
+					should_close = true;
+				}
+			}
+		}
+
+		return should_close;
+	}
+
+	void MainLoop::finalize()
+	{
+		STR_IDENTIFIER(finalize);
+
+		if (m_script)
+		{
+			if (OBJ callback{ getattr(m_script, &ID_finalize) })
+			{
+				call_object(callback);
+			}
 		}
 	}
-}
 
-void MainLoop::handle_event(Event const & event)
-{
-	STR_IDENTIFIER(handle_event);
-
-	if (m_script)
+	void MainLoop::handle_event(Event const & event)
 	{
-		if (OBJ callback{ getattr(m_script, &ID_handle_event) })
+		STR_IDENTIFIER(handle_event);
+
+		if (m_script)
 		{
-			callback((Event &)event);
+			if (OBJ callback{ getattr(m_script, &ID_handle_event) })
+			{
+				callback((Event &)event);
+			}
 		}
 	}
-}
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}

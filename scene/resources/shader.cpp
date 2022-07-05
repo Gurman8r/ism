@@ -1,24 +1,29 @@
 #include <scene/resources/shader_loader.hpp>
 
-using namespace ism;
-
-OBJECT_EMBED(Shader, t) {}
-
-Shader::~Shader()
+namespace ism
 {
-	if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); m_shader = nullptr; }
-}
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error_ Shader::reload_from_file()
-{
-	return ShaderLoader::load_from_file(*this, get_path());
-}
+	OBJECT_EMBED(Shader, t) {}
 
-String Shader::get_code() const
-{
-	return {};
-}
+	Shader::~Shader()
+	{
+		if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); m_shader = nullptr; }
+	}
 
-void Shader::set_code(String const & value)
-{
+	Error_ Shader::reload_from_file()
+	{
+		return ShaderLoader::load_from_file(*this, get_path());
+	}
+
+	String Shader::get_code() const
+	{
+		return {};
+	}
+
+	void Shader::set_code(String const & value)
+	{
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

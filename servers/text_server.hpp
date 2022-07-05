@@ -45,6 +45,8 @@ namespace ism
 
 		virtual int32_t get_height() const override { return m_bounds.height(); }
 
+		virtual bool has_alpha() const override { return false; }
+
 		virtual Ref<Image> get_image() const override;
 	};
 

@@ -1,13 +1,18 @@
 #include <core/input/input.hpp>
 
-using namespace ism;
-
-MEMBER_IMPL(Input::g_singleton) {};
-
-OBJECT_EMBED(Input, t)
+namespace ism
 {
-	t.tp_install = CLASS_INSTALLER(Input, t)
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	MEMBER_IMPL(Input::g_singleton) {};
+
+	OBJECT_EMBED(Input, t)
 	{
-		return t;
-	};
+		t.tp_install = CLASS_INSTALLER(Input, t)
+		{
+			return t;
+		};
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

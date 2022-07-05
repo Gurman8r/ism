@@ -1,22 +1,23 @@
 #include <core/object/dict_object.hpp>
 #include <core/object/detail/class.hpp>
 
-using namespace ism;
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-OBJECT_EMBED(DictObject, t)
+namespace ism
 {
-	t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)DICT(self).size(); };
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	t.tp_install = CLASS_INSTALLER(DictObject, t)
+	OBJECT_EMBED(DictObject, t)
 	{
-		return t
+		t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)DICT(self).size(); };
 
-			.def("__contains__", &DictObject::contains<OBJ const &>)
+		t.tp_install = CLASS_INSTALLER(DictObject, t)
+		{
+			return t
 
-			;
-	};
+				.def("__contains__", &DictObject::contains<OBJ const &>)
+
+				;
+		};
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

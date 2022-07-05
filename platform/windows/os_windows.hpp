@@ -44,9 +44,9 @@ namespace ism
 		virtual Error_ set_cwd(Path const & path) override;
 		virtual Error_ shell_open(Path uri) override;
 
-		virtual String get_env(String const & key) const override;
+		virtual Path get_env(String const & key) const override;
 		virtual bool has_env(String const & key) const override;
-		virtual bool set_env(String const & key, String const & value) const override;
+		virtual bool set_env(String const & key, Path const & value) const override;
 
 		virtual String get_name() const override;
 		virtual String get_model_name() const;
@@ -58,6 +58,8 @@ namespace ism
 		virtual Date get_date(bool local = false) const override;
 		virtual Time get_time(bool local = false) const override;
 		virtual TimeZoneInfo get_time_zone() const override;
+
+		virtual void debug_break() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

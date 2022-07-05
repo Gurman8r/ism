@@ -1,48 +1,49 @@
 #include <core/object/method_object.hpp>
 #include <core/object/detail/class.hpp>
 
-using namespace ism;
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-OBJECT_EMBED(MethodObject, t)
+namespace ism
 {
-	t.tp_dictoffset = offsetof(MethodObject, m_dict);
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
-
-	t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
-
-	t.tp_install = CLASS_INSTALLER(MethodObject, t)
+	OBJECT_EMBED(MethodObject, t)
 	{
-		return t;
-	};
-}
+		t.tp_dictoffset = offsetof(MethodObject, m_dict);
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
-OBJ MethodObject::method_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
-{
-	if (!METHOD::check_(callable)) { return nullptr; }
-	OBJ & self{ ((METHOD &)callable)->m_self };
-	OBJ & func{ ((METHOD &)callable)->m_func };
-	vectorcallfunc vcall{ get_vectorcall_func(func) };
-	if (argc == 0)
-	{
-		return vcall(func, &self, 1);
+		t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
+
+		t.tp_install = CLASS_INSTALLER(MethodObject, t)
+		{
+			return t;
+		};
 	}
-	else
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	OBJ MethodObject::method_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
 	{
-		ASSERT("too many arguments" && (argc + 1) < MAX_ARGUMENTS);
-		
-		OBJ stack[MAX_ARGUMENTS]{};
+		if (!METHOD::check_(callable)) { return nullptr; }
+		OBJ & self{ ((METHOD &)callable)->m_self };
+		OBJ & func{ ((METHOD &)callable)->m_func };
+		vectorcallfunc vcall{ get_vectorcall_func(func) };
+		if (argc == 0)
+		{
+			return vcall(func, &self, 1);
+		}
+		else
+		{
+			ASSERT("too many arguments" && (argc + 1) < MAX_ARGUMENTS);
 
-		stack[0] = self;
-		
-		std::copy(argv, argv + 1, stack + 1);
-		
-		return vcall(func, stack, argc + 1);
+			OBJ stack[MAX_ARGUMENTS]{};
+
+			stack[0] = self;
+
+			std::copy(argv, argv + 1, stack + 1);
+
+			return vcall(func, stack, argc + 1);
+		}
 	}
-}
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}

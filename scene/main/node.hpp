@@ -25,8 +25,8 @@ namespace ism
 		friend class SceneTree;
 
 	protected:
-		SceneTree *			m_tree{};
-		Node *				m_owner{};
+		SceneTree *		m_tree{};
+		Node *			m_owner{};
 		List<Ref<Node>>	m_nodes{};
 
 		Node(SceneTree * tree = nullptr) noexcept;
@@ -88,7 +88,7 @@ namespace ism
 
 					if (recursive)
 					{
-						(*first)->for_nodes(fn, true, reverse);
+						(*first)->each_child(fn, true, reverse);
 					}
 				}
 			};

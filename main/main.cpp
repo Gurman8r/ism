@@ -196,7 +196,8 @@ bool Main::start()
 bool Main::iteration()
 {
 	++g_iterating; SCOPE_EXIT(&) { --g_iterating; };
-
+	
+	// iteration timer
 	Timer const loop_timer{ true };
 	static Duration delta_time{ 16_ms };
 	SCOPE_EXIT(&) { delta_time = loop_timer.elapsed(); };
@@ -205,27 +206,43 @@ bool Main::iteration()
 
 	bool should_close{ false };
 
+	// poll events
 	g_display->poll_events();
 
+	// update input state
 	static Vec2 last_mouse_pos{};
 	g_input->m_state.mouse_delta = g_input->m_state.mouse_pos - last_mouse_pos;
 	last_mouse_pos = g_input->m_state.mouse_pos;
 	for (size_t i = 0; i < MouseButton_MAX; ++i) {
-		g_input->m_state.mouse_down_duration[i] = (g_input->m_state.mouse_down[i] ? (g_input->m_state.mouse_down_duration[i] < 0.f ? 0.f : g_input->m_state.mouse_down_duration[i] + delta_time) : -1.f);
+		g_input->m_state.mouse_down_duration[i] = (g_input->m_state.mouse_down[i]
+			? (g_input->m_state.mouse_down_duration[i] < 0.f
+				? 0.f
+				: g_input->m_state.mouse_down_duration[i] + delta_time)
+			: -1.f);
 	}
 	for (size_t i = 0; i < KeyCode_MAX; ++i) {
-		g_input->m_state.keys_down_duration[i] = (g_input->m_state.keys_down[i] ? (g_input->m_state.keys_down_duration[i] < 0.f ? 0.f : g_input->m_state.keys_down_duration[i] + delta_time) : -1.f);
+		g_input->m_state.keys_down_duration[i] = (g_input->m_state.keys_down[i]
+			? (g_input->m_state.keys_down_duration[i] < 0.f
+				? 0.f
+				: g_input->m_state.keys_down_duration[i] + delta_time)
+			: -1.f);
 	}
-	SCOPE_EXIT(&) { g_input->m_state.scroll = {}; g_input->m_state.last_char = 0; };
+	SCOPE_EXIT(&) {
+		g_input->m_state.scroll = {};
+		g_input->m_state.last_char = 0;
+	};
 
+	// update main loop
 	ImGui_NewFrame();
 	if (SYSTEM->get_main_loop()->process(delta_time)) { should_close = true; }
 	ImGui::Render();
 
+	// render
 	RENDERING_DEVICE->draw_list_begin_for_screen(g_display->get_current_context());
 	ImGui_RenderDrawData(&g_imgui->Viewports[0]->DrawDataP);
 	RENDERING_DEVICE->draw_list_end();
 
+	// update imgui platform windows
 	if (g_imgui->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
 		WindowID backup_context{ g_display->get_current_context() };
 		ImGui::UpdatePlatformWindows();

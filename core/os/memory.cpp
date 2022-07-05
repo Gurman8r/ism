@@ -11,109 +11,117 @@
 #define CLEAR_FINAL_ALLOCATIONS 0
 #endif
 
-using namespace ism;
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-static struct MemoryTracker final
+namespace ism
 {
-	size_t index{};
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum { ID_Index, ID_Size, ID_Addr, ID_Desc };
-
-	Batch<size_t, size_t, void *, cstring> records{};
-
-	~MemoryTracker()
+	// memory tracker
+	static struct MemoryTracker final
 	{
-#if SHOW_FINAL_ALLOCATIONS
-		if (!records.empty())
-		{
-			std::cerr << "\nMEMORY LEAKS DETECTED:\n";
+		size_t index{};
 
-			for (size_t i = 0; i < records.size(); ++i)
+		enum { ID_Index, ID_Size, ID_Addr, ID_Desc };
+
+		Batch<size_t, size_t, void *, cstring> records{};
+
+		~MemoryTracker()
+		{
+#if SHOW_FINAL_ALLOCATIONS
+			if (!records.empty())
 			{
-				records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
+				std::cerr << "\nMEMORY LEAKS DETECTED:\n";
+
+				for (size_t i = 0; i < records.size(); ++i)
 				{
-					std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr;
-					if (desc) { std::cerr << " | desc:\"" << desc; }
-					std::cerr << "\"\n";
-				});
+					records.expand_all(i, [&
+					](size_t index, size_t size, void * addr, cstring desc)
+					{
+						std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr;
+						if (desc) { std::cerr << " | desc:\"" << desc; }
+						std::cerr << "\"\n";
+					});
+				}
+#if SYSTEM_WINDOWS
+				std::system("pause");
+#endif // SYSTEM_WINDOWS
 			}
-		}
 #endif
 
 #if CLEAR_FINAL_ALLOCATIONS
-		while (!records.empty()) { memfree(records.back<ID_Addr>()); }
+			while (!records.empty()) { memfree(records.back<ID_Addr>()); }
 #else
-		ASSERT("MEMORY LEAKS DETECTED" && g_memory_tracker.records.empty());
+			ASSERT("MEMORY LEAKS DETECTED" && g_memory_tracker.records.empty());
 #endif
-	}
-}
-g_memory_tracker{};
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-void * Memory::alloc_static(size_t size, cstring desc)
-{
-	return std::get<MemoryTracker::ID_Addr>(g_memory_tracker.records.push_back
-	(
-		++g_memory_tracker.index,
-		size,
-		std::pmr::get_default_resource()->allocate(size),
-		desc
-	));
-}
-
-void * Memory::realloc_static(void * ptr, size_t oldsz, size_t newsz)
-{
-	if (newsz == 0)
-	{
-		free_static(ptr);
-
-		return nullptr;
-	}
-	else if (ptr == nullptr)
-	{
-		return alloc_static(newsz);
-	}
-	else if (newsz <= oldsz)
-	{
-		return ptr;
-	}
-	else
-	{
-		void * temp{ alloc_static(newsz) };
-		if (temp)
-		{
-			copymem(temp, ptr, oldsz);
-
-			free_static(ptr);
 		}
-		return temp;
 	}
-}
+	g_memory_tracker{};
 
-void Memory::free_static(void * ptr)
-{
-	if (size_t const i{ g_memory_tracker.records.index_of<MemoryTracker::ID_Addr>(ptr) }
-	; i != g_memory_tracker.records.npos)
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void * Memory::alloc_static(size_t size_in_bytes, cstring desc)
 	{
-		size_t const size{ g_memory_tracker.records.get<MemoryTracker::ID_Size>(i) };
-
-		std::pmr::get_default_resource()->deallocate(ptr, size);
-
-		g_memory_tracker.records.erase(i);
+		return std::get<MemoryTracker::ID_Addr>(g_memory_tracker.records.push_back
+		(
+			++g_memory_tracker.index,
+			size_in_bytes,
+			std::pmr::get_default_resource()->allocate(size_in_bytes),
+			desc
+		));
 	}
+
+	void * Memory::realloc_static(void * ptr, size_t old_size, size_t new_size)
+	{
+		if (new_size == 0)
+		{
+			free_static(ptr);
+
+			return nullptr;
+		}
+		else if (ptr == nullptr)
+		{
+			return alloc_static(new_size);
+		}
+		else if (new_size <= old_size)
+		{
+			return ptr;
+		}
+		else
+		{
+			void * temp{ alloc_static(new_size) };
+			if (temp)
+			{
+				copymem(temp, ptr, old_size);
+
+				free_static(ptr);
+			}
+			return temp;
+		}
+	}
+
+	void Memory::free_static(void * ptr)
+	{
+		if (auto const i{ g_memory_tracker.records.index_of<MemoryTracker::ID_Addr>(ptr) }
+		; i != g_memory_tracker.records.npos)
+		{
+			auto const size_in_bytes{ g_memory_tracker.records.get<MemoryTracker::ID_Size>(i) };
+
+			std::pmr::get_default_resource()->deallocate(ptr, size_in_bytes);
+
+			g_memory_tracker.records.erase(i);
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void * operator new(size_t size, ism::cstring desc)
+void * operator new(ism::size_t size, ism::cstring desc)
 {
 	return ism::Memory::alloc_static(size, desc);
 }
 
-void * operator new(size_t size, void * (*alloc_fn)(size_t))
+void * operator new(ism::size_t size, void * (*alloc_fn)(ism::size_t))
 {
 	return alloc_fn(size);
 }
@@ -123,7 +131,7 @@ void operator delete(void * ptr, ism::cstring desc)
 	CRASH("this should never be called");
 }
 
-void operator delete(void * ptr, void * (*alloc_fn)(size_t))
+void operator delete(void * ptr, void * (*alloc_fn)(ism::size_t))
 {
 	CRASH("this should never be called");
 }

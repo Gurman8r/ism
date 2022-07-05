@@ -97,9 +97,9 @@ namespace ism
 		return Error_Unknown;
 	}
 
-	String OS_Windows::get_env(String const & key) const
+	Path OS_Windows::get_env(String const & key) const
 	{
-		return String{};
+		return ""_path;
 	}
 
 	bool OS_Windows::has_env(String const & key) const
@@ -107,7 +107,7 @@ namespace ism
 		return false;
 	}
 
-	bool OS_Windows::set_env(String const & key, String const & value) const
+	bool OS_Windows::set_env(String const & key, Path const & value) const
 	{
 		return false;
 	}
@@ -119,7 +119,7 @@ namespace ism
 
 	String OS_Windows::get_model_name() const
 	{
-		return String();
+		return ""_s;
 	}
 
 	Ref<MainLoop> OS_Windows::get_main_loop() const
@@ -139,17 +139,22 @@ namespace ism
 
 	OS::Date OS_Windows::get_date(bool local) const
 	{
-		return Date();
+		return Date{};
 	}
 
 	OS::Time OS_Windows::get_time(bool local) const
 	{
-		return Time();
+		return Time{};
 	}
 
 	OS::TimeZoneInfo OS_Windows::get_time_zone() const
 	{
-		return TimeZoneInfo();
+		return TimeZoneInfo{};
+	}
+
+	void OS_Windows::debug_break()
+	{
+		_CSTD __debugbreak();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

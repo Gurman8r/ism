@@ -1,7 +1,12 @@
 #include <scene/gui/panel.hpp>
 
-using namespace ism;
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(Panel, t) {}
+	OBJECT_EMBED(Panel, t) {}
 
-Panel::~Panel() {}
+	Panel::~Panel() {}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}

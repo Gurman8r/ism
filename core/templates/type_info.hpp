@@ -55,16 +55,28 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// nameof
-	template <class T> constexpr StringView nameof_v
-	{
-		ctti::nameof<T>()
+	// nameof_t
+	template <class T
+	> struct nameof_t {
+		static constexpr StringView value{ ctti::nameof<T>() };
 	};
 
-	// hashof
-	template <class T> constexpr hash_t hashof_v
-	{
-		nameof_v<T>.hash_code()
+	// nameof_v
+	template <class T
+	> constexpr StringView nameof_v{
+		nameof_t<T>::value
+	};
+
+	// hashof_t
+	template <class T
+	> struct hashof_t {
+		static constexpr hash_t value{ nameof_v<T>.hash_code() };
+	};
+
+	// hashof_v
+	template <class T
+	> constexpr hash_t hashof_v{
+		hashof_t<T>::value
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

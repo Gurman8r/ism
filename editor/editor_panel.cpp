@@ -1,39 +1,44 @@
 #include <editor/editor_panel.hpp>
 
-using namespace ism;
-
-OBJECT_EMBED(EditorPanel, t) {}
-
-EditorPanel::EditorPanel(cstring name, bool start_open, ImGuiWindowFlags flags)
-	: m_name	{ name }
-	, m_is_open	{ start_open }
-	, m_flags	{ flags }
-	, m_window	{}
+namespace ism
 {
-}
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EditorPanel::~EditorPanel() {}
+	OBJECT_EMBED(EditorPanel, t) {}
 
-bool EditorPanel::begin_window()
-{
-	ImGui::PushID(this);
-
-	bool const open{ ImGui::Begin(m_name, &m_is_open, m_flags) };
-
-	if (open)
+	EditorPanel::EditorPanel(cstring name, bool start_open, ImGuiWindowFlags flags)
+		: m_name{ name }
+		, m_is_open{ start_open }
+		, m_flags{ flags }
+		, m_window{}
 	{
-		if (!m_window)
-		{
-			m_window = ImGui::GetCurrentContext()->CurrentWindow;
-		}
 	}
 
-	return open;
-}
+	EditorPanel::~EditorPanel() {}
 
-void EditorPanel::end_window()
-{
-	ImGui::End();
+	bool EditorPanel::begin_window()
+	{
+		ImGui::PushID(this);
 
-	ImGui::PopID();
+		bool const open{ ImGui::Begin(m_name, &m_is_open, m_flags) };
+
+		if (open)
+		{
+			if (!m_window)
+			{
+				m_window = ImGui::GetCurrentContext()->CurrentWindow;
+			}
+		}
+
+		return open;
+	}
+
+	void EditorPanel::end_window()
+	{
+		ImGui::End();
+
+		ImGui::PopID();
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

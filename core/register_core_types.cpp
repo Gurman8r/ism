@@ -37,7 +37,6 @@ void ism::register_core_types()
 		Event,
 		EventHandler,
 		DummyHandler,
-		EventDelegate<Event>,
 		EventBus,
 
 		MainLoop

@@ -14,9 +14,9 @@ namespace ism
 	class ISM_API Memory final
 	{
 	public:
-		static void * alloc_static(size_t size, cstring desc = "");
+		static void * alloc_static(size_t size_in_bytes, cstring desc = "");
 
-		static void * realloc_static(void * ptr, size_t oldsz, size_t newsz);
+		static void * realloc_static(void * ptr, size_t old_size, size_t new_size);
 
 		static void free_static(void * ptr);
 	};
@@ -27,34 +27,34 @@ namespace ism
 #define memalloc \
 		(ism::Memory::alloc_static)
 
-#define memrealloc(ptr, size) \
-		(ism::Memory::realloc_static(ptr, size, size))
+#define memrealloc(ptr, size_in_bytes) \
+		(ism::Memory::realloc_static((size_in_bytes), (size), (size)))
 
-#define memrealloc_sized(ptr, oldsz, newsz) \
-		(ism::Memory::realloc_static(ptr, oldsz, newsz))
+#define memrealloc_sized(ptr, old_size, new_size) \
+		(ism::Memory::realloc_static((ptr), (old_size), (new_size)))
 
 #define memfree \
 		(ism::Memory::free_static)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// new
+// operator new
 
-ISM_API_FUNC(void *) operator new(size_t size, ism::cstring desc);
+ISM_API_FUNC(void *) operator new(ism::size_t size, ism::cstring desc);
 
-ISM_API_FUNC(void *) operator new(size_t size, void * (*alloc_fn)(size_t));
+ISM_API_FUNC(void *) operator new(ism::size_t size, void * (*alloc_fn)(ism::size_t));
 
-FORCE_INLINE void * operator new(size_t size, void * ptr, size_t check, ism::cstring desc) { return ptr; }
+FORCE_INLINE void * operator new(ism::size_t size, void * ptr, ism::size_t check, ism::cstring desc) { return ptr; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// delete
+// operator delete
 
 ISM_API_FUNC(void) operator delete(void * ptr, ism::cstring desc);
 
-ISM_API_FUNC(void) operator delete(void * ptr, void * (*alloc_fn)(size_t));
+ISM_API_FUNC(void) operator delete(void * ptr, void * (*alloc_fn)(ism::size_t));
 
-FORCE_INLINE void operator delete(void * placement, void * ptr, size_t check, ism::cstring desc) {}
+FORCE_INLINE void operator delete(void * placement, void * ptr, ism::size_t check, ism::cstring desc) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -72,8 +72,12 @@ namespace ism
 		return value;
 	}
 
+#ifndef MEMNEW_DESC
+#define MEMNEW_DESC(T) ""
+#endif
+
 #define memnew(T) \
-		(ism::_post_initialize(new ("") T))
+		(ism::_post_initialize(new (MEMNEW_DESC(T)) T))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

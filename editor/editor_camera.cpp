@@ -1,11 +1,12 @@
 #include <editor/editor_camera.hpp>
 
-using namespace ism;
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	OBJECT_EMBED(EditorCamera, t) {}
 
-OBJECT_EMBED(EditorCamera, t) {}
+	EditorCamera::~EditorCamera() {}
 
-EditorCamera::~EditorCamera() {}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}

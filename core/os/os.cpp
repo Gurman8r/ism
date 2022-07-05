@@ -46,6 +46,11 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	void OS::printv(cstring fmt, va_list args)
+	{
+		m_logger->logv(fmt, args, false);
+	}
+
 	void OS::printf(cstring fmt, ...)
 	{
 		va_list args;
@@ -54,14 +59,14 @@ namespace ism
 		va_end(args);
 	}
 
-	void OS::printv(cstring fmt, va_list args)
-	{
-		m_logger->logv(fmt, args, false);
-	}
-
 	void OS::printerr(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
 	{
 		m_logger->log_error(func, file, line, desc, message, type);
+	}
+
+	void OS::printerrv(cstring fmt, va_list args)
+	{
+		m_logger->logv(fmt, args, true);
 	}
 
 	void OS::printerrf(cstring fmt, ...)
@@ -70,11 +75,6 @@ namespace ism
 		va_start(args, fmt);
 		printerrv(fmt, args);
 		va_end(args);
-	}
-
-	void OS::printerrv(cstring fmt, va_list args)
-	{
-		m_logger->logv(fmt, args, true);
 	}
 
 	Path OS::get_executable_path() const

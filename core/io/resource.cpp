@@ -1,19 +1,24 @@
 #include <core/io/resource.hpp>
 
-using namespace ism;
-
-OBJECT_EMBED(Resource, t, TypeFlags_IsAbstract)
+namespace ism
 {
-}
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error_ Resource::reload_from_file()
-{
-	return Error_None;
-}
+	OBJECT_EMBED(Resource, t, TypeFlags_IsAbstract)
+	{
+	}
 
-void Resource::set_path(Path const & value, bool take_over)
-{
-	if (m_path_cache == value) { return; }
+	Error_ Resource::reload_from_file()
+	{
+		return Error_None;
+	}
 
-	m_path_cache = value;
+	void Resource::set_path(Path const & value, bool take_over)
+	{
+		if (m_path_cache == value) { return; }
+
+		m_path_cache = value;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -1,7 +1,12 @@
 #include <scene/gui/gui_node.hpp>
 
-using namespace ism;
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(GuiNode, t) {}
+	OBJECT_EMBED(GuiNode, t) {}
 
-GuiNode::~GuiNode() {}
+	GuiNode::~GuiNode() {}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}

@@ -1,5 +1,10 @@
 #include <core/input/input_event.hpp>
 
-using namespace ism;
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(InputEvent, t) {}
+	OBJECT_EMBED(InputEvent, t) {}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}

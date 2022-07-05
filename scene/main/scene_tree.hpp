@@ -51,14 +51,14 @@ namespace ism
 
 		auto get_root() const noexcept -> Window * { return m_root; }
 
-		auto get_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
+		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
 
 	public:
 		template <class Fn = void(*)(Ref<Node> &)
-		> void for_nodes(Fn && fn, bool recursive = true, bool reverse = false) noexcept {
+		> void each_child(Fn && fn, bool recursive = true, bool reverse = false) noexcept {
 			if (!m_root) { return; }
 			fn((Ref<Node> &)m_root);
-			m_root->for_nodes(fn, recursive, reverse);
+			m_root->each_child(fn, recursive, reverse);
 		}
 
 	protected:
