@@ -8,9 +8,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// scene renderer
-	class ISM_API RendererSceneRenderer : public BaseObject
+	class ISM_API RendererSceneRenderer : public Object
 	{
-		OBJECT_COMMON(RendererSceneRenderer, BaseObject);
+		OBJECT_COMMON(RendererSceneRenderer, Object);
 
 		friend class RenderingServerDefault;
 

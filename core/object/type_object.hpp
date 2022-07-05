@@ -9,7 +9,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type object
-	class ISM_API TypeObject : public BaseObject
+	class ISM_API TypeObject : public Object
 	{
 	private:
 		friend class TYPE;
@@ -140,7 +140,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// type delete
-	template <> struct DefaultDelete<TypeObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<TypeObject> : DefaultDelete<Object> {};
 
 	// type check
 #define OBJECT_CHECK_TYPE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Type_Subclass))

@@ -9,9 +9,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class AudioServer : public BaseObject
+	class AudioServer : public Object
 	{
-		OBJECT_COMMON(AudioServer, BaseObject);
+		OBJECT_COMMON(AudioServer, Object);
 
 		static AudioServer * g_singleton;
 

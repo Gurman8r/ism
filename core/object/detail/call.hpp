@@ -191,7 +191,7 @@ namespace ism
 
 		ReturnPolicy_ policy{ ReturnPolicy_AutomaticReference };
 
-		BaseObject * scope{}, * sibling{};
+		Object * scope{}, * sibling{};
 
 		FunctionRecord * next{};
 

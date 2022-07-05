@@ -7,9 +7,9 @@
 namespace ism
 {
 	// function object
-	class ISM_API FunctionObject : public BaseObject
+	class ISM_API FunctionObject : public Object
 	{
-		OBJECT_COMMON(FunctionObject, BaseObject);
+		OBJECT_COMMON(FunctionObject, Object);
 
 		friend class FUNCTION;
 
@@ -28,7 +28,7 @@ namespace ism
 	};
 
 	// function delete
-	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<FunctionObject> : DefaultDelete<Object> {};
 
 	// function check
 #define OBJECT_CHECK_FUNCTION(o) (isinstance<FUNCTION>(o))

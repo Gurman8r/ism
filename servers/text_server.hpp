@@ -55,9 +55,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API TextServer : public BaseObject
+	class ISM_API TextServer : public Object
 	{
-		OBJECT_COMMON(TextServer, BaseObject);
+		OBJECT_COMMON(TextServer, Object);
 
 		static TextServer * g_singleton;
 

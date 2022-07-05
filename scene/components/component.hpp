@@ -7,9 +7,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Component : public BaseObject
+	class ISM_API Component : public Object
 	{
-		OBJECT_COMMON(Component, BaseObject);
+		OBJECT_COMMON(Component, Object);
 
 		Entity * m_entity{};
 

@@ -70,9 +70,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// input
-	class ISM_API Input : public BaseObject
+	class ISM_API Input : public Object
 	{
-		OBJECT_COMMON(Input, BaseObject);
+		OBJECT_COMMON(Input, Object);
 
 		friend class Main;
 

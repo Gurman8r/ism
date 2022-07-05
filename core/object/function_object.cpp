@@ -29,7 +29,7 @@ FunctionObject::FunctionObject(vectorcallfunc vectorcall) : m_dict{ DICT::new_()
 
 OBJ FunctionObject::cpp_function() const
 {
-	return CPP_FUNCTION::check_((BaseObject *)this) ? CPP_FUNCTION((CppFunctionObject *)this) : nullptr;
+	return CPP_FUNCTION::check_((Object *)this) ? CPP_FUNCTION((CppFunctionObject *)this) : nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -8,26 +8,10 @@ using namespace ism;
 
 void ism::register_core_types()
 {
-	ASSERT(typeof<BaseObject>().ready());
-	ASSERT(typeof<TypeObject>().ready());
-	ASSERT(typeof<IntObject>().ready());
-	ASSERT(typeof<FloatObject>().ready());
-	ASSERT(typeof<StringObject>().ready());
-	ASSERT(typeof<TupleObject>().ready());
-	ASSERT(typeof<ListObject>().ready());
-	ASSERT(typeof<DictObject>().ready());
-	ASSERT(typeof<CapsuleObject>().ready());
-	ASSERT(typeof<FunctionObject>().ready());
-	ASSERT(typeof<MethodObject>().ready());
-	ASSERT(typeof<CppFunctionObject>().ready());
-	ASSERT(typeof<PropertyObject>().ready());
-	ASSERT(typeof<ModuleObject>().ready());
-	ASSERT(typeof<GenericObject>().ready());
-
 	INTERNALS->install_class
 	<
 		CppFunctionObject, // <- cppfunction must go first
-		BaseObject,
+		Object,
 		TypeObject,
 		IntObject,
 		FloatObject,

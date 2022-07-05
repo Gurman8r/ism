@@ -9,9 +9,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// low-level graphics api
-	class ISM_API RenderingDevice : public BaseObject
+	class ISM_API RenderingDevice : public Object
 	{
-		OBJECT_COMMON(RenderingDevice, BaseObject);
+		OBJECT_COMMON(RenderingDevice, Object);
 
 		static RenderingDevice * g_singleton;
 

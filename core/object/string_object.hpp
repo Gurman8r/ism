@@ -7,9 +7,9 @@
 namespace ism
 {
 	// string object
-	class ISM_API StringObject : public BaseObject
+	class ISM_API StringObject : public Object
 	{
-		OBJECT_COMMON(StringObject, BaseObject);
+		OBJECT_COMMON(StringObject, Object);
 
 		friend class STR;
 
@@ -88,7 +88,7 @@ namespace ism
 	};
 
 	// string delete
-	template <> struct DefaultDelete<StringObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<StringObject> : DefaultDelete<Object> {};
 
 	// string check
 #define OBJECT_CHECK_STR(o) (ism::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))

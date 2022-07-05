@@ -93,17 +93,17 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// base object
-	class ISM_API BaseObject : public ObjectAPI<BaseObject>
+	class ISM_API Object : public ObjectAPI<Object>
 	{
 	private:
 		friend class OBJ;
 		friend class Internals;
-		friend class EmbedObjectClassHelper<BaseObject>;
-		friend struct DefaultDelete<BaseObject>;
-		friend bool predelete_handler(BaseObject *);
-		friend void postinitialize_handler(BaseObject *);
+		friend class EmbedObjectClassHelper<Object>;
+		friend struct DefaultDelete<Object>;
+		friend bool predelete_handler(Object *);
+		friend void postinitialize_handler(Object *);
 
-		static constexpr StringView g_name_static{ "BaseObject" };
+		static constexpr StringView g_name_static{ "Object" };
 
 		static TypeObject g_type_static;
 
@@ -120,7 +120,7 @@ namespace ism
 
 		FORCE_INLINE virtual TYPE _get_typev() const noexcept;
 
-		BaseObject() noexcept;
+		Object() noexcept;
 
 		virtual void _postinitialize();
 
@@ -133,7 +133,7 @@ namespace ism
 	public:
 		using base_type = typename void;
 
-		virtual ~BaseObject();
+		virtual ~Object();
 
 		bool init_ref();
 
@@ -160,7 +160,7 @@ namespace ism
 
 		template <class T> T cast() &&; // cast.hpp
 
-		BaseObject * ptr() const noexcept { return const_cast<BaseObject *>(this); } // :^]
+		Object * ptr() const noexcept { return const_cast<Object *>(this); } // :^]
 
 	public:
 		static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
@@ -175,13 +175,13 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// object delete
-	template <> struct DefaultDelete<BaseObject>
+	template <> struct DefaultDelete<Object>
 	{
 		template <class U> void operator()(U * ptr) const
 		{
 			if (!ptr) { return; }
 
-			BaseObject * obj{ (BaseObject *)ptr };
+			Object * obj{ (Object *)ptr };
 
 			TYPE type{ typeof(obj) };
 
@@ -195,7 +195,7 @@ namespace ism
 #define OBJECT_NO_CHECK(o) (true)
 
 	// object ref
-	class OBJ : public Ref<BaseObject>
+	class OBJ : public Ref<Object>
 	{
 		REF_COMMON(OBJ, OBJECT_NO_CHECK);
 	};
@@ -206,9 +206,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline bool predelete_handler(BaseObject * value) { return value->_predelete(); }
+	inline bool predelete_handler(Object * value) { return value->_predelete(); }
 
-	inline void postinitialize_handler(BaseObject * value) { value->_postinitialize(); }
+	inline void postinitialize_handler(Object * value) { value->_postinitialize(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -257,11 +257,11 @@ namespace ism
 	}
 
 	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> BaseObject * pointerof(T const & o) noexcept
+	> Object * pointerof(T const & o) noexcept
 	{
 		if constexpr (std::is_pointer_v<std::decay_t<decltype(o)>>)
 		{
-			return (BaseObject *)o;
+			return (Object *)o;
 		}
 		else
 		{
@@ -367,9 +367,9 @@ namespace ism
 		{
 			return false;
 		}
-		else if (type->tp_getattro == BaseObject::generic_getattr)
+		else if (type->tp_getattro == Object::generic_getattr)
 		{
-			return BaseObject::generic_getattr(obj, str_name).is_valid();
+			return Object::generic_getattr(obj, str_name).is_valid();
 		}
 		else if (type->tp_getattro)
 		{

@@ -7,9 +7,9 @@
 namespace ism
 {
 	// property object
-	class ISM_API PropertyObject : public BaseObject
+	class ISM_API PropertyObject : public Object
 	{
-		OBJECT_COMMON(PropertyObject, BaseObject);
+		OBJECT_COMMON(PropertyObject, Object);
 
 		friend class PROPERTY;
 
@@ -36,7 +36,7 @@ namespace ism
 	};
 
 	// property delete
-	template <> struct DefaultDelete<PropertyObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<PropertyObject> : DefaultDelete<Object> {};
 
 	// property check
 #define OBJECT_CHECK_PROPERTY(o) (isinstance<PROPERTY>(o))

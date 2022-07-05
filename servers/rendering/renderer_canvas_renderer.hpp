@@ -8,9 +8,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// canvas renderer
-	class ISM_API RendererCanvasRenderer : public BaseObject
+	class ISM_API RendererCanvasRenderer : public Object
 	{
-		OBJECT_COMMON(RendererCanvasRenderer, BaseObject);
+		OBJECT_COMMON(RendererCanvasRenderer, Object);
 		
 		friend class RenderingServerDefault;
 

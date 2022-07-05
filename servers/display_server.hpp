@@ -443,9 +443,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API DisplayServer : public BaseObject
+	class ISM_API DisplayServer : public Object
 	{
-		OBJECT_COMMON(DisplayServer, BaseObject);
+		OBJECT_COMMON(DisplayServer, Object);
 
 		static DisplayServer * g_singleton;
 

@@ -12,9 +12,9 @@
 namespace ism
 {
 	// int object
-	class ISM_API IntObject : public BaseObject
+	class ISM_API IntObject : public Object
 	{
-		OBJECT_COMMON(IntObject, BaseObject);
+		OBJECT_COMMON(IntObject, Object);
 
 		friend class INT;
 
@@ -43,7 +43,7 @@ namespace ism
 	};
 
 	// int delete
-	template <> struct DefaultDelete<IntObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<IntObject> : DefaultDelete<Object> {};
 
 	// int check
 #define OBJECT_CHECK_INT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Int_Subclass))

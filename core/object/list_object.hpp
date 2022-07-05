@@ -7,9 +7,9 @@
 namespace ism
 {
 	// list object
-	class ISM_API ListObject : public BaseObject
+	class ISM_API ListObject : public Object
 	{
-		OBJECT_COMMON(ListObject, BaseObject);
+		OBJECT_COMMON(ListObject, Object);
 
 		friend class LIST;
 
@@ -125,7 +125,7 @@ namespace ism
 	};
 
 	// list delete
-	template <> struct DefaultDelete<ListObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<ListObject> : DefaultDelete<Object> {};
 
 	// list check
 #define OBJECT_CHECK_LIST(o) (ism::typeof(o).has_feature(ism::TypeFlags_List_Subclass))

@@ -50,7 +50,7 @@ namespace ism
 
 	// OBJECT
 
-	class BaseObject;
+	class Object;
 	class TypeObject;
 	class IntObject;
 	class FloatObject;
@@ -67,7 +67,7 @@ namespace ism
 	class GenericObject;
 
 	template <class T
-	> constexpr bool is_base_object_v{ std::is_base_of_v<BaseObject, mpl::intrinsic_t<T>> };
+	> constexpr bool is_base_object_v{ std::is_base_of_v<Object, mpl::intrinsic_t<T>> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -131,7 +131,7 @@ namespace ism
 
 	ALIAS(installerfunc)	TYPE(*)(TYPE type);
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
-	ALIAS(delfunc)			void(*)(BaseObject * ptr);
+	ALIAS(delfunc)			void(*)(Object * ptr);
 	ALIAS(cmpfunc)			int32_t(*)(OBJ lhs, OBJ rhs);
 	ALIAS(hashfunc)			hash_t(*)(OBJ obj);
 	ALIAS(lenfunc)			ssize_t(*)(OBJ obj);

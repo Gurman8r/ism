@@ -10,9 +10,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// high-level graphics api
-	class ISM_API RenderingServer : public BaseObject
+	class ISM_API RenderingServer : public Object
 	{
-		OBJECT_COMMON(RenderingServer, BaseObject);
+		OBJECT_COMMON(RenderingServer, Object);
 
 		static RenderingServer * g_singleton;
 

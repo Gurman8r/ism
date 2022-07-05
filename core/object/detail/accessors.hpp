@@ -13,7 +13,7 @@ namespace ism
 	> class Accessor : public ObjectAPI<Accessor<Policy>>
 	{
 	public:
-		using obj_type = typename Ref<BaseObject>;
+		using obj_type = typename Ref<Object>;
 		using key_type = typename Policy::key_type;
 
 		Accessor(obj_type const & obj, key_type const & key) : m_obj{ obj }, m_key{ key } {}
@@ -36,7 +36,7 @@ namespace ism
 			return (get_cache() = object_or_cast(value)), (*this);
 		}
 
-		auto ptr() const { return const_cast<BaseObject *>(get_cache().ptr()); }
+		auto ptr() const { return const_cast<Object *>(get_cache().ptr()); }
 
 		template <class T> operator Ref<T>() const { return get_cache(); }
 

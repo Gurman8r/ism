@@ -8,9 +8,9 @@
 namespace ism
 {
 	// generic object
-	class GenericObject : public BaseObject
+	class GenericObject : public Object
 	{
-		OBJECT_COMMON(GenericObject, BaseObject);
+		OBJECT_COMMON(GenericObject, Object);
 
 		friend class GENERIC;
 
@@ -18,7 +18,7 @@ namespace ism
 	};
 
 	// generic delete
-	template <> struct DefaultDelete<GenericObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<GenericObject> : DefaultDelete<Object> {};
 
 	// generic check
 #define OBJECT_CHECK_GENERIC(o) (isinstance<GENERIC>(o))

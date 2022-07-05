@@ -8,9 +8,9 @@
 namespace ism
 {
 	// tuple object
-	class TupleObject : public BaseObject
+	class TupleObject : public Object
 	{
-		OBJECT_COMMON(TupleObject, BaseObject);
+		OBJECT_COMMON(TupleObject, Object);
 
 		friend class TUPLE;
 
@@ -18,7 +18,7 @@ namespace ism
 	};
 
 	// tuple delete
-	template <> struct DefaultDelete<TupleObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<TupleObject> : DefaultDelete<Object> {};
 
 	// tuple check
 #define OBJECT_CHECK_TUPLE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Tuple_Subclass))

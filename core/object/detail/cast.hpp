@@ -378,13 +378,13 @@ public:																							\
 
 			if constexpr (std::is_pointer_v<U>)
 			{
-				if constexpr (std::is_same_v<I, BaseObject>) { return *value; } // no cast
+				if constexpr (std::is_same_v<I, Object>) { return *value; } // no cast
 
 				else { return dynamic_cast<I *>(*value); }
 			}
 			else
 			{
-				if constexpr (std::is_same_v<I, BaseObject>) { return *VALIDATE(*value); } // no cast
+				if constexpr (std::is_same_v<I, Object>) { return *VALIDATE(*value); } // no cast
 
 				else { return *VALIDATE(dynamic_cast<I *>(*value)); }
 			}
@@ -604,12 +604,12 @@ namespace ism
 	}
 
 	// object cast
-	template <class T> inline T BaseObject::cast() const &
+	template <class T> inline T Object::cast() const &
 	{
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(ptr()); }
 	}
 
-	template <class T> inline T BaseObject::cast() &&
+	template <class T> inline T Object::cast() &&
 	{
 		if constexpr (!std::is_void_v<T>) { return ism::cast<T>(std::move(*this).ptr()); }
 	}

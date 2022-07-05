@@ -51,7 +51,7 @@ namespace ism
 	private:
 		auto rich_compare(ObjectAPI const & o) const
 		{
-			BaseObject * self{ derived().ptr() }, * other{ o.derived().ptr() };
+			Object * self{ derived().ptr() }, * other{ o.derived().ptr() };
 			if (self == other) { return 0; }
 			else if (self && other)
 			{

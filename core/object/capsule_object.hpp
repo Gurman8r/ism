@@ -7,9 +7,9 @@
 namespace ism
 {
 	// capsule object
-	class ISM_API CapsuleObject : public BaseObject
+	class ISM_API CapsuleObject : public Object
 	{
-		OBJECT_COMMON(CapsuleObject, BaseObject);
+		OBJECT_COMMON(CapsuleObject, Object);
 
 		friend class CAPSULE;
 
@@ -35,7 +35,7 @@ namespace ism
 		{
 			m_pointer = value;
 			m_context = closure;
-			m_closure = [](BaseObject * obj)
+			m_closure = [](Object * obj)
 			{
 				if (auto self{ dynamic_cast<CapsuleObject *>(obj) })
 				{
@@ -50,7 +50,7 @@ namespace ism
 		{
 			m_pointer = closure;
 			m_context = nullptr;
-			m_closure = (delfunc)[](BaseObject * obj)
+			m_closure = (delfunc)[](Object * obj)
 			{
 				if (auto self{ dynamic_cast<CapsuleObject *>(obj) })
 				{
@@ -63,7 +63,7 @@ namespace ism
 	};
 
 	// capsule delete
-	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<Object> {};
 
 	// capsule check
 #define OBJECT_CHECK_CAPSULE(o) (isinstance<CAPSULE>(o))

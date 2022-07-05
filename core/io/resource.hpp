@@ -12,9 +12,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// resource
-	class ISM_API Resource : public BaseObject
+	class ISM_API Resource : public Object
 	{
-		OBJECT_COMMON(Resource, BaseObject);
+		OBJECT_COMMON(Resource, Object);
 
 		int32_t m_subindex{};
 		String m_name{};

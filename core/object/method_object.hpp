@@ -30,7 +30,7 @@ namespace ism
 	};
 
 	// method delete
-	template <> struct DefaultDelete<MethodObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<MethodObject> : DefaultDelete<Object> {};
 
 	// method check
 #define OBJECT_CHECK_METHOD(o) (isinstance<METHOD>(o))

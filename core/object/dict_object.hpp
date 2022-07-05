@@ -7,9 +7,9 @@
 namespace ism
 {
 	// dict object
-	class ISM_API DictObject : public BaseObject
+	class ISM_API DictObject : public Object
 	{
-		OBJECT_COMMON(DictObject, BaseObject);
+		OBJECT_COMMON(DictObject, Object);
 
 		friend class DICT;
 
@@ -85,7 +85,7 @@ namespace ism
 	};
 
 	// dict delete
-	template <> struct DefaultDelete<DictObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<DictObject> : DefaultDelete<Object> {};
 
 	// dict check
 #define OBJECT_CHECK_DICT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))

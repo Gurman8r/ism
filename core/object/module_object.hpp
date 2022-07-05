@@ -7,9 +7,9 @@
 namespace ism
 {
 	// module object
-	class ISM_API ModuleObject : public BaseObject
+	class ISM_API ModuleObject : public Object
 	{
-		OBJECT_COMMON(ModuleObject, BaseObject);
+		OBJECT_COMMON(ModuleObject, Object);
 
 		friend class MODULE;
 
@@ -51,7 +51,7 @@ namespace ism
 	};
 
 	// module delete
-	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<ModuleObject> : DefaultDelete<Object> {};
 
 	// module check
 #define OBJECT_CHECK_MODULE(o) (isinstance<MODULE>(o))

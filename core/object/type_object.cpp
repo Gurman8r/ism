@@ -324,7 +324,7 @@ Error_ TypeObject::update_slot(STR const & name)
 	} break;
 
 	case "__del__"_hash: {
-		tp_del = (delfunc)[](BaseObject * obj) -> void {
+		tp_del = (delfunc)[](Object * obj) -> void {
 			STR_IDENTIFIER(__del__);
 			if (OBJ f{ typeof(obj).lookup(&ID___del__) }) { /* TODO */ }
 		};

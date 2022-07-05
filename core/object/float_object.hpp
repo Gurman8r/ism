@@ -7,9 +7,9 @@
 namespace ism
 {
 	// float object
-	class ISM_API FloatObject : public BaseObject
+	class ISM_API FloatObject : public Object
 	{
-		OBJECT_COMMON(FloatObject, BaseObject);
+		OBJECT_COMMON(FloatObject, Object);
 
 		friend class FLT;
 
@@ -33,7 +33,7 @@ namespace ism
 	};
 
 	// float delete
-	template <> struct DefaultDelete<FloatObject> : DefaultDelete<BaseObject> {};
+	template <> struct DefaultDelete<FloatObject> : DefaultDelete<Object> {};
 
 	// float check
 #define OBJECT_CHECK_FLOAT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))

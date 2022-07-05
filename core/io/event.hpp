@@ -66,9 +66,9 @@ private:
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event handler
-	class ISM_API EventHandler : public BaseObject
+	class ISM_API EventHandler : public Object
 	{
-		OBJECT_COMMON(EventHandler, BaseObject);
+		OBJECT_COMMON(EventHandler, Object);
 
 		EventBus * const m_event_bus;
 		
@@ -201,9 +201,9 @@ private:
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event bus
-	class ISM_API EventBus : public BaseObject
+	class ISM_API EventBus : public Object
 	{
-		OBJECT_COMMON(EventBus, BaseObject);
+		OBJECT_COMMON(EventBus, Object);
 
 		static EventBus * g_singleton;
 
