@@ -73,7 +73,7 @@ namespace ism
 	}
 
 #define memnew(T) \
-		(ism::_post_initialize(new (TOSTR(T)) T))
+		(ism::_post_initialize(new ("") T))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

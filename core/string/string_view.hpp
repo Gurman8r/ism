@@ -45,12 +45,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace mpl
-	{
-		template <class Ch> constexpr bool is_string_v<BasicStringView<Ch>>{ true };
-		template <> constexpr bool is_string_v<StringView>{ true };
-		template <> constexpr bool is_string_v<WideStringView>{ true };
-	}
+	namespace mpl { template <class Ch> constexpr bool is_string_v<BasicStringView<Ch>>{ true }; }
 
 	constexpr StringView operator "" _sv(cstring s, size_t n) noexcept { return StringView{ s, n }; }
 

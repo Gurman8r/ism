@@ -22,7 +22,7 @@
 #include <editor/register_editor_types.hpp>
 #endif
 
-#if OS_WINDOWS
+#if ISM_OS_WINDOWS
 #include <platform/windows/display_server_windows.hpp>
 #define DISPLAY_SERVER_DEFAULT DisplayServerWindows
 #endif

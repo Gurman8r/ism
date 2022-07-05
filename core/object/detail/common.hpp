@@ -199,7 +199,7 @@ namespace ism
 		DataType_MAX
 	};
 
-#if ARCHITECTURE == 32
+#if ISM_ARCH == 32
 	constexpr DataType_ DataType_SizeT{ DataType_U32 }; // size_t (32-bit)
 	constexpr DataType_ DataType_SSizeT{ DataType_I32 }; // ssize_t (32-bit)
 #else

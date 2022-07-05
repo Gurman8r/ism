@@ -18,11 +18,9 @@ namespace ism
 
 	public:
 		Window();
-
-		virtual ~Window();
+		virtual ~Window() override;
 
 		WindowID get_window_id() const noexcept { return m_window; }
-
 		operator WindowID() const noexcept { return m_window; }
 
 	public:
@@ -39,7 +37,6 @@ namespace ism
 		virtual void request_attention();
 
 	public:
-		inline IntRect get_bounds() const noexcept { return { get_position(), get_size() }; }
 		virtual String get_clipboard() const;
 		virtual Vec2f get_content_scale() const;
 		virtual IntRect get_frame_size() const;
@@ -50,8 +47,8 @@ namespace ism
 		virtual Vec2d get_mouse_position() const;
 		virtual void * get_native_handle() const;
 		virtual float_t get_opacity() const;
-		virtual Vec2i get_position() const;
-		virtual Vec2i get_size() const;
+		virtual Vec2i get_position() const override;
+		virtual Vec2i get_size() const override;
 		virtual bool get_should_close() const;
 		virtual void * get_user_pointer() const;
 		virtual bool is_decorated() const;
@@ -73,10 +70,10 @@ namespace ism
 		virtual void set_monitor(MonitorID monitor, IntRect const & bounds);
 		virtual void set_mouse_position(Vec2d const & value);
 		virtual void set_opacity(float_t value);
-		virtual void set_position(Vec2i const & value);
+		virtual void set_position(Vec2i const & value) override;
 		virtual void set_title(String const & value);
 		virtual void set_should_close(bool value);
-		virtual void set_size(Vec2i const & value);
+		virtual void set_size(Vec2i const & value) override;
 		virtual void set_user_pointer(void * value);
 		virtual void set_decorated(bool value);
 		virtual void set_floating(bool value);

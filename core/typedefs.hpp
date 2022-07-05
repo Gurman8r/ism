@@ -54,7 +54,7 @@ namespace ism
 
 	struct void_type {};
 
-#ifdef CC_MSVC
+#ifdef ISM_CC_MSVC
 	ALIAS(int8_t)		signed __int8;
 	ALIAS(int16_t)		signed __int16;
 	ALIAS(int32_t)		signed __int32;
@@ -86,7 +86,7 @@ namespace ism
 	ALIAS(float_t)		float32_t;
 	ALIAS(double_t)		float64_t;
 
-#if (32 == ARCHITECTURE)
+#if (32 == ISM_ARCH)
 	ALIAS(intmax_t)		int32_t;
 	ALIAS(uintmax_t)	uint32_t;
 #else
@@ -105,7 +105,7 @@ namespace ism
 
 	ALIAS(cstring)		char const *;
 	ALIAS(cwstring)		wchar_t const *;
-#if (CXX_20)
+#if (ISM_CXX_20)
 	ALIAS(c8string)		char8_t const *;
 #else
 	ALIAS(c8string)		char const *;

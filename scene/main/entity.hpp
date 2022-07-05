@@ -25,34 +25,31 @@ namespace ism
 
 		auto get_entity_id() const noexcept -> EntityID { return m_entity_id; }
 
-		template <class T, class ... Args
-		> T & add_component(Args && ... args) noexcept
+		template <class C, class ... Args
+		> C & add_component(Args && ... args) noexcept
 		{
-			auto & tree{ *VALIDATE(m_tree) };
-			T & c{ tree.m_entt.emplace<T>(m_entity_id, FWD(args)...) };
-			tree.on_component_added<T>(*this, c);
+			auto * t{ VALIDATE(get_tree()) };
+			C & c{ t->m_entt.emplace<C>(m_entity_id, FWD(args)...) };
+			t->on_component_added<C>(*this, c);
 			return c;
 		}
 
-		template <class ... T
+		template <class ... C
 		> decltype(auto) get_component()
 		{
-			auto & tree{ *VALIDATE(m_tree) };
-			return tree.m_entt.get<T...>(m_entity_id);
+			return get_tree()->m_entt.get<C...>(m_entity_id);
 		}
 
-		template <class ... T
+		template <class ... C
 		> bool has_component() const
 		{
-			auto & tree{ *VALIDATE(m_tree) };
-			return tree.m_entt.has<T...>(m_entity_id);
+			return get_tree()->m_entt.has<C...>(m_entity_id);
 		}
 
-		template <class ... T
+		template <class ... C
 		> void remove_component()
 		{
-			auto & tree{ *VALIDATE(m_tree) };
-			tree.m_entt.remove<T...>(m_entity_id);
+			get_tree()->m_entt.remove<C...>(m_entity_id);
 		}
 	};
 

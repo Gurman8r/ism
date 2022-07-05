@@ -36,12 +36,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace mpl
-	{
-		template <class Ch> constexpr bool is_string_v<BasicString<Ch>>{ true };
-		template <> constexpr bool is_string_v<String>{ true };
-		template <> constexpr bool is_string_v<WideString>{ true };
-	}
+	namespace mpl { template <class Ch> constexpr bool is_string_v<BasicString<Ch>>{ true }; }
 
 	inline String operator "" _s(cstring s, size_t n) noexcept { return String{ s, n }; }
 

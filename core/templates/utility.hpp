@@ -51,64 +51,64 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // fancy macros
-namespace ism::impl
+namespace ism::priv
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// scope enter
-	template <class Fn
-	> class OnScopeEnter final
+
+	template <class Fn> class ScopeEnterHelper final
 	{
 	public:
-		OnScopeEnter(Fn && fn) noexcept { FWD(fn)(); }
+		ScopeEnterHelper(Fn && fn) noexcept { FWD(fn)(); }
 	};
 
-	enum class _OnScopeEnter_Tag {};
+	enum class _ScopeEnter_Tag {};
 
 	template <class Fn
-	> auto operator+(_OnScopeEnter_Tag, Fn && fn) noexcept
+	> auto operator+(_ScopeEnter_Tag, Fn && fn) noexcept
 	{
-		return OnScopeEnter<Fn>{ FWD(fn) };
+		return ScopeEnterHelper<Fn>{ FWD(fn) };
 	}
 
-#define SCOPE_ENTER_EX(...) \
-		(ism::impl::_OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+#define _IMPL_SCOPE_ENTER(...) \
+		(ism::priv::_ScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 #define SCOPE_ENTER(...) \
-		auto ANON = SCOPE_ENTER_EX(##__VA_ARGS__)
+		auto ANON = _IMPL_SCOPE_ENTER(##__VA_ARGS__)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// scope exit
-	template <class Fn
-	> class OnScopeExit final
+
+	template <class Fn> class ScopeExitHelper final
 	{
 		Fn const m_fn;
 	public:
-		OnScopeExit(Fn && fn) noexcept : m_fn{ FWD(fn) } {}
+		ScopeExitHelper(Fn && fn) noexcept : m_fn{ FWD(fn) } {}
 
-		~OnScopeExit() noexcept { m_fn(); }
+		~ScopeExitHelper() noexcept { m_fn(); }
 	};
 
-	enum class _OnScopeExit_Tag {};
+	enum class _ScopeExit_Tag {};
 
 	template <class Fn
-	> auto operator+(_OnScopeExit_Tag, Fn && fn) noexcept
+	> auto operator+(_ScopeExit_Tag, Fn && fn) noexcept
 	{
-		return OnScopeExit<Fn>{ FWD(fn) };
+		return ScopeExitHelper<Fn>{ FWD(fn) };
 	}
 
-#define SCOPE_EXIT_EX(...) \
-		(ism::impl::_OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+#define _IMPL_SCOPE_EXIT(...) \
+		(ism::priv::_ScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 #define SCOPE_EXIT(...) \
-		auto ANON = SCOPE_EXIT_EX(##__VA_ARGS__)
+		auto ANON = _IMPL_SCOPE_EXIT(##__VA_ARGS__)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// make
-	template <class T
-	> class MakerHelper final
+
+	template <class T> class MakerHelper final
 	{
 		T value;
 	public:
@@ -121,7 +121,7 @@ namespace ism::impl
 	};
 
 #define MAKE_EX(m_class, ...) \
-		(ism::impl::MakerHelper<m_class>(m_class{ ##__VA_ARGS__ }))
+		(ism::priv::MakerHelper<m_class>(m_class{ ##__VA_ARGS__ }))
 
 #define MAKE(m_class, m_var, ...) \
 		MAKE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void

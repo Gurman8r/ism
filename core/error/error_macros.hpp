@@ -10,9 +10,9 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // generate trap
-#if defined(CC_MSVC)
+#if defined(ISM_CC_MSVC)
 #	define DEBUG_BREAK			(_CSTD __debugbreak)
-#elif defined(CC_CLANG)
+#elif defined(ISM_CC_CLANG)
 #	define DEBUG_BREAK			(_CSTD __builtin_debugtrap)
 #else
 #	define DEBUG_BREAK()		(_CSTD raise(SIGTRAP))

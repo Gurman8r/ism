@@ -151,23 +151,26 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
-	namespace impl
+namespace ism::priv
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// class installer helper
+
+	template <class T> struct ClassInstallerHelper final
 	{
-		template <class T> struct ClassInstallerHelper final
+		constexpr ClassInstallerHelper() noexcept = default;
+
+		constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
 		{
-			constexpr ClassInstallerHelper() noexcept = default;
+			return static_cast<installerfunc>(static_cast<void *>(fn));
+		}
+	};
 
-			constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
-			{
-				return static_cast<installerfunc>(static_cast<void *>(fn));
-			}
-		};
-	}
-
-	// class binder helper
 #define CLASS_INSTALLER(m_class, m_var) \
-	(ism::impl::ClassInstallerHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
+	(ism::priv::ClassInstallerHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -99,7 +99,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 		, file, line, code, expr, desc);
 }
 
-#if IS_DEBUG
+#if ISM_DEBUG
 #	define glCheck(expr) \
 	do { expr; glCheckError(TOSTR(expr), __FILE__, __LINE__); } while (0)
 #else
@@ -1016,7 +1016,7 @@ void RenderingDeviceOpenGL::draw_list_bind_pipeline(DrawListID draw_list, RID pi
 	dl.command_buffer.push_back(std::bind(&RenderingDeviceOpenGL::_render_pipeline_bind, this, rp));
 	if (dl.state.pipeline_shader != rp.shader) {
 		dl.state.pipeline_shader = rp.shader;
-		// TODO...
+		// shader changed...
 	}
 }
 
@@ -1154,7 +1154,7 @@ void RenderingDeviceOpenGL::draw_list_end()
 {
 	// end the draw list
 	ASSERT(!m_draw_list.empty());
-	for (_DrawList const & dl : m_draw_list) { for (auto const & cmd : dl.command_buffer) { cmd(); } }
+	for (_DrawList const & dl : m_draw_list) { for (auto const & f : dl.command_buffer) { f(); } }
 	m_draw_list.clear();
 
 	// reset

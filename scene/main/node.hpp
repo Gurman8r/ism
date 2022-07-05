@@ -25,9 +25,9 @@ namespace ism
 		friend class SceneTree;
 
 	protected:
-		SceneTree *		m_tree	{};
-		Node *			m_owner	{};
-		Vector<Ref<Node>>	m_nodes	{};
+		SceneTree *			m_tree{};
+		Node *				m_owner{};
+		Vector<Ref<Node>>	m_nodes{};
 
 		Node(SceneTree * tree = nullptr) noexcept;
 
@@ -41,40 +41,40 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		auto get_child(size_t const i) const -> Ref<Node> { return m_nodes[i]; }
+		SceneTree * get_tree() const noexcept { return m_tree; }
 
-		auto get_child_count() const noexcept -> size_t { return m_nodes.size(); }
+		Node * get_parent() const noexcept { return m_owner; }
 
-		auto get_parent() const noexcept -> Node * { return m_owner; }
+		bool set_parent(Node * value);
 
-		auto get_tree() const noexcept -> SceneTree * { return m_tree; }
+		bool set_parent(Ref<Node> const & value);
 
-		Ref<Node> add_child(Node * value) noexcept { return (value && value->set_parent(this)) ? value : nullptr; }
+		size_t get_sibling_index() const;
 
-		Ref<Node> add_child(Ref<Node> const & value) noexcept { return add_child(*value); }
+		void set_sibling_index(size_t index);
+
+		bool is_child_of(Node const * parent, bool recursive = false) const;
+
+		bool is_child_of(Ref<Node> const & parent, bool recursive = false) const;
+
+		bool is_parent_of(Node const * child, bool recursive = false) const;
+
+		bool is_parent_of(Ref<Node> const & child, bool recursive = false) const;
+
+		Ref<Node> get_child(size_t index) const noexcept { return m_nodes[index]; }
+
+		size_t get_child_count() const noexcept { return m_nodes.size(); }
+
+		Ref<Node> add_child(Node * value);
+
+		Ref<Node> add_child(Ref<Node> const & value);
 
 		template <class T, class ... Args
 		> Ref<Node> add_child(Args && ... args) noexcept { return add_child(memnew(T(FWD(args)...))); }
 
-		void destroy_child(size_t const i) { m_nodes.erase(m_nodes.begin() + i); }
+		void destroy_child(size_t index);
 
-		void detach_children();
-
-		bool set_parent(Node * value);
-
-		bool set_parent(Ref<Node> const & value) noexcept { return set_parent(*value); }
-
-		size_t get_sibling_index() const noexcept;
-
-		void set_sibling_index(size_t const i);
-
-		bool is_child_of(Node const * other, bool recursive = false) const noexcept;
-
-		bool is_child_of(Ref<Node> const & other, bool recursive = false) const noexcept { return is_child_of(*other, recursive); }
-
-		bool is_parent_of(Node const * other, bool recursive = false) const noexcept;
-
-		bool is_parent_of(Ref<Node> const & other, bool recursive = false) const noexcept { return is_parent_of(*other, recursive); }
+		void destroy_children();
 
 	public:
 		template <class Fn = void(*)(Ref<Node> &)
@@ -103,7 +103,6 @@ namespace ism
 			}
 		}
 
-	public:
 		template <class Pr = bool(*)(Ref<Node> const &)
 		> Ref<Node> find_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
 		{

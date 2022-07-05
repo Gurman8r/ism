@@ -11,10 +11,10 @@
 
 #if (_DEBUG && _DEBUG)
 //	Debug
-#	define IS_DEBUG true
+#	define ISM_DEBUG true
 #else
 //	Release
-#	define IS_DEBUG false
+#	define ISM_DEBUG false
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -23,41 +23,41 @@
 
 #if __cplusplus
 #	if _MSVC_LANG
-#		define CXX _MSVC_LANG
+#		define ISM_CXX _MSVC_LANG
 #	else
-#		define CXX __cplusplus
+#		define ISM_CXX __cplusplus
 #	endif
 #else
 #	error "this system does not support C++"
 #endif
 
-#if (CXX >= 201907L)
+#if (ISM_CXX >= 201907L)
 //	C++20
-#	define CXX_20 1
-#	define CXX_17 1
-#	define CXX_14 1
-#	define CXX_11 1
+#	define ISM_CXX_20 1
+#	define ISM_CXX_17 1
+#	define ISM_CXX_14 1
+#	define ISM_CXX_11 1
 
-#elif (CXX >= 201703L)
+#elif (ISM_CXX >= 201703L)
 //	C++17
-#	define CXX_20 0
-#	define CXX_17 1
-#	define CXX_14 1
-#	define CXX_11 1
+#	define ISM_CXX_20 0
+#	define ISM_CXX_17 1
+#	define ISM_CXX_14 1
+#	define ISM_CXX_11 1
 
-#elif (CXX >= 201402L)
+#elif (ISM_CXX >= 201402L)
 //	C++14
-#	define CXX_20 0
-#	define CXX_17 0
-#	define CXX_14 1
-#	define CXX_11 1
+#	define ISM_CXX_20 0
+#	define ISM_CXX_17 0
+#	define ISM_CXX_14 1
+#	define ISM_CXX_11 1
 
-#elif (CXX >= 201103L)
+#elif (ISM_CXX >= 201103L)
 //	C++11
-#	define CXX_20 0
-#	define CXX_17 0
-#	define CXX_14 0
-#	define CXX_11 1
+#	define ISM_CXX_20 0
+#	define ISM_CXX_17 0
+#	define ISM_CXX_14 0
+#	define ISM_CXX_11 1
 
 #else
 #	error "this version of C++ is not supported"
@@ -70,27 +70,27 @@
 
 #if _WIN32 || _WIN64 || WIN32 || WIN64 || __MINGW32__ || __MINGW64__
 //	Windows
-#define OS_WINDOWS true
+#define ISM_OS_WINDOWS true
 
 #elif __APPLE__ && __MACH__
 //	Apple
-#define OS_APPLE true
+#define ISM_OS_APPLE true
 
 #elif __unix__
 //	Unix
-#	define OS_UNIX true
+#	define ISM_OS_UNIX true
 
 #	if __ANDROID__
 //	Android
-#	define OS_ANDROID true
+#	define ISM_OS_ANDROID true
 
 #	elif __linux__
 //	Linux
-#	define OS_LINUX true
+#	define ISM_OS_LINUX true
 
 #	elif __FreeBSD__ || __FreeBSD_kernel__
 //	FreeBSD
-#	define OS_FREEBSD true
+#	define ISM_OS_FREEBSD true
 
 #	else
 #	error "unsupported unix operating system"
@@ -107,39 +107,39 @@
 
 #if __x86_64__ || _M_X64 || _x64
 //	x64
-#define CPU_X64 true
-#define ARCHITECTURE 64
+#define ISM_CPU_X64 true
+#define ISM_ARCH 64
 
 #elif __i386__ || _M_IX86
 //	x86
-#define CPU_X86 true
-#define ARCHITECTURE 32
+#define ISM_CPU_X86 true
+#define ISM_ARCH 32
 
 #elif __arm__ || _M_ARM || __aarch64__
 //	ARM
 #	if __aarch64__
-#		define CPU_ARM64 true
-#		define ARCHITECTURE 64
+#		define ISM_CPU_ARM64 true
+#		define ISM_ARCH 64
 #	else
-#		define CPU_ARM32 true
-#		define ARCHITECTURE 32
+#		define ISM_CPU_ARM32 true
+#		define ISM_ARCH 32
 #	endif
 
 #elif ppc || _M_PPC || __ppc64__
 //	PowerPC
 #	if __ppc64__
-#		define CPU_PPC64 true
-#		define ARCHITECTURE 64
+#		define ISM_CPU_PPC64 true
+#		define ISM_ARCH 64
 #	else
-#		define CPU_PPC32 true
-#		define ARCHITECTURE 32
+#		define ISM_CPU_PPC32 true
+#		define ISM_ARCH 32
 #	endif
 
 #else
 #error "unsupported cpu"
 #endif
 
-#if !(ARCHITECTURE == 32 || ARCHITECTURE == 64)
+#if !(ISM_ARCH == 32 || ISM_ARCH == 64)
 #error "unsupported architecture"
 #endif
 
@@ -150,47 +150,47 @@
 
 #if _MSC_VER
 //	Visual Studio
-#	define CC_MSVC _MSC_VER
+#	define ISM_CC_MSVC _MSC_VER
 
 #elif __clang__
 //	Clang / LLVM
-#	define CC_CLANG __clang__
+#	define ISM_CC_CLANG __clang__
 
 #elif (__GNUC__ || __GNUG__) && !__clang__
 //	GCC
 #	ifdef __GNUC__
-#		define CC_GCC __GNUC__
+#		define ISM_CC_GCC __GNUC__
 #	else
-#		define CC_GCC __GNUG__
+#		define ISM_CC_GCC __GNUG__
 #	endif
 
-#elif __ICC || __INTEL_COMPILER
+#elif __ICC || __INTEL_ISM_CC
 //	Intel
 #	ifdef __ICC
-#		define COMPILER_INTEL __ICC
+#		define ISM_CC_INTEL __ICC
 #	else
-#		define COMPILER_INTEL __INTEL_COMPILER
+#		define ISM_CC_INTEL __INTEL_ISM_CC
 #	endif
 
 #elif __MINGW32__ || __MINGW64__
 //	MinGW
 #	ifdef __MINGW64__
-#		define COMPILER_MINGW __MINGW64__
+#		define ISM_CC_MINGW __MINGW64__
 #	else
-#		define COMPILER_MINGW __MINGW32__
+#		define ISM_CC_MINGW __MINGW32__
 #	endif
 
 #elif __EMSCRIPTEN__
 //	Emscripten
-#define COMPILER_EMSCRIPTEN __EMSCRIPTEN__
+#define ISM_CC_EMSCRIPTEN __EMSCRIPTEN__
 
 #elif __asmjs__
 //	asm.js
-#define COMPILER_ASMJS __asmjs__
+#define ISM_CC_ASMJS __asmjs__
 
 #elif __wasm__
 //	WebAssembly
-#define COMPILER_WASM __wasm__
+#define ISM_CC_WASM __wasm__
 
 #else
 #error "unsupported compiler"
@@ -209,18 +209,18 @@
 #endif
 
 //	novtable
-#if CC_MSVC
+#if ISM_CC_MSVC
 #define NOVTABLE __declspec(novtable)
 #else
 #define NOVTABLE
 #endif
 
 //	inlining
-#if CC_MSVC
+#if ISM_CC_MSVC
 #	define FORCE_INLINE __forceinline
 #	define NEVER_INLINE __declspec(noinline)
 
-#elif CC_CLANG || CC_GCC
+#elif ISM_CC_CLANG || ISM_CC_GCC
 #	define FORCE_INLINE __attribute__((always_inline))
 #	define NEVER_INLINE __attribute__((noinline))
 
@@ -252,11 +252,11 @@
 #	define ISM_API_EXPORT
 #	define ISM_API_IMPORT
 
-#elif OS_WINDOWS
+#elif ISM_OS_WINDOWS
 #	define ISM_API_EXPORT __declspec(dllexport)
 #	define ISM_API_IMPORT __declspec(dllimport)
 
-#elif CC_CLANG || (__GNUC__ && (__GNUC__ >= 4))
+#elif ISM_CC_CLANG || (__GNUC__ && (__GNUC__ >= 4))
 #	define ISM_API_EXPORT __attribute__((visibility("default")))
 #	define ISM_API_IMPORT __attribute__((visibility("hidden")))
 
@@ -288,10 +288,10 @@
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-//	DISABLE ANNOYING COMPILER WARNINGS
+//	DISABLE ANNOYING ISM_CC WARNINGS
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if OS_WINDOWS
+#if ISM_OS_WINDOWS
 #	pragma warning(disable: 4031)	//	second formal parameter list longer than the first list
 #	pragma warning(disable: 4067)	//	unexpected tokens following preprocessor directive - expected a newline
 #	pragma warning(disable: 4251)	//	type1 needs to have dll-interface to be used by type2

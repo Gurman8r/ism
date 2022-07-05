@@ -53,7 +53,7 @@
 
 // sentinal
 #define SENTINAL \
-		{0}
+		{}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -85,24 +85,13 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // sink implementation
-#define _IMPL_SINK(var, ...)		\
+#define _IMPL_SINK(var, ...)			\
 		int var[] = { ##__VA_ARGS__ };	\
 		UNUSED(var);
 
 // sink
 #define SINK(...) \
 		_IMPL_SINK(ANON, ##__VA_ARGS__)
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// return static implementation
-#define _RETURN_STATIC(var, expr)	\
-		static auto var = expr;		\
-		return var;					\
-
-// return static
-#define RETURN_STATIC(expr) \
-		_RETURN_STATIC(ANON, (expr))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

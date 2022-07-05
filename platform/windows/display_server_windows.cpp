@@ -8,7 +8,7 @@
 #endif
 
 #include <glfw/glfw3.h>
-#if defined(OS_WINDOWS)
+#if defined(ISM_OS_WINDOWS)
 #	undef APIENTRY
 #	include <Windows.h>
 #	define GLFW_EXPOSE_NATIVE_WIN32
@@ -281,7 +281,7 @@ Vec2d DisplayServerWindows::window_get_mouse_position(WindowID id) const
 
 void * DisplayServerWindows::window_get_native_handle(WindowID id) const
 {
-#if OS_WINDOWS
+#if ISM_OS_WINDOWS
 	return (WindowID)glfwGetWin32Window(VALIDATE((GLFWwindow *)id));
 #else
 	return (WindowID)VALIDATE((GLFWwindow *)id);

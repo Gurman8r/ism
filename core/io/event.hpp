@@ -319,7 +319,7 @@ private:
 				{
 					using T = TAG_TYPE(tag);
 
-					if (auto const it{ m_event_delegates.find(hash_v<T>) })
+					if (auto const it{ m_event_delegates.find(hashof_v<T>) })
 					{
 						m_event_delegates.erase(it);
 					}

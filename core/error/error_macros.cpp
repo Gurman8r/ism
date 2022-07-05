@@ -7,7 +7,7 @@ using namespace ism;
 
 void ism::_crash(cwstring message, cwstring file, uint32_t line)
 {
-#if CC_MSVC
+#if ISM_CC_MSVC
 	_wassert(message, file, line);
 #else
 

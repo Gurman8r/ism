@@ -5,7 +5,7 @@
 
 #include <platform/windows/windows.hpp>
 
-static_assert(OS_WINDOWS);
+static_assert(ISM_OS_WINDOWS);
 
 namespace ism
 {

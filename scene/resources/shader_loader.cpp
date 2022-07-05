@@ -238,7 +238,7 @@ public:
 
 			// end shader
 			if (code.back() != byte::null) { code << byte::null; }
-			SYSTEM->printf("%.*s\n", code.size(), code.data());
+			//SYSTEM->printf("%.*s\n", code.size(), code.data());
 		}
 	}
 };

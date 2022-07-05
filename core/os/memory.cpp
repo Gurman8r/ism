@@ -34,7 +34,9 @@ static struct MemoryTracker final
 			{
 				records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
 				{
-					std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr << " | desc:\"" << desc << "\"\n";
+					std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr;
+					if (desc) { std::cerr << " | desc:\"" << desc; }
+					std::cerr << "\"\n";
 				});
 			}
 		}
