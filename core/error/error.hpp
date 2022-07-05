@@ -3,7 +3,7 @@
 
 // WIP
 
-#include <core/typedefs.hpp>
+#include <core/templates/type_traits.hpp>
 
 namespace ism
 {
@@ -12,6 +12,10 @@ namespace ism
 	{
 		Error_Unknown = -1,
 		Error_None = 0,
+
+		// etc...
+
+		Error_MAX
 	};
 }
 

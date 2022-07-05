@@ -32,6 +32,7 @@ namespace ism
 		using base_type = _StringViewBase<Ch>;
 		using base_type::base_type;
 		using base_type::operator=;
+
 		constexpr auto hash_code() const noexcept { return ism::hash(data(), size()); }
 	};
 

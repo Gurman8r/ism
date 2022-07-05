@@ -5,7 +5,6 @@
 // https://github.com/SuperV1234/cppcon2015
 // https://www.youtube.com/watch?v=NTWSeQtHZ9M
 
-#include <core/error/error_macros.hpp>
 #include <core/templates/batch.hpp>
 #include <core/templates/bitset.hpp>
 #include <core/templates/ratio.hpp>

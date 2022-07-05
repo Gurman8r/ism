@@ -1,7 +1,6 @@
 #ifndef _ISM_BUFFER_HPP_
 #define _ISM_BUFFER_HPP_
 
-#include <core/error/error_macros.hpp>
 #include <core/templates/array.hpp>
 #include <core/templates/vector.hpp>
 #include <core/string/string.hpp>

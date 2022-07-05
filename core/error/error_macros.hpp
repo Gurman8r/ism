@@ -2,7 +2,6 @@
 #define _ISM_ERROR_MACROS_HPP_
 
 #include <core/error/error.hpp>
-#include <core/templates/type_info.hpp>
 
 #include <cassert>
 #include <stdexcept>
@@ -66,16 +65,16 @@ namespace ism
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ERR_PRINT_ERROR(desc) \
-	ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Error)
+	(ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Error))
 
 #define ERR_PRINT_ERROR_MSG(desc, message) \
-	ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error)
+	(ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error))
 
 #define ERR_PRINT_WARNING(desc) \
-	ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Warning)
+	(ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Warning))
 
 #define ERR_PRINT_WARNING_MSG(desc, message) \
-	ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error)
+	(ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error))
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

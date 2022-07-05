@@ -1,6 +1,7 @@
 #ifndef _ISM_STRING_HPP_
 #define _ISM_STRING_HPP_
 
+#include <core/error/error_macros.hpp>
 #include <core/string/string_view.hpp>
 #include <core/os/memory.hpp>
 
@@ -23,7 +24,31 @@ namespace ism
 		using base_type = _StringBase<Ch>;
 		using base_type::base_type;
 		using base_type::operator=;
+
 		auto hash_code() const noexcept { return ism::hash(data(), size()); }
+
+		static auto vformat(Ch const * fmt, va_list args)
+		{
+			va_list args_copy;
+			va_copy(args_copy, args);
+			auto const n{ std::vsnprintf(nullptr, 0, fmt, args_copy) };
+			va_end(args_copy);
+			if (n < 0) { throw std::runtime_error("vformat error"); }
+
+			BasicString s;
+			s.resize((size_t)n);
+			std::vsnprintf(s.data(), s.size(), fmt, args);
+			return s;
+		}
+
+		static auto format(Ch const * fmt, ...)
+		{
+			va_list args;
+			va_start(args, fmt);
+			auto const s{ vformat(fmt, args) };
+			va_end(args);
+			return s;
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

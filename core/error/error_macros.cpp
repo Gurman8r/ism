@@ -8,7 +8,7 @@ using namespace ism;
 void ism::_crash(cwstring message, cwstring file, uint32_t line)
 {
 #if ISM_CC_MSVC
-	_wassert(message, file, line);
+	_CSTD _wassert(message, file, line);
 #else
 
 #endif

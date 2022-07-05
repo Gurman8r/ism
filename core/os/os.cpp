@@ -8,6 +8,11 @@ MEMBER_IMPL(OS::g_singleton) {};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+static String vstring(cstring fmt, ...)
+{
+	
+}
+
 OS::OS()
 {
 	g_singleton = this;
@@ -72,12 +77,12 @@ void OS::print(cstring str, size_t size)
 
 void OS::print(cstring str)
 {
-	print(str, std::strlen(str));
+	printf("%s", str);
 }
 
 void OS::print(String const & str)
 {
-	print(str.data(), str.size());
+	printf("%s", str.c_str());
 }
 
 void OS::errorv(cstring fmt, va_list args)
@@ -100,12 +105,12 @@ void OS::error(cstring str, size_t size)
 
 void OS::error(cstring str)
 {
-	error(str, std::strlen(str));
+	errorf("%s", str);
 }
 
 void OS::error(String const & str)
 {
-	error(str.data(), str.size());
+	errorf("%s", str.c_str());
 }
 
 void OS::error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)

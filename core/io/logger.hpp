@@ -1,7 +1,7 @@
 #ifndef _ISM_LOGGER_HPP_
 #define _ISM_LOGGER_HPP_
 
-#include <core/error/error_macros.hpp>
+#include <core/string/string.hpp>
 #include <core/templates/vector.hpp>
 
 namespace ism
