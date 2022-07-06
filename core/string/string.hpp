@@ -25,8 +25,19 @@ namespace ism
 		using base_type::base_type;
 		using base_type::operator=;
 
+	public:
+		operator void * () const noexcept { return !empty() ? (void *)data() : nullptr; }
+
 		auto hash_code() const noexcept { return ism::hash(data(), size()); }
 
+		auto & trim() noexcept
+		{
+			while (!empty() && std::isspace(back())) { pop_back(); }
+			while (!empty() && std::isspace(front())) { erase(begin()); }
+			return (*this);
+		}
+
+	public:
 		static auto vformat(Ch const * fmt, va_list args)
 		{
 			va_list args_copy;

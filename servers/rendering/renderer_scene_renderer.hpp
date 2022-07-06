@@ -45,6 +45,18 @@ namespace ism
 			}
 			ubo{};
 		};
+
+	public:
+		RID camera_create();
+		void camera_set_perspective(RID camera, float fovy_degrees, float z_near, float z_far);
+		void camera_set_orthogonal(RID camera, float size, float z_near, float z_far);
+		void camera_set_frustum(RID camera, float size, Vec2 offset, float z_near, float z_far);
+		void camera_set_transform(RID camera, const Transform & transform);
+		void camera_set_cull_mask(RID camera, uint32_t layers);
+		void camera_set_environment(RID camera, RID env);
+		void camera_set_camera_effects(RID camera, RID fx);
+		void camera_set_use_vertical_aspect(RID camera, bool enable);
+		bool is_camera(RID camera) const;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -2,7 +2,7 @@
 #define _ISM_SCENE_TREE_HPP_
 
 #include <core/os/main_loop.hpp>
-#include <core/templates/duration.hpp>
+#include <core/os/clock.hpp>
 #include <main/performance.hpp>
 #include <scene/main/window.hpp>
 
@@ -45,13 +45,13 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		auto get_ecs() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_entt); }
+		auto get_ecs() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_ecs); }
 
 		auto get_fps() const noexcept -> FrameRateTracker const & { return m_fps; }
 
 		auto get_root() const noexcept -> Window * { return m_root; }
 
-		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.elapsed(); }
+		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.get_elapsed_time(); }
 
 	public:
 		template <class Fn = void(*)(Ref<Node> &)
@@ -67,13 +67,13 @@ namespace ism
 	private:
 		bool m_initialized{};
 
-		Timer const m_main_timer{ true };
+		Clock const m_main_timer{ true };
 
 		FrameRateTracker m_fps{ 120 };
 
 		Window * m_root{};
 
-		EntityRegistry m_entt{};
+		EntityRegistry m_ecs{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

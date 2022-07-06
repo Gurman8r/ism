@@ -10,19 +10,6 @@ namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Ch = char
-	> Ch * strdup(Ch const * src)
-	{
-		int32_t n{};
-		while (src[n]) { n++; }
-		Ch * temp{ (Ch *)memalloc(n + 1 * sizeof(Ch)) }, * ptr{ temp };
-		while (*src) { *ptr++ = *src++; }
-		*ptr = static_cast<Ch>(0);
-		return temp;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class S = String
 	> S to_lower(S value)
 	{
@@ -53,16 +40,6 @@ namespace ism::util
 		temp.reserve(value.size());
 		for (auto const c : value) { temp.push_back(static_cast<wchar_t>(c)); }
 		return temp;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Ch = char
-	> BasicString<Ch> & trim(BasicString<Ch> & s) noexcept
-	{
-		while (!s.empty() && std::isspace(s.back())) { s.pop_back(); }
-		while (!s.empty() && std::isspace(s.front())) { s.erase(s.begin()); }
-		return s;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

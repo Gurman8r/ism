@@ -8,12 +8,12 @@ namespace ism
 
 	Entity::Entity()
 	{
-		m_entity_id = get_tree()->m_entt.create();
+		m_entity_id = m_tree->m_ecs.create();
 	}
 
 	Entity::~Entity()
 	{
-		get_tree()->m_entt.destroy(m_entity_id);
+		m_tree->m_ecs.destroy(m_entity_id);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

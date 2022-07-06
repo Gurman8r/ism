@@ -28,8 +28,8 @@ namespace ism
 		template <class C, class ... Args
 		> C & add_component(Args && ... args) noexcept
 		{
-			auto * t{ VALIDATE(get_tree()) };
-			C & c{ t->get_ecs().emplace<C>(m_entity_id, FWD(args)...) };
+			auto * t{ VALIDATE(m_tree) };
+			C & c{ t->m_ecs.emplace<C>(m_entity_id, FWD(args)...) };
 			t->on_component_added<C>(*this, c);
 			return c;
 		}
@@ -37,19 +37,19 @@ namespace ism
 		template <class ... C
 		> decltype(auto) get_component()
 		{
-			return VALIDATE(get_tree())->get_ecs().get<C...>(m_entity_id);
+			return VALIDATE(m_tree)->m_ecs.get<C...>(m_entity_id);
 		}
 
 		template <class ... C
 		> bool has_component() const
 		{
-			return VALIDATE(get_tree())->get_ecs().has<C...>(m_entity_id);
+			return VALIDATE(m_tree)->m_ecs.has<C...>(m_entity_id);
 		}
 
 		template <class ... C
 		> void remove_component()
 		{
-			VALIDATE(get_tree())->get_ecs().remove<C...>(m_entity_id);
+			VALIDATE(m_tree)->m_ecs.remove<C...>(m_entity_id);
 		}
 	};
 

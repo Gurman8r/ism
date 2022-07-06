@@ -7,7 +7,7 @@
 #include <core/string/print_string.hpp>
 #include <core/math/transform_2d.hpp>
 #include <core/templates/buffer.hpp>
-#include <core/templates/duration.hpp>
+#include <core/os/clock.hpp>
 #include <core/templates/ecs.hpp>
 #include <core/templates/flat_map.hpp>
 #include <core/templates/hash_map.hpp>

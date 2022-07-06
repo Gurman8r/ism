@@ -198,9 +198,9 @@ bool Main::iteration()
 	++g_iterating; SCOPE_EXIT(&) { --g_iterating; };
 	
 	// iteration timer
-	Timer const loop_timer{ true };
+	Clock const loop_timer{ true };
 	static Duration delta_time{ 16_ms };
-	SCOPE_EXIT(&) { delta_time = loop_timer.elapsed(); };
+	SCOPE_EXIT(&) { delta_time = loop_timer.get_elapsed_time(); };
 
 	// TODO: physics stuff goes here
 

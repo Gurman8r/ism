@@ -52,5 +52,10 @@ namespace ism
 
 	Viewport::~Viewport() {}
 
+	Ref<ViewportTexture> Viewport::get_texture() const
+	{
+		return nullptr;
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

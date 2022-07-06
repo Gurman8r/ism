@@ -21,6 +21,8 @@ namespace ism
 
 		Entity * get_entity() const noexcept { return m_entity; }
 
+		EntityID get_entity_id() const noexcept { return VALIDATE(m_entity)->get_entity_id(); }
+
 		template <class T, class ... Args
 		> T & add_component(Args && ... args) noexcept { return VALIDATE(m_entity)->add_component<T>(FWD(args)...); }
 

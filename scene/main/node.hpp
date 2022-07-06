@@ -26,7 +26,7 @@ namespace ism
 
 	protected:
 		SceneTree *		m_tree{};
-		Node *			m_owner{};
+		Node *			m_parent{};
 		List<Ref<Node>>	m_nodes{};
 
 		Node(SceneTree * tree = nullptr) noexcept;
@@ -43,11 +43,9 @@ namespace ism
 	public:
 		SceneTree * get_tree() const noexcept { return m_tree; }
 
-		Node * get_parent() const noexcept { return m_owner; }
+		Node * get_parent() const noexcept { return m_parent; }
 
 		bool set_parent(Node * value);
-
-		bool set_parent(Ref<Node> const & value);
 
 		size_t get_sibling_index() const;
 
@@ -55,26 +53,24 @@ namespace ism
 
 		bool is_child_of(Node const * parent, bool recursive = false) const;
 
-		bool is_child_of(Ref<Node> const & parent, bool recursive = false) const;
+		bool is_child_of(Ref<Node> const & parent, bool recursive = false) const noexcept { return is_child_of(*parent, recursive); }
 
-		bool is_parent_of(Node const * child, bool recursive = false) const;
+		Ref<Node> add_child(Ref<Node> value);
 
-		bool is_parent_of(Ref<Node> const & child, bool recursive = false) const;
+		template <class T, class ... Args
+		> Ref<Node> add_child(Args && ... args) noexcept { return add_child(memnew(T(FWD(args)...))); }
 
 		Ref<Node> get_child(size_t index) const noexcept { return m_nodes[index]; }
 
 		size_t get_child_count() const noexcept { return m_nodes.size(); }
 
-		Ref<Node> add_child(Node * value);
-
-		Ref<Node> add_child(Ref<Node> const & value);
-
-		template <class T, class ... Args
-		> Ref<Node> add_child(Args && ... args) noexcept { return add_child(memnew(T(FWD(args)...))); }
-
 		void destroy_child(size_t index);
 
 		void destroy_children();
+
+		bool is_parent_of(Node const * child, bool recursive = false) const;
+
+		bool is_parent_of(Ref<Node> const & child, bool recursive = false) const noexcept { return is_parent_of(*child, recursive); }
 
 	public:
 		template <class Fn = void(*)(Ref<Node> &)

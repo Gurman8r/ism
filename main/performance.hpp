@@ -1,7 +1,7 @@
 #ifndef _ISM_PERFORMANCE_HPP_
 #define _ISM_PERFORMANCE_HPP_
 
-#include <core/templates/duration.hpp>
+#include <core/os/clock.hpp>
 #include <core/templates/list.hpp>
 
 namespace ism
@@ -20,9 +20,9 @@ namespace ism
 		{
 		}
 
-		void update(Duration const dt) noexcept
+		void update(Duration const & dt) noexcept
 		{
-			accum += dt - times[index];
+			accum += (float_t)dt - times[index];
 			times[index] = dt;
 			index = (index + 1) % times.size();
 			value = (0.f < accum) ? (1.f / (accum / (float_t)times.size())) : FLT_MAX;

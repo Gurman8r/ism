@@ -250,25 +250,6 @@ namespace ism
 		else { return typeof<T::base_type>(); }
 	}
 
-	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
-	> constexpr StringView nameof() noexcept
-	{
-		return T::get_class_static();
-	}
-
-	template <class T, std::enable_if_t<is_api_v<T>, int> = 0
-	> Object * pointerof(T const & o) noexcept
-	{
-		if constexpr (std::is_pointer_v<std::decay_t<decltype(o)>>)
-		{
-			return (Object *)o;
-		}
-		else
-		{
-			return o.ptr();
-		}
-	}
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class O = OBJ, std::enable_if_t<is_api_v<T>, int> = 0

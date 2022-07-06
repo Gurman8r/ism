@@ -106,14 +106,14 @@ public:
 		{
 			for (String line : it->get<List<String>>())
 			{
-				if (util::trim(line).empty()) { continue; }
+				if (line.trim().empty()) { continue; }
 				if (size_t const i{ line.find_first_of('=') }
 				; i == line.npos) {
 					global_defines.push_back({ line, String{} });
 				}
 				else {
 					String first{ line.substr(0, i) }, second{ line.substr(i + 1, line.size() - i) };
-					if (util::trim(first).empty() || util::trim(second).empty()) { continue; }
+					if (first.trim().empty() || second.trim().empty()) { continue; }
 					global_defines.push_back({ first, second });
 				}
 			}
@@ -152,14 +152,14 @@ public:
 			{
 				for (String line : section[DEFINES]->get<List<String>>())
 				{
-					if (util::trim(line).empty()) { continue; }
+					if (line.trim().empty()) { continue; }
 					if (size_t const i{ line.find_first_of('=') }
 					; i == line.npos) {
 						code.printf("#define %.*s", line.size(), line.data());
 					}
 					else {
 						String first{ line.substr(0, i) }, second{ line.substr(i + 1, line.size() - i) };
-						if (util::trim(first).empty() || util::trim(second).empty()) { continue; }
+						if (first.trim().empty() || second.trim().empty()) { continue; }
 						code.printf("#define %.*s %.*s\n", first.size(), first.data(), second.size(), second.data());
 					}
 				}

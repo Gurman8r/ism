@@ -46,7 +46,7 @@ namespace ism
 		self_type & swap(self_type & value) noexcept { return m_text.swap(value.m_text), (*this); }
 
 	public:
-		operator void * () const noexcept { return !m_text.empty() ? (void *)m_text.data() : nullptr; }
+		operator void * () const noexcept { return m_text.operator void *(); }
 		bool operator==(storage_type const & value) { return m_text == value; }
 		bool operator==(const_pointer value) { return m_text == value; }
 		bool operator!=(storage_type const & value) { return m_text != value; }
