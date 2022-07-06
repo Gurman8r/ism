@@ -28,10 +28,10 @@ namespace ism
 		template <class C, class ... Args
 		> C & add_component(Args && ... args) noexcept
 		{
-			auto * t{ VALIDATE(m_tree) };
-			C & c{ t->m_ecs.emplace<C>(m_entity_id, FWD(args)...) };
-			t->on_component_added<C>(*this, c);
-			return c;
+			ASSERT(m_tree);
+			C & c{ m_tree->m_ecs.emplace<C>(m_entity_id, FWD(args)...) };
+			m_tree->on_component_added<C>(*this, c);
+			return m_tree;
 		}
 
 		template <class ... C

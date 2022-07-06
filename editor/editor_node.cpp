@@ -1,5 +1,5 @@
 #include <editor/editor_node.hpp>
-#include <scene/gui/imgui.hpp>
+#include <scene/imgui.hpp>
 
 namespace ism
 {

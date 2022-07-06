@@ -2,8 +2,8 @@
 #define _ISM_RENDERING_SERVER_DEFAULT_HPP_
 
 #include <servers/rendering/renderer_storage.hpp>
-#include <servers/rendering/renderer_canvas_renderer.hpp>
-#include <servers/rendering/renderer_scene_renderer.hpp>
+#include <servers/rendering/renderer_2d.hpp>
+#include <servers/rendering/renderer_3d.hpp>
 
 namespace ism
 {
@@ -16,8 +16,8 @@ namespace ism
 	protected:
 		RenderingDevice * m_device{};
 		RendererStorage * m_storage{};
-		RendererCanvasRenderer * m_canvas_renderer{};
-		RendererSceneRenderer * m_scene_renderer{};
+		Renderer2D * m_canvas{};
+		Renderer3D * m_scene{};
 
 	public:
 		RenderingServerDefault();

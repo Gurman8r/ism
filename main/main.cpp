@@ -2,7 +2,7 @@
 
 #include <main/main.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/gui/imgui.hpp>
+#include <scene/imgui.hpp>
 
 #if TOOLS_ENABLED
 #include <editor/editor_node.hpp>
@@ -71,9 +71,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	register_scene_types();
 	
-#if TOOLS_ENABLED
 	register_editor_types();
-#endif
 
 	register_platform_apis();
 	
@@ -209,7 +207,7 @@ bool Main::iteration()
 	// poll events
 	g_display->poll_events();
 
-	// update input state
+	// update input
 	static Vec2 last_mouse_pos{};
 	g_input->m_state.mouse_delta = g_input->m_state.mouse_pos - last_mouse_pos;
 	last_mouse_pos = g_input->m_state.mouse_pos;
@@ -242,7 +240,6 @@ bool Main::iteration()
 	ImGui_RenderDrawData(&g_imgui->Viewports[0]->DrawDataP);
 	RENDERING_DEVICE->draw_list_end();
 
-	// update imgui platform windows
 	if (g_imgui->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
 		WindowID backup_context{ g_display->get_current_context() };
 		ImGui::UpdatePlatformWindows();

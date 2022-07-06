@@ -13,7 +13,7 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-size_t load_mesh_vertices(aiMesh const * mesh, DynamicBuffer & data)
+size_t process_vertices(aiMesh const * mesh, DynamicBuffer & data)
 {
 	for (size_t i = 0; i < (size_t)mesh->mNumVertices; ++i)
 	{
@@ -56,7 +56,7 @@ size_t load_mesh_vertices(aiMesh const * mesh, DynamicBuffer & data)
 	return data.size() / sizeof(float_t);
 }
 
-size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
+size_t process_indices(aiMesh const * mesh, DynamicBuffer & data)
 {
 	for (size_t i = 0; i < (size_t)mesh->mNumFaces; ++i)
 	{
@@ -72,7 +72,7 @@ size_t load_mesh_indices(aiMesh const * mesh, DynamicBuffer & data)
 	return data.size() / sizeof(uint32_t);
 }
 
-void load_material_textures(aiMaterial const * material, List<Ref<Texture>> & textures)
+void process_aimaterial(aiMaterial const * material, List<Ref<Texture>> & textures)
 {
 	if (!material) { return; }
 
@@ -93,7 +93,7 @@ void load_material_textures(aiMaterial const * material, List<Ref<Texture>> & te
 	_load_material_texture(aiTextureType_SPECULAR, "sm"); // specular
 }
 
-void process_mesh_node(aiScene const * scene, aiNode const * node, List<RS::SurfaceData> & spec)
+void process_ainode(aiScene const * scene, aiNode const * node, List<RS::SurfaceData> & spec)
 {
 	for (size_t i = 0; i < (size_t)node->mNumMeshes; ++i)
 	{
@@ -101,16 +101,16 @@ void process_mesh_node(aiScene const * scene, aiNode const * node, List<RS::Surf
 
 		RS::SurfaceData & s{ spec.emplace_back(RS::SurfaceData{}) };
 		s.primitive = RS::Primitive_Triangles;
-		s.vertex_count = load_mesh_vertices(m, s.vertex_data);
-		s.index_count = load_mesh_indices(m, s.index_data);
+		s.vertex_count = process_vertices(m, s.vertex_data);
+		s.index_count = process_indices(m, s.index_data);
 
 		//List<Ref<Texture>> textures;
-		//load_material_textures(scene->mMaterials[m->mMaterialIndex], textures);
+		//process_aimaterial(scene->mMaterials[m->mMaterialIndex], textures);
 	}
 
 	for (size_t i = 0; i < (size_t)node->mNumChildren; ++i)
 	{
-		process_mesh_node(scene, node->mChildren[i], spec);
+		process_ainode(scene, node->mChildren[i], spec);
 	}
 }
 
@@ -132,7 +132,7 @@ Error_ MeshLoader::load_from_file(Mesh & mesh, Path const & path)
 	SCOPE_EXIT(&ai) { ai.FreeScene(); };
 
 	List<RS::SurfaceData> spec;
-	process_mesh_node(scene, scene->mRootNode, spec);
+	process_ainode(scene, scene->mRootNode, spec);
 	mesh.m_mesh = RENDERING_SERVER->mesh_create(spec);
 	if (!mesh.m_mesh) { return Error_Unknown; }
 	return Error_None;

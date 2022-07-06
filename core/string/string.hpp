@@ -34,7 +34,7 @@ namespace ism
 
 		operator BasicStringView<Ch>() const noexcept { return { data(), size() }; }
 
-		auto & trim() & noexcept
+		auto & trim() noexcept
 		{
 			while (!empty() && std::isspace(back())) { pop_back(); }
 			while (!empty() && std::isspace(front())) { erase(begin()); }

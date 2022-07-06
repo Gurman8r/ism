@@ -1,7 +1,7 @@
 #ifndef _ISM_EDITOR_PANEL_HPP_
 #define _ISM_EDITOR_PANEL_HPP_
 
-#include <scene/gui/imgui.hpp>
+#include <scene/imgui.hpp>
 #include <scene/main/scene_tree.hpp>
 
 #define EDITOR_PANEL_SCOPE(open)						\

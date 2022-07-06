@@ -46,9 +46,6 @@ namespace ism
 		virtual Vec2i get_size() const = 0;
 		virtual void set_size(Vec2i const & value) = 0;
 
-		IntRect get_rect() const noexcept { return { get_position(), get_size() }; }
-		void set_rect(IntRect const & value) noexcept { set_position({ value[0], value[1] }); set_size({ value[2], value[3] }); }
-
 		Ref<ViewportTexture> get_texture() const;
 
 		virtual WindowID get_window_id() const = 0;

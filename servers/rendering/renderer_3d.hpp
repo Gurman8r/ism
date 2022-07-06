@@ -8,9 +8,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// scene renderer
-	class ISM_API RendererSceneRenderer : public Object
+	class ISM_API Renderer3D : public Object
 	{
-		OBJECT_COMMON(RendererSceneRenderer, Object);
+		OBJECT_COMMON(Renderer3D, Object);
 
 		friend class RenderingServerDefault;
 
@@ -18,9 +18,9 @@ namespace ism
 		RendererStorage * const m_storage;
 
 	public:
-		RendererSceneRenderer(RenderingDevice * device, RendererStorage * storage);
+		Renderer3D(RenderingDevice * device, RendererStorage * storage);
 
-		virtual ~RendererSceneRenderer() override;
+		virtual ~Renderer3D() override;
 
 	public:
 		struct SceneState

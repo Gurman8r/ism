@@ -1,42 +1,42 @@
-#include <servers/rendering/renderer_canvas_renderer.hpp>
+#include <servers/rendering/renderer_2d.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(RendererCanvasRenderer, t) {}
+	OBJECT_EMBED(Renderer2D, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RendererCanvasRenderer::RendererCanvasRenderer(RenderingDevice * device, RendererStorage * storage) : m_device{ VALIDATE(device) }, m_storage{ VALIDATE(storage) }
+	Renderer2D::Renderer2D(RenderingDevice * device, RendererStorage * storage) : m_device{ VALIDATE(device) }, m_storage{ VALIDATE(storage) }
 	{
 	}
 
-	RendererCanvasRenderer::~RendererCanvasRenderer()
+	Renderer2D::~Renderer2D()
 	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void RendererCanvasRenderer::push_rect(FloatRect const & rect)
+	void Renderer2D::push_rect(FloatRect const & rect)
 	{
 		m_rect_stack.push_back(rect);
 		m_cmd_head.rect = rect;
 	}
 
-	void RendererCanvasRenderer::pop_rect()
+	void Renderer2D::pop_rect()
 	{
 		ASSERT(!m_rect_stack.empty());
 		m_rect_stack.pop_back();
 	}
 
-	void RendererCanvasRenderer::push_texture(RID texture)
+	void Renderer2D::push_texture(RID texture)
 	{
 		m_texture_stack.push_back(texture);
 		m_cmd_head.texture = texture;
 	}
 
-	void RendererCanvasRenderer::pop_texture()
+	void Renderer2D::pop_texture()
 	{
 		ASSERT(!m_texture_stack.empty());
 		m_texture_stack.pop_back();
@@ -44,52 +44,52 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void RendererCanvasRenderer::add_line(Vec2 const & p1, Vec2 const & p2, Color const & color, float_t thickness)
+	void Renderer2D::add_line(Vec2 const & p1, Vec2 const & p2, Color const & color, float_t thickness)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_rect(Vec2 const & min, Vec2 const & max, Color const & color, float_t thickness)
+	void Renderer2D::add_rect(Vec2 const & min, Vec2 const & max, Color const & color, float_t thickness)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_rect_filled(Vec2 const & min, Vec2 const & max, Color const & color)
+	void Renderer2D::add_rect_filled(Vec2 const & min, Vec2 const & max, Color const & color)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_quad(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Color const & color, float_t thickness)
+	void Renderer2D::add_quad(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Color const & color, float_t thickness)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_quad_filled(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Color const & color)
+	void Renderer2D::add_quad_filled(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Color const & color)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_triangle(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Color const & color, float_t thickness)
+	void Renderer2D::add_triangle(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Color const & color, float_t thickness)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_triangle_filled(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Color const & color)
+	void Renderer2D::add_triangle_filled(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Color const & color)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_circle(Vec2 const & center, float_t radius, Color const & color, int32_t num_segments, float_t thickness)
+	void Renderer2D::add_circle(Vec2 const & center, float_t radius, Color const & color, int32_t num_segments, float_t thickness)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_circle_filled(Vec2 const & center, float_t radius, Color const & color, int32_t num_segments)
+	void Renderer2D::add_circle_filled(Vec2 const & center, float_t radius, Color const & color, int32_t num_segments)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
-	void RendererCanvasRenderer::add_image(RID texture, Vec2 const & min, Vec2 const & max, Vec2 const & uv0, Vec2 const & uv1, Color const & color)
+	void Renderer2D::add_image(RID texture, Vec2 const & min, Vec2 const & max, Vec2 const & uv0, Vec2 const & uv1, Color const & color)
 	{
 		if (color[3] == 0.f) { return; }
 		bool const push_texture_id{ texture != m_cmd_head.texture };
@@ -99,14 +99,14 @@ namespace ism
 		if (push_texture_id) { pop_texture(); }
 	}
 
-	void RendererCanvasRenderer::add_image_quad(RID texture, Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Vec2 const & uv0, Vec2 const & uv1, Vec2 const & uv2, Vec2 const & uv3, Color const & color)
+	void Renderer2D::add_image_quad(RID texture, Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Vec2 const & uv0, Vec2 const & uv1, Vec2 const & uv2, Vec2 const & uv3, Color const & color)
 	{
 		if (color[3] == 0.f) { return; }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void RendererCanvasRenderer::prim_reserve(uint32_t index_count, uint32_t vertex_count)
+	void Renderer2D::prim_reserve(uint32_t index_count, uint32_t vertex_count)
 	{
 		Command2D & cmd{ m_cmd_buffer.emplace_back(Command2D{}) };
 		cmd.element_count += index_count;
@@ -120,7 +120,7 @@ namespace ism
 		m_index_write_ptr = m_index_buffer.data() + old_index_buffer_size;
 	}
 
-	void RendererCanvasRenderer::prim_unreserve(uint32_t index_count, uint32_t vertex_count)
+	void Renderer2D::prim_unreserve(uint32_t index_count, uint32_t vertex_count)
 	{
 		Command2D & cmd{ m_cmd_buffer.back() };
 		cmd.element_count -= index_count;
@@ -132,7 +132,7 @@ namespace ism
 		m_index_buffer.resize((size_t)(old_index_buffer_size - index_count));
 	}
 
-	void RendererCanvasRenderer::prim_rect(Vec2 const & min, Vec2 const & max, Color const & color)
+	void Renderer2D::prim_rect(Vec2 const & min, Vec2 const & max, Color const & color)
 	{
 		Vec2 const c{ max[0], min[1] }, d{ min[0], max[1] }, texcoord{ 0, 0 };
 		Index2D const index{ (Index2D)m_vertex_current_index };
@@ -147,7 +147,7 @@ namespace ism
 		m_index_write_ptr += 6;
 	}
 
-	void RendererCanvasRenderer::prim_rect_uv(Vec2 const & min, Vec2 const & max, Vec2 const & uv0, Vec2 const & uv1, Color const & color)
+	void Renderer2D::prim_rect_uv(Vec2 const & min, Vec2 const & max, Vec2 const & uv0, Vec2 const & uv1, Color const & color)
 	{
 		Vec2 const c{ max[0], min[1] }, d{ min[0], max[1] }, uv2{ uv1[0], uv0[1] }, uv3{ uv0[0], uv1[1] };
 		Index2D const index{ (Index2D)m_vertex_current_index };
@@ -162,7 +162,7 @@ namespace ism
 		m_index_write_ptr += 6;
 	}
 
-	void RendererCanvasRenderer::prim_quad_uv(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Vec2 const & uv0, Vec2 const & uv1, Vec2 const & uv2, Vec2 const & uv3, Color const & color)
+	void Renderer2D::prim_quad_uv(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Vec2 const & uv0, Vec2 const & uv1, Vec2 const & uv2, Vec2 const & uv3, Color const & color)
 	{
 		Index2D const index{ (Index2D)m_vertex_current_index };
 		m_index_write_ptr[0] = index; m_index_write_ptr[1] = (Index2D)(index + 1); m_index_write_ptr[2] = (Index2D)(index + 2);

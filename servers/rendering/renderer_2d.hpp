@@ -8,9 +8,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// canvas renderer
-	class ISM_API RendererCanvasRenderer : public Object
+	class ISM_API Renderer2D : public Object
 	{
-		OBJECT_COMMON(RendererCanvasRenderer, Object);
+		OBJECT_COMMON(Renderer2D, Object);
 		
 		friend class RenderingServerDefault;
 
@@ -37,9 +37,9 @@ namespace ism
 		};
 
 	public:
-		RendererCanvasRenderer(RenderingDevice * device, RendererStorage * storage);
+		Renderer2D(RenderingDevice * device, RendererStorage * storage);
 
-		virtual ~RendererCanvasRenderer() override;
+		virtual ~Renderer2D() override;
 
 	public:
 		void push_rect(FloatRect const & rect);

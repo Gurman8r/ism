@@ -1,4 +1,4 @@
-#include <scene/gui/imgui.hpp>
+#include <scene/imgui.hpp>
 #include <scene/main/scene_tree.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

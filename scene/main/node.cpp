@@ -10,7 +10,6 @@ namespace ism
 		t.tp_install = CLASS_INSTALLER(Node, t)
 		{
 			return t
-				.def("process", &Node::process)
 				.def("handle_event", &Node::handle_event)
 				;
 		};

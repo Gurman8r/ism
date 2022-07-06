@@ -1,6 +1,5 @@
 #include <scene/main/window.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/gui/imgui.hpp>
 
 namespace ism
 {

@@ -17,15 +17,15 @@ namespace ism
 		: RenderingServer	{}
 		, m_device			{ memnew(RENDERING_DEVICE_DEFAULT()) }
 		, m_storage			{ memnew(RendererStorage(m_device)) }
-		, m_canvas_renderer	{ memnew(RendererCanvasRenderer(m_device, m_storage)) }
-		, m_scene_renderer	{ memnew(RendererSceneRenderer(m_device, m_storage)) }
+		, m_canvas			{ memnew(Renderer2D(m_device, m_storage)) }
+		, m_scene			{ memnew(Renderer3D(m_device, m_storage)) }
 	{
 	}
 
 	RenderingServerDefault::~RenderingServerDefault()
 	{
-		if (m_scene_renderer) { memdelete(m_scene_renderer); m_scene_renderer = nullptr; }
-		if (m_canvas_renderer) { memdelete(m_canvas_renderer); m_canvas_renderer = nullptr; }
+		if (m_scene) { memdelete(m_scene); m_scene = nullptr; }
+		if (m_canvas) { memdelete(m_canvas); m_canvas = nullptr; }
 		if (m_storage) { memdelete(m_storage); m_storage = nullptr; }
 		if (m_device) { memdelete(m_device); m_device = nullptr; }
 	}

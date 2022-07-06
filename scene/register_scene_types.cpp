@@ -1,7 +1,7 @@
 #include <scene/register_scene_types.hpp>
 #include <scene/main/window.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/components/script_behavior_component.hpp>
+#include <scene/components/script_component.hpp>
 
 #include <scene/resources/font.hpp>
 #include <scene/resources/material.hpp>
@@ -24,7 +24,7 @@ void ism::register_scene_types()
 
 		Component,
 		BehaviorComponent,
-		ScriptBehaviorComponent,
+		ScriptComponent,
 
 		Font,
 		Material,
