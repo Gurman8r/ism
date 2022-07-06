@@ -44,7 +44,7 @@ namespace ism
 
 		virtual bool has_alpha() const = 0;
 
-		virtual Ref<Image> get_image() const;
+		virtual Ref<Image> get_data() const;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -75,7 +75,7 @@ namespace ism
 
 		virtual bool has_alpha() const override;
 
-		virtual Ref<Image> get_image() const override;
+		virtual Ref<Image> get_data() const override;
 
 		void update(Ref<Image> const & image, bool immediate = false);
 	};

@@ -125,7 +125,7 @@ namespace ism
 		return m_storage->texture2d_placeholder_create();
 	}
 
-	Ref<Image> RenderingServerDefault::texture2d_get_image(RID texture)
+	Ref<Image> RenderingServerDefault::texture2d_get_data(RID texture)
 	{
 		if (!texture) { return nullptr; }
 

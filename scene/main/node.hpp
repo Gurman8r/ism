@@ -10,14 +10,6 @@ namespace ism
 
 	class SceneTree;
 
-	class Node;
-
-	ALIAS(EntityID) entt::entity;
-
-	ALIAS(EntityRegistry) entt::registry;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	class ISM_API Node : public EventHandler
 	{
 		OBJECT_COMMON(Node, EventHandler);

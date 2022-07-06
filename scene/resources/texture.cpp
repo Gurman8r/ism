@@ -20,7 +20,7 @@ namespace ism
 		return true;
 	}
 
-	Ref<Image> Texture2D::get_image() const
+	Ref<Image> Texture2D::get_data() const
 	{
 		return nullptr;
 	}
@@ -71,9 +71,9 @@ namespace ism
 		return m_height;
 	}
 
-	Ref<Image> ImageTexture::get_image() const
+	Ref<Image> ImageTexture::get_data() const
 	{
-		return m_texture ? RENDERING_SERVER->texture2d_get_image(m_texture) : nullptr;
+		return m_texture ? RENDERING_SERVER->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	void ImageTexture::update(Ref<Image> const & image, bool immediate)

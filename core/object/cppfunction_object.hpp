@@ -113,7 +113,7 @@ namespace ism
 
 				using Guard = attr::extract_guard_t<Extra...>;
 
-				using Yield = make_caster<std::conditional_t<std::is_void_v<Return>, void_type, Return>>;
+				using Yield = make_caster<std::conditional_t<std::is_void_v<Return>, mpl::void_type, Return>>;
 
 				OBJ result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
 

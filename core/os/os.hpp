@@ -64,7 +64,7 @@ namespace ism
 
 		virtual Path get_cwd() const;
 		virtual Error_ set_cwd(Path const & path);
-		virtual Error_ shell_open(Path uri);
+		virtual Error_ shell_open(Path const & path);
 
 		virtual Path get_env(String const & key) const = 0;
 		virtual bool has_env(String const & key) const = 0;
@@ -76,31 +76,31 @@ namespace ism
 
 		virtual Ref<MainLoop> get_main_loop() const = 0;
 
-		enum class Weekday
+		enum Weekday
 		{
-			Sunday,
-			Monday,
-			Tuesday,
-			Wednesday,
-			Thursday,
-			Friday,
-			Saturday,
+			Weekday_Sunday,
+			Weekday_Monday,
+			Weekday_Tuesday,
+			Weekday_Wednesday,
+			Weekday_Thursday,
+			Weekday_Friday,
+			Weekday_Saturday,
 		};
 
-		enum class Month
+		enum Month
 		{
-			January,
-			February,
-			March,
-			April,
-			May,
-			June,
-			July,
-			August,
-			September,
-			October,
-			November,
-			December,
+			Month_January,
+			Month_February,
+			Month_March,
+			Month_April,
+			Month_May,
+			Month_June,
+			Month_July,
+			Month_August,
+			Month_September,
+			Month_October,
+			Month_November,
+			Month_December,
 		};
 
 		struct Date
@@ -130,11 +130,6 @@ namespace ism
 		virtual TimeZoneInfo get_time_zone() const = 0;
 		virtual String get_iso_date_time(bool local = false) const;
 		virtual double_t get_unix_time() const;
-
-		virtual void dump_memory_to_file(Path const & path);
-		virtual void dump_resources_to_file(Path const & path);
-		virtual void print_resources_in_use(bool value = false);
-		virtual void print_all_resources(Path path = {});
 
 		virtual uint64_t get_static_memory_usage() const;
 		virtual uint64_t get_static_memory_peak_usage() const;

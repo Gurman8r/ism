@@ -39,7 +39,7 @@ namespace ism
 		return false;
 	}
 
-	Ref<Image> ViewportTexture::get_image() const
+	Ref<Image> ViewportTexture::get_data() const
 	{
 		return {};
 	}

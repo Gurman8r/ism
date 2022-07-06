@@ -25,13 +25,9 @@ namespace ism
 		virtual RID get_rid() const override { return m_mesh; }
 
 		virtual size_t get_surface_count() const;
-
 		virtual RS::Primitive_ surface_get_primitive(size_t index) const;
-
 		virtual RID surface_get_vertex_array(size_t index) const;
-
 		virtual RID surface_get_index_array(size_t index) const;
-
 		virtual RID surface_get_material(size_t index) const;
 	};
 }

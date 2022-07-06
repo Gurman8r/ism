@@ -33,7 +33,7 @@ namespace ism
 		virtual RID texture_replace(RID old_texture, RID new_texture) override;
 		virtual RID texture2d_create(Ref<Image> const & image) override;
 		virtual RID texture2d_placeholder_create() override;
-		virtual Ref<Image> texture2d_get_image(RID texture) override;
+		virtual Ref<Image> texture2d_get_data(RID texture) override;
 		virtual RID texture3d_placeholder_create() override;
 		virtual RID texturecube_placeholder_create() override;
 

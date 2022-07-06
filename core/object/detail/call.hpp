@@ -118,7 +118,7 @@ namespace ism
 	> struct ArgumentLoader final
 	{
 		template <class Return, class Guard, class Func
-		> using return_type = std::conditional_t<std::is_void_v<Return>, void_type, Return>;
+		> using return_type = std::conditional_t<std::is_void_v<Return>, mpl::void_type, Return>;
 
 		static constexpr size_t argument_count{ sizeof...(Args) };
 
@@ -129,13 +129,13 @@ namespace ism
 		bool load_args(Batch<OBJ, bool> & args) { return impl_load_args(args, indices); }
 
 		template <class Return, class Guard, class Func
-		> auto call(Func && func) && -> return_type<Return, void_type, Return>
+		> auto call(Func && func) && -> return_type<Return, mpl::void_type, Return>
 		{
 			if constexpr (std::is_void_v<Return>)
 			{
 				std::move(*this).impl_call<Return>(FWD(func), indices, Guard{});
 
-				return void_type{};
+				return mpl::void_type{};
 			}
 			else
 			{

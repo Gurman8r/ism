@@ -24,15 +24,19 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// memalloc
 #define memalloc \
 		(ism::Memory::alloc_static)
 
+// memrealloc
 #define memrealloc(ptr, size_in_bytes) \
 		(ism::Memory::realloc_static((size_in_bytes), (size), (size)))
 
+// memrealloc (sized)
 #define memrealloc_sized(ptr, old_size, new_size) \
 		(ism::Memory::realloc_static((ptr), (old_size), (new_size)))
 
+// memfree
 #define memfree \
 		(ism::Memory::free_static)
 
@@ -72,18 +76,16 @@ namespace ism
 		return value;
 	}
 
-#ifndef MEMNEW_DESC
-#define MEMNEW_DESC(T) ""
-#endif
-
+	// memnew
 #define memnew(T) \
-		(ism::_post_initialize(new (MEMNEW_DESC(T)) T))
+		(ism::_post_initialize(new (TOSTR(T)) T))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// predelete
 	FORCE_INLINE bool predelete_handler(void *) { return true; }
 
+	// memdelete
 	template <class T> void memdelete(T * ptr)
 	{
 		if (!predelete_handler(ptr)) { return; }
@@ -93,6 +95,7 @@ namespace ism
 		memfree(ptr);
 	}
 
+	// memdelete nonzero
 #define memdelete_nonzero(ptr)			\
 		do {							\
 			if (ptr)					\

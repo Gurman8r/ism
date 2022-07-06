@@ -40,9 +40,9 @@ namespace ism
 		if (m_texture) { RENDERING_DEVICE->texture_destroy(m_texture); m_texture = nullptr; }
 	}
 
-	Ref<Image> Glyph::get_image() const
+	Ref<Image> Glyph::get_data() const
 	{
-		return m_texture ? RENDERING_SERVER->texture2d_get_image(m_texture) : nullptr;
+		return m_texture ? RENDERING_SERVER->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

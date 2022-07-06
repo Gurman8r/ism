@@ -249,7 +249,7 @@ namespace ism
 		auto string() const & noexcept -> storage_type const & { return m_text; }
 		auto string() && noexcept -> storage_type && { return std::move(m_text); }
 
-		operator view_type () noexcept { return { m_text.data(), m_text.size() }; }
+		operator view_type () const noexcept { return { m_text.data(), m_text.size() }; }
 		operator storage_type & () & noexcept { return m_text; }
 		operator storage_type const & () const & noexcept { return m_text; }
 		operator storage_type && () && noexcept { return std::move(m_text); }

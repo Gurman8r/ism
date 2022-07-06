@@ -7,7 +7,7 @@
 #include <core/string/print_string.hpp>
 #include <core/math/transform_2d.hpp>
 #include <core/templates/buffer.hpp>
-#include <core/os/clock.hpp>
+#include <core/os/time.hpp>
 #include <core/templates/ecs.hpp>
 #include <core/templates/flat_map.hpp>
 #include <core/templates/hash_map.hpp>
@@ -129,7 +129,7 @@ namespace ism
 	ALIAS(descrgetfunc)		OBJ(*)(OBJ descr, OBJ obj, OBJ cls);
 	ALIAS(descrsetfunc)		Error_(*)(OBJ descr, OBJ obj, OBJ value);
 
-	ALIAS(installerfunc)	TYPE(*)(TYPE type);
+	ALIAS(classproc)		TYPE(*)(TYPE type);
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
 	ALIAS(delfunc)			void(*)(Object * ptr);
 	ALIAS(cmpfunc)			int32_t(*)(OBJ lhs, OBJ rhs);

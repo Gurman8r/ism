@@ -207,6 +207,11 @@ namespace ism
 		virtual List<VideoMode> const & get_fullscreen_video_modes() const = 0;
 
 	public:
+		virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) = 0;
+		virtual CursorID create_standard_cursor(CursorShape_ shape) = 0;
+		virtual void destroy_cursor(CursorID value) = 0;
+
+	public:
 		virtual WindowID get_current_context() const = 0;
 		virtual void set_current_context(WindowID window) = 0;
 		virtual void poll_events() = 0;
@@ -220,11 +225,6 @@ namespace ism
 		virtual void maximize_window(WindowID window) = 0;
 		virtual void restore_window(WindowID window) = 0;
 		virtual void request_window_attention(WindowID window) = 0;
-		
-	public:
-		virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) = 0;
-		virtual CursorID create_standard_cursor(CursorShape_ shape) = 0;
-		virtual void destroy_cursor(CursorID value) = 0;
 
 	public:
 		inline IntRect window_get_bounds(WindowID window) const { return { window_get_position(window), window_get_size(window) }; }

@@ -121,7 +121,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	constexpr size_t get_image_depth(Image::Format_ image_format) noexcept
+	constexpr size_t get_data_depth(Image::Format_ image_format) noexcept
 	{
 		switch (image_format) {
 		case Image::Format_R8: return 1;

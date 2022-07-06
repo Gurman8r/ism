@@ -131,6 +131,45 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	CursorID DisplayServerWindows::create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y)
+	{
+		GLFWimage img{ w, h, (uint8_t *)p };
+		return (CursorID)glfwCreateCursor(&img, x, y);
+	}
+
+	CursorID DisplayServerWindows::create_standard_cursor(CursorShape_ shape)
+	{
+		return (CursorID)glfwCreateStandardCursor(std::invoke([shape]() noexcept
+		{
+			switch (shape)
+			{
+			default: return 0;
+			case CursorShape_Arrow: return GLFW_ARROW_CURSOR;
+			case CursorShape_IBeam: return GLFW_IBEAM_CURSOR;
+			case CursorShape_Crosshair: return GLFW_CROSSHAIR_CURSOR;
+			case CursorShape_PointingHand: return GLFW_POINTING_HAND_CURSOR;
+			case CursorShape_EW: return GLFW_RESIZE_EW_CURSOR;
+			case CursorShape_NS: return GLFW_RESIZE_NS_CURSOR;
+			case CursorShape_NESW: return GLFW_RESIZE_NESW_CURSOR;
+			case CursorShape_NWSE: return GLFW_RESIZE_NWSE_CURSOR;
+			case CursorShape_ResizeAll: return GLFW_RESIZE_ALL_CURSOR;
+			case CursorShape_NotAllowed: return GLFW_NOT_ALLOWED_CURSOR;
+
+				// glfw doesn't have these
+			case CursorShape_HResize: return GLFW_HRESIZE_CURSOR;
+			case CursorShape_VResize: return GLFW_VRESIZE_CURSOR;
+			case CursorShape_Hand: return GLFW_HAND_CURSOR;
+			}
+		}));
+	}
+
+	void DisplayServerWindows::destroy_cursor(CursorID value)
+	{
+		glfwDestroyCursor((GLFWcursor *)value);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	WindowID DisplayServerWindows::get_current_context() const
 	{
 		return (WindowID)glfwGetCurrentContext();
@@ -186,45 +225,6 @@ namespace ism
 	void DisplayServerWindows::request_window_attention(WindowID id)
 	{
 		glfwRequestWindowAttention(VALIDATE((GLFWwindow *)id));
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	CursorID DisplayServerWindows::create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y)
-	{
-		GLFWimage img{ w, h, (uint8_t *)p };
-		return (CursorID)glfwCreateCursor(&img, x, y);
-	}
-
-	CursorID DisplayServerWindows::create_standard_cursor(CursorShape_ shape)
-	{
-		return (CursorID)glfwCreateStandardCursor(std::invoke([shape]() noexcept
-		{
-			switch (shape)
-			{
-			default: return 0;
-			case CursorShape_Arrow: return GLFW_ARROW_CURSOR;
-			case CursorShape_IBeam: return GLFW_IBEAM_CURSOR;
-			case CursorShape_Crosshair: return GLFW_CROSSHAIR_CURSOR;
-			case CursorShape_PointingHand: return GLFW_POINTING_HAND_CURSOR;
-			case CursorShape_EW: return GLFW_RESIZE_EW_CURSOR;
-			case CursorShape_NS: return GLFW_RESIZE_NS_CURSOR;
-			case CursorShape_NESW: return GLFW_RESIZE_NESW_CURSOR;
-			case CursorShape_NWSE: return GLFW_RESIZE_NWSE_CURSOR;
-			case CursorShape_ResizeAll: return GLFW_RESIZE_ALL_CURSOR;
-			case CursorShape_NotAllowed: return GLFW_NOT_ALLOWED_CURSOR;
-
-				// glfw doesn't have these
-			case CursorShape_HResize: return GLFW_HRESIZE_CURSOR;
-			case CursorShape_VResize: return GLFW_VRESIZE_CURSOR;
-			case CursorShape_Hand: return GLFW_HAND_CURSOR;
-			}
-		}));
-	}
-
-	void DisplayServerWindows::destroy_cursor(CursorID value)
-	{
-		glfwDestroyCursor((GLFWcursor *)value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

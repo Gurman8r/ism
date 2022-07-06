@@ -92,7 +92,7 @@ namespace ism
 		return Error_Unknown;
 	}
 
-	Error_ OS::shell_open(Path uri)
+	Error_ OS::shell_open(Path const & path)
 	{
 		return Error_Unknown;
 	}
@@ -121,22 +121,6 @@ namespace ism
 	double_t OS::get_unix_time() const
 	{
 		return {};
-	}
-
-	void OS::dump_memory_to_file(Path const & path)
-	{
-	}
-
-	void OS::dump_resources_to_file(Path const & path)
-	{
-	}
-
-	void OS::print_resources_in_use(bool value)
-	{
-	}
-
-	void OS::print_all_resources(Path path)
-	{
 	}
 
 	uint64_t OS::get_static_memory_usage() const

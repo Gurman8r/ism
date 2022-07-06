@@ -1,7 +1,7 @@
 #ifndef _ISM_PERFORMANCE_HPP_
 #define _ISM_PERFORMANCE_HPP_
 
-#include <core/os/clock.hpp>
+#include <core/os/time.hpp>
 #include <core/templates/list.hpp>
 
 namespace ism

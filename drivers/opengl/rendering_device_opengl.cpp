@@ -108,7 +108,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void get_image_info(RD::DataFormat_ const data_format, Image::Format_ * image_format, uint32_t * internal_format, uint32_t * format, uint32_t * type) noexcept
+void get_data_info(RD::DataFormat_ const data_format, Image::Format_ * image_format, uint32_t * internal_format, uint32_t * format, uint32_t * type) noexcept
 {
 	Image::Format_ _image_format{};
 	uint32_t _internal_format{}, _format{}, _type{};
@@ -513,7 +513,7 @@ RID RenderingDeviceOpenGL::texture_create(TextureCreateInfo const & spec, Dynami
 		(spec.swizzle_g == TextureSwizzle_Identity) ? GL_GREEN : TO_GL(spec.swizzle_g),
 		(spec.swizzle_b == TextureSwizzle_Identity) ? GL_BLUE : TO_GL(spec.swizzle_b),
 		(spec.swizzle_a == TextureSwizzle_Identity) ? GL_ALPHA : TO_GL(spec.swizzle_a) };
-	get_image_info(t.color_format, &t.image_format, 0, 0, 0);
+	get_data_info(t.color_format, &t.image_format, 0, 0, 0);
 	_texture_update(t, data.data());
 	return texture;
 }
@@ -535,7 +535,7 @@ void RenderingDeviceOpenGL::texture_update(RID texture, DynamicBuffer const & da
 void RenderingDeviceOpenGL::_texture_update(_Texture & t, void const * data)
 {
 	uint32_t _internal_format, _format, _type;
-	get_image_info(t.color_format, nullptr, &_internal_format, &_format, &_type);
+	get_data_info(t.color_format, nullptr, &_internal_format, &_format, &_type);
 
 	glCheck(glGenTextures(1, &t.handle));
 	glCheck(glBindTexture(t.texture_type, t.handle));
@@ -573,7 +573,7 @@ DynamicBuffer RenderingDeviceOpenGL::texture_get_data(RID texture)
 	_Texture & t{ *VALIDATE((_Texture *)texture) };
 
 	uint32_t _internal_format, _format;
-	get_image_info(t.color_format, nullptr, &_internal_format, nullptr, &_format);
+	get_data_info(t.color_format, nullptr, &_internal_format, nullptr, &_format);
 
 	DynamicBuffer data{};
 	data.resize((size_t)(t.width * t.height * t.depth));

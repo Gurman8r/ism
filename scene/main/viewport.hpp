@@ -21,7 +21,7 @@ namespace ism
 		virtual int32_t get_height() const override;
 		virtual Vec2i get_size() const override;
 		virtual bool has_alpha() const override;
-		virtual Ref<Image> get_image() const override;
+		virtual Ref<Image> get_data() const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -30,6 +30,8 @@ namespace ism
 	class ISM_API Viewport : public Node
 	{
 		OBJECT_COMMON(Viewport, Node);
+
+		RID m_viewport{};
 
 	protected:
 		Viewport();
@@ -50,6 +52,8 @@ namespace ism
 		Ref<ViewportTexture> get_texture() const;
 
 		virtual WindowID get_window_id() const = 0;
+
+		virtual RID get_viewport_rid() const { return m_viewport; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

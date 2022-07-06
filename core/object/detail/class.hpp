@@ -165,7 +165,7 @@ namespace ism::priv
 
 		constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
 		{
-			return static_cast<installerfunc>(static_cast<void *>(fn));
+			return static_cast<classproc>(static_cast<void *>(fn));
 		}
 	};
 

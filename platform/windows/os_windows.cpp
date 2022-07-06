@@ -42,7 +42,7 @@ namespace ism
 
 	Error_ OS_Windows::open_dynamic_library(Path const & path, void *& instance)
 	{
-		if (path.empty()) { return Error_Unknown; }
+		if (!path) { return Error_Unknown; }
 		instance = LoadLibraryA(path.c_str());
 		if (!instance) { return Error_Unknown; }
 		return Error_None;
@@ -92,7 +92,7 @@ namespace ism
 		return std::filesystem::current_path((std::wstring)util::widen(path.string())), Error_None;
 	}
 
-	Error_ OS_Windows::shell_open(Path uri)
+	Error_ OS_Windows::shell_open(Path const & path)
 	{
 		return Error_Unknown;
 	}

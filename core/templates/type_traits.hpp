@@ -18,6 +18,10 @@ namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	struct void_type {};
+	
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	template <class T, class ... Ts
 	> constexpr bool is_any_of_v{ std::disjunction_v<std::is_same<T, Ts>...> };
 

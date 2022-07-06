@@ -217,13 +217,13 @@ public:																							\
 		TYPE_CASTER_COMMON(T, "none");
 	};
 
-	template <> struct TypeCaster<void_type> : VoidCaster<void_type> {};
+	template <> struct TypeCaster<mpl::void_type> : VoidCaster<mpl::void_type> {};
 
 	template <> struct TypeCaster<nullptr_t> : VoidCaster<nullptr_t> {};
 
-	template <> struct TypeCaster<void> : TypeCaster<void_type>
+	template <> struct TypeCaster<void> : TypeCaster<mpl::void_type>
 	{
-		using TypeCaster<void_type>::cast;
+		using TypeCaster<mpl::void_type>::cast;
 
 		bool load(OBJ const & src, bool)
 		{

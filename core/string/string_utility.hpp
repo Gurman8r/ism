@@ -78,7 +78,7 @@ namespace ism::util
 		if constexpr (sizeof(T) > 4)
 		{
 			while (value > 0xFFFFFFFFU) {
-				auto chunk{ static_cast<ulong_t>(value % 1000000000) };
+				auto chunk{ static_cast<uint32_t>(value % 1000000000) };
 				value /= 1000000000;
 				for (int32_t i = 0; i != 9; ++i) {
 					*--next = static_cast<char>('0' + chunk % 10);
@@ -86,7 +86,7 @@ namespace ism::util
 				}
 			}
 		}
-		auto trunc{ static_cast<ulong_t>(value) };
+		auto trunc{ static_cast<uint32_t>(value) };
 		do {
 			*--next = static_cast<char>('0' + trunc % 10);
 			trunc /= 10;

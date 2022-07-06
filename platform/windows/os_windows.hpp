@@ -42,7 +42,7 @@ namespace ism
 
 		virtual Path get_cwd() const override;
 		virtual Error_ set_cwd(Path const & path) override;
-		virtual Error_ shell_open(Path uri) override;
+		virtual Error_ shell_open(Path const & path) override;
 
 		virtual Path get_env(String const & key) const override;
 		virtual bool has_env(String const & key) const override;

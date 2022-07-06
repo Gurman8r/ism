@@ -93,7 +93,7 @@ namespace ism::attr
 	*/
 	template <class... Ts> struct call_guard;
 
-	template <> struct call_guard<> { using type = void_type; };
+	template <> struct call_guard<> { using type = mpl::void_type; };
 
 	template <class T
 	> struct call_guard<T>

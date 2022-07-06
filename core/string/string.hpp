@@ -30,7 +30,11 @@ namespace ism
 
 		auto hash_code() const noexcept { return ism::hash(data(), size()); }
 
-		auto & trim() noexcept
+		auto view() const noexcept { return BasicStringView<Ch>{ data(), size() }; }
+
+		operator BasicStringView<Ch>() const noexcept { return { data(), size() }; }
+
+		auto & trim() & noexcept
 		{
 			while (!empty() && std::isspace(back())) { pop_back(); }
 			while (!empty() && std::isspace(front())) { erase(begin()); }
@@ -44,7 +48,7 @@ namespace ism
 			va_copy(args_copy, args);
 			auto const n{ std::vsnprintf(nullptr, 0, fmt, args_copy) };
 			va_end(args_copy);
-			if (n < 0) { throw std::runtime_error("vformat error"); }
+			ASSERT(-1 < n && "vformat error");
 
 			BasicString s;
 			s.resize((size_t)n);

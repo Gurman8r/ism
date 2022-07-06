@@ -22,6 +22,8 @@ namespace ism
 		using base_type::base_type;
 		using base_type::operator=;
 
+		operator void * () const noexcept { return !empty() ? (void *)data() : nullptr; }
+
 		NODISCARD bool contains(T const & value) const { return end() != std::find(begin(), end(), value); }
 		NODISCARD bool contains(T && value) const noexcept { return end() != std::find(begin(), end(), FWD(value)); }
 	};

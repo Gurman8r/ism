@@ -47,7 +47,7 @@ namespace ism
 
 		virtual bool has_alpha() const override { return false; }
 
-		virtual Ref<Image> get_image() const override;
+		virtual Ref<Image> get_data() const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

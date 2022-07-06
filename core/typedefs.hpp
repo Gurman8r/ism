@@ -3,11 +3,14 @@
 
 #include <core/version.hpp>
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 // alias
 #define ALIAS(m_type) \
 		using m_type = 
+
+// opaque type
+#define DECL_HANDLE(m_name) \
+		struct CAT(__, m_name) { int unused; }; \
+		ALIAS(m_name) CAT(__, m_name) *
 
 // strong typedef
 #define STRONG_TYPEDEF(m_to, m_from)																					\
@@ -30,29 +33,11 @@
 			inline constexpr decltype(auto) operator>(m_to const & other) noexcept { return value > other.value; }		\
 			inline constexpr decltype(auto) operator<=(m_to const & other) noexcept { return value <= other.value; }	\
 			inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
-		}	
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// declare opaque handle type
-#define DECL_HANDLE(m_name) \
-		struct CAT(__, m_name) { int unused; }; \
-		ALIAS(m_name) CAT(__, m_name) *
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// declare tag object type
-#define DECL_TAG(m_type, m_var) \
-		struct m_type { struct _Tag {}; constexpr explicit m_type(_Tag) {} }; \
-		inline constexpr m_type m_var{ m_type::_Tag{} }; \
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		}
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	struct void_type {};
 
 #ifdef CC_MSVC
 	ALIAS(int8_t)		signed __int8;
@@ -74,17 +59,10 @@ namespace ism
 	ALIAS(uint64_t)		unsigned long long;
 #endif
 
-	ALIAS(signed_t)		signed;
-	ALIAS(unsigned_t)	unsigned;
-	ALIAS(slong_t)		signed long;
-	ALIAS(ulong_t)		unsigned long;
 	ALIAS(float32_t)	float;
 	ALIAS(float64_t)	double;
 	ALIAS(float80_t)	long double;
 	ALIAS(nullptr_t)	decltype(nullptr);
-
-	ALIAS(float_t)		float32_t;
-	ALIAS(double_t)		float64_t;
 
 #if (32 == ARCHITECTURE)
 	ALIAS(intmax_t)		int32_t;
@@ -94,6 +72,8 @@ namespace ism
 	ALIAS(uintmax_t)	uint64_t;
 #endif
 
+	ALIAS(float_t)		float32_t;
+	ALIAS(double_t)		float64_t;
 	ALIAS(max_align_t)	double_t;
 	ALIAS(intptr_t)		intmax_t;
 	ALIAS(ptrdiff_t)	intmax_t;

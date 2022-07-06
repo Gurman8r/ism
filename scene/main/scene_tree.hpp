@@ -2,13 +2,19 @@
 #define _ISM_SCENE_TREE_HPP_
 
 #include <core/os/main_loop.hpp>
-#include <core/os/clock.hpp>
+#include <core/os/time.hpp>
 #include <main/performance.hpp>
 #include <scene/main/window.hpp>
 
 // scene
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ALIAS(EntityID) entt::entity;
+
+	ALIAS(EntityRegistry) entt::registry;
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	struct SceneSettings final
@@ -67,7 +73,7 @@ namespace ism
 	private:
 		bool m_initialized{};
 
-		Clock const m_main_timer{ true };
+		Clock m_main_timer{};
 
 		FrameRateTracker m_fps{ 120 };
 

@@ -1,5 +1,5 @@
-#ifndef _ISM_CLOCK_HPP_
-#define _ISM_CLOCK_HPP_
+#ifndef _ISM_TIME_HPP_
+#define _ISM_TIME_HPP_
 
 #include <core/templates/ratio.hpp>
 
@@ -95,77 +95,23 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// clock base
+	ALIAS(_ClockBase) std::chrono::high_resolution_clock;
+
 	// clock
-	struct Clock final
+	class Clock final
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		_ClockBase::time_point m_time;
 
-		using TimePoint = std::chrono::high_resolution_clock::time_point;
+	public:
+		Clock() noexcept : m_time{ _ClockBase::now() } {}
 
-		static TimePoint now() noexcept { return std::chrono::high_resolution_clock::now(); }
+		Duration get_elapsed_time() const noexcept { return _ClockBase::now() - m_time; }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		Clock() noexcept = default;
-
-		explicit Clock(bool running) noexcept
-			: m_running		{ running }
-			, m_start_time	{ now() }
-			, m_stop_time	{ m_start_time }
-			, m_elapsed		{}
-		{
-		}
-
-		NON_COPYABLE(Clock);
-
-		NON_MOVABLE(Clock);
-
-		bool running() const noexcept
-		{
-			return m_running;
-		}
-
-		Duration get_elapsed_time() const noexcept
-		{
-			return m_running ? (now() - m_start_time) : m_elapsed;
-		}
-
-		Clock & restart() noexcept
-		{
-			m_running = true;
-
-			m_start_time = m_stop_time = now();
-
-			m_elapsed = {};
-
-			return (*this);
-		}
-
-		Clock & stop() noexcept
-		{
-			if (m_running)
-			{
-				m_running = false;
-
-				m_stop_time = now();
-
-				m_elapsed = (m_stop_time - m_start_time);
-			}
-			return (*this);
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	private:
-		bool		m_running;
-		TimePoint	m_start_time;
-		TimePoint	m_stop_time;
-		Duration	m_elapsed;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		void restart() noexcept { m_time = _ClockBase::now(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_CLOCK_HPP_
+#endif // !_ISM_TIME_HPP_

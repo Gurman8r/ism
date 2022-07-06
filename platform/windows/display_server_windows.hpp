@@ -25,6 +25,11 @@ namespace ism
 		virtual List<VideoMode> const & get_fullscreen_video_modes() const override;
 
 	public:
+		virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
+		virtual CursorID create_standard_cursor(CursorShape_ shape) override;
+		virtual void destroy_cursor(CursorID value) override;
+
+	public:
 		virtual WindowID get_current_context() const override;
 		virtual void set_current_context(WindowID id) override;
 		virtual void poll_events() override;
@@ -38,11 +43,6 @@ namespace ism
 		virtual void maximize_window(WindowID id) override;
 		virtual void restore_window(WindowID id) override;
 		virtual void request_window_attention(WindowID id) override;
-
-	public:
-		virtual CursorID create_custom_cursor(int32_t w, int32_t h, byte const * p, int32_t x, int32_t y) override;
-		virtual CursorID create_standard_cursor(CursorShape_ shape) override;
-		virtual void destroy_cursor(CursorID value) override;
 
 	public:
 		virtual String window_get_clipboard(WindowID id) const override;
