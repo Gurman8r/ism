@@ -86,7 +86,7 @@ namespace ism
 	Color32 Image::get_pixel(size_t index) const
 	{
 		ASSERT((int32_t)index + m_depth < get_capacity());
-		const_iterator const it{ m_pixels.begin() + index };
+		auto const it{ m_pixels.begin() + index };
 		byte r{}, g{}, b{}, a{ byte::max };
 		if (m_depth >= 1) { r = *(it + 0); }
 		if (m_depth >= 2) { g = *(it + 1); }
@@ -98,7 +98,7 @@ namespace ism
 	void Image::set_pixel(size_t index, Color32 value)
 	{
 		ASSERT((int32_t)index + m_depth < get_capacity());
-		iterator const it{ m_pixels.begin() + index };
+		auto const it{ m_pixels.begin() + index };
 		if (m_depth >= 1) { *(it + 0) = COLOR32_R(value); }
 		if (m_depth >= 2) { *(it + 1) = COLOR32_G(value); }
 		if (m_depth >= 3) { *(it + 2) = COLOR32_B(value); }

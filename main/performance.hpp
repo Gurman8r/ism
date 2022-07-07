@@ -6,7 +6,7 @@
 
 namespace ism
 {
-	struct FrameRateTracker final
+	struct FPS_Tracker final
 	{
 		float_t			value{};
 		float_t			accum{};
@@ -15,7 +15,7 @@ namespace ism
 
 		operator float_t() const noexcept { return value; }
 
-		FrameRateTracker(size_t count = 120) noexcept
+		FPS_Tracker(size_t count = 120) noexcept
 			: value{}, accum{}, index{}, times{ count, 0.f, decltype(times)::allocator_type{} }
 		{
 		}

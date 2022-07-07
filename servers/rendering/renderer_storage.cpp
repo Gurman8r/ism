@@ -327,40 +327,46 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RendererStorage::camera_create(Vec3 const & position, Vec4 const & rotation)
+	RID RendererStorage::camera_create()
 	{
-		RID const camera{ (RID)memnew(_Camera{}) };
-		_Camera & c{ *VALIDATE((_Camera *)camera) };
-		return camera;
+		return RID();
 	}
 
-	void RendererStorage::camera_destroy(RID camera)
-	{
-		_Camera & c{ *VALIDATE((_Camera *)camera) };
-		memdelete((_Camera *)camera);
-	}
-
-	Vec3 RendererStorage::camera_get_position(RID camera)
-	{
-		return Vec3();
-	}
-
-	void RendererStorage::camera_set_position(RID camera, Vec3 const & value)
+	void RendererStorage::camera_set_perspective(RID camera, float_t fovy_degrees, float_t z_near, float_t z_far)
 	{
 	}
 
-	Vec4 RendererStorage::camera_get_rotation(RID camera)
-	{
-		return Vec4();
-	}
-
-	void RendererStorage::camera_set_rotation(RID camera, Vec4 const & value)
+	void RendererStorage::camera_set_orthogonal(RID camera, float_t size, float_t z_near, float_t z_far)
 	{
 	}
 
-	Mat4 RendererStorage::camera_get_transform(RID camera)
+	void RendererStorage::camera_set_frustum(RID camera, float_t size, Vec2 offset, float_t z_near, float_t z_far)
 	{
-		return Mat4();
+	}
+
+	void RendererStorage::camera_set_transform(RID camera, Mat4 const & transform)
+	{
+	}
+
+	void RendererStorage::camera_set_cull_mask(RID camera, uint32_t layers)
+	{
+	}
+
+	void RendererStorage::camera_set_environment(RID camera, RID env)
+	{
+	}
+
+	void RendererStorage::camera_set_camera_effects(RID camera, RID fx)
+	{
+	}
+
+	void RendererStorage::camera_set_use_vertical_aspect(RID camera, bool enable)
+	{
+	}
+
+	bool RendererStorage::is_camera(RID camera) const
+	{
+		return false;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -402,7 +408,7 @@ namespace ism
 		return VALIDATE((_Viewport const *)viewport)->render_target_texture;
 	}
 
-	void RendererStorage::viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen)
+	void RendererStorage::viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen)
 	{
 	}
 

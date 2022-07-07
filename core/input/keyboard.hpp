@@ -8,8 +8,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// key codes
-	ALIAS(KeyCode) int32_t;
-	enum KeyCode_ : KeyCode
+	enum KeyCode_
 	{
 		KeyCode_Space			= 32,	// space
 		KeyCode_Apostrophe		= 39,	// apostrophe
@@ -138,8 +137,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// key modifiers
-	ALIAS(KeyMods) int32_t;
-	enum KeyMods_ : KeyMods
+	enum KeyMods_
 	{
 		KeyMods_None	= 0 << 0,	// nullptr
 		KeyMods_Shift	= 0 << 1,	// shift

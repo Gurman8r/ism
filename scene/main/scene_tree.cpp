@@ -54,7 +54,7 @@ namespace ism
 
 		m_root->process(dt);
 
-		should_close |= m_root->get_should_close();
+		should_close |= m_root->should_close();
 
 		return should_close;
 	}

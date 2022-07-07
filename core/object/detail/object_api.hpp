@@ -36,6 +36,34 @@ namespace ism
 		> bool is(O const & other) const noexcept { return derived().ptr() == other.ptr(); }
 		
 	public:
+		auto hash_code() const
+		{
+			Object * const self{ derived().ptr() };
+			hashfunc const hasher{ typeof(self)->tp_hash };
+			return hasher ? hasher(self) : Hasher<intptr_t>{}((intptr_t)self);
+		}
+
+		auto rich_compare(ObjectAPI const & o) const
+		{
+			if (Object * const self{ derived().ptr() }, * other{ o.derived().ptr() }
+			; self == other)
+			{
+				return 0;
+			}
+			else if (!self || !other)
+			{
+				return CMP((intptr_t)self, (intptr_t)other);
+			}
+			else if (cmpfunc cmp{ typeof(self)->tp_cmp })
+			{
+				return cmp(self, other);
+			}
+			else
+			{
+				return util::compare(self->hash_code(), other->hash_code());
+			}
+		}
+
 		bool equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) == 0; }
 		
 		bool not_equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) != 0; }
@@ -47,27 +75,6 @@ namespace ism
 		bool greater(ObjectAPI const & other) const noexcept { return rich_compare(other) > 0; }
 		
 		bool greater_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) >= 0; }
-
-	private:
-		auto rich_compare(ObjectAPI const & o) const
-		{
-			Object * self{ derived().ptr() }, * other{ o.derived().ptr() };
-			if (self == other) { return 0; }
-			else if (self && other)
-			{
-				TYPE type{ typeof(self) };
-
-				if (cmpfunc cf{ type->tp_cmp })
-				{
-					return cf(self, other);
-				}
-				else if (hashfunc hf{ type->tp_hash })
-				{
-					return util::compare(hf(self), hf(other));
-				}
-			}
-			return CMP((intptr_t)self, (intptr_t)other);
-		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -94,7 +101,7 @@ namespace ism
 
 	template <class T> struct Hasher<ObjectAPI<T>>
 	{
-		template <class U> hash_t operator()(U const & o) const { return ism::hash(o); }
+		template <class U> hash_t operator()(U const & o) const { return o.hash_code(); }
 	};
 
 	template <class T> struct EqualTo<ObjectAPI<T>>

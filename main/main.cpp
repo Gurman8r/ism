@@ -99,41 +99,19 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	g_input = memnew(Input);
 
 	// display server
-	g_display = memnew(DISPLAY_SERVER_DEFAULT({
-		"ism",
-		{ { 1280, 720 }, { 8, 8, 8, 8 }, -1 },
-		{ RendererAPI_OpenGL, 4, 6, RendererProfile_Compat, 24, 8, true, false },
-		WindowFlags_Default_Maximized & ~(WindowFlags_Doublebuffer)
-		}));
-	WindowID main_window{ g_display->get_current_context() };
-	g_display->window_set_char_callback(main_window, [](auto...x) { g_bus->fire_event(WindowCharEvent{x...}); });
-	g_display->window_set_char_mods_callback(main_window, [](auto...x) { g_bus->fire_event(WindowCharModsEvent{x...}); });
-	g_display->window_set_close_callback(main_window, [](auto...x) { g_bus->fire_event(WindowCloseEvent{x...}); });
-	g_display->window_set_content_scale_callback(main_window, [](auto...x) { g_bus->fire_event(WindowContentScaleEvent{x...}); });
-	g_display->window_set_drop_callback(main_window, [](auto...x) { g_bus->fire_event(WindowDropEvent{x...}); });
-	g_display->window_set_focus_callback(main_window, [](auto...x) { g_bus->fire_event(WindowFocusEvent{x...}); });
-	g_display->window_set_framebuffer_resize_callback(main_window, [](auto...x) { g_bus->fire_event(WindowFramebufferResizeEvent{x...}); });
-	g_display->window_set_iconify_callback(main_window, [](auto...x) { g_bus->fire_event(WindowIconifyEvent{x...}); });
-	g_display->window_set_key_callback(main_window, [](auto...x) { g_bus->fire_event(WindowKeyEvent{x...}); });
-	g_display->window_set_maximize_callback(main_window, [](auto...x) { g_bus->fire_event(WindowMaximizeEvent{x...}); });
-	g_display->window_set_mouse_button_callback(main_window, [](auto...x) { g_bus->fire_event(WindowMouseButtonEvent{x...}); });
-	g_display->window_set_mouse_enter_callback(main_window, [](auto...x) { g_bus->fire_event(WindowMouseEnterEvent{x...}); });
-	g_display->window_set_mouse_position_callback(main_window, [](auto...x) { g_bus->fire_event(WindowMousePositionEvent{x...}); });
-	g_display->window_set_position_callback(main_window, [](auto...x) { g_bus->fire_event(WindowPositionEvent{x...}); });
-	g_display->window_set_refresh_callback(main_window, [](auto...x) { g_bus->fire_event(WindowRefreshEvent{x...}); });
-	g_display->window_set_scroll_callback(main_window, [](auto...x) { g_bus->fire_event(WindowScrollEvent{x...}); });
-	g_display->window_set_size_callback(main_window, [](auto...x) { g_bus->fire_event(WindowSizeEvent{x...}); });
-	g_bus->get_delegate<WindowCharEvent>() += [](WindowCharEvent const & ev) { g_input->m_state.last_char = (char)ev.codepoint; };
-	g_bus->get_delegate<WindowMouseButtonEvent>() += [](WindowMouseButtonEvent const & ev) { g_input->m_state.mouse_down = ev.action != InputAction_Release; };
-	g_bus->get_delegate<WindowMousePositionEvent>() += [](WindowMousePositionEvent const & ev) { g_input->m_state.mouse_pos = { (float_t)ev.xpos, (float_t)ev.ypos }; };
-	g_bus->get_delegate<WindowScrollEvent>() += [](WindowScrollEvent const & ev) { g_input->m_state.scroll = { (float_t)ev.xoffset, (float_t)ev.yoffset }; };
-	g_bus->get_delegate<WindowKeyEvent>() += [](WindowKeyEvent const & ev) {
-		g_input->m_state.keys_down.write(ev.key, ev.action != InputAction_Release);
-		g_input->m_state.is_shift = g_input->m_state.keys_down[KeyCode_LeftShift] || g_input->m_state.keys_down[KeyCode_RightShift];
-		g_input->m_state.is_ctrl = g_input->m_state.keys_down[KeyCode_LeftCtrl] || g_input->m_state.keys_down[KeyCode_RightCtrl];
-		g_input->m_state.is_alt = g_input->m_state.keys_down[KeyCode_LeftAlt] || g_input->m_state.keys_down[KeyCode_RightAlt];
-		g_input->m_state.is_super = g_input->m_state.keys_down[KeyCode_LeftSuper] || g_input->m_state.keys_down[KeyCode_RightSuper];
-	};
+	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
+	DS::WindowID main_window{ g_display->get_current_context() };
+	g_display->window_set_char_callback(main_window, [](auto, auto c) { g_input->m_last_char = (char)c; });
+	g_display->window_set_mouse_button_callback(main_window, [](auto, auto b, auto a, auto) { g_input->m_mouse_down.write(b, a != InputAction_Release); });
+	g_display->window_set_mouse_position_callback(main_window, [](auto, auto x, auto y) { g_input->m_mouse_pos = { (float_t)x, (float_t)y }; });
+	g_display->window_set_scroll_callback(main_window, [](auto, auto x, auto y) { g_input->m_scroll = { (float_t)x, (float_t)y }; });
+	g_display->window_set_key_callback(main_window, [](auto, auto k, auto, auto a, auto) {
+		g_input->m_keys_down.write(k, a != InputAction_Release);
+		g_input->m_is_shift = g_input->m_keys_down[KeyCode_LeftShift] || g_input->m_keys_down[KeyCode_RightShift];
+		g_input->m_is_ctrl = g_input->m_keys_down[KeyCode_LeftCtrl] || g_input->m_keys_down[KeyCode_RightCtrl];
+		g_input->m_is_alt = g_input->m_keys_down[KeyCode_LeftAlt] || g_input->m_keys_down[KeyCode_RightAlt];
+		g_input->m_is_super = g_input->m_keys_down[KeyCode_LeftSuper] || g_input->m_keys_down[KeyCode_RightSuper];
+	});
 
 	// rendering server
 	g_renderer = memnew(RenderingServerDefault());
@@ -193,12 +171,12 @@ bool Main::start()
 
 bool Main::iteration()
 {
-	++g_iterating; SCOPE_EXIT(&) { --g_iterating; };
+	++g_iterating; ON_SCOPE_EXIT(&) { --g_iterating; };
 	
 	// iteration timer
-	Clock loop_timer{};
+	Clock const loop_timer{};
 	static Duration delta_time{ 16_ms };
-	SCOPE_EXIT(&) { delta_time = loop_timer.get_elapsed_time(); };
+	ON_SCOPE_EXIT(&) { delta_time = loop_timer.get_elapsed_time(); };
 
 	// TODO: physics stuff goes here
 
@@ -209,25 +187,25 @@ bool Main::iteration()
 
 	// update input
 	static Vec2 last_mouse_pos{};
-	g_input->m_state.mouse_delta = g_input->m_state.mouse_pos - last_mouse_pos;
-	last_mouse_pos = g_input->m_state.mouse_pos;
+	g_input->m_mouse_delta = g_input->m_mouse_pos - last_mouse_pos;
+	last_mouse_pos = g_input->m_mouse_pos;
 	for (size_t i = 0; i < MouseButton_MAX; ++i) {
-		g_input->m_state.mouse_down_duration[i] = (g_input->m_state.mouse_down[i]
-			? (g_input->m_state.mouse_down_duration[i] < 0.f
+		g_input->m_mouse_down_duration[i] = (g_input->m_mouse_down[i]
+			? (g_input->m_mouse_down_duration[i] < 0.f
 				? 0.f
-				: g_input->m_state.mouse_down_duration[i] + delta_time)
+				: g_input->m_mouse_down_duration[i] + delta_time)
 			: -1.f);
 	}
 	for (size_t i = 0; i < KeyCode_MAX; ++i) {
-		g_input->m_state.keys_down_duration[i] = (g_input->m_state.keys_down[i]
-			? (g_input->m_state.keys_down_duration[i] < 0.f
+		g_input->m_keys_down_duration[i] = (g_input->m_keys_down[i]
+			? (g_input->m_keys_down_duration[i] < 0.f
 				? 0.f
-				: g_input->m_state.keys_down_duration[i] + delta_time)
+				: g_input->m_keys_down_duration[i] + delta_time)
 			: -1.f);
 	}
-	SCOPE_EXIT(&) {
-		g_input->m_state.scroll = {};
-		g_input->m_state.last_char = 0;
+	ON_SCOPE_EXIT(&) {
+		g_input->m_scroll = {};
+		g_input->m_last_char = 0;
 	};
 
 	// update main loop
@@ -241,7 +219,7 @@ bool Main::iteration()
 	RENDERING_DEVICE->draw_list_end();
 
 	if (g_imgui->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-		WindowID backup_context{ g_display->get_current_context() };
+		DS::WindowID backup_context{ g_display->get_current_context() };
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 		g_display->set_current_context(backup_context);

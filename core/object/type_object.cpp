@@ -7,12 +7,10 @@ namespace ism
 
 	void TypeObject::initialize_class()
 	{
-		static SCOPE_ENTER(&)
+		static ON_SCOPE_ENTER(&)
 		{
 			INTERNALS->add_class(&g_type_static);
-
 			ASSERT(g_type_static.tp_install);
-
 			ASSERT(g_type_static.tp_install(&g_type_static));
 		};
 	}

@@ -22,7 +22,7 @@ private:																			\
 protected:																			\
 	static void initialize_class()													\
 	{																				\
-		static SCOPE_ENTER(&)														\
+		static ON_SCOPE_ENTER(&)													\
 		{																			\
 			INTERNALS->add_class(&m_class::g_type_static);							\
 																					\

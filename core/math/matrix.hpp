@@ -135,7 +135,6 @@ namespace ism
 		using storage_type				= typename Array<value_type, _Width * _Height>;
 		using size_type					= typename storage_type::size_type;
 		using difference_type			= typename storage_type::difference_type;
-		using coord_type				= typename Array<size_type, 2>;
 		using pointer					= typename storage_type::pointer;
 		using reference					= typename storage_type::reference;
 		using const_pointer				= typename storage_type::const_pointer;
@@ -152,19 +151,19 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		static constexpr bool empty() noexcept { return false; }
-		static constexpr auto height() noexcept -> size_t { return _Height; }
-		static constexpr auto max_size() noexcept -> size_t { return _Width * _Height; }
-		static constexpr auto size() noexcept -> size_t { return _Width * _Height; }
 		static constexpr auto width() noexcept -> size_t { return _Width; }
+		static constexpr auto height() noexcept -> size_t { return _Height; }
+		static constexpr auto size() noexcept -> size_t { return _Width * _Height; }
+		static constexpr auto max_size() noexcept -> size_t { return _Width * _Height; }
 		
-		constexpr auto data() noexcept -> pointer { return m_data.data(); }
-		constexpr auto data() const noexcept -> const_pointer { return m_data.data(); }
+		constexpr auto data() noexcept -> pointer { return m_data; }
+		constexpr auto data() const noexcept -> const_pointer { return m_data; }
 
+		constexpr operator pointer() noexcept { return m_data; }
+		constexpr operator const_pointer() const noexcept { return m_data; }
 		constexpr operator storage_type & () & noexcept { return m_data; }
 		constexpr operator storage_type const & () const & noexcept { return m_data; }
 		constexpr operator storage_type && () && noexcept { return std::move(m_data); }
-		constexpr operator pointer() noexcept { return m_data; }
-		constexpr operator const_pointer() const noexcept { return m_data; }
 
 		constexpr auto operator*() & noexcept -> reference { return (*m_data); }
 		constexpr auto operator*() const & noexcept -> const_reference { return (*m_data); }
@@ -176,29 +175,22 @@ namespace ism
 		constexpr auto at(size_t const x, size_t const y) & noexcept -> reference { return at(y * _Width + x); }
 		constexpr auto at(size_t const x, size_t const y) const & noexcept -> const_reference { return at(y * _Width + x); }
 		constexpr auto at(size_t const x, size_t const y) && noexcept -> value_type && { return std::move(at(y * _Width + x)); }
-		constexpr auto at(coord_type const & loc) & noexcept -> reference { return at(loc[0], loc[1]); }
-		constexpr auto at(coord_type const & loc) const & noexcept -> const_reference { return at(loc[0], loc[1]); }
-		constexpr auto at(coord_type const & loc) && noexcept -> value_type && { return std::move(at(loc[0], loc[1])); }
-
-		constexpr auto back() & noexcept -> reference { return m_data.back(); }
-		constexpr auto back() const & noexcept -> const_reference { return m_data.back(); }
-		constexpr auto back() && noexcept -> value_type && { return std::move(m_data.back()); }
-		constexpr auto front() & noexcept -> reference { return m_data.front(); }
-		constexpr auto front() const & noexcept -> const_reference { return m_data.front(); }
-		constexpr auto front() && noexcept -> value_type && { return std::move(m_data.front()); }
 
 		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
 		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
 		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
+
 		constexpr auto end() noexcept -> iterator { return m_data.end(); }
 		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
+		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
+		
 		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
 		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
+		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
+
 		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
 		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
+		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
 		
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -267,13 +259,6 @@ namespace ism
 				return temp;
 			}
 		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		// define additional code
-#ifdef ISM_MATRIX_CLASS_EXTRA
-		ISM_MATRIX_CLASS_EXTRA
-#endif // ISM_MATRIX_CLASS_EXTRA
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

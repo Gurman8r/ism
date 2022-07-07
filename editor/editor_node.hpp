@@ -27,10 +27,10 @@ namespace ism
 		bool				m_show_imgui_demo{};
 		bool				m_show_main_menu_bar{ true };
 		EditorHierarchy		m_hierarchy{};
-		EditorLog			m_editor_log{};
-		EditorViewport		m_editor_view{};
-		Ref<SceneTree>		m_active_scene{};
+		EditorLog			m_log{};
+		EditorViewport		m_viewport{};
 
+		Ref<SceneTree>				m_active_scene{};
 		Map<String, Ref<Image>>		m_images{};
 		Map<String, Ref<Material>>	m_materials{};
 		Map<String, Ref<Mesh>>		m_meshes{};
@@ -39,20 +39,16 @@ namespace ism
 
 	public:
 		EditorNode();
-
 		~EditorNode();
 
 		FORCE_INLINE static EditorNode * get_singleton() noexcept { return g_singleton; }
 
-		virtual void handle_event(Event const & event) override;
-
 		virtual void process(Duration const & dt) override;
+		virtual void handle_event(Event const & event) override;
 
 	protected:
 		void _draw_dockspace();
-		
 		void _build_dockspace();
-		
 		void _draw_menu_bar();
 	};
 

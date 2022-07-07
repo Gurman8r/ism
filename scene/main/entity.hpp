@@ -21,9 +21,10 @@ namespace ism
 	public:
 		virtual ~Entity() override;
 
-		operator EntityID() const noexcept { return m_entity_id; }
-
-		auto get_entity_id() const noexcept -> EntityID { return m_entity_id; }
+		EntityID get_entity_id() const noexcept
+		{
+			return m_entity_id;
+		}
 
 		template <class C, class ... Args
 		> C & add_component(Args && ... args) noexcept

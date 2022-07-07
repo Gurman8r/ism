@@ -119,18 +119,19 @@ namespace ism
 		/* CAMERA */
 		struct _Camera
 		{
-			Vec3 position{};
-			Vec4 rotation{}; // (quat)
 			Mat4 xform{};
 		};
 
-		RID camera_create(Vec3 const & position = {}, Vec4 const & rotation = {});
-		void camera_destroy(RID camera);
-		Vec3 camera_get_position(RID camera);
-		void camera_set_position(RID camera, Vec3 const & value);
-		Vec4 camera_get_rotation(RID camera);
-		void camera_set_rotation(RID camera, Vec4 const & value);
-		Mat4 camera_get_transform(RID camera);
+		RID camera_create();
+		void camera_set_perspective(RID camera, float_t fovy_degrees, float_t z_near, float_t z_far);
+		void camera_set_orthogonal(RID camera, float_t size, float_t z_near, float_t z_far);
+		void camera_set_frustum(RID camera, float_t size, Vec2 offset, float_t z_near, float_t z_far);
+		void camera_set_transform(RID camera, Mat4 const & transform);
+		void camera_set_cull_mask(RID camera, uint32_t layers);
+		void camera_set_environment(RID camera, RID env);
+		void camera_set_camera_effects(RID camera, RID fx);
+		void camera_set_use_vertical_aspect(RID camera, bool enable);
+		bool is_camera(RID camera) const;
 
 	public:
 		/* VIEWPORT */
@@ -147,7 +148,7 @@ namespace ism
 		void viewport_set_parent_viewport(RID viewport, RID parent_viewport);
 		void viewport_set_size(RID viewport, int32_t width, int32_t height);
 		RID viewport_get_texture(RID viewport) const;
-		void viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen);
+		void viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen);
 		void draw_viewports();
 	};
 

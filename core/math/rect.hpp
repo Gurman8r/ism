@@ -80,122 +80,53 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		constexpr operator pointer() noexcept { return m_data; }
+		constexpr operator const_pointer() const noexcept { return m_data; }
 		constexpr operator storage_type & () & noexcept { return m_data; }
-
 		constexpr operator storage_type const & () const & noexcept { return m_data; }
-
 		constexpr operator storage_type && () && noexcept { return std::move(m_data); }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		constexpr operator pointer() noexcept { return m_data; }
-
-		constexpr operator const_pointer() const noexcept { return m_data; }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		constexpr coord_type & min() & noexcept { return *(coord_type *)&m_data[0]; }
-
-		constexpr coord_type const & min() const & noexcept { return *(coord_type const *)&m_data[0]; }
-
-		template <class Value = coord_type
-		> coord_type & min(Value && value) & noexcept { return min() = FWD(value); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		constexpr coord_type & max() & noexcept { return *(coord_type *)&m_data[2]; }
-
+		constexpr coord_type const & min() const & noexcept { return *(coord_type const *)&m_data[0]; }
 		constexpr coord_type const & max() const & noexcept { return *(coord_type const *)&m_data[2]; }
 
-		template <class Value = coord_type
-		> coord_type & max(Value && value) & noexcept { return max() = FWD(value); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		constexpr value_type & at(size_t i) & noexcept { return m_data[i]; }
-
 		constexpr value_type & left() & noexcept { return m_data[0]; }
-
 		constexpr value_type & top() & noexcept { return m_data[1]; }
-
 		constexpr value_type & right() & noexcept { return m_data[2]; }
-
 		constexpr value_type & bottom() & noexcept { return m_data[3]; }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		constexpr value_type const & at(size_t i) const & noexcept { return m_data[i]; }
-
 		constexpr value_type const & left() const & noexcept { return m_data[0]; }
-
 		constexpr value_type const & top() const & noexcept { return m_data[1]; }
-
 		constexpr value_type const & right() const & noexcept { return m_data[2]; }
-
 		constexpr value_type const & bottom() const & noexcept { return m_data[3]; }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		template <class Value = value_type
-		> constexpr value_type & set(size_t i, Value && value) & noexcept { m_data[i] = FWD(value); }
-
-		template <class Value = value_type
-		> constexpr value_type & left(Value && value) & noexcept { m_data[0] = FWD(value); }
-
-		template <class Value = value_type
-		> constexpr value_type & top(Value && value) & noexcept { m_data[1] = FWD(value); }
-
-		template <class Value = value_type
-		> constexpr value_type & right(Value && value) & noexcept { m_data[2] = FWD(value); }
-
-		template <class Value = value_type
-		> constexpr value_type & bottom(Value && value) & noexcept { m_data[3] = FWD(value); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		constexpr value_type width() const noexcept { return m_data[2] - m_data[0]; }
-
 		constexpr value_type height() const noexcept { return m_data[3] - m_data[1]; }
-
 		constexpr coord_type size() const noexcept { return { m_data[2] - m_data[0], m_data[3] - m_data[1] }; }
-
 		constexpr coord_type center() const noexcept { return (min() + max()) / 2; }
-
 		constexpr coord_type position() const noexcept { return min(); }
-
 		constexpr coord_type top_left() const noexcept { return min(); }
-
 		constexpr coord_type top_right() const noexcept { return { m_data[2], m_data[1] }; }
-
 		constexpr coord_type bottom_left() const noexcept { return { m_data[0], m_data[3] }; }
-
 		constexpr coord_type bottom_right() const noexcept { return max(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
+
 		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
-
 		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
-
 		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-
-		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-
-		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-
-		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
-
 		constexpr auto end() noexcept -> iterator { return m_data.end(); }
-
 		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
-
+		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
 		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
-
 		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
-
+		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
 		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
-
 		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
+		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -205,11 +136,15 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	ALIAS(FloatRect)	Rect<float_t>;
 	ALIAS(DoubleRect)	Rect<double_t>;
 	ALIAS(IntRect)		Rect<int32_t>;
 	ALIAS(UintRect)		Rect<uint32_t>;
 	ALIAS(SizeRect)		Rect<size_t>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_RECT_HPP_

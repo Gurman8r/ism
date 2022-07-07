@@ -1,13 +1,12 @@
 #ifndef _ISM_COMMON_HPP_
 #define _ISM_COMMON_HPP_
 
-#include <core/typedefs.hpp>
 #include <core/os/safe_ref_count.hpp>
-#include <core/string/path.hpp>
-#include <core/string/print_string.hpp>
-#include <core/math/transform_2d.hpp>
-#include <core/templates/buffer.hpp>
 #include <core/os/time.hpp>
+#include <core/math/color.hpp>
+#include <core/math/rect.hpp>
+#include <core/string/print_string.hpp>
+#include <core/templates/buffer.hpp>
 #include <core/templates/ecs.hpp>
 #include <core/templates/flat_map.hpp>
 #include <core/templates/hash_map.hpp>
@@ -199,12 +198,12 @@ namespace ism
 		DataType_MAX
 	};
 
-#if ARCHITECTURE == 32
-	constexpr DataType_ DataType_SizeT{ DataType_U32 }; // size_t (32-bit)
-	constexpr DataType_ DataType_SSizeT{ DataType_I32 }; // ssize_t (32-bit)
-#else
+#if ARCHITECTURE == 64
 	constexpr DataType_ DataType_SizeT{ DataType_U64 }; // size_t (64-bit)
 	constexpr DataType_ DataType_SSizeT{ DataType_I64 }; // ssize_t (64-bit)
+#else
+	constexpr DataType_ DataType_SizeT{ DataType_U32 }; // size_t (32-bit)
+	constexpr DataType_ DataType_SSizeT{ DataType_I32 }; // ssize_t (32-bit)
 #endif
 
 

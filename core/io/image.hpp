@@ -120,19 +120,6 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	constexpr size_t get_data_depth(Image::Format_ image_format) noexcept
-	{
-		switch (image_format) {
-		case Image::Format_R8: return 1;
-		case Image::Format_RG8: return 2;
-		case Image::Format_RGB8: return 3;
-		case Image::Format_RGBA8: return 4;
-		}
-		return 0;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_IMAGE_HPP_

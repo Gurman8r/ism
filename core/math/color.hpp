@@ -29,150 +29,67 @@ namespace ism::util
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	
-	template <class _T> struct BasicColor final
+
+	struct Color
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		using storage_type				= Vec4;
+		using value_type				= storage_type::value_type;
+		using size_type					= storage_type::size_type;
+		using difference_type			= storage_type::difference_type;
+		using pointer					= storage_type::pointer;
+		using reference					= storage_type::reference;
+		using const_pointer				= storage_type::const_pointer;
+		using const_reference			= storage_type::const_reference;
+		using iterator					= storage_type::iterator;
+		using const_iterator			= storage_type::const_iterator;
+		using reverse_iterator			= storage_type::reverse_iterator;
+		using const_reverse_iterator	= storage_type::const_reverse_iterator;
 
-		using self_type					= typename BasicColor<_T>;
-		using value_type				= typename _T;
-		using rgb_type					= typename TVector3<value_type>;
-		using rgba_type					= typename TVector4<value_type>;
-		using size_type					= typename rgba_type::size_type;
-		using difference_type			= typename rgba_type::difference_type;
-		using pointer					= typename rgba_type::pointer;
-		using reference					= typename rgba_type::reference;
-		using const_pointer				= typename rgba_type::const_pointer;
-		using const_reference			= typename rgba_type::const_reference;
-		using iterator					= typename rgba_type::iterator;
-		using const_iterator			= typename rgba_type::const_iterator;
-		using reverse_iterator			= typename rgba_type::reverse_iterator;
-		using const_reverse_iterator	= typename rgba_type::const_reverse_iterator;
+		storage_type m_data{};
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		constexpr Color() noexcept = default;
+		constexpr Color(Color const &) = default;
+		constexpr Color(Color &&) noexcept = default;
+		constexpr Color & operator=(Color const &) = default;
+		constexpr Color & operator=(Color &&) noexcept = default;
+		
+		Color & swap(Color & value) noexcept { if (this != std::addressof(value)) { std::swap(m_data, value.m_data); } return (*this); }
 
-		constexpr BasicColor(rgba_type const & value)
-			: m_data{ value }
-		{
-		}
+		static constexpr bool empty() noexcept { return false; }
+		static constexpr auto width() noexcept -> size_t { return 4; }
+		static constexpr auto height() noexcept -> size_t { return 1; }
+		static constexpr auto size() noexcept -> size_t { return 4; }
+		static constexpr auto max_size() noexcept -> size_t { return 4; }
 
-		constexpr BasicColor(rgb_type const & rgb, value_type a)
-			: self_type{ rgb[0], rgb[1], rgb[2], a }
-		{
-		}
-
-		constexpr BasicColor(value_type rgba)
-			: m_data{ rgba, rgba, rgba, rgba }
-		{
-		}
-
-		template <class R, class G, class B, class A
-		> constexpr BasicColor(R r, G g, B b, A a) : m_data{
-			static_cast<value_type>(r),
-			static_cast<value_type>(g),
-			static_cast<value_type>(b),
-			static_cast<value_type>(a)
-		}
-		{
-		}
-
-		template <class R, class G, class B
-		> constexpr BasicColor(R r, G g, B b) : self_type{ r, g, b, 1 }
-		{
-		}
-
-		template <class U> constexpr BasicColor(TVector4<U> const & value)
-			: m_data{ util::color_cast(value) }
-		{
-		}
-
-		template <class U> constexpr BasicColor(BasicColor<U> const & value)
-			: m_data{ util::color_cast(value.rgba()) }
-		{
-		}
-
-		constexpr BasicColor()
-			: m_data{ 0 }
-		{
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		constexpr void swap(self_type & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
-				m_data.swap(other.m_data);
-			}
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		operator rgba_type & () & noexcept { return m_data; }
-
-		constexpr operator rgba_type const & () const & noexcept { return m_data; }
-
-		operator rgba_type && () && noexcept { return std::move(m_data); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		constexpr auto data() noexcept -> pointer { return m_data; }
+		constexpr auto data() const noexcept -> const_pointer { return m_data; }
 
 		constexpr operator pointer() noexcept { return m_data; }
-
 		constexpr operator const_pointer() const noexcept { return m_data; }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		constexpr auto operator*() & noexcept -> reference { return *m_data; }
+		constexpr auto operator*() const & noexcept -> const_reference { return *m_data; }
+		constexpr auto operator*() && noexcept -> value_type && { return std::move(*m_data); }
 
-		constexpr auto r() const  noexcept-> value_type const & { return m_data[0]; }
-		
-		constexpr auto g() const  noexcept-> value_type const & { return m_data[1]; }
-		
-		constexpr auto b() const  noexcept-> value_type const & { return m_data[2]; }
-		
-		constexpr auto a() const  noexcept-> value_type const & { return m_data[3]; }
-		
-		constexpr auto rgb() const  noexcept-> rgb_type { return (rgb_type)m_data; }
+		constexpr operator storage_type & () & noexcept { return m_data; }
+		constexpr operator storage_type const & () const & noexcept { return m_data; }
+		constexpr operator storage_type && () && noexcept { return std::move(m_data); }
 
-		constexpr auto rgba() & noexcept-> rgba_type & { return m_data; }
-		
-		constexpr auto rgba() const & noexcept-> rgba_type const & { return m_data; }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
 		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
-
 		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
-
 		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-
-		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-
-		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-
-		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
-
 		constexpr auto end() noexcept -> iterator { return m_data.end(); }
-
 		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
-
+		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
 		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
-
 		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
-
+		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
 		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
-
 		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	private:
-		rgba_type m_data;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ALIAS(Color) BasicColor<float_t>;
 	
 	ALIAS(Color32) uint32_t;
 

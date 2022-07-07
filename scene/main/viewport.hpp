@@ -40,15 +40,9 @@ namespace ism
 		virtual ~Viewport() override;
 
 	public:
-		virtual Vec2i get_position() const = 0;
-		virtual void set_position(Vec2i const & value) = 0;
-
-		virtual Vec2i get_size() const = 0;
-		virtual void set_size(Vec2i const & value) = 0;
-
 		Ref<ViewportTexture> get_texture() const;
 
-		virtual WindowID get_window_id() const = 0;
+		virtual DS::WindowID get_window_id() const = 0;
 
 		virtual RID get_viewport_rid() const { return m_viewport; }
 	};

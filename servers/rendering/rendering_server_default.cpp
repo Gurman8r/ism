@@ -258,39 +258,49 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RenderingServerDefault::camera_create(Vec3 const & position, Vec4 const & rotation)
+	RID RenderingServerDefault::camera_create()
 	{
-		return m_storage->camera_create(position, rotation);
+		return m_storage->camera_create();
 	}
 
-	void RenderingServerDefault::camera_destroy(RID camera)
+	void RenderingServerDefault::camera_set_perspective(RID camera, float_t fovy_degrees, float_t z_near, float_t z_far)
 	{
-		m_storage->camera_destroy(camera);
+		m_storage->camera_set_perspective(camera, fovy_degrees, z_near, z_far);
 	}
 
-	Vec3 RenderingServerDefault::camera_get_position(RID camera)
+	void RenderingServerDefault::camera_set_orthogonal(RID camera, float_t size, float_t z_near, float_t z_far)
 	{
-		return m_storage->camera_get_position(camera);
+		m_storage->camera_set_orthogonal(camera, size, z_near, z_far);
 	}
 
-	void RenderingServerDefault::camera_set_position(RID camera, Vec3 const & value)
+	void RenderingServerDefault::camera_set_frustum(RID camera, float_t size, Vec2 offset, float_t z_near, float_t z_far)
 	{
-		m_storage->camera_set_position(camera, value);
+		m_storage->camera_set_frustum(camera, size, offset, z_near, z_far);
 	}
 
-	Vec4 RenderingServerDefault::camera_get_rotation(RID camera)
+	void RenderingServerDefault::camera_set_transform(RID camera, Mat4 const & transform)
 	{
-		return m_storage->camera_get_rotation(camera);
+		m_storage->camera_set_transform(camera, transform);
 	}
 
-	void RenderingServerDefault::camera_set_rotation(RID camera, Vec4 const & value)
+	void RenderingServerDefault::camera_set_cull_mask(RID camera, uint32_t layers)
 	{
-		m_storage->camera_set_rotation(camera, value);
+		m_storage->camera_set_cull_mask(camera, layers);
 	}
 
-	Mat4 RenderingServerDefault::camera_get_transform(RID camera)
+	void RenderingServerDefault::camera_set_environment(RID camera, RID env)
 	{
-		return m_storage->camera_get_transform(camera);
+		m_storage->camera_set_environment(camera, env);
+	}
+
+	void RenderingServerDefault::camera_set_camera_effects(RID camera, RID fx)
+	{
+		m_storage->camera_set_camera_effects(camera, fx);
+	}
+
+	void RenderingServerDefault::camera_set_use_vertical_aspect(RID camera, bool enable)
+	{
+		m_storage->camera_set_use_vertical_aspect(camera, enable);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -320,7 +330,7 @@ namespace ism
 		return m_storage->viewport_get_texture(viewport);
 	}
 
-	void RenderingServerDefault::viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen)
+	void RenderingServerDefault::viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen)
 	{
 		m_storage->viewport_attach_to_screen(viewport, rect, screen);
 	}

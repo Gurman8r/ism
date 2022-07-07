@@ -249,7 +249,7 @@ Error_ ShaderLoader::load_from_file(Shader & shader, Path const & path)
 {
 	if (!path) { return Error_Unknown; }
 	std::ifstream file{ path.c_str() };
-	SCOPE_EXIT(&file) { file.close(); };
+	ON_SCOPE_EXIT(&file) { file.close(); };
 	if (!file) { return Error_Unknown; }
 
 	switch (path.extension().hash_code())

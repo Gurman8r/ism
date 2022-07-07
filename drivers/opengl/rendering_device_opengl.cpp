@@ -964,7 +964,7 @@ void RenderingDeviceOpenGL::_render_pipeline_bind(_RenderPipeline const & rp)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(WindowID window, Color const & clear_color)
+RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(DS::WindowID window, Color const & clear_color)
 {
 	ASSERT(window);
 

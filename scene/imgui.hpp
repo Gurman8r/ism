@@ -118,7 +118,7 @@
 
 namespace ism
 {
-	ISM_API_FUNC(bool) ImGui_Init(WindowID window, bool install_callbacks = true);
+	ISM_API_FUNC(bool) ImGui_Init(DS::WindowID window, bool install_callbacks = true);
 
 	ISM_API_FUNC(void) ImGui_Shutdown();
 

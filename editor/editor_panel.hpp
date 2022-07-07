@@ -4,9 +4,9 @@
 #include <scene/imgui.hpp>
 #include <scene/main/scene_tree.hpp>
 
-#define EDITOR_PANEL_SCOPE(open)						\
-	(open) = ism::EditorPanel::begin_window();			\
-	SCOPE_EXIT(&) { ism::EditorPanel::end_window(); };	\
+#define EDITOR_PANEL_SCOPE(open)							\
+	(open) = ism::EditorPanel::begin_window();				\
+	ON_SCOPE_EXIT(&) { ism::EditorPanel::end_window(); };	\
 
 namespace ism
 {

@@ -25,7 +25,7 @@ namespace ism
 
 		// open file
 		std::ifstream file{ get_path().c_str(), std::ios_base::binary };
-		SCOPE_EXIT(&file) { file.close(); };
+		ON_SCOPE_EXIT(&file) { file.close(); };
 		if (!file) { return Error_Unknown; }
 
 		// load contents

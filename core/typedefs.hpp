@@ -10,7 +10,7 @@
 // opaque type
 #define DECL_HANDLE(m_name) \
 		struct CAT(__, m_name) { int unused; }; \
-		ALIAS(m_name) CAT(__, m_name) *
+		ALIAS(m_name) CAT(__, m_name) *;
 
 // strong typedef
 #define STRONG_TYPEDEF(m_to, m_from)																					\
@@ -64,12 +64,12 @@ namespace ism
 	ALIAS(float80_t)	long double;
 	ALIAS(nullptr_t)	decltype(nullptr);
 
-#if (32 == ARCHITECTURE)
-	ALIAS(intmax_t)		int32_t;
-	ALIAS(uintmax_t)	uint32_t;
-#else
+#if (ARCHITECTURE == 64)
 	ALIAS(intmax_t)		int64_t;
 	ALIAS(uintmax_t)	uint64_t;
+#else
+	ALIAS(intmax_t)		int32_t;
+	ALIAS(uintmax_t)	uint32_t;
 #endif
 
 	ALIAS(float_t)		float32_t;
@@ -97,7 +97,7 @@ namespace ism
 
 	enum class byte : uint8_t
 	{
-		null, one, max = 255
+		zero, one, max = 255, null = zero
 	};
 
 	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
@@ -125,20 +125,6 @@ namespace ism
 	constexpr byte & operator&=(byte & a, byte const b) noexcept { return a = a & b; }
 
 	constexpr byte & operator^=(byte & a, byte const b) noexcept { return a = a ^ b; }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ALIAS(I8)	int8_t;
-	ALIAS(I16)	int16_t;
-	ALIAS(I32)	int32_t;
-	ALIAS(I64)	int64_t;
-	ALIAS(U8)	uint8_t;
-	ALIAS(U16)	uint16_t;
-	ALIAS(U32)	uint32_t;
-	ALIAS(U64)	uint64_t;
-	ALIAS(F32)	float32_t;
-	ALIAS(F64)	float64_t;
-	ALIAS(F80)	float80_t;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -191,7 +191,7 @@ namespace ism
 	{
 		if (!o) { return 0; }
 		TYPE t{ typeof(o) };
-		return t->tp_hash ? t->tp_hash(o) : 0;
+		return t->tp_hash ? t->tp_hash(o) : Hasher<intptr_t>{}((intptr_t)o);
 	}
 
 	template <class T, class = std::enable_if_t<is_ref_v<T>>

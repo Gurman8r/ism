@@ -52,10 +52,9 @@
 namespace ism
 {
 	template <size_t _Count = 64
-	> struct BitSet
+	> class BitSet
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+	public:
 		static constexpr size_t bit_count{ _Count };
 
 		static_assert(0 < bit_count, "bit count negative or zero");
@@ -78,46 +77,29 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	public:
 		constexpr BitSet() noexcept : m_words{} {}
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
-		> constexpr BitSet(T const value) noexcept
-			: m_words{ static_cast<value_type>(value) }
-		{
-		}
+		> constexpr BitSet(T const value) noexcept : m_words{ static_cast<value_type>(value) } { }
 
-		constexpr BitSet(self_type const & value)
-			: m_words{ value.m_words }
-		{
-		}
+		constexpr BitSet(self_type const & value) : m_words{ value.m_words } {}
 
-		constexpr BitSet(self_type && value) noexcept
-			: m_words{ std::move(value.m_words) }
-		{
-		}
+		constexpr BitSet(self_type && value) noexcept : m_words{ std::move(value.m_words) } {}
 
 		template <size_t N
-		> constexpr BitSet(BitSet<N> const & value)
-			: m_words{ value.m_words }
-		{
-		}
+		> constexpr BitSet(BitSet<N> const & value) : m_words{ value.m_words } {}
 
 		template <size_t N
-		> constexpr BitSet(BitSet<N> && value) noexcept
-			: m_words{ std::move(value.m_words) }
-		{
-		}
+		> constexpr BitSet(BitSet<N> && value) noexcept : m_words{ std::move(value.m_words) } {}
 
-		constexpr BitSet(array_type const & value) noexcept
-			: m_words{}
+		constexpr BitSet(array_type const & value) noexcept : m_words{}
 		{
 			for (auto it = value.begin(); it != value.end(); ++it)
 			{
 				write(std::distance(value.begin(), it), *it);
 			}
 		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		constexpr self_type & operator=(self_type const & value)
 		{
@@ -140,8 +122,6 @@ namespace ism
 			return (*this);
 		}
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		constexpr void swap(self_type & value) noexcept
 		{
 			if (this != std::addressof(value))
@@ -150,147 +130,69 @@ namespace ism
 			}
 		}
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	public:
+		constexpr auto size() const noexcept -> size_t { return bit_count; }
 
-		constexpr operator bool() const noexcept { return m_words; }
+		constexpr operator void * () const noexcept { return m_words; }
 
-		constexpr operator storage_type const & () const & noexcept { return m_words; }
-
-		constexpr bool operator[](size_t const i) const noexcept { return read(i); }
+		constexpr bool operator[](size_t i) const noexcept { return read(i); }
 
 		constexpr auto words() noexcept -> storage_type & { return m_words; }
 
 		constexpr auto words() const noexcept -> storage_type const & { return m_words; }
 
-		constexpr auto size() const noexcept -> size_t { return bit_count; }
+		constexpr operator storage_type & () & noexcept { return m_words; }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		constexpr operator storage_type const & () const & noexcept { return m_words; }
 
-		constexpr bool read(size_t const i) const noexcept
+	public:
+		constexpr bool read(size_t i) const noexcept
 		{
 			return (1ULL & (m_words[i / bits_per_word] >> 1ULL)) == 1ULL;
-
-			//return BIT_READ(m_words[i / bits_per_word], i % bits_per_word);
 		}
 
-		constexpr bool clear(size_t const i) noexcept
+		constexpr bool clear(size_t i) noexcept
 		{
-			bool const temp{ this->read(i) };
-			
-			//BIT_CLEAR(m_words[i / bits_per_word], i % bits_per_word);
-
+			bool const temp{ read(i) };
 			m_words[i / bits_per_word] &= ~(1ULL << (i % bits_per_word));
-			
 			return temp;
 		}
 
-		constexpr bool set(size_t const i) noexcept
+		constexpr bool set(size_t i) noexcept
 		{
-			bool const temp{ !this->read(i) };
-			
-			//BIT_SET(m_words[i / bits_per_word], i % bits_per_word);
-
+			bool const temp{ !read(i) };
 			m_words[i / bits_per_word] |= 1ULL << (i % bits_per_word);
-			
 			return temp;
 		}
 
-		constexpr bool write(size_t const i, bool const b) noexcept
+		constexpr bool write(size_t i, bool const b) noexcept
 		{
-			return b ? this->set(i) : this->clear(i);
+			return b ? set(i) : clear(i);
 		}
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		template <size_t I> constexpr bool read() const noexcept
+	public:
+		template <class U = self_type
+		> constexpr auto compare(U const & value) const noexcept
 		{
-			return this->read(I);
-		}
-
-		template <size_t I> constexpr bool clear() noexcept
-		{
-			return this->clear(I);
-		}
-
-		template <size_t I> constexpr bool set() noexcept
-		{
-			return this->set(I);
-		}
-
-		template <size_t I> constexpr bool write(bool const b) noexcept
-		{
-			return this->write(I, b);
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		constexpr array_type arr() const noexcept
-		{
-			array_type temp;
-			for (size_t i = 0; i < bit_count; ++i)
+			if constexpr (std::is_same_v<U, self_type>)
 			{
-				temp[i] = read(i);
-			}
-			return temp;
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		template <class Other = self_type
-		> constexpr auto compare(Other const & other) const noexcept
-		{
-			if constexpr (std::is_same_v<Other, self_type>)
-			{
-				return CMP(m_words, other.m_words);
+				return CMP(m_words, value.m_words);
 			}
 			else
 			{
-				return this->compare(self_type{ other });
+				return this->compare(self_type{ value });
 			}
 		}
 
-		template <class Other = self_type
-		> constexpr bool operator==(Other const & other) const
-		{
-			return this->compare(other) == 0;
-		}
-
-		template <class Other = self_type
-		> constexpr bool operator!=(Other const & other) const
-		{
-			return this->compare(other) != 0;
-		}
-
-		template <class Other = self_type
-		> constexpr bool operator<(Other const & other) const
-		{
-			return this->compare(other) < 0;
-		}
-
-		template <class Other = self_type
-		> constexpr bool operator>(Other const & other) const
-		{
-			return this->compare(other) > 0;
-		}
-
-		template <class Other = self_type
-		> constexpr bool operator<=(Other const & other) const
-		{
-			return this->compare(other) <= 0;
-		}
-
-		template <class Other = self_type
-		> constexpr bool operator>=(Other const & other) const
-		{
-			return this->compare(other) >= 0;
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		template <class U> constexpr bool operator==(U const & value) const { return this->compare(value) == 0; }
+		template <class U> constexpr bool operator!=(U const & value) const { return this->compare(value) != 0; }
+		template <class U> constexpr bool operator<(U const & value) const { return this->compare(value) < 0; }
+		template <class U> constexpr bool operator>(U const & value) const { return this->compare(value) > 0; }
+		template <class U> constexpr bool operator<=(U const & value) const { return this->compare(value) <= 0; }
+		template <class U> constexpr bool operator>=(U const & value) const { return this->compare(value) >= 0; }
 
 	private:
 		storage_type m_words;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 }
 

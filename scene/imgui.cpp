@@ -1,11 +1,10 @@
 #include <scene/imgui.hpp>
-#include <scene/main/scene_tree.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #if SYSTEM_WINDOWS
 #include <imgui/backends/imgui_impl_glfw.h>
-#define IMGUI_PLATFORM_INIT(window, install_callbacks) ImGui_ImplGlfw_InitForOpenGL((GLFWwindow *)window, install_callbacks)
+#define IMGUI_PLATFORM_INIT(window, install_callbacks) ImGui_ImplGlfw_InitForOpenGL(*((GLFWwindow **)window), install_callbacks)
 #define IMGUI_PLATFORM_SHUTDOWN() ImGui_ImplGlfw_Shutdown()
 #define IMGUI_PLATFORM_NEWFRAME() ImGui_ImplGlfw_NewFrame()
 
@@ -30,7 +29,7 @@
 
 using namespace ism;
 
-bool ism::ImGui_Init(WindowID window, bool install_callbacks)
+bool ism::ImGui_Init(DS::WindowID window, bool install_callbacks)
 {
 	if (!IMGUI_PLATFORM_INIT(window, install_callbacks)) { return false; }
 	if (!IMGUI_RENDERER_INIT()) { return false; }

@@ -94,8 +94,6 @@ namespace ism
 	{
 		ASSERT(!g_singleton); g_singleton = this;
 
-		subscribe<WindowKeyEvent, WindowMouseButtonEvent, WindowMousePositionEvent, WindowScrollEvent>();
-	
 		m_textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 		m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
 		m_meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
@@ -150,12 +148,12 @@ namespace ism
 			}),
 		};
 		framebuffer = RENDERING_DEVICE->framebuffer_create(fb_textures);
-		m_editor_view.set_main_texture(fb_textures[0]);
+		m_viewport.set_main_texture(fb_textures[0]);
 	}
 
 	EditorNode::~EditorNode()
 	{
-		ASSERT(this == g_singleton); SCOPE_EXIT(&) { g_singleton = nullptr; };
+		ASSERT(this == g_singleton); ON_SCOPE_EXIT(&) { g_singleton = nullptr; };
 
 		if (material) { RENDERING_SERVER->material_destroy(material); }
 
@@ -172,34 +170,15 @@ namespace ism
 		if (pipeline) { RENDERING_DEVICE->render_pipeline_destroy(pipeline); }
 	}
 
-	void EditorNode::handle_event(Event const & event)
-	{
-		switch (event)
-		{
-		case WindowKeyEvent::ID: {
-			WindowKeyEvent const & ev{ (WindowKeyEvent const &)event };
-		} break;
-		case WindowMouseButtonEvent::ID: {
-			WindowMouseButtonEvent const & ev{ (WindowMouseButtonEvent const &)event };
-		} break;
-		case WindowMousePositionEvent::ID: {
-			WindowMousePositionEvent const & ev{ (WindowMousePositionEvent const &)event };
-		} break;
-		case WindowScrollEvent::ID: {
-			WindowScrollEvent const & ev{ (WindowScrollEvent const &)event };
-		} break;
-		}
-	}
-
 	void EditorNode::process(Duration const & dt)
 	{
 		char window_title[32];
 		std::sprintf(window_title, "ism @ %.3f fps", (float_t)get_tree()->get_fps());
 		get_tree()->get_root()->set_title(window_title);
 
-		static EditorCamera * editor_camera{ m_editor_view.get_editor_camera() };
+		static EditorCamera * editor_camera{ m_viewport.get_editor_camera() };
 		static Vec2 view_size{ 1280, 720 }, view_size_prev{};
-		if (m_editor_view.get_window()) { view_size = m_editor_view->InnerRect.GetSize(); }
+		if (m_viewport.get_window()) { view_size = m_viewport->InnerRect.GetSize(); }
 		if (view_size_prev != view_size) {
 			view_size_prev = view_size;
 			editor_camera->set_res(view_size);
@@ -251,9 +230,13 @@ namespace ism
 		_draw_dockspace();
 		if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
 		m_hierarchy.process(dt);
-		m_editor_log.process(dt);
-		m_editor_view.process(dt);
+		m_log.process(dt);
+		m_viewport.process(dt);
 		Node::process(dt);
+	}
+
+	void EditorNode::handle_event(Event const & event)
+	{
 	}
 
 	void EditorNode::_draw_dockspace()
@@ -314,9 +297,9 @@ namespace ism
 		ImGuiID right{ dockspace_id };
 		ImGuiID left_up{ ImGui::DockBuilderSplitNode(right, ImGuiDir_Left, 0.2f, nullptr, &right) };
 		ImGuiID left_down{ ImGui::DockBuilderSplitNode(left_up, ImGuiDir_Down, 0.5f, nullptr, &left_up) };
-		ImGui::DockBuilderDockWindow(m_editor_view.get_name(), right);
+		ImGui::DockBuilderDockWindow(m_viewport.get_name(), right);
 		ImGui::DockBuilderDockWindow(m_hierarchy.get_name(), left_up);
-		ImGui::DockBuilderDockWindow(m_editor_log.get_name(), left_down);
+		ImGui::DockBuilderDockWindow(m_log.get_name(), left_down);
 	}
 
 	void EditorNode::_draw_menu_bar()
@@ -330,8 +313,8 @@ namespace ism
 		if (ImGui::BeginMenu("View")) {
 			if (ImGui::MenuItem("Dear ImGui Demo")) { m_show_imgui_demo = !m_show_imgui_demo; }
 			if (ImGui::MenuItem(m_hierarchy.get_name(), "", m_hierarchy.is_open())) { m_hierarchy.toggle_open(); }
-			if (ImGui::MenuItem(m_editor_log.get_name(), "", m_editor_log.is_open())) { m_editor_log.toggle_open(); }
-			if (ImGui::MenuItem(m_editor_view.get_name(), "", m_editor_view.is_open())) { m_editor_view.toggle_open(); }
+			if (ImGui::MenuItem(m_log.get_name(), "", m_log.is_open())) { m_log.toggle_open(); }
+			if (ImGui::MenuItem(m_viewport.get_name(), "", m_viewport.is_open())) { m_viewport.toggle_open(); }
 			ImGui::EndMenu();
 		}
 	}

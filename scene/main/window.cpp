@@ -22,225 +22,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Window::make_current_context()
+	String Window::get_title() const
 	{
-		DISPLAY_SERVER->set_current_context(m_window);
-	}
-
-	void Window::poll_events()
-	{
-		DISPLAY_SERVER->poll_events();
-	}
-
-	void Window::swap_buffers()
-	{
-		DISPLAY_SERVER->swap_buffers(m_window);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	void Window::focus()
-	{
-		DISPLAY_SERVER->focus_window(m_window);
-	}
-
-	void Window::hide()
-	{
-		DISPLAY_SERVER->hide_window(m_window);
-	}
-
-	void Window::iconify()
-	{
-		DISPLAY_SERVER->iconify_window(m_window);
-	}
-
-	void Window::maximize()
-	{
-		DISPLAY_SERVER->maximize_window(m_window);
-	}
-
-	void Window::restore()
-	{
-		DISPLAY_SERVER->restore_window(m_window);
-	}
-
-	void Window::request_attention()
-	{
-		DISPLAY_SERVER->request_window_attention(m_window);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	String Window::get_clipboard() const
-	{
-		return DISPLAY_SERVER->window_get_clipboard(m_window);
-	}
-
-	Vec2f Window::get_content_scale() const
-	{
-		return DISPLAY_SERVER->window_get_content_scale(m_window);
-	}
-
-	IntRect Window::get_frame_size() const
-	{
-		return DISPLAY_SERVER->window_get_frame_size(m_window);
-	}
-
-	Vec2i Window::get_framebuffer_size() const
-	{
-		return DISPLAY_SERVER->window_get_framebuffer_size(m_window);
-	}
-
-	int32_t Window::get_input_mode(InputMode_ value) const
-	{
-		return DISPLAY_SERVER->window_get_input_mode(m_window, value);
-	}
-
-	InputAction_ Window::get_key(KeyCode_ value) const
-	{
-		return DISPLAY_SERVER->window_get_key(m_window, value);
-	}
-
-	InputAction_ Window::get_mouse_button(MouseButton_ value) const
-	{
-		return DISPLAY_SERVER->window_get_mouse_button(m_window, value);
-	}
-
-	Vec2d Window::get_mouse_position() const
-	{
-		return DISPLAY_SERVER->window_get_mouse_position(m_window);
-	}
-
-	void * Window::get_native_handle() const
-	{
-		return DISPLAY_SERVER->window_get_native_handle(m_window);
-	}
-
-	float_t Window::get_opacity() const
-	{
-		return DISPLAY_SERVER->window_get_opacity(m_window);
-	}
-
-	Vec2i Window::get_position() const
-	{
-		return DISPLAY_SERVER->window_get_position(m_window);
-	}
-
-	Vec2i Window::get_size() const
-	{
-		return DISPLAY_SERVER->window_get_size(m_window);
-	}
-
-	bool Window::get_should_close() const
-	{
-		return DISPLAY_SERVER->window_get_should_close(m_window);
-	}
-
-	void * Window::get_user_pointer() const
-	{
-		return DISPLAY_SERVER->window_get_user_pointer(m_window);
-	}
-
-	bool Window::is_decorated() const
-	{
-		return DISPLAY_SERVER->window_is_decorated(m_window);
-	}
-
-	bool Window::is_floating() const
-	{
-		return DISPLAY_SERVER->window_is_floating(m_window);
-	}
-
-	bool Window::is_focused() const
-	{
-		return DISPLAY_SERVER->window_is_focused(m_window);
-	}
-
-	bool Window::is_hovered() const
-	{
-		return DISPLAY_SERVER->window_is_hovered(m_window);
-	}
-
-	bool Window::is_iconified() const
-	{
-		return DISPLAY_SERVER->window_is_iconified(m_window);
-	}
-
-	bool Window::is_maximized() const
-	{
-		return DISPLAY_SERVER->window_is_maximized(m_window);
-	}
-
-	bool Window::is_resizable() const
-	{
-		return DISPLAY_SERVER->window_is_resizable(m_window);
-	}
-
-	bool Window::is_transparent() const
-	{
-		return DISPLAY_SERVER->window_is_transparent(m_window);
-	}
-
-	bool Window::is_visible() const
-	{
-		return DISPLAY_SERVER->window_is_visible(m_window);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	void Window::set_clipboard(String const & value)
-	{
-		DISPLAY_SERVER->window_set_clipboard(m_window, value);
-	}
-
-	void Window::set_cursor(CursorID value)
-	{
-		DISPLAY_SERVER->window_set_cursor(m_window, value);
-	}
-
-	void Window::set_input_mode(InputMode_ value)
-	{
-		DISPLAY_SERVER->window_set_cursor_mode(m_window, value);
-	}
-
-	void Window::set_icons(int32_t width, int32_t height, uint8_t * pixels, int32_t count)
-	{
-		DISPLAY_SERVER->window_set_icons(m_window, width, height, pixels, count);
-	}
-
-	void Window::set_input_mode(int32_t mode, int32_t value)
-	{
-		DISPLAY_SERVER->window_set_input_mode(m_window, mode, value);
-	}
-
-	void Window::set_monitor(MonitorID monitor, IntRect const & bounds)
-	{
-		DISPLAY_SERVER->window_set_monitor(m_window, monitor, bounds);
-	}
-
-	void Window::set_mouse_position(Vec2d const & value)
-	{
-		DISPLAY_SERVER->window_set_mouse_position(m_window, value);
-	}
-
-	void Window::set_opacity(float_t value)
-	{
-		DISPLAY_SERVER->window_set_opacity(m_window, value);
-	}
-
-	void Window::set_position(Vec2i const & value)
-	{
-		DISPLAY_SERVER->window_set_position(m_window, value);
-	}
-
-	void Window::set_should_close(bool value)
-	{
-		DISPLAY_SERVER->window_set_should_close(m_window, value);
-	}
-
-	void Window::set_size(Vec2i const & value)
-	{
-		DISPLAY_SERVER->window_set_size(m_window, value);
+		return DISPLAY_SERVER->window_get_title(m_window);
 	}
 
 	void Window::set_title(String const & value)
@@ -248,111 +32,114 @@ namespace ism
 		DISPLAY_SERVER->window_set_title(m_window, value);
 	}
 
-	void Window::set_user_pointer(void * value)
+	DS::MonitorID Window::get_monitor() const
 	{
-		DISPLAY_SERVER->window_set_user_pointer(m_window, value);
+		return DISPLAY_SERVER->window_get_monitor(m_window);
 	}
 
-	void Window::set_decorated(bool value)
+	void Window::set_monitor(DS::MonitorID value, IntRect const & rect, int32_t refresh_rate)
 	{
-		DISPLAY_SERVER->window_set_decorated(m_window, value);
+		DISPLAY_SERVER->window_set_monitor(m_window, value, rect, refresh_rate);
 	}
 
-	void Window::set_floating(bool value)
+	Vec2i Window::get_position() const
 	{
-		DISPLAY_SERVER->window_set_floating(m_window, value);
+		return DISPLAY_SERVER->window_get_position(m_window);
 	}
 
-	void Window::set_resizable(bool value)
+	void Window::set_position(Vec2i const & value)
 	{
-		DISPLAY_SERVER->window_set_resizable(m_window, value);
+		DISPLAY_SERVER->window_set_position(m_window, value);
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	WindowCharCallback Window::set_char_callback(WindowCharCallback value)
+	Vec2i Window::get_size() const
 	{
-		return DISPLAY_SERVER->window_set_char_callback(m_window, value);
+		return DISPLAY_SERVER->window_get_size(m_window);
 	}
 
-	WindowCharModsCallback Window::set_char_mods_callback(WindowCharModsCallback value)
+	void Window::set_size(Vec2i const & value)
 	{
-		return DISPLAY_SERVER->window_set_char_mods_callback(m_window, value);
+		DISPLAY_SERVER->window_set_size(m_window, value);
 	}
 
-	WindowCloseCallback Window::set_close_callback(WindowCloseCallback value)
+	DS::WindowMode_ Window::get_mode() const
 	{
-		return DISPLAY_SERVER->window_set_close_callback(m_window, value);
+		return DISPLAY_SERVER->window_get_mode(m_window);
 	}
 
-	WindowContentCallback Window::set_content_scale_callback(WindowContentCallback value)
+	void Window::set_mode(DS::WindowMode_ mode)
 	{
-		return DISPLAY_SERVER->window_set_content_scale_callback(m_window, value);
+		DISPLAY_SERVER->window_set_mode(m_window, mode);
 	}
 
-	WindowDropCallback Window::set_drop_callback(WindowDropCallback value)
+	Vec2i Window::get_real_size() const
 	{
-		return DISPLAY_SERVER->window_set_drop_callback(m_window, value);
+		return DISPLAY_SERVER->window_get_real_size(m_window);
 	}
 
-	WindowFocusCallback Window::set_focus_callback(WindowFocusCallback value)
+	bool Window::get_flag(int32_t flag) const
 	{
-		return DISPLAY_SERVER->window_set_focus_callback(m_window, value);
+		return DISPLAY_SERVER->window_get_flag(m_window, flag);
 	}
 
-	WindowFramebufferResizeCallback Window::set_framebuffer_resize_callback(WindowFramebufferResizeCallback value)
+	void Window::set_flag(int32_t flag, bool enabled)
 	{
-		return DISPLAY_SERVER->window_set_framebuffer_resize_callback(m_window, value);
+		DISPLAY_SERVER->window_set_flag(m_window, flag, enabled);
 	}
 
-	WindowIconifyCallback Window::set_iconify_callback(WindowIconifyCallback value)
+	void Window::request_attention()
 	{
-		return DISPLAY_SERVER->window_set_iconify_callback(m_window, value);
+		DISPLAY_SERVER->request_window_attention(m_window);
 	}
 
-	WindowKeyCallback Window::set_key_callback(WindowKeyCallback value)
+	void Window::move_to_foreground()
 	{
-		return DISPLAY_SERVER->window_set_key_callback(m_window, value);
+		DISPLAY_SERVER->move_window_to_foreground(m_window);
 	}
 
-	WindowMaximizeCallback Window::set_maximize_callback(WindowMaximizeCallback value)
+	void Window::set_visible(bool value)
 	{
-		return DISPLAY_SERVER->window_set_maximize_callback(m_window, value);
+		DISPLAY_SERVER->window_set_visible(m_window, value);
 	}
 
-	WindowMouseButtonCallback Window::set_mouse_button_callback(WindowMouseButtonCallback value)
+	bool Window::is_visible() const
 	{
-		return DISPLAY_SERVER->window_set_mouse_button_callback(m_window, value);
+		return DISPLAY_SERVER->window_is_visible(m_window);
 	}
 
-	WindowMouseEnterCallback Window::set_mouse_enter_callback(WindowMouseEnterCallback value)
+	void Window::hide()
 	{
-		return DISPLAY_SERVER->window_set_mouse_enter_callback(m_window, value);
+		set_visible(false);
 	}
 
-	WindowMousePositionCallback Window::set_mouse_position_callback(WindowMousePositionCallback value)
+	void Window::show()
 	{
-		return DISPLAY_SERVER->window_set_mouse_position_callback(m_window, value);
+		set_visible(true);
 	}
 
-	WindowPositionCallback Window::set_position_callback(WindowPositionCallback value)
+	Vec2 Window::get_content_scale() const
 	{
-		return DISPLAY_SERVER->window_set_position_callback(m_window, value);
+		return DISPLAY_SERVER->window_get_content_scale(m_window);
 	}
 
-	WindowRefreshCallback Window::set_refresh_callback(WindowRefreshCallback value)
+	void Window::grab_focus()
 	{
-		return DISPLAY_SERVER->window_set_refresh_callback(m_window, value);
+		DISPLAY_SERVER->window_grab_focus(m_window);
 	}
 
-	WindowScrollCallback Window::set_scroll_callback(WindowScrollCallback value)
+	bool Window::has_focus() const
 	{
-		return DISPLAY_SERVER->window_set_scroll_callback(m_window, value);
+		return DISPLAY_SERVER->window_has_focus(m_window);
 	}
 
-	WindowSizeCallback Window::set_size_callback(WindowSizeCallback value)
+	bool Window::should_close() const
 	{
-		return DISPLAY_SERVER->window_set_size_callback(m_window, value);
+		return DISPLAY_SERVER->window_should_close(m_window);
+	}
+
+	void Window::set_should_close(bool value)
+	{
+		DISPLAY_SERVER->window_set_should_close(m_window, value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

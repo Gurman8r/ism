@@ -69,13 +69,15 @@ namespace ism
 
 	public:
 		/* CAMERA */
-		virtual RID camera_create(Vec3 const & position = {}, Vec4 const & rotation = {}) override;
-		virtual void camera_destroy(RID camera) override;
-		virtual Vec3 camera_get_position(RID camera) override;
-		virtual void camera_set_position(RID camera, Vec3 const & value) override;
-		virtual Vec4 camera_get_rotation(RID camera) override;
-		virtual void camera_set_rotation(RID camera, Vec4 const & value) override;
-		virtual Mat4 camera_get_transform(RID camera) override;
+		virtual RID camera_create() override;
+		virtual void camera_set_perspective(RID camera, float_t fovy_degrees, float_t z_near, float_t z_far) override;
+		virtual void camera_set_orthogonal(RID camera, float_t size, float_t z_near, float_t z_far) override;
+		virtual void camera_set_frustum(RID camera, float_t size, Vec2 offset, float_t z_near, float_t z_far) override;
+		virtual void camera_set_transform(RID camera, Mat4 const & transform) override;
+		virtual void camera_set_cull_mask(RID camera, uint32_t layers) override;
+		virtual void camera_set_environment(RID camera, RID env) override;
+		virtual void camera_set_camera_effects(RID camera, RID fx) override;
+		virtual void camera_set_use_vertical_aspect(RID camera, bool enable) override;
 
 	public:
 		/* VIEWPORT */
@@ -84,7 +86,7 @@ namespace ism
 		virtual void viewport_set_parent_viewport(RID viewport, RID parent_viewport) override;
 		virtual void viewport_set_size(RID viewport, int32_t width, int32_t height) override;
 		virtual RID viewport_get_texture(RID viewport) const override;
-		virtual void viewport_attach_to_screen(RID viewport, IntRect const & rect, WindowID screen) override;
+		virtual void viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

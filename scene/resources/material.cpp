@@ -80,7 +80,7 @@ namespace ism
 	void BaseMaterial3D::set_albedo(Color const & value)
 	{
 		m_params.albedo = value;
-		RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Albedo], value.rgba());
+		RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
 	}
 
 	void BaseMaterial3D::set_specular(float_t value)

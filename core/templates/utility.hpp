@@ -74,7 +74,7 @@ namespace ism::priv
 #define _IMPL_SCOPE_ENTER(...) \
 		(ism::priv::_ScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
-#define SCOPE_ENTER(...) \
+#define ON_SCOPE_ENTER(...) \
 		auto ANON = _IMPL_SCOPE_ENTER(##__VA_ARGS__)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -101,7 +101,7 @@ namespace ism::priv
 #define _IMPL_SCOPE_EXIT(...) \
 		(ism::priv::_ScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
-#define SCOPE_EXIT(...) \
+#define ON_SCOPE_EXIT(...) \
 		auto ANON = _IMPL_SCOPE_EXIT(##__VA_ARGS__)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -115,9 +115,7 @@ namespace ism::priv
 		constexpr MakerHelper(T && value) noexcept : value{ FWD(value) } {}
 
 		template <class Fn = void(*)(T &)
-		> constexpr decltype(auto) operator+(Fn && fn) && noexcept {
-			return fn(value), std::move(value);
-		}
+		> constexpr decltype(auto) operator+(Fn && fn) && noexcept { return fn(value), std::move(value); }
 	};
 
 #define MAKE_EX(m_class, ...) \

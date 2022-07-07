@@ -36,50 +36,30 @@ namespace ism
 
 	public:
 		explicit SceneTree(SceneSettings const & settings = {});
-
 		virtual ~SceneTree() override;
-
 		FORCE_INLINE static SceneTree * get_singleton() noexcept { return g_singleton; }
 
 	public:
 		virtual void initialize() override;
-
 		virtual bool process(Duration const & dt) override;
-
 		virtual void finalize() override;
-
 		virtual void handle_event(Event const & event) override;
 
 	public:
-		auto get_ecs() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_ecs); }
-
-		auto get_fps() const noexcept -> FrameRateTracker const & { return m_fps; }
-
 		auto get_root() const noexcept -> Window * { return m_root; }
-
+		auto get_ecs() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_ecs); }
 		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.get_elapsed_time(); }
-
-	public:
-		template <class Fn = void(*)(Ref<Node> &)
-		> void each_child(Fn && fn, bool recursive = true, bool reverse = false) noexcept {
-			if (!m_root) { return; }
-			fn((Ref<Node> &)m_root);
-			m_root->each_child(fn, recursive, reverse);
-		}
+		auto get_fps() const noexcept -> FPS_Tracker const & { return m_fps; }
 
 	protected:
 		template <class T> void on_component_added(class Entity &, T &) {}
 
 	private:
-		bool m_initialized{};
-
-		Clock m_main_timer{};
-
-		FrameRateTracker m_fps{ 120 };
-
-		Window * m_root{};
-
-		EntityRegistry m_ecs{};
+		bool			m_initialized{};
+		Clock			m_main_timer{};
+		FPS_Tracker		m_fps{};
+		Window *		m_root{};
+		EntityRegistry	m_ecs{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

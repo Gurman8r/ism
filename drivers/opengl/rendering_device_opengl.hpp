@@ -209,7 +209,7 @@ namespace ism
 
 		List<_DrawList> m_draw_list{};
 
-		virtual DrawListID draw_list_begin_for_screen(WindowID window, Color const & clear_color = {}) override;
+		virtual DrawListID draw_list_begin_for_screen(DS::WindowID window, Color const & clear_color = {}) override;
 		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, List<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
 		virtual void draw_list_bind_pipeline(DrawListID draw_list, RID pipeline) override;
 		virtual void draw_list_bind_uniform_set(DrawListID draw_list, RID uniform_set, size_t index) override;

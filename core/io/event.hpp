@@ -215,7 +215,7 @@ private:
 	protected:
 		friend class EventHandler;
 
-		auto next_handler_id() noexcept { return ++m_next_handler_id; }
+		auto new_event_handler_id() noexcept { return ++m_next_handler_id; }
 
 	public:
 		EventBus() noexcept { g_singleton = this; }
@@ -341,7 +341,7 @@ private:
 
 	inline EventHandler::EventHandler(EventBus * bus) noexcept
 		: m_event_bus{ bus ? bus : EventBus::get_singleton() }
-		, m_handler_index{ VALIDATE(get_event_bus())->next_handler_id() }
+		, m_handler_index{ VALIDATE(get_event_bus())->new_event_handler_id() }
 	{
 	}
 
