@@ -131,7 +131,6 @@ namespace ism
 		void camera_set_environment(RID camera, RID env);
 		void camera_set_camera_effects(RID camera, RID fx);
 		void camera_set_use_vertical_aspect(RID camera, bool enable);
-		bool is_camera(RID camera) const;
 
 	public:
 		/* VIEWPORT */

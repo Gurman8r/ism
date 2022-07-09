@@ -52,8 +52,6 @@ namespace ism::mpl
 	template <class ... Ts> constexpr bool any_of_v{ any_of<Ts...>::value };
 	template <class ... Ts> constexpr bool none_of_v{ none_of<Ts...>::value };
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class T, template<class> class ... Pr> using satisfies_all_of = all_of<Pr<T>...>;
 	template <class T, template<class> class ... Pr> using satisfies_any_of = any_of<Pr<T>...>;
 	template <class T, template<class> class ... Pr> using satisfies_none_of = none_of<Pr<T>...>;
@@ -63,37 +61,46 @@ namespace ism::mpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Ch> constexpr bool is_char_v{ any_of_v<
-		std::is_same<Ch, char>,
+	template <class C> using is_char = std::bool_constant<any_of_v
+	<
+		std::is_same<C, char>,
 #if CXX_20
-		std::is_same<Ch, char8_t>,
+		std::is_same<C, char8_t>,
 #endif
-		std::is_same<Ch, char16_t>,
-		std::is_same<Ch, char32_t>,
-		std::is_same<Ch, wchar_t>
-	> };
+		std::is_same<C, char16_t>,
+		std::is_same<C, char32_t>,
+		std::is_same<C, wchar_t>
+	>>;
 
-	template <class T> constexpr bool is_number_v{ (std::is_arithmetic_v<T> || std::is_enum_v<T>) && !mpl::is_char_v<T> };
+	template <class C> constexpr bool is_char_v{ is_char<C>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> using is_number = std::bool_constant<!is_char_v<T> && (std::is_arithmetic_v<T> || std::is_enum_v<T>)>;
+
+	template <class T> constexpr bool is_number_v{ is_number<T>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class> constexpr bool is_string_v{ false };
 
-	template <class Ch
-	> constexpr bool is_string_v<Ch *>{ is_char_v<Ch> };
+	template <class C
+	> constexpr bool is_string_v<C *>{ is_char_v<C> };
 
-	template <class Ch
-	> constexpr bool is_string_v<Ch const *>{ is_char_v<Ch> };
+	template <class C
+	> constexpr bool is_string_v<C const *>{ is_char_v<C> };
 
-	template <class Ch, size_t N
-	> constexpr bool is_string_v<Ch[N]>{ is_char_v<Ch> };
+	template <class C, size_t N
+	> constexpr bool is_string_v<C[N]>{ is_char_v<C> };
 
-	template <class Ch, size_t N
-	> constexpr bool is_string_v<Ch(&)[N]>{ is_char_v<Ch> };
+	template <class C, size_t N
+	> constexpr bool is_string_v<C(&)[N]>{ is_char_v<C> };
 
-	template <class Ch, size_t N
-	> constexpr bool is_string_v<Ch const (&)[N]>{ is_char_v<Ch> };
+	template <class C, size_t N
+	> constexpr bool is_string_v<C const (&)[N]>{ is_char_v<C> };
 
-	template <class Ch, size_t N
-	> constexpr bool is_string_v<Ch const [N]>{ is_char_v<Ch> };
+	template <class C, size_t N
+	> constexpr bool is_string_v<C const [N]>{ is_char_v<C> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -35,13 +35,10 @@ namespace ism
 		virtual RID get_rid() const = 0;
 
 		virtual int32_t get_width() const = 0;
-
 		virtual int32_t get_height() const = 0;
-
 		virtual Vec2i get_size() const;
 
 		virtual bool is_pixel_opaque(int32_t x, int32_t y) const;
-
 		virtual bool has_alpha() const = 0;
 
 		virtual Ref<Image> get_data() const;

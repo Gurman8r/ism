@@ -364,11 +364,6 @@ namespace ism
 	{
 	}
 
-	bool RendererStorage::is_camera(RID camera) const
-	{
-		return false;
-	}
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	RID RendererStorage::viewport_create()

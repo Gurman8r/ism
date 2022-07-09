@@ -130,7 +130,7 @@ namespace ism
 		> auto lookup(Index && i, Defval && dv) const -> OBJ { return VALIDATE(m_ptr)->lookup(FWD(i), FWD(dv)); }
 
 		template <class Index = OBJ
-		> auto operator[](Index && i) const -> OBJ & { return VALIDATE(m_ptr)->operator[](i); }
+		> auto operator[](Index && i) const -> OBJ & { return VALIDATE(m_ptr)->operator[](FWD(i)); }
 
 		bool empty() const { return VALIDATE(m_ptr)->empty(); }
 

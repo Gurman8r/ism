@@ -10,7 +10,7 @@ staticruntime	"Off"
 targetname		"%{prj.name}"
 debugdir		"%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"
 targetdir		"%{wks.location}/bin-lib/%{cfg.platform}/%{cfg.buildcfg}/"
-objdir			"%{wks.location}/bin-obj/%{cfg.platform}/%{cfg.buildcfg}/"
+objdir			"%{wks.location}/bin-obj/"
 location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}"
 
 dependson{ "glfw", }

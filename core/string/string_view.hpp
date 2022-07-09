@@ -5,34 +5,50 @@
 
 #include <string_view>
 
+namespace ism::util
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class C = char
+	> constexpr size_t strlen(C const * s)
+	{
+		return *s ? (1 + strlen(s + 1)) : 0;
+	}
+
+	constexpr cstring single_str(cstring items_separated_by_zeroes, size_t index)
+	{
+		cstring items{ (cstring)items_separated_by_zeroes };
+		cstring ptr{ items };
+		size_t count{};
+		while (*ptr) {
+			if (index == count) { break; }
+			ptr += strlen(ptr) + 1;
+			count++;
+		}
+		return *ptr ? ptr : (cstring)nullptr;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace util
-	{
-		template <class Ch = char
-		> constexpr size_t strlen(Ch const * s)
-		{
-			return *s ? (1 + strlen(s + 1)) : 0;
-		}
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// string view base
-	template <class Ch
-	> ALIAS(_StringViewBase) std::basic_string_view<Ch, std::char_traits<Ch>>;
+	template <class C
+	> ALIAS(_StringViewBase) std::basic_string_view<C, std::char_traits<C>>;
 
 	// basic string view
-	template <class Ch
-	> class BasicStringView : public _StringViewBase<Ch>
+	template <class C
+	> class BasicStringView : public _StringViewBase<C>
 	{
 	public:
-		using base_type = _StringViewBase<Ch>;
+		using base_type = _StringViewBase<C>;
 		using base_type::base_type;
 		using base_type::operator=;
 
+	public:
 		constexpr auto hash_code() const noexcept { return ism::hash(data(), size()); }
 	};
 
@@ -46,16 +62,16 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	namespace mpl { template <class Ch> constexpr bool is_string_v<BasicStringView<Ch>>{ true }; }
+	namespace mpl { template <class C> constexpr bool is_string_v<BasicStringView<C>>{ true }; }
 
 	constexpr StringView operator "" _sv(cstring s, size_t n) noexcept { return StringView{ s, n }; }
 
 	constexpr WideStringView operator "" _sv(cwstring s, size_t n) noexcept { return WideStringView{ s, n }; }
 
-	template <class Ch
-	> struct Hasher<BasicStringView<Ch>>
+	template <class C
+	> struct Hasher<BasicStringView<C>>
 	{
-		hash_t operator()(BasicStringView<Ch> const s) const noexcept { return s.hash_code(); }
+		hash_t operator()(BasicStringView<C> const s) const noexcept { return s.hash_code(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

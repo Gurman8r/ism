@@ -42,23 +42,14 @@ namespace ism
 
 			bool operator==(VideoMode const & value) const
 			{
-				return (this == std::addressof(value))
-					|| (size == value.size
-					&& bits_per_pixel == value.bits_per_pixel
-					&& refresh_rate == value.refresh_rate);
+				return (this == std::addressof(value)) || (size == value.size && bits_per_pixel == value.bits_per_pixel && refresh_rate == value.refresh_rate);
 			}
 
 			bool operator<(VideoMode const & value) const
 			{
-				return (this != std::addressof(value))
-					&& (size < value.size
-					|| bits_per_pixel < value.bits_per_pixel
-					|| refresh_rate < value.refresh_rate);
+				return (this != std::addressof(value)) && (size < value.size || bits_per_pixel < value.bits_per_pixel || refresh_rate < value.refresh_rate);
 			}
 		};
-
-		virtual VideoMode const & get_desktop_video_mode() const = 0;
-		virtual List<VideoMode> const & get_fullscreen_video_modes() const = 0;
 
 		DECL_HANDLE(MonitorID);
 		DECL_HANDLE(WindowID);
@@ -100,7 +91,7 @@ namespace ism
 		virtual void window_set_title(WindowID window, String const & value) = 0;
 
 		virtual MonitorID window_get_monitor(WindowID window) const = 0;
-		virtual void window_set_monitor(WindowID window, MonitorID value, IntRect const & rect, int32_t refresh_rate = -1) = 0;
+		virtual void window_set_monitor(WindowID window, MonitorID value) = 0;
 
 		virtual Vec2i window_get_position(WindowID window) const = 0;
 		virtual void window_set_position(WindowID window, Vec2i const & value) = 0;

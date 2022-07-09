@@ -136,7 +136,7 @@ namespace ism
 			{ "Specular_Map", m_textures["earth_sm_2k"]->get_rid() },
 		});
 	
-		// framebuffer
+		// framebuffers
 		List<RID> fb_textures{
 			RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
 				t.color_format = RD::DataFormat_R8G8B8_UNORM;
@@ -173,16 +173,16 @@ namespace ism
 	void EditorNode::process(Duration const & dt)
 	{
 		char window_title[32];
-		std::sprintf(window_title, "ism @ %.3f fps", (float_t)get_tree()->get_fps());
+		std::sprintf(window_title, "ism @ %.3f fps", get_tree()->get_fps().value);
 		get_tree()->get_root()->set_title(window_title);
 
 		static EditorCamera * editor_camera{ m_viewport.get_editor_camera() };
-		static Vec2 view_size{ 1280, 720 }, view_size_prev{};
-		if (m_viewport.get_window()) { view_size = m_viewport->InnerRect.GetSize(); }
+		static Vec2i view_size{ 1280, 720 }, view_size_prev{};
+		if (m_viewport.get_window()) { view_size = { (int32_t)m_viewport->InnerRect.GetWidth(), (int32_t)m_viewport->InnerRect.GetHeight() }; }
 		if (view_size_prev != view_size) {
 			view_size_prev = view_size;
 			editor_camera->set_res(view_size);
-			RENDERING_DEVICE->framebuffer_set_size(framebuffer, (int32_t)view_size[0], (int32_t)view_size[1]);
+			RENDERING_DEVICE->framebuffer_set_size(framebuffer, view_size[0], view_size[1]);
 		}
 		editor_camera->recalculate();
 
@@ -208,7 +208,7 @@ namespace ism
 			RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
 
 			static List<Color> clear_colors{ Colors::magenta };
-			clear_colors[0] = rotate_hue(clear_colors[0], (float_t)dt * 10.f);
+			clear_colors[0] = rotate_hue(clear_colors[0], 10.f * dt);
 
 			RD::DrawListID const dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
 			RENDERING_DEVICE->draw_list_bind_pipeline(dl, pipeline);
@@ -306,7 +306,7 @@ namespace ism
 	{
 		if (ImGui::BeginMenu("File")) {
 			//ImGui::Separator();
-			if (ImGui::MenuItem("Exit", "Alt+F4")) { get_tree()->get_root()->set_should_close(true); }
+			if (ImGui::MenuItem("Exit", "Alt+F4")) { get_tree()->quit(); }
 			ImGui::EndMenu();
 		}
 	

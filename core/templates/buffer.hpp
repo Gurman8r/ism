@@ -32,9 +32,9 @@ namespace ism
 
 		DynamicBuffer(allocator_type alloc = {}) noexcept : m_data{ alloc } {}
 
-		DynamicBuffer(size_t const size_in_bytes, byte const value = byte::null, allocator_type alloc = {}) : m_data{ alloc } { resize(size_in_bytes, value); }
+		DynamicBuffer(size_t size_in_bytes, byte const value = byte::null, allocator_type alloc = {}) : m_data{ alloc } { resize(size_in_bytes, value); }
 
-		DynamicBuffer(void const * src, size_t const size_in_bytes, allocator_type alloc = {}) : m_data{ alloc } { write(src, size_in_bytes); }
+		DynamicBuffer(void const * src, size_t size_in_bytes, allocator_type alloc = {}) : m_data{ alloc } { write(src, size_in_bytes); }
 
 		template <class Iter = iterator
 		> DynamicBuffer(Iter first, Iter last, allocator_type alloc = {}) : m_data{ alloc } { write(first, std::distance(first, last) / sizeof(*first)); }
@@ -68,7 +68,7 @@ namespace ism
 			return (*this);
 		}
 
-		self_type & resize(size_t const size_in_bytes, byte const value = byte::null)
+		self_type & resize(size_t size_in_bytes, byte const value = byte::null)
 		{
 			return m_data.resize(size_in_bytes, value), (*this);
 		}
@@ -90,54 +90,35 @@ namespace ism
 		}
 
 	public:
-		bool empty() const noexcept { return m_data.empty(); }
+		NODISCARD bool empty() const noexcept { return m_data.empty(); }
+		NODISCARD auto capacity() const noexcept -> size_t { return m_data.capacity(); }
+		NODISCARD auto size() const noexcept -> size_t { return m_data.size(); }
+		NODISCARD auto max_size() const noexcept -> size_t { return m_data.max_size(); }
 
-		auto capacity() const noexcept -> size_t { return m_data.capacity(); }
+		NODISCARD auto data() noexcept -> pointer { return m_data.data(); }
+		NODISCARD auto data() const noexcept -> const_pointer { return m_data.data(); }
+		NODISCARD auto c_str() const noexcept -> cstring { return (cstring)data(); }
 
-		auto size() const noexcept -> size_t { return m_data.size(); }
+		NODISCARD auto begin() noexcept -> iterator { return data(); }
+		NODISCARD auto begin() const noexcept -> const_iterator { return data(); }
 
-		auto max_size() const noexcept -> size_t { return m_data.max_size(); }
+		NODISCARD auto end() noexcept -> iterator { return begin() + size(); }
+		NODISCARD auto end() const noexcept -> const_iterator { return begin() + size(); }
 
-		auto data() noexcept -> pointer { return m_data.data(); }
+		NODISCARD auto front() noexcept -> reference { ASSERT(!empty()); return *(begin()); }
+		NODISCARD auto front() const noexcept -> const_reference { ASSERT(!empty()); return *(begin()); }
 
-		auto data() const noexcept -> const_pointer { return m_data.data(); }
+		NODISCARD auto back() noexcept -> reference { ASSERT(!empty()); return *(end() - 1); }
+		NODISCARD auto back() const noexcept -> const_reference { ASSERT(!empty()); return *(end() - 1); }
 
-		auto c_str() const noexcept -> cstring { return (cstring)data(); }
+		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < size()); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) const noexcept -> byte { ASSERT(i < size()); return m_data[i]; }
 
-		auto begin() noexcept -> iterator { return data(); }
-
-		auto begin() const noexcept -> const_iterator { return data(); }
-
-		auto end() noexcept -> iterator { return begin() + size(); }
-
-		auto end() const noexcept -> const_iterator { return begin() + size(); }
-
-		auto front() noexcept -> reference { ASSERT(!empty()); return *(begin()); }
-
-		auto front() const noexcept -> const_reference { ASSERT(!empty()); return *(begin()); }
-
-		auto back() noexcept -> reference { ASSERT(!empty()); return *(end() - 1); }
-
-		auto back() const noexcept -> const_reference { ASSERT(!empty()); return *(end() - 1); }
-
-		auto operator[](size_t const i) noexcept -> reference { ASSERT(i < size()); return m_data[i]; }
-
-		auto operator[](size_t const i) const noexcept -> byte { ASSERT(i < size()); return m_data[i]; }
-
-		operator void * () noexcept { return m_data.data(); }
-
-		operator void const * () const noexcept { return m_data.data(); }
-
-		operator String() const noexcept { return { c_str(), size() }; }
-
-		operator storage_type & () & noexcept { return m_data; }
-
-		operator storage_type const & () const & noexcept { return m_data; }
-
-		operator storage_type && () && noexcept { return std::move(m_data); }
+		NODISCARD operator void * () const noexcept { return !empty() ? (void *)data() : nullptr; }
+		NODISCARD operator String() const noexcept { return { c_str(), size() }; }
 
 	public:
-		void do_read(size_t const index, void * dst, size_t const size_in_bytes) const
+		void do_read(size_t index, void * dst, size_t size_in_bytes) const
 		{
 			ASSERT(dst && "INVALID DESTINATION");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
@@ -146,49 +127,49 @@ namespace ism
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(size_t const index, T & value) const
+		> NODISCARD T & get_to(size_t index, T & value) const
 		{
 			do_read(index, std::addressof(value), sizeof(T));
 			return value;
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(T & value) const
+		> NODISCARD T & get_to(T & value) const
 		{
 			return get_to<T>(0, value);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T get(size_t const index = 0) const
+		> NODISCARD T get(size_t index = 0) const
 		{
 			T temp;
 			return get_to<T>(index, temp);
 		}
 
 	public:
-		void do_write(size_t const index, void const * src, size_t const size_in_bytes, size_t const align = 0)
+		void do_write(size_t index, void const * src, size_t size_in_bytes, size_t align = 0)
 		{
 			ASSERT(src && "INVALID SOURCE");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
-			size_t const n{ (0 < align && align % 2 == 0) ? SIZE_ROUND_UP(size_in_bytes, align) : size_in_bytes };
+			size_t n{ (0 < align && align % 2 == 0) ? SIZE_ROUND_UP(size_in_bytes, align) : size_in_bytes };
 			if (size() < index + n) { resize(index + n); }
 			copymem(data() + index, src, n);
 		}
 
-		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
+		self_type & write(size_t index, void const * src, size_t size_in_bytes)
 		{
 			if (src && 0 < size_in_bytes) { do_write(index, src, size_in_bytes); }
 			return (*this);
 		}
 
-		self_type & write(void const * src, size_t const size_in_bytes)
+		self_type & write(void const * src, size_t size_in_bytes)
 		{
 			if (src && 0 < size_in_bytes) { do_write(size(), src, size_in_bytes); }
 			return (*this);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> self_type & write(size_t const index, T const & value)
+		> self_type & write(size_t index, T const & value)
 		{
 			do_write(index, std::addressof(value), sizeof(T));
 			return (*this);
@@ -202,7 +183,7 @@ namespace ism
 		}
 
 	public:
-		self_type & printv(size_t const index, cstring fmt, va_list args)
+		self_type & printv(size_t index, cstring fmt, va_list args)
 		{
 			char s[DYNAMICBUFFER_PRINTV_STRING_SIZE]{};
 			if (int32_t const n{ std::vsnprintf(s, sizeof(s), fmt, args) }
@@ -215,7 +196,7 @@ namespace ism
 			return printv(size(), fmt, args);
 		}
 
-		self_type & printf(size_t const index, cstring fmt, ...)
+		self_type & printf(size_t index, cstring fmt, ...)
 		{
 			va_list args;
 			va_start(args, fmt);
@@ -233,17 +214,17 @@ namespace ism
 			return (*this);
 		}
 
-		self_type & print(size_t const index, cstring str, size_t const size_in_bytes) noexcept
+		self_type & print(size_t index, cstring str, size_t size_in_bytes) noexcept
 		{
 			return write(index, str, size_in_bytes);
 		}
 
-		self_type & print(size_t const index, cstring str) noexcept
+		self_type & print(size_t index, cstring str) noexcept
 		{
 			return print(index, str, std::strlen(str));
 		}
 
-		self_type & print(cstring str, size_t const size_in_bytes) noexcept
+		self_type & print(cstring str, size_t size_in_bytes) noexcept
 		{
 			return print(size(), str, size_in_bytes);
 		}
@@ -253,7 +234,7 @@ namespace ism
 			return print(size(), str, std::strlen(str));
 		}
 
-		self_type & print(size_t const index, self_type const & str) noexcept
+		self_type & print(size_t index, self_type const & str) noexcept
 		{
 			return print(index, str.c_str(), str.size());
 		}
@@ -263,7 +244,7 @@ namespace ism
 			return print(size(), str.c_str(), str.size());
 		}
 
-		self_type & print(size_t const index, String const & str) noexcept
+		self_type & print(size_t index, String const & str) noexcept
 		{
 			return print(index, str.data(), str.size());
 		}
@@ -325,9 +306,9 @@ namespace ism
 
 		StaticBuffer() noexcept {}
 
-		StaticBuffer(size_t const index, void const * src, size_t const size_in_bytes) noexcept { write(index, src, size_in_bytes); }
+		StaticBuffer(size_t index, void const * src, size_t size_in_bytes) noexcept { write(index, src, size_in_bytes); }
 
-		StaticBuffer(void const * src, size_t const size_in_bytes) noexcept { write(src, size_in_bytes); }
+		StaticBuffer(void const * src, size_t size_in_bytes) noexcept { write(src, size_in_bytes); }
 
 		template <class Iter = iterator
 		> StaticBuffer(Iter first, Iter last) { write(first, std::distance(first, last) / sizeof(*first)); }
@@ -383,50 +364,38 @@ namespace ism
 		}
 
 	public:
-		static constexpr bool empty() noexcept { return false; }
+		NODISCARD static constexpr bool empty() noexcept { return false; }
+		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto size() noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _Size; }
 
-		static constexpr auto capacity() noexcept -> size_t { return _Size; }
+		NODISCARD auto data() noexcept -> pointer { return m_data; }
+		NODISCARD auto data() const noexcept -> const_pointer { return m_data; }
+		NODISCARD auto c_str() const noexcept -> cstring { return (cstring)m_data; }
 
-		static constexpr auto size() noexcept -> size_t { return _Size; }
+		NODISCARD auto begin() noexcept -> iterator { return m_data; }
+		NODISCARD auto begin() const noexcept -> const_iterator { return m_data; }
+		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_data; }
 
-		static constexpr auto max_size() noexcept -> size_t { return _Size; }
+		NODISCARD auto end() noexcept -> iterator { return m_data + _Size; }
+		NODISCARD auto end() const noexcept -> const_iterator { return m_data + _Size; }
+		NODISCARD auto cend() const noexcept -> const_iterator { return m_data + _Size; }
 
-		auto data() noexcept -> pointer { return m_data; }
+		NODISCARD auto front() noexcept -> reference { return *m_data; }
+		NODISCARD auto front() const noexcept -> const_reference { return *m_data; }
 
-		auto data() const noexcept -> const_pointer { return m_data; }
+		NODISCARD auto back() noexcept -> reference { return *(m_data + _Size - 1); }
+		NODISCARD auto back() const noexcept -> const_reference { return *(m_data + _Size - 1); }
 
-		auto c_str() const noexcept -> cstring { return (cstring)m_data; }
+		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < _Size); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) const noexcept -> byte { ASSERT(i < _Size); return m_data[i]; }
 
-		auto begin() noexcept -> iterator { return m_data; }
-
-		auto begin() const noexcept -> const_iterator { return m_data; }
-
-		auto end() noexcept -> iterator { return m_data + _Size; }
-
-		auto end() const noexcept -> const_iterator { return m_data + _Size; }
-
-		auto front() noexcept -> reference { return *m_data; }
-
-		auto front() const noexcept -> const_reference { return *m_data; }
-
-		auto back() noexcept -> reference { return *(m_data + _Size - 1); }
-
-		auto back() const noexcept -> const_reference { return *(m_data + _Size - 1); }
-
-		auto operator[](size_t const i) noexcept -> reference { ASSERT(i < _Size); return m_data[i]; }
-
-		auto operator[](size_t const i) const noexcept -> byte { ASSERT(i < _Size); return m_data[i]; }
-
-		operator void * () noexcept { return m_data; }
-
-		operator void const * () const noexcept { return m_data; }
-
-		operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
-
-		operator String() const noexcept { return { (cstring)m_data, _Size }; }
+		NODISCARD operator void * () const noexcept { return (void *)data(); }
+		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
+		NODISCARD operator String() const noexcept { return { (cstring)m_data, _Size }; }
 
 	public:
-		void do_read(size_t const index, void * dst, size_t const size_in_bytes) const
+		void do_read(size_t index, void * dst, size_t size_in_bytes) const
 		{
 			ASSERT(dst && "INVALID DESTINATION");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
@@ -435,49 +404,49 @@ namespace ism
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(size_t const index, T & value) const
+		> NODISCARD T & get_to(size_t index, T & value) const
 		{
 			do_read(index, std::addressof(value), sizeof(T));
 			return value;
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(T & value) const
+		> NODISCARD T & get_to(T & value) const
 		{
 			return get_to<T>(0, value);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T get(size_t const index = 0) const
+		> NODISCARD T get(size_t index = 0) const
 		{
 			T temp;
 			return get_to<T>(index, temp);
 		}
 
 	public:
-		void do_write(size_t const index, void const * src, size_t const size_in_bytes, size_t const align = 0)
+		void do_write(size_t index, void const * src, size_t size_in_bytes, size_t align = 0)
 		{
 			ASSERT(src && "INVALID SOURCE");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
-			size_t const n{ (0 < align && align % 2 == 0) ? SIZE_ROUND_UP(size_in_bytes, align) : size_in_bytes };
+			size_t n{ (0 < align && align % 2 == 0) ? SIZE_ROUND_UP(size_in_bytes, align) : size_in_bytes };
 			ASSERT(index + n <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
 			copymem(m_data + index, src, n);
 		}
 
-		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
+		self_type & write(size_t index, void const * src, size_t size_in_bytes)
 		{
 			if (src && 0 < size_in_bytes) { do_write(index, src, size_in_bytes); }
 			return (*this);
 		}
 
-		self_type & write(void const * src, size_t const size_in_bytes)
+		self_type & write(void const * src, size_t size_in_bytes)
 		{
 			if (src && 0 < size_in_bytes) { do_write(0, src, size_in_bytes); }
 			return (*this);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> self_type & write(size_t const index, T const & value)
+		> self_type & write(size_t index, T const & value)
 		{
 			do_write(index, std::addressof(value), sizeof(T));
 			return (*this);
@@ -491,7 +460,7 @@ namespace ism
 		}
 
 	public:
-		self_type & printv(size_t const index, cstring fmt, va_list args)
+		self_type & printv(size_t index, cstring fmt, va_list args)
 		{
 			return std::vsnprintf((char *)m_data + index, _Size - index, fmt, args), (*this);
 		}
@@ -501,7 +470,7 @@ namespace ism
 			return printv(_Size, fmt, args);
 		}
 
-		self_type & printf(size_t const index, cstring fmt, ...)
+		self_type & printf(size_t index, cstring fmt, ...)
 		{
 			va_list args;
 			va_start(args, fmt);
@@ -519,17 +488,17 @@ namespace ism
 			return (*this);
 		}
 
-		self_type & print(size_t const index, cstring str, size_t const size_in_bytes) noexcept
+		self_type & print(size_t index, cstring str, size_t size_in_bytes) noexcept
 		{
 			return write(index, str, size_in_bytes);
 		}
 
-		self_type & print(size_t const index, cstring str) noexcept
+		self_type & print(size_t index, cstring str) noexcept
 		{
 			return print(index, str, std::strlen(str));
 		}
 
-		self_type & print(cstring str, size_t const size_in_bytes) noexcept
+		self_type & print(cstring str, size_t size_in_bytes) noexcept
 		{
 			return print(_Size, str, size_in_bytes);
 		}
@@ -539,7 +508,7 @@ namespace ism
 			return print(_Size, str, std::strlen(str));
 		}
 
-		self_type & print(size_t const index, self_type const & str) noexcept
+		self_type & print(size_t index, self_type const & str) noexcept
 		{
 			return print(index, str.c_str(), str.size());
 		}
@@ -549,7 +518,7 @@ namespace ism
 			return print(size(), str.c_str(), str.size());
 		}
 
-		self_type & print(size_t const index, String const & str) noexcept
+		self_type & print(size_t index, String const & str) noexcept
 		{
 			return print(index, str.m_data, str._Size);
 		}
@@ -621,9 +590,9 @@ namespace ism
 
 		ConstantBuffer() noexcept {}
 
-		ConstantBuffer(size_t const index, void const * src, size_t const size_in_bytes) noexcept { write(index, src, size_in_bytes); }
+		ConstantBuffer(size_t index, void const * src, size_t size_in_bytes) noexcept { write(index, src, size_in_bytes); }
 
-		ConstantBuffer(void const * src, size_t const size_in_bytes) noexcept { write(src, size_in_bytes); }
+		ConstantBuffer(void const * src, size_t size_in_bytes) noexcept { write(src, size_in_bytes); }
 
 		template <class Iter = iterator
 		> ConstantBuffer(Iter first, Iter last) { write(first, std::distance(first, last) / sizeof(*first)); }
@@ -679,50 +648,38 @@ namespace ism
 		}
 
 	public:
-		static constexpr bool empty() noexcept { return false; }
+		NODISCARD static constexpr bool empty() noexcept { return false; }
+		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto size() noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _Size; }
 
-		static constexpr auto capacity() noexcept -> size_t { return _Size; }
+		NODISCARD auto data() noexcept -> pointer { return m_data; }
+		NODISCARD auto data() const noexcept -> const_pointer { return m_data; }
+		NODISCARD auto c_str() const noexcept -> cstring { return (cstring)m_data; }
 
-		static constexpr auto size() noexcept -> size_t { return _Size; }
+		NODISCARD auto begin() noexcept -> iterator { return m_data; }
+		NODISCARD auto begin() const noexcept -> const_iterator { return m_data; }
+		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_data; }
 
-		static constexpr auto max_size() noexcept -> size_t { return _Size; }
+		NODISCARD auto end() noexcept -> iterator { return m_data + _Size; }
+		NODISCARD auto end() const noexcept -> const_iterator { return m_data + _Size; }
+		NODISCARD auto cend() const noexcept -> const_iterator { return m_data + _Size; }
 
-		auto data() noexcept -> pointer { return m_data; }
+		NODISCARD auto front() noexcept -> reference { return *m_data; }
+		NODISCARD auto front() const noexcept -> const_reference { return *m_data; }
 
-		auto data() const noexcept -> const_pointer { return m_data; }
+		NODISCARD auto back() noexcept -> reference { return *(m_data + _Size - 1); }
+		NODISCARD auto back() const noexcept -> const_reference { return *(m_data + _Size - 1); }
 
-		auto c_str() const noexcept -> cstring { return (cstring)m_data; }
+		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < _Size); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) const noexcept -> byte { ASSERT(i < _Size); return m_data[i]; }
 
-		auto begin() noexcept -> iterator { return m_data; }
-
-		auto begin() const noexcept -> const_iterator { return m_data; }
-
-		auto end() noexcept -> iterator { return m_data + _Size; }
-
-		auto end() const noexcept -> const_iterator { return m_data + _Size; }
-
-		auto front() noexcept -> reference { return *m_data; }
-
-		auto front() const noexcept -> const_reference { return *m_data; }
-
-		auto back() noexcept -> reference { return *(m_data + _Size - 1); }
-
-		auto back() const noexcept -> const_reference { return *(m_data + _Size - 1); }
-
-		auto operator[](size_t const i) noexcept -> reference { ASSERT(i < _Size); return m_data[i]; }
-
-		auto operator[](size_t const i) const noexcept -> byte { ASSERT(i < _Size); return m_data[i]; }
-
-		operator void * () noexcept { return m_data; }
-
-		operator void const * () const noexcept { return m_data; }
-
-		operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
-
-		operator String() const noexcept { return { (cstring)m_data, _Size }; }
+		NODISCARD operator void * () const noexcept { return (void *)data(); }
+		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
+		NODISCARD operator String() const noexcept { return { (cstring)m_data, _Size }; }
 
 	public:
-		void do_read(size_t const index, void * dst, size_t const size_in_bytes) const
+		void do_read(size_t index, void * dst, size_t size_in_bytes) const
 		{
 			ASSERT(dst && "INVALID DESTINATION");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
@@ -731,33 +688,33 @@ namespace ism
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(size_t const index, T & value) const
+		> NODISCARD T & get_to(size_t index, T & value) const
 		{
 			do_read(index, std::addressof(value), sizeof(T));
 			return value;
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T & get_to(T & value) const
+		> NODISCARD T & get_to(T & value) const
 		{
 			return get_to<T>(0, value);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> T get(size_t const index = 0) const
+		> NODISCARD T get(size_t index = 0) const
 		{
 			T temp;
 			return get_to<T>(index, temp);
 		}
 
 		template <size_t I
-		> type_i<I> get() const
+		> NODISCARD type_i<I> get() const
 		{
 			return get<type_i<I>>(_calc_index<I>());
 		}
 
 	public:
-		void do_write(size_t const index, void const * src, size_t const size_in_bytes)
+		void do_write(size_t index, void const * src, size_t size_in_bytes)
 		{
 			ASSERT(src && "INVALID SOURCE");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
@@ -765,20 +722,20 @@ namespace ism
 			copymem(m_data + index, src, size_in_bytes);
 		}
 
-		self_type & write(size_t const index, void const * src, size_t const size_in_bytes)
+		self_type & write(size_t index, void const * src, size_t size_in_bytes)
 		{
 			if (src && 0 < size_in_bytes) { do_write(index, src, size_in_bytes); }
 			return (*this);
 		}
 
-		self_type & write(void const * src, size_t const size_in_bytes)
+		self_type & write(void const * src, size_t size_in_bytes)
 		{
 			if (src && 0 < size_in_bytes) { do_write(0, src, size_in_bytes); }
 			return (*this);
 		}
 
 		template <class T, std::enable_if_t<std::is_trivially_copyable_v<T>, int> = 0
-		> self_type & write(size_t const index, T const & value)
+		> self_type & write(size_t index, T const & value)
 		{
 			return do_write(index, std::addressof(value), sizeof(T)), (*this);
 		}
@@ -796,7 +753,7 @@ namespace ism
 		}
 
 	public:
-		self_type & printv(size_t const index, cstring fmt, va_list args)
+		self_type & printv(size_t index, cstring fmt, va_list args)
 		{
 			return std::vsnprintf((char *)m_data + index, _Size - index, fmt, args), (*this);
 		}
@@ -806,7 +763,7 @@ namespace ism
 			return printv(_Size, fmt, args);
 		}
 
-		self_type & printf(size_t const index, cstring fmt, ...)
+		self_type & printf(size_t index, cstring fmt, ...)
 		{
 			va_list args;
 			va_start(args, fmt);
@@ -824,17 +781,17 @@ namespace ism
 			return (*this);
 		}
 
-		self_type & print(size_t const index, cstring str, size_t const size_in_bytes) noexcept
+		self_type & print(size_t index, cstring str, size_t size_in_bytes) noexcept
 		{
 			return write(index, str, size_in_bytes);
 		}
 
-		self_type & print(size_t const index, cstring str) noexcept
+		self_type & print(size_t index, cstring str) noexcept
 		{
 			return print(index, str, std::strlen(str));
 		}
 
-		self_type & print(cstring str, size_t const size_in_bytes) noexcept
+		self_type & print(cstring str, size_t size_in_bytes) noexcept
 		{
 			return print(_Size, str, size_in_bytes);
 		}
@@ -844,7 +801,7 @@ namespace ism
 			return print(_Size, str, std::strlen(str));
 		}
 
-		self_type & print(size_t const index, self_type const & str) noexcept
+		self_type & print(size_t index, self_type const & str) noexcept
 		{
 			return print(index, str.c_str(), str.size());
 		}
@@ -854,7 +811,7 @@ namespace ism
 			return print(size(), str.c_str(), str.size());
 		}
 
-		self_type & print(size_t const index, String const & str) noexcept
+		self_type & print(size_t index, String const & str) noexcept
 		{
 			return print(index, str.m_data, str._Size);
 		}

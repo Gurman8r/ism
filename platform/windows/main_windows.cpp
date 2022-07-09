@@ -7,21 +7,23 @@
 
 int _main()
 {
-	ism::OS_Windows os{ NULL };
+	using namespace ism;
 
-	switch (ism::Main::setup(__argv[0], __argc, __argv)) {
-	case ism::Error_None: break;
-	case ism::Error_Unknown:
+	OS_Windows os{ nullptr };
+
+	switch (Main::setup(__argv[0], __argc, __argv)) {
+	case Error_None: break;
+	case Error_Unknown:
 	default: {
 		CRASH("An unknown error occurred during setup. The program was unable to start.");
 	} break;
 	}
 
-	ASSERT(ism::Main::start());
+	ASSERT(Main::start());
 
-	while (ism::Main::iteration() == EXIT_SUCCESS);
+	while (Main::iteration() == EXIT_SUCCESS);
 
-	ism::Main::cleanup();
+	Main::cleanup();
 
 	return os.get_exit_code();
 }

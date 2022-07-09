@@ -21,6 +21,8 @@ namespace ism
 		using base_type = _HashSetBase<T, H, E>;
 		using base_type::base_type;
 		using base_type::operator=;
+
+		NODISCARD operator void * () const noexcept { return (void *)(intptr_t)!empty(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -37,6 +39,8 @@ namespace ism
 		using base_type = _MultiHashSetBase<T, H, E>;
 		using base_type::base_type;
 		using base_type::operator=;
+
+		NODISCARD operator void * () const noexcept { return (void *)(intptr_t)!empty(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

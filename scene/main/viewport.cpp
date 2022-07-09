@@ -52,6 +52,25 @@ namespace ism
 
 	Viewport::~Viewport() {}
 
+	void Viewport::process(Duration const & dt)
+	{
+		base_type::process(dt);
+	}
+
+	void Viewport::notification(int32_t id)
+	{
+		base_type::notification(id);
+	}
+
+	Vec2i Viewport::_get_size() const
+	{
+		return Vec2i();
+	}
+
+	void Viewport::_set_size(Vec2i const & size)
+	{
+	}
+
 	Ref<ViewportTexture> Viewport::get_texture() const
 	{
 		return nullptr;

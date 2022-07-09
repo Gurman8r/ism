@@ -21,7 +21,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SceneTree::SceneTree(SceneSettings const & settings) : MainLoop{}
+	SceneTree::SceneTree() : MainLoop{}
 	{
 		if (g_singleton == nullptr) { g_singleton = this; }
 
@@ -41,34 +41,32 @@ namespace ism
 	{
 		m_initialized = true;
 
-		MainLoop::initialize();
+		base_type::initialize();
 	}
 
 	bool SceneTree::process(Duration const & dt)
 	{
-		MainLoop::process(dt);
+		base_type::process(dt);
 
-		bool should_close{};
-
-		m_fps.update(dt);
+		m_fps_tracker.update(dt);
 
 		m_root->process(dt);
 
-		should_close |= m_root->should_close();
+		m_should_close |= m_root->should_close();
 
-		return should_close;
+		return m_should_close;
 	}
 
 	void SceneTree::finalize()
 	{
 		m_initialized = false;
 
-		MainLoop::finalize();
+		base_type::finalize();
 	}
 
 	void SceneTree::handle_event(Event const & event)
 	{
-		MainLoop::handle_event(event);
+		base_type::handle_event(event);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

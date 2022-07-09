@@ -16,13 +16,6 @@ namespace ism
 	ALIAS(EntityRegistry) entt::registry;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	
-	struct SceneSettings final
-	{
-		String name{ "New Scene" };
-	};
-	
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API SceneTree : public MainLoop
 	{
@@ -35,7 +28,7 @@ namespace ism
 		static SceneTree * g_singleton;
 
 	public:
-		explicit SceneTree(SceneSettings const & settings = {});
+		SceneTree();
 		virtual ~SceneTree() override;
 		FORCE_INLINE static SceneTree * get_singleton() noexcept { return g_singleton; }
 
@@ -46,18 +39,21 @@ namespace ism
 		virtual void handle_event(Event const & event) override;
 
 	public:
+		void quit() { m_should_close = true; }
+
+	public:
 		auto get_root() const noexcept -> Window * { return m_root; }
 		auto get_ecs() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_ecs); }
 		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.get_elapsed_time(); }
-		auto get_fps() const noexcept -> FPS_Tracker const & { return m_fps; }
+		auto get_fps() const noexcept -> FPS_Tracker const & { return m_fps_tracker; }
 
 	protected:
 		template <class T> void on_component_added(class Entity &, T &) {}
 
 	private:
-		bool			m_initialized{};
+		bool			m_initialized{}, m_should_close{};
 		Clock			m_main_timer{};
-		FPS_Tracker		m_fps{};
+		FPS_Tracker		m_fps_tracker{};
 		Window *		m_root{};
 		EntityRegistry	m_ecs{};
 	};

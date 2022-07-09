@@ -18,13 +18,17 @@ namespace ism
 		Window();
 		virtual ~Window() override;
 
+		virtual void process(Duration const & dt) override;
+		virtual void notification(int32_t id) override;
+
+	public:
 		DS::WindowID get_window_id() const noexcept { return m_window; }
 
 		String get_title() const;
 		void set_title(String const & value);
 
 		DS::MonitorID get_monitor() const;
-		void set_monitor(DS::MonitorID value, IntRect const & rect, int32_t refresh_rate = -1);
+		void set_monitor(DS::MonitorID value);
 
 		Vec2i get_position() const;
 		void set_position(Vec2i const & value);
@@ -32,10 +36,10 @@ namespace ism
 		Vec2i get_size() const;
 		void set_size(Vec2i const & value);
 
+		Vec2i get_real_size() const;
+
 		DS::WindowMode_ get_mode() const;
 		void set_mode(DS::WindowMode_ mode);
-
-		Vec2i get_real_size() const;
 
 		bool get_flag(int32_t flag) const;
 		void set_flag(int32_t flag, bool enabled);

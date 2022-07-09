@@ -3,29 +3,6 @@
 
 #include <core/math/vector4.hpp>
 
-namespace ism::util
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class To, class From
-	> constexpr TVector4<To> color_cast(const TVector4<From> & value) noexcept
-	{
-		return (TVector4<To>)value;
-	}
-
-	constexpr Vec4b color_cast(Vec4f const & value) noexcept
-	{
-		return (Vec4b)(value * 255.f);
-	}
-
-	constexpr Vec4f color_cast(Vec4b const & value) noexcept
-	{
-		return ((Vec4f)value) / 255.f;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

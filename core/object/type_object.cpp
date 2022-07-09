@@ -152,7 +152,9 @@ namespace ism
 		{
 			if (!base->tp_subclasses) { base->tp_subclasses = DICT::new_(); }
 
-			((DICT &)base->tp_subclasses)[this] = (TYPE)this;
+			TYPE self_ref{ this };
+
+			((DICT &)base->tp_subclasses)[self_ref] = self_ref;
 		}
 
 		tp_flags = (tp_flags & ~TypeFlags_Readying) | TypeFlags_Ready;

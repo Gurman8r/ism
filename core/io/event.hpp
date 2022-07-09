@@ -285,11 +285,14 @@ private:
 
 		auto remove_dummy_handler(Ref<DummyHandler> const & value) noexcept
 		{
-			if (auto const it{ std::find(m_dummy_handlers.begin(), m_dummy_handlers.end(), value) }
-			
-			; it == m_dummy_handlers.end()) { return it; }
-			
-			else { return m_dummy_handlers.erase(it); }
+			if (auto const it{ m_dummy_handlers.find(value) }; it != m_dummy_handlers.end())
+			{
+				return m_dummy_handlers.erase(it);
+			}
+			else
+			{
+				return it;
+			}
 		}
 
 		void remove_all_dummy_handlers() noexcept

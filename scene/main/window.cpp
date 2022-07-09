@@ -20,6 +20,16 @@ namespace ism
 		m_window = nullptr;
 	}
 
+	void Window::process(Duration const & dt)
+	{
+		base_type::process(dt);
+	}
+
+	void Window::notification(int32_t id)
+	{
+		base_type::notification(id);
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	String Window::get_title() const
@@ -37,9 +47,9 @@ namespace ism
 		return DISPLAY_SERVER->window_get_monitor(m_window);
 	}
 
-	void Window::set_monitor(DS::MonitorID value, IntRect const & rect, int32_t refresh_rate)
+	void Window::set_monitor(DS::MonitorID value)
 	{
-		DISPLAY_SERVER->window_set_monitor(m_window, value, rect, refresh_rate);
+		DISPLAY_SERVER->window_set_monitor(m_window, value);
 	}
 
 	Vec2i Window::get_position() const
@@ -62,6 +72,11 @@ namespace ism
 		DISPLAY_SERVER->window_set_size(m_window, value);
 	}
 
+	Vec2i Window::get_real_size() const
+	{
+		return DISPLAY_SERVER->window_get_real_size(m_window);
+	}
+
 	DS::WindowMode_ Window::get_mode() const
 	{
 		return DISPLAY_SERVER->window_get_mode(m_window);
@@ -70,11 +85,6 @@ namespace ism
 	void Window::set_mode(DS::WindowMode_ mode)
 	{
 		DISPLAY_SERVER->window_set_mode(m_window, mode);
-	}
-
-	Vec2i Window::get_real_size() const
-	{
-		return DISPLAY_SERVER->window_get_real_size(m_window);
 	}
 
 	bool Window::get_flag(int32_t flag) const

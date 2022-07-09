@@ -13,11 +13,9 @@ namespace ism
 		size_t			index{};
 		List<float_t>	times{};
 
-		operator float_t() const noexcept { return value; }
-
-		FPS_Tracker(size_t count = 120) noexcept
-			: value{}, accum{}, index{}, times{ count, 0.f, decltype(times)::allocator_type{} }
+		FPS_Tracker(size_t count = 120) noexcept : value{}, accum{}, index{}, times{}
 		{
+			times.resize(count);
 		}
 
 		void update(Duration const & dt) noexcept

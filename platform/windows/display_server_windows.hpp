@@ -27,8 +27,8 @@ namespace ism
 		~DisplayServerWindows();
 
 	public:
-		virtual VideoMode const & get_desktop_video_mode() const override;
-		virtual List<VideoMode> const & get_fullscreen_video_modes() const override;
+		VideoMode const & get_desktop_video_mode() const;
+		List<VideoMode> const & get_fullscreen_video_modes() const;
 
 	public:
 		virtual WindowID get_current_context() const override;
@@ -51,7 +51,7 @@ namespace ism
 		virtual void window_set_title(WindowID window, String const & value) override;
 
 		virtual MonitorID window_get_monitor(WindowID window) const override;
-		virtual void window_set_monitor(WindowID window, MonitorID monitor, IntRect const & rect, int32_t refresh_rate = -1) override;
+		virtual void window_set_monitor(WindowID window, MonitorID monitor) override;
 
 		virtual Vec2i window_get_position(WindowID window) const override;
 		virtual void window_set_position(WindowID window, Vec2i const & value) override;

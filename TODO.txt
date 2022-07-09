@@ -6,5 +6,6 @@ generic objects
 function objects are an absolute nightmare
 low level object types would benefit greatly from optimization & custom implementations
 
+must get viewports and render targets working
 add "draw" functions to drawable resources like texture and mesh
 maybe unify "scene" and "servers" into "runtime"

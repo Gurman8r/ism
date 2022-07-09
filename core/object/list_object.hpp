@@ -81,10 +81,10 @@ namespace ism
 		> bool contains(Value && v) const { return m_list.contains(FWD_OBJ(v)); }
 
 		template <class Value = OBJ
-		> auto find(Value && v) -> iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
+		> auto find(Value && v) -> iterator { return m_list.find(FWD_OBJ(v)); }
 
 		template <class Value = OBJ
-		> auto find(Value && v) const -> const_iterator { return std::find(begin(), end(), FWD_OBJ(v)); }
+		> auto find(Value && v) const -> const_iterator { return m_list.find(FWD_OBJ(v)); }
 
 		template <class Value = OBJ
 		> auto lookup(Value && v) const -> OBJ { return this->lookup(FWD_OBJ(v), OBJ{}); }

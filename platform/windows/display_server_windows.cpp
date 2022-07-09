@@ -13,8 +13,6 @@
 #	include <glfw/glfw3native.h>
 #endif
 
-
-
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -79,9 +77,7 @@ namespace ism
 		m_window.window_mode = mode;
 		m_window.mouse_mode = MouseMode_Normal;
 		m_window.cursor_shape = CursorShape_Arrow;
-		
-		m_window.handle = glfwCreateWindow(size[0], size[1], m_window.title.c_str(), nullptr, nullptr);
-		if (!m_window.handle) { CRASH("failed creating glfw window"); }
+		m_window.handle = VALIDATE(glfwCreateWindow(size[0], size[1], m_window.title.c_str(), nullptr, nullptr));
 
 		glfwMakeContextCurrent(m_window.handle);
 		glfwSetWindowUserPointer(m_window.handle, &m_window);
@@ -136,8 +132,7 @@ namespace ism
 
 	DS::WindowID DisplayServerWindows::get_current_context() const
 	{
-		GLFWwindow * const context_current{ glfwGetCurrentContext() };
-		return context_current ? (WindowID)glfwGetWindowUserPointer(glfwGetCurrentContext()) : nullptr;
+		return (WindowID)glfwGetWindowUserPointer(glfwGetCurrentContext());
 	}
 
 	void DisplayServerWindows::set_current_context(WindowID window)
@@ -224,20 +219,14 @@ namespace ism
 		return (MonitorID)glfwGetWindowMonitor(w.handle);
 	}
 
-	void DisplayServerWindows::window_set_monitor(WindowID window, MonitorID monitor, IntRect const & rect, int32_t refresh_rate)
+	void DisplayServerWindows::window_set_monitor(WindowID window, MonitorID monitor)
 	{
-		_Window & w{ *VALIDATE((_Window *)window) };
-		glfwSetWindowMonitor(
-			w.handle,
-			VALIDATE((GLFWmonitor *)monitor),
-			rect[0], rect[1], rect[2], rect[3],
-			refresh_rate);
 	}
 
 	Vec2i DisplayServerWindows::window_get_position(WindowID window) const
 	{
-		Vec2i v;
 		_Window const & w{ *VALIDATE((_Window const *)window) };
+		Vec2i v;
 		glfwGetWindowPos(w.handle, &v[0], &v[1]);
 		return v;
 	}
@@ -250,8 +239,8 @@ namespace ism
 
 	Vec2i DisplayServerWindows::window_get_size(WindowID window) const
 	{
-		Vec2i v;
 		_Window const & w{ *VALIDATE((_Window const *)window) };
+		Vec2i v;
 		glfwGetWindowSize(w.handle, &v[0], &v[1]);
 		return v;
 	}
@@ -264,8 +253,8 @@ namespace ism
 
 	Vec2i DisplayServerWindows::window_get_real_size(WindowID window) const
 	{
-		Vec2i v;
 		_Window const & w{ *VALIDATE((_Window const *)window) };
+		Vec2i v;
 		glfwGetFramebufferSize(w.handle, &v[0], &v[1]);
 		return v;
 	}
@@ -283,12 +272,16 @@ namespace ism
 		w.window_mode = value;
 		switch (value) {
 		case WindowMode_Windowed: {
+			glfwRestoreWindow(w.handle);
 		} break;
 		case WindowMode_Minimized: {
+			glfwIconifyWindow(w.handle);
 		} break;
 		case WindowMode_Maximized: {
+			glfwMaximizeWindow(w.handle);
 		} break;
 		case WindowMode_Fullscreen: {
+			// TODO...
 		} break;
 		}
 	}
@@ -326,8 +319,8 @@ namespace ism
 
 	Vec2 DisplayServerWindows::window_get_content_scale(WindowID window) const
 	{
-		Vec2 v;
 		_Window const & w{ *VALIDATE((_Window const *)window) };
+		Vec2 v;
 		glfwGetWindowContentScale(w.handle, &v[0], &v[1]);
 		return v;
 	}

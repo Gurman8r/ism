@@ -28,23 +28,33 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		storage_type m_data; // aggregate initializer
+		storage_type m_data;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
-		constexpr auto data() noexcept -> pointer { return m_data; }
-		constexpr auto data() const noexcept -> const_pointer { return m_data; }
 
-		static constexpr bool empty() noexcept { return false; }
-		static constexpr auto max_size() noexcept -> size_type { return _Size; }
-		static constexpr auto size() noexcept -> size_type { return _Size; }
+		constexpr self_type & swap(self_type & other) noexcept
+		{
+			if (this != std::addressof(other))
+			{
+				for (size_t i = 0; i < size(); ++i)
+				{
+					ism::util::swap(m_data[i], other.m_data[i]);
+				}
+			}
+			return (*this);
+		}
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		constexpr operator pointer() noexcept { return m_data; }
 		constexpr operator const_pointer() const noexcept { return m_data; }
 
-		constexpr auto operator*() & noexcept -> reference { return (*m_data); }
-		constexpr auto operator*() const & noexcept -> const_reference { return (*m_data); }
-		constexpr auto operator*() && noexcept -> value_type && { return std::move(*m_data); }
+		constexpr auto data() noexcept -> pointer { return m_data; }
+		constexpr auto data() const noexcept -> const_pointer { return m_data; }
+
+		constexpr bool empty() const noexcept { return false; }
+		constexpr auto max_size() const noexcept -> size_type { return _Size; }
+		constexpr auto size() const noexcept -> size_type { return _Size; }
 
 		constexpr auto at(size_type const i) & noexcept -> reference { return m_data[i]; }
 		constexpr auto at(size_type const i) const & noexcept -> const_reference { return m_data[i]; }
@@ -71,20 +81,6 @@ namespace ism
 		constexpr auto rend() noexcept -> reverse_iterator { return std::make_reverse_iterator(begin()); }
 		constexpr auto rend() const noexcept -> const_reverse_iterator { return std::make_reverse_iterator(cbegin()); }
 		
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		constexpr self_type & swap(self_type & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
-				for (size_t i = 0; i < size(); ++i)
-				{
-					ism::util::swap(m_data[i], other.m_data[i]);
-				}
-			}
-			return (*this);
-		}
-
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 }
@@ -114,47 +110,32 @@ namespace ism
 		
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		
-		storage_type m_data; // aggregate initializer
+		storage_type m_data;
 		
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
-		constexpr auto data() noexcept -> pointer { return &m_data[0]; }
-		constexpr auto data() const noexcept -> const_pointer { return &m_data[0]; }
-		constexpr bool empty() const noexcept { return true; }
-		constexpr auto max_size() const noexcept -> size_type { return 0; }
-		constexpr auto size() const noexcept -> size_type { return 0; }
-
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		constexpr operator pointer() noexcept { return m_data; }
 		constexpr operator const_pointer() const noexcept { return m_data; }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		constexpr auto data() noexcept -> pointer { return &m_data[0]; }
+		constexpr auto data() const noexcept -> const_pointer { return &m_data[0]; }
 
-		constexpr auto operator*() & noexcept -> reference { return (*m_data); }
-		constexpr auto operator*() const & noexcept -> const_reference { return (*m_data); }
-		constexpr auto operator*() && noexcept -> value_type && { return std::move(*m_data); }
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		constexpr bool empty() const noexcept { return true; }
+		constexpr auto max_size() const noexcept -> size_type { return 0; }
+		constexpr auto size() const noexcept -> size_type { return 0; }
 
 		constexpr auto at(size_type) & noexcept -> reference { return m_data[0]; }
 		constexpr auto at(size_type) const & noexcept -> const_reference { return m_data[0]; }
 		constexpr auto at(size_type) && noexcept -> value_type && { return std::move(m_data[0]); }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
 		constexpr auto back() & noexcept -> reference { return m_data[0]; }
 		constexpr auto back() const & noexcept -> const_reference { return m_data[0]; }
 		constexpr auto back() && noexcept -> value_type && { return std::move(m_data[0]); }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
 		constexpr auto front() & noexcept -> reference { return m_data[0]; }
 		constexpr auto front() const & noexcept -> const_reference { return m_data[0]; }
 		constexpr auto front() && noexcept -> value_type && { return std::move(m_data[0]); }
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-		
 		constexpr auto begin() noexcept -> iterator { return &m_data[0]; }
 		constexpr auto begin() const noexcept -> const_iterator { return &m_data[0]; }
 		constexpr auto cbegin() const noexcept -> const_iterator { return &m_data[0]; }

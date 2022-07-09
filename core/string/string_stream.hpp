@@ -10,17 +10,27 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// string stream base
-	template <class Ch = char
-	> ALIAS(_StringStreamBase) std::basic_stringstream<Ch, std::char_traits<Ch>, PolymorphicAllocator<Ch>>;
+	template <class C = char
+	> ALIAS(_StringStreamBase) std::basic_stringstream<C, std::char_traits<C>, PolymorphicAllocator<C>>;
 
 	// basic string stream
-	template <class Ch = char
-	> class BasicStringStream : public _StringStreamBase<Ch>
+	template <class C = char
+	> class BasicStringStream : public _StringStreamBase<C>
 	{
 	public:
-		using base_type = _StringStreamBase<Ch>;
+		using base_type = _StringStreamBase<C>;
 		using base_type::base_type;
 		using base_type::operator=;
+
+		NODISCARD auto view() const noexcept {
+			auto const v{ rdbuf()->_Get_buffer_view()};
+			return BasicStringView<C>{ v._Ptr, v._Size };
+		}
+
+		NODISCARD operator BasicStringView<C>() const noexcept {
+			auto const v{ rdbuf()->_Get_buffer_view() };
+			return BasicStringView<C>{ v._Ptr, v._Size };
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

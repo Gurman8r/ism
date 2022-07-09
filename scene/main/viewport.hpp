@@ -33,17 +33,20 @@ namespace ism
 
 		RID m_viewport{};
 
-	protected:
-		Viewport();
-
 	public:
+		Viewport();
 		virtual ~Viewport() override;
+
+		virtual void process(Duration const & dt) override;
+		virtual void notification(int32_t id) override;
+
+	protected:
+		virtual Vec2i _get_size() const;
+		virtual void _set_size(Vec2i const & size);
 
 	public:
 		Ref<ViewportTexture> get_texture() const;
-
 		virtual DS::WindowID get_window_id() const = 0;
-
 		virtual RID get_viewport_rid() const { return m_viewport; }
 	};
 

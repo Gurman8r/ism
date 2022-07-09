@@ -22,6 +22,8 @@ namespace ism
 		using base_type::base_type;
 		using base_type::operator=;
 
+		NODISCARD operator void * () const noexcept { return (void *)(intptr_t)!empty(); }
+
 		NODISCARD bool contains(K const & key) const { return end() != find(key); }
 		NODISCARD bool contains(K && key) const noexcept { return end() != find(FWD(key)); }
 	};
@@ -40,6 +42,8 @@ namespace ism
 		using base_type = _MultiHashMapBase<K, V, H, E>;
 		using base_type::base_type;
 		using base_type::operator=;
+
+		NODISCARD operator void * () const noexcept { return (void *)(intptr_t)!empty(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

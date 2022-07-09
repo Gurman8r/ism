@@ -38,59 +38,46 @@ namespace ism
 		StringName(view_type const value) : m_text{ value.data(), value.size() } {}
 		StringName(self_type const & value) : m_text{ value } {}
 		StringName(self_type && value) noexcept : m_text{ std::move(value) } {}
-		self_type & operator=(self_type const & value) { return copy(value); }
 
-	public:
-		void clear() noexcept { m_text.clear(); }
-		self_type & copy(self_type const & value) { return (m_text = value.m_text), (*this); }
+		self_type & operator=(self_type const & value) { return (m_text = value.m_text), (*this); }
+		
 		self_type & swap(self_type & value) noexcept { return m_text.swap(value.m_text), (*this); }
 
-	public:
-		operator void * () const noexcept { return m_text.operator void *(); }
-		bool operator==(storage_type const & value) { return m_text == value; }
-		bool operator==(const_pointer value) { return m_text == value; }
-		bool operator!=(storage_type const & value) { return m_text != value; }
-		bool operator<(self_type const & value) { return m_text < value.m_text; }
-		bool operator>(self_type const & value) { return m_text > value.m_text; }
-		bool operator==(self_type const & value) { return m_text == value.m_text; }
+		void clear() noexcept { m_text.clear(); }
 
-		auto data() noexcept -> pointer { return m_text.data(); }
-		auto data() const noexcept -> const_pointer { return m_text.data(); }
-		auto c_str() const noexcept -> const_pointer { return m_text.data(); }
-		bool empty() const noexcept { return m_text.empty(); }
-		auto length() const noexcept -> size_type { return m_text.size(); }
-		auto size() const noexcept -> size_type { return m_text.size(); }
-		auto hash_code() const noexcept -> hash_t { return m_text.hash_code(); }
+		NODISCARD operator void * () const noexcept { return !empty() ? (void *)data() : nullptr; }
+		NODISCARD auto data() noexcept -> pointer { return m_text.data(); }
+		NODISCARD auto data() const noexcept -> const_pointer { return m_text.data(); }
+		NODISCARD auto c_str() const noexcept -> const_pointer { return m_text.data(); }
+		NODISCARD bool empty() const noexcept { return m_text.empty(); }
+		NODISCARD auto length() const noexcept -> size_type { return m_text.size(); }
+		NODISCARD auto size() const noexcept -> size_type { return m_text.size(); }
+		NODISCARD auto hash_code() const noexcept -> hash_t { return m_text.hash_code(); }
+		NODISCARD char & operator[](size_type i) & noexcept { return m_text[i]; }
+		NODISCARD char operator[](size_type i) const & noexcept { return m_text[i]; }
 
-		char & operator[](size_type i) & noexcept { return m_text[i]; }
-		char operator[](size_type i) const & noexcept { return m_text[i]; }
+		NODISCARD auto string() & noexcept -> storage_type & { return m_text; }
+		NODISCARD auto string() const & noexcept -> storage_type const & { return m_text; }
+		NODISCARD auto string() && noexcept -> storage_type && { return std::move(m_text); }
+		NODISCARD auto view() const noexcept -> view_type { return { m_text.data(), m_text.size() }; }
 
-		auto view() const noexcept -> view_type { return { m_text.data(), m_text.size() }; }
-		auto string() & noexcept -> storage_type & { return m_text; }
-		auto string() const & noexcept -> storage_type const & { return m_text; }
-		auto string() && noexcept -> storage_type && { return std::move(m_text); }
+		NODISCARD operator storage_type & () & noexcept { return m_text; }
+		NODISCARD operator storage_type const & () const & noexcept { return m_text; }
+		NODISCARD operator storage_type && () && noexcept { return std::move(m_text); }
+		NODISCARD operator view_type () const noexcept { return { m_text.data(), m_text.size() }; }
 
-		operator view_type () const noexcept { return { m_text.data(), m_text.size() }; }
-		operator storage_type & () & noexcept { return m_text; }
-		operator storage_type const & () const & noexcept { return m_text; }
-		operator storage_type && () && noexcept { return std::move(m_text); }
-
-	public:
-		auto begin() noexcept -> iterator { return m_text.begin(); }
-		auto begin() const noexcept -> const_iterator { return m_text.begin(); }
-		auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
-
-		auto end() noexcept -> iterator { return m_text.end(); }
-		auto end() const noexcept -> const_iterator { return m_text.end(); }
-		auto cend() const noexcept -> const_iterator { return m_text.cend(); }
-
-		auto rbegin() noexcept -> reverse_iterator { return m_text.rbegin(); }
-		auto rbegin() const noexcept -> const_reverse_iterator { return m_text.rbegin(); }
-		auto crbegin() const noexcept -> const_reverse_iterator { return m_text.crbegin(); }
-
-		auto rend() noexcept -> reverse_iterator { return m_text.rend(); }
-		auto rend() const noexcept -> const_reverse_iterator { return m_text.rend(); }
-		auto crend() const noexcept -> const_reverse_iterator { return m_text.crend(); }
+		NODISCARD auto begin() noexcept -> iterator { return m_text.begin(); }
+		NODISCARD auto begin() const noexcept -> const_iterator { return m_text.begin(); }
+		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
+		NODISCARD auto end() noexcept -> iterator { return m_text.end(); }
+		NODISCARD auto end() const noexcept -> const_iterator { return m_text.end(); }
+		NODISCARD auto cend() const noexcept -> const_iterator { return m_text.cend(); }
+		NODISCARD auto rbegin() noexcept -> reverse_iterator { return m_text.rbegin(); }
+		NODISCARD auto rbegin() const noexcept -> const_reverse_iterator { return m_text.rbegin(); }
+		NODISCARD auto crbegin() const noexcept -> const_reverse_iterator { return m_text.crbegin(); }
+		NODISCARD auto rend() noexcept -> reverse_iterator { return m_text.rend(); }
+		NODISCARD auto rend() const noexcept -> const_reverse_iterator { return m_text.rend(); }
+		NODISCARD auto crend() const noexcept -> const_reverse_iterator { return m_text.crend(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -104,13 +91,37 @@ namespace ism
 		hash_t operator()(StringName const & value) const { return value.hash_code(); }
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	inline bool operator==(String const & lhs, StringName const & rhs) { return lhs == rhs.string(); }
+	inline bool operator==(cstring lhs, StringName const & rhs) { return lhs == rhs.string(); }
+	inline bool operator==(StringName const & lhs, cstring rhs) { return lhs.string() == rhs; }
+	inline bool operator==(StringName const & lhs, StringName const & rhs) { return lhs.string() == rhs.string(); }
 
 	inline bool operator!=(String const & lhs, StringName const & rhs) { return lhs != rhs.string(); }
-
-	inline bool operator==(cstring lhs, StringName const & rhs) { return lhs == rhs.string(); }
-
 	inline bool operator!=(cstring lhs, StringName const & rhs) { return lhs != rhs.string(); }
+	inline bool operator!=(StringName const & lhs, cstring rhs) { return lhs.string() != rhs; }
+	inline bool operator!=(StringName const & lhs, StringName const & rhs) { return lhs.string() != rhs.string(); }
+
+	inline bool operator<(String const & lhs, StringName const & rhs) { return lhs < rhs.string(); }
+	inline bool operator<(cstring lhs, StringName const & rhs) { return lhs < rhs.string(); }
+	inline bool operator<(StringName const & lhs, cstring rhs) { return lhs.string() < rhs; }
+	inline bool operator<(StringName const & lhs, StringName const & rhs) { return lhs.string() < rhs.string(); }
+
+	inline bool operator>(String const & lhs, StringName const & rhs) { return lhs > rhs.string(); }
+	inline bool operator>(cstring lhs, StringName const & rhs) { return lhs > rhs.string(); }
+	inline bool operator>(StringName const & lhs, cstring rhs) { return lhs.string() > rhs; }
+	inline bool operator>(StringName const & lhs, StringName const & rhs) { return lhs.string() > rhs.string(); }
+
+	inline bool operator<=(String const & lhs, StringName const & rhs) { return lhs <= rhs.string(); }
+	inline bool operator<=(cstring lhs, StringName const & rhs) { return lhs <= rhs.string(); }
+	inline bool operator<=(StringName const & lhs, cstring rhs) { return lhs.string() <= rhs; }
+	inline bool operator<=(StringName const & lhs, StringName const & rhs) { return lhs.string() <= rhs.string(); }
+
+	inline bool operator>=(String const & lhs, StringName const & rhs) { return lhs >= rhs.string(); }
+	inline bool operator>=(cstring lhs, StringName const & rhs) { return lhs >= rhs.string(); }
+	inline bool operator>=(StringName const & lhs, cstring rhs) { return lhs.string() >= rhs; }
+	inline bool operator>=(StringName const & lhs, StringName const & rhs) { return lhs.string() >= rhs.string(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
