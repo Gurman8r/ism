@@ -18,7 +18,7 @@ namespace ism
 	// operating system
 	class ISM_API OS
 	{
-		static OS * g_singleton;
+		static OS * __singleton;
 
 		Path				m_exepath{};
 		List<String>		m_cmdline{};
@@ -28,7 +28,7 @@ namespace ism
 	public:
 		OS();
 		virtual ~OS();
-		FORCE_INLINE static OS * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static OS * get_singleton() noexcept { return __singleton; }
 
 	protected:
 		friend class Main;

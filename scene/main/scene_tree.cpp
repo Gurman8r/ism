@@ -1,10 +1,11 @@
 #include <scene/main/scene_tree.hpp>
+#include <scene/main/window.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(SceneTree::g_singleton) {};
+	SceneTree * SceneTree::__singleton{};
 
 	OBJECT_EMBED(SceneTree, t)
 	{
@@ -14,7 +15,6 @@ namespace ism
 				.def("initialize", &SceneTree::initialize)
 				.def("process", &SceneTree::process)
 				.def("finalize", &SceneTree::finalize)
-				.def("handle_event", &SceneTree::handle_event)
 				;
 		};
 	}
@@ -23,7 +23,7 @@ namespace ism
 
 	SceneTree::SceneTree() : MainLoop{}
 	{
-		if (g_singleton == nullptr) { g_singleton = this; }
+		if (__singleton == nullptr) { __singleton = this; }
 
 		m_root = memnew(Window);
 	}
@@ -32,7 +32,7 @@ namespace ism
 	{
 		memdelete(m_root);
 
-		if (g_singleton == this) { g_singleton = nullptr; }
+		if (__singleton == this) { __singleton = nullptr; }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -62,11 +62,6 @@ namespace ism
 		m_initialized = false;
 
 		base_type::finalize();
-	}
-
-	void SceneTree::handle_event(Event const & event)
-	{
-		base_type::handle_event(event);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

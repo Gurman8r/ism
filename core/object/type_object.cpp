@@ -9,9 +9,9 @@ namespace ism
 	{
 		static ON_SCOPE_ENTER(&)
 		{
-			INTERNALS->add_class(&g_type_static);
-			ASSERT(g_type_static.tp_install);
-			ASSERT(g_type_static.tp_install(&g_type_static));
+			Internals::get_singleton()->add_class(&__type_static);
+			ASSERT(__type_static.tp_install);
+			ASSERT(__type_static.tp_install(&__type_static));
 		};
 	}
 
@@ -19,7 +19,7 @@ namespace ism
 
 	TYPE TypeObject::_get_typev() const noexcept { return get_type_static(); }
 
-	TYPE TypeObject::get_type_static() noexcept { return &g_type_static; }
+	TYPE TypeObject::get_type_static() noexcept { return &__type_static; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

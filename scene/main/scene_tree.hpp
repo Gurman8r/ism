@@ -2,21 +2,23 @@
 #define _ISM_SCENE_TREE_HPP_
 
 #include <core/os/main_loop.hpp>
-#include <core/os/time.hpp>
 #include <main/performance.hpp>
-#include <scene/main/window.hpp>
 
-// scene
+#include <entt/entt.hpp>
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(EntityID) entt::entity;
+	class Node;
+	class Window;
 
+	ALIAS(EntityID) entt::entity;
 	ALIAS(EntityRegistry) entt::registry;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// scene tree
 	class ISM_API SceneTree : public MainLoop
 	{
 		OBJECT_COMMON(SceneTree, MainLoop);
@@ -25,20 +27,17 @@ namespace ism
 		friend class Node;
 		friend class Entity;
 
-		static SceneTree * g_singleton;
+		static SceneTree * __singleton;
 
 	public:
 		SceneTree();
 		virtual ~SceneTree() override;
-		FORCE_INLINE static SceneTree * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static SceneTree * get_singleton() noexcept { return __singleton; }
 
-	public:
 		virtual void initialize() override;
 		virtual bool process(Duration const & dt) override;
 		virtual void finalize() override;
-		virtual void handle_event(Event const & event) override;
 
-	public:
 		void quit() { m_should_close = true; }
 
 	public:
@@ -51,16 +50,12 @@ namespace ism
 		template <class T> void on_component_added(class Entity &, T &) {}
 
 	private:
-		bool			m_initialized{}, m_should_close{};
+		bool			m_initialized : 1, m_should_close : 1;
 		Clock			m_main_timer{};
 		FPS_Tracker		m_fps_tracker{};
 		Window *		m_root{};
 		EntityRegistry	m_ecs{};
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#define SCENE_TREE (ism::SceneTree::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

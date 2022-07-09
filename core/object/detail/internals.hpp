@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Internals final
 	{
-		static Internals * g_singleton;
+		static Internals * __singleton;
 
 	public:
 		Internals();
@@ -20,7 +20,7 @@ namespace ism
 
 		NON_MOVABLE(Internals);
 
-		FORCE_INLINE static Internals * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static Internals * get_singleton() noexcept { return __singleton; }
 
 	public:
 		Batch<hash_t, StringName, TYPE> class_db; // class database
@@ -43,11 +43,6 @@ namespace ism
 
 		TYPE get_class(StringName const & name) const;
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// internals g_singleton
-#define INTERNALS (ism::Internals::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

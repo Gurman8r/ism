@@ -8,7 +8,7 @@ namespace ism
 
 	Shader::~Shader()
 	{
-		if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); m_shader = nullptr; }
+		if (m_shader) { RD::get_singleton()->shader_destroy(m_shader); m_shader = nullptr; }
 	}
 
 	Error_ Shader::reload_from_file()

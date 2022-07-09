@@ -1,31 +1,35 @@
 #ifndef _ISM_MAIN_LOOP_HPP_
 #define _ISM_MAIN_LOOP_HPP_
 
-#include <core/io/event.hpp>
+#include <core/object/detail/class.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API MainLoop : public EventHandler
+	class ISM_API MainLoop : public Object
 	{
-		OBJECT_COMMON(MainLoop, EventHandler);
+		OBJECT_COMMON(MainLoop, Object);
 
 		OBJ m_script{};
 
-	protected:
-		explicit MainLoop(EventBus * bus = nullptr) noexcept : EventHandler{ bus } {}
-
 	public:
+		enum Notification_
+		{
+			Notification_MemoryWarning = 2001,
+			Notification_Crash,
+			Notification_ApplicationResumed,
+			Notification_ApplicationPaused,
+			Notification_ApplicationFocusIn,
+			Notification_ApplicationFocusOut,
+		};
+
+		MainLoop() noexcept = default;
 		virtual ~MainLoop() noexcept override = default;
 
 		virtual void initialize();
-
 		virtual bool process(Duration const & dt);
-
 		virtual void finalize();
-
-		virtual void handle_event(Event const & value) override;
 
 		void set_startup_script(OBJ const & value) { m_script = value; }
 	};

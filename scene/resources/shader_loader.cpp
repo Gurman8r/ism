@@ -279,8 +279,8 @@ Error_ ShaderLoader::load_from_file(Ref<Shader> shader, Path const & path)
 Error_ ShaderLoader::load_from_json(Shader & shader, Json const & json)
 {
 	ImplShaderLoader builder{ json };
-	if (shader.m_shader) { RENDERING_DEVICE->shader_destroy(shader.m_shader); }
-	shader.m_shader = RENDERING_DEVICE->shader_create(builder.spec);
+	if (shader.m_shader) { RD::get_singleton()->shader_destroy(shader.m_shader); }
+	shader.m_shader = RD::get_singleton()->shader_create(builder.spec);
 	if (!shader.m_shader) { return Error_Unknown; }
 	return Error_None;
 }

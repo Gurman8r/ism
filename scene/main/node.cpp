@@ -5,15 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(Node, t, TypeFlags_IsAbstract)
-	{
-		t.tp_install = CLASS_INSTALLER(Node, t)
-		{
-			return t
-				.def("handle_event", &Node::handle_event)
-				;
-		};
-	}
+	OBJECT_EMBED(Node, t, TypeFlags_IsAbstract) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -32,16 +24,6 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	void Node::initialize()
-	{
-		each_child([&](Node * n) { n->initialize(); });
-	}
-
-	void Node::finalize()
-	{
-		each_child([&](Node * n) { n->finalize(); });
-	}
 
 	void Node::process(Duration const & dt)
 	{
@@ -69,11 +51,6 @@ namespace ism
 
 	void Node::notification(int32_t id)
 	{
-		each_child([&](Node * n) { n->notification(id); });
-	}
-
-	void Node::handle_event(Event const & event)
-	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -82,13 +59,15 @@ namespace ism
 	{
 		if (!parent || this == parent || m_parent == parent) { return false; }
 
-		// add self to new parent
+		// add to new parent
 		parent->m_nodes.push_back(this);
 
-		// remove self from old parent
-		if (m_parent) { m_parent->m_nodes.erase(m_parent->m_nodes.begin() + get_sibling_index()); }
+		// remove from old parent
+		if (m_parent) {
+			m_parent->m_nodes.erase(m_parent->m_nodes.begin() + get_sibling_index());
+		}
 
-		// set new parent
+		// set parent
 		m_parent = parent;
 		m_tree = parent->m_tree;
 		return true;
@@ -106,13 +85,13 @@ namespace ism
 				}
 			}
 		}
-		return npos;
+		return 0;
 	}
 
 	void Node::set_sibling_index(size_t new_index)
 	{
-		if (!m_parent) { return; }
-		
+		ASSERT(m_parent);
+
 		ASSERT(new_index < m_parent->get_child_count());
 		
 		size_t const old_index{ get_sibling_index() };
@@ -131,38 +110,27 @@ namespace ism
 		return child;
 	}
 
-	void Node::destroy_child(size_t index)
+	void Node::destroy_child(size_t i)
 	{
-		ASSERT(index < get_child_count());
+		ASSERT(i < get_child_count());
 
-		auto const it{ m_nodes.begin() + index };
+		auto const it{ m_nodes.begin() + i };
+
+		if (*it) { memdelete(*it); }
 
 		m_nodes.erase(it);
 	}
 
-	void Node::destroy_children()
-	{
-		while (!m_nodes.empty())
-		{
-			memdelete(m_nodes.back());
-
-			m_nodes.pop_back();
-		}
-		m_nodes.clear();
-	}
-
 	bool Node::is_child_of(Node const * parent, bool recursive) const
 	{
-		if (!m_parent || !parent || (this == parent)) { return false; }
+		if (!parent || (this == parent) || !m_parent) { return false; }
 		else if (m_parent == parent) { return true; }
 		else if (recursive)
 		{
 			Node * it{ m_parent->m_parent };
 			while (it)
 			{
-				if (it == parent) {
-					return true;
-				}
+				if (it == parent) { return true; }
 				it = it->m_parent;
 			}
 		}
@@ -171,16 +139,15 @@ namespace ism
 
 	bool Node::is_parent_of(Node const * child, bool recursive) const
 	{
-		if (!child || (this == child)) { return false; }
+		if (!child || (this == child) || !child->m_parent) { return false; }
 		else if (this == child->m_parent) { return true; }
 		else if (recursive)
 		{
-			for (auto const & node : m_nodes)
+			Node * it{ child->m_parent->m_parent };
+			while (it)
 			{
-				if (node->is_parent_of(child, true))
-				{
-					return true;
-				}
+				if (it == this) { return true; }
+				it = it->m_parent;
 			}
 		}
 		return false;

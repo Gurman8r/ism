@@ -4,11 +4,11 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(AudioServer::g_singleton) {};
+	AS * AS::__singleton{};
 
 	OBJECT_EMBED(AudioServer, t) {}
 
-	AudioServer::AudioServer() { g_singleton = this; }
+	AudioServer::AudioServer() { __singleton = this; }
 
 	AudioServer::~AudioServer() {}
 

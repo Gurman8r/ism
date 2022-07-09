@@ -1,8 +1,7 @@
 #ifndef _ISM_NODE_HPP_
 #define _ISM_NODE_HPP_
 
-#include <core/input/input.hpp>
-#include <entt/entt.hpp>
+#include <scene/main/scene_tree.hpp>
 
 namespace ism
 {
@@ -10,34 +9,53 @@ namespace ism
 
 	class SceneTree;
 
-	class ISM_API Node : public EventHandler
+	// node
+	class ISM_API Node : public Object
 	{
-		OBJECT_COMMON(Node, EventHandler);
+		OBJECT_COMMON(Node, Object);
 
 		friend class SceneTree;
 
 	public:
-		static constexpr size_t npos{ static_cast<size_t>(-1) };
+		enum Notification_
+		{
+			Notification_EnterTree = 3001,
+			Notification_ExitTree,
+			Notification_Ready,
+			Notification_Paused,
+			Notification_Unpaused,
+			Notification_Update,
+			Notification_FixedUpdate,
+			Notification_Parented,
+			Notification_Unparented,
+			Notification_Instanced,
+			Notification_DragBegin,
+			Notification_DragEnd,
+			Notification_PathChanged,
+			Notification_InternalUpdate,
+			Notification_InternalFixedUpdate,
+
+			Notification_MemoryWarning = MainLoop::Notification_MemoryWarning,
+			Notification_Crash = MainLoop::Notification_Crash,
+			Notification_ApplicationResumed	 = MainLoop::Notification_ApplicationResumed,
+			Notification_ApplicationPaused	 = MainLoop::Notification_ApplicationPaused,
+			Notification_ApplicationFocusIn	 = MainLoop::Notification_ApplicationFocusIn,
+			Notification_ApplicationFocusOut = MainLoop::Notification_ApplicationFocusOut,
+		};
 
 	protected:
 		SceneTree *		m_tree{};
 		Node *			m_parent{};
 		List<Node *>	m_nodes{};
 
-		Node(SceneTree * tree = nullptr);
+		explicit Node(SceneTree * tree = nullptr);
 
 	public:
 		virtual ~Node() override;
 
-		virtual void initialize();
-
-		virtual void finalize();
-
 		virtual void process(Duration const & dt);
 
 		virtual void notification(int32_t id);
-		
-		virtual void handle_event(Event const & event) override;
 
 	public:
 		SceneTree * get_tree() const noexcept { return m_tree; }
@@ -48,9 +66,9 @@ namespace ism
 
 		size_t get_sibling_index() const;
 
-		void set_sibling_index(size_t index);
+		void set_sibling_index(size_t i);
 
-		Node * get_child(size_t index) const noexcept { return m_nodes[index]; }
+		Node * get_child(size_t i) const noexcept { ASSERT(i < get_child_count()); return m_nodes[i]; }
 
 		size_t get_child_count() const noexcept { return m_nodes.size(); }
 
@@ -59,9 +77,7 @@ namespace ism
 		template <class T, class ... Args
 		> T * add_child(Args && ... args) noexcept { return (T *)add_child(memnew(T(FWD(args)...))); }
 
-		void destroy_child(size_t index);
-
-		void destroy_children();
+		void destroy_child(size_t i);
 
 		bool is_child_of(Node const * parent, bool recursive = false) const;
 
@@ -75,7 +91,7 @@ namespace ism
 			{
 				for (; first != last; ++first)
 				{
-					fn(*first);
+					std::invoke(fn, *first);
 
 					if (recursive)
 					{
@@ -124,16 +140,6 @@ namespace ism
 			{
 				return _find_child_if(m_nodes.rbegin(), m_nodes.rend(), FWD(pr), recursive, reverse);
 			}
-		}
-
-		template <class T
-		> T * find_instance(bool recursive = true, bool reverse = false) const noexcept
-		{
-			return (T *)find_child_if([](auto const node) noexcept
-			{
-				return Ref<T>(node).is_valid();
-			}
-			, recursive, reverse);
 		}
 	};
 

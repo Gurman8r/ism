@@ -4,13 +4,13 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(OS::g_singleton) {};
+	OS * OS::__singleton{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	OS::OS()
 	{
-		g_singleton = this;
+		__singleton = this;
 
 		List<Logger *> temp{};
 		temp.push_back(memnew(StdLogger));

@@ -28,7 +28,7 @@ namespace ism
 
 	static void _setup_pipeline(RID const shader)
 	{
-		pipeline = RENDERING_DEVICE->render_pipeline_create
+		pipeline = RD::get_singleton()->render_pipeline_create
 		(
 			shader,
 			RD::RenderPrimitive_Triangles,
@@ -86,13 +86,13 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(EditorNode::g_singleton) {};
+	EditorNode * EditorNode::__singleton{};
 
 	OBJECT_EMBED(EditorNode, t) {}
 
 	EditorNode::EditorNode()
 	{
-		ASSERT(!g_singleton); g_singleton = this;
+		ASSERT(!__singleton); __singleton = this;
 
 		m_textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 		m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
@@ -102,32 +102,32 @@ namespace ism
 		RID const shader{ m_shaders["3D"]->get_rid() };
 		_setup_pipeline(shader);
 
-		uniform_buffers[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
-		uniform_sets[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		uniform_buffers[SCENE_STATE_UNIFORMS] = RD::get_singleton()->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
+		uniform_sets[SCENE_STATE_UNIFORMS] = RD::get_singleton()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, SCENE_STATE_UNIFORMS, { uniform_buffers[SCENE_STATE_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[RENDER_PASS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
-		uniform_sets[RENDER_PASS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		uniform_buffers[RENDER_PASS_UNIFORMS] = RD::get_singleton()->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+		uniform_sets[RENDER_PASS_UNIFORMS] = RD::get_singleton()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, RENDER_PASS_UNIFORMS, { uniform_buffers[RENDER_PASS_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
-		uniform_sets[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		uniform_buffers[TRANSFORMS_UNIFORMS] = RD::get_singleton()->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+		uniform_sets[TRANSFORMS_UNIFORMS] = RD::get_singleton()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, TRANSFORMS_UNIFORMS, { uniform_buffers[TRANSFORMS_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, float_t>));
-		uniform_sets[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		uniform_buffers[MATERIAL_UNIFORMS] = RD::get_singleton()->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, float_t>));
+		uniform_sets[MATERIAL_UNIFORMS] = RD::get_singleton()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, MATERIAL_UNIFORMS, { uniform_buffers[MATERIAL_UNIFORMS] } },
 			{ RD::UniformType_Texture, 0, { m_textures["earth_dm_2k"]->get_rid() } },
 			{ RD::UniformType_Texture, 1, { m_textures["earth_sm_2k"]->get_rid() } },
 		}, shader);
 	
 		// material (WIP)
-		material = RENDERING_SERVER->material_create();
-		RENDERING_SERVER->material_set_shader(material, shader);
-		RENDERING_SERVER->material_update(material, {
+		material = RS::get_singleton()->material_create();
+		RS::get_singleton()->material_set_shader(material, shader);
+		RS::get_singleton()->material_update(material, {
 			{ "Ambient", Vec4{ 0.8f, 0.4f, 0.2f, 1.0f } },
 			{ "Diffuse", Vec4{ 0.5f, 0.5f, 0.5f, 1.0f } },
 			{ "Specular", Vec4{ 1.0f, 1.0f, 1.0f, 1.0f } },
@@ -138,36 +138,36 @@ namespace ism
 	
 		// framebuffers
 		List<RID> fb_textures{
-			RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
+			RD::get_singleton()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 				t.color_format = RD::DataFormat_R8G8B8_UNORM;
 				t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
 			}),
-			RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
+			RD::get_singleton()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 				t.color_format = RD::DataFormat_D24_UNORM_S8_UINT;
 				t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_DepthStencilAttachment;
 			}),
 		};
-		framebuffer = RENDERING_DEVICE->framebuffer_create(fb_textures);
+		framebuffer = RD::get_singleton()->framebuffer_create(fb_textures);
 		m_viewport.set_main_texture(fb_textures[0]);
 	}
 
 	EditorNode::~EditorNode()
 	{
-		ASSERT(this == g_singleton); ON_SCOPE_EXIT(&) { g_singleton = nullptr; };
+		ASSERT(this == __singleton); ON_SCOPE_EXIT(&) { __singleton = nullptr; };
 
-		if (material) { RENDERING_SERVER->material_destroy(material); }
+		if (material) { RS::get_singleton()->material_destroy(material); }
 
 		for (size_t i = 0; i < ARRAY_SIZE(uniform_buffers); ++i) {
-			if (uniform_buffers[i]) { RENDERING_DEVICE->buffer_destroy(uniform_buffers[i]); }
+			if (uniform_buffers[i]) { RD::get_singleton()->buffer_destroy(uniform_buffers[i]); }
 		}
 
 		for (size_t i = 0; i < ARRAY_SIZE(uniform_sets); ++i) {
-			if (uniform_sets[i]) { RENDERING_DEVICE->uniform_set_destroy(uniform_sets[i]); }
+			if (uniform_sets[i]) { RD::get_singleton()->uniform_set_destroy(uniform_sets[i]); }
 		}
 
-		if (framebuffer) { RENDERING_DEVICE->framebuffer_destroy(framebuffer); }
-		if (backbuffer) { RENDERING_DEVICE->framebuffer_destroy(backbuffer); }
-		if (pipeline) { RENDERING_DEVICE->render_pipeline_destroy(pipeline); }
+		if (framebuffer) { RD::get_singleton()->framebuffer_destroy(framebuffer); }
+		if (backbuffer) { RD::get_singleton()->framebuffer_destroy(backbuffer); }
+		if (pipeline) { RD::get_singleton()->render_pipeline_destroy(pipeline); }
 	}
 
 	void EditorNode::process(Duration const & dt)
@@ -182,7 +182,7 @@ namespace ism
 		if (view_size_prev != view_size) {
 			view_size_prev = view_size;
 			editor_camera->set_res(view_size);
-			RENDERING_DEVICE->framebuffer_set_size(framebuffer, view_size[0], view_size[1]);
+			RD::get_singleton()->framebuffer_set_size(framebuffer, view_size[0], view_size[1]);
 		}
 		editor_camera->recalculate();
 
@@ -190,41 +190,41 @@ namespace ism
 			RD::Std140<Mat4, Mat4> scene_state_ubo;
 			scene_state_ubo.set<0>(editor_camera->get_proj()); // camera projection
 			scene_state_ubo.set<1>(editor_camera->get_view()); // camera view
-			RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
+			RD::get_singleton()->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
 
 			RD::Std140<Mat4> render_pass_ubo;
 			render_pass_ubo.set<0>(Mat4::identity()); // placeholder
-			RENDERING_DEVICE->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
+			RD::get_singleton()->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
 
 			RD::Std140<Mat4> transforms_ubo;
 			transforms_ubo.set<0>(object_matrix[0]); // model transform
-			RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
+			RD::get_singleton()->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
 
 			RD::Std140<Vec4, Vec4, Vec4, float_t> material_ubo;
 			material_ubo.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
 			material_ubo.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
 			material_ubo.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
 			material_ubo.set<3>(32.f); // shininess
-			RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
+			RD::get_singleton()->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
 
 			static List<Color> clear_colors{ Colors::magenta };
 			clear_colors[0] = rotate_hue(clear_colors[0], 10.f * dt);
 
-			RD::DrawListID const dl{ RENDERING_DEVICE->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
-			RENDERING_DEVICE->draw_list_bind_pipeline(dl, pipeline);
-			RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
-			RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
-			RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
-			RENDERING_DEVICE->draw_list_bind_uniform_set(dl, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
+			RD::DrawListID const draw_list{ RD::get_singleton()->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
+			RD::get_singleton()->draw_list_bind_pipeline(draw_list, pipeline);
+			RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
+			RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
+			RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
+			RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
 
 			static Mesh * mesh{ *m_meshes["sphere32x24"] };
 			for (size_t i = 0; i < mesh->get_surface_count(); ++i) {
-				RENDERING_DEVICE->draw_list_bind_vertex_array(dl, mesh->surface_get_vertex_array(i));
-				RENDERING_DEVICE->draw_list_bind_index_array(dl, mesh->surface_get_index_array(i));
-				RENDERING_DEVICE->draw_list_draw(dl, true, 1, 0);
+				RD::get_singleton()->draw_list_bind_vertex_array(draw_list, mesh->surface_get_vertex_array(i));
+				RD::get_singleton()->draw_list_bind_index_array(draw_list, mesh->surface_get_index_array(i));
+				RD::get_singleton()->draw_list_draw(draw_list, true, 1, 0);
 			}
 
-			RENDERING_DEVICE->draw_list_end();
+			RD::get_singleton()->draw_list_end();
 		}
 
 		_draw_dockspace();
@@ -233,10 +233,6 @@ namespace ism
 		m_log.process(dt);
 		m_viewport.process(dt);
 		Node::process(dt);
-	}
-
-	void EditorNode::handle_event(Event const & event)
-	{
 	}
 
 	void EditorNode::_draw_dockspace()

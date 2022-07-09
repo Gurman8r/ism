@@ -18,7 +18,7 @@ namespace ism
 	{
 		OBJECT_COMMON(EditorNode, Node);
 
-		static EditorNode * g_singleton;
+		static EditorNode * __singleton;
 
 		friend class EditorHierarchy;
 		friend class EditorLog;
@@ -39,12 +39,10 @@ namespace ism
 
 	public:
 		EditorNode();
-		~EditorNode();
-
-		FORCE_INLINE static EditorNode * get_singleton() noexcept { return g_singleton; }
+		virtual ~EditorNode() override;
+		FORCE_INLINE static EditorNode * get_singleton() noexcept { return __singleton; }
 
 		virtual void process(Duration const & dt) override;
-		virtual void handle_event(Event const & event) override;
 
 	protected:
 		void _draw_dockspace();

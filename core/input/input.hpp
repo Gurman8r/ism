@@ -9,17 +9,8 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// input action
-	enum InputAction_
-	{
-		InputAction_Press,
-		InputAction_Release,
-		InputAction_Repeat,
-	};
-
 	// mouse button
-	ALIAS(MouseButton) int32_t;
-	enum MouseButton_ : MouseButton
+	enum MouseButton_
 	{
 		MouseButton_0,
 		MouseButton_1,
@@ -42,7 +33,7 @@ namespace ism
 
 		friend class Main;
 
-		static Input * g_singleton;
+		static Input * __singleton;
 
 		char m_last_char;
 		bool m_is_shift : 1, m_is_ctrl : 1, m_is_alt : 1, m_is_super : 1;
@@ -55,11 +46,10 @@ namespace ism
 		Array<float_t, KeyCode_MAX> m_keys_down_duration{};
 
 	public:
-		Input() noexcept { g_singleton = this; }
+		Input() noexcept { __singleton = this; }
 		virtual ~Input() noexcept override = default;
-		FORCE_INLINE static Input * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static Input * get_singleton() noexcept { return __singleton; }
 
-	public:
 		char get_char() const noexcept { return m_last_char; }
 		bool is_shift() const noexcept { return m_is_shift; }
 		bool is_ctrl() const noexcept { return m_is_ctrl; }
@@ -79,10 +69,6 @@ namespace ism
 		auto get_mouse_delta() const noexcept -> Vec2 const & { return m_mouse_delta; }
 		auto get_scroll() const noexcept -> Vec2 const & { return m_scroll; }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#define INPUT (ism::Input::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

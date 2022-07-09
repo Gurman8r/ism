@@ -25,12 +25,12 @@ namespace ism
 	{
 		LoaderLifeSupport() noexcept
 		{
-			INTERNALS->loader_stack.push_back(nullptr);
+			Internals::get_singleton()->loader_stack.push_back(nullptr);
 		}
 
 		~LoaderLifeSupport() noexcept
 		{
-			List<OBJ> & stack{ INTERNALS->loader_stack };
+			List<OBJ> & stack{ Internals::get_singleton()->loader_stack };
 			ASSERT(!stack.empty());
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
@@ -39,7 +39,7 @@ namespace ism
 
 		static void add(OBJ const & value) noexcept
 		{
-			List<OBJ> & stack{ INTERNALS->loader_stack };
+			List<OBJ> & stack{ Internals::get_singleton()->loader_stack };
 			ASSERT(!stack.empty());
 			LIST & list{ (LIST &)stack.back() };
 			if (!list) { list = LIST::new_(); }

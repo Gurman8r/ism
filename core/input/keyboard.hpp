@@ -7,6 +7,30 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// key state
+	enum KeyState_
+	{
+		KeyState_Press,
+		KeyState_Release,
+		KeyState_Repeat,
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// key mods
+	enum KeyMods_
+	{
+		KeyMods_None,
+		KeyMods_Shift	= 0 << 1, // shift
+		KeyMods_Ctrl	= 1 << 1, // ctrl
+		KeyMods_Alt		= 1 << 2, // alt
+		KeyMods_Super	= 1 << 3, // super
+		KeyMods_Caps	= 1 << 4, // caps
+		KeyMods_NumLock = 1 << 5, // numlock
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// key codes
 	enum KeyCode_
 	{
@@ -132,20 +156,6 @@ namespace ism
 		KeyCode_Menu			= 348,	// menu
 
 		KeyCode_MAX
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// key modifiers
-	enum KeyMods_
-	{
-		KeyMods_None	= 0 << 0,	// nullptr
-		KeyMods_Shift	= 0 << 1,	// shift
-		KeyMods_Ctrl	= 1 << 1,	// ctrl
-		KeyMods_Alt		= 1 << 2,	// alt
-		KeyMods_Super	= 1 << 3,	// super
-		KeyMods_Caps	= 1 << 4,	// caps
-		KeyMods_NumLock	= 1 << 5,	// numlock
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

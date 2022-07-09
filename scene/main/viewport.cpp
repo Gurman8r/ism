@@ -1,5 +1,6 @@
 #include <scene/main/viewport.hpp>
 
+// viewport texture
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -45,12 +46,22 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// viewport
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	OBJECT_EMBED(Viewport, t, TypeFlags_IsAbstract) {}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Viewport::Viewport() {}
 
 	Viewport::~Viewport() {}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	void Viewport::process(Duration const & dt)
 	{
@@ -60,7 +71,20 @@ namespace ism
 	void Viewport::notification(int32_t id)
 	{
 		base_type::notification(id);
+		switch (id)
+		{
+		case Notification_EnterTree: {
+		} break;
+		case Notification_ExitTree: {
+		} break;
+		case Notification_Ready: {
+		} break;
+		case Notification_InternalUpdate: {
+		} break;
+		}
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Vec2i Viewport::_get_size() const
 	{

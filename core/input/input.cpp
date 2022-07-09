@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(Input::g_singleton) {};
+	Input * Input::__singleton{};
 
 	OBJECT_EMBED(Input, t)
 	{

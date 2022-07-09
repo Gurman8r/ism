@@ -38,7 +38,7 @@ using namespace ism;
 
 static bool editor{ true };
 
-MEMBER_IMPL(Main::g_iterating) {};
+int32_t Main::g_iterating{};
 
 static Internals *			g_internals{};
 static EventBus *			g_bus{};
@@ -102,11 +102,11 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
 	DS::WindowID main_window{ g_display->get_current_context() };
 	g_display->window_set_char_callback(main_window, [](auto, auto c) { g_input->m_last_char = (char)c; });
-	g_display->window_set_mouse_button_callback(main_window, [](auto, auto b, auto a, auto) { g_input->m_mouse_down.write(b, a != InputAction_Release); });
+	g_display->window_set_mouse_button_callback(main_window, [](auto, auto b, auto a, auto) { g_input->m_mouse_down.write(b, a != KeyState_Release); });
 	g_display->window_set_mouse_position_callback(main_window, [](auto, auto x, auto y) { g_input->m_mouse_pos = { (float_t)x, (float_t)y }; });
 	g_display->window_set_scroll_callback(main_window, [](auto, auto x, auto y) { g_input->m_scroll = { (float_t)x, (float_t)y }; });
 	g_display->window_set_key_callback(main_window, [](auto, auto k, auto, auto a, auto) {
-		g_input->m_keys_down.write(k, a != InputAction_Release);
+		g_input->m_keys_down.write(k, a != KeyState_Release);
 		g_input->m_is_shift = g_input->m_keys_down[KeyCode_LeftShift] || g_input->m_keys_down[KeyCode_RightShift];
 		g_input->m_is_ctrl = g_input->m_keys_down[KeyCode_LeftCtrl] || g_input->m_keys_down[KeyCode_RightCtrl];
 		g_input->m_is_alt = g_input->m_keys_down[KeyCode_LeftAlt] || g_input->m_keys_down[KeyCode_RightAlt];
@@ -214,9 +214,9 @@ bool Main::iteration()
 	ImGui::Render();
 
 	// render
-	RENDERING_DEVICE->draw_list_begin_for_screen(g_display->get_current_context());
+	RD::get_singleton()->draw_list_begin_for_screen(g_display->get_current_context());
 	ImGui_RenderDrawData(&g_imgui->Viewports[0]->DrawDataP);
-	RENDERING_DEVICE->draw_list_end();
+	RD::get_singleton()->draw_list_end();
 
 	if (g_imgui->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
 		DS::WindowID backup_context{ g_display->get_current_context() };

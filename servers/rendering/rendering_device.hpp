@@ -13,15 +13,12 @@ namespace ism
 	{
 		OBJECT_COMMON(RenderingDevice, Object);
 
-		static RenderingDevice * g_singleton;
-
-	protected:
-		RenderingDevice() noexcept { g_singleton = this; }
+		static RenderingDevice * __singleton;
 
 	public:
+		RenderingDevice() noexcept { __singleton = this; }
 		virtual ~RenderingDevice() noexcept override = default;
-
-		FORCE_INLINE static RenderingDevice * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static RenderingDevice * get_singleton() noexcept { return __singleton; }
 
 	public:
 		virtual void initialize() = 0;
@@ -780,8 +777,6 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(RD) RenderingDevice;
-
-#define RENDERING_DEVICE (ism::RD::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

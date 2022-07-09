@@ -1,7 +1,7 @@
 #ifndef _ISM_EVENT_HPP_
 #define _ISM_EVENT_HPP_
 
-#include <core/io/resource.hpp>
+#include <core/object/detail/class.hpp>
 
 namespace ism
 {
@@ -21,14 +21,12 @@ namespace ism
 
 	ALIAS(EventID) hash_t;
 
-	ALIAS(EventCallback) std::function<void(Event const &)>;
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event
-	class ISM_API Event : public Resource
+	class ISM_API Event : public Object
 	{
-		OBJECT_COMMON(Event, Resource);
+		OBJECT_COMMON(Event, Object);
 
 	protected:
 		Event() noexcept = default;
@@ -57,7 +55,7 @@ private:																		\
 	OBJECT_COMMON(m_class, m_inherits);											\
 																				\
 public:																			\
-	enum : ism::EventID { ID = m_class::g_name_static.hash_code() };			\
+	enum : ism::EventID { ID = m_class::__name_static.hash_code() };			\
 																				\
 	virtual ism::EventID get_event_id() const override { return m_class::ID; }	\
 																				\
@@ -70,18 +68,16 @@ private:
 	{
 		OBJECT_COMMON(EventHandler, Object);
 
+		friend struct Less<EventHandler *>;
+
 		EventBus * const m_event_bus;
 		
-		int32_t const m_handler_index;
+		int32_t const m_dispatch_order;
 
 	public:
 		virtual ~EventHandler() noexcept override { unsubscribe(); }
 
-		virtual void handle_event(Event const &) = 0; // <- HANDLE EVENT
-
 		auto get_event_bus() const noexcept -> EventBus * { return m_event_bus; }
-
-		auto get_handler_index() const noexcept -> int32_t { return m_handler_index; }
 
 	protected:
 		friend class EventBus;
@@ -93,21 +89,8 @@ private:
 
 		template <class ... Events
 		> void unsubscribe() noexcept;
-	};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// handler comparator
-	template <> struct Less<EventHandler *>
-	{
-		bool operator()(EventHandler * a, EventHandler * b) const noexcept
-		{
-			if (a == b) { return false; }
-
-			else if (!a || !b) { return CMP((intptr_t)a, (intptr_t)b); }
-			
-			else { return util::compare(a->get_handler_index(), b->get_handler_index()) < 0; }
-		}
+		virtual void handle_event(Event const &) = 0; // <- HANDLE EVENT
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -117,21 +100,23 @@ private:
 	{
 		OBJECT_COMMON(DummyHandler, EventHandler);
 
-		EventCallback m_callback{};
+		std::function<void(Event const &)> m_callback{};
 
 	public:
 		template <class Fn
 		> DummyHandler(EventBus * bus, Fn && fn) noexcept : EventHandler{ bus }, m_callback{ FWD(fn) } {}
 
-		void handle_event(Event const & event) final { m_callback(event); }
+		auto get_callback() const noexcept -> auto const & { return m_callback; }
 
-		auto get_callback() const noexcept -> EventCallback const & { return m_callback; }
-
-		template <class Fn> void set_callback(Fn && fn) noexcept { m_callback = FWD(fn); }
+		template <class Fn
+		> void set_callback(Fn && fn) noexcept { m_callback = FWD(fn); }
 
 		using EventHandler::subscribe;
 
 		using EventHandler::unsubscribe;
+
+	protected:
+		void handle_event(Event const & event) final { m_callback(event); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -141,15 +126,15 @@ private:
 	{
 		OBJECT_COMMON(EventDelegate<Event>, EventHandler);
 
-	protected:
-		explicit EventDelegate(EventBus * bus) noexcept : EventHandler{ bus } {}
-
 	public:
 		enum : EventID { ID = Event::ID };
 
 		using Callback = typename void;
 
 		virtual ~EventDelegate() noexcept override = default;
+
+	protected:
+		explicit EventDelegate(EventBus * bus) noexcept : EventHandler{ bus } {}
 
 		virtual void handle_event(Event const & event) override = 0;
 	};
@@ -167,16 +152,6 @@ private:
 		using Callback = typename decltype(m_callbacks)::value_type;
 
 		explicit EventDelegate(EventBus * bus) noexcept : EventDelegate<Event>{ bus } { this->subscribe<Ev>(); }
-
-		void handle_event(Event const & ev) final
-		{
-			ASSERT((EventID)ev == ID);
-
-			for (Callback const & callback : m_callbacks)
-			{
-				callback(static_cast<Ev const &>(ev));
-			}
-		}
 
 		auto operator[](size_t i) noexcept -> Callback & { return m_callbacks[i]; }
 
@@ -196,6 +171,27 @@ private:
 
 		template <class Fn
 		> auto operator+=(Fn && fn) noexcept -> EventDelegate & { return this->add(FWD(fn)), (*this); }
+
+	protected:
+		void handle_event(Event const & ev) final
+		{
+			ASSERT((EventID)ev == ID);
+
+			for (Callback const & callback : m_callbacks)
+			{
+				callback(static_cast<Ev const &>(ev));
+			}
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <> struct Less<EventHandler *>
+	{
+		bool operator()(EventHandler * a, EventHandler * b) const noexcept
+		{
+			return (a != b) && ((a && b) ? (a->m_dispatch_order < b->m_dispatch_order) : (a < b));
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -205,41 +201,34 @@ private:
 	{
 		OBJECT_COMMON(EventBus, Object);
 
-		static EventBus * g_singleton;
+		static EventBus * __singleton;
 
-		int32_t m_next_handler_id{};
 		FlatMap<EventID, FlatSet<EventHandler *>> m_event_handlers{};
 		FlatMap<EventID, Ref<EventDelegate<Event>>> m_event_delegates{};
 		List<Ref<DummyHandler>> m_dummy_handlers{};
 
 	protected:
 		friend class EventHandler;
-
-		auto new_event_handler_id() noexcept { return ++m_next_handler_id; }
+		int32_t m_next_index{};
 
 	public:
-		EventBus() noexcept { g_singleton = this; }
-
+		EventBus() noexcept { __singleton = this; }
 		virtual ~EventBus() noexcept override = default;
-
-		FORCE_INLINE static EventBus * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static EventBus * get_singleton() noexcept { return __singleton; }
 
 	public:
-		/* DISPATCH API */
+		/* DISPATCH */
 
 		void fire_event(Event const & value) noexcept
 		{
 			if (auto const group{ m_event_handlers.find((EventID)value) })
 			{
-				for (EventHandler * const h : (*group->second))
+				for (EventHandler * const handler : (*group->second))
 				{
-					VALIDATE(h)->handle_event(value);
+					VALIDATE(handler)->handle_event(value);
 				}
 			}
 		}
-
-	public:
-		/* HANDLER API */
 
 		template <class Ev> bool add_event_handler(EventHandler * value) noexcept
 		{
@@ -269,9 +258,12 @@ private:
 		}
 
 	public:
-		/* DUMMY API */
+		/* DUMMIES */
 
-		auto const & get_all_dummy_handlers() const noexcept { return m_dummy_handlers; }
+		NODISCARD auto get_all_dummies() const noexcept -> auto const &
+		{
+			return m_dummy_handlers;
+		}
 
 		template <class ... Events, class Fn
 		> auto & add_dummy_handler(Fn && fn) noexcept
@@ -301,16 +293,18 @@ private:
 		}
 
 	public:
-		/* DELEGATE API */
+		/* DELEGATES */
 
-		auto const & get_all_delegates() const noexcept { return m_event_delegates; }
+		NODISCARD auto get_all_delegates() const noexcept -> auto const &
+		{
+			return m_event_delegates;
+		}
 
 		template <class Ev
 		> auto get_delegate() noexcept -> EventDelegate<Ev> &
 		{
-			return **((Ref<EventDelegate<Ev>> &)m_event_delegates.find_or_add_fn(Ev::ID, [&]() noexcept {
-				return memnew(EventDelegate<Ev>(this));
-			}));
+			return **((Ref<EventDelegate<Ev>> &)m_event_delegates.find_or_add_fn(Ev::ID, [&
+			]() noexcept { return memnew(EventDelegate<Ev>(this)); }));
 		}
 
 		template <class ... Events
@@ -337,14 +331,9 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event bus g_singleton
-#define EVENT_BUS (ism::EventBus::get_singleton())
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	inline EventHandler::EventHandler(EventBus * bus) noexcept
-		: m_event_bus{ bus ? bus : EventBus::get_singleton() }
-		, m_handler_index{ VALIDATE(get_event_bus())->new_event_handler_id() }
+		: m_event_bus{ bus ? bus : VALIDATE(EventBus::get_singleton()) }
+		, m_dispatch_order{ ++m_event_bus->m_next_index }
 	{
 	}
 

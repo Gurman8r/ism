@@ -38,7 +38,7 @@ namespace ism
 		ImRect const view_rect{ window->InnerRect };
 
 		if (ImGui::ItemAdd(view_rect, NULL)) {
-			void * texture_handle{ RENDERING_DEVICE->texture_get_handle(m_main_texture) };
+			void * texture_handle{ RD::get_singleton()->texture_get_handle(m_main_texture) };
 			window->DrawList->AddImage(texture_handle, view_rect.Min, view_rect.Max, { 0, 1 }, { 1, 0 });
 		}
 
@@ -46,7 +46,7 @@ namespace ism
 		bool const dragging_view{ nav_enabled && !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && ImGui::IsMouseDragging(0) };
 
 		if (dragging_view) {
-			Vec2 const md{ INPUT->get_mouse_delta() * (float_t)dt * 50 };
+			Vec2 const md{ Input::get_singleton()->get_mouse_delta() * (float_t)dt * 50 };
 			m_editor_camera.do_yaw(-md[0]);
 			m_editor_camera.do_pitch(+md[1]);
 		}

@@ -47,10 +47,6 @@
 #define STRVAR(name, str) \
 		static char const name[] = str
 
-// static member variable helper
-#define MEMBER_IMPL(expr) \
-		decltype(expr) expr
-
 // sentinal
 #define SENTINAL \
 		{}

@@ -14,7 +14,7 @@ namespace ism
 	{
 		OBJECT_COMMON(RenderingServer, Object);
 
-		static RenderingServer * g_singleton;
+		static RenderingServer * __singleton;
 
 	protected:
 		RenderingServer();
@@ -22,7 +22,7 @@ namespace ism
 	public:
 		virtual ~RenderingServer() override;
 
-		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return __singleton; }
 
 	public:
 		virtual void initialize() = 0;
@@ -116,8 +116,6 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(RS) RenderingServer;
-
-#define RENDERING_SERVER (ism::RenderingServer::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

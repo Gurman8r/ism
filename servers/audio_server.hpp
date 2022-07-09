@@ -13,21 +13,19 @@ namespace ism
 	{
 		OBJECT_COMMON(AudioServer, Object);
 
-		static AudioServer * g_singleton;
+		static AudioServer * __singleton;
 
 	public:
 		AudioServer();
 
 		virtual ~AudioServer() override;
 
-		FORCE_INLINE static AudioServer * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static AudioServer * get_singleton() noexcept { return __singleton; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(AS) AudioServer;
-
-#define AUDIO_SERVER (ism::AS::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

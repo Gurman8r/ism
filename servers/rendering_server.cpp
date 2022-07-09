@@ -4,11 +4,11 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(RenderingServer::g_singleton) {};
+	RS * RS::__singleton{};
 
 	OBJECT_EMBED(RenderingServer, t, TypeFlags_IsAbstract) {}
 
-	RenderingServer::RenderingServer() { g_singleton = this; }
+	RenderingServer::RenderingServer() { __singleton = this; }
 
 	RenderingServer::~RenderingServer() {}
 

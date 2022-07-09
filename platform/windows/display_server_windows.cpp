@@ -1,10 +1,6 @@
 #include <platform/windows/display_server_windows.hpp>
 #include <scene/main/scene_tree.hpp>
 
-#ifdef INPUT
-#undef INPUT
-#endif
-
 #include <glfw/glfw3.h>
 #if defined(SYSTEM_WINDOWS)
 #	undef APIENTRY

@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(RenderingDevice::g_singleton) {};
+	RD * RD::__singleton{};
 
 	OBJECT_EMBED(RenderingDevice, t, TypeFlags_IsAbstract) {}
 

@@ -38,7 +38,7 @@ namespace ism
 			{
 				for (size_t i = 0; i < size(); ++i)
 				{
-					ism::util::swap(m_data[i], other.m_data[i]);
+					util::swap(m_data[i], other.m_data[i]);
 				}
 			}
 			return (*this);

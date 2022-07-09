@@ -30,9 +30,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(IntObject::g_true) { true };
+	IntObject IntObject::g_true{ true };
 
-	MEMBER_IMPL(IntObject::g_false) { false };
+	IntObject IntObject::g_false{ false };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

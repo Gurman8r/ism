@@ -5,11 +5,11 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(Internals::g_singleton) {};
+	Internals * Internals::__singleton{};
 
 	Internals::Internals()
 	{
-		g_singleton = this;
+		__singleton = this;
 
 		modules = DICT::new_();
 	}
@@ -23,10 +23,9 @@ namespace ism
 	{
 		ASSERT(type);
 		ASSERT(type.ready());
-		String const & type_name{ type->tp_name };
-		hash_t const type_id{ type_name.hash_code() };
+		hash_t const type_id{ type->tp_name.hash_code() };
 		ASSERT(!class_db.contains<hash_t>(type_id));
-		class_db.push_back(type_id, type_name, type);
+		class_db.push_back(type_id, type->tp_name, type);
 	}
 
 	TYPE Internals::get_class(StringName const & name) const

@@ -14,7 +14,7 @@ namespace ism
 	{
 		OBJECT_COMMON(DisplayServer, Object);
 
-		static DisplayServer * g_singleton;
+		static DisplayServer * __singleton;
 
 	protected:
 		DisplayServer();
@@ -22,7 +22,7 @@ namespace ism
 	public:
 		virtual ~DisplayServer() override;
 
-		FORCE_INLINE static DisplayServer * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static DisplayServer * get_singleton() noexcept { return __singleton; }
 
 	public:
 		enum WindowMode_
@@ -196,8 +196,6 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(DS) DisplayServer;
-
-#define DISPLAY_SERVER (ism::DisplayServer::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

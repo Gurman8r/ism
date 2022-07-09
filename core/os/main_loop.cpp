@@ -12,7 +12,6 @@ namespace ism
 				.def("initialize", &MainLoop::initialize)
 				.def("process", &MainLoop::process)
 				.def("finalize", &MainLoop::finalize)
-				.def("handle_event", &MainLoop::handle_event)
 				.def("set_startup_script", &MainLoop::set_startup_script)
 				;
 		};
@@ -65,19 +64,6 @@ namespace ism
 			if (OBJ callback{ getattr(m_script, &ID_finalize) })
 			{
 				call_object(callback);
-			}
-		}
-	}
-
-	void MainLoop::handle_event(Event const & event)
-	{
-		STR_IDENTIFIER(handle_event);
-
-		if (m_script)
-		{
-			if (OBJ callback{ getattr(m_script, &ID_handle_event) })
-			{
-				callback((Event &)event);
 			}
 		}
 	}

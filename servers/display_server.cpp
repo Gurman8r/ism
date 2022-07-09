@@ -4,11 +4,11 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(DisplayServer::g_singleton) {};
+	DS * DS::__singleton{};
 
 	OBJECT_EMBED(DisplayServer, t, TypeFlags_IsAbstract) {}
 
-	DisplayServer::DisplayServer() { g_singleton = this; }
+	DisplayServer::DisplayServer() { __singleton = this; }
 
 	DisplayServer::~DisplayServer() {}
 

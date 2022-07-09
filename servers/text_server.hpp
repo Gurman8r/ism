@@ -61,14 +61,14 @@ namespace ism
 	{
 		OBJECT_COMMON(TextServer, Object);
 
-		static TextServer * g_singleton;
+		static TextServer * __singleton;
 
 	public:
 		TextServer();
 
 		virtual ~TextServer() override;
 
-		FORCE_INLINE static TextServer * get_singleton() noexcept { return g_singleton; }
+		FORCE_INLINE static TextServer * get_singleton() noexcept { return __singleton; }
 
 	public:
 		/* FONT API */
@@ -108,8 +108,6 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ALIAS(TS) TextServer;
-
-#define TEXT_SERVER (ism::TS::get_singleton())
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

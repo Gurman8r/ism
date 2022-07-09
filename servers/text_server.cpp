@@ -12,11 +12,11 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(TextServer::g_singleton) {};
+	TS * TS::__singleton{};
 
 	OBJECT_EMBED(TextServer, t) {}
 
-	TextServer::TextServer() { g_singleton = this; }
+	TextServer::TextServer() { __singleton = this; }
 
 	TextServer::~TextServer() {}
 
@@ -28,7 +28,7 @@ namespace ism
 		: m_bounds{ bounds }
 		, m_advance{ advance }
 	{
-		m_texture = RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
+		m_texture = RD::get_singleton()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_R8_UNORM;
 			t.width = bounds.width();
 			t.height = bounds.height();
@@ -37,12 +37,12 @@ namespace ism
 
 	Glyph::~Glyph()
 	{
-		if (m_texture) { RENDERING_DEVICE->texture_destroy(m_texture); m_texture = nullptr; }
+		if (m_texture) { RD::get_singleton()->texture_destroy(m_texture); m_texture = nullptr; }
 	}
 
 	Ref<Image> Glyph::get_data() const
 	{
-		return m_texture ? RENDERING_SERVER->texture2d_get_data(m_texture) : nullptr;
+		return m_texture ? RS::get_singleton()->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

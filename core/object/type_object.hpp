@@ -17,9 +17,9 @@ namespace ism
 		friend class EmbedObjectClassHelper<TypeObject>;
 		friend struct DefaultDelete<TypeObject>;
 
-		static constexpr StringView g_name_static{ "TypeObject" };
+		static constexpr StringView __name_static{ "TypeObject" };
 
-		static TypeObject g_type_static;
+		static TypeObject __type_static;
 
 	protected:
 		static void initialize_class();
@@ -31,7 +31,7 @@ namespace ism
 		virtual TYPE _get_typev() const noexcept override;
 
 	public:
-		static constexpr StringView get_class_static() noexcept { return g_name_static; }
+		static constexpr StringView get_class_static() noexcept { return __name_static; }
 
 		static TYPE get_type_static() noexcept;
 

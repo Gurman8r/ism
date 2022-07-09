@@ -15,20 +15,20 @@ private:																			\
 																					\
 	friend struct ism::DefaultDelete<m_class>;										\
 																					\
-	static constexpr ism::StringView g_name_static{ TOSTR(m_class) };				\
+	static constexpr ism::StringView __name_static{ TOSTR(m_class) };				\
 																					\
-	static ism::TypeObject g_type_static;											\
+	static ism::TypeObject __type_static;											\
 																					\
 protected:																			\
 	static void initialize_class()													\
 	{																				\
 		static ON_SCOPE_ENTER(&)													\
 		{																			\
-			INTERNALS->add_class(&m_class::g_type_static);							\
+			Internals::get_singleton()->add_class(&m_class::__type_static);			\
 																					\
-			if (m_class::g_type_static.tp_install)									\
+			if (m_class::__type_static.tp_install)									\
 			{																		\
-				ASSERT(m_class::g_type_static.tp_install(&m_class::g_type_static));	\
+				ASSERT(m_class::__type_static.tp_install(&m_class::__type_static));	\
 			}																		\
 		};																			\
 	}																				\
@@ -53,12 +53,12 @@ public:																				\
 																					\
 	FORCE_INLINE static constexpr ism::StringView get_class_static() noexcept		\
 	{																				\
-		return m_class::g_name_static;												\
+		return m_class::__name_static;												\
 	}																				\
 																					\
 	FORCE_INLINE static ism::TYPE get_type_static() noexcept						\
 	{																				\
-		return &m_class::g_type_static;												\
+		return &m_class::__type_static;												\
 	}																				\
 																					\
 private:
@@ -75,7 +75,7 @@ private:
 	};																						\
 																							\
 	/* construct type object */																\
-	MEMBER_IMPL(m_class::g_type_static) =													\
+	ism::TypeObject m_class::__type_static =												\
 																							\
 	MAKE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
 																							\
@@ -103,9 +103,9 @@ namespace ism
 		friend bool predelete_handler(Object *);
 		friend void postinitialize_handler(Object *);
 
-		static constexpr StringView g_name_static{ "Object" };
+		static constexpr StringView __name_static{ "Object" };
 
-		static TypeObject g_type_static;
+		static TypeObject __type_static;
 
 		SafeRefCount m_refcount{}, m_refcount_init{};
 
@@ -146,7 +146,7 @@ namespace ism
 		bool has_references() const { return m_refcount_init.get() != 1; }
 
 	public:
-		static constexpr StringView get_class_static() noexcept { return g_name_static; }
+		static constexpr StringView get_class_static() noexcept { return __name_static; }
 
 		static TYPE get_type_static() noexcept;
 

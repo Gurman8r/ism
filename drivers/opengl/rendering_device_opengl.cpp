@@ -971,7 +971,7 @@ RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(DS::WindowID wi
 	DrawListID const draw_list{ m_draw_list.size() };
 	_DrawList & dl{ m_draw_list.emplace_back(_DrawList{}) };
 
-	Vec2i const size{ DISPLAY_SERVER->window_get_size(window) };
+	Vec2i const size{ DS::get_singleton()->window_get_size(window) };
 	glCheck(glViewport(0, 0, size[0], size[1]));
 	glCheck(glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT));

@@ -39,7 +39,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MEMBER_IMPL(EventBus::g_singleton) {};
+	EventBus * EventBus::__singleton{};
 
 	OBJECT_EMBED(EventBus, t) {}
 

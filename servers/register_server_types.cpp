@@ -11,7 +11,7 @@ void ism::preregister_server_types()
 
 void ism::register_server_types()
 {
-	INTERNALS->install_class
+	Internals::get_singleton()->install_class
 	<
 		DisplayServer,
 		RenderingDevice,
