@@ -37,9 +37,6 @@ namespace ism
 		Viewport();
 		virtual ~Viewport() override;
 
-		virtual void process(Duration const & dt) override;
-		virtual void notification(int32_t id) override;
-
 	protected:
 		virtual Vec2i _get_size() const;
 		virtual void _set_size(Vec2i const & size);

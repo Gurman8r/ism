@@ -32,7 +32,7 @@ namespace ism
 
 	class Internals;
 
-	template <class T> class EmbedObjectClassHelper;
+	template <class T> class _EmbedTypeHelper;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -141,8 +141,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(TypeFlags) int32_t;
-	enum TypeFlags_ : TypeFlags
+	enum TypeFlags_
 	{
 		TypeFlags_None,
 
@@ -164,8 +163,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(ReturnPolicy) int32_t;
-	enum ReturnPolicy_ : ReturnPolicy
+	enum ReturnPolicy_
 	{
 		ReturnPolicy_Automatic,
 		ReturnPolicy_AutomaticReference,
@@ -180,8 +178,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(DataType) int32_t;
-	enum DataType_ : DataType
+	enum DataType_
 	{
 		DataType_Void, // void
 
@@ -205,7 +202,6 @@ namespace ism
 	constexpr DataType_ DataType_SizeT{ DataType_U32 }; // size_t (32-bit)
 	constexpr DataType_ DataType_SSizeT{ DataType_I32 }; // ssize_t (32-bit)
 #endif
-
 
 	constexpr size_t get_data_type_size(DataType_ type) noexcept
 	{
@@ -234,16 +230,14 @@ namespace ism
 		return 0;
 	}
 
-	template <DataType_ type
-	> constexpr size_t get_data_type_size() noexcept
-	{
-		return get_data_type_size(type);
+	template <DataType_ T
+	> constexpr size_t get_data_type_size() noexcept {
+		return get_data_type_size(T);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(CompareOperator) int32_t;
-	enum CompareOperator_ : CompareOperator
+	enum CompareOperator_
 	{
 		CompareOperator_Never,
 		CompareOperator_Less,
@@ -258,8 +252,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(LogicOperation) int32_t;
-	enum LogicOperation_ : LogicOperation
+	enum LogicOperation_
 	{
 		LogicOperation_Clear,
 		LogicOperation_And,

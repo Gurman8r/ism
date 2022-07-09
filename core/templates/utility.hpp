@@ -57,72 +57,45 @@ namespace ism::priv
 
 	// scope enter
 
-	template <class Fn> class ScopeEnterHelper final
+	template <class F> struct _OnScopeEnter final
 	{
-	public:
-		ScopeEnterHelper(Fn && fn) noexcept { FWD(fn)(); }
+		explicit _OnScopeEnter(F fn) noexcept { fn(); }
 	};
 
-	enum class _ScopeEnter_Tag {};
+	enum class _OnScopeEnter_Tag {};
 
-	template <class Fn
-	> auto operator+(_ScopeEnter_Tag, Fn && fn) noexcept
+	template <class F
+	> auto operator+(_OnScopeEnter_Tag, F fn) noexcept
 	{
-		return ScopeEnterHelper<Fn>{ FWD(fn) };
+		return _OnScopeEnter<F>{ fn };
 	}
 
-#define _IMPL_SCOPE_ENTER(...) \
-		(ism::priv::_ScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
-
 #define ON_SCOPE_ENTER(...) \
-		auto ANON = _IMPL_SCOPE_ENTER(##__VA_ARGS__)
+		auto ANON = (ism::priv::_OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// scope exit
 
-	template <class Fn> class ScopeExitHelper final
+	template <class F> struct _OnScopeExit final
 	{
-		Fn const m_fn;
-	public:
-		ScopeExitHelper(Fn && fn) noexcept : m_fn{ FWD(fn) } {}
+		F const m_fn;
 
-		~ScopeExitHelper() noexcept { m_fn(); }
+		explicit _OnScopeExit(F fn) noexcept : m_fn{ fn } {}
+
+		~_OnScopeExit() noexcept { m_fn(); }
 	};
 
-	enum class _ScopeExit_Tag {};
+	enum class _OnScopeExit_Tag {};
 
-	template <class Fn
-	> auto operator+(_ScopeExit_Tag, Fn && fn) noexcept
+	template <class F
+	> auto operator+(_OnScopeExit_Tag, F fn) noexcept
 	{
-		return ScopeExitHelper<Fn>{ FWD(fn) };
+		return _OnScopeExit<F>{ fn };
 	}
 
-#define _IMPL_SCOPE_EXIT(...) \
-		(ism::priv::_ScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
-
 #define ON_SCOPE_EXIT(...) \
-		auto ANON = _IMPL_SCOPE_EXIT(##__VA_ARGS__)
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// make
-
-	template <class T> class MakerHelper final
-	{
-		T value;
-	public:
-		constexpr MakerHelper(T && value) noexcept : value{ FWD(value) } {}
-
-		template <class Fn = void(*)(T &)
-		> constexpr decltype(auto) operator+(Fn && fn) && noexcept { return fn(value), std::move(value); }
-	};
-
-#define MAKE_EX(m_class, ...) \
-		(ism::priv::MakerHelper<m_class>(m_class{ ##__VA_ARGS__ }))
-
-#define MAKE(m_class, m_var, ...) \
-		MAKE_EX(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
+		auto ANON = (ism::priv::_OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

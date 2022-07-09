@@ -25,32 +25,65 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Node::process(Duration const & dt)
+	void Node::propagate_notification(int32_t value)
 	{
-		List<size_t> to_remove{};
+		notification(value);
 
-		for (size_t i = 0, imax = get_child_count(); i < imax; ++i)
+		for (Node * child : m_nodes)
 		{
-			if (Node * node{ get_child(i) })
-			{
-				node->process(dt);
-			}
-			else
-			{
-				to_remove.push_back(i);
-			}
-		}
-
-		while (!to_remove.empty())
-		{
-			destroy_child(to_remove.back());
-
-			to_remove.pop_back();
+			child->propagate_notification(value);
 		}
 	}
 
-	void Node::notification(int32_t id)
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void Node::_notification(int32_t value)
 	{
+		switch (value)
+		{
+		case Notification_EnterTree: {
+		} break;
+		case Notification_ExitTree: {
+		} break;
+		case Notification_Ready: {
+		} break;
+		case Notification_Paused: {
+		} break;
+		case Notification_Unpaused: {
+		} break;
+		case Notification_Process: {
+		} break;
+		case Notification_PhysicsProcess: {
+		} break;
+		case Notification_Parented: {
+		} break;
+		case Notification_Unparented: {
+		} break;
+		case Notification_Instanced: {
+		} break;
+		case Notification_DragBegin: {
+		} break;
+		case Notification_DragEnd: {
+		} break;
+		case Notification_PathChanged: {
+		} break;
+		case Notification_Internal_Process: {
+		} break;
+		case Notification_Internal_PhysicsProcess: {
+		} break;
+		case Notification_MemoryWarning: {
+		} break;
+		case Notification_Crash: {
+		} break;
+		case Notification_ApplicationResumed: {
+		} break;
+		case Notification_ApplicationPaused: {
+		} break;
+		case Notification_ApplicationFocusIn: {
+		} break;
+		case Notification_ApplicationFocusOut: {
+		} break;
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -99,15 +132,6 @@ namespace ism
 		if (new_index == old_index) { return; }
 		
 		std::swap(m_parent->m_nodes[new_index], m_parent->m_nodes[old_index]);
-	}
-
-	Node * Node::add_child(Node * child)
-	{
-		if (!child) { return nullptr; }
-
-		if (!child->set_parent(this)) { return nullptr; }
-
-		return child;
 	}
 
 	void Node::destroy_child(size_t i)

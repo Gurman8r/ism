@@ -16,7 +16,7 @@ namespace ism
 			return !obj ? self : (OBJ)METHOD({ self, obj });
 		};
 
-		t.tp_install = CLASS_INSTALLER(CppFunctionObject, t)
+		t.tp_bind = CLASS_INSTALLER(CppFunctionObject, t)
 		{
 			// manually add this first because it's used by CLASS_
 			t.add_object("__name__", PROPERTY({
@@ -25,11 +25,9 @@ namespace ism
 				}));
 
 			return t
-
 				.def_property("__text_signature__",
 					[](CppFunctionObject const & self) { return self->signature; },
 					[](CppFunctionObject & self, String const & value) { self->signature = value; })
-
 				;
 		};
 	}

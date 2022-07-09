@@ -11,12 +11,10 @@ namespace ism
 
 		t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-		t.tp_install = CLASS_INSTALLER(FunctionObject, t)
+		t.tp_bind = CLASS_INSTALLER(FunctionObject, t)
 		{
 			return t
-
 				.def_readwrite("__dict__", &FunctionObject::m_dict)
-
 				;
 		};
 	}

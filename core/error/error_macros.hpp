@@ -14,13 +14,24 @@ namespace ism
 
 	// crash
 #define CRASH(message) \
-		(ism::_crash)(WIDE(message), WIDE(__FILE__), (unsigned)__LINE__)
+		(ism::_crash)(WIDE(message), WIDE(__FILE__), __LINE__)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// assert
 #define ASSERT(expr) \
 		(UNUSED((!!(expr)) || (CRASH(TOSTR(expr)), 0)))
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// verify
+#define VERIFY(expr, message)												\
+		do {																\
+			if (expr) { /* contextually convertible to bool paranoia */ }	\
+			else {															\
+				ism::_crash(WIDE(message), WIDE(__FILE__), __LINE__);		\
+			}																\
+		} while (0)															\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -32,7 +43,7 @@ namespace ism
 
 	// validate
 #define VALIDATE(expr) \
-		(ism::_validate)(expr, WIDE(TOSTR(expr)), WIDE(__FILE__), __LINE__)
+		(ism::_validate)((expr), WIDE(TOSTR(expr)), WIDE(__FILE__), __LINE__)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -41,8 +52,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(ErrorHandlerType) int32_t;
-	enum ErrorHandlerType_ : ErrorHandlerType
+	enum ErrorHandlerType_
 	{
 		ErrorHandlerType_Error,
 		ErrorHandlerType_Warning,
@@ -55,16 +65,16 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ERR_PRINT_ERROR(desc) \
-		(ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Error))
+		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Error))
 
 #define ERR_PRINT_ERROR_MSG(desc, message) \
-		(ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error))
+		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error))
 
 #define ERR_PRINT_WARNING(desc) \
-		(ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Warning))
+		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Warning))
 
 #define ERR_PRINT_WARNING_MSG(desc, message) \
-		(ism::_err_print_error(PRETTY_FUNCTION, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error))
+		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

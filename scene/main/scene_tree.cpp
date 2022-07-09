@@ -9,7 +9,7 @@ namespace ism
 
 	OBJECT_EMBED(SceneTree, t)
 	{
-		t.tp_install = CLASS_INSTALLER(SceneTree, t)
+		t.tp_bind = CLASS_INSTALLER(SceneTree, t)
 		{
 			return t
 				.def("initialize", &SceneTree::initialize)
@@ -21,7 +21,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SceneTree::SceneTree() : MainLoop{}
+	SceneTree::SceneTree()
 	{
 		if (__singleton == nullptr) { __singleton = this; }
 
@@ -39,18 +39,19 @@ namespace ism
 
 	void SceneTree::initialize()
 	{
-		m_initialized = true;
-
 		base_type::initialize();
+
+		m_initialized = true;
 	}
 
 	bool SceneTree::process(Duration const & dt)
 	{
 		base_type::process(dt);
-
 		m_fps_tracker.update(dt);
+		m_delta_time = dt;
 
-		m_root->process(dt);
+		m_root->propagate_notification(Node::Notification_Internal_Process);
+		m_root->propagate_notification(Node::Notification_Process);
 
 		m_should_close |= m_root->should_close();
 
@@ -59,9 +60,9 @@ namespace ism
 
 	void SceneTree::finalize()
 	{
-		m_initialized = false;
-
 		base_type::finalize();
+
+		m_initialized = false;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -15,8 +15,7 @@
 #include <core/object/property_object.hpp>
 #include <core/object/generic_object.hpp>
 
-// misc
-namespace ism
+namespace ism::priv
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -362,7 +361,7 @@ public:																							\
 			if (!isinstance<T>(src)) { return false; }
 			else
 			{
-				LoaderLifeSupport::add(src);
+				priv::LoaderLifeSupport::add(src);
 
 				return (value = src), true;
 			}

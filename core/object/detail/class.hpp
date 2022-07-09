@@ -9,20 +9,19 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// class interface
-	template <class _Type, class ... _Options
+	template <class T, class ... Options
 	> class CLASS_ : public TYPE
 	{
 	public:
-		using holder_type = std::conditional_t<is_base_object_v<_Type>, Ref<_Type>, _Type>;
+		using holder_type = std::conditional_t<is_base_object_v<T>, Ref<T>, T>;
 
-		using value_type = std::conditional_t<is_base_object_v<_Type>, _Type, typename holder_type::value_type>;
+		using value_type = std::conditional_t<is_base_object_v<T>, T, typename holder_type::value_type>;
 		
-		using type = _Type;
+		using type = T;
 
 	public:
-		CLASS_(TYPE target) : TYPE{ VALIDATE(target) } {}
+		CLASS_(TYPE type) : TYPE{ type } { ASSERT(is_valid()); }
 
-	public:
 		template <class ... Args, class ... Extra
 		> CLASS_ & def(initimpl::Constructor<Args...> && init, Extra && ... extra)
 		{
@@ -35,11 +34,11 @@ namespace ism
 			return FWD(init).execute(*this, FWD(extra)...); // init.hpp
 		}
 
-		template <class Func, class ... Extra
-		> CLASS_ & def(cstring name, Func && func, Extra && ... extra)
+		template <class F, class ... Extra
+		> CLASS_ & def(cstring name, F && fn, Extra && ... extra)
 		{
 			CPP_FUNCTION cf({
-				method_adaptor<type>(FWD(func)),
+				method_adaptor<type>(FWD(fn)),
 				attr::name(name),
 				attr::is_method(*this),
 				attr::sibling(getattr(*this, name, nullptr)),
@@ -47,11 +46,11 @@ namespace ism
 			return add_object(cf.name(), cf), (*this);
 		}
 
-		template <class Func, class ... Extra
-		> CLASS_ & def_static(cstring name, Func && func, Extra && ... extra)
+		template <class F, class ... Extra
+		> CLASS_ & def_static(cstring name, F && fn, Extra && ... extra)
 		{
 			CPP_FUNCTION cf({
-				FWD(func),
+				FWD(fn),
 				attr::name(name),
 				attr::scope(*this),
 				attr::sibling(getattr(*this, name, nullptr)),

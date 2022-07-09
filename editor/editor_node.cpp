@@ -90,6 +90,8 @@ namespace ism
 
 	OBJECT_EMBED(EditorNode, t) {}
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	EditorNode::EditorNode()
 	{
 		ASSERT(!__singleton); __singleton = this;
@@ -170,70 +172,80 @@ namespace ism
 		if (pipeline) { RD::get_singleton()->render_pipeline_destroy(pipeline); }
 	}
 
-	void EditorNode::process(Duration const & dt)
+	void EditorNode::_notification(int32_t notification_id)
 	{
-		char window_title[32];
-		std::sprintf(window_title, "ism @ %.3f fps", get_tree()->get_fps().value);
-		get_tree()->get_root()->set_title(window_title);
-
-		static EditorCamera * editor_camera{ m_viewport.get_editor_camera() };
-		static Vec2i view_size{ 1280, 720 }, view_size_prev{};
-		if (m_viewport.get_window()) { view_size = { (int32_t)m_viewport->InnerRect.GetWidth(), (int32_t)m_viewport->InnerRect.GetHeight() }; }
-		if (view_size_prev != view_size) {
-			view_size_prev = view_size;
-			editor_camera->set_res(view_size);
-			RD::get_singleton()->framebuffer_set_size(framebuffer, view_size[0], view_size[1]);
-		}
-		editor_camera->recalculate();
-
+		switch (notification_id)
 		{
-			RD::Std140<Mat4, Mat4> scene_state_ubo;
-			scene_state_ubo.set<0>(editor_camera->get_proj()); // camera projection
-			scene_state_ubo.set<1>(editor_camera->get_view()); // camera view
-			RD::get_singleton()->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
+		case Notification_Process: {
 
-			RD::Std140<Mat4> render_pass_ubo;
-			render_pass_ubo.set<0>(Mat4::identity()); // placeholder
-			RD::get_singleton()->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
+			Duration const dt{ get_tree()->get_delta_time() };
 
-			RD::Std140<Mat4> transforms_ubo;
-			transforms_ubo.set<0>(object_matrix[0]); // model transform
-			RD::get_singleton()->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
+			char window_title[32];
+			std::sprintf(window_title, "ism @ %.3f fps", get_tree()->get_fps().value);
+			get_tree()->get_root()->set_title(window_title);
 
-			RD::Std140<Vec4, Vec4, Vec4, float_t> material_ubo;
-			material_ubo.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
-			material_ubo.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
-			material_ubo.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
-			material_ubo.set<3>(32.f); // shininess
-			RD::get_singleton()->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
+			static EditorCamera * editor_camera{ m_viewport.get_editor_camera() };
+			static Vec2i view_size{ 1280, 720 }, view_size_prev{};
+			if (m_viewport.get_window()) { view_size = { (int32_t)m_viewport->InnerRect.GetWidth(), (int32_t)m_viewport->InnerRect.GetHeight() }; }
+			if (view_size_prev != view_size) {
+				view_size_prev = view_size;
+				editor_camera->set_res(view_size);
+				RD::get_singleton()->framebuffer_set_size(framebuffer, view_size[0], view_size[1]);
+			}
+			editor_camera->recalculate();
 
-			static List<Color> clear_colors{ Colors::magenta };
-			clear_colors[0] = rotate_hue(clear_colors[0], 10.f * dt);
+			{
+				RD::Std140<Mat4, Mat4> scene_state_ubo;
+				scene_state_ubo.set<0>(editor_camera->get_proj()); // camera projection
+				scene_state_ubo.set<1>(editor_camera->get_view()); // camera view
+				RD::get_singleton()->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
 
-			RD::DrawListID const draw_list{ RD::get_singleton()->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
-			RD::get_singleton()->draw_list_bind_pipeline(draw_list, pipeline);
-			RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
-			RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
-			RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
-			RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
+				RD::Std140<Mat4> render_pass_ubo;
+				render_pass_ubo.set<0>(Mat4::identity()); // placeholder
+				RD::get_singleton()->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
 
-			static Mesh * mesh{ *m_meshes["sphere32x24"] };
-			for (size_t i = 0; i < mesh->get_surface_count(); ++i) {
-				RD::get_singleton()->draw_list_bind_vertex_array(draw_list, mesh->surface_get_vertex_array(i));
-				RD::get_singleton()->draw_list_bind_index_array(draw_list, mesh->surface_get_index_array(i));
-				RD::get_singleton()->draw_list_draw(draw_list, true, 1, 0);
+				RD::Std140<Mat4> transforms_ubo;
+				transforms_ubo.set<0>(object_matrix[0]); // model transform
+				RD::get_singleton()->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
+
+				RD::Std140<Vec4, Vec4, Vec4, float_t> material_ubo;
+				material_ubo.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
+				material_ubo.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
+				material_ubo.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
+				material_ubo.set<3>(32.f); // shininess
+				RD::get_singleton()->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
+
+				static List<Color> clear_colors{ Colors::magenta };
+				clear_colors[0] = rotate_hue(clear_colors[0], 10.f * dt);
+
+				RD::DrawListID const draw_list{ RD::get_singleton()->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
+				RD::get_singleton()->draw_list_bind_pipeline(draw_list, pipeline);
+				RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
+				RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
+				RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
+				RD::get_singleton()->draw_list_bind_uniform_set(draw_list, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
+
+				static Mesh * mesh{ *m_meshes["sphere32x24"] };
+				for (size_t i = 0; i < mesh->get_surface_count(); ++i) {
+					RD::get_singleton()->draw_list_bind_vertex_array(draw_list, mesh->surface_get_vertex_array(i));
+					RD::get_singleton()->draw_list_bind_index_array(draw_list, mesh->surface_get_index_array(i));
+					RD::get_singleton()->draw_list_draw(draw_list, true, 1, 0);
+				}
+
+				RD::get_singleton()->draw_list_end();
 			}
 
-			RD::get_singleton()->draw_list_end();
-		}
+			_draw_dockspace();
+			if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
+			m_hierarchy.process(dt);
+			m_log.process(dt);
+			m_viewport.process(dt);
 
-		_draw_dockspace();
-		if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
-		m_hierarchy.process(dt);
-		m_log.process(dt);
-		m_viewport.process(dt);
-		Node::process(dt);
+		} break;
+		}
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	void EditorNode::_draw_dockspace()
 	{

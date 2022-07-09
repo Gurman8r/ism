@@ -12,41 +12,42 @@ namespace ism
 	template <class T
 	> class NOVTABLE Ref : public _Ref_Tag, public ObjectAPI<Ref<T>>
 	{
+	public:
+		using value_type = typename T;
+
 	protected:
-		T * m_ptr{};
+		value_type * m_ptr{};
 
 		void ref(Ref const & value)
 		{
 			if (value.m_ptr == m_ptr) { return; }
 			unref();
 			m_ptr = value.m_ptr;
-			if (m_ptr) { m_ptr->reference(); }
+			if (m_ptr) { m_ptr->inc_ref(); }
 		}
 
-		void ref_pointer(T * value)
+		void ref_pointer(value_type * value)
 		{
-			ASSERT("INVALID REF POINTER" && value);
+			ASSERT("invalid ref pointer" && value);
 
 			if (value->init_ref()) { m_ptr = value; }
 		}
 
 	public:
-		using value_type = typename T;
-
 		~Ref() noexcept { unref(); }
 
 		Ref() noexcept = default;
 
 		Ref(nullptr_t) noexcept {}
 
-		Ref(T * value) { if (value) { ref_pointer(value); } }
+		Ref(value_type * value) { if (value) { ref_pointer(value); } }
 
 		Ref(Ref const & value) { ref(value); }
 
 		template <class U
 		> Ref(Ref<U> const & value) { reset(value); }
 
-		Ref(T && value) noexcept { instance(std::move(value)); }
+		Ref(value_type && value) noexcept { instance(std::move(value)); }
 
 		Ref & operator=(nullptr_t) { return unref(), (*this); }
 
@@ -55,32 +56,32 @@ namespace ism
 		template <class U
 		> Ref & operator=(Ref<U> const & value) { return reset(value), (*this); }
 
-		Ref & operator=(T && value) noexcept { return instance(std::move(value)), (*this); }
+		Ref & operator=(value_type && value) noexcept { return instance(std::move(value)), (*this); }
 
 	public:
 		template <class ... Args
-		> static auto new_(Args && ... args) { return Ref<T>{ T{ FWD(args)... } }; }
+		> static auto new_(Args && ... args) { return Ref<value_type>{ value_type{ FWD(args)... } }; }
 
-		template <class U> U cast() const &; // cast.hpp
+		static constexpr auto get_class_static() noexcept { return value_type::get_class_static(); }
 
-		template <class U> U cast() &&; // cast.hpp
+		static auto get_type_static() noexcept { return value_type::get_type_static(); }
 
-		static constexpr auto get_class_static() noexcept { return T::get_class_static(); }
+		template <class U> U cast() const &;
 
-		static auto get_type_static() noexcept { return T::get_type_static(); }
+		template <class U> U cast() &&;
 
 	public:
-		template <class U = T, class ... Args
+		template <class U = value_type, class ... Args
 		> void instance(Args && ... args)
 		{
-			static_assert(std::is_base_of_v<T, U>);
+			static_assert(std::is_base_of_v<value_type, U>);
 
 			ref(memnew(U{ FWD(args)... }));
 		}
 
 		void unref()
 		{
-			if (m_ptr && m_ptr->unreference()) {
+			if (m_ptr && m_ptr->dec_ref()) {
 				ism::call_default_delete(m_ptr);
 			}
 			m_ptr = nullptr;
@@ -95,7 +96,7 @@ namespace ism
 		{
 			if (m_ptr == value) { return; }
 			unref();
-			T * r{ dynamic_cast<T *>(value) };
+			value_type * r{ dynamic_cast<value_type *>(value) };
 			if (r) { ref_pointer(r); }
 		}
 
@@ -104,7 +105,7 @@ namespace ism
 			Object * other{ static_cast<Object *>(value.ptr()) };
 			if (!other) { unref(); return; }
 			Ref r;
-			r.m_ptr = dynamic_cast<T *>(other);
+			r.m_ptr = dynamic_cast<value_type *>(other);
 			ref(r);
 			r.m_ptr = nullptr;
 		}
@@ -116,7 +117,7 @@ namespace ism
 		
 		bool is_valid() const noexcept { return m_ptr != nullptr; }
 		
-		auto ptr() const noexcept { return const_cast<T *>(m_ptr); }
+		auto ptr() const noexcept { return (value_type *)m_ptr; }
 
 		auto operator*() noexcept { return m_ptr; }
 		
@@ -126,13 +127,13 @@ namespace ism
 		
 		auto operator->() const noexcept { return m_ptr; }
 
-		template <class U> friend bool operator==(Ref const & lhs, U const * rhs) noexcept { return (void *)lhs.m_ptr == (void *)rhs; }
+		template <class U> friend bool operator==(Ref const & a, U const * b) noexcept { return (void *)a.m_ptr == (void *)b; }
 		
-		template <class U> friend bool operator!=(Ref const & lhs, U const * rhs) noexcept { return (void *)lhs.m_ptr != (void *)rhs; }
+		template <class U> friend bool operator!=(Ref const & a, U const * b) noexcept { return (void *)a.m_ptr != (void *)b; }
 
-		template <class U> friend bool operator==(U const * lhs, Ref const & rhs) noexcept { return (void *)lhs == (void *)rhs.m_ptr; }
+		template <class U> friend bool operator==(U const * a, Ref const & b) noexcept { return (void *)a == (void *)b.m_ptr; }
 		
-		template <class U> friend bool operator!=(U const * lhs, Ref const & rhs) noexcept { return (void *)lhs != (void *)rhs.m_ptr; }
+		template <class U> friend bool operator!=(U const * a, Ref const & b) noexcept { return (void *)a != (void *)b.m_ptr; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -176,24 +177,6 @@ public:																									\
 																										\
 	m_class & operator=(value_type && value) noexcept { return instance(std::move(value)), (*this); }	\
 																										\
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// ref traits
-#define IMPLEMENT_DEFAULT_REF_TRAITS(m_class)																\
-	template <> struct ism::Hasher<m_class> : ism::Hasher<ism::Ref<m_class::value_type>> {};				\
-																											\
-	template <> struct ism::EqualTo<m_class> : ism::EqualTo<ism::Ref<m_class::value_type>> {};				\
-																											\
-	template <> struct ism::NotEqualTo<m_class> : ism::NotEqualTo<ism::Ref<m_class::value_type>> {};		\
-																											\
-	template <> struct ism::Less<m_class> : ism::Less<ism::Ref<m_class::value_type>> {};					\
-																											\
-	template <> struct ism::Greater<m_class> : ism::Greater<ism::Ref<m_class::value_type>> {};				\
-																											\
-	template <> struct ism::LessEqual<m_class> : ism::LessEqual<ism::Ref<m_class::value_type>> {};			\
-																											\
-	template <> struct ism::GreaterEqual<m_class> : ism::GreaterEqual<ism::Ref<m_class::value_type>> {};	\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

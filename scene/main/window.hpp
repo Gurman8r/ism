@@ -18,9 +18,6 @@ namespace ism
 		Window();
 		virtual ~Window() override;
 
-		virtual void process(Duration const & dt) override;
-		virtual void notification(int32_t id) override;
-
 	public:
 		DS::WindowID get_window_id() const noexcept { return m_window; }
 

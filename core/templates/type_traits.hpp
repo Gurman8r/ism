@@ -13,6 +13,36 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+namespace ism::priv
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// maker helper
+	template <class T> struct _MakerHelper final
+	{
+		T value;
+
+		template <class ... Args
+		> constexpr _MakerHelper(Args && ... args) noexcept : value{ FWD(args)... } {}
+
+		template <class Fn = void(*)(T &)
+		> constexpr decltype(auto) operator+(Fn fn) && noexcept
+		{
+			return fn(value), std::move(value);
+		}
+	};
+
+#define MAKER(m_class, ...) \
+		(ism::priv::_MakerHelper<m_class>{ ##__VA_ARGS__ })
+
+#define MAKE(m_class, m_var, ...) \
+		MAKER(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // traits
 namespace ism::mpl
 {
@@ -122,8 +152,6 @@ namespace ism::mpl
 	template <class T, class ... Ts>
 	constexpr size_t constexpr_sum(T n, Ts... ns) { return size_t{ n } + constexpr_sum(ns...); }
 #endif
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	constexpr int32_t constexpr_impl_first(int32_t i) { return i; }
 	

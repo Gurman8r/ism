@@ -3,6 +3,23 @@
 
 #include <core/version.hpp>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// root namespace
+namespace ism {}
+
+// private namespace
+namespace ism::priv {}
+
+// utilities namespace
+namespace ism::util {}
+
+// meta programming language
+namespace ism::mpl {}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+
 // alias
 #define ALIAS(m_type) \
 		using m_type = 
@@ -34,6 +51,8 @@
 			inline constexpr decltype(auto) operator<=(m_to const & other) noexcept { return value <= other.value; }	\
 			inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
 		}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 namespace ism
 {

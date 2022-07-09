@@ -16,11 +16,6 @@ namespace ism
 		{
 			return ((PROPERTY &)self).set(obj, value);
 		};
-
-		t.tp_install = CLASS_INSTALLER(PropertyObject, t)
-		{
-			return t;
-		};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -18,12 +18,10 @@ namespace ism
 			else { return util::compare((intptr_t)*self, (intptr_t)*other); }
 		};
 
-		t.tp_install = CLASS_INSTALLER(ListObject, t)
+		t.tp_bind = CLASS_INSTALLER(ListObject, t)
 		{
 			return t
-
 				.def("__contains__", &ListObject::contains<OBJ const &>)
-
 				;
 		};
 	}

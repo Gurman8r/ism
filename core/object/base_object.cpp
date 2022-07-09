@@ -5,101 +5,132 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Object::initialize_class()
-	{
-		static ON_SCOPE_ENTER(&)
-		{
-			Internals::get_singleton()->add_class(&__type_static);
-			ASSERT(__type_static.tp_install);
-			ASSERT(__type_static.tp_install(&__type_static));
-		};
-	}
-
-	void Object::_initialize_classv() { initialize_class(); }
-
-	void Object::_postinitialize() {}
-
-	bool Object::_predelete() { return true; }
-
-	void Object::_reference() {}
-
-	void Object::_unreference() {}
-
-	Object::Object() noexcept { m_refcount.init(); m_refcount_init.init(); }
-
-	Object::~Object() { m_type = nullptr; }
-
-	bool Object::init_ref()
-	{
-		if (reference())
-		{
-			if (!has_references() && m_refcount_init.unref())
-			{
-				// first referencing is already 1, so compensate for the ref above
-				unreference();
-			}
-			return true;
-		}
-		return false;
-	}
-
-	bool Object::reference()
-	{
-		uint32_t const rc_val{ m_refcount.refval() };
-		bool const success{ rc_val != 0 };
-		if (success && rc_val <= 2 /* higher is not relevant */) { _reference(); }
-		return success;
-	}
-
-	bool Object::unreference()
-	{
-		uint32_t const rc_val{ m_refcount.unrefval() };
-		bool const die{ rc_val == 0 };
-		if (rc_val <= 1 /* higher is not relevant */) { _unreference(); }
-		return die;
-	}
-
-	TYPE Object::_get_typev() const noexcept { return get_type_static(); }
-
-	TYPE Object::get_type_static() noexcept { return &__type_static; }
-
-	TYPE Object::get_type() const noexcept { return ((!!m_type) || (m_type = _get_typev())), m_type; }
-
-	void Object::set_type(TYPE const & value) noexcept { m_type = value; }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	OBJECT_EMBED(Object, t, TypeFlags_IsAbstract)
 	{
 		t.tp_getattro = (getattrofunc)&Object::generic_getattr;
 
 		t.tp_setattro = (setattrofunc)&Object::generic_setattr;
 
-		t.tp_install = CLASS_INSTALLER(Object, t)
+		t.tp_bind = CLASS_INSTALLER(Object, t)
 		{
 			return t
-
 				.def("init_ref", &Object::init_ref)
-		
-				.def("reference", &Object::reference)
-
-				.def("unreference", &Object::unreference)
-
+				.def("inc_ref", &Object::inc_ref)
+				.def("dec_ref", &Object::dec_ref)
 				.def("get_ref_count", &Object::get_ref_count)
-
 				.def("has_references", &Object::has_references)
-
+				.def("notification", &Object::notification)
 				;
 		};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	void Object::initialize_class()
+	{
+		static ON_SCOPE_ENTER(&) {
+			Internals::get_singleton()->add_class(&__type_static);
+			ASSERT(__type_static.tp_bind);
+			ASSERT(__type_static.tp_bind(&__type_static));
+		};
+	}
+
+	void Object::_initialize_classv()
+	{
+		initialize_class();
+	}
+
+	bool Object::_predelete()
+	{
+		notification(Notification_PreDelete, true);
+		return true;
+	}
+
+	void Object::_postinitialize()
+	{
+		notification(Notification_PostInitialize);
+	}
+
+	void Object::_initialize_object()
+	{
+		m_refcount.init();
+		m_refcount_init.init();
+	}
+
+	void Object::_finalize_object()
+	{
+		m_type = nullptr;
+	}
+
+	TYPE Object::_get_typev() const noexcept
+	{
+		return get_type_static();
+	}
+
+	TYPE Object::get_type_static() noexcept
+	{
+		return &__type_static;
+	}
+
+	TYPE Object::get_type() const noexcept
+	{
+		return ((!!m_type) || (m_type = _get_typev())), m_type;
+	}
+
+	void Object::set_type(TYPE const & value) noexcept
+	{
+		m_type = value;
+	}
+
+	bool Object::init_ref()
+	{
+		if (inc_ref())
+		{
+			if (!has_references() && m_refcount_init.dec_ref())
+			{
+				// first referencing is already 1, so compensate for the ref above
+				dec_ref();
+			}
+			return true;
+		}
+		return false;
+	}
+
+	bool Object::inc_ref()
+	{
+		uint32_t const rc_val{ m_refcount.refval() };
+		bool const ok{ rc_val != 0 };
+		if (ok && rc_val <= 2 /* higher is not relevant */) {
+			notification(Notification_Reference);
+		}
+		return ok;
+	}
+
+	bool Object::dec_ref()
+	{
+		uint32_t const rc_val{ m_refcount.unrefval() };
+		bool const die{ rc_val == 0 };
+		if (rc_val <= 1 /* higher is not relevant */) {
+			notification(Notification_Unreference, true);
+		}
+		return die;
+	}
+
+	void Object::notification(int32_t notification_id, bool reversed)
+	{
+		_notificationv(notification_id, reversed);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	OBJ Object::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
 	{
-		TYPE type{ ism::typeof(obj) };
+		TYPE type{ typeof(obj) };
 
-		if (!type->tp_dict && !type->ready()) { return nullptr; }
+		if (!type->tp_dict && !type->ready())
+		{
+			return nullptr;
+		}
 
 		OBJ descr{ type.lookup(name) };
 
@@ -117,9 +148,12 @@ namespace ism
 			}
 		}
 
-		if (OBJ * dictptr; !dict && (dictptr = get_dict_ptr(type, obj)))
+		if (!dict)
 		{
-			dict = *dictptr;
+			if (OBJ * dictptr{ get_dict_ptr(type, obj) })
+			{
+				dict = *dictptr;
+			}
 		}
 
 		if (dict)
@@ -127,9 +161,15 @@ namespace ism
 			return ((DICT &)dict).lookup(name);
 		}
 
-		if (get) { return get(descr, obj, type); }
+		if (get)
+		{
+			return get(descr, obj, type);
+		}
 
-		if (descr) { return descr; }
+		if (descr)
+		{
+			return descr;
+		}
 
 		return nullptr;
 	}
@@ -145,7 +185,10 @@ namespace ism
 	{
 		TYPE type{ typeof(obj) };
 
-		if (!type->tp_dict && !type->ready()) { return Error_Unknown; }
+		if (!type->tp_dict && !type->ready())
+		{
+			return Error_Unknown;
+		}
 
 		OBJ descr{ type.lookup(name) };
 
@@ -165,7 +208,12 @@ namespace ism
 		{
 			if (OBJ * dictptr{ get_dict_ptr(type, obj) })
 			{
-				if (!(dict = *dictptr)) { dict = DICT::new_(); }
+				dict = *dictptr;
+
+				if (!dict)
+				{
+					dict = DICT::new_();
+				}
 
 				return (((DICT &)dict)[name] = value), Error_None;
 			}
@@ -183,6 +231,18 @@ namespace ism
 	Error_ Object::generic_setattr(OBJ obj, OBJ name, OBJ value)
 	{
 		return generic_setattr_with_dict(obj, name, value, nullptr);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	bool predelete_handler(Object * value)
+	{
+		return value->_predelete();
+	}
+
+	void postinitialize_handler(Object * value)
+	{
+		value->_postinitialize();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -12,11 +12,6 @@ namespace ism
 		t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
 		t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
-
-		t.tp_install = CLASS_INSTALLER(MethodObject, t)
-		{
-			return t;
-		};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

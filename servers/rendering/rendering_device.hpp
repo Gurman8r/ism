@@ -13,11 +13,14 @@ namespace ism
 	{
 		OBJECT_COMMON(RenderingDevice, Object);
 
+	private:
 		static RenderingDevice * __singleton;
 
 	public:
 		RenderingDevice() noexcept { __singleton = this; }
+
 		virtual ~RenderingDevice() noexcept override = default;
+
 		FORCE_INLINE static RenderingDevice * get_singleton() noexcept { return __singleton; }
 
 	public:

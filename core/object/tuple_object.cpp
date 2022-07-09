@@ -11,11 +11,6 @@ namespace ism
 		{
 			return util::compare(*self, *other);
 		};
-
-		t.tp_install = CLASS_INSTALLER(TupleObject, t)
-		{
-			return t;
-		};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

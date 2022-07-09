@@ -17,23 +17,33 @@ namespace ism
 		friend class SceneTree;
 
 	public:
-		enum Notification_
+		enum
 		{
-			Notification_EnterTree = 3001,
+			Notification_EnterTree = 10,
 			Notification_ExitTree,
 			Notification_Ready,
 			Notification_Paused,
 			Notification_Unpaused,
-			Notification_Update,
-			Notification_FixedUpdate,
+			Notification_Process,
+			Notification_PhysicsProcess,
 			Notification_Parented,
 			Notification_Unparented,
 			Notification_Instanced,
 			Notification_DragBegin,
 			Notification_DragEnd,
 			Notification_PathChanged,
-			Notification_InternalUpdate,
-			Notification_InternalFixedUpdate,
+			Notification_Internal_Process,
+			Notification_Internal_PhysicsProcess,
+			Notification_PostEnterTree,
+
+			Notification_WM_MouseEnter = 1001,
+			Notification_WM_MouseExit,
+			Notification_WM_FocusIn,
+			Notification_WM_FocusOut,
+			Notification_WM_CloseRequest,
+			Notification_WM_GoBackRequest,
+			Notification_WM_SizeChanged,
+			Notification_WM_DpiChanged,
 
 			Notification_MemoryWarning = MainLoop::Notification_MemoryWarning,
 			Notification_Crash = MainLoop::Notification_Crash,
@@ -53,9 +63,10 @@ namespace ism
 	public:
 		virtual ~Node() override;
 
-		virtual void process(Duration const & dt);
+		void propagate_notification(int32_t value);
 
-		virtual void notification(int32_t id);
+	protected:
+		void _notification(int32_t value);
 
 	public:
 		SceneTree * get_tree() const noexcept { return m_tree; }
@@ -72,7 +83,7 @@ namespace ism
 
 		size_t get_child_count() const noexcept { return m_nodes.size(); }
 
-		Node * add_child(Node * child);
+		Node * add_child(Node * child) noexcept { return (child && child->set_parent(this)) ? child : nullptr; }
 
 		template <class T, class ... Args
 		> T * add_child(Args && ... args) noexcept { return (T *)add_child(memnew(T(FWD(args)...))); }
@@ -83,7 +94,6 @@ namespace ism
 
 		bool is_parent_of(Node const * child, bool recursive = false) const;
 
-	public:
 		template <class Fn = void(*)(Node *)
 		> void each_child(Fn && fn, bool recursive = true, bool reverse = false)
 		{

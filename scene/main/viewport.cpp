@@ -63,29 +63,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Viewport::process(Duration const & dt)
-	{
-		base_type::process(dt);
-	}
-
-	void Viewport::notification(int32_t id)
-	{
-		base_type::notification(id);
-		switch (id)
-		{
-		case Notification_EnterTree: {
-		} break;
-		case Notification_ExitTree: {
-		} break;
-		case Notification_Ready: {
-		} break;
-		case Notification_InternalUpdate: {
-		} break;
-		}
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	Vec2i Viewport::_get_size() const
 	{
 		return Vec2i();

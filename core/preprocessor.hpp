@@ -47,10 +47,6 @@
 #define STRVAR(name, str) \
 		static char const name[] = str
 
-// sentinal
-#define SENTINAL \
-		{}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // non-copyable

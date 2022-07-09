@@ -8,7 +8,7 @@ namespace ism
 
 	OBJECT_EMBED(TextFile, t)
 	{
-		t.tp_install = CLASS_INSTALLER(TextFile, t)
+		t.tp_bind = CLASS_INSTALLER(TextFile, t)
 		{
 			return t
 				.def("reload_from_file", &TextFile::reload_from_file)
@@ -25,7 +25,7 @@ namespace ism
 
 		// open file
 		std::ifstream file{ get_path().c_str(), std::ios_base::binary };
-		ON_SCOPE_EXIT(&file) { file.close(); };
+		ON_SCOPE_EXIT(&) { file.close(); };
 		if (!file) { return Error_Unknown; }
 
 		// load contents

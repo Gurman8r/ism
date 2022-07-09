@@ -129,7 +129,7 @@ Error_ MeshLoader::load_from_file(Mesh & mesh, Path const & path)
 		aiProcess_SortByPType |
 		aiProcess_GenSmoothNormals |
 		aiProcess_GenUVCoords) };
-	ON_SCOPE_EXIT(&ai) { ai.FreeScene(); };
+	ON_SCOPE_EXIT(&) { ai.FreeScene(); };
 
 	List<RS::SurfaceData> spec;
 	process_ainode(scene, scene->mRootNode, spec);

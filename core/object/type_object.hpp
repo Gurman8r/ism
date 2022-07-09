@@ -14,7 +14,7 @@ namespace ism
 	private:
 		friend class TYPE;
 		friend class Internals;
-		friend class EmbedObjectClassHelper<TypeObject>;
+		friend class _EmbedTypeHelper<TypeObject>;
 		friend struct DefaultDelete<TypeObject>;
 
 		static constexpr StringView __name_static{ "TypeObject" };
@@ -29,6 +29,13 @@ namespace ism
 		virtual StringView _get_classv() const noexcept override { return get_class_static(); }
 
 		virtual TYPE _get_typev() const noexcept override;
+
+		virtual void _notificationv(int32_t notification_id, bool reversed) override;
+
+		FORCE_INLINE void (Object::*_get_notification() const)(int32_t)
+		{
+			return (void (Object::*)(int32_t))&TypeObject::_notification;
+		}
 
 	public:
 		static constexpr StringView get_class_static() noexcept { return __name_static; }
@@ -45,12 +52,12 @@ namespace ism
 			tp_flags = flags;
 			tp_base = baseof<T>();
 			tp_del = (delfunc)memdelete<T>;
-			tp_install = (classproc)[](TYPE t) -> TYPE { return t; };
+			tp_bind = (classproc)[](TYPE t) -> TYPE { return t; };
 			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return Hasher<intptr_t>{}((intptr_t)*o); };
 			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> int32_t { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
 			if constexpr (std::is_default_constructible_v<T>) {
-				tp_new = (newfunc)[](TYPE, OBJ) -> OBJ { return memnew(T); };
+				tp_new = (newfunc)[](TYPE, OBJ) -> OBJ { return OBJ{ memnew(T) }; };
 			}
 
 			if constexpr (std::is_base_of_v<TypeObject, T>) { tp_flags |= TypeFlags_Type_Subclass; }
@@ -66,7 +73,7 @@ namespace ism
 		String				tp_name				{};
 		ssize_t				tp_size				{};
 		int32_t				tp_flags			{};
-		classproc			tp_install			{};
+		classproc			tp_bind				{};
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
 
@@ -106,6 +113,14 @@ namespace ism
 
 	protected:
 		bool check_consistency() const;
+
+		Error_ add_operators();
+
+		Error_ add_methods(MethodDef * methods);
+
+		Error_ add_members(MemberDef * members);
+
+		Error_ add_getsets(GetSetDef * getsets);
 
 		void inherit_slots(TypeObject * base);
 

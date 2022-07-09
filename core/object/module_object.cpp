@@ -28,16 +28,12 @@ namespace ism
 			}
 		};
 
-		t.tp_install = CLASS_INSTALLER(ModuleObject, t)
+		t.tp_bind = CLASS_INSTALLER(ModuleObject, t)
 		{
 			return t
-
 				.def("__contains__", [](ModuleObject const & self, OBJ const & value) { return self.m_dict.contains(value); })
-
 				.def_readonly("__name__", &ModuleObject::m_name)
-
 				.def_readonly("__dict__", &ModuleObject::m_dict)
-
 				;
 		};
 	}

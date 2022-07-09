@@ -42,9 +42,10 @@ namespace ism
 		virtual ~EditorNode() override;
 		FORCE_INLINE static EditorNode * get_singleton() noexcept { return __singleton; }
 
-		virtual void process(Duration const & dt) override;
-
 	protected:
+		void _notification(int32_t notification_id);
+
+	private:
 		void _draw_dockspace();
 		void _build_dockspace();
 		void _draw_menu_bar();

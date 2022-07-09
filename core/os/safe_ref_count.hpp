@@ -141,11 +141,11 @@ namespace ism
 	public:
 		FORCE_INLINE void init(uint32_t p_value = 1) { m_count = p_value; }
 
-		FORCE_INLINE bool ref() { return atomic_conditional_increment(&m_count) != 0; } // true on success
+		FORCE_INLINE bool inc_ref() { return atomic_conditional_increment(&m_count) != 0; } // true on success
+
+		FORCE_INLINE bool dec_ref() { return atomic_decrement(&m_count) == 0; } // true if must be disposed of
 
 		FORCE_INLINE auto refval() -> uint32_t { return atomic_conditional_increment(&m_count); } // nullptr-zero on success
-
-		FORCE_INLINE bool unref() { return atomic_decrement(&m_count) == 0; } // true if must be disposed of
 
 		FORCE_INLINE auto unrefval() -> uint32_t { return atomic_decrement(&m_count); } // 0 if must be disposed of
 

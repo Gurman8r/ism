@@ -14,7 +14,7 @@ namespace ism
 		OBJ m_script{};
 
 	public:
-		enum Notification_
+		enum
 		{
 			Notification_MemoryWarning = 2001,
 			Notification_Crash,
@@ -24,8 +24,8 @@ namespace ism
 			Notification_ApplicationFocusOut,
 		};
 
-		MainLoop() noexcept = default;
-		virtual ~MainLoop() noexcept override = default;
+		MainLoop() noexcept {}
+		virtual ~MainLoop() noexcept override {}
 
 		virtual void initialize();
 		virtual bool process(Duration const & dt);

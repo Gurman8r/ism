@@ -11,7 +11,7 @@
 private:																			\
 	friend class ism::Internals;													\
 																					\
-	friend class ism::EmbedObjectClassHelper<m_class>;								\
+	friend class ism::_EmbedTypeHelper<m_class>;									\
 																					\
 	friend struct ism::DefaultDelete<m_class>;										\
 																					\
@@ -26,9 +26,9 @@ protected:																			\
 		{																			\
 			Internals::get_singleton()->add_class(&m_class::__type_static);			\
 																					\
-			if (m_class::__type_static.tp_install)									\
+			if (m_class::__type_static.tp_bind)										\
 			{																		\
-				ASSERT(m_class::__type_static.tp_install(&m_class::__type_static));	\
+				ASSERT(m_class::__type_static.tp_bind(&m_class::__type_static));	\
 			}																		\
 		};																			\
 	}																				\
@@ -46,6 +46,27 @@ protected:																			\
 	FORCE_INLINE virtual ism::TYPE _get_typev() const noexcept override				\
 	{																				\
 		return m_class::get_type_static();											\
+	}																				\
+																					\
+	FORCE_INLINE void (Object::*_get_notification() const)(int32_t)					\
+	{																				\
+		return (void (Object::*)(int32_t))&m_class::_notification;					\
+	}																				\
+																					\
+	virtual void _notificationv(int32_t notification_id, bool reversed) override	\
+	{																				\
+		if (!reversed)																\
+		{																			\
+			m_inherits::_notificationv(notification_id, reversed);					\
+		}																			\
+		if (m_class::_get_notification() != m_inherits::_get_notification())		\
+		{																			\
+			_notification(notification_id);											\
+		}																			\
+		if (reversed)																\
+		{																			\
+			m_inherits::_notificationv(notification_id, reversed);					\
+		}																			\
 	}																				\
 																					\
 public:																				\
@@ -69,7 +90,7 @@ private:
 #define OBJECT_EMBED(m_class, m_var, ...)													\
 																							\
 	/* declare binder */																	\
-	template <> class ism::EmbedObjectClassHelper<m_class> final							\
+	template <> class ism::_EmbedTypeHelper<m_class> final									\
 	{																						\
 	public: static void embed(ism::TypeObject &);											\
 	};																						\
@@ -77,12 +98,12 @@ private:
 	/* construct type object */																\
 	ism::TypeObject m_class::__type_static =												\
 																							\
-	MAKE_EX(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
+	MAKER(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
 																							\
-	+ ism::EmbedObjectClassHelper<m_class>::embed;											\
+	+ ism::_EmbedTypeHelper<m_class>::embed;												\
 																							\
 	/* implement binder function body */													\
-	void ism::EmbedObjectClassHelper<m_class>::embed(ism::TypeObject & m_var)				\
+	void ism::_EmbedTypeHelper<m_class>::embed(ism::TypeObject & m_var)						\
 																							\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -95,13 +116,24 @@ namespace ism
 	// base object
 	class ISM_API Object : public ObjectAPI<Object>
 	{
+	public:
+		using base_type = typename void;
+
+		enum
+		{
+			Notification_PostInitialize	= 1,
+			Notification_PreDelete		= 2,
+			Notification_Reference		= 3,
+			Notification_Unreference	= 4,
+		};
+
 	private:
 		friend class OBJ;
 		friend class Internals;
-		friend class EmbedObjectClassHelper<Object>;
+		friend class _EmbedTypeHelper<Object>;
 		friend struct DefaultDelete<Object>;
-		friend bool predelete_handler(Object *);
-		friend void postinitialize_handler(Object *);
+		friend ISM_API_FUNC(bool) predelete_handler(Object *);
+		friend ISM_API_FUNC(void) postinitialize_handler(Object *);
 
 		static constexpr StringView __name_static{ "Object" };
 
@@ -113,64 +145,58 @@ namespace ism
 
 	protected:
 		static void initialize_class();
-
 		virtual void _initialize_classv();
 
-		FORCE_INLINE virtual StringView _get_classv() const noexcept { return get_class_static(); }
+		bool _predelete();
+		void _postinitialize();
 
+		void _initialize_object();
+		void _finalize_object();
+
+		FORCE_INLINE virtual StringView _get_classv() const noexcept { return get_class_static(); }
 		FORCE_INLINE virtual TYPE _get_typev() const noexcept;
 
-		Object() noexcept;
+		virtual void _notificationv(int32_t notification_id, bool reversed) {}
+		void _notification(int32_t notification_id) {}
+		FORCE_INLINE void (Object::*_get_notification() const)(int32_t) { return &Object::_notification; }
 
-		virtual void _postinitialize();
-
-		virtual bool _predelete();
-
-		virtual void _reference();
-
-		virtual void _unreference();
+		Object() { _initialize_object(); }
 
 	public:
-		using base_type = typename void;
-
-		virtual ~Object();
+		virtual ~Object() { _finalize_object(); }
 
 		bool init_ref();
-
-		bool reference();
-
-		bool unreference();
-
+		bool inc_ref();
+		bool dec_ref();
 		int32_t get_ref_count() const { return m_refcount.get(); }
-
 		bool has_references() const { return m_refcount_init.get() != 1; }
 
-	public:
+		void notification(int32_t notification_id, bool reversed = false);
+
 		static constexpr StringView get_class_static() noexcept { return __name_static; }
-
-		static TYPE get_type_static() noexcept;
-
 		StringView get_class() const noexcept { return _get_classv(); }
 
+		static TYPE get_type_static() noexcept;
 		TYPE get_type() const noexcept;
-
 		void set_type(TYPE const & value) noexcept;
 
-		template <class T> T cast() const &; // cast.hpp
-
-		template <class T> T cast() &&; // cast.hpp
-
-		Object * ptr() const noexcept { return const_cast<Object *>(this); } // :^]
-
-	public:
 		static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
-
 		static OBJ generic_getattr(OBJ obj, OBJ name);
 
 		static Error_ generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
-
 		static Error_ generic_setattr(OBJ obj, OBJ name, OBJ value);
+
+		template <class T> T cast() const &;
+		template <class T> T cast() &&;
+
+		Object * ptr() const noexcept { return (Object *)this; }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_FUNC(bool) predelete_handler(Object * value);
+
+	ISM_API_FUNC(void) postinitialize_handler(Object * value);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -179,15 +205,18 @@ namespace ism
 	{
 		template <class U> void operator()(U * ptr) const
 		{
-			if (!ptr) { return; }
-
-			Object * obj{ (Object *)ptr };
-
-			TYPE type{ typeof(obj) };
-
-			if (type && type->tp_del) { type->tp_del(obj); }
-			
-			else { memdelete(obj); }
+			if (Object * obj{ (Object *)ptr }; !obj)
+			{
+				return;
+			}
+			else if (obj->m_type && obj->m_type->tp_del)
+			{
+				obj->m_type->tp_del(obj);
+			}
+			else
+			{
+				memdelete(ptr);
+			}
 		}
 	};
 
@@ -202,13 +231,19 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	IMPLEMENT_DEFAULT_REF_TRAITS(OBJ);
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	inline bool predelete_handler(Object * value) { return value->_predelete(); }
-
-	inline void postinitialize_handler(Object * value) { value->_postinitialize(); }
+	template <> struct Hasher<OBJ> : Hasher<Ref<Object>> {};
+	
+	template <> struct EqualTo<OBJ> : EqualTo<Ref<Object>> {};
+	
+	template <> struct NotEqualTo<OBJ> : NotEqualTo<Ref<Object>> {};
+	
+	template <> struct Less<OBJ> : Less<Ref<Object>> {};
+	
+	template <> struct Greater<OBJ> : Greater<Ref<Object>> {};
+	
+	template <> struct LessEqual<OBJ> : LessEqual<Ref<Object>> {};
+	
+	template <> struct GreaterEqual<OBJ> : GreaterEqual<Ref<Object>> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -223,7 +223,7 @@ namespace ism
 		{
 			OBJ result;
 			{
-				LoaderLifeSupport guard{};
+				priv::LoaderLifeSupport guard{};
 				result = record.impl(*this);
 			}
 			return result;

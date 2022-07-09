@@ -6,7 +6,7 @@ namespace ism
 
 	OBJECT_EMBED(MainLoop, t)
 	{
-		t.tp_install = CLASS_INSTALLER(MainLoop, t)
+		t.tp_bind = CLASS_INSTALLER(MainLoop, t)
 		{
 			return t
 				.def("initialize", &MainLoop::initialize)
@@ -21,11 +21,11 @@ namespace ism
 
 	void MainLoop::initialize()
 	{
-		STR_IDENTIFIER(initialize);
+		STR_IDENTIFIER(_initialize);
 
 		if (m_script)
 		{
-			if (OBJ callback{ getattr(m_script, &ID_initialize) })
+			if (OBJ callback{ getattr(m_script, &ID__initialize) })
 			{
 				call_object(callback);
 			}
@@ -34,13 +34,13 @@ namespace ism
 
 	bool MainLoop::process(Duration const & dt)
 	{
-		STR_IDENTIFIER(process);
+		STR_IDENTIFIER(_process);
 
 		bool should_close{};
 
 		if (m_script)
 		{
-			if (OBJ callback{ getattr(m_script, &ID_process) })
+			if (OBJ callback{ getattr(m_script, &ID__process) })
 			{
 				static FloatObject arg0; arg0 = dt.count();
 				static ListObject args{ &arg0, };
@@ -57,11 +57,11 @@ namespace ism
 
 	void MainLoop::finalize()
 	{
-		STR_IDENTIFIER(finalize);
+		STR_IDENTIFIER(_finalize);
 
 		if (m_script)
 		{
-			if (OBJ callback{ getattr(m_script, &ID_finalize) })
+			if (OBJ callback{ getattr(m_script, &ID__finalize) })
 			{
 				call_object(callback);
 			}

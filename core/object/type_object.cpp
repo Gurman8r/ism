@@ -7,38 +7,62 @@ namespace ism
 
 	void TypeObject::initialize_class()
 	{
-		static ON_SCOPE_ENTER(&)
-		{
+		static ON_SCOPE_ENTER(&) {
 			Internals::get_singleton()->add_class(&__type_static);
-			ASSERT(__type_static.tp_install);
-			ASSERT(__type_static.tp_install(&__type_static));
+			ASSERT(__type_static.tp_bind);
+			ASSERT(__type_static.tp_bind(&__type_static));
 		};
 	}
 
-	void TypeObject::_initialize_classv() { TypeObject::initialize_class(); }
+	void TypeObject::_initialize_classv()
+	{
+		TypeObject::initialize_class();
+	}
 
-	TYPE TypeObject::_get_typev() const noexcept { return get_type_static(); }
+	TYPE TypeObject::_get_typev() const noexcept
+	{
+		return get_type_static();
+	}
 
-	TYPE TypeObject::get_type_static() noexcept { return &__type_static; }
+	TYPE TypeObject::get_type_static() noexcept
+	{
+		return &__type_static;
+	}
+
+	void TypeObject::_notificationv(int32_t notification_id, bool reversed)
+	{
+		if (!reversed)
+		{
+			Object::_notificationv(notification_id, reversed);
+		}
+		if (TypeObject::_get_notification() != Object::_get_notification())
+		{
+			_notification(notification_id);
+		}
+		if (reversed)
+		{
+			Object::_notificationv(notification_id, reversed);
+		}
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	static MemberDef type_members[]
 	{
 		{"__dictoffset__", DataType_SSizeT, offsetof(TypeObject, tp_dictoffset) },
-		SENTINAL
+		{0}
 	};
 
 	static MethodDef type_methods[]
 	{
 		{ "", binaryfunc{} },
-		SENTINAL
+		{0}
 	};
 
 	static GetSetDef type_getsets[]
 	{
 		{ "", getter{}, setter{} },
-		SENTINAL
+		{0}
 	};
 
 	OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
@@ -70,42 +94,26 @@ namespace ism
 			return fn ? fn(self, args) : nullptr;
 		};
 
-		t.tp_install = CLASS_INSTALLER(TypeObject, t)
+		t.tp_bind = CLASS_INSTALLER(TypeObject, t)
 		{
 			return t
-
 				.def_static("__instancecheck__", [](OBJ const & obj, OBJ const & type) { return isinstance(obj, type); })
 
 				.def("__contains__", [](TypeObject const & self, OBJ const & value) { return DICT(self.tp_dict).contains(value); })
-
 				.def("__subclasscheck__", &TypeObject::is_subtype)
 
 				.def_readonly("__base__", &TypeObject::tp_base)
-			
 				.def_readonly("__bases__", &TypeObject::tp_bases)
-			
 				.def_readonly("__dict__", &TypeObject::tp_dict)
-			
 				.def_readonly("__dictoffset__", &TypeObject::tp_dictoffset)
-			
 				.def_readonly("__flags__", &TypeObject::tp_flags)
-			
 				.def_readonly("__mro__", &TypeObject::tp_mro)
-			
 				.def_readwrite("__name__", &TypeObject::tp_name)
-			
 				.def_readonly("__size__", &TypeObject::tp_size)
-			
 				.def_readonly("__vectorcalloffset__", &TypeObject::tp_vectorcalloffset)
 			
 				.def_property_readonly("__text_signature__", [](TypeObject const & self) { return STR(/* TODO */); })
-			
 				.def_property_readonly("__qualname__", [](TypeObject const & self) { return STR(/* TODO */); })
-
-				.def_static("type_getattro", &TypeObject::type_getattro)
-			
-				.def_static("type_setattro", &TypeObject::type_setattro)
-
 				;
 		};
 	}
@@ -120,23 +128,50 @@ namespace ism
 
 		tp_flags |= TypeFlags_Readying;
 
-		if (!tp_base && this != typeof<OBJ>()) { tp_base = typeof<OBJ>(); }
+		if (!tp_base && this != typeof<Object>()) {
+			tp_base = typeof<Object>();
+		}
 	
-		if (tp_base && !tp_base->tp_dict) { ASSERT(tp_base->ready()); }
+		if (tp_base && !tp_base->tp_dict) {
+			ASSERT(tp_base->ready());
+		}
 	
-		if (!get_type() && tp_base) { set_type(tp_base->get_type()); }
+		if (!get_type() && tp_base) {
+			set_type(tp_base->get_type());
+		}
 	
 		tp_bases = LIST::new_();
 
-		if (tp_base) { ((LIST &)tp_bases).append(tp_base); }
+		if (tp_base) {
+			((LIST &)tp_bases).append(tp_base);
+		}
 
-		if (!tp_dict) { tp_dict = DICT::new_(); }
+		if (!tp_dict) {
+			tp_dict = DICT::new_();
+		}
+
+		ASSERT(add_operators() == Error_None);
+
+		if (tp_methods) {
+			ASSERT(add_methods(tp_methods) == Error_None);
+		}
+
+		if (tp_members) {
+			ASSERT(add_members(tp_members) == Error_None);
+		}
+
+		if (tp_getsets) {
+			ASSERT(add_getsets(tp_getsets) == Error_None);
+		}
 
 		ASSERT(mro_internal(nullptr));
 	
 		if (tp_base)
 		{
-			if (!tp_base.is(typeof<OBJ>()) || !tp_new) { tp_new = tp_base->tp_new; }
+			if (!tp_base.is(typeof<Object>()) || !tp_new)
+			{
+				tp_new = tp_base->tp_new;
+			}
 
 			copy_val(*tp_base, &TypeObject::tp_size);
 
@@ -150,11 +185,12 @@ namespace ism
 
 		for (TYPE const & base : (LIST &)tp_bases)
 		{
-			if (!base->tp_subclasses) { base->tp_subclasses = DICT::new_(); }
+			if (!base->tp_subclasses)
+			{
+				base->tp_subclasses = DICT::new_();
+			}
 
-			TYPE self_ref{ this };
-
-			((DICT &)base->tp_subclasses)[self_ref] = self_ref;
+			((DICT &)base->tp_subclasses)[TYPE(this)] = TYPE(this);
 		}
 
 		tp_flags = (tp_flags & ~TypeFlags_Readying) | TypeFlags_Ready;
@@ -164,7 +200,10 @@ namespace ism
 
 	OBJ TypeObject::lookup(OBJ const & name) const
 	{
-		if (!name || !LIST::check_(tp_mro)) { return nullptr; }
+		if (!name || !LIST::check_(tp_mro))
+		{
+			return nullptr;
+		}
 		else
 		{
 			for (TYPE const & base : (LIST &)tp_mro)
@@ -200,7 +239,7 @@ namespace ism
 
 			} while (base);
 
-			return value.is(typeof<OBJ>());
+			return value.is(typeof<Object>());
 		}
 	}
 
@@ -218,6 +257,26 @@ namespace ism
 		ASSERT(DICT::check_(tp_dict));
 
 		return true;
+	}
+
+	Error_ TypeObject::add_operators()
+	{
+		return Error_None;
+	}
+
+	Error_ TypeObject::add_members(MemberDef * members)
+	{
+		return Error_None;
+	}
+
+	Error_ TypeObject::add_methods(MethodDef * methods)
+	{
+		return Error_None;
+	}
+
+	Error_ TypeObject::add_getsets(GetSetDef * getsets)
+	{
+		return Error_None;
 	}
 
 	void TypeObject::inherit_slots(TypeObject * base)
@@ -276,8 +335,7 @@ namespace ism
 	{
 		OBJ old_mro{ tp_mro };
 
-		OBJ new_mro{ std::invoke([&]() -> OBJ
-		{
+		OBJ new_mro{ std::invoke([&]() {
 			// mro_implementation
 			ASSERT(LIST::check_(tp_bases));
 			LIST result{ LIST::new_() };
@@ -302,7 +360,9 @@ namespace ism
 
 	Error_ TypeObject::update_slot(STR const & name)
 	{
-		if (!name || name.empty()) { return Error_Unknown; }
+		if (!name || name.empty()) {
+			return Error_Unknown;
+		}
 		switch (name.hash_code())
 		{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

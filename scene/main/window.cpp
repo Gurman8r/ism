@@ -21,18 +21,6 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Window::process(Duration const & dt)
-	{
-		base_type::process(dt);
-	}
-
-	void Window::notification(int32_t id)
-	{
-		base_type::notification(id);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	String Window::get_title() const
 	{
 		return DS::get_singleton()->window_get_title(m_window);

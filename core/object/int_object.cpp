@@ -21,11 +21,6 @@ namespace ism
 
 			else { return util::compare((intptr_t)*self, (intptr_t)*other); }
 		};
-
-		t.tp_install = CLASS_INSTALLER(IntObject, t)
-		{
-			return t;
-		};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
