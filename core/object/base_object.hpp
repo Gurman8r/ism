@@ -123,8 +123,6 @@ namespace ism
 		{
 			Notification_PostInitialize	= 1,
 			Notification_PreDelete		= 2,
-			Notification_Reference		= 3,
-			Notification_Unreference	= 4,
 		};
 
 	private:

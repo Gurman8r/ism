@@ -29,22 +29,6 @@ namespace ism
 		return &__type_static;
 	}
 
-	void TypeObject::_notificationv(int32_t notification_id, bool reversed)
-	{
-		if (!reversed)
-		{
-			Object::_notificationv(notification_id, reversed);
-		}
-		if (TypeObject::_get_notification() != Object::_get_notification())
-		{
-			_notification(notification_id);
-		}
-		if (reversed)
-		{
-			Object::_notificationv(notification_id, reversed);
-		}
-	}
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	static MemberDef type_members[]

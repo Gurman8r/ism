@@ -63,8 +63,9 @@ namespace ism
 			VideoMode * current_mode{};
 		};
 
+		virtual WindowID get_main_context() const = 0;
 		virtual WindowID get_current_context() const = 0;
-		virtual void set_current_context(WindowID window) = 0;
+		virtual void make_context_current(WindowID window) = 0;
 
 		virtual bool window_should_close(WindowID window) const = 0;
 		virtual void window_set_should_close(WindowID window, bool value) = 0;
@@ -159,9 +160,9 @@ namespace ism
 		using FocusCallback =				void(*)(WindowID, int32_t);
 		using FramebufferResizeCallback =	void(*)(WindowID, int32_t, int32_t);
 		using IconifyCallback =				void(*)(WindowID, int32_t);
-		using KeyCallback =					void(*)(WindowID, int32_t, int32_t, int32_t, int32_t);
+		using KeyCallback =					void(*)(WindowID, KeyCode_, int32_t, int32_t, int32_t);
 		using MaximizeCallback =			void(*)(WindowID, int32_t);
-		using MouseButtonCallback =			void(*)(WindowID, int32_t, int32_t, int32_t);
+		using MouseButtonCallback =			void(*)(WindowID, MouseButton_, int32_t, int32_t);
 		using MouseEnterCallback =			void(*)(WindowID, int32_t);
 		using MousePositionCallback =		void(*)(WindowID, double_t, double_t);
 		using PositionCallback =			void(*)(WindowID, int32_t, int32_t);

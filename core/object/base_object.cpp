@@ -100,8 +100,9 @@ namespace ism
 	{
 		uint32_t const rc_val{ m_refcount.refval() };
 		bool const ok{ rc_val != 0 };
-		if (ok && rc_val <= 2 /* higher is not relevant */) {
-			notification(Notification_Reference);
+		if (ok && rc_val <= 2 /* higher is not relevant */)
+		{
+			/* nothing to do */
 		}
 		return ok;
 	}
@@ -110,8 +111,9 @@ namespace ism
 	{
 		uint32_t const rc_val{ m_refcount.unrefval() };
 		bool const die{ rc_val == 0 };
-		if (rc_val <= 1 /* higher is not relevant */) {
-			notification(Notification_Unreference, true);
+		if (rc_val <= 1 /* higher is not relevant */)
+		{
+			/* nothing to do */
 		}
 		return die;
 	}

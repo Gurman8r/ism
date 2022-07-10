@@ -91,7 +91,7 @@ void glCheckError(cstring expr, cstring file, uint32_t line)
 	} break;
 	}
 
-	SYSTEM->printerrf(
+	OS::get_singleton()->printerrf(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -760,7 +760,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderSta
 			glCheck(glDeleteObjectARB(obj));
 			glCheck(glDeleteProgramsARB(1, &s->handle));
 			memdelete(s);
-			SYSTEM->printerrf("%.*s\n", log_len, log_str);
+			OS::get_singleton()->printerrf("%.*s\n", log_len, log_str);
 			return nullptr;
 		}
 
@@ -778,7 +778,7 @@ RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderSta
 		glCheck(glGetInfoLogARB(s->handle, sizeof(log_str), &log_len, log_str));
 		glCheck(glDeleteProgramsARB(1, &s->handle));
 		memdelete(s);
-		SYSTEM->printerrf("%.*s\n", log_len, log_str);
+		OS::get_singleton()->printerrf("%.*s\n", log_len, log_str);
 		return nullptr;
 	}
 

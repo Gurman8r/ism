@@ -126,12 +126,17 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	DS::WindowID DisplayServerWindows::get_main_context() const
+	{
+		return (WindowID)&m_window;
+	}
+
 	DS::WindowID DisplayServerWindows::get_current_context() const
 	{
 		return (WindowID)glfwGetWindowUserPointer(glfwGetCurrentContext());
 	}
 
-	void DisplayServerWindows::set_current_context(WindowID window)
+	void DisplayServerWindows::make_context_current(WindowID window)
 	{
 		_Window const & w{ *VALIDATE((_Window const *)window) };
 		glfwMakeContextCurrent(w.handle);

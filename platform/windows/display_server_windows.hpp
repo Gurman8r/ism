@@ -31,8 +31,9 @@ namespace ism
 		List<VideoMode> const & get_fullscreen_video_modes() const;
 
 	public:
+		virtual WindowID get_main_context() const override;
 		virtual WindowID get_current_context() const override;
-		virtual void set_current_context(WindowID window) override;
+		virtual void make_context_current(WindowID window) override;
 
 		virtual bool window_should_close(WindowID window) const override;
 		virtual void window_set_should_close(WindowID window, bool value) override;

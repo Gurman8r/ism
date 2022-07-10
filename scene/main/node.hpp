@@ -94,6 +94,8 @@ namespace ism
 
 		bool is_parent_of(Node const * child, bool recursive = false) const;
 
+	public:
+		// call function on each child
 		template <class Fn = void(*)(Node *)
 		> void each_child(Fn && fn, bool recursive = true, bool reverse = false)
 		{
@@ -109,7 +111,6 @@ namespace ism
 					}
 				}
 			};
-
 			if (!reverse)
 			{
 				_each_child(m_nodes.begin(), m_nodes.end(), FWD(fn), recursive, reverse);
@@ -120,6 +121,33 @@ namespace ism
 			}
 		}
 
+		// call function on each child passing its index
+		template <class Fn = void(*)(Node *, size_t)
+		> void each_child_i(Fn && fn, bool recursive = true, bool reverse = false)
+		{
+			auto _each_child_i = [](auto first, auto last, auto fn, bool recursive, bool reverse)
+			{
+				for (size_t i{}; first != last; ++first)
+				{
+					std::invoke(fn, *first, i++);
+
+					if (recursive)
+					{
+						(*first)->each_child_i(fn, true, reverse);
+					}
+				}
+			};
+			if (!reverse)
+			{
+				_each_child_i(m_nodes.begin(), m_nodes.end(), FWD(fn), recursive, reverse);
+			}
+			else
+			{
+				_each_child_i(m_nodes.rbegin(), m_nodes.rend(), FWD(fn), recursive, reverse);
+			}
+		}
+
+		// find child with predicate
 		template <class Pr = bool(*)(Node *)
 		> Node * find_child_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
 		{
@@ -127,7 +155,7 @@ namespace ism
 			{
 				if (auto const it{ std::find_if(first, last, pr) }; it != last)
 				{
-					return (*it);
+					return *it;
 				}
 				else if (recursive)
 				{
@@ -141,7 +169,6 @@ namespace ism
 				}
 				return nullptr;
 			};
-
 			if (!reverse)
 			{
 				return _find_child_if(m_nodes.begin(), m_nodes.end(), FWD(pr), recursive, reverse);

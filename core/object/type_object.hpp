@@ -30,11 +30,22 @@ namespace ism
 
 		virtual TYPE _get_typev() const noexcept override;
 
-		virtual void _notificationv(int32_t notification_id, bool reversed) override;
+		FORCE_INLINE void (Object::*_get_notification() const)(int32_t) { return (void (Object::*)(int32_t))&TypeObject::_notification; }
 
-		FORCE_INLINE void (Object::*_get_notification() const)(int32_t)
+		virtual void _notificationv(int32_t notification_id, bool reversed) override
 		{
-			return (void (Object::*)(int32_t))&TypeObject::_notification;
+			if (!reversed)
+			{
+				Object::_notificationv(notification_id, reversed);
+			}
+			if (TypeObject::_get_notification() != Object::_get_notification())
+			{
+				_notification(notification_id);
+			}
+			if (reversed)
+			{
+				Object::_notificationv(notification_id, reversed);
+			}
 		}
 
 	public:
@@ -56,8 +67,9 @@ namespace ism
 			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return Hasher<intptr_t>{}((intptr_t)*o); };
 			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> int32_t { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
-			if constexpr (std::is_default_constructible_v<T>) {
-				tp_new = (newfunc)[](TYPE, OBJ) -> OBJ { return OBJ{ memnew(T) }; };
+			if constexpr (std::is_default_constructible_v<T>)
+			{
+				tp_new = (newfunc)[](TYPE, OBJ) -> OBJ { return memnew(T); };
 			}
 
 			if constexpr (std::is_base_of_v<TypeObject, T>) { tp_flags |= TypeFlags_Type_Subclass; }

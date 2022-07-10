@@ -1,15 +1,15 @@
 #ifndef _ISM_INPUT_EVENT_HPP_
 #define _ISM_INPUT_EVENT_HPP_
 
-#include <core/io/event.hpp>
+#include <core/object/detail/class.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API InputEvent : public Event
+	class ISM_API InputEvent : public Object
 	{
-		EVENT_COMMON(InputEvent, Event);
+		OBJECT_COMMON(InputEvent, Object);
 
 	public:
 		InputEvent() noexcept {}

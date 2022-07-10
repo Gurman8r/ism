@@ -34,11 +34,6 @@ void ism::register_core_types()
 		InputEvent,
 		InputMap,
 
-		Event,
-		EventHandler,
-		DummyHandler,
-		EventBus,
-
 		MainLoop
 
 	>();

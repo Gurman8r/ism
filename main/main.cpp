@@ -41,7 +41,6 @@ static bool editor{ true };
 int32_t Main::g_iterating{};
 
 static Internals *			g_internals{};
-static EventBus *			g_bus{};
 static Input *				g_input{};
 static AudioServer *		g_audio{};
 static DisplayServer *		g_display{};
@@ -53,7 +52,7 @@ static TextServer *			g_text{};
 
 Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 {
-	SYSTEM->initialize();
+	OS::get_singleton()->initialize();
 	
 	g_internals = memnew(Internals);
 
@@ -87,10 +86,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	
 	register_server_singletons();
 	
-	SYSTEM->set_cmdline(exepath, { argv, argv + argc });
-
-	// event system
-	g_bus = memnew(EventBus);
+	OS::get_singleton()->set_cmdline(exepath, { argv, argv + argc });
 
 	// text server
 	g_text = memnew(TextServer);
@@ -101,16 +97,41 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	// display server
 	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
 	DS::WindowID main_window{ g_display->get_current_context() };
-	g_display->window_set_char_callback(main_window, [](auto, auto c) { g_input->m_last_char = (char)c; });
-	g_display->window_set_mouse_button_callback(main_window, [](auto, auto b, auto a, auto) { g_input->m_mouse_down.write(b, a != KeyState_Release); });
-	g_display->window_set_mouse_position_callback(main_window, [](auto, auto x, auto y) { g_input->m_mouse_pos = { (float_t)x, (float_t)y }; });
-	g_display->window_set_scroll_callback(main_window, [](auto, auto x, auto y) { g_input->m_scroll = { (float_t)x, (float_t)y }; });
-	g_display->window_set_key_callback(main_window, [](auto, auto k, auto, auto a, auto) {
-		g_input->m_keys_down.write(k, a != KeyState_Release);
+	g_display->window_set_char_callback(main_window, [](DS::WindowID, auto c)
+	{
+		g_input->m_last_char = (char)c;
+	});
+	g_display->window_set_key_callback(main_window, [](DS::WindowID, auto key, auto scan, auto action, auto mods)
+	{
+		g_input->m_keys_down.write(key, action != KeyState_Release);
 		g_input->m_is_shift = g_input->m_keys_down[KeyCode_LeftShift] || g_input->m_keys_down[KeyCode_RightShift];
 		g_input->m_is_ctrl = g_input->m_keys_down[KeyCode_LeftCtrl] || g_input->m_keys_down[KeyCode_RightCtrl];
 		g_input->m_is_alt = g_input->m_keys_down[KeyCode_LeftAlt] || g_input->m_keys_down[KeyCode_RightAlt];
 		g_input->m_is_super = g_input->m_keys_down[KeyCode_LeftSuper] || g_input->m_keys_down[KeyCode_RightSuper];
+	});
+	g_display->window_set_mouse_button_callback(main_window, [](DS::WindowID, auto button, auto action, auto mods)
+	{
+		g_input->m_mouse_down.write(button, action != KeyState_Release);
+	});
+	g_display->window_set_mouse_position_callback(main_window, [](DS::WindowID, auto x, auto y)
+	{
+		g_input->m_mouse_pos = { (float_t)x, (float_t)y };
+	});
+	g_display->window_set_scroll_callback(main_window, [](DS::WindowID, auto x, auto y)
+	{
+		g_input->m_scroll = { (float_t)x, (float_t)y };
+	});
+	g_display->window_set_close_callback(main_window, [](DS::WindowID)
+	{
+		SceneTree::get_singleton()->get_root()->propagate_notification(Node::Notification_WM_CloseRequest);
+	});
+	g_display->window_set_mouse_enter_callback(main_window, [](DS::WindowID, auto entered)
+	{
+		SceneTree::get_singleton()->get_root()->propagate_notification(entered ? Node::Notification_WM_MouseEnter : Node::Notification_WM_MouseExit);
+	});
+	g_display->window_set_focus_callback(main_window, [](DS::WindowID, auto focused)
+	{
+		SceneTree::get_singleton()->get_root()->propagate_notification(focused ? Node::Notification_WM_FocusIn : Node::Notification_WM_FocusOut);
 	});
 
 	// rendering server
@@ -162,7 +183,7 @@ bool Main::start()
 #endif
 	}
 	
-	SYSTEM->set_main_loop(main_loop);
+	OS::get_singleton()->set_main_loop(main_loop);
 
 	main_loop->initialize();
 
@@ -208,12 +229,10 @@ bool Main::iteration()
 		g_input->m_last_char = 0;
 	};
 
-	// update main loop
 	ImGui_NewFrame();
-	if (SYSTEM->get_main_loop()->process(delta_time)) { should_close = true; }
+	if (OS::get_singleton()->get_main_loop()->process(delta_time)) { should_close = true; }
 	ImGui::Render();
 
-	// render
 	RD::get_singleton()->draw_list_begin_for_screen(g_display->get_current_context());
 	ImGui_RenderDrawData(&g_imgui->Viewports[0]->DrawDataP);
 	RD::get_singleton()->draw_list_end();
@@ -222,7 +241,7 @@ bool Main::iteration()
 		DS::WindowID backup_context{ g_display->get_current_context() };
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		g_display->set_current_context(backup_context);
+		g_display->make_context_current(backup_context);
 	}
 
 	return should_close;
@@ -233,8 +252,8 @@ void Main::cleanup()
 	//ResourceLoader::remove_custom_loaders();
 	//ResourceSaver::remove_custom_savers();
 
-	SYSTEM->get_main_loop()->finalize();
-	SYSTEM->delete_main_loop();
+	OS::get_singleton()->get_main_loop()->finalize();
+	OS::get_singleton()->delete_main_loop();
 
 	//ScriptServer::finish_languages();
 
@@ -250,7 +269,7 @@ void Main::cleanup()
 
 	memdelete(g_audio);
 
-	SYSTEM->finalize();
+	OS::get_singleton()->finalize();
 
 	ImGui_Shutdown();
 	ImGui::DestroyContext(g_imgui);
@@ -261,13 +280,12 @@ void Main::cleanup()
 	
 	memdelete(g_input);
 	memdelete(g_text);
-	memdelete(g_bus);
 
 	unregister_core_driver_types();
 	unregister_core_types();
 
 	memdelete(g_internals);
-	SYSTEM->finalize_core();
+	OS::get_singleton()->finalize_core();
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
