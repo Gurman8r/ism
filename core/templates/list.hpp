@@ -25,8 +25,9 @@ namespace ism
 		NODISCARD operator void * () const noexcept { return !empty() ? (void *)data() : nullptr; }
 
 		NODISCARD auto find(T const & value) { return std::find(begin(), end(), value); }
-		NODISCARD auto find(T const & value) const { return std::find(begin(), end(), value); }
 		NODISCARD auto find(T && value) noexcept { return std::find(begin(), end(), FWD(value)); }
+
+		NODISCARD auto find(T const & value) const { return std::find(begin(), end(), value); }
 		NODISCARD auto find(T && value) const noexcept { return std::find(begin(), end(), FWD(value)); }
 
 		NODISCARD bool contains(T const & value) const { return end() != find(value); }

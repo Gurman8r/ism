@@ -9,7 +9,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Node::Node(SceneTree * tree) : m_tree{ tree ? tree : VALIDATE(SceneTree::get_singleton()) }
+	Node::Node()
 	{
 	}
 
@@ -20,18 +20,6 @@ namespace ism
 			memdelete(m_nodes.back());
 
 			m_nodes.pop_back();
-		}
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	void Node::propagate_notification(int32_t value)
-	{
-		notification(value);
-
-		for (Node * child : m_nodes)
-		{
-			child->propagate_notification(value);
 		}
 	}
 
@@ -88,6 +76,14 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	bool Node::set_tree(SceneTree * tree)
+	{
+		if (!tree || m_tree == tree) { return false; }
+		m_tree = tree;
+		for (Node * child : m_nodes) { child->set_tree(tree); }
+		return true;
+	}
+
 	bool Node::set_parent(Node * parent)
 	{
 		if (!parent || this == parent || m_parent == parent) { return false; }
@@ -100,7 +96,6 @@ namespace ism
 			m_parent->m_nodes.erase(m_parent->m_nodes.begin() + get_sibling_index());
 		}
 
-		// set parent
 		m_parent = parent;
 		m_tree = parent->m_tree;
 		return true;
@@ -110,9 +105,9 @@ namespace ism
 	{
 		if (m_parent)
 		{
-			for (size_t i = 0; i < m_parent->get_child_count(); ++i)
+			for (size_t i = 0; i < m_parent->m_nodes.size(); ++i)
 			{
-				if (this == m_parent->get_child(i))
+				if (this == m_parent->m_nodes[i])
 				{
 					return i;
 				}
@@ -125,18 +120,23 @@ namespace ism
 	{
 		ASSERT(m_parent);
 
-		ASSERT(new_index < m_parent->get_child_count());
+		ASSERT(new_index < m_parent->m_nodes.size());
 		
 		size_t const old_index{ get_sibling_index() };
-		
+
 		if (new_index == old_index) { return; }
 		
 		std::swap(m_parent->m_nodes[new_index], m_parent->m_nodes[old_index]);
 	}
 
+	Node * Node::add_child(Node * child)
+	{
+		return (child && child->set_parent(this)) ? child : nullptr;
+	}
+
 	void Node::destroy_child(size_t i)
 	{
-		ASSERT(i < get_child_count());
+		ASSERT(i < m_nodes.size());
 
 		auto const it{ m_nodes.begin() + i };
 

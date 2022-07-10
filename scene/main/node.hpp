@@ -58,124 +58,87 @@ namespace ism
 		Node *			m_parent{};
 		List<Node *>	m_nodes{};
 
-		explicit Node(SceneTree * tree = nullptr);
+		Node();
 
 	public:
 		virtual ~Node() override;
 
-		void propagate_notification(int32_t value);
-
 	protected:
-		void _notification(int32_t value);
+		void _notification(int32_t notification_id);
 
 	public:
 		SceneTree * get_tree() const noexcept { return m_tree; }
+		bool set_tree(SceneTree * tree);
 
 		Node * get_parent() const noexcept { return m_parent; }
-
 		bool set_parent(Node * parent);
 
 		size_t get_sibling_index() const;
-
 		void set_sibling_index(size_t i);
 
 		Node * get_child(size_t i) const noexcept { ASSERT(i < get_child_count()); return m_nodes[i]; }
-
 		size_t get_child_count() const noexcept { return m_nodes.size(); }
 
-		Node * add_child(Node * child) noexcept { return (child && child->set_parent(this)) ? child : nullptr; }
-
 		template <class T, class ... Args
-		> T * add_child(Args && ... args) noexcept { return (T *)add_child(memnew(T(FWD(args)...))); }
-
+		> T * add_child(Args && ... args) { return (T *)add_child(memnew(T(FWD(args)...))); }
+		Node * add_child(Node * child);
 		void destroy_child(size_t i);
-
+		
 		bool is_child_of(Node const * parent, bool recursive = false) const;
-
 		bool is_parent_of(Node const * child, bool recursive = false) const;
 
 	public:
-		// call function on each child
-		template <class Fn = void(*)(Node *)
-		> void each_child(Fn && fn, bool recursive = true, bool reverse = false)
+		template <bool Reverse = false
+		> void propagate_notification(int32_t notification_id) noexcept
 		{
-			auto _each_child = [](auto first, auto last, auto fn, bool recursive, bool reverse)
+			propagate<Reverse>(&Node::notification, notification_id, Reverse);
+		}
+
+		template <bool Reverse = false, class Fn, class ... Args
+		> void propagate(Fn && fn, Args && ... args) noexcept
+		{
+			auto _propagate = [](auto first, auto last, auto fn, auto ... args)
 			{
 				for (; first != last; ++first)
 				{
-					std::invoke(fn, *first);
-
-					if (recursive)
-					{
-						(*first)->each_child(fn, true, reverse);
-					}
+					(*first)->propagate<Reverse>(fn, FWD(args)...);
 				}
 			};
-			if (!reverse)
+			if constexpr (!Reverse)
 			{
-				_each_child(m_nodes.begin(), m_nodes.end(), FWD(fn), recursive, reverse);
+				std::invoke(fn, this, FWD(args)...);
+
+				_propagate(m_nodes.begin(), m_nodes.end(), fn, FWD(args)...);
 			}
 			else
 			{
-				_each_child(m_nodes.rbegin(), m_nodes.rend(), FWD(fn), recursive, reverse);
+				_propagate(m_nodes.rbegin(), m_nodes.rend(), fn, FWD(args)...);
+
+				std::invoke(fn, this, FWD(args)...);
 			}
 		}
 
-		// call function on each child passing its index
-		template <class Fn = void(*)(Node *, size_t)
-		> void each_child_i(Fn && fn, bool recursive = true, bool reverse = false)
+		template <bool Reverse = false, class Fn, class ... Args
+		> void propagate(Fn && fn, Args && ... args) const noexcept
 		{
-			auto _each_child_i = [](auto first, auto last, auto fn, bool recursive, bool reverse)
+			auto _propagate = [](auto first, auto last, auto fn, auto ... args)
 			{
-				for (size_t i{}; first != last; ++first)
+				for (; first != last; ++first)
 				{
-					std::invoke(fn, *first, i++);
-
-					if (recursive)
-					{
-						(*first)->each_child_i(fn, true, reverse);
-					}
+					(*first)->propagate<Reverse>(fn, FWD(args)...);
 				}
 			};
-			if (!reverse)
+			if constexpr (!Reverse)
 			{
-				_each_child_i(m_nodes.begin(), m_nodes.end(), FWD(fn), recursive, reverse);
+				std::invoke(fn, this, FWD(args)...);
+
+				_propagate(m_nodes.cbegin(), m_nodes.cend(), fn, FWD(args)...);
 			}
 			else
 			{
-				_each_child_i(m_nodes.rbegin(), m_nodes.rend(), FWD(fn), recursive, reverse);
-			}
-		}
+				_propagate(m_nodes.crbegin(), m_nodes.crend(), fn, FWD(args)...);
 
-		// find child with predicate
-		template <class Pr = bool(*)(Node *)
-		> Node * find_child_if(Pr && pr, bool recursive = true, bool reverse = false) const noexcept
-		{
-			auto _find_child_if = [](auto first, auto last, auto pr, bool recursive, bool reverse) noexcept -> Ref<Node>
-			{
-				if (auto const it{ std::find_if(first, last, pr) }; it != last)
-				{
-					return *it;
-				}
-				else if (recursive)
-				{
-					for (; first != last; ++first)
-					{
-						if (auto const found{ (*first)->find_node_if(pr, true, reverse) })
-						{
-							return found;
-						}
-					}
-				}
-				return nullptr;
-			};
-			if (!reverse)
-			{
-				return _find_child_if(m_nodes.begin(), m_nodes.end(), FWD(pr), recursive, reverse);
-			}
-			else
-			{
-				return _find_child_if(m_nodes.rbegin(), m_nodes.rend(), FWD(pr), recursive, reverse);
+				std::invoke(fn, this, FWD(args)...);
 			}
 		}
 	};

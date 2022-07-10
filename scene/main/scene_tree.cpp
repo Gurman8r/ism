@@ -39,9 +39,9 @@ namespace ism
 
 	void SceneTree::initialize()
 	{
-		base_type::initialize();
-
 		m_initialized = true;
+		m_root->set_tree(this);
+		base_type::initialize();
 	}
 
 	bool SceneTree::process(Duration const & dt)

@@ -231,7 +231,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline auto get_dict_ptr(TYPE const & t, OBJ const & o) -> OBJ *
+	inline OBJ * get_dict_ptr(TYPE const & t, OBJ const & o)
 	{
 		if (t && o && 0 < t->tp_dictoffset)
 		{
@@ -243,14 +243,14 @@ namespace ism
 		}
 	}
 
-	inline auto get_dict_ptr(OBJ const & o) noexcept -> OBJ *
+	inline OBJ * get_dict_ptr(OBJ const & o) noexcept
 	{
-		return get_dict_ptr(typeof(o), o);
+		return o ? get_dict_ptr(typeof(o), o) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline auto get_vectorcall_func(TYPE const & t, OBJ const & o) -> vectorcallfunc
+	inline vectorcallfunc get_vectorcall_func(TYPE const & t, OBJ const & o)
 	{
 		if (t && o && 0 < t->tp_vectorcalloffset)
 		{
@@ -262,9 +262,9 @@ namespace ism
 		}
 	}
 
-	inline auto get_vectorcall_func(OBJ const & o) noexcept -> vectorcallfunc
+	inline vectorcallfunc get_vectorcall_func(OBJ const & o) noexcept
 	{
-		return get_vectorcall_func(typeof(o), o);
+		return o ? get_vectorcall_func(typeof(o), o) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

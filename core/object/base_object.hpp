@@ -8,6 +8,9 @@
 
 // object common
 #define OBJECT_COMMON(m_class, m_inherits)											\
+public:																				\
+	using base_type = typename m_inherits;											\
+																					\
 private:																			\
 	friend class ism::Internals;													\
 																					\
@@ -24,7 +27,7 @@ protected:																			\
 	{																				\
 		static ON_SCOPE_ENTER(&)													\
 		{																			\
-			Internals::get_singleton()->add_class(&m_class::__type_static);			\
+			ism::Internals::get_singleton()->add_class(&m_class::__type_static);	\
 																					\
 			if (m_class::__type_static.tp_bind)										\
 			{																		\
@@ -70,8 +73,6 @@ protected:																			\
 	}																				\
 																					\
 public:																				\
-	using base_type = typename m_inherits;											\
-																					\
 	FORCE_INLINE static constexpr ism::StringView get_class_static() noexcept		\
 	{																				\
 		return m_class::__name_static;												\

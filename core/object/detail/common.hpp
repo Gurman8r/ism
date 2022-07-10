@@ -135,7 +135,7 @@ namespace ism
 	ALIAS(hashfunc)			hash_t(*)(OBJ obj);
 	ALIAS(lenfunc)			ssize_t(*)(OBJ obj);
 	ALIAS(reprfunc)			STR(*)(OBJ obj);
-	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argc, size_t argv);
+	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argv, size_t argc);
 	ALIAS(getter)			OBJ(*)(OBJ obj, void * closure);
 	ALIAS(setter)			Error_(*)(OBJ obj, OBJ value, void * closure);
 

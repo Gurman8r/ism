@@ -97,11 +97,11 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	// display server
 	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
 	DS::WindowID main_window{ g_display->get_current_context() };
-	g_display->window_set_char_callback(main_window, [](DS::WindowID, auto c)
+	g_display->window_set_char_callback(main_window, [](auto, auto c)
 	{
 		g_input->m_last_char = (char)c;
 	});
-	g_display->window_set_key_callback(main_window, [](DS::WindowID, auto key, auto scan, auto action, auto mods)
+	g_display->window_set_key_callback(main_window, [](auto, auto key, auto scan, auto action, auto mods)
 	{
 		g_input->m_keys_down.write(key, action != KeyState_Release);
 		g_input->m_is_shift = g_input->m_keys_down[KeyCode_LeftShift] || g_input->m_keys_down[KeyCode_RightShift];
@@ -109,27 +109,27 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 		g_input->m_is_alt = g_input->m_keys_down[KeyCode_LeftAlt] || g_input->m_keys_down[KeyCode_RightAlt];
 		g_input->m_is_super = g_input->m_keys_down[KeyCode_LeftSuper] || g_input->m_keys_down[KeyCode_RightSuper];
 	});
-	g_display->window_set_mouse_button_callback(main_window, [](DS::WindowID, auto button, auto action, auto mods)
+	g_display->window_set_mouse_button_callback(main_window, [](auto, auto button, auto action, auto mods)
 	{
 		g_input->m_mouse_down.write(button, action != KeyState_Release);
 	});
-	g_display->window_set_mouse_position_callback(main_window, [](DS::WindowID, auto x, auto y)
+	g_display->window_set_mouse_position_callback(main_window, [](auto, auto x, auto y)
 	{
 		g_input->m_mouse_pos = { (float_t)x, (float_t)y };
 	});
-	g_display->window_set_scroll_callback(main_window, [](DS::WindowID, auto x, auto y)
+	g_display->window_set_scroll_callback(main_window, [](auto, auto x, auto y)
 	{
 		g_input->m_scroll = { (float_t)x, (float_t)y };
 	});
-	g_display->window_set_close_callback(main_window, [](DS::WindowID)
+	g_display->window_set_close_callback(main_window, [](auto)
 	{
 		SceneTree::get_singleton()->get_root()->propagate_notification(Node::Notification_WM_CloseRequest);
 	});
-	g_display->window_set_mouse_enter_callback(main_window, [](DS::WindowID, auto entered)
+	g_display->window_set_mouse_enter_callback(main_window, [](auto, auto entered)
 	{
 		SceneTree::get_singleton()->get_root()->propagate_notification(entered ? Node::Notification_WM_MouseEnter : Node::Notification_WM_MouseExit);
 	});
-	g_display->window_set_focus_callback(main_window, [](DS::WindowID, auto focused)
+	g_display->window_set_focus_callback(main_window, [](auto, auto focused)
 	{
 		SceneTree::get_singleton()->get_root()->propagate_notification(focused ? Node::Notification_WM_FocusIn : Node::Notification_WM_FocusOut);
 	});
@@ -194,7 +194,6 @@ bool Main::iteration()
 {
 	++g_iterating; ON_SCOPE_EXIT(&) { --g_iterating; };
 	
-	// iteration timer
 	Clock const loop_timer{};
 	static Duration delta_time{ 16_ms };
 	ON_SCOPE_EXIT(&) { delta_time = loop_timer.get_elapsed_time(); };
@@ -203,10 +202,8 @@ bool Main::iteration()
 
 	bool should_close{ false };
 
-	// poll events
 	g_display->poll_events();
 
-	// update input
 	static Vec2 last_mouse_pos{};
 	g_input->m_mouse_delta = g_input->m_mouse_pos - last_mouse_pos;
 	last_mouse_pos = g_input->m_mouse_pos;
@@ -238,7 +235,7 @@ bool Main::iteration()
 	RD::get_singleton()->draw_list_end();
 
 	if (g_imgui->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-		DS::WindowID backup_context{ g_display->get_current_context() };
+		auto backup_context{ g_display->get_current_context() };
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 		g_display->make_context_current(backup_context);

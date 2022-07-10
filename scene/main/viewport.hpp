@@ -31,6 +31,8 @@ namespace ism
 	{
 		OBJECT_COMMON(Viewport, Node);
 
+		friend class Window;
+
 		RID m_viewport{};
 
 	public:

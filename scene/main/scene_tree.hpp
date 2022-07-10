@@ -52,8 +52,8 @@ namespace ism
 
 	private:
 		bool			m_initialized : 1, m_should_close : 1;
-		Duration		m_delta_time{};
 		Clock			m_main_timer{};
+		Duration		m_delta_time{};
 		FPS_Tracker		m_fps_tracker{};
 		Window *		m_root{};
 		EntityRegistry	m_ecs{};
