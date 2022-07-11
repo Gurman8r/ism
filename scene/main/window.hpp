@@ -18,20 +18,19 @@ namespace ism
 		Window();
 		virtual ~Window() override;
 
-	public:
 		DS::WindowID get_window_id() const noexcept { return m_window; }
 
 		String get_title() const;
-		void set_title(String const & value);
+		void set_title(String const & title);
 
-		DS::MonitorID get_monitor() const;
-		void set_monitor(DS::MonitorID value);
+		int32_t get_current_screen() const;
+		void set_current_screen(int32_t screen);
 
 		Vec2i get_position() const;
-		void set_position(Vec2i const & value);
+		void set_position(Vec2i const & position);
 
 		Vec2i get_size() const;
-		void set_size(Vec2i const & value);
+		void set_size(Vec2i const & size);
 
 		Vec2i get_real_size() const;
 
@@ -50,13 +49,10 @@ namespace ism
 		void hide();
 		void show();
 
-		Vec2 get_content_scale() const;
+		Vec2 get_scale() const;
 
 		void grab_focus();
 		bool has_focus() const;
-
-		bool should_close() const;
-		void set_should_close(bool value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

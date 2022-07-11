@@ -48,18 +48,33 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class K, class V, class Pr = Less<K>, class T
-	> V * getptr(Map<K, V, Pr> & m, T && value)
+	namespace util
 	{
-		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
-		else { return nullptr; }
-	}
+		template <class K, class V, class Pr = Less<K>, class T
+		> auto getptr(Map<K, V, Pr> & m, T && value) noexcept
+		{
+			if (auto const it{ m.find(FWD(value)) }; it != m.end())
+			{
+				return std::addressof(it->second);
+			}
+			else
+			{
+				return (V *)nullptr;
+			}
+		}
 
-	template <class K, class V, class Pr = Less<K>, class T
-	> V const * getptr(Map<K, V, Pr> const & m, T && value)
-	{
-		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
-		else { return nullptr; }
+		template <class K, class V, class Pr = Less<K>, class T
+		> auto getptr(Map<K, V, Pr> const & m, T && value) noexcept
+		{
+			if (auto const it{ m.find(FWD(value)) }; it != m.end())
+			{
+				return std::addressof(it->second);
+			}
+			else
+			{
+				return (V const *)nullptr;
+			}
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

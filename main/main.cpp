@@ -95,13 +95,12 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	g_input = memnew(Input);
 
 	// display server
-	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
-	DS::WindowID main_window{ g_display->get_current_context() };
-	g_display->window_set_char_callback(main_window, [](auto, auto c)
+	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720, COLOR32(8, 8, 8, 8), -1 }));
+	g_display->window_set_char_callback([](auto, auto c)
 	{
 		g_input->m_last_char = (char)c;
 	});
-	g_display->window_set_key_callback(main_window, [](auto, auto key, auto scan, auto action, auto mods)
+	g_display->window_set_key_callback([](auto, auto key, auto scancode, auto action, auto mods)
 	{
 		g_input->m_keys_down.write(key, action != KeyState_Release);
 		g_input->m_is_shift = g_input->m_keys_down[KeyCode_LeftShift] || g_input->m_keys_down[KeyCode_RightShift];
@@ -109,33 +108,34 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 		g_input->m_is_alt = g_input->m_keys_down[KeyCode_LeftAlt] || g_input->m_keys_down[KeyCode_RightAlt];
 		g_input->m_is_super = g_input->m_keys_down[KeyCode_LeftSuper] || g_input->m_keys_down[KeyCode_RightSuper];
 	});
-	g_display->window_set_mouse_button_callback(main_window, [](auto, auto button, auto action, auto mods)
+	g_display->window_set_mouse_button_callback([](auto, auto button, auto action, auto mods)
 	{
 		g_input->m_mouse_down.write(button, action != KeyState_Release);
 	});
-	g_display->window_set_mouse_position_callback(main_window, [](auto, auto x, auto y)
+	g_display->window_set_mouse_position_callback([](auto, auto x, auto y)
 	{
 		g_input->m_mouse_pos = { (float_t)x, (float_t)y };
 	});
-	g_display->window_set_scroll_callback(main_window, [](auto, auto x, auto y)
+	g_display->window_set_scroll_callback([](auto, auto x, auto y)
 	{
 		g_input->m_scroll = { (float_t)x, (float_t)y };
 	});
-	g_display->window_set_close_callback(main_window, [](auto)
+	g_display->window_set_close_callback([](auto)
 	{
 		SceneTree::get_singleton()->get_root()->propagate_notification(Node::Notification_WM_CloseRequest);
+		SceneTree::get_singleton()->quit();
 	});
-	g_display->window_set_mouse_enter_callback(main_window, [](auto, auto entered)
+	g_display->window_set_mouse_enter_callback([](auto, bool entered)
 	{
 		SceneTree::get_singleton()->get_root()->propagate_notification(entered ? Node::Notification_WM_MouseEnter : Node::Notification_WM_MouseExit);
 	});
-	g_display->window_set_focus_callback(main_window, [](auto, auto focused)
+	g_display->window_set_focus_callback([](auto, bool focused)
 	{
 		SceneTree::get_singleton()->get_root()->propagate_notification(focused ? Node::Notification_WM_FocusIn : Node::Notification_WM_FocusOut);
 	});
 
 	// rendering server
-	g_renderer = memnew(RenderingServerDefault());
+	g_renderer = memnew(RenderingServerDefault);
 
 	// imgui
 	g_imgui = VALIDATE(ImGui::CreateContext());
@@ -144,7 +144,7 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	ASSERT(ImGui_Init(main_window));
+	ASSERT(ImGui_Init());
 
 	return Error_None;
 }
@@ -230,7 +230,7 @@ bool Main::iteration()
 	if (OS::get_singleton()->get_main_loop()->process(delta_time)) { should_close = true; }
 	ImGui::Render();
 
-	RD::get_singleton()->draw_list_begin_for_screen(g_display->get_current_context());
+	RD::get_singleton()->draw_list_begin_for_screen(DS::MAIN_WINDOW_ID);
 	ImGui_RenderDrawData(&g_imgui->Viewports[0]->DrawDataP);
 	RD::get_singleton()->draw_list_end();
 
@@ -240,6 +240,8 @@ bool Main::iteration()
 		ImGui::RenderPlatformWindowsDefault();
 		g_display->make_context_current(backup_context);
 	}
+	
+	g_display->swap_buffers();
 
 	return should_close;
 }

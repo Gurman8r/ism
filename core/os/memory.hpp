@@ -111,7 +111,7 @@ namespace ism
 	> ALIAS(_PolymorphicAllocatorBase) std::pmr::polymorphic_allocator<T>;
 
 	// polymorphic allocator
-	template <class T = byte
+	template <class T = uint8_t
 	> class PolymorphicAllocator : public _PolymorphicAllocatorBase<T>
 	{
 	public:
@@ -175,10 +175,10 @@ namespace ism
 	class TestMemoryResource : public std::pmr::memory_resource
 	{
 	public:
-		using pointer					= typename byte *;
-		using const_pointer				= typename byte const *;
-		using reference					= typename byte &;
-		using const_reference			= typename byte const &;
+		using pointer					= typename uint8_t *;
+		using const_pointer				= typename uint8_t const *;
+		using reference					= typename uint8_t &;
+		using const_reference			= typename uint8_t const &;
 		using iterator					= typename pointer;
 		using const_iterator			= typename const_pointer;
 		using reverse_iterator			= typename std::reverse_iterator<iterator>;
@@ -188,7 +188,7 @@ namespace ism
 
 		TestMemoryResource(std::pmr::memory_resource * mres, void const * data, size_t const size) noexcept
 			: m_upstream_resource{ mres }
-			, m_buffer_data{ (byte *)data }
+			, m_buffer_data{ (uint8_t *)data }
 			, m_buffer_size{ size }
 		{
 		}

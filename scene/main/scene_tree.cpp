@@ -53,8 +53,6 @@ namespace ism
 		m_root->propagate_notification(Node::Notification_Internal_Process);
 		m_root->propagate_notification(Node::Notification_Process);
 
-		m_should_close |= m_root->should_close();
-
 		return m_should_close;
 	}
 

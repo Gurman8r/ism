@@ -92,7 +92,7 @@ namespace ism
 		template <class Value = OBJ, class Defval = OBJ
 		> auto lookup(Value && v, Defval && dv) const -> OBJ
 		{
-			if (auto const ptr{ ism::getptr(m_list, FWD_OBJ(v)) }) { return *ptr; }
+			if (auto const ptr{ util::getptr(m_list, FWD_OBJ(v)) }) { return *ptr; }
 			else { return FWD_OBJ(dv); }
 		}
 

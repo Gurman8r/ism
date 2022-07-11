@@ -237,7 +237,7 @@ public:
 			}
 
 			// end shader
-			if (code.back() != byte::null) { code << byte::null; }
+			if (code.back() != 0) { code << 0; }
 			//OS::get_singleton()->printf("%.*s\n", code.size(), code.data());
 		}
 	}

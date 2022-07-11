@@ -7,6 +7,40 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// 32-bit Color
+	ALIAS(Color32) uint32_t;
+
+#define COLOR32_R_SHIFT	0
+#define COLOR32_G_SHIFT	8
+#define COLOR32_B_SHIFT	16
+#define COLOR32_A_SHIFT	24
+#define COLOR32_A_MASK	0xFF000000
+
+	// Make Color32
+#define COLOR32(r, g, b, a) \
+		((Color32)((uint8_t)(a)) << COLOR32_A_SHIFT) | \
+		((Color32)((uint8_t)(b)) << COLOR32_B_SHIFT) | \
+		((Color32)((uint8_t)(g)) << COLOR32_B_SHIFT) | \
+		((Color32)((uint8_t)(r)) << COLOR32_A_SHIFT)
+
+	// Color32 Red Channel
+#define COLOR32_R(c) \
+		((uint8_t)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
+
+	// Color32 Green Channel
+#define COLOR32_G(c) \
+		((uint8_t)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
+
+	// Color32 Blue Channel
+#define COLOR32_B(c) \
+		((uint8_t)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
+
+	// Color32 Alpha Channel
+#define COLOR32_A(c) \
+		((uint8_t)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct Color
 	{
 		using storage_type				= Vec4;
@@ -65,27 +99,6 @@ namespace ism
 		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
 		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-	
-	ALIAS(Color32) uint32_t;
-
-#define COLOR32_R_SHIFT 0
-#define COLOR32_G_SHIFT 8
-#define COLOR32_B_SHIFT 16
-#define COLOR32_A_SHIFT 24
-#define COLOR32_A_MASK 0xFF000000
-
-#define COLOR32(r, g, b, a) \
-	((Color32)((byte)(a)) << COLOR32_A_SHIFT) | \
-	((Color32)((byte)(b)) << COLOR32_B_SHIFT) | \
-	((Color32)((byte)(g)) << COLOR32_B_SHIFT) | \
-	((Color32)((byte)(r)) << COLOR32_A_SHIFT)
-
-#define COLOR32_R(c) ((byte)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
-#define COLOR32_G(c) ((byte)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
-#define COLOR32_B(c) ((byte)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
-#define COLOR32_A(c) ((byte)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

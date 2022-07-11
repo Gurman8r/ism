@@ -76,6 +76,18 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	void Node::propagate_notification(int32_t notification_id, bool reverse)
+	{
+		notification(notification_id, reverse);
+
+		for (Node * child : m_nodes)
+		{
+			child->propagate_notification(notification_id, reverse);
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	bool Node::set_tree(SceneTree * tree)
 	{
 		if (!tree || m_tree == tree) { return false; }

@@ -55,7 +55,7 @@ private:																		\
 	OBJECT_COMMON(m_class, m_inherits);											\
 																				\
 public:																			\
-	enum : ism::EventID { ID = m_class::__name_static.hash_code() };			\
+	enum : ism::EventID { ID = m_class::get_class_static().hash_code() };		\
 																				\
 	virtual ism::EventID get_event_id() const override { return m_class::ID; }	\
 																				\

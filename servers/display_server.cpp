@@ -13,4 +13,15 @@ namespace ism
 	DisplayServer::~DisplayServer() {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void DisplayServer::vsync_set_enabled(bool value)
+	{
+	}
+
+	bool DisplayServer::vsync_is_enabled() const
+	{
+		return false;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

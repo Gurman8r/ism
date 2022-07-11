@@ -46,15 +46,15 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		static constexpr bool empty() noexcept { return false; }
+		static constexpr auto max_size() noexcept -> size_type { return _Size; }
+		static constexpr auto size() noexcept -> size_type { return _Size; }
+
 		constexpr operator pointer() noexcept { return m_data; }
 		constexpr operator const_pointer() const noexcept { return m_data; }
 
 		constexpr auto data() noexcept -> pointer { return m_data; }
 		constexpr auto data() const noexcept -> const_pointer { return m_data; }
-
-		constexpr bool empty() const noexcept { return false; }
-		constexpr auto max_size() const noexcept -> size_type { return _Size; }
-		constexpr auto size() const noexcept -> size_type { return _Size; }
 
 		constexpr auto at(size_type const i) & noexcept -> reference { return m_data[i]; }
 		constexpr auto at(size_type const i) const & noexcept -> const_reference { return m_data[i]; }
@@ -114,15 +114,15 @@ namespace ism
 		
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		static constexpr bool empty() noexcept { return true; }
+		static constexpr auto max_size() noexcept -> size_type { return 0; }
+		static constexpr auto size() noexcept -> size_type { return 0; }
+
 		constexpr operator pointer() noexcept { return m_data; }
 		constexpr operator const_pointer() const noexcept { return m_data; }
 
 		constexpr auto data() noexcept -> pointer { return &m_data[0]; }
 		constexpr auto data() const noexcept -> const_pointer { return &m_data[0]; }
-
-		constexpr bool empty() const noexcept { return true; }
-		constexpr auto max_size() const noexcept -> size_type { return 0; }
-		constexpr auto size() const noexcept -> size_type { return 0; }
 
 		constexpr auto at(size_type) & noexcept -> reference { return m_data[0]; }
 		constexpr auto at(size_type) const & noexcept -> const_reference { return m_data[0]; }

@@ -96,14 +96,14 @@ namespace ism
 
 	TextServer::FontPage * TextServer::font_get_page(RID font, uint32_t character_size)
 	{
-		return getptr(VALIDATE((Font *)font)->pages, character_size);
+		return util::getptr(VALIDATE((Font *)font)->pages, character_size);
 	}
 
 	Glyph * TextServer::font_get_glyph(RID font, uint32_t character, uint32_t character_size)
 	{
 		Font * const f{ VALIDATE((Font *)font) };
 		FontPage * const page{ (FontPage *)font_get_page(font, character_size) };
-		if (Glyph * const glyph{ getptr(page->glyphs, character) }) { return glyph; }
+		if (Glyph * const glyph{ util::getptr(page->glyphs, character) }) { return glyph; }
 		else
 		{
 			FT_Face const face{ (FT_Face)f->font_face };

@@ -156,7 +156,7 @@ void get_data_info(RD::DataFormat_ const data_format, Image::Format_ * image_for
 MAKE_ENUM_MAPPING(TO_GL, DataType_, uint32_t,
 	// void
 	GL_NONE,
-	// bool, byte, char
+	// bool, uint8_t, char
 	GL_BOOL, GL_BYTE, GL_BYTE,
 	// I8, I16, I32, I64
 	GL_BYTE, GL_SHORT, GL_INT, GL_INT64_ARB,
@@ -966,8 +966,6 @@ void RenderingDeviceOpenGL::_render_pipeline_bind(_RenderPipeline const & rp)
 
 RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(DS::WindowID window, Color const & clear_color)
 {
-	ASSERT(window);
-
 	DrawListID const draw_list{ m_draw_list.size() };
 	_DrawList & dl{ m_draw_list.emplace_back(_DrawList{}) };
 

@@ -25,7 +25,7 @@ namespace ism::mpl {}
 		using m_type = 
 
 // opaque type
-#define DECL_HANDLE(m_name) \
+#define OPAQUE_TYPE(m_name) \
 		struct CAT(__, m_name) { int unused; }; \
 		ALIAS(m_name) CAT(__, m_name) *;
 
@@ -111,39 +111,6 @@ namespace ism
 #endif
 	ALIAS(c16string)	char16_t const *;
 	ALIAS(c32string)	char32_t const *;
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum class byte : uint8_t
-	{
-		zero, one, max = 255, null = zero
-	};
-
-	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
-	> constexpr byte operator<<(byte const a, I const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) << b)); }
-
-	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
-	> constexpr byte operator>>(byte const a, I const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) >> b)); }
-
-	constexpr byte operator|(byte const a, byte const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) | static_cast<uint32_t>(b))); }
-
-	constexpr byte operator&(byte const a, byte const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) & static_cast<uint32_t>(b))); }
-
-	constexpr byte operator^(byte const a, byte const b) noexcept { return static_cast<byte>(static_cast<uint8_t>(static_cast<uint32_t>(a) ^ static_cast<uint32_t>(b))); }
-
-	constexpr byte operator~(byte const a) noexcept { return static_cast<byte>(static_cast<uint8_t>(~static_cast<uint32_t>(a))); }
-
-	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
-	> constexpr byte & operator<<=(byte & a, I const b) noexcept { return a = a << b; }
-
-	template <class I, std::enable_if_t<std::is_integral_v<I>, int> = 0
-	> constexpr byte & operator>>=(byte & a, I const b) noexcept { return a = a >> b; }
-
-	constexpr byte & operator|=(byte & a, byte const b) noexcept { return a = a | b; }
-
-	constexpr byte & operator&=(byte & a, byte const b) noexcept { return a = a & b; }
-
-	constexpr byte & operator^=(byte & a, byte const b) noexcept { return a = a ^ b; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

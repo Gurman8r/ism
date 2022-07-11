@@ -87,7 +87,7 @@ namespace ism
 	{
 		ASSERT((int32_t)index + m_depth < get_capacity());
 		auto const it{ m_pixels.begin() + index };
-		byte r{}, g{}, b{}, a{ byte::max };
+		uint8_t r{}, g{}, b{}, a{ 255 };
 		if (m_depth >= 1) { r = *(it + 0); }
 		if (m_depth >= 2) { g = *(it + 1); }
 		if (m_depth >= 3) { b = *(it + 2); }

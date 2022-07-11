@@ -48,6 +48,34 @@ namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <class LHS, class RHS, class ... Rest
+	> constexpr decltype(auto) min(LHS && lhs, RHS && rhs, Rest && ... rest)
+	{
+		return lhs < rhs ? min(FWD(lhs), FWD(rest)...) : min(FWD(rhs), FWD(rest)...);
+	}
+
+	template <class Only
+	> constexpr decltype(auto) min(Only && only)
+	{
+		return FWD(only);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class LHS, class RHS, class ... Rest
+	> constexpr decltype(auto) max(LHS && lhs, RHS && rhs, Rest && ... rest)
+	{
+		return lhs > rhs ? max(FWD(lhs), FWD(rest)...) : max(FWD(rhs), FWD(rest)...);
+	}
+
+	template <class Only
+	> constexpr decltype(auto) max(Only && only)
+	{
+		return FWD(only);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct void_type {};
 	
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

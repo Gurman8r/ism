@@ -17,22 +17,22 @@ namespace ism
 
 	class DynamicBuffer
 	{
-		List<byte> m_data{};
+		List<uint8_t> m_data{};
 
 	public:
 		using self_type			= typename DynamicBuffer;
 		using storage_type		= typename decltype(m_data);
 		using allocator_type	= typename PolymorphicAllocator<>;
-		using reference			= typename byte &;
-		using const_reference	= typename byte const &;
-		using pointer			= typename byte *;
-		using const_pointer		= typename byte const *;
+		using reference			= typename uint8_t &;
+		using const_reference	= typename uint8_t const &;
+		using pointer			= typename uint8_t *;
+		using const_pointer		= typename uint8_t const *;
 		using iterator			= typename pointer;
 		using const_iterator	= typename const_pointer;
 
 		DynamicBuffer(allocator_type alloc = {}) noexcept : m_data{ alloc } {}
 
-		DynamicBuffer(size_t size_in_bytes, byte const value = byte::null, allocator_type alloc = {}) : m_data{ alloc } { resize(size_in_bytes, value); }
+		DynamicBuffer(size_t size_in_bytes, uint8_t const value = 0, allocator_type alloc = {}) : m_data{ alloc } { resize(size_in_bytes, value); }
 
 		DynamicBuffer(void const * src, size_t size_in_bytes, allocator_type alloc = {}) : m_data{ alloc } { write(src, size_in_bytes); }
 
@@ -68,7 +68,7 @@ namespace ism
 			return (*this);
 		}
 
-		self_type & resize(size_t size_in_bytes, byte const value = byte::null)
+		self_type & resize(size_t size_in_bytes, uint8_t const value = 0)
 		{
 			return m_data.resize(size_in_bytes, value), (*this);
 		}
@@ -112,7 +112,7 @@ namespace ism
 		NODISCARD auto back() const noexcept -> const_reference { ASSERT(!empty()); return *(end() - 1); }
 
 		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < size()); return m_data[i]; }
-		NODISCARD auto operator[](size_t i) const noexcept -> byte { ASSERT(i < size()); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) const noexcept -> uint8_t { ASSERT(i < size()); return m_data[i]; }
 
 		NODISCARD operator void * () const noexcept { return !empty() ? (void *)data() : nullptr; }
 		NODISCARD operator String() const noexcept { return { c_str(), size() }; }
@@ -260,7 +260,7 @@ namespace ism
 		{
 			if constexpr (1 == sizeof(T))
 			{
-				return m_data.push_back(static_cast<byte>(value)), (*this);
+				return m_data.push_back(static_cast<uint8_t>(value)), (*this);
 			}
 			else
 			{
@@ -292,15 +292,15 @@ namespace ism
 	{
 		static_assert(0 < _Size);
 
-		Array<byte, _Size> m_data{};
+		Array<uint8_t, _Size> m_data{};
 
 	public:
 		using self_type			= typename StaticBuffer<_Size>;
 		using storage_type		= typename decltype(m_data);
-		using reference			= typename byte &;
-		using const_reference	= typename byte const &;
-		using pointer			= typename byte *;
-		using const_pointer		= typename byte const *;
+		using reference			= typename uint8_t &;
+		using const_reference	= typename uint8_t const &;
+		using pointer			= typename uint8_t *;
+		using const_pointer		= typename uint8_t const *;
 		using iterator			= typename pointer;
 		using const_iterator	= typename const_pointer;
 
@@ -388,7 +388,7 @@ namespace ism
 		NODISCARD auto back() const noexcept -> const_reference { return *(m_data + _Size - 1); }
 
 		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < _Size); return m_data[i]; }
-		NODISCARD auto operator[](size_t i) const noexcept -> byte { ASSERT(i < _Size); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) const noexcept -> uint8_t { ASSERT(i < _Size); return m_data[i]; }
 
 		NODISCARD operator void * () const noexcept { return (void *)data(); }
 		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
@@ -576,15 +576,15 @@ namespace ism
 
 		static constexpr size_t _Size{ _calc_size() };
 
-		Array<byte, _Size> m_data{};
+		Array<uint8_t, _Size> m_data{};
 
 	public:
 		using self_type			= typename ConstantBuffer<_Alignment, _Types...>;
 		using storage_type		= typename decltype(m_data);
-		using reference			= typename byte &;
-		using const_reference	= typename byte const &;
-		using pointer			= typename byte *;
-		using const_pointer		= typename byte const *;
+		using reference			= typename uint8_t &;
+		using const_reference	= typename uint8_t const &;
+		using pointer			= typename uint8_t *;
+		using const_pointer		= typename uint8_t const *;
 		using iterator			= typename pointer;
 		using const_iterator	= typename const_pointer;
 
@@ -672,7 +672,7 @@ namespace ism
 		NODISCARD auto back() const noexcept -> const_reference { return *(m_data + _Size - 1); }
 
 		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < _Size); return m_data[i]; }
-		NODISCARD auto operator[](size_t i) const noexcept -> byte { ASSERT(i < _Size); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) const noexcept -> uint8_t { ASSERT(i < _Size); return m_data[i]; }
 
 		NODISCARD operator void * () const noexcept { return (void *)data(); }
 		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, _Size }; }

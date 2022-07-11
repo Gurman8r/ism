@@ -16,10 +16,6 @@ namespace ism
 	template <class T, size_t N
 	> ALIAS(TMatrixNxN) Matrix<T, N, N>;
 
-	// Matrix<T, N, 1>
-	template <class T, size_t N
-	> ALIAS(TMatrixNx1) Matrix<T, N, 1>;
-
 	// Matrix<T, 2, 2>
 	template <class T
 	> ALIAS(TMatrix2x2) TMatrixNxN<T, 2>;
@@ -32,17 +28,21 @@ namespace ism
 	template <class T
 	> ALIAS(TMatrix4x4) TMatrixNxN<T, 4>;
 
+	// Matrix<T, N, 1>
+	template <class T, size_t N
+	> ALIAS(TVectorN) Matrix<T, N, 1>;
+
 	// Matrix<T, 2, 1>
 	template <class T
-	> ALIAS(TVector2) TMatrixNx1<T, 2>;
+	> ALIAS(TVector2) TVectorN<T, 2>;
 
 	// Matrix<T, 3, 1>
 	template <class T
-	> ALIAS(TVector3) TMatrixNx1<T, 3>;
+	> ALIAS(TVector3) TVectorN<T, 3>;
 
 	// Matrix<T, 4, 1>
 	template <class T
-	> ALIAS(TVector4) TMatrixNx1<T, 4>;
+	> ALIAS(TVector4) TVectorN<T, 4>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -155,9 +155,6 @@ namespace ism
 		static constexpr auto height() noexcept -> size_t { return _Height; }
 		static constexpr auto size() noexcept -> size_t { return _Width * _Height; }
 		static constexpr auto max_size() noexcept -> size_t { return _Width * _Height; }
-		
-		constexpr auto data() noexcept -> pointer { return m_data; }
-		constexpr auto data() const noexcept -> const_pointer { return m_data; }
 
 		constexpr operator pointer() noexcept { return m_data; }
 		constexpr operator const_pointer() const noexcept { return m_data; }
@@ -165,9 +162,8 @@ namespace ism
 		constexpr operator storage_type const & () const & noexcept { return m_data; }
 		constexpr operator storage_type && () && noexcept { return std::move(m_data); }
 
-		constexpr auto operator*() & noexcept -> reference { return (*m_data); }
-		constexpr auto operator*() const & noexcept -> const_reference { return (*m_data); }
-		constexpr auto operator*() && noexcept -> value_type && { return std::move(*m_data); }
+		constexpr auto data() noexcept -> pointer { return m_data; }
+		constexpr auto data() const noexcept -> const_pointer { return m_data; }
 
 		constexpr auto at(size_t const i) & noexcept -> reference { return m_data.at(i); }
 		constexpr auto at(size_t const i) const & noexcept -> const_reference { return m_data.at(i); }
@@ -179,15 +175,12 @@ namespace ism
 		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
 		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
 		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-
 		constexpr auto end() noexcept -> iterator { return m_data.end(); }
 		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
 		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-		
 		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
 		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
 		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-
 		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
 		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
 		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
@@ -312,36 +305,28 @@ namespace ism
 	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
 	> constexpr auto & operator+=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
 	{
-		for (auto & e : lhs) {
-			e += static_cast<Tx>(rhs);
-		}
+		for (auto & e : lhs) { e += static_cast<Tx>(rhs); }
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
 	> constexpr auto & operator-=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
 	{
-		for (auto & e : lhs) {
-			e -= static_cast<Tx>(rhs);
-		}
+		for (auto & e : lhs) { e -= static_cast<Tx>(rhs); }
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
 	> constexpr auto & operator*=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
 	{
-		for (auto & e : lhs) {
-			e *= static_cast<Tx>(rhs);
-		}
+		for (auto & e : lhs) { e *= static_cast<Tx>(rhs); }
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
 	> constexpr auto & operator/=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
 	{
-		for (auto & e : lhs) {
-			e /= static_cast<Tx>(rhs);
-		}
+		for (auto & e : lhs) { e /= static_cast<Tx>(rhs); }
 		return lhs;
 	}
 
@@ -398,66 +383,58 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Tx, class Ty, size_t N
-	> constexpr auto & operator+=(TMatrixNx1<Tx, N> & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
+	> constexpr auto & operator+=(TVectorN<Tx, N> & lhs, TVectorN<Ty, N> const & rhs) noexcept
 	{
-		for (size_t i = 0; i < N; ++i) {
-			lhs[i] += static_cast<Tx>(rhs[i]);
-		}
+		for (size_t i = 0; i < N; ++i) { lhs[i] += static_cast<Tx>(rhs[i]); }
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr auto & operator-=(TMatrixNx1<Tx, N> & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
+	> constexpr auto & operator-=(TVectorN<Tx, N> & lhs, TVectorN<Ty, N> const & rhs) noexcept
 	{
-		for (size_t i = 0; i < N; ++i) {
-			lhs[i] -= static_cast<Tx>(rhs[i]);
-		}
+		for (size_t i = 0; i < N; ++i) { lhs[i] -= static_cast<Tx>(rhs[i]); }
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr auto & operator*=(TMatrixNx1<Tx, N> & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
+	> constexpr auto & operator*=(TVectorN<Tx, N> & lhs, TVectorN<Ty, N> const & rhs) noexcept
 	{
-		for (size_t i = 0; i < N; ++i) {
-			lhs[i] *= static_cast<Tx>(rhs[i]);
-		}
+		for (size_t i = 0; i < N; ++i) { lhs[i] *= static_cast<Tx>(rhs[i]); }
 		return lhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr auto & operator/=(TMatrixNx1<Tx, N> & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
+	> constexpr auto & operator/=(TVectorN<Tx, N> & lhs, TVectorN<Ty, N> const & rhs) noexcept
 	{
-		for (size_t i = 0; i < N; ++i) {
-			lhs[i] /= static_cast<Tx>(rhs[i]);
-		}
+		for (size_t i = 0; i < N; ++i) { lhs[i] /= static_cast<Tx>(rhs[i]); }
 		return lhs;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Tx, class Ty, size_t N
-	> constexpr auto operator+(TMatrixNx1<Tx, N> const & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
+	> constexpr auto operator+(TVectorN<Tx, N> const & lhs, TVectorN<Ty, N> const & rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp += rhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr auto operator-(TMatrixNx1<Tx, N> const & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
+	> constexpr auto operator-(TVectorN<Tx, N> const & lhs, TVectorN<Ty, N> const & rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp -= rhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr auto operator*(TMatrixNx1<Tx, N> const & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
+	> constexpr auto operator*(TVectorN<Tx, N> const & lhs, TVectorN<Ty, N> const & rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp *= rhs;
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr auto operator/(TMatrixNx1<Tx, N> const & lhs, TMatrixNx1<Ty, N> const & rhs) noexcept
+	> constexpr auto operator/(TVectorN<Tx, N> const & lhs, TVectorN<Ty, N> const & rhs) noexcept
 	{
 		auto temp{ lhs };
 		return temp /= rhs;

@@ -63,6 +63,8 @@ namespace ism
 	public:
 		virtual ~Node() override;
 
+		void propagate_notification(int32_t notification_id, bool reverse = false);
+
 	protected:
 		void _notification(int32_t notification_id);
 
@@ -80,67 +82,12 @@ namespace ism
 		size_t get_child_count() const noexcept { return m_nodes.size(); }
 
 		template <class T, class ... Args
-		> T * add_child(Args && ... args) { return (T *)add_child(memnew(T(FWD(args)...))); }
+		> T * add_child(Args && ... args) { return (T *)add_child(memnew(T(args...))); }
 		Node * add_child(Node * child);
 		void destroy_child(size_t i);
 		
 		bool is_child_of(Node const * parent, bool recursive = false) const;
 		bool is_parent_of(Node const * child, bool recursive = false) const;
-
-	public:
-		template <bool Reverse = false
-		> void propagate_notification(int32_t notification_id) noexcept
-		{
-			propagate<Reverse>(&Node::notification, notification_id, Reverse);
-		}
-
-		template <bool Reverse = false, class Fn, class ... Args
-		> void propagate(Fn && fn, Args && ... args) noexcept
-		{
-			auto _propagate = [](auto first, auto last, auto fn, auto ... args)
-			{
-				for (; first != last; ++first)
-				{
-					(*first)->propagate<Reverse>(fn, FWD(args)...);
-				}
-			};
-			if constexpr (!Reverse)
-			{
-				std::invoke(fn, this, FWD(args)...);
-
-				_propagate(m_nodes.begin(), m_nodes.end(), fn, FWD(args)...);
-			}
-			else
-			{
-				_propagate(m_nodes.rbegin(), m_nodes.rend(), fn, FWD(args)...);
-
-				std::invoke(fn, this, FWD(args)...);
-			}
-		}
-
-		template <bool Reverse = false, class Fn, class ... Args
-		> void propagate(Fn && fn, Args && ... args) const noexcept
-		{
-			auto _propagate = [](auto first, auto last, auto fn, auto ... args)
-			{
-				for (; first != last; ++first)
-				{
-					(*first)->propagate<Reverse>(fn, FWD(args)...);
-				}
-			};
-			if constexpr (!Reverse)
-			{
-				std::invoke(fn, this, FWD(args)...);
-
-				_propagate(m_nodes.cbegin(), m_nodes.cend(), fn, FWD(args)...);
-			}
-			else
-			{
-				_propagate(m_nodes.crbegin(), m_nodes.crend(), fn, FWD(args)...);
-
-				std::invoke(fn, this, FWD(args)...);
-			}
-		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

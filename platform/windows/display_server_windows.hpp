@@ -1,7 +1,7 @@
 #ifndef _ISM_DISPLAY_SERVER_WINDOWS_HPP_
 #define _ISM_DISPLAY_SERVER_WINDOWS_HPP_
 
-#include <scene/main/window.hpp>
+#include <servers/display_server.hpp>
 
 struct GLFWwindow;
 
@@ -14,16 +14,18 @@ namespace ism
 
 		struct _Window
 		{
-			GLFWwindow * handle{};
-			String title{};
-			WindowMode_ window_mode{};
-			MouseMode_ mouse_mode{};
-			CursorShape_ cursor_shape{};
-		}
-		m_window{};
+			GLFWwindow *	handle{};
+			String			title{};
+			int32_t			current_screen{};
+			WindowMode_		window_mode{};
+		};
+
+		Map<WindowID, _Window> m_windows{};
+
+		_Window * m_main_window{};
 
 	public:
-		DisplayServerWindows(String const & title, WindowMode_ mode, Vec2i const & size);
+		DisplayServerWindows(String const & title, WindowMode_ mode, VideoMode const & video);
 		~DisplayServerWindows();
 
 	public:
@@ -31,85 +33,93 @@ namespace ism
 		List<VideoMode> const & get_fullscreen_video_modes() const;
 
 	public:
-		virtual WindowID get_main_context() const override;
-		virtual WindowID get_current_context() const override;
-		virtual void make_context_current(WindowID window) override;
+		// TODO: global menu stuff goes here
 
-		virtual bool window_should_close(WindowID window) const override;
-		virtual void window_set_should_close(WindowID window, bool value) override;
+		virtual void alert(String const & message, String const & title = "ALERT!") override;
 
 		virtual String get_clipboard() const override;
-		virtual void set_clipboard(String const & value) override;
-
-		virtual MouseMode_ mouse_get_mode() const override;
-		virtual void mouse_set_mode(MouseMode_ value) override;
-
-		virtual int32_t mouse_get_button(MouseButton_ value) const override;
-		virtual Vec2 mouse_get_position() const override;
-		virtual void mouse_set_position(Vec2 const & value) override;
-
-		virtual String window_get_title(WindowID window) const override;
-		virtual void window_set_title(WindowID window, String const & value) override;
-
-		virtual MonitorID window_get_monitor(WindowID window) const override;
-		virtual void window_set_monitor(WindowID window, MonitorID monitor) override;
-
-		virtual Vec2i window_get_position(WindowID window) const override;
-		virtual void window_set_position(WindowID window, Vec2i const & value) override;
-
-		virtual Vec2i window_get_size(WindowID window) const override;
-		virtual void window_set_size(WindowID window, Vec2i const & value) override;
-
-		virtual Vec2i window_get_real_size(WindowID window) const override;
-
-		virtual WindowMode_ window_get_mode(WindowID window) const override;
-		virtual void window_set_mode(WindowID window, WindowMode_ value) override;
-
-		virtual bool window_get_flag(WindowID window, int32_t flag) const override;
-		virtual void window_set_flag(WindowID window, int32_t flag, bool enabled) override;
-
-		virtual void request_window_attention(WindowID window) override;
-		virtual void move_window_to_foreground(WindowID window) override;
-
-		virtual void window_set_visible(WindowID window, bool value) override;
-		virtual bool window_is_visible(WindowID window) const override;
-
-		virtual Vec2 window_get_content_scale(WindowID window) const override;
-
-		virtual bool window_has_focus(WindowID window) const override;
-		virtual void window_grab_focus(WindowID window) override;
+		virtual void set_clipboard(String const & text) override;
 
 		virtual CursorShape_ cursor_get_shape() const override;
-		virtual void cursor_set_shape(CursorShape_ value) override;
+		virtual void cursor_set_shape(CursorShape_ shape) override;
 		virtual void cursor_set_custom_image(RES const & cursor, CursorShape_ shape = {}, Vec2 const & hotspot = {}) override;
+
+		virtual MouseMode_ mouse_get_mode() const override;
+		virtual void mouse_set_mode(MouseMode_ mode) override;
+
+		virtual int32_t mouse_get_button(MouseButton_ button) const override;
+		virtual Vec2 mouse_get_position() const override;
+		virtual void mouse_set_position(Vec2 const & position) override;
+
+		virtual int32_t get_screen_count() const override;
+		virtual String screen_get_name(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual IntRect screen_get_rect(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual Vec2i screen_get_position(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual Vec2i screen_get_size(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual Vec2 screen_get_scale(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
+
+		virtual List<WindowID> get_window_list() const override;
+
+		virtual String window_get_title(WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_set_title(String const & title, WindowID window = MAIN_WINDOW_ID) override;
+
+		virtual int32_t window_get_current_screen(WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_set_current_screen(int32_t screen, WindowID window = MAIN_WINDOW_ID) override;
+
+		virtual Vec2i window_get_position(WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_set_position(Vec2i const & position, WindowID window = MAIN_WINDOW_ID) override;
+
+		virtual Vec2i window_get_size(WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_set_size(Vec2i const & size, WindowID window = MAIN_WINDOW_ID) override;
+
+		virtual Vec2i window_get_real_size(WindowID window = MAIN_WINDOW_ID) const override;
+
+		virtual WindowMode_ window_get_mode(WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_set_mode(WindowMode_ mode, WindowID window = MAIN_WINDOW_ID) override;
+
+		virtual bool window_get_flag(int32_t flag, WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_set_flag(int32_t flag, bool enabled, WindowID window = MAIN_WINDOW_ID) override;
+
+		virtual void request_window_attention(WindowID window = MAIN_WINDOW_ID) override;
+		virtual void move_window_to_foreground(WindowID window = MAIN_WINDOW_ID) override;
+
+		virtual void window_set_visible(bool enabled, WindowID window = MAIN_WINDOW_ID) override;
+		virtual bool window_is_visible(WindowID window = MAIN_WINDOW_ID) const override;
+
+		virtual Vec2 window_get_scale(WindowID window = MAIN_WINDOW_ID) const override;
+
+		virtual bool window_has_focus(WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_grab_focus(WindowID window = MAIN_WINDOW_ID) override;
+
+		virtual void * window_get_native_handle(WindowID window = MAIN_WINDOW_ID) const override;
+
+		virtual WindowID get_current_context() const override;
+		virtual void make_context_current(WindowID window) override;
 
 		virtual void poll_events() override;
 		virtual void swap_buffers() override;
 
-		virtual void set_native_icon(Path const & value) override;
-		virtual void set_icon(Ref<Image> const & value) override;
+		virtual void set_native_icon(Path const & path) override;
+		virtual void set_icon(uint8_t const * data, int32_t width, int32_t height) override;
 
 	public:
-		virtual ErrorCallback set_error_callback(ErrorCallback callback) override;
-		virtual CharCallback window_set_char_callback(WindowID window, CharCallback value) override;
-		virtual CharModsCallback window_set_char_mods_callback(WindowID window, CharModsCallback value) override;
-		virtual CloseCallback window_set_close_callback(WindowID window, CloseCallback value) override;
-		virtual ContentScaleCallback window_set_content_scale_callback(WindowID window, ContentScaleCallback value) override;
-		virtual DropCallback window_set_drop_callback(WindowID window, DropCallback value) override;
-		virtual FocusCallback window_set_focus_callback(WindowID window, FocusCallback value) override;
-		virtual FramebufferResizeCallback window_set_framebuffer_resize_callback(WindowID window, FramebufferResizeCallback value) override;
-		virtual IconifyCallback window_set_iconify_callback(WindowID window, IconifyCallback value) override;
-		virtual KeyCallback window_set_key_callback(WindowID window, KeyCallback value) override;
-		virtual MaximizeCallback window_set_maximize_callback(WindowID window, MaximizeCallback value) override;
-		virtual MouseButtonCallback window_set_mouse_button_callback(WindowID window, MouseButtonCallback value) override;
-		virtual MouseEnterCallback window_set_mouse_enter_callback(WindowID window, MouseEnterCallback value) override;
-		virtual MousePositionCallback window_set_mouse_position_callback(WindowID window, MousePositionCallback value) override;
-		virtual PositionCallback window_set_position_callback(WindowID window, PositionCallback value) override;
-		virtual RefreshCallback window_set_refresh_callback(WindowID window, RefreshCallback value) override;
-		virtual ScrollCallback window_set_scroll_callback(WindowID window, ScrollCallback value) override;
-		virtual SizeCallback window_set_size_callback(WindowID window, SizeCallback value) override;
-		virtual MonitorCallback set_monitor_callback(MonitorCallback callback) override;
-		virtual JoystickCallback set_joystick_callback(JoystickCallback callback) override;
+		virtual CharCallback window_set_char_callback(CharCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual CharModsCallback window_set_char_mods_callback(CharModsCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual CloseCallback window_set_close_callback(CloseCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual DropCallback window_set_drop_callback(DropCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual FocusCallback window_set_focus_callback(FocusCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual FramebufferResizeCallback window_set_framebuffer_resize_callback(FramebufferResizeCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual IconifyCallback window_set_iconify_callback(IconifyCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual KeyCallback window_set_key_callback(KeyCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual MaximizeCallback window_set_maximize_callback(MaximizeCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual MouseButtonCallback window_set_mouse_button_callback(MouseButtonCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual MouseEnterCallback window_set_mouse_enter_callback(MouseEnterCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual MousePositionCallback window_set_mouse_position_callback(MousePositionCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual PositionCallback window_set_position_callback(PositionCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual RefreshCallback window_set_refresh_callback(RefreshCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual ScaleCallback window_set_scale_callback(ScaleCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual ScrollCallback window_set_scroll_callback(ScrollCallback callback, WindowID window = MAIN_WINDOW_ID) override;
+		virtual SizeCallback window_set_size_callback(SizeCallback callback, WindowID window = MAIN_WINDOW_ID) override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

@@ -48,18 +48,33 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
-	> V * getptr(HashMap<K, V, H, E> & m, T && value)
+	namespace util
 	{
-		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
-		else { return nullptr; }
-	}
+		template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
+		> auto getptr(HashMap<K, V, H, E> & m, T && value) noexcept
+		{
+			if (auto const it{ m.find(FWD(value)) }; it != m.end())
+			{
+				return std::addressof(it->second);
+			}
+			else
+			{
+				return (V *)nullptr;
+			}
+		}
 
-	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
-	> V const * getptr(HashMap<K, V, H, E> const & m, T && value)
-	{
-		if (auto const it{ m.find(FWD(value)) }; it != m.end()) { return &it->second; }
-		else { return nullptr; }
+		template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>, class T
+		> auto getptr(HashMap<K, V, H, E> const & m, T && value) noexcept
+		{
+			if (auto const it{ m.find(FWD(value)) }; it != m.end())
+			{
+				return std::addressof(it->second);
+			}
+			else
+			{
+				return (V const *)nullptr;
+			}
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

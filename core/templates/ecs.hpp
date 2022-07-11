@@ -392,7 +392,7 @@ namespace ism::ecs
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using allocator_type	= typename PolymorphicAllocator<byte>;
+		using allocator_type	= typename PolymorphicAllocator<uint8_t>;
 		using traits			= typename U;
 		using self_type			= typename manager<traits>;
 		using Tags				= typename traits::tags_type;

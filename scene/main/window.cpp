@@ -9,14 +9,12 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Window::Window()
+	Window::Window() : m_window{ DS::MAIN_WINDOW_ID }
 	{
-		m_window = DS::get_singleton()->get_current_context();
 	}
 
 	Window::~Window()
 	{
-		m_window = nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -26,19 +24,19 @@ namespace ism
 		return DS::get_singleton()->window_get_title(m_window);
 	}
 
-	void Window::set_title(String const & value)
+	void Window::set_title(String const & title)
 	{
-		DS::get_singleton()->window_set_title(m_window, value);
+		DS::get_singleton()->window_set_title(title, m_window);
 	}
 
-	DS::MonitorID Window::get_monitor() const
+	int32_t Window::get_current_screen() const
 	{
-		return DS::get_singleton()->window_get_monitor(m_window);
+		return DS::get_singleton()->window_get_current_screen(m_window);
 	}
 
-	void Window::set_monitor(DS::MonitorID value)
+	void Window::set_current_screen(int32_t screen)
 	{
-		DS::get_singleton()->window_set_monitor(m_window, value);
+		DS::get_singleton()->window_set_current_screen(screen, m_window);
 	}
 
 	Vec2i Window::get_position() const
@@ -46,9 +44,9 @@ namespace ism
 		return DS::get_singleton()->window_get_position(m_window);
 	}
 
-	void Window::set_position(Vec2i const & value)
+	void Window::set_position(Vec2i const & position)
 	{
-		DS::get_singleton()->window_set_position(m_window, value);
+		DS::get_singleton()->window_set_position(position, m_window);
 	}
 
 	Vec2i Window::get_size() const
@@ -56,9 +54,9 @@ namespace ism
 		return DS::get_singleton()->window_get_size(m_window);
 	}
 
-	void Window::set_size(Vec2i const & value)
+	void Window::set_size(Vec2i const & size)
 	{
-		DS::get_singleton()->window_set_size(m_window, value);
+		DS::get_singleton()->window_set_size(size, m_window);
 	}
 
 	Vec2i Window::get_real_size() const
@@ -73,17 +71,17 @@ namespace ism
 
 	void Window::set_mode(DS::WindowMode_ mode)
 	{
-		DS::get_singleton()->window_set_mode(m_window, mode);
+		DS::get_singleton()->window_set_mode(mode, m_window);
 	}
 
 	bool Window::get_flag(int32_t flag) const
 	{
-		return DS::get_singleton()->window_get_flag(m_window, flag);
+		return DS::get_singleton()->window_get_flag(flag, m_window);
 	}
 
 	void Window::set_flag(int32_t flag, bool enabled)
 	{
-		DS::get_singleton()->window_set_flag(m_window, flag, enabled);
+		DS::get_singleton()->window_set_flag(flag, enabled, m_window);
 	}
 
 	void Window::request_attention()
@@ -98,7 +96,7 @@ namespace ism
 
 	void Window::set_visible(bool value)
 	{
-		DS::get_singleton()->window_set_visible(m_window, value);
+		DS::get_singleton()->window_set_visible(value, m_window);
 	}
 
 	bool Window::is_visible() const
@@ -116,9 +114,9 @@ namespace ism
 		set_visible(true);
 	}
 
-	Vec2 Window::get_content_scale() const
+	Vec2 Window::get_scale() const
 	{
-		return DS::get_singleton()->window_get_content_scale(m_window);
+		return DS::get_singleton()->window_get_scale(m_window);
 	}
 
 	void Window::grab_focus()
@@ -129,16 +127,6 @@ namespace ism
 	bool Window::has_focus() const
 	{
 		return DS::get_singleton()->window_has_focus(m_window);
-	}
-
-	bool Window::should_close() const
-	{
-		return DS::get_singleton()->window_should_close(m_window);
-	}
-
-	void Window::set_should_close(bool value)
-	{
-		DS::get_singleton()->window_set_should_close(m_window, value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

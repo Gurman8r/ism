@@ -18,7 +18,7 @@ namespace ism
 		using self_type			= typename BasicFlatSet<_Ty, _Pr, _Mt, _Th>;
 		using value_type		= typename _Ty;
 		using compare_type		= typename _Pr;
-		using allocator_type	= typename PolymorphicAllocator<byte>;
+		using allocator_type	= typename PolymorphicAllocator<uint8_t>;
 		using difference_type	= typename ptrdiff_t;
 		using size_type			= typename size_t;
 
