@@ -57,45 +57,45 @@ namespace ism::priv
 
 	// scope enter
 
-	template <class F> struct _OnScopeEnter final
+	template <class F> struct OnScopeEnter final
 	{
-		explicit _OnScopeEnter(F fn) noexcept { fn(); }
+		explicit OnScopeEnter(F fn) noexcept { fn(); }
 	};
 
-	enum class _OnScopeEnter_Tag {};
+	enum class OnScopeEnter_Tag {};
 
 	template <class F
-	> auto operator+(_OnScopeEnter_Tag, F fn) noexcept
+	> auto operator+(OnScopeEnter_Tag, F fn) noexcept
 	{
-		return _OnScopeEnter<F>{ fn };
+		return OnScopeEnter<F>{ fn };
 	}
 
 #define ON_SCOPE_ENTER(...) \
-		auto ANON = (ism::priv::_OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+		auto ANON = (ism::priv::OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// scope exit
 
-	template <class F> struct _OnScopeExit final
+	template <class F> struct OnScopeExit final
 	{
 		F const m_fn;
 
-		explicit _OnScopeExit(F fn) noexcept : m_fn{ fn } {}
+		explicit OnScopeExit(F fn) noexcept : m_fn{ fn } {}
 
-		~_OnScopeExit() noexcept { m_fn(); }
+		~OnScopeExit() noexcept { m_fn(); }
 	};
 
-	enum class _OnScopeExit_Tag {};
+	enum class OnScopeExit_Tag {};
 
 	template <class F
-	> auto operator+(_OnScopeExit_Tag, F fn) noexcept
+	> auto operator+(OnScopeExit_Tag, F fn) noexcept
 	{
-		return _OnScopeExit<F>{ fn };
+		return OnScopeExit<F>{ fn };
 	}
 
 #define ON_SCOPE_EXIT(...) \
-		auto ANON = (ism::priv::_OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+		auto ANON = (ism::priv::OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -211,11 +211,7 @@ namespace ism::util
 		return temp;
 	}
 
-	template <class A, class B
-	> constexpr int32_t compare(A const & a, B const & b) noexcept
-	{
-		return CMP(a, b);
-	}
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
 	> constexpr void swap(T & lhs, T & rhs) noexcept
@@ -224,6 +220,8 @@ namespace ism::util
 		lhs = std::move(rhs);
 		rhs = std::move(tmp);
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class LI, class RI
 	> constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
@@ -239,6 +237,50 @@ namespace ism::util
 		return (lBegin != lEnd && rBegin != rEnd)
 			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))
 			: (lBegin == lEnd && rBegin == rEnd);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class A, class B
+	> constexpr int32_t compare(A const & a, B const & b) noexcept
+	{
+		return CMP(a, b);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class LHS, class RHS, class ... Rest
+	> constexpr decltype(auto) min(LHS && lhs, RHS && rhs, Rest && ... rest)
+	{
+		return lhs < rhs ? min(FWD(lhs), FWD(rest)...) : min(FWD(rhs), FWD(rest)...);
+	}
+
+	template <class Only
+	> constexpr decltype(auto) min(Only && only)
+	{
+		return FWD(only);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class LHS, class RHS, class ... Rest
+	> constexpr decltype(auto) max(LHS && lhs, RHS && rhs, Rest && ... rest)
+	{
+		return lhs > rhs ? max(FWD(lhs), FWD(rest)...) : max(FWD(rhs), FWD(rest)...);
+	}
+
+	template <class Only
+	> constexpr decltype(auto) max(Only && only)
+	{
+		return FWD(only);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class X, class In = X, class Out = In
+	> constexpr auto map(X x, In in_min, In in_max, Out out_min, Out out_max)
+	{
+		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

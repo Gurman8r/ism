@@ -21,7 +21,7 @@ namespace ism
 		static OS * __singleton;
 
 		Path				m_exepath{};
-		List<String>		m_cmdline{};
+		Vector<String>		m_cmdline{};
 		int32_t				m_exit_code{};
 		CompositeLogger *	m_logger{};
 
@@ -39,7 +39,7 @@ namespace ism
 		virtual void initialize() = 0;
 		virtual void finalize() = 0;
 		virtual void finalize_core() = 0;
-		virtual void set_cmdline(cstring exepath, List<String> const & args);
+		virtual void set_cmdline(cstring exepath, Vector<String> const & args);
 		virtual void set_main_loop(Ref<MainLoop> value) = 0;
 		virtual void delete_main_loop() = 0;
 
@@ -57,8 +57,8 @@ namespace ism
 		virtual Error_ get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional = false) = 0;
 
 		virtual Path get_executable_path() const;
-		virtual Error_ execute(Path const & path, List<String> const & args, String * pipe = nullptr, int32_t * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) = 0;
-		virtual Error_ create_process(Path const & path, List<String> const & args, ProcessID * child_id = nullptr) = 0;
+		virtual Error_ execute(Path const & path, Vector<String> const & args, String * pipe = nullptr, int32_t * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) = 0;
+		virtual Error_ create_process(Path const & path, Vector<String> const & args, ProcessID * child_id = nullptr) = 0;
 		virtual Error_ kill(ProcessID const & pid) = 0;
 		virtual int32_t get_process_id() const = 0;
 
@@ -71,7 +71,7 @@ namespace ism
 		virtual bool set_env(String const & key, Path const & value) const = 0;
 
 		virtual String get_name() const = 0;
-		virtual List<String> get_cmdline_args() const;
+		virtual Vector<String> get_cmdline_args() const;
 		virtual String get_model_name() const;
 
 		virtual Ref<MainLoop> get_main_loop() const = 0;

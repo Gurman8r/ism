@@ -187,7 +187,7 @@ namespace ism
 
 		uint16_t argument_count{};
 
-		List<ArgumentRecord> args{};
+		Vector<ArgumentRecord> args{};
 
 		ReturnPolicy_ policy{ ReturnPolicy_AutomaticReference };
 

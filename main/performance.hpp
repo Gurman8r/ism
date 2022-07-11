@@ -2,7 +2,7 @@
 #define _ISM_PERFORMANCE_HPP_
 
 #include <core/os/time.hpp>
-#include <core/templates/list.hpp>
+#include <core/templates/vector.hpp>
 
 namespace ism
 {
@@ -11,7 +11,7 @@ namespace ism
 		float_t			value{};
 		float_t			accum{};
 		size_t			index{};
-		List<float_t>	times{};
+		Vector<float_t>	times{};
 
 		FPS_Tracker(size_t count = 120) noexcept : value{}, accum{}, index{}, times{}
 		{

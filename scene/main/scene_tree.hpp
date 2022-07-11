@@ -11,6 +11,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class Node;
+	class Entity;
+	class Viewport;
 	class Window;
 
 	ALIAS(EntityID) entt::entity;

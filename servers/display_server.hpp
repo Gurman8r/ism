@@ -4,6 +4,7 @@
 #include <core/os/os.hpp>
 #include <core/input/input.hpp>
 #include <core/io/image.hpp>
+#include <core/templates/views.hpp>
 
 namespace ism
 {
@@ -29,54 +30,40 @@ namespace ism
 		virtual String get_clipboard() const = 0;
 		virtual void set_clipboard(String const & text) = 0;
 
-		enum CursorShape_
-		{
-			CursorShape_Arrow,
-			CursorShape_IBeam,
-			CursorShape_Crosshair,
-			CursorShape_PointingHand,
-			CursorShape_EW,
-			CursorShape_NS,
-			CursorShape_NESW,
-			CursorShape_NWSE,
-			CursorShape_ResizeAll,
-			CursorShape_NotAllowed,
-			CursorShape_HResize,
-			CursorShape_VResize,
-			CursorShape_Hand,
-			CursorShape_MAX
-		};
+		virtual Input::CursorShape_ cursor_get_shape() const = 0;
+		virtual void cursor_set_shape(Input::CursorShape_ shape) = 0;
+		virtual void cursor_set_custom_image(RES const & cursor, Input::CursorShape_ shape = {}, Vec2 const & hotspot = {}) = 0;
 
-		virtual CursorShape_ cursor_get_shape() const = 0;
-		virtual void cursor_set_shape(CursorShape_ shape) = 0;
-		virtual void cursor_set_custom_image(RES const & cursor, CursorShape_ shape = {}, Vec2 const & hotspot = {}) = 0;
+		virtual Input::MouseMode_ mouse_get_mode() const = 0;
+		virtual void mouse_set_mode(Input::MouseMode_ mode) = 0;
 
-		enum MouseMode_
-		{
-			MouseMode_Normal,
-			MouseMode_Hidden,
-			MouseMode_Disabled,
-			MouseMode_MAX
-		};
-
-		virtual MouseMode_ mouse_get_mode() const = 0;
-		virtual void mouse_set_mode(MouseMode_ mode) = 0;
-
-		virtual int32_t mouse_get_button(MouseButton_ button) const = 0;
+		virtual int32_t mouse_get_button(Input::MouseButton_ button) const = 0;
 		virtual Vec2 mouse_get_position() const = 0;
 		virtual void mouse_set_position(Vec2 const & position) = 0;
+
+		virtual bool joystick_is_present(Input::Joystick_ jid) const = 0;
+		virtual String joystick_get_name(Input::Joystick_ jid) const = 0;
+		virtual String joystick_get_guid(Input::Joystick_ jid) const = 0;
+		virtual View<float_t const> joystick_get_axes(Input::Joystick_ jid) const = 0;
+		virtual View<uint8_t const> joystick_get_buttons(Input::Joystick_ jid) const = 0;
+		virtual View<uint8_t const> joystick_get_hats(Input::Joystick_ jid) const = 0;
+		virtual bool joystick_is_gamepad(Input::Joystick_ jid) const = 0;
+		virtual String gamepad_get_name(Input::Joystick_ jid) const = 0;
+		virtual bool gamepad_get_state(Input::Joystick_ jid, Input::GamepadState * state) const = 0;
+		virtual bool gamepad_update_mappings(String const & mappings) = 0;
 
 		enum { SCREEN_OF_MAIN_WINDOW = -1 };
 		virtual int32_t get_screen_count() const = 0;
 		virtual String screen_get_name(int32_t screen = SCREEN_OF_MAIN_WINDOW) const = 0;
-		virtual IntRect screen_get_rect(int32_t screen = SCREEN_OF_MAIN_WINDOW) const = 0;
+		virtual Vec2i screen_get_physical_size(int32_t screen = SCREEN_OF_MAIN_WINDOW) const = 0;
+		virtual IntRect screen_get_workarea(int32_t screen = SCREEN_OF_MAIN_WINDOW) const = 0;
 		virtual Vec2i screen_get_position(int32_t screen = SCREEN_OF_MAIN_WINDOW) const = 0;
 		virtual Vec2i screen_get_size(int32_t screen = SCREEN_OF_MAIN_WINDOW) const = 0;
 		virtual Vec2 screen_get_scale(int32_t screen = SCREEN_OF_MAIN_WINDOW) const = 0;
 		virtual Vec2 screen_get_max_scale() const {
 			Vec2 scale{ 1.f, 1.f };
 			for (int32_t i = 0; i < get_screen_count(); ++i) {
-				scale = mpl::max(scale, screen_get_scale(i));
+				scale = util::max(scale, screen_get_scale(i));
 			}
 			return scale;
 		}
@@ -84,9 +71,13 @@ namespace ism
 		struct VideoMode
 		{
 			Vec2i	size			{ 1280, 720 };
-			Color32	bits_per_pixel	{ COLOR32(8, 8, 8, 8) };
+			Vec4b	bits_per_pixel	{ 8, 8, 8, 8 };
 			int32_t	refresh_rate	{ -1 };
 		};
+
+		using WindowID = int32_t;
+
+		enum { MAIN_WINDOW_ID, INVALID_WINDOW_ID = -1 };
 
 		enum WindowMode_
 		{
@@ -97,11 +88,24 @@ namespace ism
 			WindowMode_MAX
 		};
 
-		using WindowID = intptr_t;
-
-		enum { MAIN_WINDOW_ID = 0, INVALID_WINDOW_ID = -1 };
-
-		virtual List<WindowID> get_window_list() const = 0;
+		enum WindowEvent_
+		{
+			WindowEvent_MouseEnter,
+			WindowEvent_MouseExit,
+			WindowEvent_FocusIn,
+			WindowEvent_FocusOut,
+			WindowEvent_CloseRequest,
+			WindowEvent_GoBackRequest,
+			WindowEvent_SizeChanged,
+			WindowEvent_ScaleChanged,
+			WindowEvent_MAX
+		};
+		
+		virtual Vector<WindowID> get_window_list() const = 0;
+		
+		//virtual void window_set_window_event_callback(OBJ const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
+		//virtual void window_set_input_event_callback(OBJ const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
+		//virtual void window_set_input_text_callback(OBJ const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
 
 		virtual String window_get_title(WindowID window = MAIN_WINDOW_ID) const = 0;
 		virtual void window_set_title(String const & title, WindowID window = MAIN_WINDOW_ID) = 0;
@@ -134,11 +138,6 @@ namespace ism
 		virtual void window_grab_focus(WindowID window = MAIN_WINDOW_ID) = 0;
 		virtual bool window_has_focus(WindowID window = MAIN_WINDOW_ID) const = 0;
 
-		virtual void * window_get_native_handle(WindowID window = MAIN_WINDOW_ID) const = 0;
-
-		virtual WindowID get_current_context() const = 0;
-		virtual void make_context_current(WindowID window) = 0;
-
 		virtual void poll_events() = 0;
 		virtual void swap_buffers() = 0;
 
@@ -157,9 +156,9 @@ namespace ism
 		using FocusCallback =				void(*)(WindowID, bool focused);
 		using FramebufferResizeCallback =	void(*)(WindowID, int32_t w, int32_t h);
 		using IconifyCallback =				void(*)(WindowID, bool iconified);
-		using KeyCallback =					void(*)(WindowID, KeyCode_ key, int32_t scancode, int32_t action, int32_t mods);
+		using KeyCallback =					void(*)(WindowID, Input::Key_ key, int32_t scancode, int32_t action, int32_t mods);
 		using MaximizeCallback =			void(*)(WindowID, bool maximized);
-		using MouseButtonCallback =			void(*)(WindowID, MouseButton_ button, int32_t action, int32_t mods);
+		using MouseButtonCallback =			void(*)(WindowID, Input::MouseButton_ button, int32_t action, int32_t mods);
 		using MouseEnterCallback =			void(*)(WindowID, bool entered);
 		using MousePositionCallback =		void(*)(WindowID, double_t x, double_t y);
 		using PositionCallback =			void(*)(WindowID, int32_t x, int32_t y);

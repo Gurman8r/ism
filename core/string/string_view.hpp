@@ -48,7 +48,6 @@ namespace ism
 		using base_type::base_type;
 		using base_type::operator=;
 
-	public:
 		constexpr auto hash_code() const noexcept { return ism::hash(data(), size()); }
 	};
 

@@ -39,7 +39,7 @@ namespace ism
 		using key_reverse_iterator				= typename key_storage::reverse_iterator;
 		using key_const_reverse_iterator		= typename key_storage::const_reverse_iterator;
 
-		using value_storage						= typename List<value_type>;
+		using value_storage						= typename Vector<value_type>;
 		using value_pointer						= typename value_storage::pointer;
 		using value_const_pointer				= typename value_storage::const_pointer;
 		using value_reference					= typename value_storage::reference;
@@ -77,7 +77,7 @@ namespace ism
 		{
 		}
 
-		BasicFlatMap(List<key_type> && k, List<value_type> && v, allocator_type alloc = {}) noexcept
+		BasicFlatMap(Vector<key_type> && k, Vector<value_type> && v, allocator_type alloc = {}) noexcept
 			: self_type{ alloc }
 		{
 			for (size_t i = 0, imax = ML_min(k.size(), v.size()); i < imax; ++i)

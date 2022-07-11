@@ -62,12 +62,12 @@ namespace ism
 		return Error_None;
 	}
 
-	Error_ OS_Windows::execute(Path const & path, List<String> const & args, String * pipe, int32_t * exitcode, bool read_stderr, Mutex * pipe_mutex)
+	Error_ OS_Windows::execute(Path const & path, Vector<String> const & args, String * pipe, int32_t * exitcode, bool read_stderr, Mutex * pipe_mutex)
 	{
 		return Error_Unknown;
 	}
 
-	Error_ OS_Windows::create_process(Path const & path, List<String> const & args, ProcessID * child_id)
+	Error_ OS_Windows::create_process(Path const & path, Vector<String> const & args, ProcessID * child_id)
 	{
 		return Error_Unknown;
 	}

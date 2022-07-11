@@ -36,7 +36,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	CompositeLogger::CompositeLogger(List<Logger *> loggers) : m_loggers{ std::move(loggers) }
+	CompositeLogger::CompositeLogger(Vector<Logger *> loggers) : m_loggers{ std::move(loggers) }
 	{
 	}
 

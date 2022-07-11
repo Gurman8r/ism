@@ -29,7 +29,7 @@ namespace ism::priv
 
 		~LoaderLifeSupport() noexcept
 		{
-			List<OBJ> & stack{ Internals::get_singleton()->loader_stack };
+			Vector<OBJ> & stack{ Internals::get_singleton()->loader_stack };
 			ASSERT(!stack.empty());
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
@@ -38,7 +38,7 @@ namespace ism::priv
 
 		static void add(OBJ const & value) noexcept
 		{
-			List<OBJ> & stack{ Internals::get_singleton()->loader_stack };
+			Vector<OBJ> & stack{ Internals::get_singleton()->loader_stack };
 			ASSERT(!stack.empty());
 			LIST & list{ (LIST &)stack.back() };
 			if (!list) { list = LIST::new_(); }

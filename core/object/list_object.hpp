@@ -14,7 +14,7 @@ namespace ism
 		friend class LIST;
 
 	public:
-		List<OBJ> m_list{};
+		Vector<OBJ> m_list{};
 
 		using storage_type		= decltype(m_list);
 		using iterator			= storage_type::iterator;

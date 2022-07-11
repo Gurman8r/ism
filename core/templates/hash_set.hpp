@@ -29,14 +29,14 @@ namespace ism
 
 	// multi hashset base
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
-	> ALIAS(_MultiHashSetBase) std::unordered_multiset<T, H, E, PolymorphicAllocator<T>>;
+	> ALIAS(_HashMultiSetBase) std::unordered_multiset<T, H, E, PolymorphicAllocator<T>>;
 
 	// multi hashset
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
-	> class MultiHashSet : public _MultiHashSetBase<T, H, E>
+	> class HashMultiSet : public _HashMultiSetBase<T, H, E>
 	{
 	public:
-		using base_type = _MultiHashSetBase<T, H, E>;
+		using base_type = _HashMultiSetBase<T, H, E>;
 		using base_type::base_type;
 		using base_type::operator=;
 

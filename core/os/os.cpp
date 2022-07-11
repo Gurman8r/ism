@@ -12,7 +12,7 @@ namespace ism
 	{
 		__singleton = this;
 
-		List<Logger *> temp{};
+		Vector<Logger *> temp{};
 		temp.push_back(memnew(StdLogger));
 		_set_logger(memnew(CompositeLogger(std::move(temp))));
 	}
@@ -28,7 +28,7 @@ namespace ism
 	{
 		if (!value)
 		{
-			List<Logger *> temp{};
+			Vector<Logger *> temp{};
 			temp.push_back(memnew(StdLogger));
 			_set_logger(memnew(CompositeLogger(std::move(temp))));
 		}
@@ -97,12 +97,12 @@ namespace ism
 		return Error_Unknown;
 	}
 
-	List<String> OS::get_cmdline_args() const
+	Vector<String> OS::get_cmdline_args() const
 	{
 		return m_cmdline;
 	}
 
-	void OS::set_cmdline(cstring exepath, List<String> const & args)
+	void OS::set_cmdline(cstring exepath, Vector<String> const & args)
 	{
 		m_exepath = exepath;
 		m_cmdline = args;

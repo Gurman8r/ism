@@ -72,7 +72,7 @@ size_t process_indices(aiMesh const * mesh, DynamicBuffer & data)
 	return data.size() / sizeof(uint32_t);
 }
 
-void process_aimaterial(aiMaterial const * material, List<Ref<Texture>> & textures)
+void process_aimaterial(aiMaterial const * material, Vector<Ref<Texture>> & textures)
 {
 	if (!material) { return; }
 
@@ -93,7 +93,7 @@ void process_aimaterial(aiMaterial const * material, List<Ref<Texture>> & textur
 	_load_material_texture(aiTextureType_SPECULAR, "sm"); // specular
 }
 
-void process_ainode(aiScene const * scene, aiNode const * node, List<RS::SurfaceData> & spec)
+void process_ainode(aiScene const * scene, aiNode const * node, Vector<RS::SurfaceData> & spec)
 {
 	for (size_t i = 0; i < (size_t)node->mNumMeshes; ++i)
 	{
@@ -104,7 +104,7 @@ void process_ainode(aiScene const * scene, aiNode const * node, List<RS::Surface
 		s.vertex_count = process_vertices(m, s.vertex_data);
 		s.index_count = process_indices(m, s.index_data);
 
-		//List<Ref<Texture>> textures;
+		//Vector<Ref<Texture>> textures;
 		//process_aimaterial(scene->mMaterials[m->mMaterialIndex], textures);
 	}
 
@@ -131,7 +131,7 @@ Error_ MeshLoader::load_from_file(Mesh & mesh, Path const & path)
 		aiProcess_GenUVCoords) };
 	ON_SCOPE_EXIT(&) { ai.FreeScene(); };
 
-	List<RS::SurfaceData> spec;
+	Vector<RS::SurfaceData> spec;
 	process_ainode(scene, scene->mRootNode, spec);
 	mesh.m_mesh = RS::get_singleton()->mesh_create(spec);
 	if (!mesh.m_mesh) { return Error_Unknown; }

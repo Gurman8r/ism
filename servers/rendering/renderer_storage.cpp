@@ -107,7 +107,7 @@ namespace ism
 		_Material & m{ *VALIDATE((_Material *)material) };
 		m.texture_cache.clear();
 
-		List<RD::Uniform> uniforms{};
+		Vector<RD::Uniform> uniforms{};
 		size_t buffer_size{};
 
 		for (auto const & [key, value] : params)
@@ -134,7 +134,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RendererStorage::mesh_create(List<RS::SurfaceData> const & surfaces)
+	RID RendererStorage::mesh_create(Vector<RS::SurfaceData> const & surfaces)
 	{
 		RID const mesh{ (RID)memnew(_Mesh{}) };
 		_Mesh & m{ *VALIDATE((_Mesh *)mesh) };

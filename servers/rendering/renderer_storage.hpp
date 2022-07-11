@@ -39,7 +39,7 @@ namespace ism
 			RID shader{};
 			RID uniform_buffer{};
 			RID uniform_set{};
-			List<RID> texture_cache{};
+			Vector<RID> texture_cache{};
 			DynamicBuffer ubo_data{};
 			Map<StringName, Variant> params{};
 			bool update_requested{};
@@ -74,10 +74,10 @@ namespace ism
 				RID uniform_set{};
 			};
 
-			List<Surface *> surfaces{};
+			Vector<Surface *> surfaces{};
 		};
 
-		RID mesh_create(List<RS::SurfaceData> const & surfaces = {});
+		RID mesh_create(Vector<RS::SurfaceData> const & surfaces = {});
 		RID mesh_placeholder_create();
 		void mesh_destroy(RID mesh);
 		void mesh_clear(RID mesh);

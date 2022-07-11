@@ -406,7 +406,7 @@ RID RenderingDeviceOpenGL::vertex_buffer_create(size_t size_in_bytes, DynamicBuf
 	return buffer_create(BufferType_VertexBuffer, size_in_bytes, data);
 }
 
-RID RenderingDeviceOpenGL::vertex_array_create(size_t vertex_count, VertexLayout const & layout, List<RID> const & buffers)
+RID RenderingDeviceOpenGL::vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers)
 {
 	ASSERT(0 < vertex_count);
 	RID const vertex_array{ (RID)memnew(_VertexArray{}) };
@@ -584,7 +584,7 @@ DynamicBuffer RenderingDeviceOpenGL::texture_get_data(RID texture)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::framebuffer_create(List<RID> const & texture_attachments)
+RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attachments)
 {
 	_Framebuffer * const fb{ memnew(_Framebuffer{}) };
 	fb->texture_attachments = texture_attachments;
@@ -809,7 +809,7 @@ RID RenderingDeviceOpenGL::uniform_buffer_create(size_t size_in_bytes, DynamicBu
 	return buffer_create(BufferType_UniformBuffer, size_in_bytes, data);
 }
 
-RID RenderingDeviceOpenGL::uniform_set_create(List<Uniform> const & uniforms, RID shader)
+RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, RID shader)
 {
 	RID const uniform_set{ (RID)memnew(_UniformSet{}) };
 	_UniformSet & us{ *VALIDATE((_UniformSet *)uniform_set) };
@@ -977,7 +977,7 @@ RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(DS::WindowID wi
 	return draw_list;
 }
 
-RD::DrawListID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, List<Color> const & clear_colors, float_t clear_depth, int32_t clear_stencil)
+RD::DrawListID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors, float_t clear_depth, int32_t clear_stencil)
 {
 	DrawListID const draw_list{ m_draw_list.size() };
 	_DrawList & dl{ m_draw_list.emplace_back(_DrawList{}) };

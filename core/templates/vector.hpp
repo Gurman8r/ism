@@ -1,5 +1,5 @@
-#ifndef _ISM_LIST_HPP_
-#define _ISM_LIST_HPP_
+#ifndef _ISM_VECTOR_HPP_
+#define _ISM_VECTOR_HPP_
 
 #include <core/os/memory.hpp>
 
@@ -9,16 +9,16 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// list base
+	// vector base
 	template <class T
-	> ALIAS(_ListBase) std::vector<T, PolymorphicAllocator<T>>;
+	> ALIAS(_VectorBase) std::vector<T, PolymorphicAllocator<T>>;
 
-	// list
+	// vector
 	template <class T
-	> class List : public _ListBase<T>
+	> class Vector : public _VectorBase<T>
 	{
 	public:
-		using base_type = _ListBase<T>;
+		using base_type = _VectorBase<T>;
 		using base_type::base_type;
 		using base_type::operator=;
 
@@ -44,7 +44,7 @@ namespace ism
 	namespace util
 	{
 		template <class V, class K
-		> auto getptr(List<V> const & l, K && value) noexcept
+		> auto getptr(Vector<V> const & l, K && value) noexcept
 		{
 			if (auto const it{ l.find(FWD(value)) }; it != l.end())
 			{
@@ -60,4 +60,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_LIST_HPP_
+#endif // !_ISM_VECTOR_HPP_

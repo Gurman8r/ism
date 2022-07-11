@@ -206,7 +206,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RenderingServerDefault::mesh_create(List<SurfaceData> const & surfaces)
+	RID RenderingServerDefault::mesh_create(Vector<SurfaceData> const & surfaces)
 	{
 		return m_storage->mesh_create(surfaces);
 	}

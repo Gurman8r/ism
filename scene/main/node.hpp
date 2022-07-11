@@ -43,7 +43,7 @@ namespace ism
 			Notification_WM_CloseRequest,
 			Notification_WM_GoBackRequest,
 			Notification_WM_SizeChanged,
-			Notification_WM_DpiChanged,
+			Notification_WM_ScaleChanged,
 
 			Notification_MemoryWarning = MainLoop::Notification_MemoryWarning,
 			Notification_Crash = MainLoop::Notification_Crash,
@@ -56,7 +56,7 @@ namespace ism
 	protected:
 		SceneTree *		m_tree{};
 		Node *			m_parent{};
-		List<Node *>	m_nodes{};
+		Vector<Node *>	m_nodes{};
 
 		Node();
 

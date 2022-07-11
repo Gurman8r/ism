@@ -139,7 +139,7 @@ namespace ism
 		});
 	
 		// framebuffers
-		List<RID> fb_textures{
+		Vector<RID> fb_textures{
 			RD::get_singleton()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 				t.color_format = RD::DataFormat_R8G8B8_UNORM;
 				t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
@@ -178,7 +178,7 @@ namespace ism
 		{
 		case Notification_Process: {
 
-			Duration const dt{ get_tree()->get_delta_time() };
+			Duration const delta_time{ get_tree()->get_delta_time() };
 
 			char window_title[32];
 			std::sprintf(window_title, "ism @ %.3f fps", get_tree()->get_fps().value);
@@ -215,8 +215,8 @@ namespace ism
 				material_ubo.set<3>(32.f); // shininess
 				RD::get_singleton()->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
 
-				static List<Color> clear_colors{ Colors::magenta };
-				clear_colors[0] = rotate_hue(clear_colors[0], 10.f * dt);
+				static Vector<Color> clear_colors{ Colors::magenta };
+				clear_colors[0] = rotate_hue(clear_colors[0], 10.f * delta_time);
 
 				RD::DrawListID const draw_list{ RD::get_singleton()->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
 				RD::get_singleton()->draw_list_bind_pipeline(draw_list, pipeline);
@@ -237,9 +237,9 @@ namespace ism
 
 			_draw_dockspace();
 			if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
-			m_hierarchy.process(dt);
-			m_log.process(dt);
-			m_viewport.process(dt);
+			m_hierarchy.process(delta_time);
+			m_log.process(delta_time);
+			m_viewport.process(delta_time);
 
 		} break;
 		}

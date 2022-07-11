@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void ShaderLanguageGLSL::load_tokens(List<String> & v) const
+	void ShaderLanguageGLSL::load_tokens(Vector<String> & v) const
 	{
 		v.resize(Token_MAX, String{});
 		v[Token_Void] = "void"_s;

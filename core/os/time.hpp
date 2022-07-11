@@ -13,23 +13,67 @@ namespace ism
 	ALIAS(_DurationBase) std::chrono::duration<float_t>;
 
 	// duration
-	struct Duration : public _DurationBase
+	class Duration : public _DurationBase
 	{
+	public:
 		using base_type = _DurationBase;
 		using base_type::base_type;
 		using base_type::count;
+		using base_type::operator+;
+		using base_type::operator-;
+		using base_type::operator+=;
+		using base_type::operator-=;
+		using base_type::operator*=;
+		using base_type::operator/=;
 
 		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
 		> constexpr operator T() const noexcept { return (T)count(); }
 
-		constexpr auto nanoseconds() const noexcept -> Duration { return std::chrono::duration_cast<std::chrono::duration<float_t, Nano>>(*this); }
-		constexpr auto microseconds() const noexcept -> Duration { return std::chrono::duration_cast<std::chrono::duration<float_t, Micro>>(*this); }
-		constexpr auto milliseconds() const noexcept -> Duration { return std::chrono::duration_cast<std::chrono::duration<float_t, Milli>>(*this); }
-		constexpr auto seconds() const noexcept -> Duration { return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<1>>>(*this); }
-		constexpr auto minutes() const noexcept -> Duration { return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60>>>(*this); }
-		constexpr auto hours() const noexcept -> Duration { return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60 * 60>>>(*this); }
-		constexpr auto days() const noexcept -> Duration { return std::chrono::duration_cast<std::chrono::duration<float_t, Ratio<60 * 60 * 24>>>(*this); }
+		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+		> constexpr Duration & operator=(T const value) noexcept { return (*this) = Duration{ (rep)value }; }
+
+		constexpr Duration & operator++() noexcept { return (*this) = count() + (rep)1; }
+		constexpr Duration operator++(int) noexcept { Duration temp{ *this }; return ++temp, temp; }
+
+		constexpr Duration & operator--() noexcept { return (*this) = count() - (rep)1; }
+		constexpr Duration operator--(int) noexcept { Duration temp{ *this }; return --temp, temp; }
+
+		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+		> constexpr bool operator==(T const value) const noexcept { return value == (T)count(); }
+
+		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+		> constexpr bool operator!=(T const value) const noexcept { return value != (T)count(); }
+
+		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+		> constexpr bool operator<(T const value) const noexcept { return value < (T)count(); }
+
+		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+		> constexpr bool operator>(T const value) const noexcept { return value > (T)count(); }
+
+		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+		> constexpr bool operator<=(T const value) const noexcept { return value <= (T)count(); }
+
+		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+		> constexpr bool operator>=(T const value) const noexcept { return value >= (T)count(); }
+
+		template <class T = uint32_t> constexpr auto nanoseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Nano>>((_DurationBase const &)*this).count(); }
+		template <class T = uint32_t> constexpr auto microseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Micro>>((_DurationBase const &)*this).count(); }
+		template <class T = uint32_t> constexpr auto milliseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Milli>>((_DurationBase const &)*this).count(); }
+		template <class T = uint32_t> constexpr auto seconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<1>>>((_DurationBase const &)*this).count(); }
+		template <class T = uint32_t> constexpr auto minutes() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60>>>((_DurationBase const &)*this).count(); }
+		template <class T = uint32_t> constexpr auto hours() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60 * 60>>>((_DurationBase const &)*this).count(); }
+		template <class T = uint32_t> constexpr auto days() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60 * 60 * 24>>>((_DurationBase const &)*this).count(); }
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	NODISCARD constexpr Duration operator+(Duration const & a, Duration const & b) noexcept { auto c{ a }; return c += b; }
+
+	NODISCARD constexpr Duration operator-(Duration const & a, Duration const & b) noexcept { auto c{ a }; return c -= b; }
+
+	NODISCARD constexpr Duration operator*(Duration const & a, Duration const & b) noexcept { auto c{ a }; return c *= b; }
+
+	NODISCARD constexpr Duration operator/(Duration const & a, Duration const & b) noexcept { auto c{ a }; return c /= b; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -45,6 +89,18 @@ namespace ism
 	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
 	> constexpr auto operator/=(T & a, Duration const & b) noexcept -> T & { return a = a / (T)b; }
 
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+	> NODISCARD constexpr auto operator+(T const a, Duration const & b) noexcept { auto c{ a }; return c += b; }
+
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+	> NODISCARD constexpr auto operator-(T const a, Duration const & b) noexcept { auto c{ a }; return c -= b; }
+
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+	> NODISCARD constexpr auto operator*(T const a, Duration const & b) noexcept { auto c{ a }; return c *= b; }
+
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+	> NODISCARD constexpr auto operator/(T const a, Duration const & b) noexcept { auto c{ a }; return c /= b; }
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
@@ -59,16 +115,17 @@ namespace ism
 	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
 	> constexpr auto & operator/=(Duration & a, T const b) noexcept { return a = (Duration::rep)a / (Duration::rep)b; }
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T> constexpr auto operator+(T const & a, Duration const & b) noexcept { auto c{ a }; return c += b; }
-	template <class T> constexpr auto operator-(T const & a, Duration const & b) noexcept { auto c{ a }; return c -= b; }
-	template <class T> constexpr auto operator*(T const & a, Duration const & b) noexcept { auto c{ a }; return c *= b; }
-	template <class T> constexpr auto operator/(T const & a, Duration const & b) noexcept { auto c{ a }; return c /= b; }
-	template <class T> constexpr auto operator+(Duration const & a, T const & b) noexcept { auto c{ a }; return c += b; }
-	template <class T> constexpr auto operator-(Duration const & a, T const & b) noexcept { auto c{ a }; return c -= b; }
-	template <class T> constexpr auto operator*(Duration const & a, T const & b) noexcept { auto c{ a }; return c *= b; }
-	template <class T> constexpr auto operator/(Duration const & a, T const & b) noexcept { auto c{ a }; return c /= b; }
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+	> NODISCARD constexpr auto operator+(Duration const & a, T const b) noexcept { auto c{ a }; return c += b; }
+	
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+	> NODISCARD constexpr auto operator-(Duration const & a, T const b) noexcept { auto c{ a }; return c -= b; }
+	
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+	> NODISCARD constexpr auto operator*(Duration const & a, T const b) noexcept { auto c{ a }; return c *= b; }
+	
+	template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
+	> NODISCARD constexpr auto operator/(Duration const & a, T const b) noexcept { auto c{ a }; return c /= b; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

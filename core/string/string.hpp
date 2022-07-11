@@ -32,10 +32,16 @@ namespace ism
 
 		NODISCARD operator BasicStringView<C>() const noexcept { return { data(), size() }; }
 
-		auto & trim() & noexcept {
+		auto & trim() & noexcept
+		{
 			while (!empty() && std::isspace(back())) { pop_back(); }
 			while (!empty() && std::isspace(front())) { erase(begin()); }
 			return (*this);
+		}
+
+		NODISCARD static auto trim(BasicString value) noexcept
+		{
+			return value.trim();
 		}
 
 	public:

@@ -32,14 +32,14 @@ namespace ism
 
 	// multi hashmap base
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
-	> ALIAS(_MultiHashMapBase) std::unordered_multimap<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
+	> ALIAS(_HashMultiMapBase) std::unordered_multimap<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
 
 	// multi hashmap
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
-	> class MultiHashMap : public _MultiHashMapBase<K, V, H, E>
+	> class HashMultiMap : public _HashMultiMapBase<K, V, H, E>
 	{
 	public:
-		using base_type = _MultiHashMapBase<K, V, H, E>;
+		using base_type = _HashMultiMapBase<K, V, H, E>;
 		using base_type::base_type;
 		using base_type::operator=;
 

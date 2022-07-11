@@ -6,9 +6,7 @@ namespace ism
 
 	Input * Input::__singleton{};
 
-	OBJECT_EMBED(Input, t)
-	{
-	}
+	OBJECT_EMBED(Input, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
