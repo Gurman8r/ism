@@ -25,7 +25,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Node::_notification(int32_t value)
+	void Node::_notification(i32 value)
 	{
 		switch (value)
 		{
@@ -76,7 +76,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Node::propagate_notification(int32_t notification_id, bool reverse)
+	void Node::propagate_notification(i32 notification_id, bool reverse)
 	{
 		notification(notification_id, reverse);
 

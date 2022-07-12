@@ -15,7 +15,7 @@ namespace ism
 		return { get_width(), get_height() };
 	}
 
-	bool Texture2D::is_pixel_opaque(int32_t x, int32_t y) const
+	bool Texture2D::is_pixel_opaque(i32 x, i32 y) const
 	{
 		return true;
 	}
@@ -61,12 +61,12 @@ namespace ism
 		return m_image_cache && (3 < m_image_cache->get_depth());
 	}
 
-	int32_t ImageTexture::get_width() const
+	i32 ImageTexture::get_width() const
 	{
 		return m_width;
 	}
 
-	int32_t ImageTexture::get_height() const
+	i32 ImageTexture::get_height() const
 	{
 		return m_height;
 	}

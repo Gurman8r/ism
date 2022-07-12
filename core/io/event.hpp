@@ -72,7 +72,7 @@ private:
 
 		EventBus * const m_event_bus;
 		
-		int32_t const m_dispatch_order;
+		i32 const m_dispatch_order;
 
 	public:
 		virtual ~EventHandler() noexcept override { unsubscribe(); }
@@ -209,7 +209,7 @@ private:
 
 	protected:
 		friend class EventHandler;
-		int32_t m_next_index{};
+		i32 m_next_index{};
 
 	public:
 		EventBus() noexcept { __singleton = this; }

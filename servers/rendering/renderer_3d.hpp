@@ -36,10 +36,10 @@ namespace ism
 				Vec2 viewport_size{};
 				Vec2 screen_pixel_size{};
 
-				float_t z_near{};
-				float_t z_far{};
+				f32 z_near{};
+				f32 z_far{};
 				
-				float_t time{};
+				f32 time{};
 
 				// etc...
 			}

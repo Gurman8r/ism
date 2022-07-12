@@ -14,10 +14,10 @@ namespace ism
 		std::map,
 		std::vector,
 		std::string,
-		bool, int64_t, uint64_t, double_t,
+		bool, i64, u64, f64,
 		std::allocator,
 		nlohmann::adl_serializer,
-		std::vector<uint8_t>
+		std::vector<byte>
 	>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

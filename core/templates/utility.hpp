@@ -242,43 +242,43 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class A, class B
-	> constexpr int32_t compare(A const & a, B const & b) noexcept
+	> constexpr i32 compare(A const & a, B const & b) noexcept
 	{
 		return CMP(a, b);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class LHS, class RHS, class ... Rest
-	> constexpr decltype(auto) min(LHS && lhs, RHS && rhs, Rest && ... rest)
+	template <class Left, class Right, class ... Rest
+	> constexpr decltype(auto) min(Left && lhs, Right && rhs, Rest && ... rest) noexcept
 	{
 		return lhs < rhs ? min(FWD(lhs), FWD(rest)...) : min(FWD(rhs), FWD(rest)...);
 	}
 
 	template <class Only
-	> constexpr decltype(auto) min(Only && only)
+	> constexpr decltype(auto) min(Only && only) noexcept
 	{
 		return FWD(only);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class LHS, class RHS, class ... Rest
-	> constexpr decltype(auto) max(LHS && lhs, RHS && rhs, Rest && ... rest)
+	template <class Left, class Right, class ... Rest
+	> constexpr decltype(auto) max(Left && lhs, Right && rhs, Rest && ... rest) noexcept
 	{
 		return lhs > rhs ? max(FWD(lhs), FWD(rest)...) : max(FWD(rhs), FWD(rest)...);
 	}
 
 	template <class Only
-	> constexpr decltype(auto) max(Only && only)
+	> constexpr decltype(auto) max(Only && only) noexcept
 	{
 		return FWD(only);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class X, class In = X, class Out = In
-	> constexpr auto map(X x, In in_min, In in_max, Out out_min, Out out_max)
+	template <class X, class In0, class In1, class Out0, class Out1
+	> constexpr decltype(auto) map(X const x, In0 const in_min, In1 const in_max, Out0 const out_min, Out1 const out_max)
 	{
 		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}

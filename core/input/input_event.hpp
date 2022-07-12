@@ -1,7 +1,7 @@
 #ifndef _ISM_INPUT_EVENT_HPP_
 #define _ISM_INPUT_EVENT_HPP_
 
-#include <core/object/detail/class.hpp>
+#include <core/io/event.hpp>
 
 namespace ism
 {

@@ -101,8 +101,8 @@ namespace ism
 		struct Params
 		{
 			Color albedo{};
-			float_t specular{};
-			float_t metallic{};
+			f32 specular{};
+			f32 metallic{};
 			// etc...
 		}
 		m_params{};
@@ -111,11 +111,11 @@ namespace ism
 		Color get_albedo() const { return m_params.albedo; }
 		void set_albedo(Color const & value);
 
-		float_t get_specular() const { return m_params.specular; }
-		void set_specular(float_t value);
+		f32 get_specular() const { return m_params.specular; }
+		void set_specular(f32 value);
 
-		float_t get_metallic() const { return m_params.metallic; }
-		void set_metallic(float_t value);
+		f32 get_metallic() const { return m_params.metallic; }
+		void set_metallic(f32 value);
 
 		// etc...
 	};

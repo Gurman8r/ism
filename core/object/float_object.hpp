@@ -14,7 +14,7 @@ namespace ism
 		friend class FLT;
 
 	public:
-		double_t m_float{};
+		f64 m_float{};
 
 		using storage_type = decltype(m_float);
 

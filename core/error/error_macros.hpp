@@ -10,7 +10,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(void) _crash(cwstring message, cwstring file, uint32_t line);
+	ISM_API_FUNC(void) _crash(cwstring message, cwstring file, u32 line);
 
 	// crash
 #define CRASH(message) \
@@ -36,7 +36,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> auto _validate(T && expr, cwstring message, cwstring file, uint32_t line) noexcept -> decltype(FWD(expr))
+	> auto _validate(T && expr, cwstring message, cwstring file, u32 line) noexcept -> decltype(FWD(expr))
 	{
 		return (UNUSED((!!(expr)) || (_crash(message, file, line), 0))), FWD(expr);
 	}
@@ -59,8 +59,8 @@ namespace ism
 		ErrorHandlerType_MAX
 	};
 
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
+	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
+	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

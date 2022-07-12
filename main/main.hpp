@@ -9,10 +9,10 @@ namespace ism
 
 	class ISM_API Main final
 	{
-		static int32_t g_iterating;
+		static i32 g_iterating;
 
 	public:
-		static Error_ setup(cstring exepath, int32_t argc, char * argv[]);
+		static Error_ setup(cstring exepath, i32 argc, char * argv[]);
 
 		static bool start();
 

@@ -10,7 +10,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Logger::log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
+	void Logger::log_error(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type)
 	{
 		cstring const err_type{ (ErrorHandlerType_MAX <= type) ? "ERROR" : ERR_TYPE(type) };
 

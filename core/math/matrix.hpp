@@ -47,66 +47,66 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat2
-	ALIAS(Mat2b) TMatrix2x2<uint8_t>;
-	ALIAS(Mat2i) TMatrix2x2<int32_t>;
-	ALIAS(Mat2u) TMatrix2x2<uint32_t>;
-	ALIAS(Mat2f) TMatrix2x2<float32_t>;
-	ALIAS(Mat2d) TMatrix2x2<float64_t>;
+	ALIAS(Mat2b) TMatrix2x2<byte>;
+	ALIAS(Mat2i) TMatrix2x2<i32>;
+	ALIAS(Mat2u) TMatrix2x2<u32>;
+	ALIAS(Mat2f) TMatrix2x2<f32>;
+	ALIAS(Mat2d) TMatrix2x2<f64>;
 	ALIAS(Mat2s) TMatrix2x2<size_t>;
 	ALIAS(Mat2) Mat2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat3
-	ALIAS(Mat3b) TMatrix3x3<uint8_t>;
-	ALIAS(Mat3i) TMatrix3x3<int32_t>;
-	ALIAS(Mat3u) TMatrix3x3<uint32_t>;
-	ALIAS(Mat3f) TMatrix3x3<float32_t>;
-	ALIAS(Mat3d) TMatrix3x3<float64_t>;
+	ALIAS(Mat3b) TMatrix3x3<byte>;
+	ALIAS(Mat3i) TMatrix3x3<i32>;
+	ALIAS(Mat3u) TMatrix3x3<u32>;
+	ALIAS(Mat3f) TMatrix3x3<f32>;
+	ALIAS(Mat3d) TMatrix3x3<f64>;
 	ALIAS(Mat3s) TMatrix3x3<size_t>;
 	ALIAS(Mat3) Mat3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat4
-	ALIAS(Mat4b) TMatrix4x4<uint8_t>;
-	ALIAS(Mat4i) TMatrix4x4<int32_t>;
-	ALIAS(Mat4u) TMatrix4x4<uint32_t>;
-	ALIAS(Mat4f) TMatrix4x4<float32_t>;
-	ALIAS(Mat4d) TMatrix4x4<float64_t>;
+	ALIAS(Mat4b) TMatrix4x4<byte>;
+	ALIAS(Mat4i) TMatrix4x4<i32>;
+	ALIAS(Mat4u) TMatrix4x4<u32>;
+	ALIAS(Mat4f) TMatrix4x4<f32>;
+	ALIAS(Mat4d) TMatrix4x4<f64>;
 	ALIAS(Mat4s) TMatrix4x4<size_t>;
 	ALIAS(Mat4) Mat4f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec2
-	ALIAS(Vec2b) TVector2<uint8_t>;
-	ALIAS(Vec2i) TVector2<int32_t>;
-	ALIAS(Vec2u) TVector2<uint32_t>;
-	ALIAS(Vec2f) TVector2<float32_t>;
-	ALIAS(Vec2d) TVector2<float64_t>;
+	ALIAS(Vec2b) TVector2<byte>;
+	ALIAS(Vec2i) TVector2<i32>;
+	ALIAS(Vec2u) TVector2<u32>;
+	ALIAS(Vec2f) TVector2<f32>;
+	ALIAS(Vec2d) TVector2<f64>;
 	ALIAS(Vec2s) TVector2<size_t>;
 	ALIAS(Vec2) Vec2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec3
-	ALIAS(Vec3b) TVector3<uint8_t>;
-	ALIAS(Vec3i) TVector3<int32_t>;
-	ALIAS(Vec3u) TVector3<uint32_t>;
-	ALIAS(Vec3f) TVector3<float32_t>;
-	ALIAS(Vec3d) TVector3<float64_t>;
+	ALIAS(Vec3b) TVector3<byte>;
+	ALIAS(Vec3i) TVector3<i32>;
+	ALIAS(Vec3u) TVector3<u32>;
+	ALIAS(Vec3f) TVector3<f32>;
+	ALIAS(Vec3d) TVector3<f64>;
 	ALIAS(Vec3s) TVector3<size_t>;
 	ALIAS(Vec3) Vec3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec4
-	ALIAS(Vec4b) TVector4<uint8_t>;
-	ALIAS(Vec4i) TVector4<int32_t>;
-	ALIAS(Vec4u) TVector4<uint32_t>;
-	ALIAS(Vec4f) TVector4<float32_t>;
-	ALIAS(Vec4d) TVector4<float64_t>;
+	ALIAS(Vec4b) TVector4<byte>;
+	ALIAS(Vec4i) TVector4<i32>;
+	ALIAS(Vec4u) TVector4<u32>;
+	ALIAS(Vec4f) TVector4<f32>;
+	ALIAS(Vec4d) TVector4<f64>;
 	ALIAS(Vec4s) TVector4<size_t>;
 	ALIAS(Vec4) Vec4f;
 

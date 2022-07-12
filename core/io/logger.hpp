@@ -13,7 +13,7 @@ namespace ism
 	public:
 		virtual ~Logger() noexcept = default;
 
-		virtual void log_error(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
+		virtual void log_error(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
 
 		virtual void logv(cstring fmt, va_list args, bool is_error = false) = 0;
 

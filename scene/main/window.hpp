@@ -23,8 +23,8 @@ namespace ism
 		String get_title() const;
 		void set_title(String const & title);
 
-		int32_t get_current_screen() const;
-		void set_current_screen(int32_t screen);
+		i32 get_current_screen() const;
+		void set_current_screen(i32 screen);
 
 		Vec2i get_position() const;
 		void set_position(Vec2i const & position);
@@ -37,8 +37,8 @@ namespace ism
 		DS::WindowMode_ get_mode() const;
 		void set_mode(DS::WindowMode_ mode);
 
-		bool get_flag(int32_t flag) const;
-		void set_flag(int32_t flag, bool enabled);
+		bool get_flag(i32 flag) const;
+		void set_flag(i32 flag, bool enabled);
 
 		void request_attention();
 		void move_to_foreground();

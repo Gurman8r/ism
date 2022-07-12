@@ -153,22 +153,22 @@ namespace ism::mpl
 	constexpr size_t constexpr_sum(T n, Ts... ns) { return size_t{ n } + constexpr_sum(ns...); }
 #endif
 
-	constexpr int32_t constexpr_impl_first(int32_t i) { return i; }
+	constexpr i32 constexpr_impl_first(i32 i) { return i; }
 	
 	template <class T, class... Ts
-	> constexpr int32_t constexpr_impl_first(int32_t i, T v, Ts... vs) { return v ? i : constexpr_impl_first(i + 1, vs...); }
+	> constexpr i32 constexpr_impl_first(i32 i, T v, Ts... vs) { return v ? i : constexpr_impl_first(i + 1, vs...); }
 
-	constexpr int32_t constexpr_impl_last(int32_t /*i*/, int32_t result) { return result; }
+	constexpr i32 constexpr_impl_last(i32 /*i*/, i32 result) { return result; }
 	
 	template <class T, class... Ts
-	> constexpr int32_t constexpr_impl_last(int32_t i, int32_t result, T v, Ts... vs) { return constexpr_impl_last(i + 1, v ? i : result, vs...); }
+	> constexpr i32 constexpr_impl_last(i32 i, i32 result, T v, Ts... vs) { return constexpr_impl_last(i + 1, v ? i : result, vs...); }
 
 	template <template<class> class Pr, class... Ts
-	> constexpr int32_t constexpr_first() { return constexpr_impl_first(0, Pr<Ts>::value...); }
+	> constexpr i32 constexpr_first() { return constexpr_impl_first(0, Pr<Ts>::value...); }
 
 	// Return the index of the last type in Ts which satisfies Pr<T>, or -1 if None match.
 	template <template<class> class Pr, class... Ts
-	> constexpr int32_t constexpr_last() { return constexpr_impl_last(0, -1, Pr<Ts>::value...); }
+	> constexpr i32 constexpr_last() { return constexpr_impl_last(0, -1, Pr<Ts>::value...); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -393,59 +393,59 @@ namespace ism
 		constexpr Hasher() noexcept = default;
 	};
 
-	template <> struct Hasher<int8_t> {
+	template <> struct Hasher<sbyte> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(int8_t value) const { return std::hash<int8_t>{}(value); }
+		hash_t operator()(sbyte value) const { return std::hash<sbyte>{}(value); }
 	};
 
-	template <> struct Hasher<int16_t> {
+	template <> struct Hasher<i16> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(int16_t value) const { return std::hash<int16_t>{}(value); }
+		hash_t operator()(i16 value) const { return std::hash<i16>{}(value); }
 	};
 
-	template <> struct Hasher<int32_t> {
+	template <> struct Hasher<i32> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(int32_t value) const { return std::hash<int32_t>{}(value); }
+		hash_t operator()(i32 value) const { return std::hash<i32>{}(value); }
 	};
 
-	template <> struct Hasher<int64_t> {
+	template <> struct Hasher<i64> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(int64_t value) const { return std::hash<int64_t>{}(value); }
+		hash_t operator()(i64 value) const { return std::hash<i64>{}(value); }
 	};
 
-	template <> struct Hasher<uint8_t> {
+	template <> struct Hasher<byte> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(uint8_t value) const { return std::hash<uint8_t>{}(value); }
+		hash_t operator()(byte value) const { return std::hash<byte>{}(value); }
 	};
 
-	template <> struct Hasher<uint16_t> {
+	template <> struct Hasher<u16> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(uint16_t value) const { return std::hash<uint16_t>{}(value); }
+		hash_t operator()(u16 value) const { return std::hash<u16>{}(value); }
 	};
 
-	template <> struct Hasher<uint32_t> {
+	template <> struct Hasher<u32> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(uint32_t value) const { return std::hash<uint32_t>{}(value); }
+		hash_t operator()(u32 value) const { return std::hash<u32>{}(value); }
 	};
 
-	template <> struct Hasher<uint64_t> {
+	template <> struct Hasher<u64> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(uint64_t value) const { return std::hash<uint64_t>{}(value); }
+		hash_t operator()(u64 value) const { return std::hash<u64>{}(value); }
 	};
 
-	template <> struct Hasher<float32_t> {
+	template <> struct Hasher<f32> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(float32_t value) const { return std::hash<float32_t>{}(value); }
+		hash_t operator()(f32 value) const { return std::hash<f32>{}(value); }
 	};
 
-	template <> struct Hasher<float64_t> {
+	template <> struct Hasher<f64> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(float64_t value) const { return std::hash<float64_t>{}(value); }
+		hash_t operator()(f64 value) const { return std::hash<f64>{}(value); }
 	};
 
-	template <> struct Hasher<float80_t> {
+	template <> struct Hasher<f80> {
 		constexpr Hasher() noexcept = default;
-		hash_t operator()(float80_t value) const { return std::hash<float80_t>{}(value); }
+		hash_t operator()(f80 value) const { return std::hash<f80>{}(value); }
 	};
 
 	template <> struct Hasher<nullptr_t> {

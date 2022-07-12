@@ -46,7 +46,7 @@ namespace ism
 		bool const dragging_view{ nav_enabled && !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && ImGui::IsMouseDragging(0) };
 
 		if (dragging_view) {
-			Vec2 const md{ Input::get_singleton()->get_mouse_delta() * (float_t)dt * 50 };
+			Vec2 const md{ Input::get_singleton()->get_mouse_delta() * (f32)dt * 50 };
 			m_editor_camera.do_yaw(-md[0]);
 			m_editor_camera.do_pitch(+md[1]);
 		}
@@ -59,7 +59,7 @@ namespace ism
 		ImGuizmo::SetRect(view_rect.Min.x, view_rect.Min.y, view_rect.GetWidth(), view_rect.GetHeight());
 		if (m_grid_enabled) { ImGuizmo::DrawGrid(m_editor_camera.get_view(), m_editor_camera.get_proj(), m_grid_matrix, m_grid_size); }
 		//if (0 < m_object_count) { ImGuizmo::DrawCubes(view_matrix, proj_matrix, &m_object_matrix[0][0], m_object_count); }
-		//for (int32_t i = 0; i < m_object_count; ++i) {
+		//for (i32 i = 0; i < m_object_count; ++i) {
 		//	ImGuizmo::SetID(i);
 		//	if (m_xeditor.Manipulate(view_matrix, proj_matrix, m_object_matrix[i])) { m_object_index = i; }
 		//}

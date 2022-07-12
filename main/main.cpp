@@ -38,7 +38,7 @@ using namespace ism;
 
 static bool editor{ true };
 
-int32_t Main::g_iterating{};
+i32 Main::g_iterating{};
 
 static Internals *			g_internals{};
 static Input *				g_input{};
@@ -50,7 +50,7 @@ static TextServer *			g_text{};
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
+Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 {
 	OS::get_singleton()->initialize();
 	
@@ -93,48 +93,6 @@ Error_ Main::setup(cstring exepath, int32_t argc, char * argv[])
 	g_input = memnew(Input);
 
 	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
-	g_display->window_set_close_callback([](auto)
-	{
-		SceneTree::get_singleton()->get_root()->propagate_notification(Node::Notification_WM_CloseRequest);
-		SceneTree::get_singleton()->quit();
-	});
-	g_display->window_set_focus_callback([](auto, auto focused)
-	{
-		SceneTree::get_singleton()->get_root()->propagate_notification(focused ? Node::Notification_WM_FocusIn : Node::Notification_WM_FocusOut);
-	});
-	g_display->window_set_mouse_enter_callback([](auto, auto entered)
-	{
-		SceneTree::get_singleton()->get_root()->propagate_notification(entered ? Node::Notification_WM_MouseEnter : Node::Notification_WM_MouseExit);
-	});
-	g_display->window_set_char_callback([](auto, auto c)
-	{
-		Input * input{ Input::get_singleton() };
-		input->m_typed = c;
-	});
-	g_display->window_set_key_callback([](auto, auto key, auto, auto action, auto)
-	{
-		Input * input{ Input::get_singleton() };
-		input->m_keys_down[key] = action != Input::RELEASE;
-		input->m_is_shift = input->m_keys_down[Input::Key_LeftShift] || input->m_keys_down[Input::Key_RightShift];
-		input->m_is_ctrl = input->m_keys_down[Input::Key_LeftCtrl] || input->m_keys_down[Input::Key_RightCtrl];
-		input->m_is_alt = input->m_keys_down[Input::Key_LeftAlt] || input->m_keys_down[Input::Key_RightAlt];
-		input->m_is_super = input->m_keys_down[Input::Key_LeftSuper] || input->m_keys_down[Input::Key_RightSuper];
-	});
-	g_display->window_set_mouse_button_callback([](auto, auto button, auto action, auto)
-	{
-		Input * input{ Input::get_singleton() };
-		input->m_mouse_down[button] = action != Input::RELEASE;
-	});
-	g_display->window_set_mouse_position_callback([](auto, auto x, auto y)
-	{
-		Input * input{ Input::get_singleton() };
-		input->m_mouse_position = { (float_t)x, (float_t)y };
-	});
-	g_display->window_set_scroll_callback([](auto, auto x, auto y)
-	{
-		Input * input{ Input::get_singleton() };
-		input->m_scroll = { (float_t)x, (float_t)y };
-	});
 
 	g_renderer = memnew(RenderingServerDefault);
 
@@ -205,28 +163,7 @@ bool Main::iteration()
 
 	g_display->poll_events();
 
-	Input * input{ Input::get_singleton() };
-	input->m_mouse_delta = input->m_mouse_position - input->m_prev_mouse_position;
-	input->m_prev_mouse_position = input->m_mouse_position;
-	for (int32_t i = 0; i < Input::MouseButton_MAX; ++i) {
-
-		input->m_mouse_down_duration[i] = input->m_mouse_down[i]
-			? (input->m_mouse_down_duration[i] < 0.f
-				? 0.f
-				: input->m_mouse_down_duration[i] + delta_time)
-			: -1.f;
-	}
-	for (int32_t i = 0; i < Input::Key_MAX; ++i) {
-		input->m_keys_down_duration[i] = input->m_keys_down[i]
-			? (input->m_keys_down_duration[i] < 0.f
-				? 0.f
-				: input->m_keys_down_duration[i] + delta_time)
-			: -1.f;
-	}
-	ON_SCOPE_EXIT(&) {
-		input->m_scroll = { 0.f, 0.f };
-		input->m_typed = '0';
-	};
+	Input::get_singleton()->iteration(delta_time);
 
 	ImGui_NewFrame();
 	if (OS::get_singleton()->get_main_loop()->process(delta_time)) { should_close = true; }

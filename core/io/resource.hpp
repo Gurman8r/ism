@@ -16,7 +16,7 @@ namespace ism
 	{
 		OBJECT_COMMON(Resource, Object);
 
-		int32_t m_subindex{};
+		i32 m_subindex{};
 		String m_name{};
 		Path m_path_cache{};
 
@@ -30,13 +30,13 @@ namespace ism
 
 		virtual RID get_rid() const { return {}; }
 
-		int32_t get_subindex() const { return m_subindex; }
+		i32 get_subindex() const { return m_subindex; }
 		
 		String const & get_name() const { return m_name; }
 
 		Path const & get_path() const { return m_path_cache; }
 
-		void set_subindex(int32_t value) { m_subindex = value; }
+		void set_subindex(i32 value) { m_subindex = value; }
 
 		void set_name(String const & value) { m_name = value; }
 

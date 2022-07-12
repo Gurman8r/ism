@@ -62,7 +62,7 @@ namespace ism
 		return Error_None;
 	}
 
-	Error_ OS_Windows::execute(Path const & path, Vector<String> const & args, String * pipe, int32_t * exitcode, bool read_stderr, Mutex * pipe_mutex)
+	Error_ OS_Windows::execute(Path const & path, Vector<String> const & args, String * pipe, i32 * exitcode, bool read_stderr, Mutex * pipe_mutex)
 	{
 		return Error_Unknown;
 	}
@@ -77,7 +77,7 @@ namespace ism
 		return Error_Unknown;
 	}
 
-	int32_t OS_Windows::get_process_id() const
+	i32 OS_Windows::get_process_id() const
 	{
 		return -1;
 	}

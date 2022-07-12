@@ -53,7 +53,7 @@ size_t process_vertices(aiMesh const * mesh, DynamicBuffer & data)
 	}
 
 	// TODO: properly deduce type
-	return data.size() / sizeof(float_t);
+	return data.size() / sizeof(f32);
 }
 
 size_t process_indices(aiMesh const * mesh, DynamicBuffer & data)
@@ -69,7 +69,7 @@ size_t process_indices(aiMesh const * mesh, DynamicBuffer & data)
 	}
 
 	// TODO: properly deduce type
-	return data.size() / sizeof(uint32_t);
+	return data.size() / sizeof(u32);
 }
 
 void process_aimaterial(aiMaterial const * material, Vector<Ref<Texture>> & textures)
@@ -78,7 +78,7 @@ void process_aimaterial(aiMaterial const * material, Vector<Ref<Texture>> & text
 
 	auto _load_material_texture = [&](aiTextureType type, cstring type_name)
 	{
-		for (uint32_t i = 0; i < material->GetTextureCount(type); ++i)
+		for (u32 i = 0; i < material->GetTextureCount(type); ++i)
 		{
 			aiString path;
 			if (material->GetTexture(type, i, &path) != aiReturn_SUCCESS) { continue; }

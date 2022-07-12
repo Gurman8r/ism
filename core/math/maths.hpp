@@ -13,12 +13,12 @@ namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T = float32_t, class = std::enable_if_t<std::is_floating_point_v<T>>
+	template <class T = f32, class = std::enable_if_t<std::is_floating_point_v<T>>
 	> constexpr T pi{ static_cast<T>(3.14159265358979323846) };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T = float_t> constexpr auto deg2rad(T const degrees) noexcept
+	template <class T = f32> constexpr auto deg2rad(T const degrees) noexcept
 	{
 		if constexpr (std::is_floating_point_v<T>)
 		{
@@ -26,11 +26,11 @@ namespace ism::util
 		}
 		else
 		{
-			return deg2rad(static_cast<float_t>(degrees));
+			return deg2rad(static_cast<f32>(degrees));
 		}
 	}
 
-	template <class T = float_t> constexpr auto rad2deg(T const radians) noexcept
+	template <class T = f32> constexpr auto rad2deg(T const radians) noexcept
 	{
 		if constexpr (std::is_floating_point_v<T>)
 		{
@@ -38,7 +38,7 @@ namespace ism::util
 		}
 		else
 		{
-			return rad2deg(static_cast<float_t>(radians));
+			return rad2deg(static_cast<f32>(radians));
 		}
 	}
 

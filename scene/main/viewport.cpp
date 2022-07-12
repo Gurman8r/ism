@@ -20,12 +20,12 @@ namespace ism
 		return RID();
 	}
 
-	int32_t ViewportTexture::get_width() const
+	i32 ViewportTexture::get_width() const
 	{
 		return 0;
 	}
 
-	int32_t ViewportTexture::get_height() const
+	i32 ViewportTexture::get_height() const
 	{
 		return 0;
 	}

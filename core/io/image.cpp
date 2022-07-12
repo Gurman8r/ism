@@ -6,7 +6,7 @@ namespace ism
 
 	OBJECT_EMBED(Image, t) {}
 
-	Image::Image(int32_t width, int32_t height, Format_ format)
+	Image::Image(i32 width, i32 height, Format_ format)
 	{
 		m_width = width;
 		m_height = height;
@@ -21,7 +21,7 @@ namespace ism
 		m_pixels.resize((size_t)(m_width * m_height * m_depth));
 	}
 
-	Image::Image(int32_t width, int32_t height, Format_ format, DynamicBuffer const & data)
+	Image::Image(i32 width, i32 height, Format_ format, DynamicBuffer const & data)
 	{
 		m_width = width;
 		m_height = height;
@@ -85,9 +85,9 @@ namespace ism
 
 	Color32 Image::get_pixel(size_t index) const
 	{
-		ASSERT((int32_t)index + m_depth < get_capacity());
+		ASSERT((i32)index + m_depth < get_capacity());
 		auto const it{ m_pixels.begin() + index };
-		uint8_t r{}, g{}, b{}, a{ 255 };
+		byte r{}, g{}, b{}, a{ 255 };
 		if (m_depth >= 1) { r = *(it + 0); }
 		if (m_depth >= 2) { g = *(it + 1); }
 		if (m_depth >= 3) { b = *(it + 2); }
@@ -97,7 +97,7 @@ namespace ism
 
 	void Image::set_pixel(size_t index, Color32 value)
 	{
-		ASSERT((int32_t)index + m_depth < get_capacity());
+		ASSERT((i32)index + m_depth < get_capacity());
 		auto const it{ m_pixels.begin() + index };
 		if (m_depth >= 1) { *(it + 0) = COLOR32_R(value); }
 		if (m_depth >= 2) { *(it + 1) = COLOR32_G(value); }

@@ -7,7 +7,7 @@ namespace ism
 
 	OBJECT_EMBED(GenericObject, t)
 	{
-		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> int32_t
+		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
 		{
 			return util::compare(*self, *other);
 		};

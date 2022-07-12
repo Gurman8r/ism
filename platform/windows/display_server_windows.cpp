@@ -21,14 +21,15 @@ namespace ism
 	{
 		ASSERT(glfwInit() == GLFW_TRUE);
 
-		glfwSetMonitorCallback([](GLFWmonitor * monitor, int32_t event) {
-			if (event == GLFW_CONNECTED) { /* monitor connected */ }
-			else if (event == GLFW_DISCONNECTED) { /* monitor disconnected */ }
+		glfwSetMonitorCallback([](GLFWmonitor * monitor, i32 connected)
+		{
+			// monitor connected/disconnected
 		});
 
-		glfwSetJoystickCallback([](int32_t jid, int32_t event) {
-			if (event == GLFW_CONNECTED) { /* joystick connected */ }
-			else if (event == GLFW_DISCONNECTED) { /* joystick disconnected */ }
+		glfwSetJoystickCallback([](i32 device, i32 connected)
+		{
+			// joystick connected/disconnected
+			Input::get_singleton()->joy_connection_changed(device, (connected == GLFW_CONNECTED), glfwGetJoystickGUID(device));
 		});
 
 		ASSERT(title);
@@ -71,35 +72,55 @@ namespace ism
 		w.handle = VALIDATE(glfwCreateWindow(size[0], size[1], w.title.c_str(), nullptr, nullptr));
 		glfwSetWindowUserPointer(w.handle, &w);
 
-		glfwSetCharCallback(w.handle, [](GLFWwindow * window, auto c)
+		glfwSetCharCallback(w.handle, [](auto, auto c)
 		{
 		});
-		glfwSetKeyCallback(w.handle, [](GLFWwindow * window, auto key, auto, auto action, auto)
+		glfwSetKeyCallback(w.handle, [](auto, auto key, auto, auto action, auto)
 		{
+			Input::get_singleton()->set_key(key, action);
 		});
-		glfwSetMouseButtonCallback(w.handle, [](GLFWwindow * window, auto button, auto action, auto)
+		glfwSetMouseButtonCallback(w.handle, [](auto, auto button, auto action, auto)
 		{
+			Input::get_singleton()->set_mouse_button(button, action);
 		});
-		glfwSetScrollCallback(w.handle, [](GLFWwindow * window, auto x, auto y)
+		glfwSetCursorPosCallback(w.handle, [](auto, auto x, auto y)
 		{
+			Input::get_singleton()->set_mouse_position({ (f32)x, (f32)y });
 		});
-		glfwSetCursorEnterCallback(w.handle, [](GLFWwindow * window, auto entered)
+		glfwSetScrollCallback(w.handle, [](auto, auto x, auto y)
 		{
+			Input::get_singleton()->set_mouse_wheel({ (f32)x, (f32)y });
 		});
-		glfwSetCursorPosCallback(w.handle, [](GLFWwindow * window, auto x, auto y)
+		glfwSetCursorEnterCallback(w.handle, [](auto, auto entered)
 		{
+			if (auto const tree{ SceneTree::get_singleton() }) {
+				tree->get_root()->propagate_notification(entered ? Node::Notification_WM_MouseEnter : Node::Notification_WM_MouseExit);
+			}
 		});
-		glfwSetWindowCloseCallback(w.handle, [](GLFWwindow * window)
+		glfwSetWindowCloseCallback(w.handle, [](auto)
 		{
+			if (auto const tree{ SceneTree::get_singleton() }) {
+				tree->get_root()->propagate_notification(Node::Notification_WM_CloseRequest);
+				tree->quit();
+			}
 		});
-		glfwSetWindowFocusCallback(w.handle, [](GLFWwindow * window, auto focused)
+		glfwSetWindowFocusCallback(w.handle, [](auto, auto focused)
 		{
+			if (auto const tree{ SceneTree::get_singleton() }) {
+				tree->get_root()->propagate_notification(focused ? Node::Notification_WM_FocusIn : Node::Notification_WM_FocusOut);
+			}
 		});
-		glfwSetWindowPosCallback(w.handle, [](GLFWwindow * window, auto x, auto y)
+		glfwSetWindowContentScaleCallback(w.handle, [](auto, auto x, auto y) 
 		{
+			if (auto const tree{ SceneTree::get_singleton() }) {
+				tree->get_root()->propagate_notification(Node::Notification_WM_ScaleChanged);
+			}
 		});
-		glfwSetWindowSizeCallback(w.handle, [](GLFWwindow * window, auto w, auto h)
+		glfwSetWindowSizeCallback(w.handle, [](auto, auto w, auto h)
 		{
+			if (auto const tree{ SceneTree::get_singleton() }) {
+				tree->get_root()->propagate_notification(Node::Notification_WM_SizeChanged);
+			}
 		});
 
 		switch (mode) {
@@ -110,7 +131,6 @@ namespace ism
 		}
 
 		glfwMakeContextCurrent(w.handle);
-
 		m_main_window = &w;
 	}
 
@@ -130,7 +150,7 @@ namespace ism
 	{
 		DEVMODE dm; dm.dmSize = sizeof(dm);
 		EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm);
-		out.size = { (int32_t)dm.dmPelsWidth, (int32_t)dm.dmPelsHeight };
+		out.size = { (i32)dm.dmPelsWidth, (i32)dm.dmPelsHeight };
 		out.bits_per_pixel = util::bit_cast<Vec4b>(dm.dmBitsPerPel);
 		out.refresh_rate = dm.dmDisplayFrequency;
 	}
@@ -138,10 +158,10 @@ namespace ism
 	void DisplayServerWindows::get_fullscreen_video_modes(Vector<VideoMode> & out) const
 	{
 		DEVMODE dm; dm.dmSize = sizeof(dm);
-		for (int32_t i = 0; EnumDisplaySettings(nullptr, i, &dm); ++i)
+		for (i32 i = 0; EnumDisplaySettings(nullptr, i, &dm); ++i)
 		{
 			VideoMode vm;
-			vm.size = { (int32_t)dm.dmPelsWidth, (int32_t)dm.dmPelsHeight };
+			vm.size = { (i32)dm.dmPelsWidth, (i32)dm.dmPelsHeight };
 			vm.bits_per_pixel = util::bit_cast<Vec4b>(dm.dmBitsPerPel);
 			vm.refresh_rate = dm.dmDisplayFrequency;
 
@@ -177,16 +197,16 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Input::CursorShape_ DisplayServerWindows::cursor_get_shape() const
+	Input::Cursor_ DisplayServerWindows::cursor_get_shape() const
 	{
 		return {};
 	}
 
-	void DisplayServerWindows::cursor_set_shape(Input::CursorShape_ shape)
+	void DisplayServerWindows::cursor_set_shape(Input::Cursor_ shape)
 	{
 	}
 
-	void DisplayServerWindows::cursor_set_custom_image(RES const & cursor, Input::CursorShape_ shape, Vec2 const & hotspot)
+	void DisplayServerWindows::cursor_set_custom_image(RES const & cursor, Input::Cursor_ shape, Vec2 const & hotspot)
 	{
 	}
 
@@ -208,17 +228,17 @@ namespace ism
 		glfwSetInputMode(m_main_window->handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
-	int32_t DisplayServerWindows::mouse_get_button(Input::MouseButton_ button) const
+	i32 DisplayServerWindows::mouse_get_button(Input::MouseButton_ button) const
 	{
 		ASSERT(m_main_window);
-		return glfwGetMouseButton(m_main_window->handle, (int32_t)button);
+		return glfwGetMouseButton(m_main_window->handle, (i32)button);
 	}
 
 	Vec2 DisplayServerWindows::mouse_get_position() const
 	{
 		ASSERT(m_main_window);
 		Vec2d v; glfwGetCursorPos(m_main_window->handle, &v[0], &v[1]);
-		return { (float_t)v[0], (float_t)v[1] };
+		return { (f32)v[0], (f32)v[1] };
 	}
 
 	void DisplayServerWindows::mouse_set_position(Vec2 const & position)
@@ -229,58 +249,53 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool DisplayServerWindows::joystick_is_present(Input::Joystick_ jid) const
+	bool DisplayServerWindows::joystick_is_present(i32 device) const
 	{
-		return glfwJoystickPresent(jid);
+		return glfwJoystickPresent(device);
 	}
 
-	String DisplayServerWindows::joystick_get_name(Input::Joystick_ jid) const
+	String DisplayServerWindows::joystick_get_name(i32 device) const
 	{
-		return glfwGetJoystickName(jid);
+		return glfwGetJoystickName(device);
 	}
 
-	String DisplayServerWindows::joystick_get_guid(Input::Joystick_ jid) const
+	String DisplayServerWindows::joystick_get_guid(i32 device) const
 	{
-		return glfwGetJoystickGUID(jid);
+		return glfwGetJoystickGUID(device);
 	}
 
-	View<float_t const> DisplayServerWindows::joystick_get_axes(Input::Joystick_ jid) const
+	View<f32 const> DisplayServerWindows::joystick_get_axes(i32 device) const
 	{
-		int32_t count;
-		if (auto const data{ glfwGetJoystickAxes(jid, &count) }
+		i32 count;
+		if (auto const data{ glfwGetJoystickAxes(device, &count) }
 		; 0 < count) { return { data, (size_t)count }; }
 		return nullptr;
 	}
 
-	View<uint8_t const> DisplayServerWindows::joystick_get_buttons(Input::Joystick_ jid) const
+	View<byte const> DisplayServerWindows::joystick_get_buttons(i32 device) const
 	{
-		int32_t count;
-		if (auto const data{ glfwGetJoystickButtons(jid, &count) }
+		i32 count;
+		if (auto const data{ glfwGetJoystickButtons(device, &count) }
 		; 0 < count) { return { data, (size_t)count }; }
 		return nullptr;
 	}
 
-	View<uint8_t const> DisplayServerWindows::joystick_get_hats(Input::Joystick_ jid) const
+	View<byte const> DisplayServerWindows::joystick_get_hats(i32 device) const
 	{
-		int32_t count;
-		if (auto const data{ glfwGetJoystickHats(jid, &count) }
+		i32 count;
+		if (auto const data{ glfwGetJoystickHats(device, &count) }
 		; 0 < count) { return { data, (size_t)count }; }
 		return nullptr;
 	}
 
-	bool DisplayServerWindows::joystick_is_gamepad(Input::Joystick_ jid) const
+	bool DisplayServerWindows::joystick_is_gamepad(i32 device) const
 	{
-		return glfwJoystickIsGamepad(jid);
+		return glfwJoystickIsGamepad(device);
 	}
 
-	String DisplayServerWindows::gamepad_get_name(Input::Joystick_ jid) const
+	String DisplayServerWindows::gamepad_get_name(i32 device) const
 	{
-		return glfwGetGamepadName(jid);
-	}
-
-	bool DisplayServerWindows::gamepad_get_state(Input::Joystick_ jid, Input::GamepadState * state) const
-	{
-		return glfwGetGamepadState(jid, (GLFWgamepadstate *)state);
+		return glfwGetGamepadName(device);
 	}
 
 	bool DisplayServerWindows::gamepad_update_mappings(String const & mappings)
@@ -290,25 +305,25 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	int32_t DisplayServerWindows::get_screen_count() const
+	i32 DisplayServerWindows::get_screen_count() const
 	{
-		int32_t monitor_count;
+		i32 monitor_count;
 		UNUSED(glfwGetMonitors(&monitor_count));
 		return monitor_count;
 	}
 
-	String DisplayServerWindows::screen_get_name(int32_t screen) const
+	String DisplayServerWindows::screen_get_name(i32 screen) const
 	{
-		int32_t monitor_count;
+		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
 		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
 		ASSERT((unsigned)screen < (unsigned)monitor_count);
 		return glfwGetMonitorName(monitors[screen]);
 	}
 
-	Vec2i DisplayServerWindows::screen_get_physical_size(int32_t screen) const
+	Vec2i DisplayServerWindows::screen_get_physical_size(i32 screen) const
 	{
-		int32_t monitor_count;
+		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
 		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
 		ASSERT((unsigned)screen < (unsigned)monitor_count);
@@ -316,9 +331,9 @@ namespace ism
 		return size;
 	}
 
-	IntRect DisplayServerWindows::screen_get_workarea(int32_t screen) const
+	IntRect DisplayServerWindows::screen_get_workarea(i32 screen) const
 	{
-		int32_t monitor_count;
+		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
 		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
 		ASSERT((unsigned)screen < (unsigned)monitor_count);
@@ -326,9 +341,9 @@ namespace ism
 		return rect;
 	}
 
-	Vec2i DisplayServerWindows::screen_get_position(int32_t screen) const
+	Vec2i DisplayServerWindows::screen_get_position(i32 screen) const
 	{
-		int32_t monitor_count;
+		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
 		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
 		ASSERT((unsigned)screen < (unsigned)monitor_count);
@@ -336,9 +351,9 @@ namespace ism
 		return pos;
 	}
 
-	Vec2i DisplayServerWindows::screen_get_size(int32_t screen) const
+	Vec2i DisplayServerWindows::screen_get_size(i32 screen) const
 	{
-		int32_t monitor_count;
+		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
 		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
 		ASSERT((unsigned)screen < (unsigned)monitor_count);
@@ -346,9 +361,9 @@ namespace ism
 		return { vm->width, vm->height };
 	}
 
-	Vec2 DisplayServerWindows::screen_get_scale(int32_t screen) const
+	Vec2 DisplayServerWindows::screen_get_scale(i32 screen) const
 	{
-		int32_t monitor_count;
+		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
 		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
 		ASSERT((unsigned)screen < (unsigned)monitor_count);
@@ -382,14 +397,14 @@ namespace ism
 		glfwSetWindowTitle(w.handle, w.title.c_str());
 	}
 
-	int32_t DisplayServerWindows::window_get_current_screen(WindowID window) const
+	i32 DisplayServerWindows::window_get_current_screen(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		return w.current_screen;
 	}
 
-	void DisplayServerWindows::window_set_current_screen(int32_t screen, WindowID window)
+	void DisplayServerWindows::window_set_current_screen(i32 screen, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
@@ -409,7 +424,7 @@ namespace ism
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		glfwSetWindowPos(w.handle, (int32_t)position[0], (int32_t)position[1]);
+		glfwSetWindowPos(w.handle, (i32)position[0], (i32)position[1]);
 	}
 
 	Vec2i DisplayServerWindows::window_get_size(WindowID window) const
@@ -424,7 +439,7 @@ namespace ism
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		glfwSetWindowSize(w.handle, (int32_t)size[0], (int32_t)size[1]);
+		glfwSetWindowSize(w.handle, (i32)size[0], (i32)size[1]);
 	}
 
 	Vec2i DisplayServerWindows::window_get_real_size(WindowID window) const
@@ -462,12 +477,12 @@ namespace ism
 		}
 	}
 
-	bool DisplayServerWindows::window_get_flag(int32_t flag, WindowID window) const
+	bool DisplayServerWindows::window_get_flag(i32 flag, WindowID window) const
 	{
 		return false;
 	}
 
-	void DisplayServerWindows::window_set_flag(int32_t flag, bool enabled, WindowID window)
+	void DisplayServerWindows::window_set_flag(i32 flag, bool enabled, WindowID window)
 	{
 	}
 
@@ -522,8 +537,6 @@ namespace ism
 
 	void DisplayServerWindows::poll_events()
 	{
-		ASSERT(m_main_window);
-		glfwMakeContextCurrent(m_main_window->handle);
 		glfwPollEvents();
 	}
 
@@ -538,14 +551,14 @@ namespace ism
 	{
 	}
 
-	void DisplayServerWindows::set_icon(uint8_t const * data, int32_t width, int32_t height)
+	void DisplayServerWindows::set_icon(byte const * data, i32 width, i32 height)
 	{
 		ASSERT(m_main_window);
 		ASSERT(data);
 		ASSERT(0 < width);
 		ASSERT(0 < height);
 		GLFWimage icon;
-		icon.pixels = (uint8_t *)data;
+		icon.pixels = (byte *)data;
 		icon.width = width;
 		icon.height = height;
 		glfwSetWindowIcon(m_main_window->handle, 1, &icon);

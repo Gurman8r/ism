@@ -10,7 +10,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// duration base
-	ALIAS(_DurationBase) std::chrono::duration<float_t>;
+	ALIAS(_DurationBase) std::chrono::duration<f32>;
 
 	// duration
 	class Duration : public _DurationBase
@@ -56,13 +56,13 @@ namespace ism
 		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
 		> constexpr bool operator>=(T const value) const noexcept { return value >= (T)count(); }
 
-		template <class T = uint32_t> constexpr auto nanoseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Nano>>((_DurationBase const &)*this).count(); }
-		template <class T = uint32_t> constexpr auto microseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Micro>>((_DurationBase const &)*this).count(); }
-		template <class T = uint32_t> constexpr auto milliseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Milli>>((_DurationBase const &)*this).count(); }
-		template <class T = uint32_t> constexpr auto seconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<1>>>((_DurationBase const &)*this).count(); }
-		template <class T = uint32_t> constexpr auto minutes() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60>>>((_DurationBase const &)*this).count(); }
-		template <class T = uint32_t> constexpr auto hours() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60 * 60>>>((_DurationBase const &)*this).count(); }
-		template <class T = uint32_t> constexpr auto days() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60 * 60 * 24>>>((_DurationBase const &)*this).count(); }
+		template <class T = u32> constexpr auto nanoseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Nano>>((_DurationBase const &)*this).count(); }
+		template <class T = u32> constexpr auto microseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Micro>>((_DurationBase const &)*this).count(); }
+		template <class T = u32> constexpr auto milliseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Milli>>((_DurationBase const &)*this).count(); }
+		template <class T = u32> constexpr auto seconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<1>>>((_DurationBase const &)*this).count(); }
+		template <class T = u32> constexpr auto minutes() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60>>>((_DurationBase const &)*this).count(); }
+		template <class T = u32> constexpr auto hours() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60 * 60>>>((_DurationBase const &)*this).count(); }
+		template <class T = u32> constexpr auto days() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60 * 60 * 24>>>((_DurationBase const &)*this).count(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -129,26 +129,26 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	constexpr auto operator"" _ns(float80_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Nano{}) }; }
-	constexpr auto operator"" _ns(uint64_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Nano{}) }; }
+	constexpr auto operator"" _ns(f80 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Nano{}) }; }
+	constexpr auto operator"" _ns(u64 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Nano{}) }; }
 
-	constexpr auto operator"" _us(float80_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Micro{}) }; }
-	constexpr auto operator"" _us(uint64_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Micro{}) }; }
+	constexpr auto operator"" _us(f80 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Micro{}) }; }
+	constexpr auto operator"" _us(u64 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Micro{}) }; }
 
-	constexpr auto operator"" _ms(float80_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Milli{}) }; }
-	constexpr auto operator"" _ms(uint64_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Milli{}) }; }
+	constexpr auto operator"" _ms(f80 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Milli{}) }; }
+	constexpr auto operator"" _ms(u64 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Milli{}) }; }
 
-	constexpr auto operator"" _s(float80_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<1>{}) }; }
-	constexpr auto operator"" _s(uint64_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<1>{}) }; }
+	constexpr auto operator"" _s(f80 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<1>{}) }; }
+	constexpr auto operator"" _s(u64 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<1>{}) }; }
 
-	constexpr auto operator"" _min(float80_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60>{}) }; }
-	constexpr auto operator"" _min(uint64_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60>{}) }; }
+	constexpr auto operator"" _min(f80 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<60>{}) }; }
+	constexpr auto operator"" _min(u64 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<60>{}) }; }
 
-	constexpr auto operator"" _hrs(float80_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60>{}) }; }
-	constexpr auto operator"" _hrs(uint64_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60>{}) }; }
+	constexpr auto operator"" _hrs(f80 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<60 * 60>{}) }; }
+	constexpr auto operator"" _hrs(u64 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<60 * 60>{}) }; }
 
-	constexpr auto operator"" _days(float80_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60 * 24>{}) }; }
-	constexpr auto operator"" _days(uint64_t value) noexcept { return Duration{ ratio_cast(static_cast<float_t>(value), Ratio<60 * 60 * 24>{}) }; }
+	constexpr auto operator"" _days(f80 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<60 * 60 * 24>{}) }; }
+	constexpr auto operator"" _days(u64 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<60 * 60 * 24>{}) }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

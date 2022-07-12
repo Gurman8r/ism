@@ -25,13 +25,13 @@ namespace ism
 	public:
 		bool get_bool(String const & section, String const & name, bool dv = {}) const;
 		
-		double_t get_double(String const & section, String const & name, double_t dv = {}) const;
+		f64 get_double(String const & section, String const & name, f64 dv = {}) const;
 		
-		float_t get_float(String const & section, String const & name, float_t dv = {}) const;
+		f32 get_float(String const & section, String const & name, f32 dv = {}) const;
 		
-		int32_t get_int(String const & section, String const & name, int32_t dv = {}) const;
+		i32 get_int(String const & section, String const & name, i32 dv = {}) const;
 		
-		uint32_t get_uint(String const & section, String const & name, uint32_t dv = {}) const;
+		u32 get_uint(String const & section, String const & name, u32 dv = {}) const;
 		
 		String get_string(String const & section, String const & name, String const & dv = {}) const;
 

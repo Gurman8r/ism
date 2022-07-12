@@ -159,9 +159,9 @@ public:																							\
 	{
 		using _itype = IntObject::storage_type;
 		using _ftype = FloatObject::storage_type;
-		using _type0 = std::conditional_t<sizeof(T) <= sizeof(int32_t), int32_t, int64_t>;
+		using _type0 = std::conditional_t<sizeof(T) <= sizeof(i32), i32, i64>;
 		using _type1 = std::conditional_t<std::is_signed_v<T>, _type0, std::make_unsigned_t<_type0>>;
-		using _convt = std::conditional_t<std::is_floating_point_v<T>, double_t, _type1>;
+		using _convt = std::conditional_t<std::is_floating_point_v<T>, f64, _type1>;
 
 		bool load(OBJ const & src, bool convert)
 		{
@@ -190,9 +190,9 @@ public:																							\
 		{
 			if (!src) { return false; }
 
-			if (FLT::check_(src)) { return (value = Duration{ (float_t)(***(FLT &)src) }), true; }
+			if (FLT::check_(src)) { return (value = Duration{ (f32)(***(FLT &)src) }), true; }
 
-			else if (INT::check_(src)) { return (value = Duration{ (float_t)(***(INT &)src) }), true; }
+			else if (INT::check_(src)) { return (value = Duration{ (f32)(***(INT &)src) }), true; }
 
 			else { return false; }
 		}
@@ -587,7 +587,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<!is_api_v<T>, int>
-	> OBJ object_or_cast(T && o) { return ism::cast(FWD(o)); }
+	> OBJ object_or_cast(T && o)
+	{
+		return ism::cast(FWD(o));
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	

@@ -83,13 +83,13 @@ namespace ism
 		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
 	}
 
-	void BaseMaterial3D::set_specular(float_t value)
+	void BaseMaterial3D::set_specular(f32 value)
 	{
 		m_params.specular = value;
 		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Specular], value);
 	}
 
-	void BaseMaterial3D::set_metallic(float_t value)
+	void BaseMaterial3D::set_metallic(f32 value)
 	{
 		m_params.metallic = value;
 		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Metallic], value);

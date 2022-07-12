@@ -29,12 +29,12 @@ namespace ism
 		DS::get_singleton()->window_set_title(title, m_window);
 	}
 
-	int32_t Window::get_current_screen() const
+	i32 Window::get_current_screen() const
 	{
 		return DS::get_singleton()->window_get_current_screen(m_window);
 	}
 
-	void Window::set_current_screen(int32_t screen)
+	void Window::set_current_screen(i32 screen)
 	{
 		DS::get_singleton()->window_set_current_screen(screen, m_window);
 	}
@@ -74,12 +74,12 @@ namespace ism
 		DS::get_singleton()->window_set_mode(mode, m_window);
 	}
 
-	bool Window::get_flag(int32_t flag) const
+	bool Window::get_flag(i32 flag) const
 	{
 		return DS::get_singleton()->window_get_flag(flag, m_window);
 	}
 
-	void Window::set_flag(int32_t flag, bool enabled)
+	void Window::set_flag(i32 flag, bool enabled)
 	{
 		DS::get_singleton()->window_set_flag(flag, enabled, m_window);
 	}

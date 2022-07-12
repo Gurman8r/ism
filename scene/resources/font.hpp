@@ -22,7 +22,7 @@ namespace ism
 
 		virtual RID get_rid() const override { return m_font; }
 
-		virtual Glyph * get_glyph(uint32_t character, uint32_t character_size);
+		virtual Glyph * get_glyph(u32 character, u32 character_size);
 	};
 }
 

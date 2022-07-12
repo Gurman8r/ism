@@ -20,10 +20,10 @@ namespace ism
 
 	public:
 		explicit Transform(
-			float_t m00, float_t m01, float_t m02, float_t m03,
-			float_t m10, float_t m11, float_t m12, float_t m13,
-			float_t m20, float_t m21, float_t m22, float_t m23,
-			float_t m30, float_t m31, float_t m32, float_t m33
+			f32 m00, f32 m01, f32 m02, f32 m03,
+			f32 m10, f32 m11, f32 m12, f32 m13,
+			f32 m20, f32 m21, f32 m22, f32 m23,
+			f32 m30, f32 m31, f32 m32, f32 m33
 		) noexcept : m_matrix{
 			m00, m01, m02, m03,
 			m10, m11, m12, m13,
@@ -32,9 +32,9 @@ namespace ism
 		} {}
 
 		explicit Transform(
-			float_t a00, float_t a01, float_t a02,
-			float_t a10, float_t a11, float_t a12,
-			float_t a20, float_t a21, float_t a22
+			f32 a00, f32 a01, f32 a02,
+			f32 a10, f32 a11, f32 a12,
+			f32 a20, f32 a21, f32 a22
 		) noexcept : m_matrix{
 			a00, a01, 0.f, a02,
 			a10, a11, 0.f, a12,

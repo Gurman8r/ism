@@ -24,7 +24,7 @@ namespace ism
 
 	OBJECT_EMBED(Glyph, t) {}
 
-	Glyph::Glyph(DynamicBuffer const & buffer, IntRect const & bounds, uint32_t advance)
+	Glyph::Glyph(DynamicBuffer const & buffer, IntRect const & bounds, u32 advance)
 		: m_bounds{ bounds }
 		, m_advance{ advance }
 	{
@@ -94,12 +94,12 @@ namespace ism
 		memdelete(f);
 	}
 
-	TextServer::FontPage * TextServer::font_get_page(RID font, uint32_t character_size)
+	TextServer::FontPage * TextServer::font_get_page(RID font, u32 character_size)
 	{
 		return util::getptr(VALIDATE((Font *)font)->pages, character_size);
 	}
 
-	Glyph * TextServer::font_get_glyph(RID font, uint32_t character, uint32_t character_size)
+	Glyph * TextServer::font_get_glyph(RID font, u32 character, u32 character_size)
 	{
 		Font * const f{ VALIDATE((Font *)font) };
 		FontPage * const page{ (FontPage *)font_get_page(font, character_size) };
@@ -117,7 +117,7 @@ namespace ism
 
 			DynamicBuffer buffer{ face->glyph->bitmap.buffer, (size_t)(bounds.width() * bounds.height()) };
 
-			uint32_t advance{ (uint32_t)face->glyph->advance.x };
+			u32 advance{ (u32)face->glyph->advance.x };
 
 			return &page->glyphs.insert({ character, Glyph{ buffer, bounds, advance } }).first->second;
 		}

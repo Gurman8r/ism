@@ -23,44 +23,48 @@
 
 #if __cplusplus
 #	if _MSVC_LANG
-#		define CXX_VERSION _MSVC_LANG
+#		define CXX_LANGUAGE _MSVC_LANG
 #	else
-#		define CXX_VERSION __cplusplus
+#		define CXX_LANGUAGE __cplusplus
 #	endif
 #else
-#	error "this system does not support C++"
+#error "this system does not support C++"
 #endif
 
-#if (CXX_VERSION >= 201907L)
+#if (CXX_LANGUAGE >= 201907L)
 //	C++20
-#	define CXX_20 1
-#	define CXX_17 1
-#	define CXX_14 1
-#	define CXX_11 1
+#define CXX_VERSION 20
+#define CXX_20 1
+#define CXX_17 1
+#define CXX_14 1
+#define CXX_11 1
 
-#elif (CXX_VERSION >= 201703L)
+#elif (CXX_LANGUAGE >= 201703L)
 //	C++17
-#	define CXX_20 0
-#	define CXX_17 1
-#	define CXX_14 1
-#	define CXX_11 1
+#define CXX_VERSION 17
+#define CXX_20 0
+#define CXX_17 1
+#define CXX_14 1
+#define CXX_11 1
 
-#elif (CXX_VERSION >= 201402L)
+#elif (CXX_LANGUAGE >= 201402L)
 //	C++14
-#	define CXX_20 0
-#	define CXX_17 0
-#	define CXX_14 1
-#	define CXX_11 1
+#define CXX_VERSION 14
+#define CXX_20 0
+#define CXX_17 0
+#define CXX_14 1
+#define CXX_11 1
 
-#elif (CXX_VERSION >= 201103L)
+#elif (CXX_LANGUAGE >= 201103L)
 //	C++11
-#	define CXX_20 0
-#	define CXX_17 0
-#	define CXX_14 0
-#	define CXX_11 1
+#define CXX_VERSION 11
+#define CXX_20 0
+#define CXX_17 0
+#define CXX_14 0
+#define CXX_11 1
 
 #else
-#	error "this version of C++ is not supported"
+#error "this version of C++ is not supported"
 #endif
 
 

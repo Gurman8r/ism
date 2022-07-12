@@ -4,8 +4,8 @@
 #include <core/object/type_object.hpp>
 
 // bool
-#define TRUE_OBJ		(ism::INT(&ism::IntObject::g_true))
-#define FALSE_OBJ		(ism::INT(&ism::IntObject::g_false))
+#define TRUE_OBJ		(ism::INT(&ism::IntObject::g_True))
+#define FALSE_OBJ		(ism::INT(&ism::IntObject::g_False))
 #define BOOL_OBJ(b)		((b) ? TRUE_OBJ : FALSE_OBJ)
 
 // int
@@ -19,7 +19,7 @@ namespace ism
 		friend class INT;
 
 	public:
-		int64_t m_int{};
+		i64 m_int{};
 
 		using storage_type = decltype(m_int);
 
@@ -37,9 +37,9 @@ namespace ism
 		> operator T() const & { return static_cast<T>(m_int); }
 
 	public:
-		static IntObject g_true; // global true
+		static IntObject g_True; // global true constant
 
-		static IntObject g_false; // global false
+		static IntObject g_False; // global false constant
 	};
 
 	// int delete

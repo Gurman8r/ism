@@ -126,7 +126,7 @@ namespace ism
 
 			// collect type info
 			constexpr size_t argc{ sizeof...(Args) };
-			Array<std::type_info const *, argc> types{};
+			std::type_info const * types[argc]{};
 			mpl::for_types_i<Args...>([&](size_t i, auto tag) { types[i] = &typeid(TAG_TYPE(tag)); });
 
 			// prepend?

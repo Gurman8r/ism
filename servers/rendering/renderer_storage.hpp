@@ -105,9 +105,9 @@ namespace ism
 		RID render_target_create();
 		void render_target_destroy(RID render_target);
 		Vec2i render_target_get_position(RID render_target);
-		void render_target_set_position(RID render_target, int32_t x, int32_t  y);
+		void render_target_set_position(RID render_target, i32 x, i32  y);
 		Vec2i render_target_get_size(RID render_target);
-		void render_target_set_size(RID render_target, int32_t width, int32_t height);
+		void render_target_set_size(RID render_target, i32 width, i32 height);
 		RID render_target_get_texture(RID render_target);
 		void render_target_request_clear(RID render_target, Color const & value);
 		void render_target_disable_clear_request(RID render_target);
@@ -123,11 +123,11 @@ namespace ism
 		};
 
 		RID camera_create();
-		void camera_set_perspective(RID camera, float_t fovy_degrees, float_t z_near, float_t z_far);
-		void camera_set_orthogonal(RID camera, float_t size, float_t z_near, float_t z_far);
-		void camera_set_frustum(RID camera, float_t size, Vec2 offset, float_t z_near, float_t z_far);
+		void camera_set_perspective(RID camera, f32 fovy_degrees, f32 z_near, f32 z_far);
+		void camera_set_orthogonal(RID camera, f32 size, f32 z_near, f32 z_far);
+		void camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 z_near, f32 z_far);
 		void camera_set_transform(RID camera, Mat4 const & transform);
-		void camera_set_cull_mask(RID camera, uint32_t layers);
+		void camera_set_cull_mask(RID camera, u32 layers);
 		void camera_set_environment(RID camera, RID env);
 		void camera_set_camera_effects(RID camera, RID fx);
 		void camera_set_use_vertical_aspect(RID camera, bool enable);
@@ -145,7 +145,7 @@ namespace ism
 		RID viewport_create();
 		void viewport_destroy(RID viewport);
 		void viewport_set_parent_viewport(RID viewport, RID parent_viewport);
-		void viewport_set_size(RID viewport, int32_t width, int32_t height);
+		void viewport_set_size(RID viewport, i32 width, i32 height);
 		RID viewport_get_texture(RID viewport) const;
 		void viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen);
 		void draw_viewports();

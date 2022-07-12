@@ -59,46 +59,41 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifdef CC_MSVC
-	ALIAS(int8_t)		signed __int8;
-	ALIAS(int16_t)		signed __int16;
-	ALIAS(int32_t)		signed __int32;
-	ALIAS(int64_t)		signed __int64;
-	ALIAS(uint8_t)		unsigned __int8;
-	ALIAS(uint16_t)		unsigned __int16;
-	ALIAS(uint32_t)		unsigned __int32;
-	ALIAS(uint64_t)		unsigned __int64;
+	ALIAS(sbyte)		signed __int8;
+	ALIAS(i16)			signed __int16;
+	ALIAS(i32)			signed __int32;
+	ALIAS(i64)			signed __int64;
+	ALIAS(byte)			unsigned __int8;
+	ALIAS(u16)			unsigned __int16;
+	ALIAS(u32)			unsigned __int32;
+	ALIAS(u64)			unsigned __int64;
 #else
-	ALIAS(int8_t)		signed char;
-	ALIAS(int16_t)		signed short;
-	ALIAS(int32_t)		signed int;
-	ALIAS(int64_t)		signed long long;
-	ALIAS(uint8_t)		unsigned char;
-	ALIAS(uint16_t)		unsigned short;
-	ALIAS(uint32_t)		unsigned int;
-	ALIAS(uint64_t)		unsigned long long;
+	ALIAS(sbyte)		signed char;
+	ALIAS(i16)			signed short;
+	ALIAS(i32)			signed int;
+	ALIAS(i64)			signed long long;
+	ALIAS(byte)			unsigned char;
+	ALIAS(u16)			unsigned short;
+	ALIAS(u32)			unsigned int;
+	ALIAS(u64)			unsigned long long;
 #endif
 
-	ALIAS(float32_t)	float;
-	ALIAS(float64_t)	double;
-	ALIAS(float80_t)	long double;
-	ALIAS(nullptr_t)	decltype(nullptr);
+	ALIAS(f32)			float;
+	ALIAS(f64)			double;
+	ALIAS(f80)			long double;
 
 #if (ARCHITECTURE == 64)
-	ALIAS(intmax_t)		int64_t;
-	ALIAS(uintmax_t)	uint64_t;
+	ALIAS(ssize_t)		i64;
+	ALIAS(size_t)		u64;
 #else
-	ALIAS(intmax_t)		int32_t;
-	ALIAS(uintmax_t)	uint32_t;
+	ALIAS(ssize_t)		i32;
+	ALIAS(size_t)		u32;
 #endif
 
-	ALIAS(float_t)		float32_t;
-	ALIAS(double_t)		float64_t;
-	ALIAS(max_align_t)	double_t;
-	ALIAS(intptr_t)		intmax_t;
-	ALIAS(ptrdiff_t)	intmax_t;
-	ALIAS(ssize_t)		intmax_t;
-	ALIAS(size_t)		uintmax_t;
-	ALIAS(hash_t)		uintmax_t;
+	ALIAS(intptr_t)		ssize_t;
+	ALIAS(ptrdiff_t)	ssize_t;
+	ALIAS(hash_t)		size_t;
+	ALIAS(nullptr_t)	decltype(nullptr);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -119,7 +119,7 @@ namespace ism
 			{ RD::UniformType_UniformBuffer, TRANSFORMS_UNIFORMS, { uniform_buffers[TRANSFORMS_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[MATERIAL_UNIFORMS] = RD::get_singleton()->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, float_t>));
+		uniform_buffers[MATERIAL_UNIFORMS] = RD::get_singleton()->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, f32>));
 		uniform_sets[MATERIAL_UNIFORMS] = RD::get_singleton()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, MATERIAL_UNIFORMS, { uniform_buffers[MATERIAL_UNIFORMS] } },
 			{ RD::UniformType_Texture, 0, { m_textures["earth_dm_2k"]->get_rid() } },
@@ -172,7 +172,7 @@ namespace ism
 		if (pipeline) { RD::get_singleton()->render_pipeline_destroy(pipeline); }
 	}
 
-	void EditorNode::_notification(int32_t notification_id)
+	void EditorNode::_notification(i32 notification_id)
 	{
 		switch (notification_id)
 		{
@@ -186,7 +186,7 @@ namespace ism
 
 			static EditorCamera * editor_camera{ m_viewport.get_editor_camera() };
 			static Vec2i view_size{ 1280, 720 }, view_size_prev{};
-			if (m_viewport.get_window()) { view_size = { (int32_t)m_viewport->InnerRect.GetWidth(), (int32_t)m_viewport->InnerRect.GetHeight() }; }
+			if (m_viewport.get_window()) { view_size = { (i32)m_viewport->InnerRect.GetWidth(), (i32)m_viewport->InnerRect.GetHeight() }; }
 			if (view_size_prev != view_size) {
 				view_size_prev = view_size;
 				editor_camera->set_res(view_size);
@@ -208,7 +208,7 @@ namespace ism
 				transforms_ubo.set<0>(object_matrix[0]); // model transform
 				RD::get_singleton()->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
 
-				RD::Std140<Vec4, Vec4, Vec4, float_t> material_ubo;
+				RD::Std140<Vec4, Vec4, Vec4, f32> material_ubo;
 				material_ubo.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
 				material_ubo.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
 				material_ubo.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular

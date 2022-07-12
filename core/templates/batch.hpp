@@ -14,7 +14,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		using self_type			= typename Batch<_Types...>;
-		using allocator_type	= typename PolymorphicAllocator<uint8_t>;
+		using allocator_type	= typename PolymorphicAllocator<byte>;
 		using value_types		= typename mpl::type_list<_Types...>;
 		using value_tuple		= typename mpl::tuple<value_types>;
 		using vector_types		= typename mpl::remap<ism::Vector, value_types>;

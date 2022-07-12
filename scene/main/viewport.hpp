@@ -17,8 +17,8 @@ namespace ism
 		ViewportTexture();
 		virtual ~ViewportTexture() override;
 		virtual RID get_rid() const override;
-		virtual int32_t get_width() const override;
-		virtual int32_t get_height() const override;
+		virtual i32 get_width() const override;
+		virtual i32 get_height() const override;
 		virtual Vec2i get_size() const override;
 		virtual bool has_alpha() const override;
 		virtual Ref<Image> get_data() const override;

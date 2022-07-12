@@ -16,7 +16,7 @@ namespace ism
 			return memnew(ModuleObject(STR(args[0])));
 		};
 
-		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> int32_t
+		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
 		{
 			if (MODULE::check_(other))
 			{

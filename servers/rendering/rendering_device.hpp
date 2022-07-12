@@ -300,23 +300,23 @@ namespace ism
 			{
 				cstring		name;
 				DataType_	type;
-				uint32_t	count;
+				u32	count;
 				bool		normalized;
-				uint32_t	size;
-				uint32_t	offset;
+				u32	size;
+				u32	offset;
 
 				constexpr Attribute(cstring name, DataType_ type, size_t count, bool normalized = false) noexcept
 					: name		{ name }
 					, type		{ type }
-					, count		{ (uint32_t)count }
+					, count		{ (u32)count }
 					, normalized{ normalized }
-					, size		{ (uint32_t)(ism::get_data_type_size(type) * count) }
+					, size		{ (u32)(ism::get_data_type_size(type) * count) }
 					, offset	{}
 				{
 				}
 			};
 
-			uint32_t stride{};
+			u32 stride{};
 			Vector<Attribute> attributes{};
 
 			VertexLayout() noexcept : VertexLayout{
@@ -329,7 +329,7 @@ namespace ism
 
 			void update()
 			{
-				uint32_t offset{};
+				u32 offset{};
 				stride = 0;
 				for (VertexLayout::Attribute & e : attributes) {
 					e.offset = offset;
@@ -386,12 +386,12 @@ namespace ism
 		{
 			SamplerFilter_ mag_filter{ SamplerFilter_Nearest }, min_filter{ SamplerFilter_Nearest }, mip_filter{ SamplerFilter_Nearest };
 			SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat }, repeat_r{ SamplerRepeatMode_Repeat };
-			float_t lod_bias{ 0 };
+			f32 lod_bias{ 0 };
 			bool use_anisotropy{ false };
-			float_t anisotropy_max{ 1.f };
+			f32 anisotropy_max{ 1.f };
 			bool enable_compare{};
 			CompareOperator_ compare_op{ CompareOperator_Always };
-			float_t min_lod{ 0 }, max_lod{ 1e20f };
+			f32 min_lod{ 0 }, max_lod{ 1e20f };
 			SamplerBorderColor_ border_color{ SamplerBorderColor_Float_Opaque_Black };
 			bool unnormalized_uvw{ false };
 		};
@@ -472,11 +472,11 @@ namespace ism
 		{
 			TextureType_ texture_type{ TextureType_2D };
 			DataFormat_ color_format{ DataFormat_R8G8B8_UNORM };
-			uint32_t width{ 1 }, height{ 1 }, depth{ 1 }, layers{ 1 }, mipmaps{ 1 };
+			u32 width{ 1 }, height{ 1 }, depth{ 1 }, layers{ 1 }, mipmaps{ 1 };
 			SamplerFilter_ min_filter{ SamplerFilter_Nearest }, mag_filter{ SamplerFilter_Nearest };
 			SamplerRepeatMode_ repeat_s{ SamplerRepeatMode_Repeat }, repeat_t{ SamplerRepeatMode_Repeat };
 			TextureSamples_ samples{ TextureSamples_1 };
-			int32_t usage_flags{ TextureFlags_Default };
+			i32 usage_flags{ TextureFlags_Default };
 			DataFormat_ color_format_srgb{ DataFormat_MAX };
 			TextureSwizzle_ swizzle_r{ TextureSwizzle_R }, swizzle_g{ TextureSwizzle_G }, swizzle_b{ TextureSwizzle_B }, swizzle_a{ TextureSwizzle_A };
 		};
@@ -491,7 +491,7 @@ namespace ism
 		/* FRAMEBUFFER */
 		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) = 0;
 		virtual void framebuffer_destroy(RID framebuffer) = 0;
-		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) = 0;
+		virtual void framebuffer_set_size(RID framebuffer, i32 width, i32 height) = 0;
 
 	public:
 		/* SHADER */
@@ -556,7 +556,7 @@ namespace ism
 		struct Uniform
 		{
 			UniformType_ uniform_type{ UniformType_Image };
-			int32_t binding{};
+			i32 binding{};
 			Vector<RID> ids{};
 		};
 
@@ -606,19 +606,19 @@ namespace ism
 			PolygonCullMode_ cull_mode{ PolygonCullMode_Disabled };
 			PolygonFrontFace_ front_face{ PolygonFrontFace_Clockwise };
 			bool enable_depth_bias{ false };
-			float_t depth_bias_constant_factor{ 0.f };
-			float_t depth_bias_clamp{ 0.f };
-			float_t depth_bias_slope_factor{ 0.f };
-			float_t line_width{ 1.f };
-			uint32_t patch_control_points{ 1 };
+			f32 depth_bias_constant_factor{ 0.f };
+			f32 depth_bias_clamp{ 0.f };
+			f32 depth_bias_slope_factor{ 0.f };
+			f32 line_width{ 1.f };
+			u32 patch_control_points{ 1 };
 		};
 
 		struct MultisampleState
 		{
 			TextureSamples_ sample_count{ TextureSamples_1 };
 			bool enable_sample_shading{ false };
-			float_t min_sample_shading{ 0.f };
-			Vector<uint32_t> sample_mask{};
+			f32 min_sample_shading{ 0.f };
+			Vector<u32> sample_mask{};
 			bool enable_alpha_to_coverage{ false };
 			bool enable_alpha_to_one{ false };
 		};
@@ -642,9 +642,9 @@ namespace ism
 			StencilOperation_ pass{ StencilOperation_Zero };
 			StencilOperation_ depth_fail{ StencilOperation_Zero };
 			CompareOperator_ compare{ CompareOperator_Always };
-			uint32_t compare_mask{ 0 };
-			uint32_t write_mask{ 0 };
-			uint32_t reference{ 0 };
+			u32 compare_mask{ 0 };
+			u32 write_mask{ 0 };
+			u32 reference{ 0 };
 		};
 
 		struct DepthStencilState
@@ -653,7 +653,7 @@ namespace ism
 			bool enable_depth_write{ false };
 			CompareOperator_ depth_compare_operator{ CompareOperator_Always };
 			bool enable_depth_range{ false };
-			float_t depth_range_min{ 0.f }, depth_range_max{ 0.f };
+			f32 depth_range_min{ 0.f }, depth_range_max{ 0.f };
 			bool enable_stencil{ false };
 			StencilOperationState front_op{}, back_op{};
 		};
@@ -714,21 +714,21 @@ namespace ism
 			
 			Vector<Attachment> attachments{};
 
-			static ColorBlendState create_disabled(int32_t num_attachments = 1)
+			static ColorBlendState create_disabled(i32 num_attachments = 1)
 			{
 				ColorBlendState temp{};
 				temp.attachments.reserve(num_attachments);
-				for (int32_t i = 0; i < num_attachments; ++i) {
+				for (i32 i = 0; i < num_attachments; ++i) {
 					temp.attachments.push_back({});
 				}
 				return temp;
 			}
 
-			static ColorBlendState create_blend(int32_t num_attachments = 1)
+			static ColorBlendState create_blend(i32 num_attachments = 1)
 			{
 				ColorBlendState temp{};
 				temp.attachments.reserve(num_attachments);
-				for (int32_t i = 0; i < num_attachments; ++i) {
+				for (i32 i = 0; i < num_attachments; ++i) {
 					temp.attachments.push_back({ true,
 						BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add,
 						BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add,
@@ -764,12 +764,12 @@ namespace ism
 		};
 
 		virtual DrawListID draw_list_begin_for_screen(DS::WindowID window = DS::MAIN_WINDOW_ID, Color const & clear_color = {}) = 0;
-		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) = 0;
+		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, f32 clear_depth = 1.f, i32 clear_stencil = 0) = 0;
 		virtual void draw_list_bind_pipeline(DrawListID draw_list, RID pipeline) = 0;
 		virtual void draw_list_bind_uniform_set(DrawListID draw_list, RID uniform_set, size_t index) = 0;
 		virtual void draw_list_bind_vertex_array(DrawListID draw_list, RID vertex_array) = 0;
 		virtual void draw_list_bind_index_array(DrawListID draw_list, RID index_array) = 0;
-		virtual void draw_list_set_line_width(DrawListID draw_list, float_t width) = 0;
+		virtual void draw_list_set_line_width(DrawListID draw_list, f32 width) = 0;
 		virtual void draw_list_set_push_constant(DrawListID draw_list, void const * data, size_t size) = 0;
 		virtual void draw_list_enable_scissor(DrawListID draw_list, IntRect const & rect) = 0;
 		virtual void draw_list_disable_scissor(DrawListID draw_list) = 0;

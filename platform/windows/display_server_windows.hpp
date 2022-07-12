@@ -16,7 +16,7 @@ namespace ism
 		{
 			GLFWwindow *	handle{};
 			String			title{};
-			int32_t			current_screen{};
+			i32			current_screen{};
 			WindowMode_		window_mode{};
 		};
 
@@ -40,43 +40,42 @@ namespace ism
 		virtual String get_clipboard() const override;
 		virtual void set_clipboard(String const & text) override;
 
-		virtual Input::CursorShape_ cursor_get_shape() const override;
-		virtual void cursor_set_shape(Input::CursorShape_ shape) override;
-		virtual void cursor_set_custom_image(RES const & cursor, Input::CursorShape_ shape = {}, Vec2 const & hotspot = {}) override;
+		virtual Input::Cursor_ cursor_get_shape() const override;
+		virtual void cursor_set_shape(Input::Cursor_ shape) override;
+		virtual void cursor_set_custom_image(RES const & cursor, Input::Cursor_ shape = {}, Vec2 const & hotspot = {}) override;
 
 		virtual Input::MouseMode_ mouse_get_mode() const override;
 		virtual void mouse_set_mode(Input::MouseMode_ mode) override;
 
-		virtual int32_t mouse_get_button(Input::MouseButton_ button) const override;
+		virtual i32 mouse_get_button(Input::MouseButton_ button) const override;
 		virtual Vec2 mouse_get_position() const override;
 		virtual void mouse_set_position(Vec2 const & position) override;
 
-		virtual bool joystick_is_present(Input::Joystick_ jid) const override;
-		virtual String joystick_get_name(Input::Joystick_ jid) const override;
-		virtual String joystick_get_guid(Input::Joystick_ jid) const override;
-		virtual View<float_t const> joystick_get_axes(Input::Joystick_ jid) const override;
-		virtual View<uint8_t const> joystick_get_buttons(Input::Joystick_ jid) const override;
-		virtual View<uint8_t const> joystick_get_hats(Input::Joystick_ jid) const override;
-		virtual bool joystick_is_gamepad(Input::Joystick_ jid) const override;
-		virtual String gamepad_get_name(Input::Joystick_ jid) const override;
-		virtual bool gamepad_get_state(Input::Joystick_ jid, Input::GamepadState * state) const override;
+		virtual bool joystick_is_present(i32 device) const override;
+		virtual String joystick_get_name(i32 device) const override;
+		virtual String joystick_get_guid(i32 device) const override;
+		virtual View<f32 const> joystick_get_axes(i32 device) const override;
+		virtual View<byte const> joystick_get_buttons(i32 device) const override;
+		virtual View<byte const> joystick_get_hats(i32 device) const override;
+		virtual bool joystick_is_gamepad(i32 device) const override;
+		virtual String gamepad_get_name(i32 device) const override;
 		virtual bool gamepad_update_mappings(String const & mappings) override;
 
-		virtual int32_t get_screen_count() const override;
-		virtual String screen_get_name(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual Vec2i screen_get_physical_size(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual IntRect screen_get_workarea(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual Vec2i screen_get_position(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual Vec2i screen_get_size(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual Vec2 screen_get_scale(int32_t screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual i32 get_screen_count() const override;
+		virtual String screen_get_name(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual Vec2i screen_get_physical_size(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual IntRect screen_get_workarea(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual Vec2i screen_get_position(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual Vec2i screen_get_size(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual Vec2 screen_get_scale(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
 
 		virtual Vector<WindowID> get_window_list() const override;
 
 		virtual String window_get_title(WindowID window = MAIN_WINDOW_ID) const override;
 		virtual void window_set_title(String const & title, WindowID window = MAIN_WINDOW_ID) override;
 
-		virtual int32_t window_get_current_screen(WindowID window = MAIN_WINDOW_ID) const override;
-		virtual void window_set_current_screen(int32_t screen, WindowID window = MAIN_WINDOW_ID) override;
+		virtual i32 window_get_current_screen(WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_set_current_screen(i32 screen, WindowID window = MAIN_WINDOW_ID) override;
 
 		virtual Vec2i window_get_position(WindowID window = MAIN_WINDOW_ID) const override;
 		virtual void window_set_position(Vec2i const & position, WindowID window = MAIN_WINDOW_ID) override;
@@ -89,8 +88,8 @@ namespace ism
 		virtual WindowMode_ window_get_mode(WindowID window = MAIN_WINDOW_ID) const override;
 		virtual void window_set_mode(WindowMode_ mode, WindowID window = MAIN_WINDOW_ID) override;
 
-		virtual bool window_get_flag(int32_t flag, WindowID window = MAIN_WINDOW_ID) const override;
-		virtual void window_set_flag(int32_t flag, bool enabled, WindowID window = MAIN_WINDOW_ID) override;
+		virtual bool window_get_flag(i32 flag, WindowID window = MAIN_WINDOW_ID) const override;
+		virtual void window_set_flag(i32 flag, bool enabled, WindowID window = MAIN_WINDOW_ID) override;
 
 		virtual void request_window_attention(WindowID window = MAIN_WINDOW_ID) override;
 		virtual void move_window_to_foreground(WindowID window = MAIN_WINDOW_ID) override;
@@ -107,7 +106,7 @@ namespace ism
 		virtual void swap_buffers() override;
 
 		virtual void set_native_icon(Path const & path) override;
-		virtual void set_icon(uint8_t const * data, int32_t width, int32_t height) override;
+		virtual void set_icon(byte const * data, i32 width, i32 height) override;
 
 	public:
 		virtual CharCallback window_set_char_callback(CharCallback callback, WindowID window = MAIN_WINDOW_ID) override;

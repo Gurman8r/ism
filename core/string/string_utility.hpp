@@ -75,15 +75,15 @@ namespace ism::util
 		if constexpr (sizeof(T) > 4)
 		{
 			while (value > 0xFFFFFFFFU) {
-				auto chunk{ static_cast<uint32_t>(value % 1000000000) };
+				auto chunk{ static_cast<u32>(value % 1000000000) };
 				value /= 1000000000;
-				for (int32_t i = 0; i != 9; ++i) {
+				for (i32 i = 0; i != 9; ++i) {
 					*--next = static_cast<char>('0' + chunk % 10);
 					chunk /= 10;
 				}
 			}
 		}
-		auto trunc{ static_cast<uint32_t>(value) };
+		auto trunc{ static_cast<u32>(value) };
 		do {
 			*--next = static_cast<char>('0' + trunc % 10);
 			trunc /= 10;
@@ -132,51 +132,51 @@ namespace ism::util
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline Optional<int8_t> to_i8(String const & value, int32_t base = 10) noexcept { return parse_answer<int8_t>(value.c_str(), &_CSTD strtol, base); }
+	inline Optional<sbyte> to_i8(String const & value, i32 base = 10) noexcept { return parse_answer<sbyte>(value.c_str(), &_CSTD strtol, base); }
 
-	inline Optional<int16_t> to_i16(String const & value, int32_t base = 10) noexcept { return parse_answer<int16_t>(value.c_str(), &_CSTD strtol, base); }
+	inline Optional<i16> to_i16(String const & value, i32 base = 10) noexcept { return parse_answer<i16>(value.c_str(), &_CSTD strtol, base); }
 
-	inline Optional<int32_t> to_i32(String const & value, int32_t base = 10) noexcept { return parse_answer<int32_t>(value.c_str(), &_CSTD strtol, base); }
+	inline Optional<i32> to_i32(String const & value, i32 base = 10) noexcept { return parse_answer<i32>(value.c_str(), &_CSTD strtol, base); }
 
-	inline Optional<int64_t> to_i64(String const & value, int32_t base = 10) noexcept { return parse_answer<int64_t>(value.c_str(), &_CSTD strtoll, base); }
+	inline Optional<i64> to_i64(String const & value, i32 base = 10) noexcept { return parse_answer<i64>(value.c_str(), &_CSTD strtoll, base); }
 
-	inline Optional<uint8_t> to_u8(String const & value, int32_t base = 10) noexcept { return parse_answer<uint8_t>(value.c_str(), &_CSTD strtoul, base); }
+	inline Optional<byte> to_u8(String const & value, i32 base = 10) noexcept { return parse_answer<byte>(value.c_str(), &_CSTD strtoul, base); }
 
-	inline Optional<uint16_t> to_u16(String const & value, int32_t base = 10) noexcept { return parse_answer<uint16_t>(value.c_str(), &_CSTD strtoul, base); }
+	inline Optional<u16> to_u16(String const & value, i32 base = 10) noexcept { return parse_answer<u16>(value.c_str(), &_CSTD strtoul, base); }
 
-	inline Optional<uint32_t> to_u32(String const & value, int32_t base = 10) noexcept { return parse_answer<uint32_t>(value.c_str(), &_CSTD strtoul, base); }
+	inline Optional<u32> to_u32(String const & value, i32 base = 10) noexcept { return parse_answer<u32>(value.c_str(), &_CSTD strtoul, base); }
 
-	inline Optional<uint64_t> to_u64(String const & value, int32_t base = 10) noexcept { return parse_answer<uint64_t>(value.c_str(), &_CSTD strtoull, base); }
+	inline Optional<u64> to_u64(String const & value, i32 base = 10) noexcept { return parse_answer<u64>(value.c_str(), &_CSTD strtoull, base); }
 
-	inline Optional<float32_t> to_f32(String const & value) noexcept { return parse_answer<float32_t>(value.c_str(), &_CSTD strtod); }
+	inline Optional<f32> to_f32(String const & value) noexcept { return parse_answer<f32>(value.c_str(), &_CSTD strtod); }
 
-	inline Optional<float64_t> to_f64(String const & value) noexcept { return parse_answer<float64_t>(value.c_str(), &_CSTD strtod); }
+	inline Optional<f64> to_f64(String const & value) noexcept { return parse_answer<f64>(value.c_str(), &_CSTD strtod); }
 
-	inline Optional<float80_t> to_f80(String const & value) noexcept { return parse_answer<float80_t>(value.c_str(), &_CSTD strtold); }
+	inline Optional<f80> to_f80(String const & value) noexcept { return parse_answer<f80>(value.c_str(), &_CSTD strtold); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline String to_string(int8_t value) noexcept { return integral_to_string(value); }
+	inline String to_string(sbyte value) noexcept { return integral_to_string(value); }
 
-	inline String to_string(int16_t value) noexcept { return integral_to_string(value); }
+	inline String to_string(i16 value) noexcept { return integral_to_string(value); }
 
-	inline String to_string(int32_t value) noexcept { return integral_to_string(value); }
+	inline String to_string(i32 value) noexcept { return integral_to_string(value); }
 
-	inline String to_string(int64_t value) noexcept { return integral_to_string(value); }
+	inline String to_string(i64 value) noexcept { return integral_to_string(value); }
 
-	inline String to_string(uint8_t value) noexcept { return uintegral_to_string(value); }
+	inline String to_string(byte value) noexcept { return uintegral_to_string(value); }
 
-	inline String to_string(uint16_t value) noexcept { return uintegral_to_string(value); }
+	inline String to_string(u16 value) noexcept { return uintegral_to_string(value); }
 
-	inline String to_string(uint32_t value) noexcept { return uintegral_to_string(value); }
+	inline String to_string(u32 value) noexcept { return uintegral_to_string(value); }
 
-	inline String to_string(uint64_t value) noexcept { return uintegral_to_string(value); }
+	inline String to_string(u64 value) noexcept { return uintegral_to_string(value); }
 
-	inline String to_string(float32_t value) noexcept { return floating_point_to_string(value); }
+	inline String to_string(f32 value) noexcept { return floating_point_to_string(value); }
 
-	inline String to_string(float64_t value) noexcept { return floating_point_to_string(value); }
+	inline String to_string(f64 value) noexcept { return floating_point_to_string(value); }
 
-	inline String to_string(float80_t value) noexcept { return floating_point_to_string(value); }
+	inline String to_string(f80 value) noexcept { return floating_point_to_string(value); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

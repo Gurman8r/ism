@@ -24,11 +24,11 @@ namespace ism
 		/* BUFFER  */
 		struct _BufferBase
 		{
-			uint32_t handle{};
-			uint32_t buffer_type{};
-			uint32_t usage{};
-			uint32_t size{};
-			uint32_t draw_mode{};
+			u32 handle{};
+			u32 buffer_type{};
+			u32 usage{};
+			u32 size{};
+			u32 draw_mode{};
 			DynamicBuffer data{};
 		};
 
@@ -42,24 +42,24 @@ namespace ism
 
 		struct _VertexArray
 		{
-			uint32_t handle{};
-			uint32_t vertex_count{};
+			u32 handle{};
+			u32 vertex_count{};
 			VertexLayout layout{};
 			Vector<RID> buffers{};
 		};
 
 		struct _IndexBuffer : _BufferBase
 		{
-			uint32_t index_count{};
-			uint32_t index_type{};
+			u32 index_count{};
+			u32 index_type{};
 		};
 
 		struct _IndexArray
 		{
 			RID index_buffer{};
-			uint32_t index_offset{};
-			uint32_t index_count{};
-			uint32_t index_type{};
+			u32 index_offset{};
+			u32 index_count{};
+			u32 index_type{};
 		};
 
 		virtual RID vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data = {}) override;
@@ -74,15 +74,15 @@ namespace ism
 		/* SAMPLER  */
 		struct _Sampler
 		{
-			uint32_t handle{};
-			uint32_t mag_filter{}, min_filter{}, mip_filter{};
-			uint32_t repeat_s{}, repeat_t{}, repeat_r{};
-			float_t lod_bias{};
+			u32 handle{};
+			u32 mag_filter{}, min_filter{}, mip_filter{};
+			u32 repeat_s{}, repeat_t{}, repeat_r{};
+			f32 lod_bias{};
 			bool use_anisotropy{};
-			float_t anisotropy_max{};
+			f32 anisotropy_max{};
 			bool enable_compare{};
-			uint32_t compare_op{};
-			float_t min_lod{}, max_lod{};
+			u32 compare_op{};
+			f32 min_lod{}, max_lod{};
 			SamplerBorderColor_ border_color{};
 			bool unnormalized_uvw{};
 		};
@@ -94,17 +94,17 @@ namespace ism
 		/* TEXTURE  */
 		struct _Texture
 		{
-			uint32_t handle{};
-			uint32_t texture_type{};
+			u32 handle{};
+			u32 texture_type{};
 			DataFormat_ color_format{}, color_format_srgb{};
 			Image::Format_ image_format{};
-			int32_t width{}, height{}, depth{}, layers{}, mipmaps{};
-			uint32_t min_filter{}, mag_filter{};
-			uint32_t repeat_s{}, repeat_t{};
+			i32 width{}, height{}, depth{}, layers{}, mipmaps{};
+			u32 min_filter{}, mag_filter{};
+			u32 repeat_s{}, repeat_t{};
 			TextureSamples_ samples{};
 			Vec4i swizzle_mask{};
-			int32_t usage_flags{};
-			int32_t width_2d{ width }, height_2d{ height }; // size override
+			i32 usage_flags{};
+			i32 width_2d{ width }, height_2d{ height }; // size override
 		};
 
 		virtual RID texture_create(TextureCreateInfo const & spec, DynamicBuffer const & data = {}) override;
@@ -118,21 +118,21 @@ namespace ism
 		/* FRAMEBUFFER  */
 		struct _Framebuffer
 		{
-			uint32_t handle{};
-			int32_t width{}, height{};
+			u32 handle{};
+			i32 width{}, height{};
 			Vector<RID> texture_attachments{};
 		};
 
 		virtual RID framebuffer_create(Vector<RID> const & texture_attachments) override;
 		virtual void framebuffer_destroy(RID framebuffer) override;
-		virtual void framebuffer_set_size(RID framebuffer, int32_t width, int32_t height) override;
+		virtual void framebuffer_set_size(RID framebuffer, i32 width, i32 height) override;
 
 	public:
 		/* SHADER  */
 		struct _Shader
 		{
-			uint32_t handle{};
-			FlatMap<hash_t, int32_t> bindings{};
+			u32 handle{};
+			FlatMap<hash_t, i32> bindings{};
 			Vector<ShaderStageData> stage_data{};
 		};
 
@@ -148,8 +148,8 @@ namespace ism
 		struct _UniformDescriptor
 		{
 			UniformType_ uniform_type{};
-			uint32_t binding{};
-			uint32_t length{};
+			u32 binding{};
+			u32 length{};
 			Vector<RID> buffers{};
 			Vector<RID> images{};
 		};
@@ -170,7 +170,7 @@ namespace ism
 		struct _RenderPipeline
 		{
 			RID shader{};
-			uint32_t primitive{};
+			u32 primitive{};
 			RasterizationState rasterization_state{};
 			MultisampleState multisample_state{};
 			DepthStencilState depth_stencil_state{};
@@ -198,7 +198,7 @@ namespace ism
 			struct State
 			{
 				SetState sets[32]{};
-				uint32_t set_count{};
+				u32 set_count{};
 				RID pipeline{};
 				RID pipeline_shader{};
 				RID vertex_array{};
@@ -210,12 +210,12 @@ namespace ism
 		Vector<_DrawList> m_draw_list{};
 
 		virtual DrawListID draw_list_begin_for_screen(DS::WindowID window = DS::MAIN_WINDOW_ID, Color const & clear_color = {}) override;
-		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, float_t clear_depth = 1.f, int32_t clear_stencil = 0) override;
+		virtual DrawListID draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors = {}, f32 clear_depth = 1.f, i32 clear_stencil = 0) override;
 		virtual void draw_list_bind_pipeline(DrawListID draw_list, RID pipeline) override;
 		virtual void draw_list_bind_uniform_set(DrawListID draw_list, RID uniform_set, size_t index) override;
 		virtual void draw_list_bind_vertex_array(DrawListID draw_list, RID vertex_array) override;
 		virtual void draw_list_bind_index_array(DrawListID draw_list, RID index_array) override;
-		virtual void draw_list_set_line_width(DrawListID draw_list, float_t width) override;
+		virtual void draw_list_set_line_width(DrawListID draw_list, f32 width) override;
 		virtual void draw_list_set_push_constant(DrawListID draw_list, void const * data, size_t data_size) override;
 		virtual void draw_list_enable_scissor(DrawListID draw_list, IntRect const & rect) override;
 		virtual void draw_list_disable_scissor(DrawListID draw_list) override;

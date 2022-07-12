@@ -108,9 +108,9 @@ namespace ism
 		return m_device->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = color_format;
 			t.color_format_srgb = color_format_srgb;
-			t.width = (uint32_t)image->get_width();
-			t.height = (uint32_t)image->get_height();
-			t.depth = (uint32_t)image->get_depth();
+			t.width = (u32)image->get_width();
+			t.height = (u32)image->get_height();
+			t.depth = (u32)image->get_depth();
 			t.min_filter = t.mag_filter = RD::SamplerFilter_Linear;
 			t.repeat_s = t.repeat_t = RD::SamplerRepeatMode_ClampToEdge;
 			t.swizzle_r = swizzle_r;
@@ -263,17 +263,17 @@ namespace ism
 		return m_storage->camera_create();
 	}
 
-	void RenderingServerDefault::camera_set_perspective(RID camera, float_t fovy_degrees, float_t z_near, float_t z_far)
+	void RenderingServerDefault::camera_set_perspective(RID camera, f32 fovy_degrees, f32 z_near, f32 z_far)
 	{
 		m_storage->camera_set_perspective(camera, fovy_degrees, z_near, z_far);
 	}
 
-	void RenderingServerDefault::camera_set_orthogonal(RID camera, float_t size, float_t z_near, float_t z_far)
+	void RenderingServerDefault::camera_set_orthogonal(RID camera, f32 size, f32 z_near, f32 z_far)
 	{
 		m_storage->camera_set_orthogonal(camera, size, z_near, z_far);
 	}
 
-	void RenderingServerDefault::camera_set_frustum(RID camera, float_t size, Vec2 offset, float_t z_near, float_t z_far)
+	void RenderingServerDefault::camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 z_near, f32 z_far)
 	{
 		m_storage->camera_set_frustum(camera, size, offset, z_near, z_far);
 	}
@@ -283,7 +283,7 @@ namespace ism
 		m_storage->camera_set_transform(camera, transform);
 	}
 
-	void RenderingServerDefault::camera_set_cull_mask(RID camera, uint32_t layers)
+	void RenderingServerDefault::camera_set_cull_mask(RID camera, u32 layers)
 	{
 		m_storage->camera_set_cull_mask(camera, layers);
 	}
@@ -320,7 +320,7 @@ namespace ism
 		m_storage->viewport_set_parent_viewport(viewport, parent_viewport);
 	}
 
-	void RenderingServerDefault::viewport_set_size(RID viewport, int32_t width, int32_t height)
+	void RenderingServerDefault::viewport_set_size(RID viewport, i32 width, i32 height)
 	{
 		m_storage->viewport_set_size(viewport, width, height);
 	}

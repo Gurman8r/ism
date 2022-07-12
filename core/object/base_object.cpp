@@ -98,7 +98,7 @@ namespace ism
 
 	bool Object::inc_ref()
 	{
-		uint32_t const rc_val{ m_refcount.refval() };
+		u32 const rc_val{ m_refcount.refval() };
 		bool const ok{ rc_val != 0 };
 		if (ok && rc_val <= 2 /* higher is not relevant */)
 		{
@@ -109,7 +109,7 @@ namespace ism
 
 	bool Object::dec_ref()
 	{
-		uint32_t const rc_val{ m_refcount.unrefval() };
+		u32 const rc_val{ m_refcount.unrefval() };
 		bool const die{ rc_val == 0 };
 		if (rc_val <= 1 /* higher is not relevant */)
 		{
@@ -118,7 +118,7 @@ namespace ism
 		return die;
 	}
 
-	void Object::notification(int32_t notification_id, bool reversed)
+	void Object::notification(i32 notification_id, bool reversed)
 	{
 		_notificationv(notification_id, reversed);
 	}

@@ -25,7 +25,7 @@ namespace ism
 		return Error_None;
 	}
 
-	Glyph * Font::get_glyph(uint32_t character, uint32_t character_size)
+	Glyph * Font::get_glyph(u32 character, u32 character_size)
 	{
 		if (!m_font || !character || !character_size) { return nullptr; }
 

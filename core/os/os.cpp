@@ -59,7 +59,7 @@ namespace ism
 		va_end(args);
 	}
 
-	void OS::printerr(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type)
+	void OS::printerr(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type)
 	{
 		m_logger->log_error(func, file, line, desc, message, type);
 	}
@@ -118,22 +118,22 @@ namespace ism
 		return {};
 	}
 
-	double_t OS::get_unix_time() const
+	f64 OS::get_unix_time() const
 	{
 		return {};
 	}
 
-	uint64_t OS::get_static_memory_usage() const
+	u64 OS::get_static_memory_usage() const
 	{
 		return {};
 	}
 
-	uint64_t OS::get_static_memory_peak_usage() const
+	u64 OS::get_static_memory_peak_usage() const
 	{
 		return {};
 	}
 
-	uint64_t OS::get_free_static_memory() const
+	u64 OS::get_free_static_memory() const
 	{
 		return {};
 	}
@@ -197,16 +197,16 @@ namespace ism
 	{
 	}
 
-	int32_t OS::get_exit_code() const
+	i32 OS::get_exit_code() const
 	{
 		return m_exit_code;
 	}
 
-	void OS::set_exit_code(int32_t value)
+	void OS::set_exit_code(i32 value)
 	{
 	}
 
-	int32_t OS::get_processor_count() const
+	i32 OS::get_processor_count() const
 	{
 		return -1;
 	}

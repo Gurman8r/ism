@@ -39,24 +39,24 @@ namespace ism
 		return INI(m_ini)->GetBoolean((std::string const &)section, (std::string const &)name, dv);
 	}
 
-	double_t ConfigFile::get_double(String const & section, String const & name, double_t dv) const
+	f64 ConfigFile::get_double(String const & section, String const & name, f64 dv) const
 	{
 		return INI(m_ini)->GetReal((std::string const &)section, (std::string const &)name, dv);
 	}
 
-	float_t ConfigFile::get_float(String const & section, String const & name, float_t dv) const
+	f32 ConfigFile::get_float(String const & section, String const & name, f32 dv) const
 	{
-		return (float_t)get_double(section, name, (float64_t)dv);
+		return (f32)get_double(section, name, (f64)dv);
 	}
 
-	int32_t ConfigFile::get_int(String const & section, String const & name, int32_t dv) const
+	i32 ConfigFile::get_int(String const & section, String const & name, i32 dv) const
 	{
 		return INI(m_ini)->GetInteger((std::string const &)section, (std::string const &)name, dv);
 	}
 
-	uint32_t ConfigFile::get_uint(String const & section, String const & name, uint32_t dv) const
+	u32 ConfigFile::get_uint(String const & section, String const & name, u32 dv) const
 	{
-		return (uint32_t)get_int(section, name, (int32_t)dv);
+		return (u32)get_int(section, name, (i32)dv);
 	}
 
 	String ConfigFile::get_string(String const & section, String const & name, String const & dv) const

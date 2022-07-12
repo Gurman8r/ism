@@ -8,7 +8,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// 32-bit Color
-	ALIAS(Color32) uint32_t;
+	ALIAS(Color32) u32;
 
 #define COLOR32_R_SHIFT	0
 #define COLOR32_G_SHIFT	8
@@ -18,26 +18,26 @@ namespace ism
 
 	// Make Color32
 #define COLOR32(r, g, b, a) \
-		((Color32)((uint8_t)(a)) << COLOR32_A_SHIFT) | \
-		((Color32)((uint8_t)(b)) << COLOR32_B_SHIFT) | \
-		((Color32)((uint8_t)(g)) << COLOR32_B_SHIFT) | \
-		((Color32)((uint8_t)(r)) << COLOR32_A_SHIFT)
+		((Color32)((byte)(a)) << COLOR32_A_SHIFT) | \
+		((Color32)((byte)(b)) << COLOR32_B_SHIFT) | \
+		((Color32)((byte)(g)) << COLOR32_B_SHIFT) | \
+		((Color32)((byte)(r)) << COLOR32_A_SHIFT)
 
 	// Color32 Red Channel
 #define COLOR32_R(c) \
-		((uint8_t)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
+		((byte)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
 
 	// Color32 Green Channel
 #define COLOR32_G(c) \
-		((uint8_t)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
+		((byte)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
 
 	// Color32 Blue Channel
 #define COLOR32_B(c) \
-		((uint8_t)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
+		((byte)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
 
 	// Color32 Alpha Channel
 #define COLOR32_A(c) \
-		((uint8_t)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
+		((byte)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -126,10 +126,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
-	inline Color rotate_hue(Color const & v, float_t degrees) noexcept
+	inline Color rotate_hue(Color const & v, f32 degrees) noexcept
 	{
 		// https://stackoverflow.com/a/8510751
-		float_t const c{ std::cos(util::deg2rad(degrees)) }, s{ std::sin(util::deg2rad(degrees)) };
+		f32 const c{ std::cos(util::deg2rad(degrees)) }, s{ std::sin(util::deg2rad(degrees)) };
 		auto m{ Mat3::identity() };
 		m.at(0, 0) = c + (1.0f - c) / 3.0f;
 		m.at(0, 1) = 1.f / 3.f * (1.0f - c) - std::sqrt(1.f / 3.f) * s;

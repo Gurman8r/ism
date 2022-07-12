@@ -94,11 +94,11 @@ namespace ism
 	public:
 		/* CAMERA */
 		virtual RID camera_create() = 0;
-		virtual void camera_set_perspective(RID camera, float_t fovy_degrees, float_t z_near, float_t z_far) = 0;
-		virtual void camera_set_orthogonal(RID camera, float_t size, float_t z_near, float_t z_far) = 0;
-		virtual void camera_set_frustum(RID camera, float_t size, Vec2 offset, float_t z_near, float_t z_far) = 0;
+		virtual void camera_set_perspective(RID camera, f32 fovy_degrees, f32 z_near, f32 z_far) = 0;
+		virtual void camera_set_orthogonal(RID camera, f32 size, f32 z_near, f32 z_far) = 0;
+		virtual void camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 z_near, f32 z_far) = 0;
 		virtual void camera_set_transform(RID camera, Mat4 const & transform) = 0;
-		virtual void camera_set_cull_mask(RID camera, uint32_t layers) = 0;
+		virtual void camera_set_cull_mask(RID camera, u32 layers) = 0;
 		virtual void camera_set_environment(RID camera, RID env) = 0;
 		virtual void camera_set_camera_effects(RID camera, RID fx) = 0;
 		virtual void camera_set_use_vertical_aspect(RID camera, bool enable) = 0;
@@ -108,7 +108,7 @@ namespace ism
 		virtual RID viewport_create() = 0;
 		virtual void viewport_destroy(RID viewport) = 0;
 		virtual void viewport_set_parent_viewport(RID viewport, RID parent_viewport) = 0;
-		virtual void viewport_set_size(RID viewport, int32_t width, int32_t height) = 0;
+		virtual void viewport_set_size(RID viewport, i32 width, i32 height) = 0;
 		virtual RID viewport_get_texture(RID viewport) const = 0;
 		virtual void viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen) = 0;
 	};

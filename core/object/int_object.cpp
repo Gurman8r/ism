@@ -7,13 +7,13 @@ namespace ism
 
 	OBJECT_EMBED(IntObject, t)
 	{
-		t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<int64_t>()(***(INT &)self); };
+		t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<i64>()(***(INT &)self); };
 
 		t.tp_repr = (reprfunc)[](OBJ self) -> STR { return STR(util::to_string(***(INT &)self)); };
 
 		t.tp_str = (reprfunc)[](OBJ self) -> STR { return STR(util::to_string(***(INT &)self)); };
 
-		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> int32_t
+		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
 		{
 			if (self.is(other)) { return 0; }
 
@@ -25,9 +25,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	IntObject IntObject::g_true{ true };
+	IntObject IntObject::g_True{ true };
 
-	IntObject IntObject::g_false{ false };
+	IntObject IntObject::g_False{ false };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

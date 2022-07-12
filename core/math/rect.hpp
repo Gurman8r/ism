@@ -138,10 +138,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(FloatRect)	Rect<float_t>;
-	ALIAS(DoubleRect)	Rect<double_t>;
-	ALIAS(IntRect)		Rect<int32_t>;
-	ALIAS(UintRect)		Rect<uint32_t>;
+	ALIAS(FloatRect)	Rect<f32>;
+	ALIAS(DoubleRect)	Rect<f64>;
+	ALIAS(IntRect)		Rect<i32>;
+	ALIAS(UintRect)		Rect<u32>;
 	ALIAS(SizeRect)		Rect<size_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -67,6 +67,8 @@ namespace ism
 		nameof_t<T>::value
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// hashof_t
 	template <class T
 	> struct hashof_t {

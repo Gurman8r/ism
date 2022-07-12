@@ -13,12 +13,12 @@ namespace ism
 
 		RID m_texture{};
 		IntRect m_bounds{};
-		uint32_t m_advance{};
+		u32 m_advance{};
 
 	public:
 		Glyph() noexcept {}
 
-		Glyph(DynamicBuffer const & buffer, IntRect const & bounds, uint32_t advance);
+		Glyph(DynamicBuffer const & buffer, IntRect const & bounds, u32 advance);
 
 		Glyph(Glyph && other) noexcept { swap(other); }
 
@@ -37,13 +37,13 @@ namespace ism
 			return (*this);
 		}
 
-		uint32_t get_advance() const noexcept { return m_advance; }
+		u32 get_advance() const noexcept { return m_advance; }
 
 		virtual RID get_rid() const override { return m_texture; }
 
-		virtual int32_t get_width() const override { return m_bounds.width(); }
+		virtual i32 get_width() const override { return m_bounds.width(); }
 
-		virtual int32_t get_height() const override { return m_bounds.height(); }
+		virtual i32 get_height() const override { return m_bounds.height(); }
 
 		virtual bool has_alpha() const override { return false; }
 
@@ -78,9 +78,9 @@ namespace ism
 
 		struct FontPage
 		{
-			uint32_t character_size{};
+			u32 character_size{};
 
-			Map<uint32_t, Glyph> glyphs{};
+			Map<u32, Glyph> glyphs{};
 		};
 
 		struct Font
@@ -91,7 +91,7 @@ namespace ism
 
 			FontFace font_face{};
 
-			Map<uint32_t, FontPage> pages{};
+			Map<u32, FontPage> pages{};
 		};
 
 		struct FontCreateInfo
@@ -101,8 +101,8 @@ namespace ism
 
 		RID font_create(FontCreateInfo const & spec);
 		void font_destroy(RID font);
-		FontPage * font_get_page(RID font, uint32_t character_size);
-		Glyph * font_get_glyph(RID font, uint32_t character, uint32_t character_size);
+		FontPage * font_get_page(RID font, u32 character_size);
+		Glyph * font_get_glyph(RID font, u32 character, u32 character_size);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

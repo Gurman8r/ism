@@ -14,6 +14,7 @@
 #include <core/templates/map.hpp>
 #include <core/templates/set.hpp>
 #include <core/templates/type_info.hpp>
+#include <core/templates/views.hpp>
 
 #ifndef MAX_ARGUMENTS
 #define MAX_ARGUMENTS 24
@@ -119,7 +120,7 @@ namespace ism
 	ALIAS(inquiry)			bool(*)(OBJ obj);
 	ALIAS(sizeargfunc)		OBJ(*)(OBJ obj, ssize_t i);
 	ALIAS(sizesizeargfunc)	OBJ(*)(OBJ obj, ssize_t i, ssize_t j);
-	ALIAS(objobjproc)		int32_t(*)(OBJ lhs, OBJ rhs);
+	ALIAS(objobjproc)		i32(*)(OBJ lhs, OBJ rhs);
 
 	ALIAS(getattrfunc)		OBJ(*)(OBJ obj, cstring name);
 	ALIAS(setattrfunc)		Error_(*)(OBJ obj, cstring name, OBJ value);
@@ -131,7 +132,7 @@ namespace ism
 	ALIAS(classproc)		TYPE(*)(TYPE type);
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
 	ALIAS(delfunc)			void(*)(Object * ptr);
-	ALIAS(cmpfunc)			int32_t(*)(OBJ lhs, OBJ rhs);
+	ALIAS(cmpfunc)			i32(*)(OBJ lhs, OBJ rhs);
 	ALIAS(hashfunc)			hash_t(*)(OBJ obj);
 	ALIAS(lenfunc)			ssize_t(*)(OBJ obj);
 	ALIAS(reprfunc)			STR(*)(OBJ obj);
@@ -280,7 +281,7 @@ namespace ism
 		cstring		name{};
 		DataType_	type{};
 		ssize_t		offset{};
-		int32_t		flags{};
+		i32		flags{};
 		cstring		doc{};
 	};
 
@@ -288,7 +289,7 @@ namespace ism
 	{
 		cstring		name{};
 		binaryfunc	func{};
-		int32_t		flags{};
+		i32		flags{};
 		cstring		doc{};
 	};
 

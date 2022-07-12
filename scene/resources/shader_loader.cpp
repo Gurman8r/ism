@@ -13,7 +13,7 @@ public:
 	{
 		String name{};
 		String type{};
-		int32_t index{ -1 };
+		i32 index{ -1 };
 		Json::const_pointer data{};
 
 		operator bool() const noexcept { return (-1 < index) && !name.empty() && !type.empty(); }

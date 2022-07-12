@@ -45,7 +45,7 @@ namespace ism
 		}
 
 	public:
-		static int32_t format(BasicString & s, C const * fmt, va_list args)
+		static i32 format(BasicString & s, C const * fmt, va_list args)
 		{
 			va_list args_copy;
 			va_copy(args_copy, args);
@@ -58,7 +58,7 @@ namespace ism
 			return n;
 		}
 
-		static int32_t format(BasicString & s, C const * fmt, ...) noexcept
+		static i32 format(BasicString & s, C const * fmt, ...) noexcept
 		{
 			va_list args;
 			va_start(args, fmt);

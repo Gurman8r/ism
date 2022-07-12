@@ -9,7 +9,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(ProcessID) int64_t;
+	ALIAS(ProcessID) i64;
 
 	struct Mutex { /* PLACEHOLDER */ };
 
@@ -22,7 +22,7 @@ namespace ism
 
 		Path				m_exepath{};
 		Vector<String>		m_cmdline{};
-		int32_t				m_exit_code{};
+		i32				m_exit_code{};
 		CompositeLogger *	m_logger{};
 
 	public:
@@ -46,7 +46,7 @@ namespace ism
 	public:
 		void printv(cstring fmt, va_list args);
 		void printf(cstring fmt, ...);
-		void printerr(cstring func, cstring file, uint32_t line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
+		void printerr(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
 		void printerrv(cstring fmt, va_list args);
 		void printerrf(cstring fmt, ...);
 
@@ -57,10 +57,10 @@ namespace ism
 		virtual Error_ get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional = false) = 0;
 
 		virtual Path get_executable_path() const;
-		virtual Error_ execute(Path const & path, Vector<String> const & args, String * pipe = nullptr, int32_t * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) = 0;
+		virtual Error_ execute(Path const & path, Vector<String> const & args, String * pipe = nullptr, i32 * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) = 0;
 		virtual Error_ create_process(Path const & path, Vector<String> const & args, ProcessID * child_id = nullptr) = 0;
 		virtual Error_ kill(ProcessID const & pid) = 0;
-		virtual int32_t get_process_id() const = 0;
+		virtual i32 get_process_id() const = 0;
 
 		virtual Path get_cwd() const;
 		virtual Error_ set_cwd(Path const & path);
@@ -105,23 +105,23 @@ namespace ism
 
 		struct Date
 		{
-			int32_t	year;
+			i32	year;
 			Month	month;
-			int32_t	day;
+			i32	day;
 			Weekday	weekday;
 			bool	dst;
 		};
 
 		struct Time
 		{
-			int32_t hour;
-			int32_t min;
-			int32_t sec;
+			i32 hour;
+			i32 min;
+			i32 sec;
 		};
 
 		struct TimeZoneInfo
 		{
-			int32_t bias;
+			i32 bias;
 			String name;
 		};
 
@@ -129,11 +129,11 @@ namespace ism
 		virtual Time get_time(bool local = false) const = 0;
 		virtual TimeZoneInfo get_time_zone() const = 0;
 		virtual String get_iso_date_time(bool local = false) const;
-		virtual double_t get_unix_time() const;
+		virtual f64 get_unix_time() const;
 
-		virtual uint64_t get_static_memory_usage() const;
-		virtual uint64_t get_static_memory_peak_usage() const;
-		virtual uint64_t get_free_static_memory() const;
+		virtual u64 get_static_memory_usage() const;
+		virtual u64 get_static_memory_peak_usage() const;
+		virtual u64 get_free_static_memory() const;
 
 		virtual String get_locale() const;
 
@@ -166,10 +166,10 @@ namespace ism
 
 		virtual void debug_break();
 
-		virtual int32_t get_exit_code() const;
-		virtual void set_exit_code(int32_t value);
+		virtual i32 get_exit_code() const;
+		virtual void set_exit_code(i32 value);
 
-		virtual int32_t get_processor_count() const;
+		virtual i32 get_processor_count() const;
 
 		virtual String get_unique_id() const;
 

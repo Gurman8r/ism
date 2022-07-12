@@ -64,64 +64,64 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	uint32_t atomic_conditional_increment(uint32_t volatile * value)
+	u32 atomic_conditional_increment(u32 volatile * value)
 	{
 		return 0;
 	}
 
-	uint32_t atomic_decrement(uint32_t volatile * value)
+	u32 atomic_decrement(u32 volatile * value)
 	{
 		return 0;
 	}
 
-	uint32_t atomic_increment(uint32_t volatile * value)
+	u32 atomic_increment(u32 volatile * value)
 	{
 		return 0;
 	}
 
-	uint32_t atomic_sub(uint32_t volatile * value, uint32_t volatile amount)
+	u32 atomic_sub(u32 volatile * value, u32 volatile amount)
 	{
 		return 0;
 	}
 
-	uint32_t atomic_add(uint32_t volatile * value, uint32_t volatile amount)
+	u32 atomic_add(u32 volatile * value, u32 volatile amount)
 	{
 		return 0;
 	}
 
-	uint32_t atomic_exchange_if_greater(uint32_t volatile * value, uint32_t volatile amount)
+	u32 atomic_exchange_if_greater(u32 volatile * value, u32 volatile amount)
 	{
 		return 0;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	uint64_t atomic_conditional_increment(uint64_t volatile * value)
+	u64 atomic_conditional_increment(u64 volatile * value)
 	{
 		return 0;
 	}
 
-	uint64_t atomic_decrement(uint64_t volatile * value)
+	u64 atomic_decrement(u64 volatile * value)
 	{
 		return 0;
 	}
 
-	uint64_t atomic_increment(uint64_t volatile * value)
+	u64 atomic_increment(u64 volatile * value)
 	{
 		return 0;
 	}
 
-	uint64_t atomic_sub(uint64_t volatile * value, uint64_t volatile amount)
+	u64 atomic_sub(u64 volatile * value, u64 volatile amount)
 	{
 		return 0;
 	}
 
-	uint64_t atomic_add(uint64_t volatile * value, uint64_t volatile amount)
+	u64 atomic_add(u64 volatile * value, u64 volatile amount)
 	{
 		return 0;
 	}
 
-	uint64_t atomic_exchange_if_greater(uint64_t volatile * value, uint64_t volatile amount)
+	u64 atomic_exchange_if_greater(u64 volatile * value, u64 volatile amount)
 	{
 		return 0;
 	}
@@ -136,20 +136,20 @@ namespace ism
 
 	class ISM_API SafeRefCount final
 	{
-		uint32_t m_count{};
+		u32 m_count{};
 
 	public:
-		FORCE_INLINE void init(uint32_t p_value = 1) { m_count = p_value; }
+		FORCE_INLINE void init(u32 p_value = 1) { m_count = p_value; }
 
 		FORCE_INLINE bool inc_ref() { return atomic_conditional_increment(&m_count) != 0; } // true on success
 
 		FORCE_INLINE bool dec_ref() { return atomic_decrement(&m_count) == 0; } // true if must be disposed of
 
-		FORCE_INLINE auto refval() -> uint32_t { return atomic_conditional_increment(&m_count); } // nullptr-zero on success
+		FORCE_INLINE auto refval() -> u32 { return atomic_conditional_increment(&m_count); } // nullptr-zero on success
 
-		FORCE_INLINE auto unrefval() -> uint32_t { return atomic_decrement(&m_count); } // 0 if must be disposed of
+		FORCE_INLINE auto unrefval() -> u32 { return atomic_decrement(&m_count); } // 0 if must be disposed of
 
-		FORCE_INLINE auto get() const -> uint32_t { return m_count; }
+		FORCE_INLINE auto get() const -> u32 { return m_count; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

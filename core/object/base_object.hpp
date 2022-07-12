@@ -51,12 +51,12 @@ protected:																			\
 		return m_class::get_type_static();											\
 	}																				\
 																					\
-	FORCE_INLINE void (Object::*_get_notification() const)(int32_t)					\
+	FORCE_INLINE void (Object::*_get_notification() const)(i32)					\
 	{																				\
-		return (void (Object::*)(int32_t))&m_class::_notification;					\
+		return (void (Object::*)(i32))&m_class::_notification;					\
 	}																				\
 																					\
-	virtual void _notificationv(int32_t notification_id, bool reversed) override	\
+	virtual void _notificationv(i32 notification_id, bool reversed) override	\
 	{																				\
 		if (!reversed)																\
 		{																			\
@@ -155,9 +155,9 @@ namespace ism
 		FORCE_INLINE virtual StringView _get_classv() const noexcept { return get_class_static(); }
 		FORCE_INLINE virtual TYPE _get_typev() const noexcept;
 
-		virtual void _notificationv(int32_t notification_id, bool reversed) {}
-		void _notification(int32_t notification_id) {}
-		FORCE_INLINE void (Object::*_get_notification() const)(int32_t) { return &Object::_notification; }
+		virtual void _notificationv(i32 notification_id, bool reversed) {}
+		void _notification(i32 notification_id) {}
+		FORCE_INLINE void (Object::*_get_notification() const)(i32) { return &Object::_notification; }
 
 		Object() { _initialize_object(); }
 
@@ -167,10 +167,10 @@ namespace ism
 		bool init_ref();
 		bool inc_ref();
 		bool dec_ref();
-		int32_t get_ref_count() const { return m_refcount.get(); }
+		i32 get_ref_count() const { return m_refcount.get(); }
 		bool has_references() const { return m_refcount_init.get() != 1; }
 
-		void notification(int32_t notification_id, bool reversed = false);
+		void notification(i32 notification_id, bool reversed = false);
 
 		static constexpr StringView get_class_static() noexcept { return __name_static; }
 		StringView get_class() const noexcept { return _get_classv(); }

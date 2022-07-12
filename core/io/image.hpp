@@ -70,7 +70,7 @@ namespace ism
 	private:
 		Format_ m_format{};
 
-		int32_t m_width{}, m_height{}, m_depth{};
+		i32 m_width{}, m_height{}, m_depth{};
 		
 		DynamicBuffer m_pixels{};
 
@@ -83,9 +83,9 @@ namespace ism
 
 		explicit Image(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
-		Image(int32_t width, int32_t height, Format_ format);
+		Image(i32 width, i32 height, Format_ format);
 
-		Image(int32_t width, int32_t height, Format_ format, DynamicBuffer const & data);
+		Image(i32 width, i32 height, Format_ format, DynamicBuffer const & data);
 
 		virtual Error_ reload_from_file() override;
 
@@ -98,13 +98,13 @@ namespace ism
 	public:
 		virtual RID get_rid() const override { return RID{}; }
 
-		int32_t get_width() const noexcept { return m_width; }
+		i32 get_width() const noexcept { return m_width; }
 
-		int32_t get_height() const noexcept { return m_height; }
+		i32 get_height() const noexcept { return m_height; }
 
-		int32_t get_depth() const noexcept { return m_depth; }
+		i32 get_depth() const noexcept { return m_depth; }
 
-		int32_t get_capacity() const noexcept { return m_width * m_height * m_depth; }
+		i32 get_capacity() const noexcept { return m_width * m_height * m_depth; }
 
 		Format_ get_format() const noexcept { return m_format; }
 

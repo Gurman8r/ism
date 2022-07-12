@@ -11,7 +11,7 @@ namespace ism
 
 		Mat4		m_proj;
 		bool		m_is_ortho;
-		float_t		m_fov[2];
+		f32		m_fov[2];
 		Vec2		m_clip[2];
 
 		Mat4		m_view;
@@ -20,17 +20,17 @@ namespace ism
 		Vec3		m_up;
 
 		Vec2		m_resolution;
-		float_t		m_yaw;
-		float_t		m_pitch;
-		float_t		m_roll;
-		float_t		m_zoom;
+		f32		m_yaw;
+		f32		m_pitch;
+		f32		m_roll;
+		f32		m_zoom;
 
 	public:
-		static void perspective(float_t fov_in_degrees, float_t aspect_ratio, float_t znear, float_t zfar, float_t * m16)
+		static void perspective(f32 fov_in_degrees, f32 aspect_ratio, f32 znear, f32 zfar, f32 * m16)
 		{
-			static auto _frustum = [](float_t left, float_t right, float_t bottom, float_t top, float_t znear, float_t zfar, float_t * m16)
+			static auto _frustum = [](f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar, f32 * m16)
 			{
-				float_t temp, temp2, temp3, temp4;
+				f32 temp, temp2, temp3, temp4;
 				temp = 2.0f * znear;
 				temp2 = right - left;
 				temp3 = top - bottom;
@@ -53,13 +53,13 @@ namespace ism
 				m16[15] = 0.0;
 			};
 
-			float_t ymax, xmax;
+			f32 ymax, xmax;
 			ymax = znear * std::tanf(fov_in_degrees * 3.141592f / 180.0f);
 			xmax = ymax * aspect_ratio;
 			_frustum(-xmax, xmax, -ymax, ymax, znear, zfar, m16);
 		}
 
-		static void orthographic(float_t l, float_t r, float_t b, float_t t, float_t zn, float_t const zf, float_t * m16)
+		static void orthographic(f32 l, f32 r, f32 b, f32 t, f32 zn, f32 const zf, f32 * m16)
 		{
 			m16[0] = 2 / (r - l);
 			m16[1] = 0.0f;
@@ -79,26 +79,26 @@ namespace ism
 			m16[15] = 1.0f;
 		}
 
-		static void look_at(float_t const * eye, float_t const * at, float_t const * up, float_t * m16)
+		static void look_at(f32 const * eye, f32 const * at, f32 const * up, f32 * m16)
 		{
-			static auto _cross = [](float_t const * a, float_t const * b, float_t * r) noexcept {
+			static auto _cross = [](f32 const * a, f32 const * b, f32 * r) noexcept {
 				r[0] = a[1] * b[2] - a[2] * b[1];
 				r[1] = a[2] * b[0] - a[0] * b[2];
 				r[2] = a[0] * b[1] - a[1] * b[0];
 			};
 
-			static auto _dot = [](float_t const * a, float_t const * b) noexcept {
+			static auto _dot = [](f32 const * a, f32 const * b) noexcept {
 				return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 			};
 
-			static auto _normalize = [](float_t const * a, float_t * r) noexcept {
-				float_t il{ 1.f / (std::sqrtf(_dot(a, a)) + FLT_EPSILON) };
+			static auto _normalize = [](f32 const * a, f32 * r) noexcept {
+				f32 il{ 1.f / (std::sqrtf(_dot(a, a)) + FLT_EPSILON) };
 				r[0] = a[0] * il;
 				r[1] = a[1] * il;
 				r[2] = a[2] * il;
 			};
 
-			float_t X[3], Y[3], Z[3], tmp[3];
+			f32 X[3], Y[3], Z[3], tmp[3];
 			tmp[0] = eye[0] - at[0];
 			tmp[1] = eye[1] - at[1];
 			tmp[2] = eye[2] - at[2];
@@ -196,11 +196,11 @@ namespace ism
 		/* PROJECTION */
 		auto get_proj() const noexcept -> Mat4 const & { return m_proj; }
 		bool is_orthographic() const noexcept { return m_is_ortho; }
-		auto get_fov() const noexcept -> float_t { return m_fov[m_is_ortho]; }
+		auto get_fov() const noexcept -> f32 { return m_fov[m_is_ortho]; }
 		auto get_clip() const noexcept -> Vec2 const & { return m_clip[m_is_ortho]; }
 		auto get_res() const noexcept -> Vec2 const & { return m_resolution; }
 		void set_orthographic(bool const value) noexcept { m_is_ortho = value; }
-		void set_fov(float_t const value) noexcept { m_fov[m_is_ortho] = value; }
+		void set_fov(f32 const value) noexcept { m_fov[m_is_ortho] = value; }
 		void set_clip(Vec2 const & value) noexcept { m_clip[m_is_ortho] = value; }
 		void set_res(Vec2 const & value) noexcept { m_resolution = value; }
 
@@ -216,18 +216,18 @@ namespace ism
 
 	public:
 		/* CONTROL */
-		auto get_yaw() const noexcept -> float_t { return m_yaw; }
-		auto get_pitch() const noexcept -> float_t { return m_pitch; }
-		auto get_roll() const noexcept -> float_t { return m_roll; }
-		auto get_zoom() const noexcept -> float_t { return m_zoom; }
-		void set_yaw(float_t const value) noexcept { m_yaw = value; }
-		void set_pitch(float_t const value) noexcept { m_pitch = value; }
-		void set_roll(float_t const value) noexcept { m_roll = value; }
-		void set_zoom(float_t const value) noexcept { m_zoom = value; }
-		void do_yaw(float_t const value) noexcept { m_yaw += value; }
-		void do_pitch(float_t const value) noexcept { m_pitch += value; }
-		void do_roll(float_t const value) noexcept { m_roll += value; }
-		void do_zoom(float_t const value) noexcept { m_zoom += value; }
+		auto get_yaw() const noexcept -> f32 { return m_yaw; }
+		auto get_pitch() const noexcept -> f32 { return m_pitch; }
+		auto get_roll() const noexcept -> f32 { return m_roll; }
+		auto get_zoom() const noexcept -> f32 { return m_zoom; }
+		void set_yaw(f32 const value) noexcept { m_yaw = value; }
+		void set_pitch(f32 const value) noexcept { m_pitch = value; }
+		void set_roll(f32 const value) noexcept { m_roll = value; }
+		void set_zoom(f32 const value) noexcept { m_zoom = value; }
+		void do_yaw(f32 const value) noexcept { m_yaw += value; }
+		void do_pitch(f32 const value) noexcept { m_pitch += value; }
+		void do_roll(f32 const value) noexcept { m_roll += value; }
+		void do_zoom(f32 const value) noexcept { m_zoom += value; }
 
 	public:
 		void recalculate_proj()
@@ -240,7 +240,7 @@ namespace ism
 			}
 			else
 			{
-				float_t const ortho_height{ m_fov[m_is_ortho] * m_resolution[1] / m_resolution[0] };
+				f32 const ortho_height{ m_fov[m_is_ortho] * m_resolution[1] / m_resolution[0] };
 
 				orthographic(-m_fov[m_is_ortho], m_fov[m_is_ortho], -ortho_height, ortho_height, m_clip[m_is_ortho][0], m_clip[m_is_ortho][1], m_proj);
 			}

@@ -11,9 +11,9 @@ namespace ism
 	{
 	public:
 		explicit Transform2D(
-			float_t a00, float_t a01, float_t a02,
-			float_t a10, float_t a11, float_t a12,
-			float_t a20, float_t a21, float_t a22
+			f32 a00, f32 a01, f32 a02,
+			f32 a10, f32 a11, f32 a12,
+			f32 a20, f32 a21, f32 a22
 		) noexcept : Transform{
 			a00, a01, a02,
 			a10, a11, a12,

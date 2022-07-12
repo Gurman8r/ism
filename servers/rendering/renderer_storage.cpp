@@ -243,8 +243,8 @@ namespace ism
 		rt.color = m_device->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = rt.color_format;
 			t.color_format_srgb = rt.color_format_srgb;
-			t.width = (uint32_t)rt.size[0];
-			t.width = (uint32_t)rt.size[1];
+			t.width = (u32)rt.size[0];
+			t.width = (u32)rt.size[1];
 			t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_ColorAttachment | RD::TextureFlags_CanCopyFrom;
 		});
 
@@ -266,7 +266,7 @@ namespace ism
 		return { 0, 0 };
 	}
 
-	void RendererStorage::render_target_set_position(RID render_target, int32_t x, int32_t  y)
+	void RendererStorage::render_target_set_position(RID render_target, i32 x, i32  y)
 	{
 		_RenderTarget & rt{ *VALIDATE((_RenderTarget *)render_target) };
 	}
@@ -277,7 +277,7 @@ namespace ism
 		return rt.size;
 	}
 
-	void RendererStorage::render_target_set_size(RID render_target, int32_t width, int32_t height)
+	void RendererStorage::render_target_set_size(RID render_target, i32 width, i32 height)
 	{
 		_RenderTarget & rt{ *VALIDATE((_RenderTarget *)render_target) };
 		m_device->framebuffer_set_size(rt.framebuffer, width, height);
@@ -332,15 +332,15 @@ namespace ism
 		return RID();
 	}
 
-	void RendererStorage::camera_set_perspective(RID camera, float_t fovy_degrees, float_t z_near, float_t z_far)
+	void RendererStorage::camera_set_perspective(RID camera, f32 fovy_degrees, f32 z_near, f32 z_far)
 	{
 	}
 
-	void RendererStorage::camera_set_orthogonal(RID camera, float_t size, float_t z_near, float_t z_far)
+	void RendererStorage::camera_set_orthogonal(RID camera, f32 size, f32 z_near, f32 z_far)
 	{
 	}
 
-	void RendererStorage::camera_set_frustum(RID camera, float_t size, Vec2 offset, float_t z_near, float_t z_far)
+	void RendererStorage::camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 z_near, f32 z_far)
 	{
 	}
 
@@ -348,7 +348,7 @@ namespace ism
 	{
 	}
 
-	void RendererStorage::camera_set_cull_mask(RID camera, uint32_t layers)
+	void RendererStorage::camera_set_cull_mask(RID camera, u32 layers)
 	{
 	}
 
@@ -392,7 +392,7 @@ namespace ism
 		vp.parent = parent_viewport;
 	}
 
-	void RendererStorage::viewport_set_size(RID viewport, int32_t width, int32_t height)
+	void RendererStorage::viewport_set_size(RID viewport, i32 width, i32 height)
 	{
 		_Viewport & vp{ *VALIDATE((_Viewport *)viewport) };
 		vp.size = { width, height };

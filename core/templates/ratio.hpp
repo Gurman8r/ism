@@ -9,7 +9,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <int64_t N, int64_t D = 1
+	template <i64 N, i64 D = 1
 	> ALIAS(Ratio) std::ratio<N, D>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -33,7 +33,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class R, class T = float_t
+	template <class R, class T = f32
 	> constexpr auto ratio_cast(T v = T{ 1 }) noexcept
 	{
 		if constexpr (((T)R::num == (T)1) && ((T)R::den == (T)1))
@@ -56,7 +56,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, int64_t Num, int64_t Den
+	template <class T, i64 Num, i64 Den
 	> constexpr auto ratio_cast(T v, Ratio<Num, Den> const & r)
 	{
 		auto const
@@ -99,85 +99,85 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// uint8_t literals
+// byte literals
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// kibibyte
-	constexpr uint64_t operator"" _KiB(uint64_t n) noexcept
+	constexpr u64 operator"" _KiB(u64 n) noexcept
 	{
 		return power_of_2(ratio_cast(n, Kilo{}));
 	}
 
-	constexpr uint64_t operator"" _KiB(float80_t n) noexcept
+	constexpr u64 operator"" _KiB(f80 n) noexcept
 	{
-		return static_cast<uint64_t>(power_of_2(ratio_cast(n, Kilo{})));
+		return static_cast<u64>(power_of_2(ratio_cast(n, Kilo{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// mebibyte
-	constexpr uint64_t operator"" _MiB(uint64_t n) noexcept
+	constexpr u64 operator"" _MiB(u64 n) noexcept
 	{
 		return power_of_2(ratio_cast(n, Mega{}));
 	}
 
-	constexpr uint64_t operator"" _MiB(float80_t n) noexcept
+	constexpr u64 operator"" _MiB(f80 n) noexcept
 	{
-		return static_cast<uint64_t>(power_of_2(ratio_cast(n, Mega{})));
+		return static_cast<u64>(power_of_2(ratio_cast(n, Mega{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// gibibyte
-	constexpr uint64_t operator"" _GiB(uint64_t n) noexcept
+	constexpr u64 operator"" _GiB(u64 n) noexcept
 	{
 		return power_of_2(ratio_cast(n, Giga{}));
 	}
 
-	constexpr uint64_t operator"" _GiB(float80_t n) noexcept
+	constexpr u64 operator"" _GiB(f80 n) noexcept
 	{
-		return static_cast<uint64_t>(power_of_2(ratio_cast(n, Giga{})));
+		return static_cast<u64>(power_of_2(ratio_cast(n, Giga{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// tebibyte
-	constexpr uint64_t operator"" _TiB(uint64_t n) noexcept
+	constexpr u64 operator"" _TiB(u64 n) noexcept
 	{
 		return power_of_2(ratio_cast(n, Tera{}));
 	}
 
-	constexpr uint64_t operator"" _TiB(float80_t n) noexcept
+	constexpr u64 operator"" _TiB(f80 n) noexcept
 	{
-		return static_cast<uint64_t>(power_of_2(ratio_cast(n, Tera{})));
+		return static_cast<u64>(power_of_2(ratio_cast(n, Tera{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// pebibyte
-	constexpr uint64_t operator"" _PiB(uint64_t n) noexcept
+	constexpr u64 operator"" _PiB(u64 n) noexcept
 	{
 		return power_of_2(ratio_cast(n, Peta{}));
 	}
 
-	constexpr uint64_t operator"" _PiB(float80_t n) noexcept
+	constexpr u64 operator"" _PiB(f80 n) noexcept
 	{
-		return static_cast<uint64_t>(power_of_2(ratio_cast(n, Peta{})));
+		return static_cast<u64>(power_of_2(ratio_cast(n, Peta{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// exbibyte
-	constexpr uint64_t operator"" _EiB(uint64_t n) noexcept
+	constexpr u64 operator"" _EiB(u64 n) noexcept
 	{
 		return power_of_2(ratio_cast(n, Exa{}));
 	}
 
-	constexpr uint64_t operator"" _EiB(float80_t n) noexcept
+	constexpr u64 operator"" _EiB(f80 n) noexcept
 	{
-		return static_cast<uint64_t>(power_of_2(ratio_cast(n, Exa{})));
+		return static_cast<u64>(power_of_2(ratio_cast(n, Exa{})));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -30,9 +30,9 @@ namespace ism
 
 		virtual TYPE _get_typev() const noexcept override;
 
-		FORCE_INLINE void (Object::*_get_notification() const)(int32_t) { return (void (Object::*)(int32_t))&TypeObject::_notification; }
+		FORCE_INLINE void (Object::*_get_notification() const)(i32) { return (void (Object::*)(i32))&TypeObject::_notification; }
 
-		virtual void _notificationv(int32_t notification_id, bool reversed) override
+		virtual void _notificationv(i32 notification_id, bool reversed) override
 		{
 			if (!reversed)
 			{
@@ -56,7 +56,7 @@ namespace ism
 		TypeObject() noexcept {}
 
 		template <class T
-		> TypeObject(mpl::type_tag<T>, cstring name, int32_t flags = TypeFlags_None) noexcept : TypeObject{}
+		> TypeObject(mpl::type_tag<T>, cstring name, i32 flags = TypeFlags_None) noexcept : TypeObject{}
 		{
 			tp_name = name;
 			tp_size = sizeof(T);
@@ -65,7 +65,7 @@ namespace ism
 			tp_del = (delfunc)memdelete<T>;
 			tp_bind = (classproc)[](TYPE t) -> TYPE { return t; };
 			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return Hasher<intptr_t>{}((intptr_t)*o); };
-			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> int32_t { return util::compare((intptr_t)*a, (intptr_t)*b); };
+			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> i32 { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
 			if constexpr (std::is_default_constructible_v<T>)
 			{
@@ -84,7 +84,7 @@ namespace ism
 	public:
 		String				tp_name				{};
 		ssize_t				tp_size				{};
-		int32_t				tp_flags			{};
+		i32					tp_flags			{};
 		classproc			tp_bind				{};
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};

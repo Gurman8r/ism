@@ -20,7 +20,7 @@ namespace ism
 		using key_type			= typename _Kt;
 		using value_type		= typename _Vt;
 		using compare_type		= typename _Pr;
-		using allocator_type	= typename PolymorphicAllocator<uint8_t>;
+		using allocator_type	= typename PolymorphicAllocator<byte>;
 		using difference_type	= typename ptrdiff_t;
 		using size_type			= typename size_t;
 

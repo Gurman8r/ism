@@ -16,7 +16,7 @@ namespace ism
 
 		bool	m_grid_enabled;
 		Mat4	m_grid_matrix;
-		float_t	m_grid_size;
+		f32	m_grid_size;
 
 	public:
 		EditorViewport();

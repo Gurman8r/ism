@@ -185,7 +185,7 @@ namespace ism
 
 		void(*free_data)(FunctionRecord *){};
 
-		uint16_t argument_count{};
+		u16 argument_count{};
 
 		Vector<ArgumentRecord> args{};
 

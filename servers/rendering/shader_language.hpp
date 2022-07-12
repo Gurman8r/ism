@@ -26,10 +26,10 @@ namespace ism
 		using data_types = typename mpl::type_list
 		<
 			bool,
-			int32_t, Vec2i, Vec3i, Vec4i, Mat2i, Mat3i, Mat4i,
-			uint32_t, Vec2u, Vec3u, Vec4u, Mat2u, Mat3u, Mat4u,
-			float_t, Vec2f, Vec3f, Vec4f, Mat2f, Mat3f, Mat4f,
-			double_t, Vec2d, Vec3d, Vec4d, Mat2d, Mat3d, Mat4d,
+			i32, Vec2i, Vec3i, Vec4i, Mat2i, Mat3i, Mat4i,
+			u32, Vec2u, Vec3u, Vec4u, Mat2u, Mat3u, Mat4u,
+			f32, Vec2f, Vec3f, Vec4f, Mat2f, Mat3f, Mat4f,
+			f64, Vec2d, Vec3d, Vec4d, Mat2d, Mat3d, Mat4d,
 			RID
 		>;
 
@@ -41,28 +41,28 @@ namespace ism
 
 		template <class> static constexpr Type_ type_v{ Type_MAX };
 		template <> static constexpr Type_ type_v<bool>{ Type_Bool };
-		template <> static constexpr Type_ type_v<int32_t>{ Type_Int };
+		template <> static constexpr Type_ type_v<i32>{ Type_Int };
 		template <> static constexpr Type_ type_v<Vec2i>{ Type_Vec2i };
 		template <> static constexpr Type_ type_v<Vec3i>{ Type_Vec3i };
 		template <> static constexpr Type_ type_v<Vec4i>{ Type_Vec4i };
 		template <> static constexpr Type_ type_v<Mat2i>{ Type_Mat2i };
 		template <> static constexpr Type_ type_v<Mat3i>{ Type_Mat3i };
 		template <> static constexpr Type_ type_v<Mat4i>{ Type_Mat4i };
-		template <> static constexpr Type_ type_v<uint32_t>{ Type_Uint };
+		template <> static constexpr Type_ type_v<u32>{ Type_Uint };
 		template <> static constexpr Type_ type_v<Vec2u>{ Type_Vec2u };
 		template <> static constexpr Type_ type_v<Vec3u>{ Type_Vec3u };
 		template <> static constexpr Type_ type_v<Vec4u>{ Type_Vec4u };
 		template <> static constexpr Type_ type_v<Mat2u>{ Type_Mat2u };
 		template <> static constexpr Type_ type_v<Mat3u>{ Type_Mat3u };
 		template <> static constexpr Type_ type_v<Mat4u>{ Type_Mat4u };
-		template <> static constexpr Type_ type_v<float_t>{ Type_Float };
+		template <> static constexpr Type_ type_v<f32>{ Type_Float };
 		template <> static constexpr Type_ type_v<Vec2f>{ Type_Vec2f };
 		template <> static constexpr Type_ type_v<Vec3f>{ Type_Vec3f };
 		template <> static constexpr Type_ type_v<Vec4f>{ Type_Vec4f };
 		template <> static constexpr Type_ type_v<Mat2f>{ Type_Mat2f };
 		template <> static constexpr Type_ type_v<Mat3f>{ Type_Mat3f };
 		template <> static constexpr Type_ type_v<Mat4f>{ Type_Mat4f };
-		template <> static constexpr Type_ type_v<double_t>{ Type_Double };
+		template <> static constexpr Type_ type_v<f64>{ Type_Double };
 		template <> static constexpr Type_ type_v<Vec2d>{ Type_Vec2d };
 		template <> static constexpr Type_ type_v<Vec3d>{ Type_Vec3d };
 		template <> static constexpr Type_ type_v<Vec4d>{ Type_Vec4d };
@@ -75,28 +75,28 @@ namespace ism
 		{
 			switch (type) {
 			case Type_Bool: return sizeof(bool);
-			case Type_Int: return sizeof(int32_t);
+			case Type_Int: return sizeof(i32);
 			case Type_Vec2i: return sizeof(Vec2i);
 			case Type_Vec3i: return sizeof(Vec3i);
 			case Type_Vec4i: return sizeof(Vec4i);
 			case Type_Mat2i: return sizeof(Mat2i);
 			case Type_Mat3i: return sizeof(Mat3i);
 			case Type_Mat4i: return sizeof(Mat4i);
-			case Type_Uint: return sizeof(uint32_t);
+			case Type_Uint: return sizeof(u32);
 			case Type_Vec2u: return sizeof(Vec2u);
 			case Type_Vec3u: return sizeof(Vec3u);
 			case Type_Vec4u: return sizeof(Vec4u);
 			case Type_Mat2u: return sizeof(Mat2u);
 			case Type_Mat3u: return sizeof(Mat3u);
 			case Type_Mat4u: return sizeof(Mat4u);
-			case Type_Float: return sizeof(float_t);
+			case Type_Float: return sizeof(f32);
 			case Type_Vec2f: return sizeof(Vec2f);
 			case Type_Vec3f: return sizeof(Vec3f);
 			case Type_Vec4f: return sizeof(Vec4f);
 			case Type_Mat2f: return sizeof(Mat2f);
 			case Type_Mat3f: return sizeof(Mat3f);
 			case Type_Mat4f: return sizeof(Mat4f);
-			case Type_Double: return sizeof(double_t);
+			case Type_Double: return sizeof(f64);
 			case Type_Vec2d: return sizeof(Vec2d);
 			case Type_Vec3d: return sizeof(Vec3d);
 			case Type_Vec4d: return sizeof(Vec4d);
@@ -112,28 +112,28 @@ namespace ism
 		{
 			switch (type) {
 			case Type_Bool: return &std::get<bool>(data);
-			case Type_Int: return &std::get<int32_t>(data);
+			case Type_Int: return &std::get<i32>(data);
 			case Type_Vec2i: return &std::get<Vec2i>(data);
 			case Type_Vec3i: return &std::get<Vec3i>(data);
 			case Type_Vec4i: return &std::get<Vec4i>(data);
 			case Type_Mat2i: return &std::get<Mat2i>(data);
 			case Type_Mat3i: return &std::get<Mat3i>(data);
 			case Type_Mat4i: return &std::get<Mat4i>(data);
-			case Type_Uint: return &std::get<uint32_t>(data);
+			case Type_Uint: return &std::get<u32>(data);
 			case Type_Vec2u: return &std::get<Vec2u>(data);
 			case Type_Vec3u: return &std::get<Vec3u>(data);
 			case Type_Vec4u: return &std::get<Vec4u>(data);
 			case Type_Mat2u: return &std::get<Mat2u>(data);
 			case Type_Mat3u: return &std::get<Mat3u>(data);
 			case Type_Mat4u: return &std::get<Mat4u>(data);
-			case Type_Float: return &std::get<float_t>(data);
+			case Type_Float: return &std::get<f32>(data);
 			case Type_Vec2f: return &std::get<Vec2f>(data);
 			case Type_Vec3f: return &std::get<Vec3f>(data);
 			case Type_Vec4f: return &std::get<Vec4f>(data);
 			case Type_Mat2f: return &std::get<Mat2f>(data);
 			case Type_Mat3f: return &std::get<Mat3f>(data);
 			case Type_Mat4f: return &std::get<Mat4f>(data);
-			case Type_Double: return &std::get<double_t>(data);
+			case Type_Double: return &std::get<f64>(data);
 			case Type_Vec2d: return &std::get<Vec2d>(data);
 			case Type_Vec3d: return &std::get<Vec3d>(data);
 			case Type_Vec4d: return &std::get<Vec4d>(data);
@@ -348,8 +348,8 @@ namespace ism
 		{
 			struct Uniform
 			{
-				int32_t order{ -1 };
-				int32_t texture_order{ -1 };
+				i32 order{ -1 };
+				i32 texture_order{ -1 };
 				Variant::Type_ type{ Variant::Type_MAX };
 			};
 		};
