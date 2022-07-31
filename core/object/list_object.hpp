@@ -20,11 +20,11 @@ namespace ism
 		using iterator			= storage_type::iterator;
 		using const_iterator	= storage_type::const_iterator;
 
-		auto & operator*() const { return const_cast<storage_type &>(m_list); }
+		auto & operator*() const { return (storage_type &)(m_list); }
 
-		auto * operator->() const { return const_cast<storage_type *>(&m_list); }
+		auto * operator->() const { return (storage_type *)(&m_list); }
 
-		operator storage_type & () const { return const_cast<storage_type &>(m_list); }
+		operator storage_type & () const { return (storage_type &)(m_list); }
 
 		template <class Iter
 		> ListObject(Iter first, Iter last) : m_list{ first, last } {}

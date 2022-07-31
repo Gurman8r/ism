@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(MainLoop, t)
+	EMBED_CLASS(MainLoop, t)
 	{
 		t.tp_bind = CLASS_INSTALLER(MainLoop, t)
 		{

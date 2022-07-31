@@ -9,7 +9,8 @@ namespace ism
 
 	class ISM_API Main final
 	{
-		static i32 g_iterating;
+		static i32 m_iterating;
+		static u64 m_frame;
 
 	public:
 		static Error_ setup(cstring exepath, i32 argc, char * argv[]);
@@ -18,7 +19,7 @@ namespace ism
 
 		static bool iteration();
 
-		static bool is_iterating() { return g_iterating > 0; }
+		static bool is_iterating() { return m_iterating > 0; }
 
 		static void cleanup();
 	};

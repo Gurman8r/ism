@@ -13,30 +13,53 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(DisplayServerWindows, t) {}
+	EMBED_CLASS(DisplayServerWindows, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	DisplayServerWindows::DisplayServerWindows(String const & title, WindowMode_ mode, Vec2i const & size)
 	{
+		/* GLFW SETUP */
+
 		ASSERT(glfwInit() == GLFW_TRUE);
 
-		glfwSetMonitorCallback([](GLFWmonitor * monitor, i32 connected)
+		glfwSetErrorCallback([](i32 code, cstring message)
+		{
+			OS::get_singleton()->printerrf("glfw error %i: %s", code, message);
+		});
+
+		m_cursors[Input::CursorShape_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+		m_cursors[Input::CursorShape_IBeam] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+		m_cursors[Input::CursorShape_Crosshair] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
+		m_cursors[Input::CursorShape_PointingHand] = glfwCreateStandardCursor(GLFW_POINTING_HAND_CURSOR);
+		m_cursors[Input::CursorShape_EW] = glfwCreateStandardCursor(GLFW_RESIZE_EW_CURSOR);
+		m_cursors[Input::CursorShape_NS] = glfwCreateStandardCursor(GLFW_RESIZE_NS_CURSOR);
+		m_cursors[Input::CursorShape_NESW] = glfwCreateStandardCursor(GLFW_RESIZE_NESW_CURSOR);
+		m_cursors[Input::CursorShape_NWSE] = glfwCreateStandardCursor(GLFW_RESIZE_NWSE_CURSOR);
+		m_cursors[Input::CursorShape_ResizeAll] = glfwCreateStandardCursor(GLFW_RESIZE_ALL_CURSOR);
+		m_cursors[Input::CursorShape_NotAllowed] = glfwCreateStandardCursor(GLFW_NOT_ALLOWED_CURSOR);
+		m_cursors[Input::CursorShape_HResize] = nullptr;
+		m_cursors[Input::CursorShape_VResize] = nullptr;
+		m_cursors[Input::CursorShape_Hand] = nullptr;
+
+		glfwSetMonitorCallback([](GLFWmonitor * monitor, auto connected)
 		{
 			// monitor connected/disconnected
 		});
-
-		glfwSetJoystickCallback([](i32 device, i32 connected)
+		
+		glfwSetJoystickCallback([](i32 device, auto connected)
 		{
-			// joystick connected/disconnected
-			Input::get_singleton()->joy_connection_changed(device, (connected == GLFW_CONNECTED), glfwGetJoystickGUID(device));
+			Input::get_singleton()->joy_connection_changed(device, connected == GLFW_CONNECTED, glfwGetJoystickName(device), glfwGetJoystickGUID(device));
 		});
+
+		/* MAIN WINDOW SETUP */
 
 		ASSERT(title);
 		ASSERT(0 < size[0]);
 		ASSERT(0 < size[1]);
 		ASSERT((unsigned)mode < (unsigned)WindowMode_MAX);
 
+		// context creation hints
 #if OPENGL_ENABLED
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
@@ -47,6 +70,7 @@ namespace ism
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #endif
 
+		// window hints
 		glfwWindowHint(GLFW_RESIZABLE, true);
 		glfwWindowHint(GLFW_VISIBLE, mode != WindowMode_Maximized);
 		glfwWindowHint(GLFW_DECORATED, true);
@@ -57,6 +81,7 @@ namespace ism
 		glfwWindowHint(GLFW_FLOATING, false);
 		glfwWindowHint(GLFW_MAXIMIZED, mode == WindowMode_Maximized);
 
+		// framebuffer hints
 		glfwWindowHint(GLFW_RED_BITS, 8);
 		glfwWindowHint(GLFW_GREEN_BITS, 8);
 		glfwWindowHint(GLFW_BLUE_BITS, 8);
@@ -66,12 +91,21 @@ namespace ism
 		glfwWindowHint(GLFW_DOUBLEBUFFER, false);
 		glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 
+		// CREATE WINDOW
 		_Window & w{ m_windows[MAIN_WINDOW_ID] = {} };
 		w.title = title;
 		w.window_mode = mode;
 		w.handle = VALIDATE(glfwCreateWindow(size[0], size[1], w.title.c_str(), nullptr, nullptr));
 		glfwSetWindowUserPointer(w.handle, &w);
 
+		switch (mode) {
+		case WindowMode_Windowed: {} break;
+		case WindowMode_Minimized: { glfwIconifyWindow(w.handle); } break;
+		case WindowMode_Maximized: { glfwMaximizeWindow(w.handle); } break;
+		case WindowMode_Fullscreen: {} break;
+		}
+
+		// CALLBACKS
 		glfwSetCharCallback(w.handle, [](auto, auto c)
 		{
 		});
@@ -110,7 +144,7 @@ namespace ism
 				tree->get_root()->propagate_notification(focused ? Node::Notification_WM_FocusIn : Node::Notification_WM_FocusOut);
 			}
 		});
-		glfwSetWindowContentScaleCallback(w.handle, [](auto, auto x, auto y) 
+		glfwSetWindowContentScaleCallback(w.handle, [](auto, auto x, auto y)
 		{
 			if (auto const tree{ SceneTree::get_singleton() }) {
 				tree->get_root()->propagate_notification(Node::Notification_WM_ScaleChanged);
@@ -123,22 +157,23 @@ namespace ism
 			}
 		});
 
-		switch (mode) {
-		case WindowMode_Windowed: {} break;
-		case WindowMode_Minimized: { glfwIconifyWindow(w.handle); } break;
-		case WindowMode_Maximized: { glfwMaximizeWindow(w.handle); } break;
-		case WindowMode_Fullscreen: {} break;
-		}
-
+		// DONE
 		glfwMakeContextCurrent(w.handle);
 		m_main_window = &w;
 	}
 
 	DisplayServerWindows::~DisplayServerWindows()
 	{
-		for (auto const & [k, v] : m_windows)
-		{
+		// cleanup windows
+		for (auto const & [k, v] : m_windows) {
 			glfwDestroyWindow(v.handle);
+		}
+
+		// cleanup cursors
+		for (GLFWcursor * cursor : m_cursors) {
+			if (cursor) {
+				glfwDestroyCursor(cursor);
+			}
 		}
 
 		glfwTerminate();
@@ -165,10 +200,9 @@ namespace ism
 			vm.bits_per_pixel = util::bit_cast<Vec4b>(dm.dmBitsPerPel);
 			vm.refresh_rate = dm.dmDisplayFrequency;
 
+			// insert
 			if (auto const it{ std::equal_range(out.begin(), out.end(), vm, [
-			](VideoMode const & a, VideoMode const & b) {
-				return (a.size < b.size || a.refresh_rate < b.refresh_rate || a.bits_per_pixel < b.bits_per_pixel);
-			}) }
+			](VideoMode const & a, VideoMode const & b) { return a.compare(b) < 0; }) }
 			; it.first == it.second) {
 				out.emplace(it.second, std::move(vm));
 			}
@@ -197,29 +231,15 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Input::Cursor_ DisplayServerWindows::cursor_get_shape() const
-	{
-		return {};
-	}
-
-	void DisplayServerWindows::cursor_set_shape(Input::Cursor_ shape)
-	{
-	}
-
-	void DisplayServerWindows::cursor_set_custom_image(RES const & cursor, Input::Cursor_ shape, Vec2 const & hotspot)
-	{
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	Input::MouseMode_ DisplayServerWindows::mouse_get_mode() const
 	{
 		ASSERT(m_main_window);
-		switch (glfwGetInputMode(m_main_window->handle, GLFW_CURSOR))
-		{
+		switch (glfwGetInputMode(m_main_window->handle, GLFW_CURSOR)) {
 		case GLFW_CURSOR_NORMAL: return Input::MouseMode_Normal;
+		case GLFW_CURSOR_HIDDEN: return Input::MouseMode_Hidden;
+		case GLFW_CURSOR_DISABLED: return Input::MouseMode_Disabled;
 		}
-		return {};
+		return Input::MouseMode_MAX;
 	}
 
 	void DisplayServerWindows::mouse_set_mode(Input::MouseMode_ mode)
@@ -237,8 +257,8 @@ namespace ism
 	Vec2 DisplayServerWindows::mouse_get_position() const
 	{
 		ASSERT(m_main_window);
-		Vec2d v; glfwGetCursorPos(m_main_window->handle, &v[0], &v[1]);
-		return { (f32)v[0], (f32)v[1] };
+		Vec2d pos; glfwGetCursorPos(m_main_window->handle, &pos[0], &pos[1]);
+		return { (f32)pos[0], (f32)pos[1] };
 	}
 
 	void DisplayServerWindows::mouse_set_position(Vec2 const & position)
@@ -249,58 +269,21 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool DisplayServerWindows::joystick_is_present(i32 device) const
+	Input::CursorShape_ DisplayServerWindows::cursor_get_shape() const
 	{
-		return glfwJoystickPresent(device);
+		return m_cursor_shape;
 	}
 
-	String DisplayServerWindows::joystick_get_name(i32 device) const
+	void DisplayServerWindows::cursor_set_shape(Input::CursorShape_ shape)
 	{
-		return glfwGetJoystickName(device);
+		ASSERT(m_main_window);
+		if (m_cursor_shape == shape) { return; }
+		m_cursor_shape = shape;
+		glfwSetCursor(m_main_window->handle, m_cursors[shape]);
 	}
 
-	String DisplayServerWindows::joystick_get_guid(i32 device) const
+	void DisplayServerWindows::cursor_set_custom_image(RES const & cursor, Input::CursorShape_ shape, Vec2 const & hotspot)
 	{
-		return glfwGetJoystickGUID(device);
-	}
-
-	View<f32 const> DisplayServerWindows::joystick_get_axes(i32 device) const
-	{
-		i32 count;
-		if (auto const data{ glfwGetJoystickAxes(device, &count) }
-		; 0 < count) { return { data, (size_t)count }; }
-		return nullptr;
-	}
-
-	View<byte const> DisplayServerWindows::joystick_get_buttons(i32 device) const
-	{
-		i32 count;
-		if (auto const data{ glfwGetJoystickButtons(device, &count) }
-		; 0 < count) { return { data, (size_t)count }; }
-		return nullptr;
-	}
-
-	View<byte const> DisplayServerWindows::joystick_get_hats(i32 device) const
-	{
-		i32 count;
-		if (auto const data{ glfwGetJoystickHats(device, &count) }
-		; 0 < count) { return { data, (size_t)count }; }
-		return nullptr;
-	}
-
-	bool DisplayServerWindows::joystick_is_gamepad(i32 device) const
-	{
-		return glfwJoystickIsGamepad(device);
-	}
-
-	String DisplayServerWindows::gamepad_get_name(i32 device) const
-	{
-		return glfwGetGamepadName(device);
-	}
-
-	bool DisplayServerWindows::gamepad_update_mappings(String const & mappings)
-	{
-		return mappings && glfwUpdateGamepadMappings(mappings.c_str());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -331,7 +314,7 @@ namespace ism
 		return size;
 	}
 
-	IntRect DisplayServerWindows::screen_get_workarea(i32 screen) const
+	IntRect DisplayServerWindows::screen_get_workrect(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -341,7 +324,7 @@ namespace ism
 		return rect;
 	}
 
-	Vec2i DisplayServerWindows::screen_get_position(i32 screen) const
+	Vec2i DisplayServerWindows::screen_get_workpos(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -351,7 +334,7 @@ namespace ism
 		return pos;
 	}
 
-	Vec2i DisplayServerWindows::screen_get_size(i32 screen) const
+	Vec2i DisplayServerWindows::screen_get_worksize(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -538,6 +521,27 @@ namespace ism
 	void DisplayServerWindows::poll_events()
 	{
 		glfwPollEvents();
+
+		for (i32 device = 0; device < Input::Joy_MAX; ++device)
+		{
+			if (!glfwJoystickPresent(device)) {
+				continue;
+			}
+			
+			i32 num_axes;
+			f32 const * axes{ glfwGetJoystickAxes(device, &num_axes) };
+			num_axes = MIN(num_axes, Input::JoyAxis_MAX);
+			for (i32 axis = 0; axis < num_axes; ++axis) {
+				Input::get_singleton()->set_joy_axis(device, axis, axes[axis]);
+			}
+
+			i32 num_buttons;
+			byte const * buttons{ glfwGetJoystickButtons(device, &num_buttons) };
+			num_buttons = MIN(num_buttons, Input::JoyButton_MAX);
+			for (i32 button = 0; button < num_buttons; ++button) {
+				Input::get_singleton()->set_joy_button(device, button, buttons[button] == GLFW_PRESS);
+			}
+		}
 	}
 
 	void DisplayServerWindows::swap_buffers()
@@ -562,110 +566,6 @@ namespace ism
 		icon.width = width;
 		icon.height = height;
 		glfwSetWindowIcon(m_main_window->handle, 1, &icon);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	DS::CharCallback DisplayServerWindows::window_set_char_callback(CharCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<CharCallback>(glfwSetCharCallback(w.handle, reinterpret_cast<GLFWcharfun>(callback)));
-	}
-
-	DS::CharModsCallback DisplayServerWindows::window_set_char_mods_callback(CharModsCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<CharModsCallback>(glfwSetCharModsCallback(w.handle, reinterpret_cast<GLFWcharmodsfun>(callback)));
-	}
-
-	DS::CloseCallback DisplayServerWindows::window_set_close_callback(CloseCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<CloseCallback>(glfwSetWindowCloseCallback(w.handle, reinterpret_cast<GLFWwindowclosefun>(callback)));
-	}
-
-	DS::DropCallback DisplayServerWindows::window_set_drop_callback(DropCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<DropCallback>(glfwSetDropCallback(w.handle, reinterpret_cast<GLFWdropfun>(callback)));
-	}
-
-	DS::FocusCallback DisplayServerWindows::window_set_focus_callback(FocusCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<FocusCallback>(glfwSetWindowFocusCallback(w.handle, reinterpret_cast<GLFWwindowfocusfun>(callback)));
-	}
-
-	DS::FramebufferResizeCallback DisplayServerWindows::window_set_framebuffer_resize_callback(FramebufferResizeCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<FramebufferResizeCallback>(glfwSetFramebufferSizeCallback(w.handle, reinterpret_cast<GLFWframebuffersizefun>(callback)));
-	}
-
-	DS::IconifyCallback DisplayServerWindows::window_set_iconify_callback(IconifyCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<IconifyCallback>(glfwSetWindowIconifyCallback(w.handle, reinterpret_cast<GLFWwindowiconifyfun>(callback)));
-	}
-
-	DS::KeyCallback DisplayServerWindows::window_set_key_callback(KeyCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<KeyCallback>(glfwSetKeyCallback(w.handle, reinterpret_cast<GLFWkeyfun>(callback)));
-	}
-
-	DS::MaximizeCallback DisplayServerWindows::window_set_maximize_callback(MaximizeCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<MaximizeCallback>(glfwSetWindowMaximizeCallback(w.handle, reinterpret_cast<GLFWwindowmaximizefun>(callback)));
-	}
-
-	DS::MouseButtonCallback DisplayServerWindows::window_set_mouse_button_callback(MouseButtonCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<MouseButtonCallback>(glfwSetMouseButtonCallback(w.handle, reinterpret_cast<GLFWmousebuttonfun>(callback)));
-	}
-
-	DS::MouseEnterCallback DisplayServerWindows::window_set_mouse_enter_callback(MouseEnterCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<MouseEnterCallback>(glfwSetCursorEnterCallback(w.handle, reinterpret_cast<GLFWcursorenterfun>(callback)));
-	}
-
-	DS::MousePositionCallback DisplayServerWindows::window_set_mouse_position_callback(MousePositionCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<MousePositionCallback>(glfwSetCursorPosCallback(w.handle, reinterpret_cast<GLFWcursorposfun>(callback)));
-	}
-
-	DS::PositionCallback DisplayServerWindows::window_set_position_callback(PositionCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<PositionCallback>(glfwSetWindowPosCallback(w.handle, reinterpret_cast<GLFWwindowposfun>(callback)));
-	}
-
-	DS::RefreshCallback DisplayServerWindows::window_set_refresh_callback(RefreshCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<RefreshCallback>(glfwSetWindowRefreshCallback(w.handle, reinterpret_cast<GLFWwindowrefreshfun>(callback)));
-	}
-
-	DS::ScaleCallback DisplayServerWindows::window_set_scale_callback(ScaleCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<ScaleCallback>(glfwSetWindowContentScaleCallback(w.handle, reinterpret_cast<GLFWwindowcontentscalefun>(callback)));
-	}
-
-	DS::ScrollCallback DisplayServerWindows::window_set_scroll_callback(ScrollCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<ScrollCallback>(glfwSetScrollCallback(w.handle, reinterpret_cast<GLFWscrollfun>(callback)));
-	}
-
-	DS::SizeCallback DisplayServerWindows::window_set_size_callback(SizeCallback callback, WindowID window)
-	{
-		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return reinterpret_cast<SizeCallback>(glfwSetWindowSizeCallback(w.handle, reinterpret_cast<GLFWwindowposfun>(callback)));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(InputMap, t) {}
+	EMBED_CLASS(InputMap, t) {}
 
 	InputMap::~InputMap()
 	{

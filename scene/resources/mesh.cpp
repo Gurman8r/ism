@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(Mesh, t) {}
+	EMBED_CLASS(Mesh, t) {}
 
 	Mesh::~Mesh()
 	{

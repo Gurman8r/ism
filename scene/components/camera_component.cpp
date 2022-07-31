@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(CameraComponent, t) {}
+	EMBED_CLASS(CameraComponent, t) {}
 
 	CameraComponent::CameraComponent(Entity * entity) noexcept : BehaviorComponent{ entity } {}
 

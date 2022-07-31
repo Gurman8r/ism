@@ -18,7 +18,7 @@ namespace ism
 
 		using storage_type = decltype(m_float);
 
-		auto & operator*() const { return const_cast<storage_type &>(m_float); }
+		auto & operator*() const { return (storage_type &)(m_float); }
 
 		FloatObject() noexcept {}
 

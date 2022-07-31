@@ -20,11 +20,11 @@ namespace ism
 		using iterator			= storage_type::iterator;
 		using const_iterator	= storage_type::const_iterator;
 
-		auto & operator*() const { return const_cast<storage_type &>(m_string); }
+		auto & operator*() const { return (storage_type &)(m_string); }
 
-		auto * operator->() const { return const_cast<storage_type *>(&m_string); }
+		auto * operator->() const { return (storage_type *)(&m_string); }
 
-		operator storage_type & () const & noexcept { return const_cast<storage_type &>(m_string); }
+		operator storage_type & () const & noexcept { return (storage_type &)(m_string); }
 
 		StringObject() noexcept : m_string{} {}
 
@@ -66,7 +66,7 @@ namespace ism
 
 		void resize(size_t count) { m_string.resize(count); }
 
-		auto & string() const { return const_cast<storage_type &>(m_string); }
+		auto & string() const { return (storage_type &)(m_string); }
 
 		auto c_str() const { return m_string.c_str(); }
 

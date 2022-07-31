@@ -8,7 +8,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(ConfigFile, t) {}
+	EMBED_CLASS(ConfigFile, t) {}
 
 	ConfigFile::~ConfigFile()
 	{

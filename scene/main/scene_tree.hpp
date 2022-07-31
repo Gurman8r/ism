@@ -47,7 +47,7 @@ namespace ism
 		auto get_delta_time() const noexcept -> Duration { return m_delta_time; }
 		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.get_elapsed_time(); }
 		auto get_fps() const noexcept -> FPS_Tracker const & { return m_fps_tracker; }
-		auto get_ecs() const noexcept -> EntityRegistry & { return const_cast<EntityRegistry &>(m_ecs); }
+		auto get_ecs() const noexcept -> EntityRegistry & { return (EntityRegistry &)(m_ecs); }
 
 	protected:
 		template <class T> void on_component_added(class Entity &, T &) {}

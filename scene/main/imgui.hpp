@@ -107,12 +107,11 @@
 #include <imgui_club/imgui_memory_editor/imgui_memory_editor.h>
 #include <ImGuizmo/ImGuizmo.h>
 
-#if 0 // extras
-#include <ImGuizmo/ImSequencer.h>
-#include <ImGuizmo/ImCurveEdit.h>
-#include <ImGuiColorTextEdit/TextEditor.h>
-#include <imgui-node-editor/imgui_node_editor.h>
-#endif
+// extras
+//#include <ImGuizmo/ImSequencer.h>
+//#include <ImGuizmo/ImCurveEdit.h>
+//#include <ImGuiColorTextEdit/TextEditor.h>
+//#include <imgui-node-editor/imgui_node_editor.h>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -10,9 +10,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// duration base
-	ALIAS(_DurationBase) std::chrono::duration<f32>;
+	ALIAS(_DurationBase) std::chrono::duration<f32, Ratio<1>>;
 
-	// duration
+	// length of time measured in seconds
 	class Duration : public _DurationBase
 	{
 	public:
@@ -25,6 +25,8 @@ namespace ism
 		using base_type::operator-=;
 		using base_type::operator*=;
 		using base_type::operator/=;
+
+		constexpr operator f32() const noexcept { return count(); }
 
 		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
 		> constexpr operator T() const noexcept { return (T)count(); }
@@ -56,13 +58,20 @@ namespace ism
 		template <class T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0
 		> constexpr bool operator>=(T const value) const noexcept { return value >= (T)count(); }
 
-		template <class T = u32> constexpr auto nanoseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Nano>>((_DurationBase const &)*this).count(); }
-		template <class T = u32> constexpr auto microseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Micro>>((_DurationBase const &)*this).count(); }
-		template <class T = u32> constexpr auto milliseconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Milli>>((_DurationBase const &)*this).count(); }
-		template <class T = u32> constexpr auto seconds() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<1>>>((_DurationBase const &)*this).count(); }
-		template <class T = u32> constexpr auto minutes() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60>>>((_DurationBase const &)*this).count(); }
-		template <class T = u32> constexpr auto hours() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60 * 60>>>((_DurationBase const &)*this).count(); }
-		template <class T = u32> constexpr auto days() const noexcept { return std::chrono::duration_cast<std::chrono::duration<T, Ratio<60 * 60 * 24>>>((_DurationBase const &)*this).count(); }
+		template <class T = u32> constexpr T nanoseconds() const noexcept { return duration_cast<T, Nano>(); }
+		template <class T = u32> constexpr T microseconds() const noexcept { return duration_cast<T, Micro>(); }
+		template <class T = u32> constexpr T milliseconds() const noexcept { return duration_cast<T, Milli>(); }
+		template <class T = u32> constexpr T seconds() const noexcept { return duration_cast<T, Ratio<1>>(); }
+		template <class T = u32> constexpr T minutes() const noexcept { return duration_cast<T, Ratio<60>>(); }
+		template <class T = u32> constexpr T hours() const noexcept { return duration_cast<T, Ratio<60 * 60>>(); }
+		template <class T = u32> constexpr T days() const noexcept { return duration_cast<T, Ratio<60 * 60 * 24>>(); }
+
+	private:
+		template <class T = u32, class R = Ratio<1>
+		> constexpr T duration_cast() const noexcept
+		{
+			return std::chrono::duration_cast<std::chrono::duration<T, R>>((_DurationBase const &)*this).count();
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

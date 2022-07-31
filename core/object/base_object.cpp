@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(Object, t, TypeFlags_IsAbstract)
+	EMBED_CLASS(Object, t, TypeFlags_IsAbstract)
 	{
 		t.tp_getattro = (getattrofunc)&Object::generic_getattr;
 
@@ -176,7 +176,7 @@ namespace ism
 		return nullptr;
 	}
 
-	OBJ Object::generic_getattr(OBJ obj, OBJ name)
+	OBJ Object::generic_getattr(OBJ obj, OBJ name) noexcept
 	{
 		return generic_getattr_with_dict(obj, name, nullptr);
 	}
@@ -230,7 +230,7 @@ namespace ism
 		}
 	}
 
-	Error_ Object::generic_setattr(OBJ obj, OBJ name, OBJ value)
+	Error_ Object::generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept
 	{
 		return generic_setattr_with_dict(obj, name, value, nullptr);
 	}

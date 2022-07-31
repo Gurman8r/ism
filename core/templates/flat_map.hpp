@@ -446,7 +446,7 @@ namespace ism
 		{
 			for (; first != last; ++first)
 			{
-				std::invoke(FWD(fn), *first, *this->fetch(first));
+				std::invoke(fn, *first, *this->fetch(first));
 			}
 		}
 

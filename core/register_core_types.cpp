@@ -8,7 +8,7 @@ using namespace ism;
 
 void ism::register_core_types()
 {
-	Internals::get_singleton()->install_class
+	Internals::get_singleton()->initialize_class
 	<
 		CppFunctionObject, // <- cppfunction must go first
 		Object,
@@ -57,21 +57,4 @@ void ism::unregister_core_driver_types()
 
 void ism::unregister_core_types()
 {
-	auto & db{ Internals::get_singleton()->class_db };
-
-	for (size_t i = 0; i < db.size(); ++i)
-	{
-		TYPE & t{ db.get<TYPE>(i) };
-		if (!t) { continue; }
-		t->tp_base = nullptr;
-		t->tp_bases = nullptr;
-		t->tp_dict = nullptr;
-		t->tp_mro = nullptr;
-		t->tp_subclasses = nullptr;
-	}
-
-	while (!db.empty())
-	{
-		db.pop_back();
-	}
 }

@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(FloatObject, t)
+	EMBED_CLASS(FloatObject, t)
 	{
 		t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<f64>()(***(FLT &)self); };
 

@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(RendererStorage, t) {}
+	EMBED_CLASS(RendererStorage, t) {}
 
 	RendererStorage::RendererStorage(RenderingDevice * device) : m_device{ VALIDATE(device) }
 	{

@@ -14,7 +14,7 @@ using namespace ism;
 
 void ism::register_scene_types()
 {
-	Internals::get_singleton()->install_class
+	Internals::get_singleton()->initialize_class
 	<
 		SceneTree,
 		Node,

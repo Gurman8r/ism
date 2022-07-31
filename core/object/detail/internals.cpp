@@ -16,7 +16,20 @@ namespace ism
 
 	Internals::~Internals()
 	{
+		// set ALL internal object references to nullptr
+		Vector<OBJ>{}.swap(loader_stack);
 		modules = nullptr;
+		while (!class_db.empty())
+		{
+			TYPE & t{ class_db.back<TYPE>() };
+			if (!t) { continue; }
+			t->tp_base = nullptr;
+			t->tp_bases = nullptr;
+			t->tp_dict = nullptr;
+			t->tp_mro = nullptr;
+			t->tp_subclasses = nullptr;
+			class_db.pop_back();
+		}
 	}
 
 	void Internals::add_class(TYPE const & type)

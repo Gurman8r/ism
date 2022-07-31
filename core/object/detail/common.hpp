@@ -33,7 +33,7 @@ namespace ism
 
 	class Internals;
 
-	template <class T> class _EmbedTypeHelper;
+	template <class T> class _EmbedClassHelper;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

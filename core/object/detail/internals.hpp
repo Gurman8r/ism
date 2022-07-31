@@ -11,29 +11,31 @@ namespace ism
 	{
 		static Internals * __singleton;
 
-	public:
+		friend class Main;
+
 		Internals();
 
+	public:
 		~Internals();
-
-		NON_COPYABLE(Internals);
-
-		NON_MOVABLE(Internals);
 
 		FORCE_INLINE static Internals * get_singleton() noexcept { return __singleton; }
 
 	public:
-		Batch<hash_t, StringName, TYPE> class_db; // class database
+		/* MISC */
 
 		Vector<OBJ> loader_stack; // loader life support stack
 
 		OBJ modules; // module dictionary
 
 	public:
-		template <class Class0, class ... Classes
-		> void install_class()
+		/* CLASS DATABASE */
+
+		Batch<hash_t, StringName, TYPE> class_db;
+
+		template <class First, class ... Rest
+		> void initialize_class() noexcept
 		{
-			mpl::for_types<Class0, Classes...>([&](auto tag) noexcept
+			mpl::for_types<First, Rest...>([&](auto tag) noexcept
 			{
 				TAG_TYPE(tag)::initialize_class();
 			});

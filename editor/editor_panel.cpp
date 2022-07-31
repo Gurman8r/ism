@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(EditorPanel, t) {}
+	EMBED_CLASS(EditorPanel, t) {}
 
 	EditorPanel::EditorPanel(cstring name, bool start_open, ImGuiWindowFlags flags)
 		: m_name{ name }

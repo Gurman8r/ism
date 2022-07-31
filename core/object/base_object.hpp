@@ -14,7 +14,7 @@ public:																				\
 private:																			\
 	friend class ism::Internals;													\
 																					\
-	friend class ism::_EmbedTypeHelper<m_class>;									\
+	friend class ism::_EmbedClassHelper<m_class>;									\
 																					\
 	friend struct ism::DefaultDelete<m_class>;										\
 																					\
@@ -51,12 +51,12 @@ protected:																			\
 		return m_class::get_type_static();											\
 	}																				\
 																					\
-	FORCE_INLINE void (Object::*_get_notification() const)(i32)					\
+	FORCE_INLINE void (Object::*_get_notification() const)(i32)						\
 	{																				\
-		return (void (Object::*)(i32))&m_class::_notification;					\
+		return (void (Object::*)(i32))&m_class::_notification;						\
 	}																				\
 																					\
-	virtual void _notificationv(i32 notification_id, bool reversed) override	\
+	virtual void _notificationv(i32 notification_id, bool reversed) override		\
 	{																				\
 		if (!reversed)																\
 		{																			\
@@ -88,12 +88,20 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // class embedding utility
-#define OBJECT_EMBED(m_class, m_var, ...)													\
+#define EMBED_CLASS(m_class, m_var, ...)													\
 																							\
 	/* declare binder */																	\
-	template <> class ism::_EmbedTypeHelper<m_class> final									\
+	template <> class ism::_EmbedClassHelper<m_class> final									\
 	{																						\
-	public: static void embed(ism::TypeObject &);											\
+	public:																					\
+		static void do_embed(ism::TypeObject & t);											\
+																							\
+		static void embed(ism::TypeObject & t)												\
+		{																					\
+			/* TODO: can add extra stuff here later */										\
+																							\
+			do_embed(t);																	\
+		}																					\
 	};																						\
 																							\
 	/* construct type object */																\
@@ -101,10 +109,10 @@ private:
 																							\
 	MAKER(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
 																							\
-	+ ism::_EmbedTypeHelper<m_class>::embed;												\
+	+ ism::_EmbedClassHelper<m_class>::embed;												\
 																							\
 	/* implement binder function body */													\
-	void ism::_EmbedTypeHelper<m_class>::embed(ism::TypeObject & m_var)						\
+	void ism::_EmbedClassHelper<m_class>::do_embed(ism::TypeObject & m_var)					\
 																							\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -129,7 +137,7 @@ namespace ism
 	private:
 		friend class OBJ;
 		friend class Internals;
-		friend class _EmbedTypeHelper<Object>;
+		friend class _EmbedClassHelper<Object>;
 		friend struct DefaultDelete<Object>;
 		friend ISM_API_FUNC(bool) predelete_handler(Object *);
 		friend ISM_API_FUNC(void) postinitialize_handler(Object *);
@@ -179,16 +187,18 @@ namespace ism
 		TYPE get_type() const noexcept;
 		void set_type(TYPE const & value) noexcept;
 
-		static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
-		static OBJ generic_getattr(OBJ obj, OBJ name);
-
-		static Error_ generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
-		static Error_ generic_setattr(OBJ obj, OBJ name, OBJ value);
-
 		template <class T> T cast() const &;
 		template <class T> T cast() &&;
 
 		Object * ptr() const noexcept { return (Object *)this; }
+
+		// generic_getattr
+		static OBJ generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict);
+		static OBJ generic_getattr(OBJ obj, OBJ name) noexcept;
+
+		// generic_setattr
+		static Error_ generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict);
+		static Error_ generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

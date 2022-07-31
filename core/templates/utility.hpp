@@ -71,7 +71,7 @@ namespace ism::priv
 	}
 
 #define ON_SCOPE_ENTER(...) \
-		auto ANON = (ism::priv::OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+		auto ANON(temp) = (ism::priv::OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -95,7 +95,7 @@ namespace ism::priv
 	}
 
 #define ON_SCOPE_EXIT(...) \
-		auto ANON = (ism::priv::OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+		auto ANON(temp) = (ism::priv::OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

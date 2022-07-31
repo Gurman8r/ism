@@ -300,10 +300,10 @@ namespace ism
 			{
 				cstring		name;
 				DataType_	type;
-				u32	count;
+				u32			count;
 				bool		normalized;
-				u32	size;
-				u32	offset;
+				u32			size;
+				u32			offset;
 
 				constexpr Attribute(cstring name, DataType_ type, size_t count, bool normalized = false) noexcept
 					: name		{ name }

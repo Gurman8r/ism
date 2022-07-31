@@ -9,12 +9,14 @@
 //	CONFIGURATION
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if (_DEBUG && _DEBUG)
+#ifndef DEBUG_ENABLED
+#if _DEBUG
 //	Debug
-#	define IS_DEBUG true
+#	define DEBUG_ENABLED true
 #else
 //	Release
-#	define IS_DEBUG false
+#	define DEBUG_ENABLED false
+#endif
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -168,12 +170,12 @@
 #		define CC_GCC __GNUG__
 #	endif
 
-#elif __ICC || __INTEL_ISM_CC
+#elif __ICC || __INTEL_COMPILER
 //	Intel
 #	ifdef __ICC
 #		define CC_INTEL __ICC
 #	else
-#		define CC_INTEL __INTEL_ISM_CC
+#		define CC_INTEL __INTEL_COMPILER
 #	endif
 
 #elif __MINGW32__ || __MINGW64__

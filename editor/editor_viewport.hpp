@@ -27,7 +27,7 @@ namespace ism
 		auto get_main_texture() const -> RID { return m_main_texture; }
 		void set_main_texture(RID value) { m_main_texture = value; }
 
-		auto get_editor_camera() const noexcept { return const_cast<EditorCamera *>(&m_editor_camera); }
+		auto get_editor_camera() const noexcept { return (EditorCamera *)(&m_editor_camera); }
 
 	public:
 		virtual void process(Duration const & dt) override;

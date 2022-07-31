@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(ScriptComponent, t) {}
+	EMBED_CLASS(ScriptComponent, t) {}
 
 	ScriptComponent::ScriptComponent(Entity * entity) noexcept : BehaviorComponent{ entity }
 	{

@@ -29,7 +29,7 @@ namespace ism::mpl
 	template <class Tup, class Fn, size_t ... Is
 	> constexpr void impl_tuple_expand(Tup && tp, Fn && fn, std::index_sequence<Is...>) noexcept
 	{
-		fn(std::get<Is>(FWD(tp))...);
+		fn(std::get<Is>(tp)...);
 	}
 
 	template <class Tup, class Fn

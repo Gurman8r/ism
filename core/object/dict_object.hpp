@@ -22,11 +22,11 @@ namespace ism
 		using iterator			= storage_type::iterator;
 		using const_iterator	= storage_type::const_iterator;
 
-		auto & operator*() const { return const_cast<storage_type &>(m_dict); }
+		auto & operator*() const { return (storage_type &)(m_dict); }
 
-		auto * operator->() const { return const_cast<storage_type *>(&m_dict); }
+		auto * operator->() const { return (storage_type *)(&m_dict); }
 
-		operator storage_type & () const { return const_cast<storage_type &>(m_dict); }
+		operator storage_type & () const { return (storage_type &)(m_dict); }
 
 		DictObject() noexcept : m_dict{} {}
 

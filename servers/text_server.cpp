@@ -14,7 +14,7 @@ namespace ism
 
 	TS * TS::__singleton{};
 
-	OBJECT_EMBED(TextServer, t) {}
+	EMBED_CLASS(TextServer, t) {}
 
 	TextServer::TextServer() { __singleton = this; }
 
@@ -22,7 +22,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(Glyph, t) {}
+	EMBED_CLASS(Glyph, t) {}
 
 	Glyph::Glyph(DynamicBuffer const & buffer, IntRect const & bounds, u32 advance)
 		: m_bounds{ bounds }

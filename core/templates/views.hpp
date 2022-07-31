@@ -33,9 +33,13 @@ namespace ism
 		
 		constexpr View() noexcept = default;
 
-		constexpr View(self_type const &) noexcept = default;
+		constexpr View(self_type const &) = delete;
 
-		constexpr self_type & operator=(self_type const &) noexcept = default;
+		constexpr View(self_type &&) noexcept = default;
+
+		constexpr self_type & operator=(self_type const &) noexcept = delete;
+
+		constexpr self_type & operator=(self_type &&) noexcept = default;
 
 		constexpr self_type & swap(self_type & value) noexcept
 		{
@@ -98,9 +102,9 @@ namespace ism
 				return cmp;
 			}
 #else
-			else if (!util::range_equal(begin(), end(), value.begin(), value.end()))
+			else if (auto const cmp{ std::memcmp(m_data, value.m_data, util::min(m_size, value.m_size)) }; cmp != 0)
 			{
-				return util::range_less(begin(), end(), value.begin(), value.end()) ? -1 : 1;
+				return cmp;
 			}
 #endif
 			else if (m_size < value.m_size)
@@ -125,22 +129,22 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> NODISCARD constexpr bool operator==(View<T> const a, View<T> const b) { return a.compare(b) == 0; }
+	> NODISCARD constexpr bool operator==(View<T> const & a, View<T> const & b) { return a.compare(b) == 0; }
 
 	template <class T
-	> NODISCARD constexpr bool operator!=(View<T> const a, View<T> const b) { return a.compare(b) != 0; }
+	> NODISCARD constexpr bool operator!=(View<T> const & a, View<T> const & b) { return a.compare(b) != 0; }
 
 	template <class T
-	> NODISCARD constexpr bool operator<(View<T> const a, View<T> const b) { return a.compare(b) < 0; }
+	> NODISCARD constexpr bool operator<(View<T> const & a, View<T> const & b) { return a.compare(b) < 0; }
 
 	template <class T
-	> NODISCARD constexpr bool operator<=(View<T> const a, View<T> const b) { return a.compare(b) <= 0; }
+	> NODISCARD constexpr bool operator<=(View<T> const & a, View<T> const & b) { return a.compare(b) <= 0; }
 
 	template <class T
-	> NODISCARD constexpr bool operator>(View<T> const a, View<T> const b) { return a.compare(b) > 0; }
+	> NODISCARD constexpr bool operator>(View<T> const & a, View<T> const & b) { return a.compare(b) > 0; }
 
 	template <class T
-	> NODISCARD constexpr bool operator>=(View<T> const a, View<T> const b) { return a.compare(b) >= 0; }
+	> NODISCARD constexpr bool operator>=(View<T> const & a, View<T> const & b) { return a.compare(b) >= 0; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

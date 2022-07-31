@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(GenericObject, t)
+	EMBED_CLASS(GenericObject, t)
 	{
 		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
 		{

@@ -2,7 +2,7 @@
 
 #include <main/main.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/imgui.hpp>
+#include <scene/main/imgui.hpp>
 
 #if TOOLS_ENABLED
 #include <editor/editor_node.hpp>
@@ -38,7 +38,8 @@ using namespace ism;
 
 static bool editor{ true };
 
-i32 Main::g_iterating{};
+i32 Main::m_iterating{};
+u64 Main::m_frame{};
 
 static Internals *			g_internals{};
 static Input *				g_input{};
@@ -151,15 +152,17 @@ bool Main::start()
 
 bool Main::iteration()
 {
-	++g_iterating; ON_SCOPE_EXIT(&) { --g_iterating; };
+	++m_iterating;
 	
 	Clock const loop_timer{};
 	static Duration delta_time{ 16_ms };
 	ON_SCOPE_EXIT(&) { delta_time = loop_timer.get_elapsed_time(); };
 
-	// TODO: physics stuff goes here
+	++m_frame;
 
 	bool should_close{ false };
+
+	// TODO: physics stuff goes here
 
 	g_display->poll_events();
 
@@ -179,6 +182,8 @@ bool Main::iteration()
 	}
 
 	g_display->swap_buffers();
+
+	--m_iterating;
 
 	return should_close;
 }

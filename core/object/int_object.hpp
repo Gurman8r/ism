@@ -23,7 +23,7 @@ namespace ism
 
 		using storage_type = decltype(m_int);
 
-		auto & operator*() const { return const_cast<storage_type &>(m_int); }
+		auto & operator*() const { return (storage_type &)(m_int); }
 
 		IntObject() noexcept {}
 

@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(ModuleObject, t)
+	EMBED_CLASS(ModuleObject, t)
 	{
 		t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 

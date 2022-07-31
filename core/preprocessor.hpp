@@ -61,18 +61,14 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// make anonymous
+// anonymous variable name ( _expr_#_ )
 #if defined(__COUNTER__)
-#	define MAKE_ANON(expr) CAT(_, CAT(expr, CAT(_, CAT(__COUNTER__, _))))
+#	define ANON(m_expr) CAT(_, CAT(m_expr, CAT(_, CAT(__COUNTER__, _))))
 #elif defined(__LINE__)
-#	define MAKE_ANON(expr) CAT(_, CAT(expr, CAT(_, CAT(__LINE__, _))))
+#	define ANON(m_expr) CAT(_, CAT(m_expr, CAT(_, CAT(__LINE__, _))))
 #else
-#	define MAKE_ANON(expr) CAT(_, CAT(expr, _))
+#	define ANON(m_expr) CAT(_, CAT(m_expr, _))
 #endif
-
-// anonymous
-#define ANON \
-		MAKE_ANON(anonymous)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -83,7 +79,7 @@
 
 // sink
 #define SINK(...) \
-		_IMPL_SINK(ANON, ##__VA_ARGS__)
+		_IMPL_SINK(ANON(temp), ##__VA_ARGS__)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

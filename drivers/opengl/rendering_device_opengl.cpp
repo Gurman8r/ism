@@ -99,7 +99,7 @@ void glCheckError(cstring expr, cstring file, u32 line)
 		, file, line, code, expr, desc);
 }
 
-#if IS_DEBUG
+#if DEBUG_ENABLED
 #	define glCheck(expr) \
 	do { expr; glCheckError(TOSTR(expr), __FILE__, __LINE__); } while (0)
 #else
@@ -311,7 +311,7 @@ MAKE_ENUM_MAPPING(TO_GL, BlendOperation_, u32,
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-OBJECT_EMBED(RenderingDeviceOpenGL, t) {}
+EMBED_CLASS(RenderingDeviceOpenGL, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

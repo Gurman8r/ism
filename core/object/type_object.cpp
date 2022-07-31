@@ -49,7 +49,7 @@ namespace ism
 		{0}
 	};
 
-	OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
+	EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 	{
 		t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 

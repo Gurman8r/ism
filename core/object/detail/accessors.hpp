@@ -36,7 +36,7 @@ namespace ism
 			return (get_cache() = object_or_cast(value)), (*this);
 		}
 
-		auto ptr() const { return const_cast<Object *>(get_cache().ptr()); }
+		auto ptr() const { return (Object *)(get_cache().ptr()); }
 
 		template <class T> operator Ref<T>() const { return get_cache(); }
 

@@ -9,7 +9,7 @@ using namespace ism;
 
 void ism::register_editor_types()
 {
-	Internals::get_singleton()->install_class
+	Internals::get_singleton()->initialize_class
 	<
 		EditorCamera,
 		EditorNode,

@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(EditorViewport, t) {}
+	EMBED_CLASS(EditorViewport, t) {}
 
 	EditorViewport::EditorViewport()
 		: EditorPanel{ "Viewport##Editor", true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar }
@@ -34,6 +34,7 @@ namespace ism
 		ImGui::PopStyleVar(1);
 		if (!open) { return; }
 
+		Input * const input{ Input::get_singleton() };
 		ImGuiWindow * const window{ get_window() };
 		ImRect const view_rect{ window->InnerRect };
 
@@ -43,12 +44,12 @@ namespace ism
 		}
 
 		bool const nav_enabled{ window == ImGui::GetCurrentContext()->NavWindow };
-		bool const dragging_view{ nav_enabled && !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && ImGui::IsMouseDragging(0) };
+		bool const dragging_view{ nav_enabled && !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && input->is_mouse_dragging(0) };
 
 		if (dragging_view) {
-			Vec2 const md{ Input::get_singleton()->get_mouse_delta() * (f32)dt * 50 };
-			m_editor_camera.do_yaw(-md[0]);
-			m_editor_camera.do_pitch(+md[1]);
+			Vec2 const drag{ input->get_mouse_delta() * (f32)dt * 50.f };
+			m_editor_camera.do_yaw(-drag[0]);
+			m_editor_camera.do_pitch(+drag[1]);
 		}
 
 		if (ImGui::BeginMenuBar()) {

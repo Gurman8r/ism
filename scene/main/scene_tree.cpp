@@ -7,7 +7,7 @@ namespace ism
 
 	SceneTree * SceneTree::__singleton{};
 
-	OBJECT_EMBED(SceneTree, t)
+	EMBED_CLASS(SceneTree, t)
 	{
 		t.tp_bind = CLASS_INSTALLER(SceneTree, t)
 		{
@@ -59,7 +59,6 @@ namespace ism
 	void SceneTree::finalize()
 	{
 		base_type::finalize();
-
 		m_initialized = false;
 	}
 

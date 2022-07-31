@@ -259,8 +259,6 @@ namespace ism::mpl
 	template <class C, class R, class ... A> struct remove_class<R(C:: *)(A...) const> { using type = R(A...); };
 	template <class ... Ts> using remove_class_t = typename remove_class<Ts...>::type;
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class F> struct strip_function_object { using type = remove_class_t<decltype(&F::operator())>; };
 
 	template <class Func, class F = std::remove_reference_t<Func>

@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(Component, t) {}
+	EMBED_CLASS(Component, t) {}
 
 	Component::Component(Entity * entity) noexcept : m_entity{ VALIDATE(entity) }
 	{

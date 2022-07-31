@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(TransformComponent, t) {}
+	EMBED_CLASS(TransformComponent, t) {}
 
 	TransformComponent::TransformComponent(Entity * entity) noexcept : Component{ entity } {}
 

@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(EditorCamera, t) {}
+	EMBED_CLASS(EditorCamera, t) {}
 
 	EditorCamera::~EditorCamera() {}
 

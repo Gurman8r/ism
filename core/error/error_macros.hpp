@@ -10,40 +10,95 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(void) _crash(cwstring message, cwstring file, u32 line);
+	// crash implementation
+	namespace priv
+	{
+		ISM_API_FUNC(void) _crash(cwstring message, cwstring file, u32 line);
+	}
 
 	// crash
-#define CRASH(message) \
-		(ism::_crash)(WIDE(message), WIDE(__FILE__), __LINE__)
+#define CRASH(m_message) \
+		(ism::priv::_crash)(WIDE(m_message), WIDE(__FILE__), __LINE__)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// assert
-#define ASSERT(expr) \
-		(UNUSED((!!(expr)) || (CRASH(TOSTR(expr)), 0)))
+#define ASSERT(m_expr) \
+		(UNUSED((!!(m_expr)) || (CRASH(TOSTR(m_expr)), 0)))
+
+	// debug assert
+#if DEBUG_ENABLED
+#define DEBUG_ASSERT(m_expr) ASSERT(m_expr)
+#else
+#define DEBUG_ASSERT(m_expr) UNUSED(0)
+#endif
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// validate implementation
+	namespace priv
+	{
+		template <class T
+		> auto _validate(T && expr, cwstring message, cwstring file, u32 line) noexcept -> decltype(FWD(expr))
+		{
+			return (UNUSED((!!(expr)) || (_crash(message, file, line), 0))), FWD(expr);
+		}
+	}
+
+	// validate
+#define VALIDATE(m_expr) \
+		(ism::priv::_validate)((m_expr), WIDE(TOSTR(m_expr)), WIDE(__FILE__), __LINE__)
+
+	// debug validate
+#if DEBUG_ENABLED
+#define DEBUG_VALIDATE(m_expr) VALIDATE(m_expr)
+#else
+#define DEBUG_VALIDATE(m_expr) (m_expr)
+#endif
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// verify
-#define VERIFY(expr, message)												\
-		do {																\
-			if (expr) { /* contextually convertible to bool paranoia */ }	\
-			else {															\
-				ism::_crash(WIDE(message), WIDE(__FILE__), __LINE__);		\
-			}																\
-		} while (0)															\
+#define VERIFY(m_expr, m_message)												\
+		do {																	\
+			if (m_expr) { /* contextually convertible to bool paranoia */ }		\
+			else {																\
+				ism::priv::_crash(WIDE(m_message), WIDE(__FILE__), __LINE__);	\
+			}																	\
+		} while (0)
+
+	// debug verify
+#if DEBUG_ENABLED
+#define DEBUG_VERIFY(m_expr, m_message) VERIFY(m_expr, m_message)
+#else
+#define DEBUG_VERIFY(m_expr, m_message) UNUSED(0)
+#endif
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T
-	> auto _validate(T && expr, cwstring message, cwstring file, u32 line) noexcept -> decltype(FWD(expr))
-	{
-		return (UNUSED((!!(expr)) || (_crash(message, file, line), 0))), FWD(expr);
-	}
+	// verify range implementation
+#define _IMPL_VERIFY_RANGE(m_type, m_expr, m_min, m_max, m_op)	\
+		ASSERT(													\
+		("index out of range: " TOSTR(m_expr) "") &&			\
+		((m_type)(m_min) m_op (m_type)(m_expr)) &&				\
+		((m_type)(m_expr) m_op (m_type)(m_max))					\
+		)
 
-	// validate
-#define VALIDATE(expr) \
-		(ism::_validate)((expr), WIDE(TOSTR(expr)), WIDE(__FILE__), __LINE__)
+	// verify range (typed, inclusive)
+#define VERIFY_RANGE_INCLUSIVE_TYPED(m_type, m_expr, m_min, m_max) \
+		_IMPL_VERIFY_RANGE(m_type, m_expr, m_min, m_max, <=)
+
+	// verify range (inclusive)
+#define VERIFY_RANGE_INCLUSIVE(m_expr, m_min, m_max) \
+		_IMPL_VERIFY_RANGE(decltype(m_expr), m_expr, m_min, m_max, <=)
+
+	// verify range (typed)
+#define VERIFY_RANGE_TYPED(m_type, m_expr, m_min, m_max) \
+		_IMPL_VERIFY_RANGE(m_type, m_expr, m_min, m_max, <)
+
+	// verify range
+#define VERIFY_RANGE(m_expr, m_min, m_max) \
+		_IMPL_VERIFY_RANGE(decltype(m_expr), m_expr, m_min, m_max, <)
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
@@ -60,21 +115,21 @@ namespace ism
 	};
 
 	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
+	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, cstring m_message, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#define ERR_PRINT_ERROR(desc) \
-		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Error))
+#define ERR_PRINT_ERROR(m_desc) \
+		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), ism::ErrorHandlerType_Error))
 
-#define ERR_PRINT_ERROR_MSG(desc, message) \
-		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error))
+#define ERR_PRINT_ERROR_MSG(m_desc, m_message) \
+		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), (m_message), ism::ErrorHandlerType_Error))
 
-#define ERR_PRINT_WARNING(desc) \
-		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (desc), ism::ErrorHandlerType_Warning))
+#define ERR_PRINT_WARNING(m_desc) \
+		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), ism::ErrorHandlerType_Warning))
 
-#define ERR_PRINT_WARNING_MSG(desc, message) \
-		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (desc), (message), ism::ErrorHandlerType_Error))
+#define ERR_PRINT_WARNING_MSG(m_desc, m_message) \
+		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), (m_message), ism::ErrorHandlerType_Error))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

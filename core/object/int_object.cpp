@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(IntObject, t)
+	EMBED_CLASS(IntObject, t)
 	{
 		t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return Hasher<i64>()(***(INT &)self); };
 

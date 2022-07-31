@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(TupleObject, t)
+	EMBED_CLASS(TupleObject, t)
 	{
 		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
 		{

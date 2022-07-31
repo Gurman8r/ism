@@ -16,9 +16,9 @@ namespace ism
 	public:
 		FunctionRecord * m_record{};
 
-		auto & operator*() const { return const_cast<FunctionRecord &>(*m_record); }
+		auto & operator*() const { return (FunctionRecord &)(*m_record); }
 
-		auto * operator->() const { return const_cast<FunctionRecord *>(m_record); }
+		auto * operator->() const { return (FunctionRecord *)(m_record); }
 
 		virtual ~CppFunctionObject() override;
 
@@ -107,7 +107,7 @@ namespace ism
 
 				auto data{ (sizeof(Capture) <= sizeof(call.record.data) ? &call.record.data : call.record.data[0]) };
 
-				auto capture{ const_cast<Capture *>(reinterpret_cast<Capture const *>(data)) };
+				auto capture{ (Capture *)(reinterpret_cast<Capture const *>(data)) };
 
 				ReturnPolicy_ policy{ return_policy_override<Return>::policy(call.record.policy) };
 
@@ -139,7 +139,7 @@ namespace ism
 			if constexpr (std::is_convertible_v<Func, Return(*)(Args...)> && sizeof(Capture) == sizeof(void *))
 			{
 				rec->is_stateless = true;
-				rec->data[1] = const_cast<void *>(reinterpret_cast<void const *>(&typeid(Return(*)(Args...))));
+				rec->data[1] = (void *)(reinterpret_cast<void const *>(&typeid(Return(*)(Args...))));
 			}
 		}
 

@@ -6,7 +6,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJECT_EMBED(TextFile, t)
+	EMBED_CLASS(TextFile, t)
 	{
 		t.tp_bind = CLASS_INSTALLER(TextFile, t)
 		{
