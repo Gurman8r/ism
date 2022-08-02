@@ -19,6 +19,11 @@ namespace ism
 
 	DisplayServerWindows::DisplayServerWindows(String const & title, WindowMode_ mode, Vec2i const & size)
 	{
+		ASSERT(title);
+		ASSERT(0 < size[0]);
+		ASSERT(0 < size[1]);
+		VERIFY_RANGE(mode, -1, WindowMode_MAX);
+
 		/* GLFW SETUP */
 
 		ASSERT(glfwInit() == GLFW_TRUE);
@@ -26,6 +31,16 @@ namespace ism
 		glfwSetErrorCallback([](i32 code, cstring message)
 		{
 			OS::get_singleton()->printerrf("glfw error %i: %s", code, message);
+		});
+
+		glfwSetMonitorCallback([](GLFWmonitor * monitor, i32 connected)
+		{
+			// monitor connected / disconnected
+		});
+
+		glfwSetJoystickCallback([](i32 device, i32 connected)
+		{
+			Input::get_singleton()->joy_connection_changed(device, connected == GLFW_CONNECTED, glfwGetJoystickName(device), glfwGetJoystickGUID(device));
 		});
 
 		m_cursors[Input::CursorShape_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
@@ -42,22 +57,7 @@ namespace ism
 		m_cursors[Input::CursorShape_VResize] = nullptr;
 		m_cursors[Input::CursorShape_Hand] = nullptr;
 
-		glfwSetMonitorCallback([](GLFWmonitor * monitor, auto connected)
-		{
-			// monitor connected/disconnected
-		});
-		
-		glfwSetJoystickCallback([](i32 device, auto connected)
-		{
-			Input::get_singleton()->joy_connection_changed(device, connected == GLFW_CONNECTED, glfwGetJoystickName(device), glfwGetJoystickGUID(device));
-		});
-
-		/* MAIN WINDOW SETUP */
-
-		ASSERT(title);
-		ASSERT(0 < size[0]);
-		ASSERT(0 < size[1]);
-		ASSERT((unsigned)mode < (unsigned)WindowMode_MAX);
+		/* WINDOW HINTS */
 
 		// context creation hints
 #if OPENGL_ENABLED
@@ -91,7 +91,8 @@ namespace ism
 		glfwWindowHint(GLFW_DOUBLEBUFFER, false);
 		glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 
-		// CREATE WINDOW
+		/* CREATE WINDOW */
+
 		_Window & w{ m_windows[MAIN_WINDOW_ID] = {} };
 		w.title = title;
 		w.window_mode = mode;
@@ -105,59 +106,58 @@ namespace ism
 		case WindowMode_Fullscreen: {} break;
 		}
 
-		// CALLBACKS
-		glfwSetCharCallback(w.handle, [](auto, auto c)
-		{
+		/* WINDOW CALLBACKS */
+
+		glfwSetCharCallback(w.handle, [](GLFWwindow *, u32 codepoint) {});
+		
+		glfwSetKeyCallback(w.handle, [](GLFWwindow *, i32 key, i32, i32 action, i32) {
+			Input::get_singleton()->set_key(key, (Input::Action_)action);
 		});
-		glfwSetKeyCallback(w.handle, [](auto, auto key, auto, auto action, auto)
-		{
-			Input::get_singleton()->set_key(key, action);
+
+		glfwSetMouseButtonCallback(w.handle, [](GLFWwindow *, i32 button, i32 action, i32) {
+			Input::get_singleton()->set_mouse_button(button, (Input::Action_)action);
 		});
-		glfwSetMouseButtonCallback(w.handle, [](auto, auto button, auto action, auto)
-		{
-			Input::get_singleton()->set_mouse_button(button, action);
-		});
-		glfwSetCursorPosCallback(w.handle, [](auto, auto x, auto y)
-		{
+
+		glfwSetCursorPosCallback(w.handle, [](GLFWwindow *, f64 x, f64 y) {
 			Input::get_singleton()->set_mouse_position({ (f32)x, (f32)y });
 		});
-		glfwSetScrollCallback(w.handle, [](auto, auto x, auto y)
-		{
+
+		glfwSetScrollCallback(w.handle, [](GLFWwindow *, f64 x, f64 y) {
 			Input::get_singleton()->set_mouse_wheel({ (f32)x, (f32)y });
 		});
-		glfwSetCursorEnterCallback(w.handle, [](auto, auto entered)
-		{
+
+		glfwSetCursorEnterCallback(w.handle, [](GLFWwindow *, i32 entered) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
 				tree->get_root()->propagate_notification(entered ? Node::Notification_WM_MouseEnter : Node::Notification_WM_MouseExit);
 			}
 		});
-		glfwSetWindowCloseCallback(w.handle, [](auto)
-		{
+
+		glfwSetWindowCloseCallback(w.handle, [](GLFWwindow *) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
 				tree->get_root()->propagate_notification(Node::Notification_WM_CloseRequest);
 				tree->quit();
 			}
 		});
-		glfwSetWindowFocusCallback(w.handle, [](auto, auto focused)
-		{
+
+		glfwSetWindowFocusCallback(w.handle, [](GLFWwindow *, i32 focused) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
 				tree->get_root()->propagate_notification(focused ? Node::Notification_WM_FocusIn : Node::Notification_WM_FocusOut);
 			}
 		});
-		glfwSetWindowContentScaleCallback(w.handle, [](auto, auto x, auto y)
-		{
+
+		glfwSetWindowContentScaleCallback(w.handle, [](GLFWwindow *, f32 x, f32 y) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
 				tree->get_root()->propagate_notification(Node::Notification_WM_ScaleChanged);
 			}
 		});
-		glfwSetWindowSizeCallback(w.handle, [](auto, auto w, auto h)
-		{
+
+		glfwSetWindowSizeCallback(w.handle, [](GLFWwindow *, i32 w, i32 h) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
 				tree->get_root()->propagate_notification(Node::Notification_WM_SizeChanged);
 			}
 		});
 
-		// DONE
+		/* DONE */
 		glfwMakeContextCurrent(w.handle);
 		m_main_window = &w;
 	}
@@ -538,8 +538,8 @@ namespace ism
 			i32 num_buttons;
 			byte const * buttons{ glfwGetJoystickButtons(device, &num_buttons) };
 			num_buttons = MIN(num_buttons, Input::JoyButton_MAX);
-			for (i32 button = 0; button < num_buttons; ++button) {
-				Input::get_singleton()->set_joy_button(device, button, buttons[button] == GLFW_PRESS);
+			for (i32 i = 0; i < num_buttons; ++i) {
+				Input::get_singleton()->set_joy_button(device, i, (Input::Action_)buttons[i]);
 			}
 		}
 	}

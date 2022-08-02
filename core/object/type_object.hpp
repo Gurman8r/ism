@@ -182,7 +182,7 @@ namespace ism
 	public:
 		bool ready() const { return m_ptr->ready(); }
 
-		bool has_feature(TypeFlags_ flag) const { return FLAG_READ(m_ptr->tp_flags, flag); }
+		bool has_feature(TypeFlags_ flag) const { return flag_read(m_ptr->tp_flags, flag); }
 
 		bool is_subtype(TYPE const & value) const { return m_ptr->is_subtype(value); }
 

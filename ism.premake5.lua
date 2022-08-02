@@ -27,21 +27,21 @@ defines{
 files{
 	"%{wks.location}/ism.premake5.lua",
 
-	"%{wks.location}/core/**.hpp", "%{wks.location}/core/**.cpp",
+	"%{wks.location}/core/**.hpp", "%{wks.location}/core/**.cpp", "%{wks.location}/core/**.inl",
 
-	"%{wks.location}/drivers/**.hpp", "%{wks.location}/drivers/**.cpp",
+	"%{wks.location}/drivers/**.hpp", "%{wks.location}/drivers/**.cpp", "%{wks.location}/drivers/**.inl",
 
-	"%{wks.location}/editor/**.hpp", "%{wks.location}/editor/**.cpp",
+	"%{wks.location}/editor/**.hpp", "%{wks.location}/editor/**.cpp", "%{wks.location}/editor/**.inl",
 
-	"%{wks.location}/main/**.hpp", "%{wks.location}/main/**.cpp",
+	"%{wks.location}/main/**.hpp", "%{wks.location}/main/**.cpp", "%{wks.location}/main/**.inl",
 
-	"%{wks.location}/platform/*.hpp", "%{wks.location}/platform/*.cpp",
+	"%{wks.location}/platform/*.hpp", "%{wks.location}/platform/*.cpp", "%{wks.location}/platform/*.inl",
 
-	"%{wks.location}/platform/%{_TARGET_OS}/**.hpp", "%{wks.location}/platform/%{_TARGET_OS}/**.cpp",
+	"%{wks.location}/platform/%{_TARGET_OS}/**.hpp", "%{wks.location}/platform/%{_TARGET_OS}/**.cpp", "%{wks.location}/platform/%{_TARGET_OS}/**.inl",
 
-	"%{wks.location}/scene/**.hpp", "%{wks.location}/scene/**.cpp",
+	"%{wks.location}/scene/**.hpp", "%{wks.location}/scene/**.cpp", "%{wks.location}/scene/**.inl",
 
-	"%{wks.location}/servers/**.hpp", "%{wks.location}/servers/**.cpp",
+	"%{wks.location}/servers/**.hpp", "%{wks.location}/servers/**.cpp", "%{wks.location}/servers/**.inl",
 }
 
 postbuildcommands{

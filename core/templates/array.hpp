@@ -36,7 +36,7 @@ namespace ism
 		{
 			if (this != std::addressof(other))
 			{
-				for (size_t i = 0; i < size(); ++i)
+				for (size_t i = 0; i < _Size; ++i)
 				{
 					util::swap(m_data[i], other.m_data[i]);
 				}
@@ -167,7 +167,7 @@ namespace ism
 	template <class Tx, class Ty, size_t N
 	> constexpr bool operator!=(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
 	{
-		return !(lhs == rhs);
+		return util::range_nequal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <class Tx, class Ty, size_t N
@@ -179,19 +179,19 @@ namespace ism
 	template <class Tx, class Ty, size_t N
 	> constexpr bool operator<=(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
 	{
-		return (lhs < rhs) || (lhs == rhs);
+		return util::range_lequal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <class Tx, class Ty, size_t N
 	> constexpr bool operator>(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
 	{
-		return !(lhs < rhs) && (lhs != rhs);
+		return util::range_greater(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	template <class Tx, class Ty, size_t N
 	> constexpr bool operator>=(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
 	{
-		return (lhs > rhs) || (lhs == rhs);
+		return util::range_gequal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

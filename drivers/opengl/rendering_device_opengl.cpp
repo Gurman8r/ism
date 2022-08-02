@@ -600,12 +600,12 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 
 		glCheck(glBindTexture(t.texture_type, t.handle));
 
-		if (FLAG_READ(t.usage_flags, TextureFlags_ColorAttachment)) {
-			ASSERT(!FLAG_READ(t.usage_flags, TextureFlags_DepthStencilAttachment));
+		if (flag_read(t.usage_flags, TextureFlags_ColorAttachment)) {
+			ASSERT(!flag_read(t.usage_flags, TextureFlags_DepthStencilAttachment));
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), t.texture_type, t.handle, 0));
 		}
 		else {
-			ASSERT(FLAG_READ(t.usage_flags, TextureFlags_DepthStencilAttachment));
+			ASSERT(flag_read(t.usage_flags, TextureFlags_DepthStencilAttachment));
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, t.texture_type, t.handle, 0));
 		}
 	}
@@ -643,12 +643,12 @@ void RenderingDeviceOpenGL::framebuffer_set_size(RID framebuffer, i32 width, i32
 
 		texture_update(fb.texture_attachments[i]);
 
-		if (FLAG_READ(t.usage_flags, TextureFlags_ColorAttachment)) {
-			ASSERT(!FLAG_READ(t.usage_flags, TextureFlags_DepthStencilAttachment));
+		if (flag_read(t.usage_flags, TextureFlags_ColorAttachment)) {
+			ASSERT(!flag_read(t.usage_flags, TextureFlags_DepthStencilAttachment));
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + (color_attachment_index++), t.texture_type, t.handle, 0));
 		}
 		else {
-			ASSERT(FLAG_READ(t.usage_flags, TextureFlags_DepthStencilAttachment));
+			ASSERT(flag_read(t.usage_flags, TextureFlags_DepthStencilAttachment));
 			glCheck(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, t.texture_type, t.handle, 0));
 		}
 	}

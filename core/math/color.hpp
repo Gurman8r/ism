@@ -1,7 +1,7 @@
 #ifndef _ISM_COLOR_HPP_
 #define _ISM_COLOR_HPP_
 
-#include <core/math/vector4.hpp>
+#include <core/math/maths.hpp>
 
 namespace ism
 {

@@ -223,19 +223,51 @@ namespace ism::util
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// range equal
 	template <class LI, class RI
-	> constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
-	{
+	> constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
 		return (lBegin != lEnd && rBegin != rEnd)
 			? ((*lBegin == *rBegin) && util::range_equal(lBegin + 1, lEnd, rBegin + 1, rEnd))
 			: (lBegin == lEnd && rBegin == rEnd);
 	}
 
+	// range not equal
 	template <class LI, class RI
-	> constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd)
-	{
+	> constexpr bool range_nequal(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
+		return (lBegin != lEnd && rBegin != rEnd)
+			? ((*lBegin != *rBegin) && util::range_nequal(lBegin + 1, lEnd, rBegin + 1, rEnd))
+			: (lBegin == lEnd && rBegin == rEnd);
+	}
+
+	// range less
+	template <class LI, class RI
+	> constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
 		return (lBegin != lEnd && rBegin != rEnd)
 			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))
+			: (lBegin == lEnd && rBegin == rEnd);
+	}
+
+	// range greater
+	template <class LI, class RI
+	> constexpr bool range_greater(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
+		return (lBegin != lEnd && rBegin != rEnd)
+			? ((*lBegin > *rBegin) && util::range_greater(lBegin + 1, lEnd, rBegin + 1, rEnd))
+			: (lBegin == lEnd && rBegin == rEnd);
+	}
+
+	// range less or equal
+	template <class LI, class RI
+	> constexpr bool range_lequal(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
+		return (lBegin != lEnd && rBegin != rEnd)
+			? ((*lBegin <= *rBegin) && util::range_lequal(lBegin + 1, lEnd, rBegin + 1, rEnd))
+			: (lBegin == lEnd && rBegin == rEnd);
+	}
+
+	// range greater or equal
+	template <class LI, class RI
+	> constexpr bool range_gequal(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
+		return (lBegin != lEnd && rBegin != rEnd)
+			? ((*lBegin >= *rBegin) && util::range_gequal(lBegin + 1, lEnd, rBegin + 1, rEnd))
 			: (lBegin == lEnd && rBegin == rEnd);
 	}
 

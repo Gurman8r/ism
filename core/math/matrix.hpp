@@ -3,7 +3,6 @@
 
 #include <core/templates/array.hpp>
 
-// TYPES
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -14,108 +13,102 @@ namespace ism
 
 	// Matrix<T, N, N>
 	template <class T, size_t N
-	> ALIAS(TMatrixNxN) Matrix<T, N, N>;
+	> ALIAS(TMatN) Matrix<T, N, N>;
 
 	// Matrix<T, 2, 2>
 	template <class T
-	> ALIAS(TMatrix2x2) TMatrixNxN<T, 2>;
+	> ALIAS(TMat2) TMatN<T, 2>;
 
 	// Matrix<T, 3, 3>
 	template <class T
-	> ALIAS(TMatrix3x3) TMatrixNxN<T, 3>;
+	> ALIAS(TMat3) TMatN<T, 3>;
 
 	// Matrix<T, 4 ,4>
 	template <class T
-	> ALIAS(TMatrix4x4) TMatrixNxN<T, 4>;
+	> ALIAS(TMat4) TMatN<T, 4>;
 
 	// Matrix<T, N, 1>
 	template <class T, size_t N
-	> ALIAS(TVectorN) Matrix<T, N, 1>;
+	> ALIAS(TVecN) Matrix<T, N, 1>;
 
 	// Matrix<T, 2, 1>
 	template <class T
-	> ALIAS(TVector2) TVectorN<T, 2>;
+	> ALIAS(TVec2) TVecN<T, 2>;
 
 	// Matrix<T, 3, 1>
 	template <class T
-	> ALIAS(TVector3) TVectorN<T, 3>;
+	> ALIAS(TVec3) TVecN<T, 3>;
 
 	// Matrix<T, 4, 1>
 	template <class T
-	> ALIAS(TVector4) TVectorN<T, 4>;
+	> ALIAS(TVec4) TVecN<T, 4>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat2
-	ALIAS(Mat2b) TMatrix2x2<byte>;
-	ALIAS(Mat2i) TMatrix2x2<i32>;
-	ALIAS(Mat2u) TMatrix2x2<u32>;
-	ALIAS(Mat2f) TMatrix2x2<f32>;
-	ALIAS(Mat2d) TMatrix2x2<f64>;
-	ALIAS(Mat2s) TMatrix2x2<size_t>;
+	ALIAS(Mat2b) TMat2<byte>;
+	ALIAS(Mat2i) TMat2<i32>;
+	ALIAS(Mat2u) TMat2<u32>;
+	ALIAS(Mat2f) TMat2<f32>;
+	ALIAS(Mat2d) TMat2<f64>;
+	ALIAS(Mat2s) TMat2<size_t>;
 	ALIAS(Mat2) Mat2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat3
-	ALIAS(Mat3b) TMatrix3x3<byte>;
-	ALIAS(Mat3i) TMatrix3x3<i32>;
-	ALIAS(Mat3u) TMatrix3x3<u32>;
-	ALIAS(Mat3f) TMatrix3x3<f32>;
-	ALIAS(Mat3d) TMatrix3x3<f64>;
-	ALIAS(Mat3s) TMatrix3x3<size_t>;
+	ALIAS(Mat3b) TMat3<byte>;
+	ALIAS(Mat3i) TMat3<i32>;
+	ALIAS(Mat3u) TMat3<u32>;
+	ALIAS(Mat3f) TMat3<f32>;
+	ALIAS(Mat3d) TMat3<f64>;
+	ALIAS(Mat3s) TMat3<size_t>;
 	ALIAS(Mat3) Mat3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat4
-	ALIAS(Mat4b) TMatrix4x4<byte>;
-	ALIAS(Mat4i) TMatrix4x4<i32>;
-	ALIAS(Mat4u) TMatrix4x4<u32>;
-	ALIAS(Mat4f) TMatrix4x4<f32>;
-	ALIAS(Mat4d) TMatrix4x4<f64>;
-	ALIAS(Mat4s) TMatrix4x4<size_t>;
+	ALIAS(Mat4b) TMat4<byte>;
+	ALIAS(Mat4i) TMat4<i32>;
+	ALIAS(Mat4u) TMat4<u32>;
+	ALIAS(Mat4f) TMat4<f32>;
+	ALIAS(Mat4d) TMat4<f64>;
+	ALIAS(Mat4s) TMat4<size_t>;
 	ALIAS(Mat4) Mat4f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec2
-	ALIAS(Vec2b) TVector2<byte>;
-	ALIAS(Vec2i) TVector2<i32>;
-	ALIAS(Vec2u) TVector2<u32>;
-	ALIAS(Vec2f) TVector2<f32>;
-	ALIAS(Vec2d) TVector2<f64>;
-	ALIAS(Vec2s) TVector2<size_t>;
+	ALIAS(Vec2b) TVec2<byte>;
+	ALIAS(Vec2i) TVec2<i32>;
+	ALIAS(Vec2u) TVec2<u32>;
+	ALIAS(Vec2f) TVec2<f32>;
+	ALIAS(Vec2d) TVec2<f64>;
+	ALIAS(Vec2s) TVec2<size_t>;
 	ALIAS(Vec2) Vec2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec3
-	ALIAS(Vec3b) TVector3<byte>;
-	ALIAS(Vec3i) TVector3<i32>;
-	ALIAS(Vec3u) TVector3<u32>;
-	ALIAS(Vec3f) TVector3<f32>;
-	ALIAS(Vec3d) TVector3<f64>;
-	ALIAS(Vec3s) TVector3<size_t>;
+	ALIAS(Vec3b) TVec3<byte>;
+	ALIAS(Vec3i) TVec3<i32>;
+	ALIAS(Vec3u) TVec3<u32>;
+	ALIAS(Vec3f) TVec3<f32>;
+	ALIAS(Vec3d) TVec3<f64>;
+	ALIAS(Vec3s) TVec3<size_t>;
 	ALIAS(Vec3) Vec3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec4
-	ALIAS(Vec4b) TVector4<byte>;
-	ALIAS(Vec4i) TVector4<i32>;
-	ALIAS(Vec4u) TVector4<u32>;
-	ALIAS(Vec4f) TVector4<f32>;
-	ALIAS(Vec4d) TVector4<f64>;
-	ALIAS(Vec4s) TVector4<size_t>;
+	ALIAS(Vec4b) TVec4<byte>;
+	ALIAS(Vec4i) TVec4<i32>;
+	ALIAS(Vec4u) TVec4<u32>;
+	ALIAS(Vec4f) TVec4<f32>;
+	ALIAS(Vec4d) TVec4<f64>;
+	ALIAS(Vec4s) TVec4<size_t>;
 	ALIAS(Vec4) Vec4f;
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// MATRIX
-namespace ism
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Matrix
@@ -150,64 +143,50 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		static constexpr bool empty() noexcept { return false; }
-		static constexpr auto width() noexcept -> size_t { return _Width; }
-		static constexpr auto height() noexcept -> size_t { return _Height; }
-		static constexpr auto size() noexcept -> size_t { return _Width * _Height; }
-		static constexpr auto max_size() noexcept -> size_t { return _Width * _Height; }
-
-		constexpr operator pointer() noexcept { return m_data; }
-		constexpr operator const_pointer() const noexcept { return m_data; }
-		constexpr operator storage_type & () & noexcept { return m_data; }
-		constexpr operator storage_type const & () const & noexcept { return m_data; }
-		constexpr operator storage_type && () && noexcept { return std::move(m_data); }
-
-		constexpr auto data() noexcept -> pointer { return m_data; }
-		constexpr auto data() const noexcept -> const_pointer { return m_data; }
-
-		constexpr auto at(size_t const i) & noexcept -> reference { return m_data.at(i); }
-		constexpr auto at(size_t const i) const & noexcept -> const_reference { return m_data.at(i); }
-		constexpr auto at(size_t const i) && noexcept -> value_type && { return std::move(m_data.at(i)); }
-		constexpr auto at(size_t const x, size_t const y) & noexcept -> reference { return at(y * _Width + x); }
-		constexpr auto at(size_t const x, size_t const y) const & noexcept -> const_reference { return at(y * _Width + x); }
-		constexpr auto at(size_t const x, size_t const y) && noexcept -> value_type && { return std::move(at(y * _Width + x)); }
-
-		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
-		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
-		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-		constexpr auto end() noexcept -> iterator { return m_data.end(); }
-		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
-		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
-		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
-		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
-		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
-		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
-		
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 		constexpr self_type & swap(self_type & other) noexcept
 		{
 			return m_data.swap(other.m_data), (*this);
 		}
 
-		static constexpr self_type fill(value_type value) noexcept
-		{
-			self_type temp{};
-			for (value_type & e : temp) {
-				e = value;
-			}
-			return temp;
-		}
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		static constexpr self_type one() noexcept
-		{
-			return fill(1);
-		}
+		NODISCARD static constexpr bool empty() noexcept { return false; }
+		NODISCARD static constexpr auto width() noexcept -> size_t { return _Width; }
+		NODISCARD static constexpr auto height() noexcept -> size_t { return _Height; }
+		NODISCARD static constexpr auto size() noexcept -> size_t { return _Width * _Height; }
+		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _Width * _Height; }
 
-		static constexpr self_type identity() noexcept
-		{
+		NODISCARD constexpr operator pointer() noexcept { return m_data; }
+		NODISCARD constexpr operator const_pointer() const noexcept { return m_data; }
+		NODISCARD constexpr operator storage_type & () & noexcept { return m_data; }
+		NODISCARD constexpr operator storage_type const & () const & noexcept { return m_data; }
+		NODISCARD constexpr operator storage_type && () && noexcept { return std::move(m_data); }
+		NODISCARD constexpr auto data() noexcept -> pointer { return m_data; }
+		NODISCARD constexpr auto data() const noexcept -> const_pointer { return m_data; }
+
+		NODISCARD constexpr auto at(size_t const i) & noexcept -> reference { return m_data.at(i); }
+		NODISCARD constexpr auto at(size_t const i) const & noexcept -> const_reference { return m_data.at(i); }
+		NODISCARD constexpr auto at(size_t const i) && noexcept -> value_type && { return std::move(m_data.at(i)); }
+		NODISCARD constexpr auto at(size_t const x, size_t const y) & noexcept -> reference { return at(y * _Width + x); }
+		NODISCARD constexpr auto at(size_t const x, size_t const y) const & noexcept -> const_reference { return at(y * _Width + x); }
+		NODISCARD constexpr auto at(size_t const x, size_t const y) && noexcept -> value_type && { return std::move(at(y * _Width + x)); }
+
+		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
+		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
+		NODISCARD constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
+		NODISCARD constexpr auto end() noexcept -> iterator { return m_data.end(); }
+		NODISCARD constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
+		NODISCARD constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
+		NODISCARD constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
+		NODISCARD constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
+		NODISCARD constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
+		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
+		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
+		NODISCARD constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
+		
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		NODISCARD static constexpr self_type identity() noexcept {
 			self_type temp{};
 			for (size_t i = 0; i < size(); ++i) {
 				temp[i] = static_cast<value_type>(i % width() == i / height());
@@ -215,10 +194,22 @@ namespace ism
 			return temp;
 		}
 
+		NODISCARD static constexpr self_type fill(value_type value) noexcept {
+			self_type temp{};
+			for (value_type & e : temp) {
+				e = value;
+			}
+			return temp;
+		}
+
+		NODISCARD static constexpr self_type one() noexcept {
+			return fill(1);
+		}
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		template <class U, size_t W, size_t H
-		> constexpr operator Matrix<U, W, H>() const noexcept
+		> NODISCARD constexpr operator Matrix<U, W, H>() const noexcept
 		{
 			using Other = Matrix<U, W, H>;
 
@@ -257,242 +248,134 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// MATRIX OPERATORS
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr bool operator==(Matrix<Tx, W, H> const & lhs, Matrix<Ty, W, H> const & rhs) noexcept
-	{
-		return (lhs.m_data == rhs.m_data);
+	template <size_t I, class T, size_t W, size_t H
+	> NODISCARD constexpr T & get(ism::Matrix<T, W, H> & value) noexcept {
+		static_assert(I < W * H, "out of range");
+		return value.at(I);
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr bool operator!=(Matrix<Tx, W, H> const & lhs, Matrix<Ty, W, H> const & rhs) noexcept
-	{
-		return (lhs.m_data != rhs.m_data);
+	template <size_t I, class T, size_t W, size_t H
+	> NODISCARD constexpr T const & get(ism::Matrix<T, W, H> const & value) noexcept {
+		static_assert(I < W * H, "out of range");
+		return value.at(I);
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr bool operator<(Matrix<Tx, W, H> const & lhs, Matrix<Ty, W, H> const & rhs) noexcept
-	{
-		return (lhs.m_data < rhs.m_data);
+	template <size_t I, class T, size_t W, size_t H
+	> NODISCARD constexpr T && get(ism::Matrix<T, W, H> && value) noexcept {
+		static_assert(I < W * H, "out of range");
+		return std::move(value).at(I);
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr bool operator<=(Matrix<Tx, W, H> const & lhs, Matrix<Ty, W, H> const & rhs) noexcept
-	{
-		return (lhs.m_data <= rhs.m_data);
+	template <size_t X, size_t Y, class T, size_t W, size_t H
+	> NODISCARD constexpr T & get(ism::Matrix<T, W, H> & value) noexcept {
+		static_assert(X * Y < W * H, "out of range");
+		return value.at(X, Y);
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr bool operator>(Matrix<Tx, W, H> const & lhs, Matrix<Ty, W, H> const & rhs) noexcept
-	{
-		return (lhs.m_data > rhs.m_data);
+	template <size_t X, size_t Y, class T, size_t W, size_t H
+	> NODISCARD constexpr T const & get(ism::Matrix<T, W, H> const & value) noexcept {
+		static_assert(X * Y < W * H, "out of range");
+		return value.at(X, Y);
 	}
 
-	template <class Tx, class Ty, size_t W, size_t H
-	> constexpr bool operator>=(Matrix<Tx, W, H> const & lhs, Matrix<Ty, W, H> const & rhs) noexcept
-	{
-		return (lhs.m_data >= rhs.m_data);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
-	> constexpr auto & operator+=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
-	{
-		for (auto & e : lhs) { e += static_cast<Tx>(rhs); }
-		return lhs;
-	}
-
-	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
-	> constexpr auto & operator-=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
-	{
-		for (auto & e : lhs) { e -= static_cast<Tx>(rhs); }
-		return lhs;
-	}
-
-	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
-	> constexpr auto & operator*=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
-	{
-		for (auto & e : lhs) { e *= static_cast<Tx>(rhs); }
-		return lhs;
-	}
-
-	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
-	> constexpr auto & operator/=(Matrix<Tx, W, H> & lhs, Ty const rhs) noexcept
-	{
-		for (auto & e : lhs) { e /= static_cast<Tx>(rhs); }
-		return lhs;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
-	> constexpr auto operator+(Matrix<Tx, W, H> const & lhs, Ty const rhs) noexcept
-	{
-		auto temp{ lhs };
-		return temp += static_cast<Tx>(rhs);
-	}
-
-	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
-	> constexpr auto operator-(Matrix<Tx, W, H> const & lhs, Ty const rhs) noexcept
-	{
-		auto temp{ lhs };
-		return temp -= static_cast<Tx>(rhs);
-	}
-
-	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
-	> constexpr auto operator*(Matrix<Tx, W, H> const & lhs, Ty const rhs) noexcept
-	{
-		auto temp{ lhs };
-		return temp *= static_cast<Tx>(rhs);
-	}
-
-	template <class Tx, class Ty, size_t W, size_t H, std::enable_if_t<mpl::is_number_v<Ty>, int> = 0
-	> constexpr auto operator/(Matrix<Tx, W, H> const & lhs, Ty const rhs) noexcept
-	{
-		auto temp{ lhs };
-		return temp /= static_cast<Tx>(rhs);
+	template <size_t X, size_t Y, class T, size_t W, size_t H
+	> NODISCARD constexpr T && get(ism::Matrix<T, W, H> && value) noexcept {
+		static_assert(X * Y < W * H, "out of range");
+		return std::move(value).at(X, Y);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, size_t W, size_t H
-	> constexpr auto operator-(Matrix<T, W, H> const & lhs) noexcept
-	{
-		return (lhs * static_cast<T>(-1));
+	> NODISCARD constexpr bool operator==(Matrix<T, W, H> const & a, Matrix<T, W, H> const & b) noexcept {
+		return a.m_data == b.m_data;
 	}
 
 	template <class T, size_t W, size_t H
-	> constexpr auto operator+(Matrix<T, W, H> const & lhs) noexcept
-	{
-		return -(-(lhs));
+	> NODISCARD constexpr bool operator!=(Matrix<T, W, H> const & a, Matrix<T, W, H> const & b) noexcept {
+		return a.m_data != b.m_data;
+	}
+
+	template <class T, size_t W, size_t H
+	> NODISCARD constexpr bool operator<(Matrix<T, W, H> const & a, Matrix<T, W, H> const & b) noexcept {
+		return a.m_data < b.m_data;
+	}
+
+	template <class T, size_t W, size_t H
+	> NODISCARD constexpr bool operator<=(Matrix<T, W, H> const & a, Matrix<T, W, H> const & b) noexcept {
+		return a.m_data <= b.m_data;
+	}
+
+	template <class T, size_t W, size_t H
+	> NODISCARD constexpr bool operator>(Matrix<T, W, H> const & a, Matrix<T, W, H> const & b) noexcept {
+		return a.m_data > b.m_data;
+	}
+
+	template <class T, size_t W, size_t H
+	> NODISCARD constexpr bool operator>=(Matrix<T, W, H> const & a, Matrix<T, W, H> const & b) noexcept {
+		return a.m_data >= b.m_data;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, size_t W, size_t H, class B
+	> NODISCARD constexpr Matrix<T, W, H> operator+(Matrix<T, W, H> const & a, B && b) noexcept {
+		auto c{ a };
+		return c += FWD(b);
+	}
+
+	template <class T, size_t W, size_t H, class B
+	> NODISCARD constexpr Matrix<T, W, H> operator-(Matrix<T, W, H> const & a, B && b) noexcept {
+		auto c{ a };
+		return c -= FWD(b);
+	}
+
+	template <class T, size_t W, size_t H, class B
+	> NODISCARD constexpr Matrix<T, W, H> operator*(Matrix<T, W, H> const & a, B && b) noexcept {
+		auto c{ a };
+		return c *= FWD(b);
+	}
+
+	template <class T, size_t W, size_t H, class B
+	> NODISCARD constexpr Matrix<T, W, H> operator/(Matrix<T, W, H> const & a, B && b) noexcept {
+		auto c{ a };
+		return c /= FWD(b);
+	}
+
+	template <class T, size_t W, size_t H, class B
+	> NODISCARD constexpr Matrix<T, W, H> operator%(Matrix<T, W, H> const & a, B && b) noexcept {
+		auto c{ a };
+		return c %= FWD(b);
+	}
+
+	template <class T, size_t W, size_t H, class B
+	> NODISCARD constexpr Matrix<T, W, H> operator^(Matrix<T, W, H> const & a, B && b) noexcept {
+		auto c{ a };
+		return c ^= FWD(b);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, size_t W, size_t H
+	> NODISCARD constexpr auto operator-(Matrix<T, W, H> const & a) noexcept {
+		return a * -1;
+	}
+
+	template <class T, size_t W, size_t H
+	> NODISCARD constexpr auto operator+(Matrix<T, W, H> const & a) noexcept {
+		return -(-(a));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// VECTOR OPERATORS
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Tx, class Ty, size_t N
-	> constexpr auto & operator+=(TVectorN<Tx, N> & lhs, TVectorN<Ty, N> const & rhs) noexcept
-	{
-		for (size_t i = 0; i < N; ++i) { lhs[i] += static_cast<Tx>(rhs[i]); }
-		return lhs;
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr auto & operator-=(TVectorN<Tx, N> & lhs, TVectorN<Ty, N> const & rhs) noexcept
-	{
-		for (size_t i = 0; i < N; ++i) { lhs[i] -= static_cast<Tx>(rhs[i]); }
-		return lhs;
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr auto & operator*=(TVectorN<Tx, N> & lhs, TVectorN<Ty, N> const & rhs) noexcept
-	{
-		for (size_t i = 0; i < N; ++i) { lhs[i] *= static_cast<Tx>(rhs[i]); }
-		return lhs;
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr auto & operator/=(TVectorN<Tx, N> & lhs, TVectorN<Ty, N> const & rhs) noexcept
-	{
-		for (size_t i = 0; i < N; ++i) { lhs[i] /= static_cast<Tx>(rhs[i]); }
-		return lhs;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Tx, class Ty, size_t N
-	> constexpr auto operator+(TVectorN<Tx, N> const & lhs, TVectorN<Ty, N> const & rhs) noexcept
-	{
-		auto temp{ lhs };
-		return temp += rhs;
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr auto operator-(TVectorN<Tx, N> const & lhs, TVectorN<Ty, N> const & rhs) noexcept
-	{
-		auto temp{ lhs };
-		return temp -= rhs;
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr auto operator*(TVectorN<Tx, N> const & lhs, TVectorN<Ty, N> const & rhs) noexcept
-	{
-		auto temp{ lhs };
-		return temp *= rhs;
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr auto operator/(TVectorN<Tx, N> const & lhs, TVectorN<Ty, N> const & rhs) noexcept
-	{
-		auto temp{ lhs };
-		return temp /= rhs;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// TUPLE INTERFACE
-namespace std
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <size_t I, class T, size_t W, size_t H
-	> constexpr T & get(ism::Matrix<T, W, H> & value) noexcept
-	{
-		static_assert(I < W * H, "ism::Matrix index out of bounds");
-		return value.at(I);
-	}
-
-	template <size_t I, class T, size_t W, size_t H
-	> constexpr T const & get(ism::Matrix<T, W, H> const & value) noexcept
-	{
-		static_assert(I < W * H, "ism::Matrix index out of bounds");
-		return value.at(I);
-	}
-
-	template <size_t I, class T, size_t W, size_t H
-	> constexpr T && get(ism::Matrix<T, W, H> && value) noexcept
-	{
-		static_assert(I < W * H, "ism::Matrix index out of bounds");
-		return std::move(value.at(I));
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <size_t X, size_t Y, class T, size_t W, size_t H
-	> constexpr T & get(ism::Matrix<T, W, H> & value) noexcept
-	{
-		static_assert(X * Y < W * H, "ism::Matrix index out of bounds");
-		return value.at(X, Y);
-	}
-
-	template <size_t X, size_t Y, class T, size_t W, size_t H
-	> constexpr T const & get(ism::Matrix<T, W, H> const & value) noexcept
-	{
-		static_assert(X * Y < W * H, "ism::Matrix index out of bounds");
-		return value.at(X, Y);
-	}
-
-	template <size_t X, size_t Y, class T, size_t W, size_t H
-	> constexpr T && get(ism::Matrix<T, W, H> && value) noexcept
-	{
-		static_assert(X * Y < W * H, "ism::Matrix index out of bounds");
-		return std::move(value.at(X, Y));
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
+/* specializations */
+#include "vec2.inl"
+#include "vec3.inl"
+#include "vec4.inl"
+#include "mat2.inl"
+#include "mat3.inl"
+#include "mat4.inl"
 
 #endif // !_ISM_MATRIX_HPP_

@@ -6,12 +6,13 @@
 #include <core/math/color.hpp>
 #include <core/math/rect.hpp>
 #include <core/string/print_string.hpp>
+#include <core/templates/batch.hpp>
 #include <core/templates/buffer.hpp>
-#include <core/templates/ecs.hpp>
 #include <core/templates/flat_map.hpp>
 #include <core/templates/hash_map.hpp>
 #include <core/templates/hash_set.hpp>
 #include <core/templates/map.hpp>
+#include <core/templates/mask.hpp>
 #include <core/templates/set.hpp>
 #include <core/templates/type_info.hpp>
 #include <core/templates/views.hpp>

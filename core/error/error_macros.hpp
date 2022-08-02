@@ -76,29 +76,19 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// verify range implementation
-#define _IMPL_VERIFY_RANGE(m_type, m_expr, m_min, m_max, m_op)	\
-		ASSERT(													\
-		("index out of range: " TOSTR(m_expr) "") &&			\
-		((m_type)(m_min) m_op (m_type)(m_expr)) &&				\
-		((m_type)(m_expr) m_op (m_type)(m_max))					\
-		)
-
-	// verify range (typed, inclusive)
-#define VERIFY_RANGE_INCLUSIVE_TYPED(m_type, m_expr, m_min, m_max) \
-		_IMPL_VERIFY_RANGE(m_type, m_expr, m_min, m_max, <=)
-
-	// verify range (inclusive)
-#define VERIFY_RANGE_INCLUSIVE(m_expr, m_min, m_max) \
-		_IMPL_VERIFY_RANGE(decltype(m_expr), m_expr, m_min, m_max, <=)
-
-	// verify range (typed)
-#define VERIFY_RANGE_TYPED(m_type, m_expr, m_min, m_max) \
-		_IMPL_VERIFY_RANGE(m_type, m_expr, m_min, m_max, <)
-
 	// verify range
 #define VERIFY_RANGE(m_expr, m_min, m_max) \
-		_IMPL_VERIFY_RANGE(decltype(m_expr), m_expr, m_min, m_max, <)
+		(UNUSED( \
+		(!!(((decltype(m_expr))(m_min) < (m_expr)) && ((m_expr) < (decltype(m_expr))(m_max)))) || \
+		(CRASH("range error: \"" TOSTR(m_min) "\" < \"" TOSTR(m_expr) "\" < \"" TOSTR(m_max) "\""), 0) \
+		))
+
+	// debug verify range
+#if DEBUG_ENABLED
+#define DEBUG_VERIFY_RANGE(m_expr, m_min, m_max) VERIFY_RANGE(m_expr, m_min, m_max)
+#else
+#define DEBUG_VERIFY_RANGE(m_expr, m_min, m_max) UNUSED(0)
+#endif
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
