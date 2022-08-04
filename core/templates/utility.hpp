@@ -114,7 +114,8 @@ namespace ism::util
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T = f32> constexpr auto deg2rad(T const degrees) noexcept
+	template <class T = f32, class = std::enable_if_t<mpl::is_number_v<T>>
+	> constexpr auto radians(T const degrees) noexcept
 	{
 		if constexpr (std::is_floating_point_v<T>)
 		{
@@ -122,11 +123,12 @@ namespace ism::util
 		}
 		else
 		{
-			return deg2rad(static_cast<f32>(degrees));
+			return radians(static_cast<f32>(degrees));
 		}
 	}
 
-	template <class T = f32> constexpr auto rad2deg(T const radians) noexcept
+	template <class T = f32, class = std::enable_if_t<mpl::is_number_v<T>>
+	> constexpr auto degrees(T const radians) noexcept
 	{
 		if constexpr (std::is_floating_point_v<T>)
 		{
@@ -134,7 +136,7 @@ namespace ism::util
 		}
 		else
 		{
-			return rad2deg(static_cast<f32>(radians));
+			return degrees(static_cast<f32>(radians));
 		}
 	}
 
@@ -240,7 +242,7 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class X, class In0, class In1, class Out0, class Out1
-	> constexpr decltype(auto) map(X const x, In0 const in_min, In1 const in_max, Out0 const out_min, Out1 const out_max)
+	> constexpr auto map(X const x, In0 const in_min, In1 const in_max, Out0 const out_min, Out1 const out_max)
 	{
 		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}

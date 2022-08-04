@@ -25,45 +25,46 @@
 
 #if __cplusplus
 #	if _MSVC_LANG
-#		define CXX_LANGUAGE _MSVC_LANG
+#		define CXX_LANG _MSVC_LANG
 #	else
-#		define CXX_LANGUAGE __cplusplus
+#		define CXX_LANG __cplusplus
 #	endif
 #else
 #error "this system does not support C++"
 #endif
 
-#if (CXX_LANGUAGE >= 201907L)
+#define CXX_20 201907L
+#define CXX_17 201703L
+#define CXX_14 201402L
+#define CXX_11 201103L
+
 //	C++20
-#define CXX_VERSION 20
-#define CXX_20 1
-#define CXX_17 1
-#define CXX_14 1
-#define CXX_11 1
+#if (CXX_LANG >= CXX_20)
+#define HAS_CXX_20 1
+#define HAS_CXX_17 1
+#define HAS_CXX_14 1
+#define HAS_CXX_11 1
 
-#elif (CXX_LANGUAGE >= 201703L)
 //	C++17
-#define CXX_VERSION 17
-#define CXX_20 0
-#define CXX_17 1
-#define CXX_14 1
-#define CXX_11 1
+#elif (CXX_LANG >= CXX_17)
+#define HAS_CXX_20 0
+#define HAS_CXX_17 1
+#define HAS_CXX_14 1
+#define HAS_CXX_11 1
 
-#elif (CXX_LANGUAGE >= 201402L)
 //	C++14
-#define CXX_VERSION 14
-#define CXX_20 0
-#define CXX_17 0
-#define CXX_14 1
-#define CXX_11 1
+#elif (CXX_LANG >= CXX_14)
+#define HAS_CXX_20 0
+#define HAS_CXX_17 0
+#define HAS_CXX_14 1
+#define HAS_CXX_11 1
 
-#elif (CXX_LANGUAGE >= 201103L)
 //	C++11
-#define CXX_VERSION 11
-#define CXX_20 0
-#define CXX_17 0
-#define CXX_14 0
-#define CXX_11 1
+#elif (CXX_LANG >= CXX_11)
+#define HAS_CXX_20 0
+#define HAS_CXX_17 0
+#define HAS_CXX_14 0
+#define HAS_CXX_11 1
 
 #else
 #error "this version of C++ is not supported"

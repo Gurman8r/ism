@@ -57,7 +57,7 @@ namespace ism::mpl
 	template <class C> using is_char = std::bool_constant<any_of_v
 		<
 		std::is_same<C, char>,
-#if CXX_20
+#if HAS_CXX_20
 		std::is_same<C, char8_t>,
 #endif
 		std::is_same<C, char16_t>,

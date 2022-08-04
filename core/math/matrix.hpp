@@ -198,48 +198,44 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		template <class U, size_t W, size_t H
-		> NODISCARD constexpr operator Matrix<U, W, H>() const noexcept
+		template <class T, size_t W, size_t H
+		> NODISCARD constexpr operator Matrix<T, W, H>() const noexcept
 		{
-			using Other = Matrix<U, W, H>;
+			using Out = Matrix<T, W, H>;
 
 			// same type
-			if constexpr (std::is_same_v<Other, self_type>)
+			if constexpr (std::is_same_v<Out, self_type>)
 			{
 				return (*this);
 			}
 			else
 			{
-				Other temp;
+				Out temp;
+
+				// same dimensions
 				if constexpr ((W == _Width) && (H == _Height))
 				{
-					// same dimensions
 					for (size_t i = 0; i < (W * H); ++i)
 					{
-						temp[i] = static_cast<U>(m_data[i]);
+						temp[i] = static_cast<T>(m_data[i]);
 					}
 				}
+
+				// different dimensions
 				else
 				{
-					// different dimensions
-					for (size_t i = 0; i < (W * H); ++i)
+					for (size_t i = 0; i < W * H; ++i)
 					{
-						if (size_t const x{ i % W }, y{ i / W }; (x < _Width && y < _Height))
+						if (size_t const x{ i % W }, y{ i / W }; (x < _Width) && (y < _Height))
 						{
-							temp[i] = static_cast<U>(m_data[y * _Width + x]);
+							temp[i] = static_cast<T>(m_data[y * _Width + x]);
 						}
 					}
 				}
+
 				return temp;
 			}
 		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		/* define additional code */
-#ifdef MATRIX_CLASS_EXTRA
-		MATRIX_CLASS_EXTRA
-#endif // MATRIX_CLASS_EXTRA
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
@@ -351,39 +347,39 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator+(Matrix<T, W, H> const & a, B && b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator+(Matrix<T, W, H> const & a, B const & b) noexcept {
 		auto c{ a };
-		return c += FWD(b);
+		return c += b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator-(Matrix<T, W, H> const & a, B && b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator-(Matrix<T, W, H> const & a, B const & b) noexcept {
 		auto c{ a };
-		return c -= FWD(b);
+		return c -= b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator*(Matrix<T, W, H> const & a, B && b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator*(Matrix<T, W, H> const & a, B const & b) noexcept {
 		auto c{ a };
-		return c *= FWD(b);
+		return c *= b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator/(Matrix<T, W, H> const & a, B && b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator/(Matrix<T, W, H> const & a, B const & b) noexcept {
 		auto c{ a };
-		return c /= FWD(b);
+		return c /= b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator%(Matrix<T, W, H> const & a, B && b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator%(Matrix<T, W, H> const & a, B const & b) noexcept {
 		auto c{ a };
-		return c %= FWD(b);
+		return c %= b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator^(Matrix<T, W, H> const & a, B && b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator^(Matrix<T, W, H> const & a, B const & b) noexcept {
 		auto c{ a };
-		return c ^= FWD(b);
+		return c ^= b;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -400,6 +396,12 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
+
+#define GLM_FORCE_SIZE_T_LENGTH
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtx/quaternion.hpp>
 
 #include "vec2.inl"
 #include "vec3.inl"

@@ -71,6 +71,40 @@ namespace ism
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class A, class B
+	> TMat4<A> & operator+=(TMat4<A> & a, TMat4<B> const & b) noexcept {
+		((glm::tmat4x4<A> &)a) += ((glm::tmat4x4<B> const &)b);
+		return a;
+	}
+
+	template <class A, class B
+	> TMat4<A> & operator-=(TMat4<A> & a, TMat4<B> const & b) noexcept {
+		((glm::tmat4x4<A> &)a) -= ((glm::tmat4x4<B> const &)b);
+		return a;
+	}
+
+	template <class A, class B
+	> TMat4<A> & operator*=(TMat4<A> & a, TMat4<B> const & b) noexcept {
+		((glm::tmat4x4<A> &)a) *= ((glm::tmat4x4<B> const &)b);
+		return a;
+	}
+
+	template <class A, class B
+	> TMat4<A> & operator/=(TMat4<A> & a, TMat4<B> const & b) noexcept {
+		((glm::tmat4x4<A> &)a) /= ((glm::tmat4x4<B> const &)b);
+		return a;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class A, class B
+	> TVec4<A> operator*(TMat4<A> const & a, TVec4<B> const & b) noexcept {
+		glm::tvec4<A> const c{ ((glm::tmat4x4<A> const &)a) * ((glm::tvec4<B> const &)b) };
+		return (TVec4<A> const &)c;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // _ISM_MATRIX_HPP_

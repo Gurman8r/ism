@@ -86,7 +86,7 @@ namespace ism
 
 	ALIAS(cstring)		char const *;
 	ALIAS(cwstring)		wchar_t const *;
-#if (CXX_20)
+#if (HAS_CXX_20)
 	ALIAS(c8string)		char8_t const *;
 #else
 	ALIAS(c8string)		char const *;

@@ -249,9 +249,9 @@ namespace ism
 		void recalculate_view()
 		{
 			m_target = m_eye + Vec3{
-				cosf(util::deg2rad(m_yaw)) * cosf(util::deg2rad(m_pitch)),
-				sinf(util::deg2rad(m_pitch)),
-				sinf(util::deg2rad(m_yaw)) * cosf(util::deg2rad(m_pitch))
+				cosf(util::radians(m_yaw)) * cosf(util::radians(m_pitch)),
+				sinf(util::radians(m_pitch)),
+				sinf(util::radians(m_yaw)) * cosf(util::radians(m_pitch))
 			};
 			
 			look_at(m_eye, m_target, m_up, m_view);

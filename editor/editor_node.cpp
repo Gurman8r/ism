@@ -1,6 +1,7 @@
 #include <editor/editor_node.hpp>
 #include <scene/main/imgui.hpp>
 #include <core/math/face3.hpp>
+#include <core/math/transform.hpp>
 
 namespace ism
 {
@@ -37,9 +38,14 @@ namespace ism
 	static RID render_target{};
 	static RID viewport{};
 
-	static Mat4 object_matrix[] = // 
+	static Transform camera{};
+	static Transform transform[] =
 	{
-		Mat4::identity(),
+		{
+			Vec3{ 0, 0, 0 },
+			Vec4{ 1, 1, 1, 0 },
+			Vec3{ 1, 1, 1 }
+		},
 	};
 
 	static void _setup_pipeline(RID const shader)
@@ -196,6 +202,13 @@ namespace ism
 
 			Duration const delta_time{ get_tree()->get_delta_time() };
 
+			{
+				Input * const input{ Input::get_singleton() };
+				f32 const move_speed{ delta_time };
+				if (input->is_key_down(Input::Key_Q)) { transform[0].translate(0, +move_speed, 0); }
+				else if (input->is_key_down(Input::Key_Z)) { transform[0].translate(0, -move_speed, 0); }
+			}
+
 			char window_title[32];
 			std::sprintf(window_title, "ism @ %.3f fps", get_tree()->get_fps().value);
 			get_tree()->get_root()->set_title(window_title);
@@ -220,7 +233,7 @@ namespace ism
 			RD::get_singleton()->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
 
 			RD::Std140<Mat4> transforms_ubo;
-			transforms_ubo.set<0>(object_matrix[0]); // model transform
+			transforms_ubo.set<0>(transform[0].get_matrix()); // model transform
 			RD::get_singleton()->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
 
 			RD::Std140<Vec4, Vec4, Vec4, f32> material_ubo;
