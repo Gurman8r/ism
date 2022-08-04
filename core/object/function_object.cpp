@@ -5,13 +5,13 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+	EMBED_OBJECT_CLASS(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 	{
 		t.tp_dictoffset = offsetof(FunctionObject, m_dict);
 
 		t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-		t.tp_bind = CLASS_INSTALLER(FunctionObject, t)
+		t.tp_bind = CLASS_BINDER(FunctionObject, t)
 		{
 			return t
 				.def_readwrite("__dict__", &FunctionObject::m_dict)

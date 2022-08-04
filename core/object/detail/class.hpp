@@ -158,9 +158,9 @@ namespace ism::priv
 
 	// class installer helper
 
-	template <class T> struct ClassInstallerHelper final
+	template <class T> struct ClassBinderHelper final
 	{
-		constexpr ClassInstallerHelper() noexcept = default;
+		constexpr ClassBinderHelper() noexcept = default;
 
 		constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
 		{
@@ -168,8 +168,8 @@ namespace ism::priv
 		}
 	};
 
-#define CLASS_INSTALLER(m_class, m_var) \
-	(ism::priv::ClassInstallerHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
+#define CLASS_BINDER(m_class, m_var) \
+	(ism::priv::ClassBinderHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

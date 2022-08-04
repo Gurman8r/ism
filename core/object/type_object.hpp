@@ -64,7 +64,7 @@ namespace ism
 			tp_base = baseof<T>();
 			tp_del = (delfunc)memdelete<T>;
 			tp_bind = (classproc)[](TYPE t) -> TYPE { return t; };
-			tp_hash = (hashfunc)[](OBJ o) -> hash_t { return Hasher<intptr_t>{}((intptr_t)*o); };
+			tp_hash = (hashfunc)[](OBJ o) -> size_t { return Hasher<intptr_t>{}((intptr_t)*o); };
 			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> i32 { return util::compare((intptr_t)*a, (intptr_t)*b); };
 
 			if constexpr (std::is_default_constructible_v<T>)
@@ -177,7 +177,7 @@ namespace ism
 	// type ref
 	class TYPE : public Ref<TypeObject>
 	{
-		REF_COMMON(TYPE, OBJECT_CHECK_TYPE);
+		REF_CLASS(TYPE, OBJECT_CHECK_TYPE);
 
 	public:
 		bool ready() const { return m_ptr->ready(); }
@@ -214,7 +214,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class = std::enable_if_t<is_ref_v<T>>
-	> hash_t hash(T const & o) noexcept
+	> size_t hash(T const & o) noexcept
 	{
 		if (!o) { return 0; }
 		TYPE t{ typeof(o) };

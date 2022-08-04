@@ -14,7 +14,7 @@ namespace ism
 	// int object
 	class ISM_API IntObject : public Object
 	{
-		OBJECT_COMMON(IntObject, Object);
+		OBJECT_CLASS(IntObject, Object);
 
 		friend class INT;
 
@@ -51,7 +51,7 @@ namespace ism
 	// int ref
 	class INT : public Ref<IntObject>
 	{
-		REF_COMMON(INT, OBJECT_CHECK_INT);
+		REF_CLASS(INT, OBJECT_CHECK_INT);
 
 	public:
 		using storage_type = value_type::storage_type;

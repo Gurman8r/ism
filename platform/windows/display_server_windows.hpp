@@ -11,7 +11,7 @@ namespace ism
 	// windows display server
 	class ISM_API DisplayServerWindows : public DisplayServer
 	{
-		OBJECT_COMMON(DisplayServerWindows, DisplayServer);
+		OBJECT_CLASS(DisplayServerWindows, DisplayServer);
 
 		struct _Window
 		{
@@ -58,12 +58,12 @@ namespace ism
 
 	public:
 		virtual i32 get_screen_count() const override;
-		virtual String screen_get_name(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual Vec2i screen_get_physical_size(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual IntRect screen_get_workrect(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual Vec2i screen_get_workpos(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual Vec2i screen_get_worksize(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
-		virtual Vec2 screen_get_scale(i32 screen = SCREEN_OF_MAIN_WINDOW) const override;
+		virtual String screen_get_name(i32 screen = -1) const override;
+		virtual Vec2i screen_get_physical_size(i32 screen = -1) const override;
+		virtual IntRect screen_get_workrect(i32 screen = -1) const override;
+		virtual Vec2i screen_get_workpos(i32 screen = -1) const override;
+		virtual Vec2i screen_get_worksize(i32 screen = -1) const override;
+		virtual Vec2 screen_get_scale(i32 screen = -1) const override;
 
 	public:
 		virtual Vector<WindowID> get_window_list() const override;
@@ -104,7 +104,7 @@ namespace ism
 		virtual void swap_buffers() override;
 
 		virtual void set_native_icon(Path const & path) override;
-		virtual void set_icon(byte const * data, i32 width, i32 height) override;
+		virtual void set_icon(u8 const * data, i32 width, i32 height) override;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};

@@ -12,7 +12,7 @@ namespace ism
 	// input
 	class ISM_API Input : public Object
 	{
-		OBJECT_COMMON(Input, Object);
+		OBJECT_CLASS(Input, Object);
 
 		static Input * __singleton;
 
@@ -22,12 +22,11 @@ namespace ism
 		FORCE_INLINE static Input * get_singleton() noexcept { return __singleton; }
 
 	public:
-		enum Action_ : byte
+		enum Action_ : u8
 		{
 			Action_Release	= 0,
 			Action_Press	= 1,
 			Action_Repeat	= 2,
-			Action_MAX
 		};
 
 		enum MouseButton_
@@ -281,7 +280,7 @@ namespace ism
 		};
 
 		// internal click state
-		enum Click_ : byte
+		enum Click_ : u8
 		{
 			Click_Released			= 0,
 			Click_Clicked			= 1,
@@ -324,7 +323,7 @@ namespace ism
 		Action_	m_mouse_button[MouseButton_MAX]{};
 		f32		m_mouse_button_time[MouseButton_MAX]{};
 		f32		m_mouse_button_time_prev[MouseButton_MAX]{};
-		byte	m_mouse_click[MouseButton_MAX]{}; // 0:released, 1:clicked, 2:double_clicked, 3:new_double_click
+		u8		m_mouse_click[MouseButton_MAX]{}; // 0:released, 1:clicked, 2:double_clicked, 3:new_double_click
 		f32		m_mouse_click_time[MouseButton_MAX]{};
 		Vec2	m_mouse_click_position[MouseButton_MAX]{};
 		Vec2	m_mouse_released_position[MouseButton_MAX]{};
@@ -365,30 +364,30 @@ namespace ism
 		void set_joy_button(i32 device, i32 button, Action_ action);
 		void set_nav_input(i32 nav_input, Action_ action);
 
-		bool is_key(i32 key, i32 action, i32 mods = KeyMods_None) const;
-		bool is_mouse_button(i32 button, i32 action, i32 mods = KeyMods_None) const;
-		bool is_joy_button(i32 device, i32 button, i32 action, i32 mods = KeyMods_None) const;
-		bool is_nav_input(i32 nav_input, i32 action, i32 mods = KeyMods_None) const;
+		bool is_key(i32 key, i32 action) const;
+		bool is_mouse_button(i32 button, i32 action) const;
+		bool is_joy_button(i32 device, i32 button, i32 action) const;
+		bool is_nav_input(i32 nav_input, i32 action) const;
 
-		bool is_key_released(i32 key, i32 mods = KeyMods_None) const noexcept { return is_key(key, Action_Release, mods); }
-		bool is_mouse_button_released(i32 button, i32 mods = KeyMods_None) const noexcept { return is_mouse_button(button, Action_Release, mods); }
-		bool is_joy_button_released(i32 device, i32 button, i32 mods = KeyMods_None) const noexcept { return is_joy_button(device, button, Action_Release, mods); }
-		bool is_nav_input_released(i32 nav_input, i32 mods = KeyMods_None) const noexcept { return is_nav_input(nav_input, Action_Release, mods); }
+		bool is_key_released(i32 key) const noexcept { return is_key(key, Action_Release); }
+		bool is_mouse_button_released(i32 button) const noexcept { return is_mouse_button(button, Action_Release); }
+		bool is_joy_button_released(i32 device, i32 button) const noexcept { return is_joy_button(device, button, Action_Release); }
+		bool is_nav_input_released(i32 nav_input) const noexcept { return is_nav_input(nav_input, Action_Release); }
 
-		bool is_key_pressed(i32 key, i32 mods = KeyMods_None) const noexcept { return is_key(key, Action_Press, mods); }
-		bool is_mouse_button_pressed(i32 button, i32 mods = KeyMods_None) const noexcept { return is_mouse_button(button, Action_Press, mods); }
-		bool is_joy_button_pressed(i32 device, i32 button, i32 mods = KeyMods_None) const noexcept { return is_joy_button(device, button, Action_Press, mods); }
-		bool is_nav_input_pressed(i32 nav_input, i32 mods = KeyMods_None) const noexcept { return is_nav_input(nav_input, Action_Press, mods); }
+		bool is_key_pressed(i32 key) const noexcept { return is_key(key, Action_Press); }
+		bool is_mouse_button_pressed(i32 button) const noexcept { return is_mouse_button(button, Action_Press); }
+		bool is_joy_button_pressed(i32 device, i32 button) const noexcept { return is_joy_button(device, button, Action_Press); }
+		bool is_nav_input_pressed(i32 nav_input) const noexcept { return is_nav_input(nav_input, Action_Press); }
 
-		bool is_key_repeating(i32 key, i32 mods = KeyMods_None) const noexcept { return is_key(key, Action_Repeat, mods); }
-		bool is_mouse_button_repeating(i32 button, i32 mods = KeyMods_None) const noexcept { return is_mouse_button(button, Action_Repeat, mods); }
-		bool is_joy_button_repeating(i32 device, i32 button, i32 mods = KeyMods_None) const noexcept { return is_joy_button(device, button, Action_Repeat, mods); }
-		bool is_nav_input_repeating(i32 nav_input, i32 mods = KeyMods_None) const noexcept { return is_nav_input(nav_input, Action_Repeat, mods); }
+		bool is_key_repeat(i32 key) const noexcept { return is_key(key, Action_Repeat); }
+		bool is_mouse_button_repeat(i32 button) const noexcept { return is_mouse_button(button, Action_Repeat); }
+		bool is_joy_button_repeat(i32 device, i32 button) const noexcept { return is_joy_button(device, button, Action_Repeat); }
+		bool is_nav_input_repeat(i32 nav_input) const noexcept { return is_nav_input(nav_input, Action_Repeat); }
 		
-		bool is_key_down(i32 key, i32 mods = KeyMods_None) const;
-		bool is_mouse_button_down(i32 button, i32 mods = KeyMods_None) const;
-		bool is_joy_button_down(i32 device, i32 button, i32 mods = KeyMods_None) const;
-		bool is_nav_input_down(i32 nav_input, i32 mods = KeyMods_None) const;
+		bool is_key_down(i32 key) const;
+		bool is_mouse_button_down(i32 button) const;
+		bool is_joy_button_down(i32 device, i32 button) const;
+		bool is_nav_input_down(i32 nav_input) const;
 
 		bool is_any_key_down() const;
 		bool is_any_mouse_button_down() const;

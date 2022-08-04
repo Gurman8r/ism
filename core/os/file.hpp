@@ -9,7 +9,7 @@ namespace ism
 {
 	class ISM_API File : public Resource
 	{
-		OBJECT_COMMON(File, Resource);
+		OBJECT_CLASS(File, Resource);
 
 	protected:
 		File();

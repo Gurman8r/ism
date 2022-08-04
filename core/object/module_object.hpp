@@ -9,7 +9,7 @@ namespace ism
 	// module object
 	class ISM_API ModuleObject : public Object
 	{
-		OBJECT_COMMON(ModuleObject, Object);
+		OBJECT_CLASS(ModuleObject, Object);
 
 		friend class MODULE;
 
@@ -59,7 +59,7 @@ namespace ism
 	// module ref
 	class MODULE : public Ref<ModuleObject>
 	{
-		REF_COMMON(MODULE, OBJECT_CHECK_MODULE);
+		REF_CLASS(MODULE, OBJECT_CHECK_MODULE);
 
 	public:
 		template <class Value = OBJ

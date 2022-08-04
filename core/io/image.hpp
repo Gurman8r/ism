@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Image : public Resource
 	{
-		OBJECT_COMMON(Image, Resource);
+		OBJECT_CLASS(Image, Resource);
 
 		friend class ImageLoader;
 
@@ -68,10 +68,8 @@ namespace ism
 		};
 
 	private:
-		Format_ m_format{};
-
 		i32 m_width{}, m_height{}, m_depth{};
-		
+		Format_ m_format{};
 		DynamicBuffer m_pixels{};
 
 	public:
@@ -87,35 +85,25 @@ namespace ism
 
 		Image(i32 width, i32 height, Format_ format, DynamicBuffer const & data);
 
+		virtual RID get_rid() const override { return RID{}; }
+
 		virtual Error_ reload_from_file() override;
 
 		void clear();
-
 		void flip_vertically();
-
 		void flip_horizontally();
 
-	public:
-		virtual RID get_rid() const override { return RID{}; }
-
 		i32 get_width() const noexcept { return m_width; }
-
 		i32 get_height() const noexcept { return m_height; }
-
 		i32 get_depth() const noexcept { return m_depth; }
-
 		i32 get_capacity() const noexcept { return m_width * m_height * m_depth; }
-
 		Format_ get_format() const noexcept { return m_format; }
-
 		DynamicBuffer const & get_data() const noexcept { return m_pixels; }
 
 		Color32 get_pixel(size_t index) const;
-
 		Color32 get_pixel(size_t x, size_t y) const noexcept { return get_pixel((x + y * m_width) * m_depth); }
 
 		void set_pixel(size_t index, Color32 value);
-
 		void set_pixel(size_t x, size_t y, Color32 value) noexcept { set_pixel(((x + y * m_width) * m_depth), value); }
 	};
 

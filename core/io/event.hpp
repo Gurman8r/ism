@@ -19,14 +19,14 @@ namespace ism
 
 	class EventBus;
 
-	ALIAS(EventID) hash_t;
+	ALIAS(EventID) size_t;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// event
 	class ISM_API Event : public Object
 	{
-		OBJECT_COMMON(Event, Object);
+		OBJECT_CLASS(Event, Object);
 
 	protected:
 		Event() noexcept = default;
@@ -52,7 +52,7 @@ namespace ism
 private:																		\
 	static_assert(std::is_base_of_v<ism::Event, m_inherits>);					\
 																				\
-	OBJECT_COMMON(m_class, m_inherits);											\
+	OBJECT_CLASS(m_class, m_inherits);											\
 																				\
 public:																			\
 	enum : ism::EventID { ID = m_class::get_class_static().hash_code() };		\
@@ -66,7 +66,7 @@ private:
 	// event handler
 	class ISM_API EventHandler : public Object
 	{
-		OBJECT_COMMON(EventHandler, Object);
+		OBJECT_CLASS(EventHandler, Object);
 
 		friend struct Less<EventHandler *>;
 
@@ -98,7 +98,7 @@ private:
 	// dummy handler
 	class ISM_API DummyHandler final : public EventHandler
 	{
-		OBJECT_COMMON(DummyHandler, EventHandler);
+		OBJECT_CLASS(DummyHandler, EventHandler);
 
 		std::function<void(Event const &)> m_callback{};
 
@@ -124,7 +124,7 @@ private:
 	// event delegate base
 	template <> class ISM_API EventDelegate<Event> : public EventHandler
 	{
-		OBJECT_COMMON(EventDelegate<Event>, EventHandler);
+		OBJECT_CLASS(EventDelegate<Event>, EventHandler);
 
 	public:
 		enum : EventID { ID = Event::ID };
@@ -199,7 +199,7 @@ private:
 	// event bus
 	class ISM_API EventBus : public Object
 	{
-		OBJECT_COMMON(EventBus, Object);
+		OBJECT_CLASS(EventBus, Object);
 
 		static EventBus * __singleton;
 

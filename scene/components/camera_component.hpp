@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API CameraComponent : public BehaviorComponent
 	{
-		OBJECT_COMMON(CameraComponent, BehaviorComponent);
+		OBJECT_CLASS(CameraComponent, BehaviorComponent);
 
 	public:
 		CameraComponent(Entity * entity) noexcept;

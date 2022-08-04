@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API BehaviorComponent : public Component
 	{
-		OBJECT_COMMON(BehaviorComponent, Component);
+		OBJECT_CLASS(BehaviorComponent, Component);
 
 		bool m_is_enabled{ true };
 

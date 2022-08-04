@@ -3,7 +3,6 @@
 
 #include <core/templates/tuple.hpp>
 
-// META STRUCTURES
 namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -18,12 +17,6 @@ namespace ism::mpl
 
 #define TAG_TYPE(tag) std::decay_t<decltype(tag)::type>
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// LOOPS
-namespace ism::mpl
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Tup, class Fn, size_t ... Is
@@ -108,12 +101,8 @@ namespace ism::mpl
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// CONCAT - combine types
-namespace ism::mpl
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* CONCAT - combine types */
 
 	template <class ...
 	> struct impl_concat
@@ -137,12 +126,8 @@ namespace ism::mpl
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// REMAP - modify inner types
-namespace ism::mpl
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* REMAP - modify inner types */
 
 	template <template <class> class Pr, class
 	> struct impl_remap
@@ -160,12 +145,8 @@ namespace ism::mpl
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// RENAME - modify outer type
-namespace ism::mpl
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* RENAME - modify outer type */
 
 	template <template <class...> class To, class T
 	> struct impl_rename;
@@ -186,10 +167,11 @@ namespace ism::mpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// CONTAINS - check type_list contains type
 namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	/* CONTAINS - check type_list contains type */
 
 	template <class T, class Ls
 	> struct contains;
@@ -210,12 +192,8 @@ namespace ism::mpl
 	> constexpr bool contains_v{ contains<T, Ls>::value };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// INDEX OF - get index of type in a type_list
-namespace ism::mpl
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* INDEX OF - get index of type in a type_list */
 
 	template <class T, class Ls
 	> struct index_of;
@@ -231,12 +209,6 @@ namespace ism::mpl
 	template <class T, class Ls
 	> constexpr auto index_of_v{ index_of<T, Ls>::value };
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-// GENERAL
-namespace ism::mpl
-{
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	
 	template <class Ls
@@ -300,12 +272,8 @@ namespace ism::mpl
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// REPEAT - size N type_list of T
-namespace ism::mpl
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* REPEAT - size N type_list of T */
 
 	template <size_t N, class T
 	> struct impl_repeat
@@ -326,12 +294,8 @@ namespace ism::mpl
 	> using array = tuple<repeat<N, T>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// FILTER - remove types from type_list
-namespace ism::mpl
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	/* FILTER - remove types from type_list */
 
 	template <template <class> class Pr, class
 	> struct impl_filter

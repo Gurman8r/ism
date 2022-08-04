@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API EditorHierarchy : public EditorPanel
 	{
-		OBJECT_COMMON(EditorHierarchy, EditorPanel);
+		OBJECT_CLASS(EditorHierarchy, EditorPanel);
 
 	public:
 		EditorHierarchy();
@@ -15,7 +15,7 @@ namespace ism
 		virtual ~EditorHierarchy();
 
 	public:
-		virtual void process(Duration const & dt) override;
+		virtual void process(Duration const & delta_time) override;
 	};
 }
 

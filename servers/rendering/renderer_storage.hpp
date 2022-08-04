@@ -10,7 +10,7 @@ namespace ism
 	// renderer storage
 	class ISM_API RendererStorage : public Object
 	{
-		OBJECT_COMMON(RendererStorage, Object);
+		OBJECT_CLASS(RendererStorage, Object);
 
 		friend class RenderingServerDefault;
 
@@ -109,6 +109,7 @@ namespace ism
 		Vec2i render_target_get_size(RID render_target);
 		void render_target_set_size(RID render_target, i32 width, i32 height);
 		RID render_target_get_texture(RID render_target);
+
 		void render_target_request_clear(RID render_target, Color const & value);
 		void render_target_disable_clear_request(RID render_target);
 		bool render_target_is_clear_requested(RID render_target);

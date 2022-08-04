@@ -2,8 +2,34 @@
 
 /* VEC2 */
 
+namespace ism::util
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> constexpr T magnitude(TVec2<T> const & v) noexcept
+	{
+		return (v[0] * v[0]) + (v[1] * v[1]);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class A, class B
+	> constexpr bool operator==(TVec2<A> const & a, TVec2<B> const & b) noexcept {
+		return (std::addressof(a) == std::addressof(b)) || (
+			a[0] == (A)b[0] &&
+			a[1] == (A)b[1]);
+	}
+
+	template <class A, class B
+	> constexpr bool operator!=(TVec2<A> const & a, TVec2<B> const & b) noexcept {
+		return !(a == b);
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class A, class B

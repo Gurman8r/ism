@@ -9,7 +9,7 @@ namespace ism
 	// string object
 	class ISM_API StringObject : public Object
 	{
-		OBJECT_COMMON(StringObject, Object);
+		OBJECT_CLASS(StringObject, Object);
 
 		friend class STR;
 
@@ -96,7 +96,7 @@ namespace ism
 	// string ref
 	class STR : public Ref<StringObject>
 	{
-		REF_COMMON(STR, OBJECT_CHECK_STR);
+		REF_CLASS(STR, OBJECT_CHECK_STR);
 
 	public:
 		using storage_type		= value_type::storage_type;

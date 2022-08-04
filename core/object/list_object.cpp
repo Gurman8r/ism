@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ListObject, t)
+	EMBED_OBJECT_CLASS(ListObject, t)
 	{
 		t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)LIST(self).size(); };
 
@@ -18,7 +18,7 @@ namespace ism
 			else { return util::compare((intptr_t)*self, (intptr_t)*other); }
 		};
 
-		t.tp_bind = CLASS_INSTALLER(ListObject, t)
+		t.tp_bind = CLASS_BINDER(ListObject, t)
 		{
 			return t
 				.def("__contains__", &ListObject::contains<OBJ const &>)

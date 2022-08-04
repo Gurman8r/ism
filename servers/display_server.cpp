@@ -6,7 +6,7 @@ namespace ism
 
 	DS * DS::__singleton{};
 
-	EMBED_CLASS(DisplayServer, t, TypeFlags_IsAbstract) {}
+	EMBED_OBJECT_CLASS(DisplayServer, t, TypeFlags_IsAbstract) {}
 
 	DisplayServer::DisplayServer()
 	{

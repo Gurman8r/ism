@@ -13,7 +13,7 @@ namespace ism
 	// base class for editor windows
 	class ISM_API EditorPanel : public Object
 	{
-		OBJECT_COMMON(EditorPanel, Object);
+		OBJECT_CLASS(EditorPanel, Object);
 
 		cstring				m_name;
 		bool				m_is_open;
@@ -26,7 +26,7 @@ namespace ism
 	public:
 		virtual ~EditorPanel();
 
-		virtual void process(Duration const & dt) = 0;
+		virtual void process(Duration const & delta_time) = 0;
 
 	public:
 		auto get_name() const noexcept -> cstring { return m_name; }

@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MAKE_ENUM_MAPPING(ERR_TYPE, ErrorHandlerType_, cstring,
+	ENUM_MAPPING(ERR_TYPE, ErrorHandlerType_, cstring,
 		"ERROR",
 		"WARNING");
 

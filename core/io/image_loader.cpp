@@ -16,7 +16,7 @@ namespace ism
 		if (!path) { return Error_Unknown; }
 
 		static ON_SCOPE_ENTER(&) { stbi_set_flip_vertically_on_load(true); };
-		byte * data{ (byte *)stbi_load(path.c_str(), &image.m_width, &image.m_height, &image.m_depth, 0) };
+		u8 * data{ (u8 *)stbi_load(path.c_str(), &image.m_width, &image.m_height, &image.m_depth, 0) };
 		ON_SCOPE_EXIT(&) { stbi_image_free(data); };
 		if (!data) { return Error_Unknown; }
 

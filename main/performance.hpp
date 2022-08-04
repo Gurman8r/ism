@@ -10,7 +10,7 @@ namespace ism
 	{
 		f32			value{};
 		f32			accum{};
-		size_t			index{};
+		size_t		index{};
 		Vector<f32>	times{};
 
 		FPS_Tracker(size_t count = 120) noexcept : value{}, accum{}, index{}, times{}

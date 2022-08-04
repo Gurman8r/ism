@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorLog, t) {}
+	EMBED_OBJECT_CLASS(EditorLog, t) {}
 
 	EditorLog::EditorLog() : EditorPanel{ "Log##Editor" }
 	{
@@ -14,7 +14,7 @@ namespace ism
 	{
 	}
 
-	void EditorLog::process(Duration const & dt)
+	void EditorLog::process(Duration const & delta_time)
 	{
 		if (!is_open()) { return; }
 		ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };

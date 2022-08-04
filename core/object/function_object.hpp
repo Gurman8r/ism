@@ -9,7 +9,7 @@ namespace ism
 	// function object
 	class ISM_API FunctionObject : public Object
 	{
-		OBJECT_COMMON(FunctionObject, Object);
+		OBJECT_CLASS(FunctionObject, Object);
 
 		friend class FUNCTION;
 
@@ -36,7 +36,7 @@ namespace ism
 	// function ref
 	class FUNCTION : public Ref<FunctionObject>
 	{
-		REF_COMMON(FUNCTION, OBJECT_CHECK_FUNCTION);
+		REF_CLASS(FUNCTION, OBJECT_CHECK_FUNCTION);
 
 	public:
 		OBJ cpp_function() const { return VALIDATE(m_ptr)->cpp_function(); }

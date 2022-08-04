@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API InputEvent : public Object
 	{
-		OBJECT_COMMON(InputEvent, Object);
+		OBJECT_CLASS(InputEvent, Object);
 
 	public:
 		InputEvent() noexcept {}

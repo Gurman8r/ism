@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorHierarchy, t) {}
+	EMBED_OBJECT_CLASS(EditorHierarchy, t) {}
 
 	EditorHierarchy::EditorHierarchy() : EditorPanel{ "Hierarchy##Editor" }
 	{
@@ -14,7 +14,7 @@ namespace ism
 	{
 	}
 
-	void EditorHierarchy::process(Duration const & dt)
+	void EditorHierarchy::process(Duration const & delta_time)
 	{
 		if (!is_open()) { return; }
 		ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };

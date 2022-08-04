@@ -10,7 +10,7 @@ namespace ism
 	// generic object
 	class GenericObject : public Object
 	{
-		OBJECT_COMMON(GenericObject, Object);
+		OBJECT_CLASS(GenericObject, Object);
 
 		friend class GENERIC;
 
@@ -26,7 +26,7 @@ namespace ism
 	// generic ref
 	class GENERIC : public Ref<GenericObject>
 	{
-		REF_COMMON(GENERIC, OBJECT_CHECK_GENERIC);
+		REF_CLASS(GENERIC, OBJECT_CHECK_GENERIC);
 
 	public:
 	};

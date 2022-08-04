@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Image, t) {}
+	EMBED_OBJECT_CLASS(Image, t) {}
 
 	Image::Image(i32 width, i32 height, Format_ format)
 	{
@@ -43,7 +43,7 @@ namespace ism
 
 	void Image::clear()
 	{
-		m_pixels = {};
+		DynamicBuffer{}.swap(m_pixels);
 		m_width = m_height = m_depth = 0;
 		m_format = Image::Format_MAX;
 	}
@@ -87,7 +87,7 @@ namespace ism
 	{
 		ASSERT((i32)index + m_depth < get_capacity());
 		auto const it{ m_pixels.begin() + index };
-		byte r{}, g{}, b{}, a{ 255 };
+		u8 r{}, g{}, b{}, a{ 255 };
 		if (m_depth >= 1) { r = *(it + 0); }
 		if (m_depth >= 2) { g = *(it + 1); }
 		if (m_depth >= 3) { b = *(it + 2); }

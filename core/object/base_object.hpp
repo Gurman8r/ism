@@ -6,8 +6,8 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// object common
-#define OBJECT_COMMON(m_class, m_inherits)											\
+// object class
+#define OBJECT_CLASS(m_class, m_inherits)											\
 public:																				\
 	using base_type = typename m_inherits;											\
 																					\
@@ -88,32 +88,34 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // class embedding utility
-#define EMBED_CLASS(m_class, m_var, ...)													\
-																							\
-	/* declare binder */																	\
-	template <> class ism::_EmbedClassHelper<m_class> final									\
-	{																						\
-	public:																					\
-		static void do_embed(ism::TypeObject & t);											\
-																							\
-		static void embed(ism::TypeObject & t)												\
-		{																					\
-			/* TODO: can add extra stuff here later */										\
-																							\
-			do_embed(t);																	\
-		}																					\
-	};																						\
-																							\
-	/* construct type object */																\
-	ism::TypeObject m_class::__type_static =												\
-																							\
-	MAKER(ism::TypeObject, ism::mpl::type_tag<m_class>(), TOSTR(m_class), ##__VA_ARGS__)	\
-																							\
-	+ ism::_EmbedClassHelper<m_class>::embed;												\
-																							\
-	/* implement binder function body */													\
-	void ism::_EmbedClassHelper<m_class>::do_embed(ism::TypeObject & m_var)					\
-																							\
+#define EMBED_OBJECT_CLASS(m_class, m_var, ...)								\
+																			\
+	/* implement embedding helper */										\
+	template <> class ism::_EmbedClassHelper<m_class> final					\
+	{																		\
+	public:																	\
+		static void do_embed(ism::TypeObject & t);							\
+																			\
+		static void embed(ism::TypeObject & t)								\
+		{																	\
+			/* TODO: can add extra stuff here */							\
+																			\
+			do_embed(t);													\
+		}																	\
+	};																		\
+																			\
+	/* construct the type object using a maker to call the embedder */		\
+	ism::TypeObject m_class::__type_static = MAKER(							\
+		ism::TypeObject,													\
+		ism::mpl::type_tag<m_class>(),										\
+		TOSTR(m_class),														\
+		##__VA_ARGS__)														\
+																			\
+	+ ism::_EmbedClassHelper<m_class>::embed;								\
+																			\
+	/* implement binder function body */									\
+	void ism::_EmbedClassHelper<m_class>::do_embed(ism::TypeObject & m_var)	\
+																			\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -235,7 +237,7 @@ namespace ism
 	// object ref
 	class OBJ : public Ref<Object>
 	{
-		REF_COMMON(OBJ, OBJECT_NO_CHECK);
+		REF_CLASS(OBJ, OBJECT_NO_CHECK);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

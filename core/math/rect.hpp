@@ -1,7 +1,7 @@
 #ifndef _ISM_RECT_HPP_
 #define _ISM_RECT_HPP_
 
-#include <core/math/maths.hpp>
+#include <core/math/matrix.hpp>
 
 namespace ism
 {

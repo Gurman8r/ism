@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorViewport, t) {}
+	EMBED_OBJECT_CLASS(EditorViewport, t) {}
 
 	EditorViewport::EditorViewport()
 		: EditorPanel{ "Viewport##Editor", true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar }
@@ -23,7 +23,7 @@ namespace ism
 	{
 	}
 
-	void EditorViewport::process(Duration const & dt)
+	void EditorViewport::process(Duration const & delta_time)
 	{
 		if (!is_open()) { return; }
 		ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };
@@ -47,7 +47,7 @@ namespace ism
 		bool const dragging_view{ nav_enabled && !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && input->is_mouse_dragging(0) };
 
 		if (dragging_view) {
-			Vec2 const drag{ input->get_mouse_delta() * (f32)dt * 50.f };
+			Vec2 const drag{ input->get_mouse_delta() * (f32)delta_time * 50.f };
 			m_editor_camera.do_yaw(-drag[0]);
 			m_editor_camera.do_pitch(+drag[1]);
 		}

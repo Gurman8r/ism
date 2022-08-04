@@ -132,7 +132,7 @@ namespace ism::util
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline Optional<sbyte> to_i8(String const & value, i32 base = 10) noexcept { return parse_answer<sbyte>(value.c_str(), &_CSTD strtol, base); }
+	inline Optional<i8> to_i8(String const & value, i32 base = 10) noexcept { return parse_answer<i8>(value.c_str(), &_CSTD strtol, base); }
 
 	inline Optional<i16> to_i16(String const & value, i32 base = 10) noexcept { return parse_answer<i16>(value.c_str(), &_CSTD strtol, base); }
 
@@ -140,7 +140,7 @@ namespace ism::util
 
 	inline Optional<i64> to_i64(String const & value, i32 base = 10) noexcept { return parse_answer<i64>(value.c_str(), &_CSTD strtoll, base); }
 
-	inline Optional<byte> to_u8(String const & value, i32 base = 10) noexcept { return parse_answer<byte>(value.c_str(), &_CSTD strtoul, base); }
+	inline Optional<u8> to_u8(String const & value, i32 base = 10) noexcept { return parse_answer<u8>(value.c_str(), &_CSTD strtoul, base); }
 
 	inline Optional<u16> to_u16(String const & value, i32 base = 10) noexcept { return parse_answer<u16>(value.c_str(), &_CSTD strtoul, base); }
 
@@ -156,7 +156,7 @@ namespace ism::util
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline String to_string(sbyte value) noexcept { return integral_to_string(value); }
+	inline String to_string(i8 value) noexcept { return integral_to_string(value); }
 
 	inline String to_string(i16 value) noexcept { return integral_to_string(value); }
 
@@ -164,7 +164,7 @@ namespace ism::util
 
 	inline String to_string(i64 value) noexcept { return integral_to_string(value); }
 
-	inline String to_string(byte value) noexcept { return uintegral_to_string(value); }
+	inline String to_string(u8 value) noexcept { return uintegral_to_string(value); }
 
 	inline String to_string(u16 value) noexcept { return uintegral_to_string(value); }
 

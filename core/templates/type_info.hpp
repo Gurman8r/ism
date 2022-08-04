@@ -72,12 +72,12 @@ namespace ism
 	// hashof_t
 	template <class T
 	> struct hashof_t {
-		static constexpr hash_t value{ nameof_v<T>.hash_code() };
+		static constexpr size_t value{ nameof_v<T>.hash_code() };
 	};
 
 	// hashof_v
 	template <class T
-	> constexpr hash_t hashof_v{
+	> constexpr size_t hashof_v{
 		hashof_t<T>::value
 	};
 

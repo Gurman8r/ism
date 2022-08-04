@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Node, t, TypeFlags_IsAbstract) {}
+	EMBED_OBJECT_CLASS(Node, t, TypeFlags_IsAbstract) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

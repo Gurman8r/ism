@@ -16,7 +16,7 @@ namespace ism
 
 	class ISM_API EditorNode : public Node
 	{
-		OBJECT_COMMON(EditorNode, Node);
+		OBJECT_CLASS(EditorNode, Node);
 
 		static EditorNode * __singleton;
 

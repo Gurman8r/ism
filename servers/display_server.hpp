@@ -12,7 +12,7 @@ namespace ism
 	// display server
 	class ISM_API DisplayServer : public Object
 	{
-		OBJECT_COMMON(DisplayServer, Object);
+		OBJECT_CLASS(DisplayServer, Object);
 
 		static DisplayServer * __singleton;
 
@@ -42,14 +42,13 @@ namespace ism
 		virtual void cursor_set_custom_image(RES const & cursor, Input::CursorShape_ shape = {}, Vec2 const & hotspot = {}) = 0;
 
 	public:
-		enum { SCREEN_OF_MAIN_WINDOW = -1 };
 		virtual i32 get_screen_count() const = 0;
-		virtual String screen_get_name(i32 screen = SCREEN_OF_MAIN_WINDOW) const = 0;
-		virtual Vec2i screen_get_physical_size(i32 screen = SCREEN_OF_MAIN_WINDOW) const = 0;
-		virtual IntRect screen_get_workrect(i32 screen = SCREEN_OF_MAIN_WINDOW) const = 0;
-		virtual Vec2i screen_get_workpos(i32 screen = SCREEN_OF_MAIN_WINDOW) const = 0;
-		virtual Vec2i screen_get_worksize(i32 screen = SCREEN_OF_MAIN_WINDOW) const = 0;
-		virtual Vec2 screen_get_scale(i32 screen = SCREEN_OF_MAIN_WINDOW) const = 0;
+		virtual String screen_get_name(i32 screen = -1) const = 0;
+		virtual Vec2i screen_get_physical_size(i32 screen = -1) const = 0;
+		virtual IntRect screen_get_workrect(i32 screen = -1) const = 0;
+		virtual Vec2i screen_get_workpos(i32 screen = -1) const = 0;
+		virtual Vec2i screen_get_worksize(i32 screen = -1) const = 0;
+		virtual Vec2 screen_get_scale(i32 screen = -1) const = 0;
 		virtual Vec2 screen_get_max_scale() const {
 			Vec2 scale{ 1.f, 1.f };
 			for (i32 i = 0; i < get_screen_count(); ++i) {
@@ -143,7 +142,7 @@ namespace ism
 		virtual void swap_buffers() = 0;
 
 		virtual void set_native_icon(Path const & path) = 0;
-		virtual void set_icon(byte const * data, i32 width, i32 height) = 0;
+		virtual void set_icon(u8 const * data, i32 width, i32 height) = 0;
 
 		void vsync_set_enabled(bool enabled);
 		bool vsync_is_enabled() const;

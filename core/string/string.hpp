@@ -102,7 +102,7 @@ namespace ism
 
 	template <class C> struct Hasher<BasicString<C>>
 	{
-		hash_t operator()(BasicString<C> const & s) const noexcept { return s.hash_code(); }
+		size_t operator()(BasicString<C> const & s) const noexcept { return s.hash_code(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

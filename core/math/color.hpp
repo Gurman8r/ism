@@ -1,7 +1,7 @@
 #ifndef _ISM_COLOR_HPP_
 #define _ISM_COLOR_HPP_
 
-#include <core/math/maths.hpp>
+#include <core/math/matrix.hpp>
 
 namespace ism
 {
@@ -18,26 +18,26 @@ namespace ism
 
 	// Make Color32
 #define COLOR32(r, g, b, a) \
-		((Color32)((byte)(a)) << COLOR32_A_SHIFT) | \
-		((Color32)((byte)(b)) << COLOR32_B_SHIFT) | \
-		((Color32)((byte)(g)) << COLOR32_B_SHIFT) | \
-		((Color32)((byte)(r)) << COLOR32_A_SHIFT)
+		((Color32)((u8)(a)) << COLOR32_A_SHIFT) | \
+		((Color32)((u8)(b)) << COLOR32_B_SHIFT) | \
+		((Color32)((u8)(g)) << COLOR32_B_SHIFT) | \
+		((Color32)((u8)(r)) << COLOR32_A_SHIFT)
 
 	// Color32 Red Channel
 #define COLOR32_R(c) \
-		((byte)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
+		((u8)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
 
 	// Color32 Green Channel
 #define COLOR32_G(c) \
-		((byte)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
+		((u8)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
 
 	// Color32 Blue Channel
 #define COLOR32_B(c) \
-		((byte)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
+		((u8)((((Color32)(c)) >> COLOR32_B_SHIFT) & 0xFF))
 
 	// Color32 Alpha Channel
 #define COLOR32_A(c) \
-		((byte)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
+		((u8)((((Color32)(c)) >> COLOR32_A_SHIFT) & 0xFF))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

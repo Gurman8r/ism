@@ -55,6 +55,7 @@ namespace ism
 	class TypeObject;
 	class IntObject;
 	class FloatObject;
+	class IteratorObject;
 	class StringObject;
 	class TupleObject;
 	class ListObject;
@@ -85,6 +86,7 @@ namespace ism
 	class TYPE;
 	class INT;
 	class FLT;
+	class ITERATOR;
 	class STR;
 	class TUPLE;
 	class LIST;
@@ -134,7 +136,7 @@ namespace ism
 	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
 	ALIAS(delfunc)			void(*)(Object * ptr);
 	ALIAS(cmpfunc)			i32(*)(OBJ lhs, OBJ rhs);
-	ALIAS(hashfunc)			hash_t(*)(OBJ obj);
+	ALIAS(hashfunc)			size_t(*)(OBJ obj);
 	ALIAS(lenfunc)			ssize_t(*)(OBJ obj);
 	ALIAS(reprfunc)			STR(*)(OBJ obj);
 	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argv, size_t argc);

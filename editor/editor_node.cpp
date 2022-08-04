@@ -1,8 +1,24 @@
 #include <editor/editor_node.hpp>
 #include <scene/main/imgui.hpp>
+#include <core/math/face3.hpp>
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	static constexpr Face3 default_quad_vertices[] =
+	{
+		{ { +1.f, +1.f }, Vec3::one(), { 1.f, 1.f } },
+		{ { +1.f, -1.f }, Vec3::one(), { 1.f, 0.f } },
+		{ { -1.f, -1.f }, Vec3::one(), { 0.f, 0.f } },
+		{ { -1.f, +1.f }, Vec3::one(), { 0.f, 1.f } },
+	};
+
+	static constexpr i32 default_quad_indices[] =
+	{
+		0, 1, 2
+	};
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	enum {
@@ -88,7 +104,7 @@ namespace ism
 
 	EditorNode * EditorNode::__singleton{};
 
-	EMBED_CLASS(EditorNode, t) {}
+	EMBED_OBJECT_CLASS(EditorNode, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -231,6 +247,7 @@ namespace ism
 			}
 			RD::get_singleton()->draw_list_end();
 
+			// imgui
 			_draw_dockspace();
 			if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
 			m_hierarchy.process(delta_time);

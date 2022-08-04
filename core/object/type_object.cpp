@@ -49,7 +49,7 @@ namespace ism
 		{0}
 	};
 
-	EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
+	EMBED_OBJECT_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
 	{
 		t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -65,7 +65,7 @@ namespace ism
 
 		t.tp_setattro = (setattrofunc)&TypeObject::type_setattro;
 
-		t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return ((TYPE)self)->tp_name.hash_code(); };
+		t.tp_hash = (hashfunc)[](OBJ self) -> size_t { return ((TYPE)self)->tp_name.hash_code(); };
 
 		t.tp_repr = (reprfunc)[](OBJ self) -> STR { return STR(TYPE(self)->tp_name); };
 
@@ -78,7 +78,7 @@ namespace ism
 			return fn ? fn(self, args) : nullptr;
 		};
 
-		t.tp_bind = CLASS_INSTALLER(TypeObject, t)
+		t.tp_bind = CLASS_BINDER(TypeObject, t)
 		{
 			return t
 				.def_static("__instancecheck__", [](OBJ const & obj, OBJ const & type) { return isinstance(obj, type); })
@@ -385,9 +385,9 @@ namespace ism
 		} break;
 
 		case "__hash__"_hash: {
-			tp_hash = (hashfunc)[](OBJ self) -> hash_t {
+			tp_hash = (hashfunc)[](OBJ self) -> size_t {
 				STR_IDENTIFIER(__hash__);
-				if (OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<hash_t>(); }
+				if (OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<size_t>(); }
 				return 0;
 			};
 		} break;

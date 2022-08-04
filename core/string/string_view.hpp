@@ -70,7 +70,7 @@ namespace ism
 	template <class C
 	> struct Hasher<BasicStringView<C>>
 	{
-		hash_t operator()(BasicStringView<C> const s) const noexcept { return s.hash_code(); }
+		size_t operator()(BasicStringView<C> const s) const noexcept { return s.hash_code(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

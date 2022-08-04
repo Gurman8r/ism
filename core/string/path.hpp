@@ -231,7 +231,7 @@ namespace ism
 		NODISCARD bool empty() const noexcept { return m_text.empty(); }
 		NODISCARD auto length() const noexcept -> size_type { return m_text.size(); }
 		NODISCARD auto size() const noexcept -> size_type { return m_text.size(); }
-		NODISCARD auto hash_code() const noexcept -> hash_t { return m_text.hash_code(); }
+		NODISCARD auto hash_code() const noexcept -> size_t { return m_text.hash_code(); }
 		NODISCARD char & operator[](size_type i) & noexcept { return m_text[i]; }
 		NODISCARD char operator[](size_type i) const & noexcept { return m_text[i]; }
 
@@ -285,7 +285,7 @@ namespace ism
 
 	template <> struct Hasher<Path>
 	{
-		hash_t operator()(Path const & value) const { return value.hash_code(); }
+		size_t operator()(Path const & value) const { return value.hash_code(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

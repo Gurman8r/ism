@@ -7,19 +7,19 @@ namespace ism
 {
 	class ISM_API EditorCamera : public Object
 	{
-		OBJECT_COMMON(EditorCamera, Object);
+		OBJECT_CLASS(EditorCamera, Object);
 
-		Mat4		m_proj;
-		bool		m_is_ortho;
+		Mat4	m_proj;
+		bool	m_is_ortho;
 		f32		m_fov[2];
-		Vec2		m_clip[2];
+		Vec2	m_clip[2];
 
-		Mat4		m_view;
-		Vec3		m_eye;
-		Vec3		m_target;
-		Vec3		m_up;
+		Mat4	m_view;
+		Vec3	m_eye;
+		Vec3	m_target;
+		Vec3	m_up;
 
-		Vec2		m_resolution;
+		Vec2	m_resolution;
 		f32		m_yaw;
 		f32		m_pitch;
 		f32		m_roll;

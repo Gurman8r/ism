@@ -10,7 +10,7 @@ namespace ism
 	// window
 	class ISM_API Window : public Viewport
 	{
-		OBJECT_COMMON(Window, Viewport);
+		OBJECT_CLASS(Window, Viewport);
 
 		DS::WindowID m_window{};
 

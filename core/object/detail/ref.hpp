@@ -149,7 +149,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// ref common
-#define REF_COMMON(m_class, m_check)																	\
+#define REF_CLASS(m_class, m_check)																	\
 public:																									\
 	ALIAS(base_type) ism::Ref<value_type>;																\
 																										\

@@ -45,14 +45,14 @@ namespace ism
 {
 	// mask base
 	template <size_t _Bits
-	> ALIAS(_MaskBase) std::bitset<_Bits>;
+	> ALIAS(_BitMaskBase) std::bitset<_Bits>;
 
 	// mask
 	template <size_t _Bits
-	> class Mask : public _MaskBase<_Bits>
+	> class BitMask : public _BitMaskBase<_Bits>
 	{
 	public:
-		using base_type = _MaskBase<_Bits>;
+		using base_type = _BitMaskBase<_Bits>;
 		using base_type::base_type;
 		using base_type::operator=;
 		using base_type::operator&=;

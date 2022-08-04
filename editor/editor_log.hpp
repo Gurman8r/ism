@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API EditorLog : public EditorPanel
 	{
-		OBJECT_COMMON(EditorLog, EditorPanel);
+		OBJECT_CLASS(EditorLog, EditorPanel);
 
 	public:
 		EditorLog();
@@ -15,7 +15,7 @@ namespace ism
 		virtual ~EditorLog();
 
 	public:
-		virtual void process(Duration const & dt) override;
+		virtual void process(Duration const & delta_time) override;
 	};
 }
 

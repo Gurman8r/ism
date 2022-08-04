@@ -10,7 +10,7 @@ namespace ism
 	// canvas renderer
 	class ISM_API Renderer2D : public Object
 	{
-		OBJECT_COMMON(Renderer2D, Object);
+		OBJECT_CLASS(Renderer2D, Object);
 		
 		friend class RenderingServerDefault;
 

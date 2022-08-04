@@ -11,7 +11,7 @@ namespace ism
 
 	class AudioServer : public Object
 	{
-		OBJECT_COMMON(AudioServer, Object);
+		OBJECT_CLASS(AudioServer, Object);
 
 		static AudioServer * __singleton;
 

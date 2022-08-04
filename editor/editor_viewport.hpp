@@ -8,7 +8,7 @@ namespace ism
 {
 	class ISM_API EditorViewport : public EditorPanel
 	{
-		OBJECT_COMMON(EditorViewport, EditorPanel);
+		OBJECT_CLASS(EditorViewport, EditorPanel);
 
 		RID m_main_texture;
 		
@@ -30,7 +30,7 @@ namespace ism
 		auto get_editor_camera() const noexcept { return (EditorCamera *)(&m_editor_camera); }
 
 	public:
-		virtual void process(Duration const & dt) override;
+		virtual void process(Duration const & delta_time) override;
 	};
 }
 

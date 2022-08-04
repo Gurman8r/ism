@@ -7,9 +7,10 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// texture
 	class ISM_API Texture : public Resource
 	{
-		OBJECT_COMMON(Texture, Resource);
+		OBJECT_CLASS(Texture, Resource);
 
 	protected:
 		Texture() noexcept {}
@@ -22,9 +23,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// texture 2D
 	class ISM_API Texture2D : public Texture
 	{
-		OBJECT_COMMON(Texture2D, Texture);
+		OBJECT_CLASS(Texture2D, Texture);
 
 	protected:
 		Texture2D() noexcept {}
@@ -33,11 +35,9 @@ namespace ism
 		virtual ~Texture2D() noexcept override = default;
 
 		virtual RID get_rid() const = 0;
-
 		virtual i32 get_width() const = 0;
 		virtual i32 get_height() const = 0;
 		virtual Vec2i get_size() const;
-
 		virtual bool is_pixel_opaque(i32 x, i32 y) const;
 		virtual bool has_alpha() const = 0;
 
@@ -46,13 +46,14 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// image texture
 	class ISM_API ImageTexture : public Texture2D
 	{
-		OBJECT_COMMON(ImageTexture, Texture2D);
+		OBJECT_CLASS(ImageTexture, Texture2D);
 
 		RID			m_texture{};
-		i32		m_width{};
-		i32		m_height{};
+		i32			m_width{};
+		i32			m_height{};
 		Ref<Image>	m_image_cache{};
 
 	public:
@@ -65,13 +66,9 @@ namespace ism
 		virtual ~ImageTexture() override;
 
 		virtual RID get_rid() const override;
-
 		virtual i32 get_width() const override;
-		
 		virtual i32 get_height() const override;
-
 		virtual bool has_alpha() const override;
-
 		virtual Ref<Image> get_data() const override;
 
 		void update(Ref<Image> const & image, bool immediate = false);
@@ -79,9 +76,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// texture 3D (NYI)
 	class ISM_API Texture3D : public Texture
 	{
-		OBJECT_COMMON(Texture3D, Texture);
+		OBJECT_CLASS(Texture3D, Texture);
 
 	public:
 		Texture3D();
@@ -93,9 +91,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// texture cube (NYI)
 	class ISM_API TextureCube : public Texture
 	{
-		OBJECT_COMMON(TextureCube, Texture);
+		OBJECT_CLASS(TextureCube, Texture);
 
 	public:
 		TextureCube();

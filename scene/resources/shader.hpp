@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API Shader : public Resource
 	{
-		OBJECT_COMMON(Shader, Resource);
+		OBJECT_CLASS(Shader, Resource);
 
 	public:
 		enum Mode_

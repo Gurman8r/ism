@@ -12,7 +12,7 @@ namespace ism
 	// node
 	class ISM_API Node : public Object
 	{
-		OBJECT_COMMON(Node, Object);
+		OBJECT_CLASS(Node, Object);
 
 		friend class SceneTree;
 
@@ -78,7 +78,7 @@ namespace ism
 		size_t get_sibling_index() const;
 		void set_sibling_index(size_t i);
 
-		Node * get_child(size_t i) const noexcept { ASSERT(i < get_child_count()); return m_nodes[i]; }
+		Node * get_child(size_t i) const noexcept { VERIFY_RANGE(i, -1, get_child_count()); return m_nodes[i]; }
 		size_t get_child_count() const noexcept { return m_nodes.size(); }
 
 		template <class T, class ... Args

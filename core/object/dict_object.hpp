@@ -9,7 +9,7 @@ namespace ism
 	// dict object
 	class ISM_API DictObject : public Object
 	{
-		OBJECT_COMMON(DictObject, Object);
+		OBJECT_CLASS(DictObject, Object);
 
 		friend class DICT;
 
@@ -93,7 +93,7 @@ namespace ism
 	// dict ref
 	class DICT : public Ref<DictObject>
 	{
-		REF_COMMON(DICT, OBJECT_CHECK_DICT);
+		REF_CLASS(DICT, OBJECT_CHECK_DICT);
 
 	public:
 		using storage_type		= value_type::storage_type;

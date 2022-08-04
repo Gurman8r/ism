@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Material, t, TypeFlags_IsAbstract) {}
+	EMBED_OBJECT_CLASS(Material, t, TypeFlags_IsAbstract) {}
 
 	Material::Material()
 	{
@@ -19,7 +19,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ShaderMaterial, t) {}
+	EMBED_OBJECT_CLASS(ShaderMaterial, t) {}
 
 	ShaderMaterial::ShaderMaterial() : Material{} {}
 
@@ -55,7 +55,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(BaseMaterial3D, t) {}
+	EMBED_OBJECT_CLASS(BaseMaterial3D, t) {}
 
 	BaseMaterial3D::BaseMaterial3D() : Material{} {}
 

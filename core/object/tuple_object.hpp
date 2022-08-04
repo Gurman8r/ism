@@ -10,7 +10,7 @@ namespace ism
 	// tuple object
 	class TupleObject : public Object
 	{
-		OBJECT_COMMON(TupleObject, Object);
+		OBJECT_CLASS(TupleObject, Object);
 
 		friend class TUPLE;
 
@@ -26,7 +26,7 @@ namespace ism
 	// tuple ref
 	class TUPLE : public Ref<TupleObject>
 	{
-		REF_COMMON(TUPLE, OBJECT_CHECK_TUPLE);
+		REF_CLASS(TUPLE, OBJECT_CHECK_TUPLE);
 
 	public:
 	};

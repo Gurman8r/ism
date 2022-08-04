@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(File, t, TypeFlags_IsAbstract) {}
+	EMBED_OBJECT_CLASS(File, t, TypeFlags_IsAbstract) {}
 
 	File::File() {}
 

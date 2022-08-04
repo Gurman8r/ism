@@ -3,9 +3,9 @@
 
 #include <core/templates/utility.hpp>
 
-// FIXED SIZE ARRAY
 namespace ism
 {
+	// fixed size array
 	template <class _Ty, size_t _Size
 	> class Array
 	{
@@ -36,9 +36,11 @@ namespace ism
 		{
 			if (this != std::addressof(other))
 			{
-				for (size_t i = 0; i < _Size; ++i)
-				{
-					util::swap(m_data[i], other.m_data[i]);
+				value_type temp;
+				for (size_t i = 0; i < _Size; ++i) {
+					temp = std::move(m_data[i]);
+					m_data[i] = std::move(other.m_data[i]);
+					other.m_data[i] = std::move(temp);
 				}
 			}
 			return (*this);
@@ -47,15 +49,14 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		static constexpr bool empty() noexcept { return false; }
+		static constexpr auto capacity() noexcept -> size_type { return _Size; }
 		static constexpr auto max_size() noexcept -> size_type { return _Size; }
 		static constexpr auto size() noexcept -> size_type { return _Size; }
 
 		constexpr operator pointer() noexcept { return m_data; }
 		constexpr operator const_pointer() const noexcept { return m_data; }
-
 		constexpr auto data() noexcept -> pointer { return m_data; }
 		constexpr auto data() const noexcept -> const_pointer { return m_data; }
-
 		constexpr auto at(size_type const i) & noexcept -> reference { return m_data[i]; }
 		constexpr auto at(size_type const i) const & noexcept -> const_reference { return m_data[i]; }
 		constexpr auto at(size_type const i) && noexcept -> value_type && { return std::move(m_data[i]); }
@@ -63,7 +64,6 @@ namespace ism
 		constexpr auto back() & noexcept -> reference { return m_data[_Size - 1]; }
 		constexpr auto back() const & noexcept -> const_reference { return m_data[_Size - 1]; }
 		constexpr auto back() && noexcept -> value_type && { return std::move(m_data[_Size - 1]); }
-
 		constexpr auto front() & noexcept -> reference { return m_data[0]; }
 		constexpr auto front() const & noexcept -> const_reference { return m_data[0]; }
 		constexpr auto front() && noexcept -> value_type && { return std::move(m_data[0]); }
@@ -83,11 +83,10 @@ namespace ism
 		
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
-}
+	
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// ZERO SIZE ARRAY
-namespace ism
-{
+	// zero size array
 	template <class _Ty
 	> class Array<_Ty, 0>
 	{
@@ -115,15 +114,14 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		static constexpr bool empty() noexcept { return true; }
+		static constexpr auto capacity() noexcept -> size_type { return 0; }
 		static constexpr auto max_size() noexcept -> size_type { return 0; }
 		static constexpr auto size() noexcept -> size_type { return 0; }
 
 		constexpr operator pointer() noexcept { return m_data; }
 		constexpr operator const_pointer() const noexcept { return m_data; }
-
 		constexpr auto data() noexcept -> pointer { return &m_data[0]; }
 		constexpr auto data() const noexcept -> const_pointer { return &m_data[0]; }
-
 		constexpr auto at(size_type) & noexcept -> reference { return m_data[0]; }
 		constexpr auto at(size_type) const & noexcept -> const_reference { return m_data[0]; }
 		constexpr auto at(size_type) && noexcept -> value_type && { return std::move(m_data[0]); }
@@ -131,7 +129,6 @@ namespace ism
 		constexpr auto back() & noexcept -> reference { return m_data[0]; }
 		constexpr auto back() const & noexcept -> const_reference { return m_data[0]; }
 		constexpr auto back() && noexcept -> value_type && { return std::move(m_data[0]); }
-
 		constexpr auto front() & noexcept -> reference { return m_data[0]; }
 		constexpr auto front() const & noexcept -> const_reference { return m_data[0]; }
 		constexpr auto front() && noexcept -> value_type && { return std::move(m_data[0]); }
@@ -151,76 +148,43 @@ namespace ism
 		
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
-}
-
-// ARRAY OPERATORS
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class Tx, class Ty, size_t N
-	> constexpr bool operator==(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
-	{
-		return util::range_equal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr bool operator!=(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
-	{
-		return util::range_nequal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr bool operator<(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
-	{
-		return util::range_less(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr bool operator<=(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
-	{
-		return util::range_lequal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr bool operator>(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
-	{
-		return util::range_greater(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-	}
-
-	template <class Tx, class Ty, size_t N
-	> constexpr bool operator>=(Array<Tx, N> const & lhs, Array<Ty, N> const & rhs)
-	{
-		return util::range_gequal(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
-	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-// TUPLE INTERFACE
-namespace std
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <size_t I, class T, size_t N
-	> constexpr T & get(ism::Array<T, N> & value) noexcept
-	{
-		static_assert(I < N, "Array index out of bounds");
-		return value.at(I);
+	template <class Tx, class Ty, size_t N
+	> constexpr bool operator==(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
+		return std::addressof(a) == std::addressof(b)
+			|| util::range_equal(a.begin(), a.end(), b.begin(), b.end());
 	}
 
-	template <size_t I, class T, size_t N
-	> constexpr T const & get(ism::Array<T, N> const & value) noexcept
-	{
-		static_assert(I < N, "Array index out of bounds");
-		return value.at(I);
+	template <class Tx, class Ty, size_t N
+	> constexpr bool operator!=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
+		return std::addressof(a) != std::addressof(b)
+			&& util::range_nequal(a.begin(), a.end(), b.begin(), b.end());
 	}
 
-	template <size_t I, class T, size_t N
-	> constexpr T && get(ism::Array<T, N> && value) noexcept
-	{
-		static_assert(I < N, "Array index out of bounds");
-		return std::move(value.at(I));
+	template <class Tx, class Ty, size_t N
+	> constexpr bool operator<(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
+		return std::addressof(a) != std::addressof(b)
+			&& util::range_less(a.begin(), a.end(), b.begin(), b.end());
+	}
+
+	template <class Tx, class Ty, size_t N
+	> constexpr bool operator<=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
+		return std::addressof(a) == std::addressof(b)
+			|| util::range_lequal(a.begin(), a.end(), b.begin(), b.end());
+	}
+
+	template <class Tx, class Ty, size_t N
+	> constexpr bool operator>(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
+		return std::addressof(a) != std::addressof(b)
+			&& util::range_greater(a.begin(), a.end(), b.begin(), b.end());
+	}
+
+	template <class Tx, class Ty, size_t N
+	> constexpr bool operator>=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
+		return std::addressof(a) == std::addressof(b)
+			|| util::range_gequal(a.begin(), a.end(), b.begin(), b.end());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

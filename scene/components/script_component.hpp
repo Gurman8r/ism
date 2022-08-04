@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API ScriptComponent : public BehaviorComponent
 	{
-		OBJECT_COMMON(ScriptComponent, BehaviorComponent);
+		OBJECT_CLASS(ScriptComponent, BehaviorComponent);
 
 	protected:
 		ScriptComponent(Entity * entity) noexcept;

@@ -1,7 +1,7 @@
 #ifndef _ISM_QUAT_HPP_
 #define _ISM_QUAT_HPP_
 
-#include <core/math/maths.hpp>
+#include <core/math/matrix.hpp>
 
 namespace ism
 {

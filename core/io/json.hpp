@@ -17,7 +17,7 @@ namespace ism
 		bool, i64, u64, f64,
 		std::allocator,
 		nlohmann::adl_serializer,
-		std::vector<byte>
+		std::vector<u8>
 	>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

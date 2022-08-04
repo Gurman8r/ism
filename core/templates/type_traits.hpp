@@ -7,49 +7,12 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// forward
-#define FWD(expr) \
-		(std::forward<decltype(expr)>(expr))
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-namespace ism::priv
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// maker helper
-	template <class T> struct _MakerHelper final
-	{
-		T value;
-
-		template <class ... Args
-		> constexpr _MakerHelper(Args && ... args) noexcept : value{ FWD(args)... } {}
-
-		template <class Fn = void(*)(T &)
-		> constexpr decltype(auto) operator+(Fn fn) && noexcept
-		{
-			return fn(value), std::move(value);
-		}
-	};
-
-#define MAKER(m_class, ...) \
-		(ism::priv::_MakerHelper<m_class>{ ##__VA_ARGS__ })
-
-#define MAKE(m_class, m_var, ...) \
-		MAKER(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// traits
 namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct void_type {};
-	
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class ... Ts
@@ -92,7 +55,7 @@ namespace ism::mpl
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class C> using is_char = std::bool_constant<any_of_v
-	<
+		<
 		std::is_same<C, char>,
 #if CXX_20
 		std::is_same<C, char8_t>,
@@ -100,7 +63,7 @@ namespace ism::mpl
 		std::is_same<C, char16_t>,
 		std::is_same<C, char32_t>,
 		std::is_same<C, wchar_t>
-	>>;
+		>>;
 
 	template <class C> constexpr bool is_char_v{ is_char<C>::value };
 
@@ -154,12 +117,12 @@ namespace ism::mpl
 #endif
 
 	constexpr i32 constexpr_impl_first(i32 i) { return i; }
-	
+
 	template <class T, class... Ts
 	> constexpr i32 constexpr_impl_first(i32 i, T v, Ts... vs) { return v ? i : constexpr_impl_first(i + 1, vs...); }
 
 	constexpr i32 constexpr_impl_last(i32 /*i*/, i32 result) { return result; }
-	
+
 	template <class T, class... Ts
 	> constexpr i32 constexpr_impl_last(i32 i, i32 result, T v, Ts... vs) { return constexpr_impl_last(i + 1, v ? i : result, vs...); }
 
@@ -201,7 +164,7 @@ namespace ism::mpl
 
 	template <class Base, class Derived
 	> constexpr bool is_strict_base_of_v{ is_strict_base_of_v<Base, Derived> };
-	
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Base, class Derived
@@ -283,13 +246,13 @@ namespace ism::mpl
 	template <class T, class SFINAE = void> struct has_operator_delete : std::false_type {};
 
 	template <class T, class SFINAE = void> struct has_operator_delete_size : std::false_type {};
-	
+
 	template <class T> struct has_operator_delete<T, void_t<decltype(static_cast<void (*)(void *)>(T::operator delete))>> : std::true_type {};
 
 	template <class T> struct has_operator_delete_size<T, void_t<decltype(static_cast<void (*)(void *, size_t)>(T::operator delete))>> : std::true_type {};
-	
+
 	template <class T> constexpr bool has_operator_delete_v{ has_operator_delete<T>::value };
-	
+
 	template <class T> constexpr bool has_operator_delete_size_v{ has_operator_delete_size<T>::value };
 
 	// Call class-specific delete if it exists or global otherwise. Can also be an overload set.
@@ -350,11 +313,45 @@ namespace ism::mpl
 	> using return_type_t = typename return_type_helper<Types...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// forward
+#define FWD(expr) \
+		(std::forward<decltype(expr)>(expr))
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// hash
+/* MAKER */
+namespace ism::priv
+{
+	template <class T> struct _MakerHelper final
+	{
+		T value;
+
+		template <class ... Args
+		> constexpr _MakerHelper(Args && ... args) noexcept : value{ FWD(args)... } {}
+
+		template <class Fn = void(*)(T &)
+		> constexpr decltype(auto) operator+(Fn fn) && noexcept
+		{
+			return fn(value), std::move(value);
+		}
+	};
+}
+
+// maker
+#define MAKER(m_class, ...) \
+		(ism::priv::_MakerHelper<m_class>{ ##__VA_ARGS__ })
+
+// make
+#define MAKE(m_class, m_var, ...) \
+		MAKER(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* HASH */
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -363,15 +360,15 @@ namespace ism
 	{
 		constexpr FNV1A() noexcept = default;
 
-		static constexpr hash_t fnv1a_basis{ static_cast<hash_t>(14695981039346656037ULL) };
+		static constexpr size_t basis{ static_cast<size_t>(14695981039346656037ULL) };
 
-		static constexpr hash_t fnv1a_prime{ static_cast<hash_t>(1099511628211ULL) };
+		static constexpr size_t prime{ static_cast<size_t>(1099511628211ULL) };
 
 		template <class T
-		> constexpr hash_t operator()(T const * data, hash_t size, hash_t seed = fnv1a_basis) const noexcept
+		> constexpr size_t operator()(T const * const data, size_t const size, size_t const seed = basis) const noexcept
 		{
 			return size
-				? operator()(data + 1, size - 1, (seed ^ static_cast<hash_t>(*data)) * fnv1a_prime)
+				? operator()(data + 1, size - 1, (seed ^ static_cast<size_t>(*data)) * prime)
 				: seed;
 		}
 	};
@@ -379,76 +376,76 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class H = FNV1A, class T
-	> constexpr hash_t hash(T const * data, size_t size) { return H{}(data, size); }
+	> constexpr size_t hash(T const * data, size_t size) { return H{}(data, size); }
 
-	constexpr hash_t operator ""_hash(cstring data, size_t size) { return ism::hash(data, size); }
-
-	constexpr hash_t operator ""_hash(cwstring data, size_t size) { return ism::hash(data, size); }
+	template <class H = FNV1A, class T
+	> constexpr size_t hash(T const & data) { return H{}(&data, 1); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> struct Hasher {
-		constexpr Hasher() noexcept = default;
+	constexpr size_t operator ""_hash(cstring data, size_t size) { return ism::hash(data, size); }
+
+	constexpr size_t operator ""_hash(cwstring data, size_t size) { return ism::hash(data, size); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T> struct Hasher;
+
+	template <class T, bool Enabled> struct Conditionally_Enabled_Hasher
+	{
+		constexpr size_t operator()(T const & value) const noexcept
+		{
+			return Hasher<T>::do_hash(value);
+		}
 	};
 
-	template <> struct Hasher<sbyte> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(sbyte value) const { return std::hash<sbyte>{}(value); }
+	template <class T> struct Conditionally_Enabled_Hasher<T, false>
+	{
+		Conditionally_Enabled_Hasher() = delete;
+		Conditionally_Enabled_Hasher(Conditionally_Enabled_Hasher const &) = delete;
+		Conditionally_Enabled_Hasher(Conditionally_Enabled_Hasher &&) = delete;
+		Conditionally_Enabled_Hasher & operator=(Conditionally_Enabled_Hasher const &) = delete;
+		Conditionally_Enabled_Hasher & operator=(Conditionally_Enabled_Hasher &&) = delete;
 	};
 
-	template <> struct Hasher<i16> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(i16 value) const { return std::hash<i16>{}(value); }
+	template <class T> struct Hasher : Conditionally_Enabled_Hasher<T, !std::is_const_v<T> && !std::is_volatile_v<T> && (std::is_enum_v<T> || std::is_integral_v<T> || std::is_pointer_v<T>)>
+	{
+		static constexpr size_t do_hash(T const & value) noexcept
+		{
+			return ism::hash(value);
+		}
 	};
 
-	template <> struct Hasher<i32> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(i32 value) const { return std::hash<i32>{}(value); }
+	template <> struct Hasher<f32>
+	{
+		constexpr size_t operator()(f32 const value) const noexcept
+		{
+			return ism::hash(value == 0.f ? 0.f : value);
+		}
 	};
 
-	template <> struct Hasher<i64> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(i64 value) const { return std::hash<i64>{}(value); }
+	template <> struct Hasher<f64>
+	{
+		constexpr size_t operator()(f64 const value) const noexcept
+		{
+			return ism::hash(value == 0.0 ? 0.0 : value);
+		}
 	};
 
-	template <> struct Hasher<byte> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(byte value) const { return std::hash<byte>{}(value); }
+	template <> struct Hasher<f80>
+	{
+		constexpr size_t operator()(f80 const value) const noexcept
+		{
+			return ism::hash(value == 0.L ? 0.L : value);
+		}
 	};
 
-	template <> struct Hasher<u16> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(u16 value) const { return std::hash<u16>{}(value); }
-	};
-
-	template <> struct Hasher<u32> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(u32 value) const { return std::hash<u32>{}(value); }
-	};
-
-	template <> struct Hasher<u64> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(u64 value) const { return std::hash<u64>{}(value); }
-	};
-
-	template <> struct Hasher<f32> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(f32 value) const { return std::hash<f32>{}(value); }
-	};
-
-	template <> struct Hasher<f64> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(f64 value) const { return std::hash<f64>{}(value); }
-	};
-
-	template <> struct Hasher<f80> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(f80 value) const { return std::hash<f80>{}(value); }
-	};
-
-	template <> struct Hasher<nullptr_t> {
-		constexpr Hasher() noexcept = default;
-		hash_t operator()(nullptr_t) const { return std::hash<nullptr_t>{}(nullptr_t{}); }
+	template <> struct Hasher<nullptr_t>
+	{
+		constexpr size_t operator()(nullptr_t) const noexcept
+		{
+			return ism::hash((size_t)0);
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

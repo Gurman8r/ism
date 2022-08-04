@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Resource, t, TypeFlags_IsAbstract)
+	EMBED_OBJECT_CLASS(Resource, t, TypeFlags_IsAbstract)
 	{
 	}
 

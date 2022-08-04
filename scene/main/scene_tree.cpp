@@ -7,9 +7,9 @@ namespace ism
 
 	SceneTree * SceneTree::__singleton{};
 
-	EMBED_CLASS(SceneTree, t)
+	EMBED_OBJECT_CLASS(SceneTree, t)
 	{
-		t.tp_bind = CLASS_INSTALLER(SceneTree, t)
+		t.tp_bind = CLASS_BINDER(SceneTree, t)
 		{
 			return t
 				.def("initialize", &SceneTree::initialize)

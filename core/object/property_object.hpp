@@ -9,7 +9,7 @@ namespace ism
 	// property object
 	class ISM_API PropertyObject : public Object
 	{
-		OBJECT_COMMON(PropertyObject, Object);
+		OBJECT_CLASS(PropertyObject, Object);
 
 		friend class PROPERTY;
 
@@ -44,7 +44,7 @@ namespace ism
 	// property ref
 	class PROPERTY : public Ref<PropertyObject>
 	{
-		REF_COMMON(PROPERTY, OBJECT_CHECK_PROPERTY);
+		REF_CLASS(PROPERTY, OBJECT_CHECK_PROPERTY);
 
 	public:
 		OBJ get(OBJ const & self) const { return VALIDATE(m_ptr)->m_get(self); }

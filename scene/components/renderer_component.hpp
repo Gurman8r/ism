@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API RendererComponent : public Component
 	{
-		OBJECT_COMMON(RendererComponent, Component);
+		OBJECT_CLASS(RendererComponent, Component);
 
 	public:
 		RendererComponent(Entity * entity) noexcept;

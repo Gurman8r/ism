@@ -9,7 +9,7 @@ namespace ism
 	// float object
 	class ISM_API FloatObject : public Object
 	{
-		OBJECT_COMMON(FloatObject, Object);
+		OBJECT_CLASS(FloatObject, Object);
 
 		friend class FLT;
 
@@ -41,7 +41,7 @@ namespace ism
 	// float ref
 	class FLT : public Ref<FloatObject>
 	{
-		REF_COMMON(FLT, OBJECT_CHECK_FLOAT);
+		REF_CLASS(FLT, OBJECT_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;

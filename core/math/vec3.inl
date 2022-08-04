@@ -7,6 +7,21 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class A, class B
+	> constexpr bool operator==(TVec3<A> const & a, TVec3<B> const & b) noexcept {
+		return (std::addressof(a) == std::addressof(b)) || (
+			a[0] == (A)b[0] &&
+			a[1] == (A)b[1] &&
+			a[2] == (A)b[2]);
+	}
+
+	template <class A, class B
+	> constexpr bool operator!=(TVec3<A> const & a, TVec3<B> const & b) noexcept {
+		return !(a == b);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class A, class B
 	> constexpr TVec3<A> & operator+=(TVec3<A> & a, TVec3<B> const & b) noexcept {
 		a[0] += (A)b[0];
 		a[1] += (A)b[1];

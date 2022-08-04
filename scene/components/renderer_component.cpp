@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(RendererComponent, t) {}
+	EMBED_OBJECT_CLASS(RendererComponent, t) {}
 
 	RendererComponent::RendererComponent(Entity * entity) noexcept : Component{ entity } {}
 

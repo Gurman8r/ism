@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Shader, t) {}
+	EMBED_OBJECT_CLASS(Shader, t) {}
 
 	Shader::~Shader()
 	{

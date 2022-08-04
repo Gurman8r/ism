@@ -30,7 +30,7 @@ namespace ism
 	public:
 		/* CLASS DATABASE */
 
-		Batch<hash_t, StringName, TYPE> class_db;
+		Batch<size_t, StringName, TYPE> class_db;
 
 		template <class First, class ... Rest
 		> void initialize_class() noexcept

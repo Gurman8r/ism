@@ -5,21 +5,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// root namespace
-namespace ism {}
-
-// private namespace
-namespace ism::priv {}
-
-// utilities namespace
-namespace ism::util {}
-
-// meta programming language
-namespace ism::mpl {}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-
 // alias
 #define ALIAS(m_type) \
 		using m_type = 
@@ -59,20 +44,20 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifdef CC_MSVC
-	ALIAS(sbyte)		signed __int8;
+	ALIAS(i8)			signed __int8;
 	ALIAS(i16)			signed __int16;
 	ALIAS(i32)			signed __int32;
 	ALIAS(i64)			signed __int64;
-	ALIAS(byte)			unsigned __int8;
+	ALIAS(u8)			unsigned __int8;
 	ALIAS(u16)			unsigned __int16;
 	ALIAS(u32)			unsigned __int32;
 	ALIAS(u64)			unsigned __int64;
 #else
-	ALIAS(sbyte)		signed char;
+	ALIAS(i8)			signed char;
 	ALIAS(i16)			signed short;
 	ALIAS(i32)			signed int;
 	ALIAS(i64)			signed long long;
-	ALIAS(byte)			unsigned char;
+	ALIAS(u8)			unsigned char;
 	ALIAS(u16)			unsigned short;
 	ALIAS(u32)			unsigned int;
 	ALIAS(u64)			unsigned long long;
@@ -81,6 +66,8 @@ namespace ism
 	ALIAS(f32)			float;
 	ALIAS(f64)			double;
 	ALIAS(f80)			long double;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #if (ARCHITECTURE == 64)
 	ALIAS(ssize_t)		i64;
@@ -91,8 +78,8 @@ namespace ism
 #endif
 
 	ALIAS(intptr_t)		ssize_t;
+	ALIAS(uintptr_t)	size_t;
 	ALIAS(ptrdiff_t)	ssize_t;
-	ALIAS(hash_t)		size_t;
 	ALIAS(nullptr_t)	decltype(nullptr);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -109,5 +96,31 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* ALIGNMENT HELPERS */
+
+// round down size m_size to be a multiple of m_alignment, where m_alignment is a power of 2
+#define SIZE_ROUND_DOWN(m_size, m_alignment) \
+		((size_t)(m_size) & ~(size_t)((m_alignment) - 1))
+
+// round up size m_size to be m_alignment multiple of m_alignment, where m_alignment is a power of 2
+#define SIZE_ROUND_UP(m_size, m_alignment) \
+		(((size_t)(m_size) + (size_t)((m_alignment) - 1)) & ~(size_t)((m_alignment) - 1))
+
+// round pointer m_ptr down to the closest m_alignment-aligned address <= m_ptr, where m_alignment is a power of 2
+#define ALIGN_DOWN(m_ptr, m_alignment) \
+		((void *)((uintptr_t)(m_ptr) & ~(uintptr_t)((m_alignment) - 1)))
+
+// round pointer m_ptr up to the closest m_alignment-aligned address >= m_ptr, where m_alignment is a power of 2
+#define ALIGN_UP(m_ptr, m_alignment) \
+		((void *)(((uintptr_t)(m_ptr) + (uintptr_t)((m_alignment) - 1)) & ~(uintptr_t)((m_alignment) - 1)))
+
+// check if pointer m_ptr is aligned to m_alignment-bytes boundary, where m_alignment is a power of 2
+#define IS_ALIGNED(m_ptr, m_alignment) \
+		(!((uintptr_t)(m_ptr) & (uintptr_t)((m_alignment) - 1)))
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #endif // !_ISM_TYPEDEFS_HPP_

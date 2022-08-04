@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API Material : public Resource
 	{
-		OBJECT_COMMON(Material, Resource);
+		OBJECT_CLASS(Material, Resource);
 
 		RID m_material;
 
@@ -33,7 +33,7 @@ namespace ism
 
 	class ISM_API ShaderMaterial : public Material
 	{
-		OBJECT_COMMON(ShaderMaterial, Material);
+		OBJECT_CLASS(ShaderMaterial, Material);
 
 		Ref<Shader> m_shader;
 
@@ -62,7 +62,7 @@ namespace ism
 
 	class ISM_API BaseMaterial3D : public Material
 	{
-		OBJECT_COMMON(BaseMaterial3D, Material);
+		OBJECT_CLASS(BaseMaterial3D, Material);
 
 	public:
 		enum Param_

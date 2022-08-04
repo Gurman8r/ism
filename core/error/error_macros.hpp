@@ -80,7 +80,7 @@ namespace ism
 #define VERIFY_RANGE(m_expr, m_min, m_max) \
 		(UNUSED( \
 		(!!(((decltype(m_expr))(m_min) < (m_expr)) && ((m_expr) < (decltype(m_expr))(m_max)))) || \
-		(CRASH("range error: \"" TOSTR(m_min) "\" < \"" TOSTR(m_expr) "\" < \"" TOSTR(m_max) "\""), 0) \
+		(CRASH("range error: (" TOSTR(m_min) ") < (" TOSTR(m_expr) ") < (" TOSTR(m_max) ")"), 0) \
 		))
 
 	// debug verify range

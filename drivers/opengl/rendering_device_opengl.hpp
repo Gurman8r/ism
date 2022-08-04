@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API RenderingDeviceOpenGL : public RenderingDevice
 	{
-		OBJECT_COMMON(RenderingDeviceOpenGL, RenderingDevice);
+		OBJECT_CLASS(RenderingDeviceOpenGL, RenderingDevice);
 
 	public:
 		~RenderingDeviceOpenGL();
@@ -132,7 +132,7 @@ namespace ism
 		struct _Shader
 		{
 			u32 handle{};
-			FlatMap<hash_t, i32> bindings{};
+			FlatMap<size_t, i32> bindings{};
 			Vector<ShaderStageData> stage_data{};
 		};
 

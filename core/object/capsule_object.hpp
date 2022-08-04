@@ -9,7 +9,7 @@ namespace ism
 	// capsule object
 	class ISM_API CapsuleObject : public Object
 	{
-		OBJECT_COMMON(CapsuleObject, Object);
+		OBJECT_CLASS(CapsuleObject, Object);
 
 		friend class CAPSULE;
 
@@ -71,7 +71,7 @@ namespace ism
 	// capsule ref
 	class CAPSULE : public Ref<CapsuleObject>
 	{
-		REF_COMMON(CAPSULE, OBJECT_CHECK_CAPSULE);
+		REF_CLASS(CAPSULE, OBJECT_CHECK_CAPSULE);
 
 	public:
 		template <class T

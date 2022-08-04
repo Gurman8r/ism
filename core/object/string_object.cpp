@@ -5,9 +5,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(StringObject, t)
+	EMBED_OBJECT_CLASS(StringObject, t)
 	{
-		t.tp_hash = (hashfunc)[](OBJ self) -> hash_t { return ((STR &)self).hash_code(); };
+		t.tp_hash = (hashfunc)[](OBJ self) -> size_t { return ((STR &)self).hash_code(); };
 
 		t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)((STR &)self).size(); };
 

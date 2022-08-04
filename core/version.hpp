@@ -45,4 +45,20 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/* NAMESPACES */
+
+// root namespace
+namespace ism {}
+
+// private namespace
+namespace ism::priv {}
+
+// utility namespace
+namespace ism::util {}
+
+// meta namespace
+namespace ism::mpl {}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #endif // !_ISM_VERSION_HPP_

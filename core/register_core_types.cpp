@@ -15,6 +15,7 @@ void ism::register_core_types()
 		TypeObject,
 		IntObject,
 		FloatObject,
+		IteratorObject,
 		StringObject,
 		TupleObject,
 		ListObject,

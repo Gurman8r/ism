@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(MethodObject, t)
+	EMBED_OBJECT_CLASS(MethodObject, t)
 	{
 		t.tp_dictoffset = offsetof(MethodObject, m_dict);
 

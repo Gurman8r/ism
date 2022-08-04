@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ViewportTexture, t) {}
+	EMBED_OBJECT_CLASS(ViewportTexture, t) {}
 
 	ViewportTexture::ViewportTexture()
 	{
@@ -53,7 +53,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Viewport, t, TypeFlags_IsAbstract) {}
+	EMBED_OBJECT_CLASS(Viewport, t, TypeFlags_IsAbstract) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

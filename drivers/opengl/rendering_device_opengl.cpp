@@ -153,21 +153,20 @@ void get_data_info(RD::DataFormat_ const data_format, Image::Format_ * image_for
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-MAKE_ENUM_MAPPING(TO_GL, DataType_, u32,
-	// void
-	GL_NONE,
-	// bool, byte, char
-	GL_BOOL, GL_BYTE, GL_BYTE,
-	// I8, I16, I32, I64
-	GL_BYTE, GL_SHORT, GL_INT, GL_INT64_ARB,
-	// U8, U16, U32, U64
-	GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT, GL_UNSIGNED_INT64_ARB,
-	// F32, F64
-	GL_FLOAT, GL_DOUBLE,
-	// String, Object
-	GL_NONE, GL_NONE);
+ENUM_MAPPING(TO_GL, DataType_, u32,
+	
+	GL_NONE, // void
+	
+	GL_BOOL, GL_BYTE, GL_BYTE, // bool, u8, char
+	
+	GL_BYTE, GL_SHORT, GL_INT, GL_INT64_ARB, // i8, i16, i32, i64
+	
+	GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT, GL_UNSIGNED_INT64_ARB, // u8, u16, u32, u64
+	
+	GL_FLOAT, GL_DOUBLE // f32, f64
+);
 
-MAKE_ENUM_MAPPING(TO_GL, CompareOperator_, u32,
+ENUM_MAPPING(TO_GL, CompareOperator_, u32,
 	GL_NEVER,
 	GL_LESS,
 	GL_EQUAL,
@@ -175,9 +174,10 @@ MAKE_ENUM_MAPPING(TO_GL, CompareOperator_, u32,
 	GL_GREATER,
 	GL_NOTEQUAL,
 	GL_GEQUAL,
-	GL_ALWAYS);
+	GL_ALWAYS
+);
 
-MAKE_ENUM_MAPPING(TO_GL, LogicOperation_, u32,
+ENUM_MAPPING(TO_GL, LogicOperation_, u32,
 	GL_CLEAR,
 	GL_AND,
 	GL_AND_REVERSE,
@@ -191,16 +191,18 @@ MAKE_ENUM_MAPPING(TO_GL, LogicOperation_, u32,
 	GL_INVERT,
 	GL_OR_REVERSE,
 	GL_NAND,
-	GL_SET);
+	GL_SET
+);
 
 ALIAS(BufferType_) RD::BufferType_;
-MAKE_ENUM_MAPPING(TO_GL, BufferType_, u32,
+ENUM_MAPPING(TO_GL, BufferType_, u32,
 	GL_ARRAY_BUFFER,
 	GL_ELEMENT_ARRAY_BUFFER,
-	GL_UNIFORM_BUFFER);
+	GL_UNIFORM_BUFFER
+);
 
 ALIAS(TextureType_) RD::TextureType_;
-MAKE_ENUM_MAPPING(TO_GL, TextureType_, u32,
+ENUM_MAPPING(TO_GL, TextureType_, u32,
 	GL_TEXTURE_1D,
 	GL_TEXTURE_2D,
 	GL_TEXTURE_3D,
@@ -210,44 +212,49 @@ MAKE_ENUM_MAPPING(TO_GL, TextureType_, u32,
 	GL_TEXTURE_CUBE_MAP_ARRAY,
 	GL_PROXY_TEXTURE_2D,
 	GL_PROXY_TEXTURE_1D_ARRAY,
-	GL_PROXY_TEXTURE_CUBE_MAP);
+	GL_PROXY_TEXTURE_CUBE_MAP
+);
 
 ALIAS(TextureSwizzle_) RD::TextureSwizzle_;
-MAKE_ENUM_MAPPING(TO_GL, TextureSwizzle_, i32,
+ENUM_MAPPING(TO_GL, TextureSwizzle_, i32,
 	0, // TextureSwizzle_Identity
 	GL_ZERO,
 	GL_ONE,
 	GL_RED,
 	GL_GREEN,
 	GL_BLUE,
-	GL_ALPHA);
+	GL_ALPHA
+);
 
 ALIAS(SamplerFilter_) RD::SamplerFilter_;
-MAKE_ENUM_MAPPING(TO_GL, SamplerFilter_, u32,
+ENUM_MAPPING(TO_GL, SamplerFilter_, u32,
 	GL_NEAREST,
 	GL_LINEAR,
 	GL_NEAREST_MIPMAP_LINEAR,
-	GL_LINEAR_MIPMAP_LINEAR);
+	GL_LINEAR_MIPMAP_LINEAR
+);
 
 ALIAS(SamplerRepeatMode_) RD::SamplerRepeatMode_;
-MAKE_ENUM_MAPPING(TO_GL, SamplerRepeatMode_, u32,
+ENUM_MAPPING(TO_GL, SamplerRepeatMode_, u32,
 	GL_REPEAT,
 	GL_MIRRORED_REPEAT,
 	GL_CLAMP_TO_EDGE,
 	GL_CLAMP_TO_BORDER,
-	GL_MIRROR_CLAMP_TO_EDGE);
+	GL_MIRROR_CLAMP_TO_EDGE
+);
 
 ALIAS(ShaderStage_) RD::ShaderStage_;
-MAKE_ENUM_MAPPING(TO_GL, ShaderStage_, u32,
+ENUM_MAPPING(TO_GL, ShaderStage_, u32,
 	GL_VERTEX_SHADER,
 	GL_FRAGMENT_SHADER,
 	GL_GEOMETRY_SHADER,
 	GL_TESS_CONTROL_SHADER,
 	GL_TESS_EVALUATION_SHADER,
-	GL_COMPUTE_SHADER);
+	GL_COMPUTE_SHADER
+);
 
 ALIAS(RenderPrimitive_) RD::RenderPrimitive_;
-MAKE_ENUM_MAPPING(TO_GL, RenderPrimitive_, u32,
+ENUM_MAPPING(TO_GL, RenderPrimitive_, u32,
 	GL_POINTS,
 	GL_LINES,
 	GL_LINES_ADJACENCY,
@@ -258,21 +265,24 @@ MAKE_ENUM_MAPPING(TO_GL, RenderPrimitive_, u32,
 	GL_TRIANGLE_STRIP,
 	GL_TRIANGLE_STRIP_ADJACENCY,
 	0, // RenderPrimitive_TriangleStripsWithRestartIndex
-	GL_PATCHES);
+	GL_PATCHES
+);
 
 ALIAS(PolygonCullMode_) RD::PolygonCullMode_;
-MAKE_ENUM_MAPPING(TO_GL, PolygonCullMode_, u32,
+ENUM_MAPPING(TO_GL, PolygonCullMode_, u32,
 	GL_FRONT_AND_BACK,
 	GL_FRONT,
-	GL_BACK);
+	GL_BACK
+);
 
 ALIAS(PolygonFrontFace_) RD::PolygonFrontFace_;
-MAKE_ENUM_MAPPING(TO_GL, PolygonFrontFace_, u32,
+ENUM_MAPPING(TO_GL, PolygonFrontFace_, u32,
 	GL_CW,
-	GL_CCW);
+	GL_CCW
+);
 
 ALIAS(StencilOperation_) RD::StencilOperation_;
-MAKE_ENUM_MAPPING(TO_GL, StencilOperation_, u32,
+ENUM_MAPPING(TO_GL, StencilOperation_, u32,
 	GL_KEEP,
 	GL_ZERO,
 	GL_REPLACE,
@@ -280,10 +290,11 @@ MAKE_ENUM_MAPPING(TO_GL, StencilOperation_, u32,
 	GL_DECR,
 	GL_INVERT,
 	GL_INCR_WRAP,
-	GL_DECR_WRAP);
+	GL_DECR_WRAP
+);
 
 ALIAS(BlendFactor_) RD::BlendFactor_;
-MAKE_ENUM_MAPPING(TO_GL, BlendFactor_, u32,
+ENUM_MAPPING(TO_GL, BlendFactor_, u32,
 	GL_ZERO,
 	GL_ONE,
 	GL_SRC_COLOR,
@@ -299,19 +310,21 @@ MAKE_ENUM_MAPPING(TO_GL, BlendFactor_, u32,
 	GL_CONSTANT_ALPHA,
 	GL_ONE_MINUS_CONSTANT_ALPHA,
 	GL_SRC1_ALPHA,
-	GL_ONE_MINUS_SRC1_ALPHA);
+	GL_ONE_MINUS_SRC1_ALPHA
+);
 
 ALIAS(BlendOperation_) RD::BlendOperation_;
-MAKE_ENUM_MAPPING(TO_GL, BlendOperation_, u32,
+ENUM_MAPPING(TO_GL, BlendOperation_, u32,
 	GL_FUNC_ADD,
 	GL_FUNC_SUBTRACT,
 	GL_FUNC_REVERSE_SUBTRACT,
 	GL_MIN,
-	GL_MAX);
+	GL_MAX
+);
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(RenderingDeviceOpenGL, t) {}
+EMBED_OBJECT_CLASS(RenderingDeviceOpenGL, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -344,26 +357,29 @@ RID RenderingDeviceOpenGL::buffer_create(BufferType_ buffer_type, size_t size_in
 {
 	ASSERT(0 < size_in_bytes);
 
-	_BufferBase * b;
-	switch (buffer_type) {
-	default: {
-		return nullptr;
-	} break;
+	_BufferBase * b{};
+	switch (buffer_type)
+	{
+	// vertex buffer
 	case BufferType_VertexBuffer: {
 		b = memnew(_VertexBuffer{});
 		b->usage = data.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	} break;
+
+	// index buffer
 	case BufferType_IndexBuffer: {
 		b = memnew(_IndexBuffer{});
 		b->usage = data.empty() ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW;
 	} break;
+
+	// uniform buffer
 	case BufferType_UniformBuffer: {
 		b = memnew(_UniformBuffer{});
 		b->usage = GL_STATIC_DRAW;
 	} break;
 	}
 
-	ASSERT(b);
+	if (!b) { return nullptr; }
 	b->buffer_type = TO_GL(buffer_type);
 	b->size = (u32)size_in_bytes;
 	b->data = data;
@@ -954,12 +970,11 @@ void RenderingDeviceOpenGL::_render_pipeline_bind(_RenderPipeline const & rp)
 	// color blend state
 	glCheck(glSetEnabled(GL_LOGIC_OP, rp.color_blend_state.enable_logic_op));
 	glCheck(glLogicOp(TO_GL(rp.color_blend_state.logic_op)));
-	for (auto const & attachment : rp.color_blend_state.attachments) {
-		glCheck(glSetEnabled(GL_BLEND, attachment.enable_blend));
-		glCheck(glBlendColor(rp.color_blend_state.blend_constant[0], rp.color_blend_state.blend_constant[1], rp.color_blend_state.blend_constant[2], rp.color_blend_state.blend_constant[3]));
-		glCheck(glBlendFuncSeparate(TO_GL(attachment.src_color_blend_factor), TO_GL(attachment.dst_color_blend_factor), TO_GL(attachment.src_alpha_blend_factor), TO_GL(attachment.dst_alpha_blend_factor)));
-		glCheck(glBlendEquationSeparate(TO_GL(attachment.color_blend_op), TO_GL(attachment.alpha_blend_op)));
-	}
+	auto const & attachment{ rp.color_blend_state.attachments[0] };
+	glCheck(glSetEnabled(GL_BLEND, attachment.enable_blend));
+	glCheck(glBlendColor(rp.color_blend_state.blend_constant[0], rp.color_blend_state.blend_constant[1], rp.color_blend_state.blend_constant[2], rp.color_blend_state.blend_constant[3]));
+	glCheck(glBlendFuncSeparate(TO_GL(attachment.src_color_blend_factor), TO_GL(attachment.dst_color_blend_factor), TO_GL(attachment.src_alpha_blend_factor), TO_GL(attachment.dst_alpha_blend_factor)));
+	glCheck(glBlendEquationSeparate(TO_GL(attachment.color_blend_op), TO_GL(attachment.alpha_blend_op)));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

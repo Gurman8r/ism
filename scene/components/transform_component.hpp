@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API TransformComponent : public Component
 	{
-		OBJECT_COMMON(TransformComponent, Component);
+		OBJECT_CLASS(TransformComponent, Component);
 
 	public:
 		TransformComponent(Entity * entity) noexcept;

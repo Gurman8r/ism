@@ -9,7 +9,7 @@ namespace ism
 	// method object
 	class ISM_API MethodObject : public FunctionObject
 	{
-		OBJECT_COMMON(MethodObject, FunctionObject);
+		OBJECT_CLASS(MethodObject, FunctionObject);
 
 		friend class METHOD;
 
@@ -38,7 +38,7 @@ namespace ism
 	// method ref
 	class METHOD : public Ref<MethodObject>
 	{
-		REF_COMMON(METHOD, OBJECT_CHECK_METHOD);
+		REF_CLASS(METHOD, OBJECT_CHECK_METHOD);
 	};
 }
 

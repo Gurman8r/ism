@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ModuleObject, t)
+	EMBED_OBJECT_CLASS(ModuleObject, t)
 	{
 		t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 
@@ -28,7 +28,7 @@ namespace ism
 			}
 		};
 
-		t.tp_bind = CLASS_INSTALLER(ModuleObject, t)
+		t.tp_bind = CLASS_BINDER(ModuleObject, t)
 		{
 			return t
 				.def("__contains__", [](ModuleObject const & self, OBJ const & value) { return self.m_dict.contains(value); })

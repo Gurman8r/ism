@@ -31,19 +31,19 @@
 		return a;																				\
 	}																							\
 																								\
-	friend ImVec2 operator+(ImVec2 & a, ism::Vec2 const & b) noexcept {							\
+	friend ImVec2 operator+(ImVec2 const & a, ism::Vec2 const & b) noexcept {					\
 		ImVec2 temp{ a };																		\
 		return temp += b;																		\
 	}																							\
-	friend ImVec2 operator-(ImVec2 & a, ism::Vec2 const & b) noexcept {							\
+	friend ImVec2 operator-(ImVec2 const & a, ism::Vec2 const & b) noexcept {					\
 		ImVec2 temp{ a };																		\
 		return temp -= b;																		\
 	}																							\
-	friend ImVec2 operator*(ImVec2 & a, ism::Vec2 const & b) noexcept {							\
+	friend ImVec2 operator*(ImVec2 const & a, ism::Vec2 const & b) noexcept {					\
 		ImVec2 temp{ a };																		\
 		return temp *= b;																		\
 	}																							\
-	friend ImVec2 operator/(ImVec2 & a, ism::Vec2 const & b) noexcept {							\
+	friend ImVec2 operator/(ImVec2 const & a, ism::Vec2 const & b) noexcept {					\
 		ImVec2 temp{ a };																		\
 		return temp /= b;																		\
 	}																							\
@@ -79,19 +79,19 @@
 		return a;																					\
 	}																								\
 																									\
-	friend ImVec4 operator+(ImVec4 & a, ism::Vec4 const & b) noexcept {								\
+	friend ImVec4 operator+(ImVec4 const & a, ism::Vec4 const & b) noexcept {						\
 		ImVec4 temp{ a };																			\
 		return temp += b;																			\
 	}																								\
-	friend ImVec4 operator-(ImVec4 & a, ism::Vec4 const & b) noexcept {								\
+	friend ImVec4 operator-(ImVec4 const & a, ism::Vec4 const & b) noexcept {						\
 		ImVec4 temp{ a };																			\
 		return temp -= b;																			\
 	}																								\
-	friend ImVec4 operator*(ImVec4 & a, ism::Vec4 const & b) noexcept {								\
+	friend ImVec4 operator*(ImVec4 const & a, ism::Vec4 const & b) noexcept {						\
 		ImVec4 temp{ a };																			\
 		return temp *= b;																			\
 	}																								\
-	friend ImVec4 operator/(ImVec4 & a, ism::Vec4 const & b) noexcept {								\
+	friend ImVec4 operator/(ImVec4 const & a, ism::Vec4 const & b) noexcept {						\
 		ImVec4 temp{ a };																			\
 		return temp /= b;																			\
 	}																								\

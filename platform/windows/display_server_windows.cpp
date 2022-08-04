@@ -13,7 +13,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DisplayServerWindows, t) {}
+	EMBED_OBJECT_CLASS(DisplayServerWindows, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -299,8 +299,8 @@ namespace ism
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
-		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
-		ASSERT((unsigned)screen < (unsigned)monitor_count);
+		screen = (-1 < screen) ? screen : window_get_current_screen();
+		VERIFY_RANGE(screen, -1, monitor_count);
 		return glfwGetMonitorName(monitors[screen]);
 	}
 
@@ -308,8 +308,8 @@ namespace ism
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
-		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
-		ASSERT((unsigned)screen < (unsigned)monitor_count);
+		screen = (-1 < screen) ? screen : window_get_current_screen();
+		VERIFY_RANGE(screen, -1, monitor_count);
 		Vec2i size; glfwGetMonitorPhysicalSize(monitors[screen], &size[0], &size[1]);
 		return size;
 	}
@@ -318,8 +318,8 @@ namespace ism
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
-		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
-		ASSERT((unsigned)screen < (unsigned)monitor_count);
+		screen = (-1 < screen) ? screen : window_get_current_screen();
+		VERIFY_RANGE(screen, -1, monitor_count);
 		IntRect rect; glfwGetMonitorWorkarea(monitors[screen], &rect[0], &rect[1], &rect[2], &rect[3]);
 		return rect;
 	}
@@ -328,8 +328,8 @@ namespace ism
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
-		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
-		ASSERT((unsigned)screen < (unsigned)monitor_count);
+		screen = (-1 < screen) ? screen : window_get_current_screen();
+		VERIFY_RANGE(screen, -1, monitor_count);
 		Vec2i pos; glfwGetMonitorPos(monitors[screen], &pos[0], &pos[1]);
 		return pos;
 	}
@@ -338,8 +338,8 @@ namespace ism
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
-		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
-		ASSERT((unsigned)screen < (unsigned)monitor_count);
+		screen = (-1 < screen) ? screen : window_get_current_screen();
+		VERIFY_RANGE(screen, -1, monitor_count);
 		GLFWvidmode const * vm{ glfwGetVideoMode(monitors[screen]) };
 		return { vm->width, vm->height };
 	}
@@ -348,8 +348,8 @@ namespace ism
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
-		screen = (screen == SCREEN_OF_MAIN_WINDOW) ? window_get_current_screen() : screen;
-		ASSERT((unsigned)screen < (unsigned)monitor_count);
+		screen = (-1 < screen) ? screen : window_get_current_screen();
+		VERIFY_RANGE(screen, -1, monitor_count);
 		Vec2 scale; glfwGetMonitorContentScale(monitors[screen], &scale[0], &scale[1]);
 		return scale;
 	}
@@ -536,7 +536,7 @@ namespace ism
 			}
 
 			i32 num_buttons;
-			byte const * buttons{ glfwGetJoystickButtons(device, &num_buttons) };
+			u8 const * buttons{ glfwGetJoystickButtons(device, &num_buttons) };
 			num_buttons = MIN(num_buttons, Input::JoyButton_MAX);
 			for (i32 i = 0; i < num_buttons; ++i) {
 				Input::get_singleton()->set_joy_button(device, i, (Input::Action_)buttons[i]);
@@ -555,14 +555,14 @@ namespace ism
 	{
 	}
 
-	void DisplayServerWindows::set_icon(byte const * data, i32 width, i32 height)
+	void DisplayServerWindows::set_icon(u8 const * data, i32 width, i32 height)
 	{
 		ASSERT(m_main_window);
 		ASSERT(data);
 		ASSERT(0 < width);
 		ASSERT(0 < height);
 		GLFWimage icon;
-		icon.pixels = (byte *)data;
+		icon.pixels = (u8 *)data;
 		icon.width = width;
 		icon.height = height;
 		glfwSetWindowIcon(m_main_window->handle, 1, &icon);

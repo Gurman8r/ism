@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Component : public Object
 	{
-		OBJECT_COMMON(Component, Object);
+		OBJECT_CLASS(Component, Object);
 
 		Entity * m_entity{};
 

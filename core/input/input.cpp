@@ -8,7 +8,7 @@ namespace ism
 
 	Input::Funcs Input::m_funcs{};
 
-	EMBED_CLASS(Input, t) {}
+	EMBED_OBJECT_CLASS(Input, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -76,56 +76,56 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool Input::is_key(i32 key, i32 action, i32 mods) const
+	bool Input::is_key(i32 key, i32 action) const
 	{
 		VERIFY_RANGE(key, -1, Key_MAX);
-		return (m_key[key] == action) && (mods == KeyMods_None || mods == m_key_mods);
+		return (m_key[key] == action);
 	}
 
-	bool Input::is_mouse_button(i32 button, i32 action, i32 mods) const
+	bool Input::is_mouse_button(i32 button, i32 action) const
 	{
 		VERIFY_RANGE(button, -1, MouseButton_MAX);
-		return (m_mouse_button[button] == action) && (mods == KeyMods_None || mods == m_key_mods);
+		return (m_mouse_button[button] == action);
 	}
 
-	bool Input::is_joy_button(i32 device, i32 button, i32 action, i32 mods) const
+	bool Input::is_joy_button(i32 device, i32 button, i32 action) const
 	{
 		VERIFY_RANGE(device, -1, Joy_MAX);
 		VERIFY_RANGE(button, -1, JoyButton_MAX);
-		return (m_joy_button[device][button] == action) && (mods == KeyMods_None || mods == m_key_mods);
+		return (m_joy_button[device][button] == action);
 	}
 
-	bool Input::is_nav_input(i32 nav_input, i32 action, i32 mods) const
+	bool Input::is_nav_input(i32 nav_input, i32 action) const
 	{
 		VERIFY_RANGE(nav_input, -1, NavInput_MAX);
-		return (m_nav_input[nav_input] == action) && (mods == KeyMods_None || mods == m_key_mods);
+		return (m_nav_input[nav_input] == action);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool Input::is_key_down(i32 key, i32 mods) const
+	bool Input::is_key_down(i32 key) const
 	{
 		VERIFY_RANGE(key, -1, Key_MAX);
-		return (m_key[key] != Action_Release) && (mods == KeyMods_None || mods == m_key_mods);
+		return (m_key[key] != Action_Release);
 	}
 
-	bool Input::is_mouse_button_down(i32 button, i32 mods) const
+	bool Input::is_mouse_button_down(i32 button) const
 	{
 		VERIFY_RANGE(button, -1, MouseButton_MAX);
-		return (m_mouse_button[button] != Action_Release) && (mods == KeyMods_None || mods == m_key_mods);
+		return (m_mouse_button[button] != Action_Release);
 	}
 
-	bool Input::is_joy_button_down(i32 device, i32 button, i32 mods) const
+	bool Input::is_joy_button_down(i32 device, i32 button) const
 	{
 		VERIFY_RANGE(device, -1, Joy_MAX);
 		VERIFY_RANGE(button, -1, JoyButton_MAX);
-		return (m_joy_button[device][button] != Action_Release) && (mods == KeyMods_None || mods == m_key_mods);
+		return (m_joy_button[device][button] != Action_Release);
 	}
 
-	bool Input::is_nav_input_down(i32 nav_input, i32 mods) const
+	bool Input::is_nav_input_down(i32 nav_input) const
 	{
 		VERIFY_RANGE(nav_input, -1, NavInput_MAX);
-		return (m_nav_input[nav_input] != Action_Release) && (mods == KeyMods_None || mods == m_key_mods);
+		return (m_nav_input[nav_input] != Action_Release);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -134,7 +134,7 @@ namespace ism
 	{
 		for (i32 i = 0; i < Key_MAX; ++i)
 		{
-			if (m_key[i] == Action_Press)
+			if (m_key[i] != Action_Release)
 			{
 				return true;
 			}
@@ -146,7 +146,7 @@ namespace ism
 	{
 		for (i32 i = 0; i < MouseButton_MAX; ++i)
 		{
-			if (m_mouse_button[i] == Action_Press)
+			if (m_mouse_button[i] != Action_Release)
 			{
 				return true;
 			}
@@ -156,12 +156,11 @@ namespace ism
 
 	bool Input::is_any_joy_button_down(i32 device) const
 	{
-		VERIFY_RANGE(device, -1, Joy_MAX);
-		if (m_joy_known[device])
+		if (is_joy_known(device))
 		{
 			for (i32 i = 0; i < JoyButton_MAX; ++i)
 			{
-				if (m_joy_button[device][i] == Action_Press)
+				if (m_joy_button[device][i] != Action_Release)
 				{
 					return true;
 				}
@@ -174,7 +173,7 @@ namespace ism
 	{
 		for (i32 i = 0; i < NavInput_MAX; ++i)
 		{
-			if (m_nav_input[i] == Action_Press)
+			if (m_nav_input[i] != Action_Release)
 			{
 				return true;
 			}
@@ -244,14 +243,15 @@ namespace ism
 
 	Vector<Input::Joy_> Input::get_connected_joys() const
 	{
-		Vector<Joy_> out{};
+		Vector<Joy_> temp{};
 		for (i32 device = 0; device < Joy_MAX; ++device)
 		{
-			if (m_joy_known[device]) {
-				out.push_back((Joy_)device);
+			if (m_joy_known[device])
+			{
+				temp.push_back((Joy_)device);
 			}
 		}
-		return out;
+		return temp;
 	}
 
 	Input::Joy_ Input::get_unused_joy_id()
@@ -446,7 +446,7 @@ namespace ism
 				if (delta_time - m_mouse_click_time[i] > m_mouse_double_click_time[i])
 				{
 					Vec2 const click_delta{ is_valid_mouse_position(&m_mouse_position) ? (m_mouse_position - m_mouse_click_position[i]) : Vec2{} };
-					f32 const click_dist{ (click_delta[0] * click_delta[0]) + (click_delta[1] * click_delta[1]) };
+					f32 const click_dist{ util::magnitude(click_delta) };
 					if (click_dist < m_double_click_max_distance * m_double_click_max_distance) {
 						bit_set(m_mouse_click[i], Click_DoubleClicked);
 					}
@@ -464,9 +464,8 @@ namespace ism
 			}
 			else if (m_mouse_button[i])
 			{
-				// TODO
 				Vec2 const click_delta{ is_valid_mouse_position(&m_mouse_position) ? (m_mouse_position - m_mouse_click_position[i]) : Vec2{} };
-				f32 const click_dist{ (click_delta[0] * click_delta[0]) + (click_delta[1] * click_delta[1]) };
+				f32 const click_dist{ util::magnitude(click_delta) };
 				m_mouse_drag_sqr[i] = util::max(m_mouse_drag_sqr[i], click_dist);
 				m_mouse_drag_abs[i][0] = util::max(m_mouse_drag_abs[i][0], click_delta[0] < 0.f ? -click_delta[0] : click_delta[0]);
 				m_mouse_drag_abs[i][1] = util::max(m_mouse_drag_abs[i][1], click_delta[1] < 0.f ? -click_delta[1] : click_delta[1]);

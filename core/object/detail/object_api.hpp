@@ -101,7 +101,7 @@ namespace ism
 
 	template <class T> struct Hasher<ObjectAPI<T>>
 	{
-		template <class U> hash_t operator()(U const & o) const { return o.hash_code(); }
+		template <class U> size_t operator()(U const & o) const { return o.hash_code(); }
 	};
 
 	template <class T> struct EqualTo<ObjectAPI<T>>

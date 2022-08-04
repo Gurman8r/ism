@@ -36,15 +36,15 @@ namespace ism
 	{
 		ASSERT(type);
 		ASSERT(type.ready());
-		hash_t const type_id{ type->tp_name.hash_code() };
-		ASSERT(!class_db.contains<hash_t>(type_id));
+		size_t const type_id{ type->tp_name.hash_code() };
+		ASSERT(!class_db.contains<size_t>(type_id));
 		class_db.push_back(type_id, type->tp_name, type);
 	}
 
 	TYPE Internals::get_class(StringName const & name) const
 	{
-		hash_t const i{ name.hash_code() };
-		if (TYPE const * e{ class_db.map<hash_t, TYPE>(i) }) {
+		size_t const i{ name.hash_code() };
+		if (TYPE const * e{ class_db.map<size_t, TYPE>(i) }) {
 			return *e;
 		}
 		return nullptr;

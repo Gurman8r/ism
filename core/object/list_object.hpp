@@ -9,7 +9,7 @@ namespace ism
 	// list object
 	class ISM_API ListObject : public Object
 	{
-		OBJECT_COMMON(ListObject, Object);
+		OBJECT_CLASS(ListObject, Object);
 
 		friend class LIST;
 
@@ -133,7 +133,7 @@ namespace ism
 	// list ref
 	class LIST : public Ref<ListObject>
 	{
-		REF_COMMON(LIST, OBJECT_CHECK_LIST);
+		REF_CLASS(LIST, OBJECT_CHECK_LIST);
 
 	public:
 		using storage_type		= value_type::storage_type;

@@ -5,6 +5,7 @@
 #include <core/object/type_object.hpp>
 #include <core/object/int_object.hpp>
 #include <core/object/float_object.hpp>
+#include <core/object/iterator_object.hpp>
 #include <core/object/string_object.hpp>
 #include <core/object/tuple_object.hpp>
 #include <core/object/list_object.hpp>

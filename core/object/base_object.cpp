@@ -5,13 +5,13 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Object, t, TypeFlags_IsAbstract)
+	EMBED_OBJECT_CLASS(Object, t, TypeFlags_IsAbstract)
 	{
 		t.tp_getattro = (getattrofunc)&Object::generic_getattr;
 
 		t.tp_setattro = (setattrofunc)&Object::generic_setattr;
 
-		t.tp_bind = CLASS_INSTALLER(Object, t)
+		t.tp_bind = CLASS_BINDER(Object, t)
 		{
 			return t
 				.def("init_ref", &Object::init_ref)
