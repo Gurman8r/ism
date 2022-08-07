@@ -10,13 +10,10 @@ namespace ism
 	EditorViewport::EditorViewport()
 		: EditorPanel{ "Viewport##Editor", true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar }
 		, m_main_texture{}
-		, m_editor_camera{}
 		, m_grid_enabled{ true }
 		, m_grid_matrix{ Mat4::identity() }
 		, m_grid_size{ 100.f }
 	{
-		m_editor_camera.set_eye({ 0.f, 0.f, -5.f });
-		m_editor_camera.set_yaw(90.f);
 	}
 
 	EditorViewport::~EditorViewport()
@@ -34,7 +31,6 @@ namespace ism
 		ImGui::PopStyleVar(1);
 		if (!open) { return; }
 
-		Input * const input{ Input::get_singleton() };
 		ImGuiWindow * const window{ get_window() };
 		ImRect const view_rect{ window->InnerRect };
 
@@ -44,13 +40,7 @@ namespace ism
 		}
 
 		bool const nav_enabled{ window == ImGui::GetCurrentContext()->NavWindow };
-		bool const dragging_view{ nav_enabled && !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && input->is_mouse_dragging(0) };
-
-		if (dragging_view) {
-			Vec2 const drag{ input->get_mouse_delta() * (f32)delta_time * 50.f };
-			m_editor_camera.do_yaw(-drag[0]);
-			m_editor_camera.do_pitch(+drag[1]);
-		}
+		m_is_dragging_view = nav_enabled && !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && ImGui::IsMouseDragging(0);
 
 		if (ImGui::BeginMenuBar()) {
 			ImGui::EndMenuBar();
@@ -58,7 +48,7 @@ namespace ism
 
 		ImGuizmo::SetDrawlist(window->DrawList);
 		ImGuizmo::SetRect(view_rect.Min.x, view_rect.Min.y, view_rect.GetWidth(), view_rect.GetHeight());
-		if (m_grid_enabled) { ImGuizmo::DrawGrid(m_editor_camera.get_view(), m_editor_camera.get_proj(), m_grid_matrix, m_grid_size); }
+		if (m_grid_enabled) { ImGuizmo::DrawGrid(m_camera_view, m_camera_proj, m_grid_matrix, m_grid_size); }
 		//if (0 < m_object_count) { ImGuizmo::DrawCubes(view_matrix, proj_matrix, &m_object_matrix[0][0], m_object_count); }
 		//for (i32 i = 0; i < m_object_count; ++i) {
 		//	ImGuizmo::SetID(i);

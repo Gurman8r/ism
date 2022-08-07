@@ -1,5 +1,4 @@
 #include <editor/register_editor_types.hpp>
-#include <editor/editor_camera.hpp>
 #include <editor/editor_node.hpp>
 #include <editor/editor_hierarchy.hpp>
 #include <editor/editor_log.hpp>
@@ -11,9 +10,7 @@ void ism::register_editor_types()
 {
 	Internals::get_singleton()->initialize_class
 	<
-		EditorCamera,
 		EditorNode,
-
 		EditorPanel,
 		EditorHierarchy,
 		EditorLog,

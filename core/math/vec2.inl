@@ -6,9 +6,10 @@ namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> constexpr T magnitude(TVec2<T> const & v) noexcept
+	template <class T
+	> NODISCARD T dot(TVec2<T> const & a, TVec2<T> const & b) noexcept
 	{
-		return (v[0] * v[0]) + (v[1] * v[1]);
+		return a[0] * b[0] + a[1] * b[1];
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

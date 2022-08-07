@@ -62,26 +62,22 @@ namespace ism
 
 	template <class A, class B
 	> TMat2<A> & operator+=(TMat2<A> & a, TMat2<B> const & b) noexcept {
-		((glm::tmat2x2<A> &)a) += ((glm::tmat2x2<B> const &)b);
-		return a;
+		return (((glm::tmat2x2<A> &)a) += ((glm::tmat2x2<B> const &)b)), a;
 	}
 
 	template <class A, class B
 	> TMat2<A> & operator-=(TMat2<A> & a, TMat2<B> const & b) noexcept {
-		((glm::tmat2x2<A> &)a) -= ((glm::tmat2x2<B> const &)b);
-		return a;
+		return (((glm::tmat2x2<A> &)a) -= ((glm::tmat2x2<B> const &)b)), a;
 	}
 
 	template <class A, class B
 	> TMat2<A> & operator*=(TMat2<A> & a, TMat2<B> const & b) noexcept {
-		((glm::tmat2x2<A> &)a) *= ((glm::tmat2x2<B> const &)b);
-		return a;
+		return (((glm::tmat2x2<A> &)a) *= ((glm::tmat2x2<B> const &)b)), a;
 	}
 
 	template <class A, class B
 	> TMat2<A> & operator/=(TMat2<A> & a, TMat2<B> const & b) noexcept {
-		((glm::tmat2x2<A> &)a) /= ((glm::tmat2x2<B> const &)b);
-		return a;
+		return (((glm::tmat2x2<A> &)a) /= ((glm::tmat2x2<B> const &)b)), a;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

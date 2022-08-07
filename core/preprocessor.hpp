@@ -45,7 +45,10 @@
 
 // static string variable
 #define STRVAR(name, str) \
-		static char const name[] = str
+		static char const name[] = (str)
+
+#define CONSTEXPR_VAR(type, name, value) \
+		static constexpr type CAT(name, _v) = (value)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

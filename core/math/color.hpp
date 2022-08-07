@@ -43,61 +43,38 @@ namespace ism
 
 	struct Color
 	{
-		using storage_type				= Vec4;
-		using value_type				= storage_type::value_type;
-		using size_type					= storage_type::size_type;
-		using difference_type			= storage_type::difference_type;
-		using pointer					= storage_type::pointer;
-		using reference					= storage_type::reference;
-		using const_pointer				= storage_type::const_pointer;
-		using const_reference			= storage_type::const_reference;
-		using iterator					= storage_type::iterator;
-		using const_iterator			= storage_type::const_iterator;
-		using reverse_iterator			= storage_type::reverse_iterator;
-		using const_reverse_iterator	= storage_type::const_reverse_iterator;
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		using self_type			= Color;
+		using storage_type		= Vec4;
+		using value_type		= storage_type::value_type;
+		using size_type			= storage_type::size_type;
+		using difference_type	= storage_type::difference_type;
+		using pointer			= storage_type::pointer;
+		using reference			= storage_type::reference;
+		using const_pointer		= storage_type::const_pointer;
+		using const_reference	= storage_type::const_reference;
+		using iterator			= storage_type::iterator;
+		using const_iterator	= storage_type::const_iterator;
 
 		storage_type m_data{};
 
 		constexpr Color() noexcept = default;
-		constexpr Color(Color const &) = default;
-		constexpr Color(Color &&) noexcept = default;
-		constexpr Color & operator=(Color const &) = default;
-		constexpr Color & operator=(Color &&) noexcept = default;
-		
-		Color & swap(Color & value) noexcept { if (this != std::addressof(value)) { std::swap(m_data, value.m_data); } return (*this); }
+		constexpr Color(self_type const &) = default;
+		constexpr Color(self_type &&) noexcept = default;
+		constexpr self_type & operator=(self_type const &) = default;
+		constexpr self_type & operator=(self_type &&) noexcept = default;
+		NODISCARD constexpr operator pointer() noexcept { return m_data; }
+		NODISCARD constexpr operator const_pointer() const noexcept { return m_data; }
+		NODISCARD constexpr operator storage_type & () & noexcept { return m_data; }
+		NODISCARD constexpr operator storage_type const & () const & noexcept { return m_data; }
+		NODISCARD constexpr operator storage_type && () && noexcept { return std::move(m_data); }
+		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
+		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
+		NODISCARD constexpr auto end() noexcept -> iterator { return m_data.end(); }
+		NODISCARD constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
 
-		static constexpr bool empty() noexcept { return false; }
-		static constexpr auto width() noexcept -> size_t { return 4; }
-		static constexpr auto height() noexcept -> size_t { return 1; }
-		static constexpr auto size() noexcept -> size_t { return 4; }
-		static constexpr auto max_size() noexcept -> size_t { return 4; }
-
-		constexpr auto data() noexcept -> pointer { return m_data; }
-		constexpr auto data() const noexcept -> const_pointer { return m_data; }
-
-		constexpr operator pointer() noexcept { return m_data; }
-		constexpr operator const_pointer() const noexcept { return m_data; }
-
-		constexpr auto operator*() & noexcept -> reference { return *m_data; }
-		constexpr auto operator*() const & noexcept -> const_reference { return *m_data; }
-		constexpr auto operator*() && noexcept -> value_type && { return std::move(*m_data); }
-
-		constexpr operator storage_type & () & noexcept { return m_data; }
-		constexpr operator storage_type const & () const & noexcept { return m_data; }
-		constexpr operator storage_type && () && noexcept { return std::move(m_data); }
-
-		constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
-		constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
-		constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
-		constexpr auto end() noexcept -> iterator { return m_data.end(); }
-		constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
-		constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-		constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
-		constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
-		constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-		constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
-		constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
-		constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

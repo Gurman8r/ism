@@ -59,7 +59,7 @@ namespace ism
 			_frustum(-xmax, xmax, -ymax, ymax, znear, zfar, m16);
 		}
 
-		static void orthographic(f32 l, f32 r, f32 b, f32 t, f32 zn, f32 const zf, f32 * m16)
+		static void orthographic(f32 l, f32 r, f32 b, f32 t, f32 zn, f32 zf, f32 * m16)
 		{
 			m16[0] = 2 / (r - l);
 			m16[1] = 0.0f;

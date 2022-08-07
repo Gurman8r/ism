@@ -3,6 +3,13 @@
 
 #include <core/templates/array.hpp>
 
+//#define GLM_FORCE_LEFT_HANDED
+#define GLM_FORCE_SIZE_T_LENGTH
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtx/quaternion.hpp>
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -123,77 +130,78 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		using value_type				= typename _Type;
-		using self_type					= typename Matrix<value_type, _Width, _Height>;
-		using storage_type				= typename Array<value_type, _Width * _Height>;
-		using size_type					= typename storage_type::size_type;
-		using difference_type			= typename storage_type::difference_type;
-		using pointer					= typename storage_type::pointer;
-		using reference					= typename storage_type::reference;
-		using const_pointer				= typename storage_type::const_pointer;
-		using const_reference			= typename storage_type::const_reference;
-		using iterator					= typename storage_type::iterator;
-		using const_iterator			= typename storage_type::const_iterator;
-		using reverse_iterator			= typename storage_type::reverse_iterator;
-		using const_reverse_iterator	= typename storage_type::const_reverse_iterator;
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		using value_type		= typename _Type;
+		using self_type			= typename Matrix<value_type, _Width, _Height>;
+		using storage_type		= typename Array<value_type, _Width * _Height>;
+		using size_type			= typename storage_type::size_type;
+		using difference_type	= typename storage_type::difference_type;
+		using pointer			= typename storage_type::pointer;
+		using reference			= typename storage_type::reference;
+		using const_pointer		= typename storage_type::const_pointer;
+		using const_reference	= typename storage_type::const_reference;
+		using iterator			= typename storage_type::iterator;
+		using const_iterator	= typename storage_type::const_iterator;
+		using row_type			= typename TVecN<_Type, _Width>;
+		using col_type			= typename TVecN<_Type, _Height>;
 
 		storage_type m_data; // aggregate initializer
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		constexpr self_type & swap(self_type & value) noexcept { return m_data.swap(value.m_data), (*this); }
 
-		constexpr self_type & swap(self_type & other) noexcept { return util::swap(m_data, other.m_data), (*this); }
-
-		NODISCARD static constexpr bool empty() noexcept { return false; }
-		NODISCARD static constexpr auto width() noexcept -> size_t { return _Width; }
-		NODISCARD static constexpr auto height() noexcept -> size_t { return _Height; }
-		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _Width * _Height; }
+		NODISCARD static constexpr auto cols() noexcept -> size_t { return _Width; }
+		NODISCARD static constexpr auto rows() noexcept -> size_t { return _Height; }
 		NODISCARD static constexpr auto size() noexcept -> size_t { return _Width * _Height; }
-		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _Width * _Height; }
-		
+
 		NODISCARD constexpr operator pointer() noexcept { return m_data; }
 		NODISCARD constexpr operator const_pointer() const noexcept { return m_data; }
-		NODISCARD constexpr auto data() noexcept -> pointer { return m_data; }
-		NODISCARD constexpr auto data() const noexcept -> const_pointer { return m_data; }
-		NODISCARD constexpr auto at(size_t const i) & noexcept -> reference { return m_data.at(i); }
-		NODISCARD constexpr auto at(size_t const i) const & noexcept -> const_reference { return m_data.at(i); }
-		NODISCARD constexpr auto at(size_t const i) && noexcept -> value_type && { return std::move(m_data.at(i)); }
-		NODISCARD constexpr auto at(size_t const x, size_t const y) & noexcept -> reference { return at(y * _Width + x); }
-		NODISCARD constexpr auto at(size_t const x, size_t const y) const & noexcept -> const_reference { return at(y * _Width + x); }
-		NODISCARD constexpr auto at(size_t const x, size_t const y) && noexcept -> value_type && { return std::move(at(y * _Width + x)); }
-		
+		NODISCARD constexpr operator storage_type & () & noexcept { return m_data; }
+		NODISCARD constexpr operator storage_type const & () const & noexcept { return m_data; }
+		NODISCARD constexpr operator storage_type && () && noexcept { return std::move(m_data); }
+
+		NODISCARD constexpr auto at(size_t const i) noexcept -> reference { return m_data.at(i); }
+		NODISCARD constexpr auto at(size_t const i) const noexcept -> const_reference { return m_data.at(i); }
+		NODISCARD constexpr auto at(size_t const x, size_t const y) noexcept -> reference { return m_data.at(y * _Width + x); }
+		NODISCARD constexpr auto at(size_t const x, size_t const y) const noexcept -> const_reference { return m_data.at(y * _Width + x); }
+
 		NODISCARD constexpr auto begin() noexcept -> iterator { return m_data.begin(); }
 		NODISCARD constexpr auto begin() const noexcept -> const_iterator { return m_data.begin(); }
-		NODISCARD constexpr auto cbegin() const noexcept -> const_iterator { return m_data.cbegin(); }
 		NODISCARD constexpr auto end() noexcept -> iterator { return m_data.end(); }
 		NODISCARD constexpr auto end() const noexcept -> const_iterator { return m_data.end(); }
-		NODISCARD constexpr auto cend() const noexcept -> const_iterator { return m_data.cend(); }
-		NODISCARD constexpr auto rbegin() noexcept -> reverse_iterator { return m_data.rbegin(); }
-		NODISCARD constexpr auto rbegin() const noexcept -> const_reverse_iterator { return m_data.rbegin(); }
-		NODISCARD constexpr auto crbegin() const noexcept -> const_reverse_iterator { return m_data.crbegin(); }
-		NODISCARD constexpr auto rend() noexcept -> reverse_iterator { return m_data.rend(); }
-		NODISCARD constexpr auto rend() const noexcept -> const_reverse_iterator { return m_data.rend(); }
-		NODISCARD constexpr auto crend() const noexcept -> const_reverse_iterator { return m_data.crend(); }
 		
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD static constexpr self_type identity() noexcept {
-			self_type temp{};
-			for (size_t i = 0; i < size(); ++i) { temp[i] = (value_type)(i % _Width == i / _Height); }
-			return temp;
+		NODISCARD static constexpr self_type identity() noexcept
+		{
+			self_type m{};
+			for (size_t i = 0; i < _Width * _Height; ++i) {
+				m[i] = static_cast<value_type>(i % _Width == i / _Height);
+			}
+			return m;
 		}
 
-		NODISCARD static constexpr self_type fill(value_type value) noexcept {
-			self_type temp{};
-			for (auto & e : temp) { e = value; }
-			return temp;
+		NODISCARD static constexpr self_type one() noexcept
+		{
+			self_type m{};
+			for (auto & e : m) {
+				e = static_cast<value_type>(1);
+			}
+			return m;
 		}
 
-		NODISCARD static constexpr self_type one() noexcept {
-			self_type temp{};
-			for (auto & e : temp) { e = (value_type)1; }
-			return temp;
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+		NODISCARD constexpr row_type row(size_t const y) const
+		{
+			row_type r{};
+			for (size_t x{}; x < _Width; ++x) { r[x] = at(x, y); }
+			return r;
+		}
+
+		NODISCARD constexpr col_type col(size_t const x) const
+		{
+			col_type c{};
+			for (size_t y{}; y < _Height; ++y) { c[y] = at(x, y); }
+			return c;
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -203,31 +211,29 @@ namespace ism
 		{
 			using Out = Matrix<T, W, H>;
 
-			// same type
+			// same
 			if constexpr (std::is_same_v<Out, self_type>)
 			{
 				return (*this);
 			}
 			else
 			{
-				Out temp;
+				Out temp{};
 
 				// same dimensions
 				if constexpr ((W == _Width) && (H == _Height))
 				{
-					for (size_t i = 0; i < (W * H); ++i)
-					{
+					for (size_t i = 0; i < (W * H); ++i) {
 						temp[i] = static_cast<T>(m_data[i]);
 					}
 				}
-
 				// different dimensions
 				else
 				{
 					for (size_t i = 0; i < W * H; ++i)
 					{
-						if (size_t const x{ i % W }, y{ i / W }; (x < _Width) && (y < _Height))
-						{
+						if (size_t const x{ i % W }, y{ i / W }
+						; x < _Width && y < _Height) {
 							temp[i] = static_cast<T>(m_data[y * _Width + x]);
 						}
 					}
@@ -310,7 +316,7 @@ namespace ism
 		}
 	}
 
-	// greater or equal
+	// less or equal
 	template <
 		class T1, size_t W1, size_t H1,
 		class T2, size_t W2, size_t H2
@@ -327,7 +333,7 @@ namespace ism
 		}
 	}
 
-	// less or equal
+	// greater or equal
 	template <
 		class T1, size_t W1, size_t H1,
 		class T2, size_t W2, size_t H2
@@ -347,37 +353,43 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator+(Matrix<T, W, H> const & a, B const & b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator+(Matrix<T, W, H> const & a, B const & b) noexcept
+	{
 		auto c{ a };
 		return c += b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator-(Matrix<T, W, H> const & a, B const & b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator-(Matrix<T, W, H> const & a, B const & b) noexcept
+	{
 		auto c{ a };
 		return c -= b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator*(Matrix<T, W, H> const & a, B const & b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator*(Matrix<T, W, H> const & a, B const & b) noexcept
+	{
 		auto c{ a };
 		return c *= b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator/(Matrix<T, W, H> const & a, B const & b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator/(Matrix<T, W, H> const & a, B const & b) noexcept
+	{
 		auto c{ a };
 		return c /= b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator%(Matrix<T, W, H> const & a, B const & b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator%(Matrix<T, W, H> const & a, B const & b) noexcept
+	{
 		auto c{ a };
 		return c %= b;
 	}
 
 	template <class T, size_t W, size_t H, class B
-	> NODISCARD constexpr Matrix<T, W, H> operator^(Matrix<T, W, H> const & a, B const & b) noexcept {
+	> NODISCARD constexpr Matrix<T, W, H> operator^(Matrix<T, W, H> const & a, B const & b) noexcept
+	{
 		auto c{ a };
 		return c ^= b;
 	}
@@ -385,23 +397,104 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, size_t W, size_t H
-	> NODISCARD constexpr auto operator-(Matrix<T, W, H> const & a) noexcept {
+	> NODISCARD constexpr auto operator-(Matrix<T, W, H> const & a) noexcept
+	{
 		return a * static_cast<T>(-1);
 	}
 
 	template <class T, size_t W, size_t H
-	> NODISCARD constexpr auto operator+(Matrix<T, W, H> const & a) noexcept {
+	> NODISCARD constexpr auto operator+(Matrix<T, W, H> const & a) noexcept
+	{
 		return -(-(a));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-#define GLM_FORCE_SIZE_T_LENGTH
-#include <glm/glm/glm.hpp>
-#include <glm/glm/gtc/type_ptr.hpp>
-#include <glm/glm/gtc/matrix_transform.hpp>
-#include <glm/glm/gtx/quaternion.hpp>
+	namespace util
+	{
+		template <class T, size_t W, size_t H
+		> NODISCARD Matrix<T, W, H> asin(Matrix<T, W, H> m) noexcept
+		{
+			for (size_t i = 0; i < W * H; ++i) { m[i] = std::asin(m[i]); }
+			return m;
+		}
+
+		template <class T, size_t W, size_t H
+		> NODISCARD Matrix<T, W, H> acos(Matrix<T, W, H> m) noexcept
+		{
+			for (size_t i = 0; i < W * H; ++i) { m[i] = std::acos(m[i]); }
+			return m;
+		}
+
+		template <class T, size_t W, size_t H
+		> NODISCARD Matrix<T, W, H> atan(Matrix<T, W, H> m) noexcept
+		{
+			for (size_t i = 0; i < W * H; ++i) { m[i] = std::atan(m[i]); }
+			return m;
+		}
+
+		template <class T, size_t W, size_t H
+		> NODISCARD Matrix<T, W, H> sin(Matrix<T, W, H> m) noexcept
+		{
+			for (size_t i = 0; i < W * H; ++i) { m[i] = std::sin(m[i]); }
+			return m;
+		}
+
+		template <class T, size_t W, size_t H
+		> NODISCARD Matrix<T, W, H> cos(Matrix<T, W, H> m) noexcept
+		{
+			for (size_t i = 0; i < W * H; ++i) { m[i] = std::cos(m[i]); }
+			return m;
+		}
+
+		template <class T, size_t W, size_t H
+		> NODISCARD Matrix<T, W, H> tan(Matrix<T, W, H> m) noexcept
+		{
+			for (size_t i = 0; i < W * H; ++i) { m[i] = std::tan(m[i]); }
+			return m;
+		}
+
+		template <class T, size_t W, size_t H
+		> NODISCARD Matrix<T, W, H> sqrt(Matrix<T, W, H> m) noexcept
+		{
+			for (size_t i = 0; i < W * H; ++i) { m[i] = std::sqrt(m[i]); }
+			return m;
+		}
+
+		template <class T
+		> NODISCARD T inversesqrt(T const v) noexcept
+		{
+			return static_cast<T>(1) / std::sqrt(v);
+		}
+
+		template <class T, size_t W, size_t H
+		> NODISCARD Matrix<T, W, H> inversesqrt(Matrix<T, W, H> m) noexcept
+		{
+			for (size_t i = 0; i < W * H; ++i) { m[i] = inversesqrt(m[i]); }
+			return m;
+		}
+
+		template <class T, size_t N
+		> NODISCARD T length(TVecN<T, N> const & v) noexcept
+		{
+			return std::sqrt(dot(v, v));
+		}
+
+		template <class T, size_t N
+		> NODISCARD TVecN<T, N> normalize(TVecN<T, N> const & v) noexcept
+		{
+			return v * inversesqrt(dot(v, v));
+		}
+
+		template <class T, size_t N
+		> NODISCARD TVecN<T, N> cross(TVecN<T, N> const & a, TVecN<T, N> const & b) noexcept
+		{
+			return bit_cast<TVecN<T, N>>(glm::cross((glm::vec<N, T> const &)a, (glm::vec<N, T> const &)b));
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
 #include "vec2.inl"
 #include "vec3.inl"

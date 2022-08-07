@@ -28,7 +28,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		storage_type m_data;
+		storage_type m_data; // aggregate initializer
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -36,10 +36,12 @@ namespace ism
 		{
 			if (this != std::addressof(other))
 			{
-				value_type temp;
-				for (size_t i = 0; i < _Size; ++i) {
-					temp = std::move(m_data[i]);
+				for (size_t i = 0; i < _Size; ++i)
+				{
+					value_type temp{ std::move(m_data[i]) };
+
 					m_data[i] = std::move(other.m_data[i]);
+
 					other.m_data[i] = std::move(temp);
 				}
 			}

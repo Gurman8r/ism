@@ -6,33 +6,10 @@ namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class A, class B
-	> NODISCARD TVec3<A> cross(TVec3<A> const & a, TVec3<B> const & b) noexcept
+	template <class T
+	> NODISCARD T dot(TVec3<T> const & a, TVec3<T> const & b) noexcept
 	{
-		return {
-			a[1] * (A)b[2] - a[2] * (A)b[1],
-			a[2] * (A)b[0] - a[0] * (A)b[2],
-			a[0] * (A)b[1] - a[1] * (A)b[0],
-		};
-	}
-
-	template <class A, class B
-	> NODISCARD A dot(TVec3<A> const & a, TVec3<B> const & b) noexcept
-	{
-		return a[0] * (A)b[0] + a[1] * (A)b[1] + a[2] * (A)b[2];
-	}
-
-	template <class A
-	> NODISCARD TVec3<A> normalize(TVec3<A> const & a) noexcept
-	{
-		glm::mat4() * glm::vec4();
-
-		A const il{ (A)1 / (std::sqrtf(dot(a, a)) + FLT_EPSILON) };
-		return {
-			a[0] * il,
-			a[1] * il,
-			a[2] * il,
-		};
+		return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

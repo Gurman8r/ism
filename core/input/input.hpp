@@ -279,16 +279,6 @@ namespace ism
 			NavInput_MAX
 		};
 
-		// internal click state
-		enum Click_ : u8
-		{
-			Click_Released			= 0,
-			Click_Clicked			= 1,
-			Click_DoubleClicked		= 2,
-			Click_IsNewDoubleClick	= 3,
-			Click_MAX
-		};
-
 	public:
 		static constexpr bool is_valid_mouse_position(Vec2 const * value = nullptr) noexcept
 		{

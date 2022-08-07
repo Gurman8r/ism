@@ -1,8 +1,44 @@
 #ifndef _ISM_TRANSFORM_HPP_
 #define _ISM_TRANSFORM_HPP_
 
-#include <core/math/rect.hpp>
 #include <core/math/quat.hpp>
+
+namespace ism::util
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	inline Mat4 perspective(f32 fov, f32 aspect, f32 znear, f32 zfar) noexcept
+	{
+		return bit_cast<Mat4>(glm::perspective(fov, aspect, znear, zfar));
+	}
+
+	inline Mat4 orthographic(f32 left, f32 right, f32 bottom, f32 top, f32 znear, f32 zfar) noexcept
+	{
+		return bit_cast<Mat4>(glm::ortho(left, right, bottom, top, znear, zfar));
+	}
+
+	inline Mat4 translate(Mat4 const & m, Vec3 const & v)
+	{
+		return bit_cast<Mat4>(glm::translate((glm::mat4 const &)m, (glm::vec3 const &)v));
+	}
+
+	inline Mat4 rotate(Mat4 const & m, f32 const angle, Vec3 const & axis) noexcept
+	{
+		return bit_cast<Mat4>(glm::rotate((glm::mat4 const &)m, angle, (glm::vec3 const &)axis));
+	}
+
+	inline Mat4 scale(Mat4 const & m, Vec3 const & v) noexcept
+	{
+		return bit_cast<Mat4>(glm::scale((glm::mat4 const &)m, (glm::vec3 const &)v));
+	}
+
+	inline Mat4 look_at(Vec3 const & eye, Vec3 const & target, Vec3 const & up = { 0, 1, 0 }) noexcept
+	{
+		return bit_cast<Mat4>(glm::lookAt((glm::vec3 const &)eye, (glm::vec3 const &)target, (glm::vec3 const &)up));
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
 
 namespace ism
 {
@@ -10,199 +46,258 @@ namespace ism
 
 	class Transform
 	{
-		mutable Mat4 m_matrix{};
-		
-		mutable bool m_changed{};
+	public:
+		static constexpr Vec3 world_up{ 0, 1, 0 };
 
-		Vec3 m_position{}, m_rotation{}, m_scale{};
-		
+	private:
+		mutable Mat4 m_matrix{ Mat4::identity() }; // keep this as the first element for conversion reasons
+
 		mutable Mat4 m_translation{}, m_orientation{}, m_scaling{};
 
+		mutable bool m_position_changed : 1, m_rotation_changed : 1, m_scale_changed : 1;
+
+		Vec3 m_position{}; Quat m_rotation{}; Vec3 m_scale{};
+
 	public:
-		Transform() noexcept = default;
-
-		Transform(Transform const & value)
-			: m_changed	{ value.m_changed }
-			, m_matrix	{ value.m_matrix }
-			, m_position{ value.m_position }
-			, m_rotation{ value.m_rotation }
-			, m_scale	{ value.m_scale }
+		Transform(Vec3 const & position = {}, Quat const & rotation = {}, Vec3 const & scale = { 1, 1, 1 }) noexcept
+			: m_position{ position }, m_position_changed{ true }
+			, m_rotation{ rotation }, m_rotation_changed{ true }
+			, m_scale{ scale }, m_scale_changed{ true }
 		{
 		}
 
-		Transform(Transform && value) noexcept
+		Transform(Transform const & value) noexcept
+			: m_position{ value.m_position }, m_position_changed{ true }
+			, m_rotation{ value.m_rotation }, m_rotation_changed{ true }
+			, m_scale{ value.m_scale }, m_scale_changed{ true }
 		{
-			swap(std::move(value));
-		}
-
-		Transform(Vec3 const & position, Vec3 const & rotation, Vec3 const & scale) noexcept
-			: m_changed	{ true }
-			, m_position{ position }
-			, m_rotation{ rotation }
-			, m_scale	{ scale }
-		{
-			UNUSED(get_matrix());
-		}
-
-		Transform & operator=(Transform const & value)
-		{
-			Transform temp{ value };
-			return swap(temp);
-		}
-
-		Transform & operator=(Transform && value) noexcept
-		{
-			return swap(std::move(value));
-		}
-
-		Transform & swap(Transform & value) noexcept
-		{
-			if (this != std::addressof(value))
-			{
-				m_changed = value.m_changed = true;
-				std::swap(m_position, value.m_position);
-				std::swap(m_rotation, value.m_rotation);
-				std::swap(m_scale, value.m_scale);
-			}
-			return (*this);
 		}
 
 	public:
-		Mat4 const & get_translation() const noexcept
-		{
-			if (m_changed) {
-				((glm::mat4 &)m_translation) = glm::translate(glm::mat4(1.f), (glm::vec3 const &)m_position);
-			}
-			return m_translation;
-		}
+		/* TRANSLATION */
 
-		Vec3 const & get_position() const noexcept
-		{
-			return m_position;
-		}
+		NODISCARD Vec3 const & get_position() const noexcept { return m_position; }
 
 		Transform & set_position(Vec3 const & value) noexcept
 		{
 			if (m_position != value) {
 				m_position = value;
-				m_changed = true;
+				m_position_changed = true;
+			}
+			return (*this);
+		}
+
+		Transform & set_position(f32 const x, f32 const y, f32 const z) noexcept
+		{
+			if (m_position[0] != x || m_position[1] != y || m_position[2] != z) {
+				m_position[0] = x; m_position[1] = y; m_position[2] = z;
+				m_position_changed = true;
+			}
+			return (*this);
+		}
+
+		Transform & translate(Vec3 const & value) noexcept
+		{
+			if (value != Vec3{}) {
+				m_position += value;
+				m_position_changed = true;
 			}
 			return (*this);
 		}
 
 		Transform & translate(f32 const x, f32 const y, f32 const z) noexcept
 		{
-			m_position[0] += x;
-			m_position[1] += y;
-			m_position[2] += z;
-			m_changed = true;
-			return (*this);
-		}
-
-		Transform & translate(Vec3 const & amount) noexcept
-		{
-			m_position[0] += amount[0];
-			m_position[1] += amount[1];
-			m_position[2] += amount[2];
-			m_changed = true;
+			if (x != 0.f || y != 0.f || z != 0.f) {
+				m_position[0] += x; m_position[1] += y; m_position[2] += z;
+				m_position_changed = true;
+			}
 			return (*this);
 		}
 
 	public:
-		Mat4 const & get_orientation() const noexcept
-		{
-			if (m_changed) {
-				((glm::mat4 &)m_orientation) = glm::rotate(glm::mat4(1.f), glm::radians(0.f), (glm::vec3 const &)m_rotation);
-			}
-			return m_orientation;
-		}
+		/* ORIENTATION */
 
-		Vec3 const & get_rotation() const noexcept
-		{
-			return m_rotation;
-		}
+		NODISCARD Quat const & get_rotation() const noexcept { return m_rotation; }
 
-		Transform & set_rotation(Vec3 const & value) noexcept
+		Transform & set_rotation(Quat const & value) noexcept
 		{
 			if (m_rotation != value) {
 				m_rotation = value;
-				m_changed = true;
+				m_rotation_changed = true;
 			}
 			return (*this);
 		}
 
-		Transform & rotate(f32 const x, f32 const y, f32 const z, bool world = true) noexcept
+		Transform & set_rotation(f32 const angle, Vec3 const & axis) noexcept
 		{
-			m_rotation[0] += x;
-			m_rotation[1] += y;
-			m_rotation[2] += z;
-			m_changed = true;
+			return set_rotation(Quat{ angle, axis });
+		}
+
+		Transform & set_rotation(f32 const pitch, f32 const yaw, f32 const roll) noexcept
+		{
+			return set_rotation(Quat{ Vec3{ pitch, yaw, roll } });
+		}
+
+		Transform & set_rotation(Vec3 const & u, Vec3 const & v) noexcept
+		{
+			return set_rotation(Quat{ u, v });
+		}
+
+		Transform & set_rotation(Vec3 const & euler_angles) noexcept
+		{
+			return set_rotation(Quat{ euler_angles });
+		}
+
+		Transform & set_rotation(Mat3 const & m9) noexcept
+		{
+			return set_rotation(Quat{ m9 });
+		}
+
+		Transform & set_rotation(Mat4 const & m16) noexcept
+		{
+			return set_rotation(Quat{ m16 });
+		}
+
+		Transform & rotate(Quat const & q) noexcept
+		{
+			m_rotation *= q;
+			m_rotation_changed = true;
 			return (*this);
 		}
 
-		Transform & rotate(Vec3 const & amount, bool world = true) noexcept
+		Transform & rotate(f32 const angle, Vec3 const & axis) noexcept
 		{
-			m_rotation[0] += amount[0];
-			m_rotation[1] += amount[1];
-			m_rotation[2] += amount[2];
-			m_changed = true;
+			m_rotation.rotate(angle, axis);
+			m_rotation_changed = true;
 			return (*this);
 		}
 
-		Transform & look_at(Vec3 const & target) noexcept
+		Transform & rotate(f32 const pitch, f32 const yaw, f32 const roll) noexcept
 		{
+			m_rotation.rotate(pitch, yaw, roll);
+			m_rotation_changed = true;
+			return (*this);
+		}
+
+		Transform & rotate(Mat3 const & m9) noexcept
+		{
+			return rotate(Quat{ m9 });
+		}
+
+		Transform & rotate(Mat4 const & m16) noexcept
+		{
+			return rotate(Quat{ m16 });
+		}
+
+		Transform & look_at(Vec3 const & target, Vec3 const & up = world_up) noexcept
+		{
+			m_rotation.look_at(util::normalize(m_position - target), up);
+			m_rotation_changed = true;
 			return (*this);
 		}
 
 	public:
-		Mat4 const & get_scaling() const noexcept
-		{
-			if (m_changed) {
-				((glm::mat4 &)m_scaling) = glm::scale(glm::mat4(1.f), (glm::vec3 const &)m_scale);
-			}
-			return m_scaling;
-		}
+		/* SCALING */
 
-		Vec3 const & get_scale() const noexcept
-		{
-			return m_scale;
-		}
+		NODISCARD Vec3 const & get_scale() const noexcept { return m_scale; }
 
 		Transform & set_scale(Vec3 const & value) noexcept
 		{
 			if (m_scale != value) {
 				m_scale = value;
-				m_changed = true;
+				m_scale_changed = true;
+			}
+			return (*this);
+		}
+
+		Transform & set_scale(f32 const x, f32 const y, f32 const z) noexcept
+		{
+			if (m_scale[0] != x || m_scale[1] != y || m_scale[2] != z) {
+				m_scale[0] = x; m_scale[1] = y; m_scale[2] = z;
+				m_scale_changed = true;
+			}
+			return (*this);
+		}
+
+		Transform & scale(Vec3 const & value) noexcept
+		{
+			if (value != Vec3{}) {
+				m_scale += value;
+				m_scale_changed = true;
 			}
 			return (*this);
 		}
 
 		Transform & scale(f32 const x, f32 const y, f32 const z) noexcept
 		{
-			m_scale[0] += x;
-			m_scale[1] += y;
-			m_scale[2] += z;
-			m_changed = true;
-			return (*this);
-		}
-
-		Transform & scale(Vec3 const & amount) noexcept
-		{
-			m_scale[0] += amount[0];
-			m_scale[1] += amount[1];
-			m_scale[2] += amount[2];
-			m_changed = true;
+			if (x != 0.f || y != 0.f || z != 0.f) {
+				m_scale[0] += x; m_scale[1] += y; m_scale[2] += z;
+				m_scale_changed = true;
+			}
 			return (*this);
 		}
 
 	public:
-		Mat4 const & get_matrix() const noexcept
+		/* MATRIX */
+
+		NODISCARD Mat4 const & get_translation() const noexcept
 		{
-			if (m_changed) {
-				m_matrix = get_translation() * get_orientation() * get_scaling();
-				m_changed = false;
+			if (m_position_changed) {
+				m_translation = util::translate(Mat4::identity(), m_position);
+				m_position_changed = false;
+			}
+			return m_translation;
+		}
+
+		NODISCARD Mat4 const & get_orientation() const noexcept
+		{
+			if (m_rotation_changed) {
+				m_orientation = m_rotation;
+				m_rotation_changed = false;
+			}
+			return m_orientation;
+		}
+
+		NODISCARD Mat4 const & get_scaling() const noexcept
+		{
+			if (m_scale_changed) {
+				m_scaling = util::scale(Mat4::identity(), m_scale);
+				m_scale_changed = false;
+			}
+			return m_scaling;
+		}
+
+		NODISCARD Mat4 const & get_matrix() const noexcept
+		{
+			if (m_position_changed || m_rotation_changed || m_scale_changed) {
+				m_matrix = get_scaling() * get_orientation() * get_translation();
 			}
 			return m_matrix;
+		}
+
+		NODISCARD operator Mat4 const & () const noexcept
+		{
+			return get_matrix();
+		}
+
+		NODISCARD operator f32 const * () const noexcept
+		{
+			return get_matrix();
+		}
+
+		NODISCARD Vec3 forward() const noexcept
+		{
+			return util::normalize(Vec3{ m_matrix.at(2, 0), m_matrix.at(2, 1), m_matrix.at(2, 2) });
+		}
+
+		NODISCARD Vec3 right() const noexcept
+		{
+			return util::normalize(util::cross(forward(), world_up));
+		}
+
+		NODISCARD Vec3 up() const noexcept
+		{
+			return util::normalize(util::cross(right(), forward()));
 		}
 	};
 

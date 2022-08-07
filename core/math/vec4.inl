@@ -2,6 +2,19 @@
 
 /* VEC4 */
 
+namespace ism::util
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T
+	> NODISCARD T dot(TVec4<T> const & a, TVec4<T> const & b) noexcept
+	{
+		return a[0] * b[0] + a[1] * b[1] + a[2] * b[2] + a[3] * b[3];
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

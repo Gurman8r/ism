@@ -4,6 +4,17 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// click state bitset
+	enum : u8
+	{
+		Click_Released = 0,
+		Click_Clicked = 1,
+		Click_DoubleClicked = 2,
+		Click_IsNewDoubleClick = 3,
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	Input * Input::__singleton{};
 
 	Input::Funcs Input::m_funcs{};
@@ -446,7 +457,7 @@ namespace ism
 				if (delta_time - m_mouse_click_time[i] > m_mouse_double_click_time[i])
 				{
 					Vec2 const click_delta{ is_valid_mouse_position(&m_mouse_position) ? (m_mouse_position - m_mouse_click_position[i]) : Vec2{} };
-					f32 const click_dist{ util::magnitude(click_delta) };
+					f32 const click_dist{ util::length(click_delta) };
 					if (click_dist < m_double_click_max_distance * m_double_click_max_distance) {
 						bit_set(m_mouse_click[i], Click_DoubleClicked);
 					}
@@ -465,7 +476,7 @@ namespace ism
 			else if (m_mouse_button[i])
 			{
 				Vec2 const click_delta{ is_valid_mouse_position(&m_mouse_position) ? (m_mouse_position - m_mouse_click_position[i]) : Vec2{} };
-				f32 const click_dist{ util::magnitude(click_delta) };
+				f32 const click_dist{ util::length(click_delta) };
 				m_mouse_drag_sqr[i] = util::max(m_mouse_drag_sqr[i], click_dist);
 				m_mouse_drag_abs[i][0] = util::max(m_mouse_drag_abs[i][0], click_delta[0] < 0.f ? -click_delta[0] : click_delta[0]);
 				m_mouse_drag_abs[i][1] = util::max(m_mouse_drag_abs[i][1], click_delta[1] < 0.f ? -click_delta[1] : click_delta[1]);
