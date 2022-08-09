@@ -126,10 +126,10 @@ public:																							\
 	template <class T_> ALIAS(cast_op_type) movable_cast_op_type<T_>;							\
 																								\
 	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0	\
-	> static OBJ cast(T_ * src, ReturnPolicy_ policy, OBJ const & parent)					\
+	> static OBJ cast(T_ * src, ReturnPolicy_ policy, OBJ const & parent)						\
 	{																							\
 		if (!src) { return nullptr; }															\
-		else if (policy == ReturnPolicy_TakeOwnership)										\
+		else if (policy == ReturnPolicy_TakeOwnership)											\
 		{																						\
 			OBJ h{ cast(std::move(*src), policy, parent) };										\
 			memdelete(src);																		\

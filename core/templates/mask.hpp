@@ -81,6 +81,9 @@ namespace ism
 		using base_type::_Validate;
 		using base_type::_Subscript;
 	};
+
+	ALIAS(Mask32) BitMask<32>;
+	ALIAS(Mask64) BitMask<64>;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

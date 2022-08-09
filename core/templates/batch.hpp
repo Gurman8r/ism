@@ -1013,19 +1013,19 @@ namespace ism
 
 		void swap(size_t const lhs, size_t const rhs) noexcept
 		{
-			this->for_tuple([&](auto & v) noexcept { std::swap(v[lhs], v[rhs]); });
+			this->for_tuple([&](auto & v) noexcept { util::swap(v[lhs], v[rhs]); });
 		}
 
 		template <size_t ... Is
 		> void swap(size_t const lhs, size_t const rhs) noexcept
 		{
-			this->for_indices<Is...>([&](auto & v) noexcept { std::swap(v[lhs], v[rhs]); });
+			this->for_indices<Is...>([&](auto & v) noexcept { util::swap(v[lhs], v[rhs]); });
 		}
 
 		template <class ... Ts
 		> void swap(size_t const lhs, size_t const rhs) noexcept
 		{
-			this->for_types<Ts...>([&](auto & v) noexcept { std::swap(v[lhs], v[rhs]); });
+			this->for_types<Ts...>([&](auto & v) noexcept { util::swap(v[lhs], v[rhs]); });
 		}
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

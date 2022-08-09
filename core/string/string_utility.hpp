@@ -10,52 +10,6 @@ namespace ism::util
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class S = String
-	> S & to_lower(S & value) noexcept {
-		for (auto & c : value) { c = std::tolower(c); }
-		return value;
-	}
-
-	template <class S = String
-	> S to_lower(S const & value) noexcept {
-		auto const temp{ value };
-		return to_lower(temp);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class S = String
-	> S & to_upper(S & value) noexcept {
-		for (auto & c : value) { c = std::toupper(c); }
-		return value;
-	}
-
-	template <class S = String
-	> S to_upper(S const & value) noexcept {
-		auto const temp{ value };
-		return to_upper(temp);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	inline String narrow(WideString const & value) noexcept
-	{
-		String temp;
-		temp.reserve(value.size());
-		for (auto const c : value) { temp.push_back(static_cast<char>(c)); }
-		return temp;
-	}
-
-	inline WideString widen(String const & value) noexcept
-	{
-		WideString temp;
-		temp.reserve(value.size());
-		for (auto const c : value) { temp.push_back(static_cast<wchar_t>(c)); }
-		return temp;
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class T, class Fn, class ... Args
 	> Optional<T> parse_answer(cstring ptr, Fn && fn, Args && ... args) noexcept
 	{

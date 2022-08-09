@@ -117,7 +117,7 @@ namespace ism
 	{
 		if (m_parent)
 		{
-			for (size_t i = 0; i < m_parent->m_nodes.size(); ++i)
+			for (size_t i{}; i < m_parent->m_nodes.size(); ++i)
 			{
 				if (this == m_parent->m_nodes[i])
 				{
@@ -138,7 +138,7 @@ namespace ism
 
 		if (new_index == old_index) { return; }
 		
-		std::swap(m_parent->m_nodes[new_index], m_parent->m_nodes[old_index]);
+		util::swap(m_parent->m_nodes[new_index], m_parent->m_nodes[old_index]);
 	}
 
 	Node * Node::add_child(Node * child)

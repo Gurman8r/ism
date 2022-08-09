@@ -609,7 +609,7 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fb->handle));
 
 	u32 color_attachment_index{};
-	for (size_t i = 0; i < fb->texture_attachments.size(); ++i)
+	for (size_t i{}; i < fb->texture_attachments.size(); ++i)
 	{
 		_Texture & t{ *VALIDATE((_Texture *)fb->texture_attachments[i]) };
 		if (i == 0) { fb->width = t.width; fb->height = t.height; }
@@ -651,7 +651,7 @@ void RenderingDeviceOpenGL::framebuffer_set_size(RID framebuffer, i32 width, i32
 	glCheck(glBindFramebuffer(GL_FRAMEBUFFER, fb.handle));
 
 	u32 color_attachment_index{};
-	for (size_t i = 0; i < fb.texture_attachments.size(); ++i)
+	for (size_t i{}; i < fb.texture_attachments.size(); ++i)
 	{
 		_Texture & t{ *VALIDATE((_Texture *)fb.texture_attachments[i]) };
 		t.width = fb.width;
@@ -830,7 +830,7 @@ RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, 
 	RID const uniform_set{ (RID)memnew(_UniformSet{}) };
 	_UniformSet & us{ *VALIDATE((_UniformSet *)uniform_set) };
 	us.shader = shader;
-	for (size_t i = 0; i < uniforms.size(); ++i)
+	for (size_t i{}; i < uniforms.size(); ++i)
 	{
 		_UniformDescriptor & ud{ us.uniforms.emplace_back(_UniformDescriptor{}) };
 		ud.uniform_type = uniforms[i].uniform_type;
@@ -951,7 +951,7 @@ void RenderingDeviceOpenGL::_render_pipeline_bind(_RenderPipeline const & rp)
 	// multisample state
 	glCheck(glSetEnabled(GL_SAMPLE_SHADING, rp.multisample_state.enable_sample_shading));
 	glCheck(glMinSampleShading(rp.multisample_state.min_sample_shading));
-	for (size_t i = 0; i < rp.multisample_state.sample_mask.size(); ++i) {
+	for (size_t i{}; i < rp.multisample_state.sample_mask.size(); ++i) {
 		glCheck(glSampleMaski((u32)i, rp.multisample_state.sample_mask[i]));
 	}
 	glCheck(glSetEnabled(GL_SAMPLE_ALPHA_TO_COVERAGE, rp.multisample_state.enable_alpha_to_coverage));

@@ -120,18 +120,21 @@ namespace ism
 		/* CAMERA */
 		struct _Camera
 		{
-			Mat4 xform{};
+			enum Type_ { Type_Perspective, Type_Orthographic, Type_Frustum };
+			Type_ type{};
+			f32 fov{};
+			f32 size{};
+			Vec2 offset{};
+			f32 znear{}, zfar{};
+			Mat4 transform{};
 		};
 
 		RID camera_create();
-		void camera_set_perspective(RID camera, f32 fovy_degrees, f32 z_near, f32 z_far);
-		void camera_set_orthogonal(RID camera, f32 size, f32 z_near, f32 z_far);
-		void camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 z_near, f32 z_far);
+		void camera_destroy(RID camera);
+		void camera_set_perspective(RID camera, f32 fov, f32 znear, f32 zfar);
+		void camera_set_orthographic(RID camera, f32 size, f32 znear, f32 zfar);
+		void camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 znear, f32 zfar);
 		void camera_set_transform(RID camera, Mat4 const & transform);
-		void camera_set_cull_mask(RID camera, u32 layers);
-		void camera_set_environment(RID camera, RID env);
-		void camera_set_camera_effects(RID camera, RID fx);
-		void camera_set_use_vertical_aspect(RID camera, bool enable);
 
 	public:
 		/* VIEWPORT */

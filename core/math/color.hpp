@@ -106,16 +106,16 @@ namespace ism
 	inline Color rotate_hue(Color const & v, f32 degrees) noexcept
 	{
 		// https://stackoverflow.com/a/8510751
-		f32 const c{ std::cos(util::radians(degrees)) }, s{ std::sin(util::radians(degrees)) };
-		auto m{ Mat3::identity() };
+		f32 const c{ cos(radians(degrees)) }, s{ sin(radians(degrees)) };
+		auto m{ identity_v<Mat3> };
 		m.at(0, 0) = c + (1.0f - c) / 3.0f;
-		m.at(0, 1) = 1.f / 3.f * (1.0f - c) - std::sqrt(1.f / 3.f) * s;
-		m.at(0, 2) = 1.f / 3.f * (1.0f - c) + std::sqrt(1.f / 3.f) * s;
-		m.at(1, 0) = 1.f / 3.f * (1.0f - c) + std::sqrt(1.f / 3.f) * s;
+		m.at(0, 1) = 1.f / 3.f * (1.0f - c) - sqrt(1.f / 3.f) * s;
+		m.at(0, 2) = 1.f / 3.f * (1.0f - c) + sqrt(1.f / 3.f) * s;
+		m.at(1, 0) = 1.f / 3.f * (1.0f - c) + sqrt(1.f / 3.f) * s;
 		m.at(1, 1) = c + 1.f / 3.f * (1.0f - c);
-		m.at(1, 2) = 1.f / 3.f * (1.0f - c) - std::sqrt(1.f / 3.f) * s;
-		m.at(2, 0) = 1.f / 3.f * (1.0f - c) - std::sqrt(1.f / 3.f) * s;
-		m.at(2, 1) = 1.f / 3.f * (1.0f - c) + std::sqrt(1.f / 3.f) * s;
+		m.at(1, 2) = 1.f / 3.f * (1.0f - c) - sqrt(1.f / 3.f) * s;
+		m.at(2, 0) = 1.f / 3.f * (1.0f - c) - sqrt(1.f / 3.f) * s;
+		m.at(2, 1) = 1.f / 3.f * (1.0f - c) + sqrt(1.f / 3.f) * s;
 		m.at(2, 2) = c + 1.f / 3.f * (1.0f - c);
 		return {
 			v[0] * m.at(0, 0) + v[1] * m.at(0, 1) + v[2] * m.at(0, 2),

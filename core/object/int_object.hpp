@@ -30,7 +30,7 @@ namespace ism
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
 		> explicit IntObject(T const value) : IntObject{} { m_int = static_cast<storage_type>(value); }
 
-		template <class T, class = std::enable_if_t<std::is_integral_v<T>>
+		template <class T, class = std::enable_if_t<mpl::is_number_v<T>>
 		> IntObject & operator=(T const value) { m_int = static_cast<storage_type>(value); return (*this); }
 
 		template <class T, class = std::enable_if_t<std::is_integral_v<T>>

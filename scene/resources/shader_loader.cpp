@@ -24,7 +24,7 @@ public:
 			name = (String)key;
 			for (auto const & [k, v] : value.items())
 			{
-				switch (ism::hash(k.data(), k.size())) {
+				switch (hash_representation(k.data(), k.size())) {
 				// bool
 				case "bool"_hash: case "bvec2"_hash: case "bvec3"_hash: case "bvec4"_hash:
 				// int
@@ -75,7 +75,7 @@ public:
 					if (v.is_number()) { v.get_to(index); }
 					else if (v.is_string())
 					{
-						switch (String const s{ v }; ism::hash(s.data(), s.size())) {
+						switch (String const s{ v }; hash_representation(s.data(), s.size())) {
 						default:				{ index = -1; } break;
 						case "POSITION"_hash:	{ index = 0; } break;
 						case "NORMAL"_hash:		{ index = 1; } break;
@@ -120,7 +120,7 @@ public:
 		}
 
 		// load stages
-		for (size_t i = 0; i < RD::ShaderStage_MAX; ++i)
+		for (size_t i{}; i < RD::ShaderStage_MAX; ++i)
 		{
 			RD::ShaderStage_ const shader_stage{ (RD::ShaderStage_)i };
 			constexpr cstring stage_name[RD::ShaderStage_MAX]{ "vertex", "fragment", "geometry", "tess_eval", "tess_ctrl", "compute", };
@@ -132,7 +132,7 @@ public:
 			enum : size_t { DEFINES, IN, OUT, DATA, MAIN, MAX_SECTION };
 			constexpr cstring section_name[MAX_SECTION]{ "defines", "in", "out", "data", "main", };
 			Json::const_pointer section[MAX_SECTION]{};
-			for (size_t i = 0; i < MAX_SECTION; ++i) {
+			for (size_t i{}; i < MAX_SECTION; ++i) {
 				if (auto const it{ stage->find(section_name[i]) }
 				; it != stage->end()) { section[i] = &(*it); }
 			}
@@ -200,7 +200,7 @@ public:
 				{
 					Def const def{ key, value };
 					if (!def) { continue; }
-					switch (ism::hash(def.type.data(), def.type.size()))
+					switch (hash_representation(def.type.data(), def.type.size()))
 					{
 					// DEFAULT
 					default: {
@@ -245,6 +245,46 @@ public:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData (&spec)[RD::ShaderStage_MAX])
+{
+	RD::ShaderStage_ stage_index{ RD::ShaderStage_MAX };
+
+	String line;
+	while (std::getline(file, line))
+	{
+		bool should_write{ true };
+		if (line.trim().empty()) { continue; }
+		else if (line.front() == '#') {
+			switch (line.hash_code()) {
+			case "#pragma shader vertex"_hash: { stage_index = RD::ShaderStage_Vertex; should_write = false; } break;
+			case "#pragma shader pixel"_hash: { stage_index = RD::ShaderStage_Fragment; should_write = false; } break;
+			case "#pragma shader geometry"_hash: { stage_index = RD::ShaderStage_Geometry; should_write = false; } break;
+			case "#pragma shader tess_ctrl"_hash: { stage_index = RD::ShaderStage_TesselationControl; should_write = false; } break;
+			case "#pragma shader tess_eval"_hash: { stage_index = RD::ShaderStage_TesselationEvaluation; should_write = false; } break;
+			case "#pragma shader compute"_hash: { stage_index = RD::ShaderStage_Compute; should_write = false; } break;
+			}
+		}
+		
+		if (should_write && stage_index != RD::ShaderStage_MAX)
+		{
+			spec[stage_index].code.printf("%.*s\n", line.size(), line.data());
+		}
+	}
+
+	for (i32 i{}; i < RD::ShaderStage_MAX; ++i)
+	{
+		spec[i].shader_stage = (RD::ShaderStage_)i;
+
+		if (!spec[i].code.empty() && spec[i].code.back() != '\0') { spec[i].code << '\0'; }
+
+		//OS::get_singleton()->printf("%.*s\n", spec[i].code.size(), spec[i].code.data());
+	}
+
+	return Error_None;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 Error_ ShaderLoader::load_from_file(Shader & shader, Path const & path)
 {
 	if (!path) { return Error_Unknown; }
@@ -254,15 +294,20 @@ Error_ ShaderLoader::load_from_file(Shader & shader, Path const & path)
 
 	switch (path.extension().hash_code())
 	{
-	case ".glsl"_hash: {} break;
-	case ".hlsl"_hash: {} break;
 	case ".json"_hash: {
 		Json json;
 		try { json = Json::parse(file); }
 		catch (Json::parse_error) { return Error_Unknown; }
 		return load_from_json(shader, json);
 	} break;
-	case ".shader"_hash: {} break;
+	case ".shader"_hash: {
+		if (shader.m_shader) { RD::get_singleton()->shader_destroy(shader.m_shader); }
+		RD::ShaderStageData spec[RD::ShaderStage_MAX]{};
+		if (auto const err{ load_shader_default(file, spec) }; err != Error_None) { return err; }
+		shader.m_shader = RD::get_singleton()->shader_create(spec);
+		if (!shader.m_shader) { return Error_Unknown; }
+		return Error_None;
+	} break;
 	}
 
 	return Error_Unknown;

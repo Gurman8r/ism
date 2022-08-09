@@ -24,24 +24,68 @@ namespace ism
 		using base_type::base_type;
 		using base_type::operator=;
 
+		static constexpr bool is_ascii{ 1 == sizeof(C) };
+
 		NODISCARD operator void * () const noexcept { return !empty() ? (void *)data() : nullptr; }
 
-		NODISCARD auto hash_code() const noexcept { return ism::hash(data(), size()); }
+		NODISCARD auto hash_code() const noexcept { return hash_representation(data(), size()); }
 
 		NODISCARD auto view() const noexcept { return BasicStringView<C>{ data(), size() }; }
 
 		NODISCARD operator BasicStringView<C>() const noexcept { return { data(), size() }; }
 
-		auto & trim() & noexcept
+	public:
+		template <class = std::enable_if_t<!is_ascii>
+		> auto narrow() const
+		{
+			BasicString<char> temp;
+			temp.reserve(size());
+			for (auto const c : *this) { temp.push_back(static_cast<char>(c)); }
+			return temp;
+		}
+
+		template <class = std::enable_if_t<is_ascii>
+		> auto widen() const
+		{
+			BasicString<wchar_t> temp;
+			temp.reserve(size());
+			for (auto const c : *this) { temp.push_back(static_cast<wchar_t>(c)); }
+			return temp;
+		}
+		
+		auto uppercase() const
+		{
+			BasicString temp;
+			temp.reserve(size());
+			for (auto const c : *this) { temp.push_back(std::toupper(c)); }
+			return temp;
+		}
+		
+		auto lowercase() const
+		{
+			BasicString temp;
+			temp.reserve(size());
+			for (auto const c : *this) { temp.push_back(std::tolower(c)); }
+			return temp;
+		}
+
+		auto & trim_back() noexcept
 		{
 			while (!empty() && std::isspace(back())) { pop_back(); }
+			return (*this);
+		}
+
+		auto & trim_front() noexcept
+		{
 			while (!empty() && std::isspace(front())) { erase(begin()); }
 			return (*this);
 		}
 
-		NODISCARD static auto trim(BasicString value) noexcept
+		auto & trim() noexcept
 		{
-			return value.trim();
+			while (!empty() && std::isspace(back())) { pop_back(); }
+			while (!empty() && std::isspace(front())) { erase(begin()); }
+			return (*this);
 		}
 
 	public:

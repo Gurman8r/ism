@@ -32,15 +32,15 @@ namespace ism
 
 		StringObject(cstring value, size_t n) : m_string{ value, n } {}
 
-		StringObject(cwstring value) : m_string{ util::narrow(WideString{ value }) } {}
+		StringObject(cwstring value) : m_string{ WideString{ value }.narrow() } {}
 
-		StringObject(cwstring value, size_t n) : m_string{ util::narrow(WideString{ value, n }) } {}
+		StringObject(cwstring value, size_t n) : m_string{ WideString{ value, n }.narrow() } {}
 
 		StringObject(storage_type const & value) : m_string{ value } {}
 
 		StringObject(storage_type && value) noexcept : m_string{ std::move(value) } {}
 
-		StringObject(WideString const & value) : m_string{ util::narrow(value) } {}
+		StringObject(WideString const & value) : m_string{ value.narrow() } {}
 
 		StringObject(StringName const & value) : m_string{ value.string() } {}
 

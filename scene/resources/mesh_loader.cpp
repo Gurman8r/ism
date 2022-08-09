@@ -15,7 +15,7 @@ using namespace ism;
 
 size_t process_vertices(aiMesh const * mesh, DynamicBuffer & data)
 {
-	for (size_t i = 0; i < (size_t)mesh->mNumVertices; ++i)
+	for (size_t i{}; i < (size_t)mesh->mNumVertices; ++i)
 	{
 		// position
 		data << Vec4f{ mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.f };
@@ -58,11 +58,11 @@ size_t process_vertices(aiMesh const * mesh, DynamicBuffer & data)
 
 size_t process_indices(aiMesh const * mesh, DynamicBuffer & data)
 {
-	for (size_t i = 0; i < (size_t)mesh->mNumFaces; ++i)
+	for (size_t i{}; i < (size_t)mesh->mNumFaces; ++i)
 	{
 		aiFace face{ mesh->mFaces[i] };
 
-		for (size_t j = 0; j < (size_t)face.mNumIndices; ++j)
+		for (size_t j{}; j < (size_t)face.mNumIndices; ++j)
 		{
 			data << face.mIndices[j];
 		}
@@ -95,7 +95,7 @@ void process_aimaterial(aiMaterial const * material, Vector<Ref<Texture>> & text
 
 void process_ainode(aiScene const * scene, aiNode const * node, Vector<RS::SurfaceData> & spec)
 {
-	for (size_t i = 0; i < (size_t)node->mNumMeshes; ++i)
+	for (size_t i{}; i < (size_t)node->mNumMeshes; ++i)
 	{
 		aiMesh const * m{ scene->mMeshes[node->mMeshes[i]] };
 
@@ -108,7 +108,7 @@ void process_ainode(aiScene const * scene, aiNode const * node, Vector<RS::Surfa
 		//process_aimaterial(scene->mMaterials[m->mMaterialIndex], textures);
 	}
 
-	for (size_t i = 0; i < (size_t)node->mNumChildren; ++i)
+	for (size_t i{}; i < (size_t)node->mNumChildren; ++i)
 	{
 		process_ainode(scene, node->mChildren[i], spec);
 	}

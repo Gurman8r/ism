@@ -203,7 +203,7 @@ namespace ism
 
 		Variant & swap(Variant & v) noexcept {
 			if (this != std::addressof(v)) {
-				std::swap(m_type, v.m_type);
+				util::swap(m_type, v.m_type);
 				m_data.swap(v.m_data);
 			}
 			return (*this);

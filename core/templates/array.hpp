@@ -36,13 +36,9 @@ namespace ism
 		{
 			if (this != std::addressof(other))
 			{
-				for (size_t i = 0; i < _Size; ++i)
+				for (size_t i{}; i < _Size; ++i)
 				{
-					value_type temp{ std::move(m_data[i]) };
-
-					m_data[i] = std::move(other.m_data[i]);
-
-					other.m_data[i] = std::move(temp);
+					util::swap(m_data[i], other.m_data[i]);
 				}
 			}
 			return (*this);
@@ -154,39 +150,39 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Tx, class Ty, size_t N
-	> constexpr bool operator==(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
-		return std::addressof(a) == std::addressof(b)
-			|| util::range_equal(a.begin(), a.end(), b.begin(), b.end());
+	> constexpr bool operator==(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept
+	{
+		return std::addressof(a) == std::addressof(b) || range_eq(a.begin(), a.end(), b.begin(), b.end());
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr bool operator!=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
-		return std::addressof(a) != std::addressof(b)
-			&& util::range_nequal(a.begin(), a.end(), b.begin(), b.end());
+	> constexpr bool operator!=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept
+	{
+		return std::addressof(a) != std::addressof(b) && range_neq(a.begin(), a.end(), b.begin(), b.end());
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr bool operator<(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
-		return std::addressof(a) != std::addressof(b)
-			&& util::range_less(a.begin(), a.end(), b.begin(), b.end());
+	> constexpr bool operator<(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept
+	{
+		return std::addressof(a) != std::addressof(b) && range_lt(a.begin(), a.end(), b.begin(), b.end());
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr bool operator<=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
-		return std::addressof(a) == std::addressof(b)
-			|| util::range_lequal(a.begin(), a.end(), b.begin(), b.end());
+	> constexpr bool operator<=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept
+	{
+		return std::addressof(a) == std::addressof(b) || range_leq(a.begin(), a.end(), b.begin(), b.end());
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr bool operator>(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
-		return std::addressof(a) != std::addressof(b)
-			&& util::range_greater(a.begin(), a.end(), b.begin(), b.end());
+	> constexpr bool operator>(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept
+	{
+		return std::addressof(a) != std::addressof(b) && range_gt(a.begin(), a.end(), b.begin(), b.end());
 	}
 
 	template <class Tx, class Ty, size_t N
-	> constexpr bool operator>=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept {
-		return std::addressof(a) == std::addressof(b)
-			|| util::range_gequal(a.begin(), a.end(), b.begin(), b.end());
+	> constexpr bool operator>=(Array<Tx, N> const & a, Array<Ty, N> const & b) noexcept
+	{
+		return std::addressof(a) == std::addressof(b) || range_geq(a.begin(), a.end(), b.begin(), b.end());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

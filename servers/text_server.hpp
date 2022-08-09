@@ -30,9 +30,9 @@ namespace ism
 		{
 			if (this != std::addressof(other))
 			{
-				std::swap(m_texture, other.m_texture);
-				std::swap(m_bounds, other.m_bounds);
-				std::swap(m_advance, other.m_advance);
+				util::swap(m_texture, other.m_texture);
+				util::swap(m_bounds, other.m_bounds);
+				util::swap(m_advance, other.m_advance);
 			}
 			return (*this);
 		}

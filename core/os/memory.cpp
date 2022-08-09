@@ -31,7 +31,7 @@ namespace ism
 			{
 				std::cerr << "\nMEMORY LEAKS DETECTED:\n";
 
-				for (size_t i = 0; i < records.size(); ++i)
+				for (size_t i{}; i < records.size(); ++i)
 				{
 					records.expand_all(i, [&
 					](size_t index, size_t size, void * addr, cstring desc)

@@ -13,9 +13,9 @@ namespace ism
 		{
 			if (self.is(other)) { return 0; }
 
-			else if (LIST::check_(self) && LIST::check_(other)) { return util::compare(***(LIST &)self, ***(LIST &)other); }
+			else if (LIST::check_(self) && LIST::check_(other)) { return compare(***(LIST &)self, ***(LIST &)other); }
 
-			else { return util::compare((intptr_t)*self, (intptr_t)*other); }
+			else { return compare((intptr_t)*self, (intptr_t)*other); }
 		};
 
 		t.tp_bind = CLASS_BINDER(ListObject, t)

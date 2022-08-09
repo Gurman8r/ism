@@ -186,7 +186,7 @@ namespace ism
 		DEVMODE dm; dm.dmSize = sizeof(dm);
 		EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm);
 		out.size = { (i32)dm.dmPelsWidth, (i32)dm.dmPelsHeight };
-		out.bits_per_pixel = util::bit_cast<Vec4b>(dm.dmBitsPerPel);
+		out.bits_per_pixel = bit_cast<Vec4b>(dm.dmBitsPerPel);
 		out.refresh_rate = dm.dmDisplayFrequency;
 	}
 
@@ -197,7 +197,7 @@ namespace ism
 		{
 			VideoMode vm;
 			vm.size = { (i32)dm.dmPelsWidth, (i32)dm.dmPelsHeight };
-			vm.bits_per_pixel = util::bit_cast<Vec4b>(dm.dmBitsPerPel);
+			vm.bits_per_pixel = bit_cast<Vec4b>(dm.dmBitsPerPel);
 			vm.refresh_rate = dm.dmDisplayFrequency;
 
 			// insert

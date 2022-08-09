@@ -60,7 +60,7 @@ namespace ism
 			}
 			else
 			{
-				return util::compare(self->hash_code(), other->hash_code());
+				return compare(self->hash_code(), other->hash_code());
 			}
 		}
 

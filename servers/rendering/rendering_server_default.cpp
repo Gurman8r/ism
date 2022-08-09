@@ -263,44 +263,24 @@ namespace ism
 		return m_storage->camera_create();
 	}
 
-	void RenderingServerDefault::camera_set_perspective(RID camera, f32 fovy_degrees, f32 z_near, f32 z_far)
+	void RenderingServerDefault::camera_set_perspective(RID camera, f32 fov, f32 znear, f32 zfar)
 	{
-		m_storage->camera_set_perspective(camera, fovy_degrees, z_near, z_far);
+		m_storage->camera_set_perspective(camera, fov, znear, zfar);
 	}
 
-	void RenderingServerDefault::camera_set_orthogonal(RID camera, f32 size, f32 z_near, f32 z_far)
+	void RenderingServerDefault::camera_set_orthographic(RID camera, f32 size, f32 znear, f32 zfar)
 	{
-		m_storage->camera_set_orthogonal(camera, size, z_near, z_far);
+		m_storage->camera_set_orthographic(camera, size, znear, zfar);
 	}
 
-	void RenderingServerDefault::camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 z_near, f32 z_far)
+	void RenderingServerDefault::camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 znear, f32 zfar)
 	{
-		m_storage->camera_set_frustum(camera, size, offset, z_near, z_far);
+		m_storage->camera_set_frustum(camera, size, offset, znear, zfar);
 	}
 
 	void RenderingServerDefault::camera_set_transform(RID camera, Mat4 const & transform)
 	{
 		m_storage->camera_set_transform(camera, transform);
-	}
-
-	void RenderingServerDefault::camera_set_cull_mask(RID camera, u32 layers)
-	{
-		m_storage->camera_set_cull_mask(camera, layers);
-	}
-
-	void RenderingServerDefault::camera_set_environment(RID camera, RID env)
-	{
-		m_storage->camera_set_environment(camera, env);
-	}
-
-	void RenderingServerDefault::camera_set_camera_effects(RID camera, RID fx)
-	{
-		m_storage->camera_set_camera_effects(camera, fx);
-	}
-
-	void RenderingServerDefault::camera_set_use_vertical_aspect(RID camera, bool enable)
-	{
-		m_storage->camera_set_use_vertical_aspect(camera, enable);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

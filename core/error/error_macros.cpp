@@ -1,5 +1,6 @@
 #include <core/error/error_macros.hpp>
 #include <core/os/os.hpp>
+#include <core/math/matrix.hpp>
 
 using namespace ism;
 

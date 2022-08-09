@@ -30,7 +30,7 @@ namespace ism
 		
 		CppFunctionObject & operator=(CppFunctionObject && value) noexcept { return swap(value); }
 		
-		CppFunctionObject & swap(CppFunctionObject & other) noexcept { if (this != std::addressof(other)) { std::swap(m_record, other.m_record); } return (*this); }
+		CppFunctionObject & swap(CppFunctionObject & other) noexcept { if (this != std::addressof(other)) { util::swap(m_record, other.m_record); } return (*this); }
 
 		template <class Return, class ... Args, class ... Extra
 		> CppFunctionObject(Return(*f)(Args...), Extra && ... extra) : CppFunctionObject{}

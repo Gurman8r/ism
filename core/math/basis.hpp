@@ -41,7 +41,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		Basis(Mat3 const & m = Mat3::identity()) noexcept
+		Basis(Mat3 const & m = identity_v<Mat3>) noexcept
 		{
 			::new (m_data) glm::mat3{ (glm::mat3 const &)m };
 		}

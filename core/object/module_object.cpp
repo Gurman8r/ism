@@ -20,11 +20,11 @@ namespace ism
 		{
 			if (MODULE::check_(other))
 			{
-				return (*self == *other) ? 0 : util::compare(MODULE(self)->m_name, MODULE(other)->m_name);
+				return (*self == *other) ? 0 : compare(MODULE(self)->m_name, MODULE(other)->m_name);
 			}
 			else
 			{
-				return util::compare(*self, *other);
+				return compare(*self, *other);
 			}
 		};
 

@@ -17,9 +17,9 @@ namespace ism
 		{
 			if (self.is(other)) { return 0; }
 
-			else if (FLT::check_(self) && FLT::check_(other)) { return util::compare(***(FLT &)self, ***(FLT &)other); }
+			else if (FLT::check_(self) && FLT::check_(other)) { return compare(***(FLT &)self, ***(FLT &)other); }
 
-			else { return util::compare((intptr_t)*self, (intptr_t)*other); }
+			else { return compare((intptr_t)*self, (intptr_t)*other); }
 		};
 	}
 

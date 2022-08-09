@@ -1,5 +1,6 @@
 #include <servers/rendering/renderer_storage.hpp>
 #include <servers/rendering_server.hpp>
+#include <core/math/transform.hpp>
 
 namespace ism
 {
@@ -329,39 +330,48 @@ namespace ism
 
 	RID RendererStorage::camera_create()
 	{
-		return RID();
+		_Camera * const c{ memnew(_Camera{}) };
+		return (RID)c;
 	}
 
-	void RendererStorage::camera_set_perspective(RID camera, f32 fovy_degrees, f32 z_near, f32 z_far)
+	void RendererStorage::camera_destroy(RID camera)
 	{
+		_Camera & c{ *VALIDATE((_Camera *)camera) };
+		memdelete((_Camera *)camera);
 	}
 
-	void RendererStorage::camera_set_orthogonal(RID camera, f32 size, f32 z_near, f32 z_far)
+	void RendererStorage::camera_set_perspective(RID camera, f32 fov, f32 znear, f32 zfar)
 	{
+		_Camera & c{ *VALIDATE((_Camera *)camera) };
+		c.type = c.Type_Perspective;
+		c.fov = fov;
+		c.znear = znear;
+		c.zfar = zfar;
 	}
 
-	void RendererStorage::camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 z_near, f32 z_far)
+	void RendererStorage::camera_set_orthographic(RID camera, f32 size, f32 znear, f32 zfar)
 	{
+		_Camera & c{ *VALIDATE((_Camera *)camera) };
+		c.type = c.Type_Orthographic;
+		c.size = size;
+		c.znear = znear;
+		c.zfar = zfar;
+	}
+
+	void RendererStorage::camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 znear, f32 zfar)
+	{
+		_Camera & c{ *VALIDATE((_Camera *)camera) };
+		c.type = c.Type_Frustum;
+		c.size = size;
+		c.offset = offset;
+		c.znear = znear;
+		c.zfar = zfar;
 	}
 
 	void RendererStorage::camera_set_transform(RID camera, Mat4 const & transform)
 	{
-	}
-
-	void RendererStorage::camera_set_cull_mask(RID camera, u32 layers)
-	{
-	}
-
-	void RendererStorage::camera_set_environment(RID camera, RID env)
-	{
-	}
-
-	void RendererStorage::camera_set_camera_effects(RID camera, RID fx)
-	{
-	}
-
-	void RendererStorage::camera_set_use_vertical_aspect(RID camera, bool enable)
-	{
+		_Camera & c{ *VALIDATE((_Camera *)camera) };
+		c.transform = transform;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

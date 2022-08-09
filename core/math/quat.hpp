@@ -11,11 +11,6 @@ namespace ism
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		static constexpr Vec3
-			world_right	{ 1, 0, 0 },
-			world_up	{ 0, 1, 0 },
-			world_front	{ 0, 0, 1 };
-
 		using self_type			= Quat;
 		using storage_type		= Vec4;
 		using value_type		= storage_type::value_type;
@@ -28,7 +23,7 @@ namespace ism
 		using iterator			= storage_type::iterator;
 		using const_iterator	= storage_type::const_iterator;
 
-		storage_type m_data{};
+		storage_type m_data{ 1, 0, 0, 0 };
 
 		Quat(self_type const &) = default;
 		Quat(self_type &&) noexcept = default;
@@ -45,25 +40,30 @@ namespace ism
 		NODISCARD auto end() const noexcept -> const_iterator { return m_data.end(); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+		
+		Quat(glm::quat const & q) noexcept
+		{
+			::new (m_data) glm::quat{ q };
+		}
 
-		Quat(f32 const w = 1.f, f32 const x = 0.f, f32 const y = 0.f, f32 const z = 0.f) noexcept
+		Quat(f32 const w = 1, f32 const x = 0, f32 const y = 0, f32 const z = 0) noexcept
 		{
 			::new (m_data) glm::quat{ w, x, y, z };
 		}
 
-		Quat(f32 const angle, Vec3 const & axis) noexcept
+		Quat(f32 const real, Vec3 const & complex) noexcept
 		{
-			::new (m_data) glm::quat{ glm::angleAxis(angle, (glm::vec3 const &)axis) };
+			::new (m_data) glm::quat{ real, (glm::vec3 const &)complex };
 		}
 
 		Quat(Vec3 const & u, Vec3 const & v) noexcept
 		{
-			::new (m_data) glm::quat{ (glm::vec3 const &)u, (glm::vec3 const &)v };
+			::new(m_data) glm::quat{ (glm::vec3 const &)u, (glm::vec3 const &)v };
 		}
 
-		Quat(Vec3 const & euler_angles) noexcept
+		Quat(Vec3 const & xyz) noexcept : Quat{}
 		{
-			::new (m_data) glm::quat{ (glm::vec3 const &)euler_angles };
+			rotate(xyz);
 		}
 
 		Quat(Mat3 const & m9) noexcept
@@ -78,56 +78,64 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD operator Mat3() const noexcept { return util::bit_cast<Mat3>(glm::toMat3((glm::quat const &)*this)); }
+		NODISCARD Vec3 const & complex() const noexcept { return *(Vec3 const *)&m_data[1]; }
 
-		NODISCARD operator Mat4() const noexcept { return util::bit_cast<Mat4>(glm::toMat4((glm::quat const &)*this)); }
+		NODISCARD f32 const & real() const noexcept { return m_data[0]; }
 
-		NODISCARD f32 angle() const { return glm::angle((glm::quat const &)*this); }
+		NODISCARD Vec3 & complex() noexcept { return *(Vec3 *)&m_data[1]; }
+		
+		NODISCARD f32 & real() noexcept { return m_data[0]; }
 
-		NODISCARD Vec3 axis() const { return util::bit_cast<Vec3>(glm::axis((glm::quat const &)*this)); }
+		NODISCARD f32 angle() const noexcept { return glm::angle((glm::quat const &)*this); }
+		
+		NODISCARD Vec3 axis() const noexcept { return bit_cast<Vec3>(glm::axis((glm::quat const &)*this)); }
 
-		NODISCARD Vec3 euler() const { return { pitch(), yaw(), roll() }; }
+		NODISCARD Vec3 euler() const noexcept { return { pitch(), yaw(), roll() }; }
+		
+		NODISCARD f32 pitch() const noexcept { return glm::pitch((glm::quat const &)*this); }
+		
+		NODISCARD f32 yaw() const noexcept { return glm::yaw((glm::quat const &)*this); }
+		
+		NODISCARD f32 roll() const noexcept { return glm::roll((glm::quat const &)*this); }
 
-		NODISCARD f32 pitch() const { return glm::pitch((glm::quat const &)*this); }
+		NODISCARD operator Mat3() const noexcept { return bit_cast<Mat3>(glm::toMat3((glm::quat const &)*this)); }
+		
+		NODISCARD operator Mat4() const noexcept { return bit_cast<Mat4>(glm::toMat4((glm::quat const &)*this)); }
 
-		NODISCARD f32 yaw() const { return glm::yaw((glm::quat const &)*this); }
+		NODISCARD operator Vec3() const noexcept { return { m_data[1], m_data[2], m_data[3] }; }
 
-		NODISCARD f32 roll() const { return glm::roll((glm::quat const &)*this); }
+		NODISCARD operator Vec4() const noexcept { return { m_data[1], m_data[2], m_data[3], m_data[0] }; }
 
-		NODISCARD f32 dot(Quat const & q) const noexcept { return glm::dot((glm::quat const &)*this, (glm::quat const &)q); }
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD f32 length() const noexcept { return glm::length((glm::quat const &)*this); }
-
-		NODISCARD Quat cross(Quat const & q) const noexcept
+		NODISCARD static Quat angle_axis(f32 const angle, Vec3 const & axis) noexcept
 		{
-			auto const temp{ glm::cross((glm::quat const &)*this, (glm::quat const &)q) };
-			return (Quat const &)temp;
+			return glm::angleAxis(angle, (glm::vec3 const &)axis);
 		}
 
-		Quat & normalize() noexcept
+		NODISCARD static Quat look_at(Vec3 const & direction, Vec3 const & up = up_v<Vec3>) noexcept
 		{
-			return glm::normalize((glm::quat const &)*this), (*this);
+			return glm::quatLookAt((glm::vec3 const &)direction, (glm::vec3 const &)up);
 		}
 
-		Quat & rotate(f32 const angle, Vec3 const & axis) noexcept
+		NODISCARD static Quat rotate(Quat const & q, f32 const angle, Vec3 const & axis) noexcept
 		{
-			return (((glm::quat &)*this) = glm::rotate((glm::quat const &)*this, angle, (glm::vec3 const &)axis)), (*this);
+			return glm::rotate((glm::quat const &)q, angle, (glm::vec3 const &)axis);
 		}
 
-		Quat & rotate(f32 const pitch, f32 const yaw, f32 const roll) noexcept
-		{
-			return rotate(pitch, { 1, 0, 0 }).rotate(yaw, { 0, 1, 0 }).rotate(roll, { 0, 0, 1 });
-		}
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		Quat & rotate(Vec3 const euler_angles) noexcept
-		{
-			return rotate(euler_angles[0], euler_angles[1], euler_angles[2]);
-		}
+		Quat & rotate(f32 const angle, Vec3 const & axis) noexcept { return (*this) = rotate(*this, angle, axis); }
 
-		Quat & look_at(Vec3 const & direction, Vec3 const & up = { 0, 1, 0 }) noexcept
-		{
-			return (((glm::quat &)*this) = glm::quatLookAt((glm::vec3 const &)direction, (glm::vec3 const &)up)), (*this);
-		}
+		Quat & rotate_x(f32 const x) noexcept { return rotate(x, right_v<Vec3>); }
+
+		Quat & rotate_y(f32 const y) noexcept { return rotate(y, up_v<Vec3>); }
+
+		Quat & rotate_z(f32 const z) noexcept { return rotate(z, front_v<Vec3>); }
+
+		Quat & rotate(f32 const x, f32 const y, f32 const z) noexcept { return rotate_x(x).rotate_y(y).rotate_z(z); }
+
+		Quat & rotate(Vec3 const & xyz) noexcept { return rotate_x(xyz[0]).rotate_y(xyz[1]).rotate_z(xyz[2]); }
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	};
@@ -144,19 +152,27 @@ namespace ism
 
 	inline Quat & operator/=(Quat & a, f32 const b) noexcept { return (((glm::quat &)a) /= b), a; }
 
-	inline Quat operator+(Quat const & a) noexcept { return a; }
+	NODISCARD inline Quat operator+(Quat const & a) noexcept { return a; }
 
-	inline Quat operator-(Quat const & a) noexcept { return { -a[0], -a[1], -a[2], -a[3] }; }
+	NODISCARD inline Quat operator-(Quat const & a) noexcept { return { -a[0], -a[1], -a[2], -a[3] }; }
 
-	inline Quat operator+(Quat const & a, Quat const & b) noexcept { return Quat{ a } += b; }
+	NODISCARD inline Quat operator+(Quat const & a, Quat const & b) noexcept { return Quat{ a } += b; }
 
-	inline Quat operator-(Quat const & a, Quat const & b) noexcept { return Quat{ a } -= b; }
+	NODISCARD inline Quat operator-(Quat const & a, Quat const & b) noexcept { return Quat{ a } -= b; }
 
-	inline Quat operator*(Quat const & a, Quat const & b) noexcept { return Quat{ a } *= b; }
+	NODISCARD inline Quat operator*(Quat const & a, Quat const & b) noexcept { return Quat{ a } *= b; }
 
-	inline bool operator==(Quat const & a, Quat const & b) noexcept { return a.m_data == b.m_data; }
+	NODISCARD inline Vec3 operator*(Quat const & a, Vec3 const & b) noexcept { return bit_cast<Vec3>((glm::quat const &)a * (glm::vec3 const &)b); }
 
-	inline bool operator!=(Quat const & a, Quat const & b) noexcept { return a.m_data != b.m_data; }
+	NODISCARD inline Vec3 operator*(Vec3 const & a, Quat const & b) noexcept { return bit_cast<Vec3>((glm::vec3 const &)a * (glm::quat const &)b); }
+
+	NODISCARD inline Vec4 operator*(Quat const & a, Vec4 const & b) noexcept { return bit_cast<Vec4>((glm::quat const &)a * (glm::vec4 const &)b); }
+
+	NODISCARD inline Vec4 operator*(Vec4 const & a, Quat const & b) noexcept { return bit_cast<Vec4>((glm::vec4 const &)a * (glm::quat const &)b); }
+
+	NODISCARD inline bool operator==(Quat const & a, Quat const & b) noexcept { return a.m_data == b.m_data; }
+
+	NODISCARD inline bool operator!=(Quat const & a, Quat const & b) noexcept { return a.m_data != b.m_data; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

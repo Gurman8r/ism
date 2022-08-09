@@ -165,11 +165,6 @@ namespace ism::mpl
 	> using rename = typename impl_rename<To, T>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism::mpl
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	/* CONTAINS - check type_list contains type */
 

@@ -42,7 +42,7 @@ namespace ism
 
 	CompositeLogger::~CompositeLogger()
 	{
-		for (size_t i = 0; i < m_loggers.size(); ++i)
+		for (size_t i{}; i < m_loggers.size(); ++i)
 		{
 			memdelete(m_loggers[i]);
 		}
@@ -50,7 +50,7 @@ namespace ism
 
 	void CompositeLogger::logv(cstring fmt, va_list args, bool is_error)
 	{
-		for (size_t i = 0; i < m_loggers.size(); ++i)
+		for (size_t i{}; i < m_loggers.size(); ++i)
 		{
 			va_list args_copy;
 			va_copy(args_copy, args);

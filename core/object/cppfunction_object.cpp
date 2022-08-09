@@ -53,7 +53,7 @@ namespace ism
 		// argument info
 		rec->argument_count = (u16)argc_in;
 		rec->args.reserve(argc_in);
-		for (size_t i = 0; i < argc_in; ++i)
+		for (size_t i{}; i < argc_in; ++i)
 		{
 			rec->args.push_back(MAKE(ArgumentRecord, arg)
 			{

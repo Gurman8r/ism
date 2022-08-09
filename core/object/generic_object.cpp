@@ -9,7 +9,7 @@ namespace ism
 	{
 		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
 		{
-			return util::compare(*self, *other);
+			return compare(*self, *other);
 		};
 	}
 

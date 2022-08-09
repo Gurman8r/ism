@@ -89,7 +89,7 @@ namespace ism
 
 	Error_ OS_Windows::set_cwd(Path const & path)
 	{
-		return std::filesystem::current_path((std::wstring)util::widen(path.string())), Error_None;
+		return std::filesystem::current_path((std::wstring)path.string().widen()), Error_None;
 	}
 
 	Error_ OS_Windows::shell_open(Path const & path)

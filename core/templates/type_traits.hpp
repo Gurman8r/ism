@@ -11,29 +11,17 @@ namespace ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// forward
+#define FWD(expr) \
+		(std::forward<decltype(expr)>(expr))
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct void_type {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, class ... Ts
-	> constexpr bool is_any_of_v{ std::disjunction_v<std::is_same<T, Ts>...> };
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class To, class From
-	> constexpr bool is_trivially_convertible_v
-	{
-		"requires To is trivially default constructible and is copy or move constructible"
-		&& sizeof(To) == sizeof(From)
-		&& std::is_trivially_copyable_v<From>
-		&& std::is_trivial_v<To>
-		&& (std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class ...> struct void_t_impl { using type = void; };
-
 	template <class ... Ts> using void_t = typename void_t_impl<Ts...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -54,16 +42,14 @@ namespace ism::mpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class C> using is_char = std::bool_constant<any_of_v
-		<
+	template <class C> using is_char = std::bool_constant<any_of_v<
 		std::is_same<C, char>,
 #if HAS_CXX_20
 		std::is_same<C, char8_t>,
 #endif
 		std::is_same<C, char16_t>,
 		std::is_same<C, char32_t>,
-		std::is_same<C, wchar_t>
-		>>;
+		std::is_same<C, wchar_t>>>;
 
 	template <class C> constexpr bool is_char_v{ is_char<C>::value };
 
@@ -313,12 +299,6 @@ namespace ism::mpl
 	> using return_type_t = typename return_type_helper<Types...>::type;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// forward
-#define FWD(expr) \
-		(std::forward<decltype(expr)>(expr))
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -326,6 +306,7 @@ namespace ism::mpl
 /* MAKER */
 namespace ism::priv
 {
+	// maker helper
 	template <class T> struct _MakerHelper final
 	{
 		T value;
@@ -339,15 +320,15 @@ namespace ism::priv
 			return fn(value), std::move(value);
 		}
 	};
-}
 
-// maker
+	// maker
 #define MAKER(m_class, ...) \
 		(ism::priv::_MakerHelper<m_class>{ ##__VA_ARGS__ })
 
-// make
+	// make
 #define MAKE(m_class, m_var, ...) \
 		MAKER(m_class, ##__VA_ARGS__) + [&](m_class & m_var) -> void
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -376,16 +357,16 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class H = FNV1A, class T
-	> constexpr size_t hash(T const * data, size_t size) { return H{}(data, size); }
+	> constexpr size_t hash_representation(T const * data, size_t size) { return H{}(data, size); }
 
 	template <class H = FNV1A, class T
-	> constexpr size_t hash(T const & data) { return H{}(&data, 1); }
+	> constexpr size_t hash_representation(T const & data) { return hash_representation<H>(&data, 1); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	constexpr size_t operator ""_hash(cstring data, size_t size) { return ism::hash(data, size); }
+	constexpr size_t operator ""_hash(cstring data, size_t size) { return hash_representation(data, size); }
 
-	constexpr size_t operator ""_hash(cwstring data, size_t size) { return ism::hash(data, size); }
+	constexpr size_t operator ""_hash(cwstring data, size_t size) { return hash_representation(data, size); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -412,7 +393,7 @@ namespace ism
 	{
 		static constexpr size_t do_hash(T const & value) noexcept
 		{
-			return ism::hash(value);
+			return hash_representation(value);
 		}
 	};
 
@@ -420,7 +401,7 @@ namespace ism
 	{
 		constexpr size_t operator()(f32 const value) const noexcept
 		{
-			return ism::hash(value == 0.f ? 0.f : value);
+			return hash_representation(value == 0.f ? 0.f : value);
 		}
 	};
 
@@ -428,7 +409,7 @@ namespace ism
 	{
 		constexpr size_t operator()(f64 const value) const noexcept
 		{
-			return ism::hash(value == 0.0 ? 0.0 : value);
+			return hash_representation(value == 0.0 ? 0.0 : value);
 		}
 	};
 
@@ -436,7 +417,7 @@ namespace ism
 	{
 		constexpr size_t operator()(f80 const value) const noexcept
 		{
-			return ism::hash(value == 0.L ? 0.L : value);
+			return hash_representation(value == 0.L ? 0.L : value);
 		}
 	};
 
@@ -444,7 +425,7 @@ namespace ism
 	{
 		constexpr size_t operator()(nullptr_t) const noexcept
 		{
-			return ism::hash((size_t)0);
+			return hash_representation((uintptr_t)0);
 		}
 	};
 

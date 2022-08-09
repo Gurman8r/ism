@@ -36,17 +36,17 @@ namespace ism
 				Vec2 viewport_size{};
 				Vec2 screen_pixel_size{};
 
-				f32 z_near{};
-				f32 z_far{};
+				f32 znear{};
+				f32 zfar{};
 				
 				f32 time{};
 
 				// etc...
 			}
 			ubo{};
-		};
+		}
+		m_scene_state{};
 
-	public:
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

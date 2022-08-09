@@ -1,15 +1,14 @@
 #ifndef _ISM_UTILITY_HPP_
 #define _ISM_UTILITY_HPP_
 
+#include <core/math/math.hpp>
+
 #include <core/os/copymem.hpp>
-#include <core/templates/type_traits.hpp>
 
 #include <stdarg.h>
 #include <algorithm>
 #include <functional>
 #include <utility>
-
-#include <gcem.hpp>
 
 namespace ism
 {
@@ -103,44 +102,12 @@ namespace ism
 	> ALIAS(Pair) std::pair<First, Second>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
 
-namespace ism::util
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T = f32, class = std::enable_if_t<std::is_floating_point_v<T>>
-	> constexpr T pi_v{ static_cast<T>(3.14159265358979323846) };
-
-	template <class T = f32, class = std::enable_if_t<mpl::is_number_v<T>>
-	> constexpr auto radians(T const value) noexcept
-	{
-		if constexpr (std::is_floating_point_v<T>)
-		{
-			return value * static_cast<T>(0.01745329251994329576923690768489);
-		}
-		else
-		{
-			return radians(static_cast<f32>(value));
-		}
-	}
-
-	template <class T = f32, class = std::enable_if_t<mpl::is_number_v<T>>
-	> constexpr auto degrees(T const value) noexcept
-	{
-		if constexpr (std::is_floating_point_v<T>)
-		{
-			return value * static_cast<T>(57.295779513082320876798154814105);
-		}
-		else
-		{
-			return degrees(static_cast<f32>(value));
-		}
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class To, class From, class = std::enable_if_t<mpl::is_trivially_convertible_v<To, From>>
+	template <class To, class From, class = std::enable_if_t<
+		sizeof(To) == sizeof(From) &&
+		std::is_trivially_copyable_v<From> &&
+		std::is_trivial_v<To> &&
+		(std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)>
 	> To bit_cast(From const & value) noexcept
 	{
 		To temp;
@@ -148,24 +115,11 @@ namespace ism::util
 		return temp;
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T
-	> constexpr void swap(T & a, T & b) noexcept
-	{
-		T c{ std::move(a) };
-		a = std::move(b);
-		b = std::move(c);
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class A, class B
-	> constexpr i32 compare(A const & a, B const & b) noexcept {
-		return CMP(a, b);
+	> constexpr auto compare(A const & a, B const & b) noexcept
+	{
+		return (a != b) ? ((a < b) ? -1 : 1) : 0;
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
 	> constexpr T const & constrain(T const & x, T const & min, T const & max) noexcept
@@ -179,16 +133,27 @@ namespace ism::util
 		return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 	}
 
+	namespace util
+	{
+		template <class T
+		> constexpr void swap(T & a, T & b) noexcept
+		{
+			T c{ std::move(a) };
+			a = std::move(b);
+			b = std::move(c);
+		}
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Left, class Right, class ... Rest
-	> constexpr decltype(auto) min(Left && lhs, Right && rhs, Rest && ... rest) noexcept
+	> constexpr decltype(auto) minimum(Left && lhs, Right && rhs, Rest && ... rest) noexcept
 	{
-		return lhs < rhs ? min(FWD(lhs), FWD(rest)...) : min(FWD(rhs), FWD(rest)...);
+		return lhs < rhs ? minimum(FWD(lhs), FWD(rest)...) : minimum(FWD(rhs), FWD(rest)...);
 	}
 
 	template <class Only
-	> constexpr decltype(auto) min(Only && only) noexcept
+	> constexpr decltype(auto) minimum(Only && only) noexcept
 	{
 		return FWD(only);
 	}
@@ -196,65 +161,91 @@ namespace ism::util
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class Left, class Right, class ... Rest
-	> constexpr decltype(auto) max(Left && lhs, Right && rhs, Rest && ... rest) noexcept
+	> constexpr decltype(auto) maximum(Left && lhs, Right && rhs, Rest && ... rest) noexcept
 	{
-		return lhs > rhs ? max(FWD(lhs), FWD(rest)...) : max(FWD(rhs), FWD(rest)...);
+		return lhs > rhs ? maximum(FWD(lhs), FWD(rest)...) : maximum(FWD(rhs), FWD(rest)...);
 	}
 
 	template <class Only
-	> constexpr decltype(auto) max(Only && only) noexcept
+	> constexpr decltype(auto) maximum(Only && only) noexcept
 	{
 		return FWD(only);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// range equal
-	template <class LI, class RI
-	> constexpr bool range_equal(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin == *rBegin) && util::range_equal(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
+	template <class It0, class It1
+	> constexpr bool range_eq(It0 first0, It0 last0, It1 first1, It1 last1)
+	{
+		return (first0 != last0 && first1 != last1) ? ((*first0 == *first1) && range_eq(first0 + 1, last0, first1 + 1, last1)) : (first0 == last0 && first1 == last1);
 	}
 
-	// range not equal
-	template <class LI, class RI
-	> constexpr bool range_nequal(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin != *rBegin) && util::range_nequal(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
+	template <class It0, class It1
+	> constexpr bool range_neq(It0 first0, It0 last0, It1 first1, It1 last1)
+	{
+		return (first0 != last0 && first1 != last1) ? ((*first0 != *first1) && range_neq(first0 + 1, last0, first1 + 1, last1)) : (first0 == last0 && first1 == last1);
 	}
 
-	// range less
-	template <class LI, class RI
-	> constexpr bool range_less(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin < *rBegin) && util::range_less(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
+	template <class It0, class It1
+	> constexpr bool range_lt(It0 first0, It0 last0, It1 first1, It1 last1)
+	{
+		return (first0 != last0 && first1 != last1) ? ((*first0 < *first1) && range_lt(first0 + 1, last0, first1 + 1, last1)) : (first0 == last0 && first1 == last1);
 	}
 
-	// range greater
-	template <class LI, class RI
-	> constexpr bool range_greater(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin > *rBegin) && util::range_greater(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
+	template <class It0, class It1
+	> constexpr bool range_gt(It0 first0, It0 last0, It1 first1, It1 last1)
+	{
+		return (first0 != last0 && first1 != last1) ? ((*first0 > *first1) && range_gt(first0 + 1, last0, first1 + 1, last1)) : (first0 == last0 && first1 == last1);
 	}
 
-	// range less or equal
-	template <class LI, class RI
-	> constexpr bool range_lequal(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin <= *rBegin) && util::range_lequal(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
+	template <class It0, class It1
+	> constexpr bool range_leq(It0 first0, It0 last0, It1 first1, It1 last1)
+	{
+		return (first0 != last0 && first1 != last1) ? ((*first0 <= *first1) && range_leq(first0 + 1, last0, first1 + 1, last1)) : (first0 == last0 && first1 == last1);
 	}
 
-	// range greater or equal
-	template <class LI, class RI
-	> constexpr bool range_gequal(LI lBegin, LI lEnd, RI rBegin, RI rEnd) {
-		return (lBegin != lEnd && rBegin != rEnd)
-			? ((*lBegin >= *rBegin) && util::range_gequal(lBegin + 1, lEnd, rBegin + 1, rEnd))
-			: (lBegin == lEnd && rBegin == rEnd);
+	template <class It0, class It1
+	> constexpr bool range_geq(It0 first0, It0 last0, It1 first1, It1 last1)
+	{
+		return (first0 != last0 && first1 != last1) ? ((*first0 >= *first1) && range_geq(first0 + 1, last0, first1 + 1, last1)) : (first0 == last0 && first1 == last1);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class It, class T
+	> constexpr bool range_eq(It first, It last, T const & value)
+	{
+		return (first != last) ? ((*first == value) && range_eq(first + 1, last, value)) : (first == last);
+	}
+
+	template <class It, class T
+	> constexpr bool range_neq(It first, It last, T const & value)
+	{
+		return (first != last) ? ((*first != value) && range_neq(first + 1, last, value)) : (first == last);
+	}
+
+	template <class It, class T
+	> constexpr bool range_lt(It first, It last, T const & value)
+	{
+		return (first != last) ? ((*first < value) && range_lt(first + 1, last, value)) : (first == last);
+	}
+
+	template <class It, class T
+	> constexpr bool range_gt(It first, It last, T const & value)
+	{
+		return (first != last) ? ((*first > value) && range_gt(first + 1, last, value)) : (first == last);
+	}
+
+	template <class It, class T
+	> constexpr bool range_leq(It first, It last, T const & value)
+	{
+		return (first != last) ? ((*first <= value) && range_leq(first + 1, last, value)) : (first == last);
+	}
+
+	template <class It, class T
+	> constexpr bool range_geq(It first, It last, T const & value)
+	{
+		return (first != last) ? ((*first >= value) && range_geq(first + 1, last, value)) : (first == last);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

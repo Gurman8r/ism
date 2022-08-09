@@ -97,12 +97,12 @@ namespace ism
 				return 0;
 			}
 #if (CXX_LANG >= CXX_17)
-			else if (auto const cmp{ __builtin_memcmp(m_data, value.m_data, util::min(m_size, value.m_size)) }; cmp != 0)
+			else if (auto const cmp{ __builtin_memcmp(m_data, value.m_data, minimum(m_size, value.m_size)) }; cmp != 0)
 			{
 				return cmp;
 			}
 #else
-			else if (auto const cmp{ std::memcmp(m_data, value.m_data, util::min(m_size, value.m_size)) }; cmp != 0)
+			else if (auto const cmp{ std::memcmp(m_data, value.m_data, minimum(m_size, value.m_size)) }; cmp != 0)
 			{
 				return cmp;
 			}

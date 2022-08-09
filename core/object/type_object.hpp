@@ -65,7 +65,7 @@ namespace ism
 			tp_del = (delfunc)memdelete<T>;
 			tp_bind = (classproc)[](TYPE t) -> TYPE { return t; };
 			tp_hash = (hashfunc)[](OBJ o) -> size_t { return Hasher<intptr_t>{}((intptr_t)*o); };
-			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> i32 { return util::compare((intptr_t)*a, (intptr_t)*b); };
+			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> i32 { return compare((intptr_t)*a, (intptr_t)*b); };
 
 			if constexpr (std::is_default_constructible_v<T>)
 			{
@@ -222,7 +222,7 @@ namespace ism
 	}
 
 	template <class T, class = std::enable_if_t<is_ref_v<T>>
-	> ssize_t len(T const & o) noexcept
+	> ssize_t length(T const & o) noexcept
 	{
 		if (!o) { return -1; }
 		TYPE t{ typeof(o) };

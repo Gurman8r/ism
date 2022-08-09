@@ -11,7 +11,7 @@ namespace ism
 		: EditorPanel{ "Viewport##Editor", true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar }
 		, m_main_texture{}
 		, m_grid_enabled{ true }
-		, m_grid_matrix{ Mat4::identity() }
+		, m_grid_matrix{ identity_v<Mat4> }
 		, m_grid_size{ 100.f }
 	{
 	}
