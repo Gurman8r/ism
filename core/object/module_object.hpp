@@ -86,7 +86,6 @@ namespace ism
 	};
 }
 
-// functions
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

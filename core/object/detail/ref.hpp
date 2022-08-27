@@ -71,12 +71,17 @@ namespace ism
 		template <class U> U cast() &&;
 
 	public:
-		template <class U = value_type, class ... Args
+		template <class U = value_type, class ... Args, std::enable_if_t<std::is_base_of_v<value_type, U>, int> = 0
 		> void instance(Args && ... args)
 		{
-			static_assert(std::is_base_of_v<value_type, U>);
-
-			ref(memnew(U{ FWD(args)... }));
+			if constexpr (std::is_constructible_v<U, Args...>)
+			{
+				ref(memnew(U(FWD(args)...)));
+			}
+			else
+			{
+				ref(memnew(U{ FWD(args)... }));
+			}
 		}
 
 		void unref()
@@ -148,10 +153,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// ref common
-#define REF_CLASS(m_class, m_check)																	\
+	// ref class
+#define REF_CLASS(m_class, m_check)																		\
 public:																									\
-	ALIAS(base_type) ism::Ref<value_type>;																\
+	using base_type = ism::Ref<value_type>;																\
 																										\
 	static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }					\
 																										\

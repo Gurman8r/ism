@@ -254,17 +254,16 @@ namespace ism
 		}
 
 	public:
-		template <class T
+		template <class T, std::enable_if_t<(1 == sizeof(T)), int> = 0
 		> self_type & operator<<(T const & value)
 		{
-			if constexpr (1 == sizeof(T))
-			{
-				return m_data.push_back(static_cast<u8>(value)), (*this);
-			}
-			else
-			{
-				return write(value);
-			}
+			return m_data.push_back(static_cast<u8>(value)), (*this);
+		}
+
+		template <class T, std::enable_if_t<(1 < sizeof(T)), int> = 0
+		> self_type & operator<<(T const & value)
+		{
+			return write(value);
 		}
 
 		self_type & operator<<(cstring str)

@@ -52,7 +52,7 @@ namespace ism
 			}
 			else if (!self || !other)
 			{
-				return CMP((intptr_t)self, (intptr_t)other);
+				return compare((intptr_t)self, (intptr_t)other);
 			}
 			else if (cmpfunc cmp{ typeof(self)->tp_cmp })
 			{

@@ -31,7 +31,7 @@ filter{}
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 solution_items{
-	".ism",
+	".engine", ".editor",
 	"premake5.lua",
 	"README.md",
 	"TODO.txt",

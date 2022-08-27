@@ -77,6 +77,8 @@ namespace ism
 			DynamicBuffer index_data{};
 			size_t index_count{};
 
+			RD::VertexLayout layout{};
+
 			RID material{};
 		};
 
@@ -94,9 +96,10 @@ namespace ism
 	public:
 		/* CAMERA */
 		virtual RID camera_create() = 0;
-		virtual void camera_set_perspective(RID camera, f32 fov, f32 znear, f32 z_far) = 0;
-		virtual void camera_set_orthographic(RID camera, f32 size, f32 znear, f32 z_far) = 0;
-		virtual void camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 znear, f32 z_far) = 0;
+		virtual void camera_destroy(RID camera) = 0;
+		virtual void camera_set_perspective(RID camera, f32 fov, f32 znear, f32 zfar) = 0;
+		virtual void camera_set_orthographic(RID camera, f32 size, f32 znear, f32 zfar) = 0;
+		virtual void camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 znear, f32 zfar) = 0;
 		virtual void camera_set_transform(RID camera, Mat4 const & transform) = 0;
 
 	public:

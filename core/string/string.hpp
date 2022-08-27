@@ -243,59 +243,29 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class C
-	> NODISCARD bool operator==(BasicString<C> const & a, BasicString<C> const & b) noexcept { return a._Equal(b); }
+	template <class C> NODISCARD bool operator==(BasicString<C> const & a, BasicString<C> const & b) noexcept { return a._Equal(b); }
+	template <class C> NODISCARD bool operator==(BasicString<C> const & a, C const * const b) { return a._Equal(b); }
+	template <class C> NODISCARD bool operator==(C const * const a, BasicString<C> const & b) { return b._Equal(a); }
 
-	template <class C
-	> NODISCARD bool operator==(BasicString<C> const & a, C const * const b) { return a._Equal(b); }
+	template <class C> NODISCARD bool operator!=(BasicString<C> const & a, BasicString<C> const & b) noexcept { return !(a == b); }
+	template <class C> NODISCARD bool operator!=(C const * const a, BasicString<C> const & b) { return !(a == b); }
+	template <class C> NODISCARD bool operator!=(BasicString<C> const & a, C const * const b) { return !(a == b); }
 
-	template <class C
-	> NODISCARD bool operator==(C const * const a, BasicString<C> const & b) { return b._Equal(a); }
+	template <class C> NODISCARD bool operator<(BasicString<C> const & a, BasicString<C> const & b) noexcept { return a.compare(b) < 0; }
+	template <class C> NODISCARD bool operator<(C const * const a, BasicString<C> const & b) { return b.compare(a) > 0; }
+	template <class C> NODISCARD bool operator<(BasicString<C> const & a, C const * const b) { return a.compare(b) < 0; }
 
-	template <class C
-	> NODISCARD bool operator!=(BasicString<C> const & a, BasicString<C> const & b) noexcept { return !(a == b); }
+	template <class C> NODISCARD bool operator>(BasicString<C> const & a, BasicString<C> const & b) noexcept { return b < a; }
+	template <class C> NODISCARD bool operator>(C const * const a, BasicString<C> const & b) { return b < a; }
+	template <class C> NODISCARD bool operator>(BasicString<C> const & a, C const * const b) { return b < a; }
 
-	template <class C
-	> NODISCARD bool operator!=(C const * const a, BasicString<C> const & b) { return !(a == b); }
+	template <class C> NODISCARD bool operator<=(BasicString<C> const & a, BasicString<C> const & b) noexcept { return !(b < a); }
+	template <class C> NODISCARD bool operator<=(C const * const a, BasicString<C> const & b) { return !(b < a); }
+	template <class C> NODISCARD bool operator<=(BasicString<C> const & a, C const * const b) { return !(b < a); }
 
-	template <class C
-	> NODISCARD bool operator!=(BasicString<C> const & a, C const * const b) { return !(a == b); }
-
-	template <class C
-	> NODISCARD bool operator<(BasicString<C> const & a, BasicString<C> const & b) noexcept { return a.compare(b) < 0; }
-
-	template <class C
-	> NODISCARD bool operator<(C const * const a, BasicString<C> const & b) { return b.compare(a) > 0; }
-
-	template <class C
-	> NODISCARD bool operator<(BasicString<C> const & a, C const * const b) { return a.compare(b) < 0; }
-
-	template <class C
-	> NODISCARD bool operator>(BasicString<C> const & a, BasicString<C> const & b) noexcept { return b < a; }
-
-	template <class C
-	> NODISCARD bool operator>(C const * const a, BasicString<C> const & b) { return b < a; }
-
-	template <class C
-	> NODISCARD bool operator>(BasicString<C> const & a, C const * const b) { return b < a; }
-
-	template <class C
-	> NODISCARD bool operator<=(BasicString<C> const & a, BasicString<C> const & b) noexcept { return !(b < a); }
-
-	template <class C
-	> NODISCARD bool operator<=(C const * const a, BasicString<C> const & b) { return !(b < a); }
-
-	template <class C
-	> NODISCARD bool operator<=(BasicString<C> const & a, C const * const b) { return !(b < a); }
-
-	template <class C
-	> NODISCARD bool operator>=(BasicString<C> const & a, BasicString<C> const & b) noexcept { return !(a < b); }
-
-	template <class C
-	> NODISCARD bool operator>=(C const * const a, BasicString<C> const & b) { return !(a < b); }
-
-	template <class C
-	> NODISCARD bool operator>=(BasicString<C> const & a, C const * const b) { return !(a < b); }
+	template <class C> NODISCARD bool operator>=(BasicString<C> const & a, BasicString<C> const & b) noexcept { return !(a < b); }
+	template <class C> NODISCARD bool operator>=(C const * const a, BasicString<C> const & b) { return !(a < b); }
+	template <class C> NODISCARD bool operator>=(BasicString<C> const & a, C const * const b) { return !(a < b); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

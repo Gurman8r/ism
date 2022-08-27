@@ -170,7 +170,11 @@ namespace ism
 		_ClockBase::time_point m_time;
 
 	public:
-		Clock() noexcept : m_time{ _ClockBase::now() } {}
+		explicit Clock() noexcept : m_time{ _ClockBase::now() } {}
+
+		NON_COPYABLE(Clock);
+
+		NON_MOVABLE(Clock);
 
 		Duration get_elapsed_time() const noexcept { return _ClockBase::now() - m_time; }
 

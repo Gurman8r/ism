@@ -14,7 +14,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
+	// main editor
 	class ISM_API EditorNode : public Node
 	{
 		OBJECT_CLASS(EditorNode, Node);

@@ -7,6 +7,7 @@
 
 namespace ism
 {
+	// file
 	class ISM_API File : public Resource
 	{
 		OBJECT_CLASS(File, Resource);

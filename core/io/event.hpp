@@ -47,8 +47,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event common
-#define EVENT_COMMON(m_class, m_inherits)										\
+	// event class
+#define EVENT_CLASS(m_class, m_inherits)										\
 private:																		\
 	static_assert(std::is_base_of_v<ism::Event, m_inherits>);					\
 																				\
@@ -63,7 +63,7 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event handler
+	// handler
 	class ISM_API EventHandler : public Object
 	{
 		OBJECT_CLASS(EventHandler, Object);
@@ -121,7 +121,7 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event delegate base
+	// delegate base
 	template <> class ISM_API EventDelegate<Event> : public EventHandler
 	{
 		OBJECT_CLASS(EventDelegate<Event>, EventHandler);
@@ -141,7 +141,7 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event delegate
+	// delegate
 	template <class Ev> class EventDelegate final : public EventDelegate<Event>
 	{
 		Vector<std::function<void(Ev const &)>> m_callbacks{};
@@ -196,7 +196,7 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// event bus
+	// bus
 	class ISM_API EventBus : public Object
 	{
 		OBJECT_CLASS(EventBus, Object);

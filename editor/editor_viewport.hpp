@@ -11,7 +11,9 @@ namespace ism
 
 		friend class EditorNode;
 
-		RID m_main_texture;
+		RID m_viewport{};
+
+		RID m_main_texture{};
 
 		Mat4 m_camera_view{}, m_camera_proj{};
 

@@ -141,7 +141,7 @@ namespace ism
 		struct _Viewport
 		{
 			RID self{}, parent{};
-			Vec2i size{};
+			Vec2i position{}, size{};
 			RID camera{};
 			RID render_target{}, render_target_texture{};
 		};

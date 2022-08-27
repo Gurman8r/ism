@@ -178,17 +178,19 @@ namespace ism
 
 		// vertices
 		RID vb{ m_device->vertex_buffer_create(surface.vertex_data.size(), surface.vertex_data) };
-		RID va{ m_device->vertex_array_create(surface.vertex_count, RD::VertexLayout{}, { vb }) };
+		RID va{ m_device->vertex_array_create(surface.vertex_count, surface.layout, { vb }) };
 		s->vertex_array = va;
 		s->vertex_count = surface.vertex_count;
 		s->vertex_buffer_size = surface.vertex_data.size();
 
 		// indices
-		RID ib{ m_device->index_buffer_create(surface.index_count, DataType_U32, surface.index_data) };
-		RID ia{ m_device->index_array_create(ib, 0, surface.index_count) };
-		s->index_array = ia;
-		s->index_count = surface.index_count;
-		s->index_buffer_size = surface.index_data.size();
+		if (0 < surface.index_count) {
+			RID ib{ m_device->index_buffer_create(surface.index_count, DataType_U32, surface.index_data) };
+			RID ia{ m_device->index_array_create(ib, 0, surface.index_count) };
+			s->index_array = ia;
+			s->index_count = surface.index_count;
+			s->index_buffer_size = surface.index_data.size();
+		}
 
 		// material
 		s->material = nullptr;
@@ -382,6 +384,7 @@ namespace ism
 		_Viewport & vp{ *VALIDATE((_Viewport *)viewport) };
 		vp.self = viewport;
 		vp.parent = nullptr;
+		vp.position = {};
 		vp.size = { 1280, 720 };
 		vp.camera = nullptr;
 		vp.render_target = render_target_create();

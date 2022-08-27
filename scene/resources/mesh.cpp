@@ -6,6 +6,13 @@ namespace ism
 
 	EMBED_OBJECT_CLASS(Mesh, t) {}
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	Mesh::Mesh(Vector<RS::SurfaceData> const & surfaces)
+	{
+		if (!surfaces.empty()) { m_mesh = RS::get_singleton()->mesh_create(surfaces); }
+	}
+
 	Mesh::~Mesh()
 	{
 		if (m_mesh) { RS::get_singleton()->mesh_destroy(m_mesh); m_mesh = nullptr; }
@@ -15,6 +22,8 @@ namespace ism
 	{
 		return MeshLoader::load_from_file(*this, get_path());
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	size_t Mesh::get_surface_count() const
 	{

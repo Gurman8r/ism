@@ -970,6 +970,9 @@ void RenderingDeviceOpenGL::_render_pipeline_bind(_RenderPipeline const & rp)
 	// color blend state
 	glCheck(glSetEnabled(GL_LOGIC_OP, rp.color_blend_state.enable_logic_op));
 	glCheck(glLogicOp(TO_GL(rp.color_blend_state.logic_op)));
+	
+	// TODO: fixme
+	if (rp.color_blend_state.attachments.empty()) { return; }
 	auto const & attachment{ rp.color_blend_state.attachments[0] };
 	glCheck(glSetEnabled(GL_BLEND, attachment.enable_blend));
 	glCheck(glBlendColor(rp.color_blend_state.blend_constant[0], rp.color_blend_state.blend_constant[1], rp.color_blend_state.blend_constant[2], rp.color_blend_state.blend_constant[3]));

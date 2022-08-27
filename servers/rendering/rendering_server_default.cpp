@@ -263,6 +263,11 @@ namespace ism
 		return m_storage->camera_create();
 	}
 
+	void RenderingServerDefault::camera_destroy(RID camera)
+	{
+		m_storage->camera_destroy(camera);
+	}
+
 	void RenderingServerDefault::camera_set_perspective(RID camera, f32 fov, f32 znear, f32 zfar)
 	{
 		m_storage->camera_set_perspective(camera, fov, znear, zfar);

@@ -7,21 +7,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	static constexpr Face3 default_quad_vertices[] =
-	{
-		{ { +1.f, +1.f, 0.f }, { 1.f, 1.f, 1.f }, { 1.f, 1.f, 0.f } },
-		{ { +1.f, -1.f, 0.f }, { 1.f, 1.f, 1.f }, { 1.f, 0.f, 0.f } },
-		{ { -1.f, -1.f, 0.f }, { 1.f, 1.f, 1.f }, { 0.f, 0.f, 0.f } },
-		{ { -1.f, +1.f, 0.f }, { 1.f, 1.f, 1.f }, { 0.f, 1.f, 0.f } },
-	};
-
-	static constexpr i32 default_quad_indices[] =
-	{
-		0, 1, 2
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	enum {
 		SCENE_STATE_UNIFORMS,
 		RENDER_PASS_UNIFORMS,
@@ -38,23 +23,19 @@ namespace ism
 	static RID render_target{};
 	static RID viewport{};
 
-
 	static Vec2 screen_resolution{};
 
 	static struct Camera
 	{
 		f32 fov{ radians(45) }, znear{ 0.001f }, zfar{ 1000.f };
 
-		f32 pitch{}, yaw{};
+		f32 pitch{}, yaw{}, roll{};
 
-		Mat4 proj{};
+		Mat4 projection{ identity_v<Mat4> };
 
-		Transform view{ Vec3{ 0, 0, -5 } };
+		Transform transform{ Vec3{ 0, 0, -5 } };
 	}
 	camera;
-
-	static Vec3 camera_position{};
-	static f32 camera_pitch{}, camera_yaw{};
 
 	static Transform transform[] =
 	{
@@ -131,16 +112,41 @@ namespace ism
 	{
 		ASSERT(!__singleton); __singleton = this;
 
-		//RID cam{ RS::get_singleton()->camera_create() };
-		//RS::get_singleton()->camera_set_perspective(cam, radians(45), 0.001f, 1000.f);
-		//RS::get_singleton()->camera_set_transform(cam, Transform{ camera_position });
+		RID c{ RS::get_singleton()->camera_create() };
+		RS::get_singleton()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
+		RS::get_singleton()->camera_set_transform(c, camera.transform);
+		RS::get_singleton()->camera_destroy(c);
 
+		m_shaders["2d"].instance("../../../assets/shaders/2d.shader");
+		m_shaders["3d"].instance("../../../assets/shaders/3d.shader");
 		m_textures["earth_dm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_dm_2k.png");
 		m_textures["earth_sm_2k"].instance<ImageTexture>("../../../assets/textures/earth/earth_sm_2k.png");
 		m_meshes["sphere32x24"].instance("../../../assets/meshes/sphere32x24.obj");
-		m_shaders["3D"].instance("../../../assets/shaders/3d.shader");
 
-		RID const shader{ m_shaders["3D"]->get_rid() };
+		//RS::SurfaceData quad_spec{};
+		//quad_spec.primitive = RS::Primitive_Triangles;
+		//quad_spec.vertex_data
+		//	<< Vec4{ -1, -1 } << Vec4{} << Vec4{ 0, 0 } << Vec4{} << Vec4{}
+		//	<< Vec4{ 1, -1 } << Vec4{} << Vec4{ 1, 0 } << Vec4{} << Vec4{}
+		//	<< Vec4{ 1, 1 } << Vec4{} << Vec4{ 1, 1 } << Vec4{} << Vec4{};
+		//quad_spec.vertex_data
+		//	<< Vec4{ 1, 1 } << Vec4{} << Vec4{ 1, 1 } << Vec4{} << Vec4{}
+		//	<< Vec4{ 1, -1 } << Vec4{} << Vec4{ 1, 0 } << Vec4{} << Vec4{}
+		//	<< Vec4{ -1, -1 } << Vec4{} << Vec4{ 0, 0 } << Vec4{} << Vec4{}
+		//	<< Vec4{ -1, 1 } << Vec4{} << Vec4{ 0, 1 } << Vec4{} << Vec4{};
+		//quad_spec.vertex_data
+		//	<< Vec4{ -1, 1 } << Vec4{} << Vec4{ 0, 1 } << Vec4{} << Vec4{}
+		//	<< Vec4{ -1, -1 } << Vec4{} << Vec4{ 0, 0 } << Vec4{} << Vec4{}
+		//	<< Vec4{ 1, -1 } << Vec4{} << Vec4{ 1, 0 } << Vec4{} << Vec4{}
+		//	<< Vec4{ -1, 1 } << Vec4{} << Vec4{ 0, 1 } << Vec4{} << Vec4{}
+		//	<< Vec4{ 1, -1 } << Vec4{} << Vec4{ 1, 0 } << Vec4{} << Vec4{}
+		//	<< Vec4{ 1, 1 } << Vec4{} << Vec4{ 1, 1 } << Vec4{} << Vec4{};
+		//quad_spec.vertex_count = quad_spec.vertex_data.size() / sizeof(f32);
+		//quad_spec.index_data << 0u << 1u << 2u;
+		//quad_spec.index_count = quad_spec.index_data.size() / sizeof(u32);
+		//m_meshes["quad"].instance(quad_spec);
+
+		RID const shader{ m_shaders["3d"]->get_rid() };
 		_setup_pipeline(shader);
 
 		uniform_buffers[SCENE_STATE_UNIFORMS] = RD::get_singleton()->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
@@ -228,33 +234,33 @@ namespace ism
 				if (Vec2 const res{ m_viewport->InnerRect.GetWidth(), m_viewport->InnerRect.GetHeight() }
 				; screen_resolution != res) {
 					screen_resolution = res;
-					camera.proj = perspective(camera.fov, screen_resolution[0] / screen_resolution[1], camera.znear, camera.zfar);
+					camera.projection = perspective(camera.fov, screen_resolution[0] / screen_resolution[1], camera.znear, camera.zfar);
 					RD::get_singleton()->framebuffer_set_size(framebuffer, (i32)screen_resolution[0], (i32)screen_resolution[1]);
 				}
 			}
 
 			f32 const camera_speed{ 10.f * delta_time };
-			if (input->is_key_down(Input::Key_Q)) { camera.view.translate(-up_v<Vec3> * camera_speed); }
-			else if (input->is_key_down(Input::Key_Z)) { camera.view.translate(up_v<Vec3> * camera_speed); }
-			if (input->is_key_down(Input::Key_W)) { camera.view.translate(camera.view.front() * camera_speed); }
-			else if (input->is_key_down(Input::Key_S)) { camera.view.translate(-camera.view.front() * camera_speed); }
-			if (input->is_key_down(Input::Key_D)) { camera.view.translate(camera.view.right() * camera_speed); }
-			else if (input->is_key_down(Input::Key_A)) { camera.view.translate(-camera.view.right() * camera_speed); }
+			if (input->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_speed); }
+			else if (input->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_speed); }
+			if (input->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_speed); }
+			else if (input->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_speed); }
+			if (input->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_speed); }
+			else if (input->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_speed); }
 
 			if (m_viewport.m_is_dragging_view) {
 				Vec2 const drag{ input->get_mouse_delta() * (f32)delta_time };
 				camera.yaw += drag[0];
-				camera_pitch = constrain(camera_pitch + drag[1], -89.f, 89.f);
+				camera.pitch = constrain(camera.pitch + drag[1], -89.f, 89.f);
 			}
-			camera.view.set_rotation(camera_pitch, camera.yaw, 0);
+			camera.transform.set_rotation(camera.pitch, camera.yaw, camera.roll);
 
-			m_viewport.m_camera_proj = camera.proj;
-			m_viewport.m_camera_view = camera.view;
+			m_viewport.m_camera_proj = camera.projection;
+			m_viewport.m_camera_view = camera.transform;
 
 			{
 				RD::Std140<Mat4, Mat4> scene_state_ubo;
-				scene_state_ubo.set<0>(camera.proj); // camera projection
-				scene_state_ubo.set<1>(camera.view); // camera view
+				scene_state_ubo.set<0>(camera.projection); // camera projection
+				scene_state_ubo.set<1>(camera.transform); // camera view
 				RD::get_singleton()->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
 
 				RD::Std140<Mat4> render_pass_ubo;
@@ -284,8 +290,9 @@ namespace ism
 				static Mesh * mesh{ *m_meshes["sphere32x24"] };
 				for (size_t i{}; i < mesh->get_surface_count(); ++i) {
 					RD::get_singleton()->draw_list_bind_vertex_array(draw_list, mesh->surface_get_vertex_array(i));
-					RD::get_singleton()->draw_list_bind_index_array(draw_list, mesh->surface_get_index_array(i));
-					RD::get_singleton()->draw_list_draw(draw_list, true, 1, 0);
+					RID const ia{ mesh->surface_get_index_array(i) };
+					RD::get_singleton()->draw_list_bind_index_array(draw_list, ia);
+					RD::get_singleton()->draw_list_draw(draw_list, ia != nullptr, 1, 0);
 				}
 				RD::get_singleton()->draw_list_end();
 			}

@@ -14,7 +14,7 @@ namespace ism
 		OBJ m_script{};
 
 	public:
-		enum
+		enum : Notification_
 		{
 			Notification_MemoryWarning = 2001,
 			Notification_Crash,

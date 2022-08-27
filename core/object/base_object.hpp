@@ -13,9 +13,7 @@ public:																				\
 																					\
 private:																			\
 	friend class ism::Internals;													\
-																					\
 	friend class ism::_EmbedClassHelper<m_class>;									\
-																					\
 	friend struct ism::DefaultDelete<m_class>;										\
 																					\
 	static constexpr ism::StringView __name_static{ TOSTR(m_class) };				\
@@ -128,9 +126,9 @@ namespace ism
 	class ISM_API Object : public ObjectAPI<Object>
 	{
 	public:
-		using base_type = typename void;
+		using Notification_ = typename i32;
 
-		enum
+		enum : Notification_
 		{
 			Notification_PostInitialize	= 1,
 			Notification_PreDelete		= 2,
@@ -172,6 +170,8 @@ namespace ism
 		Object() { _initialize_object(); }
 
 	public:
+		using base_type = typename void; // no base
+
 		virtual ~Object() { _finalize_object(); }
 
 		bool init_ref();
@@ -243,23 +243,16 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <> struct Hasher<OBJ> : Hasher<Ref<Object>> {};
-	
 	template <> struct EqualTo<OBJ> : EqualTo<Ref<Object>> {};
-	
 	template <> struct NotEqualTo<OBJ> : NotEqualTo<Ref<Object>> {};
-	
 	template <> struct Less<OBJ> : Less<Ref<Object>> {};
-	
 	template <> struct Greater<OBJ> : Greater<Ref<Object>> {};
-	
 	template <> struct LessEqual<OBJ> : LessEqual<Ref<Object>> {};
-	
 	template <> struct GreaterEqual<OBJ> : GreaterEqual<Ref<Object>> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// functions
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

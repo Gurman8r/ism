@@ -185,7 +185,9 @@ namespace ism
 		/* DRAWLIST  */
 		struct _DrawList
 		{
-			Vector<std::function<void()>> command_buffer{};
+			using Cmd = std::function<void()>;
+
+			Vector<Cmd> command_buffer{};
 
 			IntRect viewport{};
 

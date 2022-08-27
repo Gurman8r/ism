@@ -70,6 +70,7 @@ namespace ism
 	public:
 		/* CAMERA */
 		virtual RID camera_create() override;
+		virtual void camera_destroy(RID camera) override;
 		virtual void camera_set_perspective(RID camera, f32 fov, f32 znear, f32 zfar) override;
 		virtual void camera_set_orthographic(RID camera, f32 size, f32 znear, f32 zfar) override;
 		virtual void camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 znear, f32 zfar) override;

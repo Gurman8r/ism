@@ -284,7 +284,7 @@ namespace ism
 		cstring		name{};
 		DataType_	type{};
 		ssize_t		offset{};
-		i32		flags{};
+		i32			flags{};
 		cstring		doc{};
 	};
 
@@ -292,7 +292,7 @@ namespace ism
 	{
 		cstring		name{};
 		binaryfunc	func{};
-		i32		flags{};
+		i32			flags{};
 		cstring		doc{};
 	};
 

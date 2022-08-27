@@ -146,10 +146,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Left, class Right, class ... Rest
-	> constexpr decltype(auto) minimum(Left && lhs, Right && rhs, Rest && ... rest) noexcept
+	template <class First, class Second, class ... Rest
+	> constexpr decltype(auto) minimum(First && first, Second && second, Rest && ... rest) noexcept
 	{
-		return lhs < rhs ? minimum(FWD(lhs), FWD(rest)...) : minimum(FWD(rhs), FWD(rest)...);
+		return first < second ? minimum(FWD(first), FWD(rest)...) : minimum(FWD(second), FWD(rest)...);
 	}
 
 	template <class Only
@@ -160,10 +160,10 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class Left, class Right, class ... Rest
-	> constexpr decltype(auto) maximum(Left && lhs, Right && rhs, Rest && ... rest) noexcept
+	template <class First, class Second, class ... Rest
+	> constexpr decltype(auto) maximum(First && first, Second && second, Rest && ... rest) noexcept
 	{
-		return lhs > rhs ? maximum(FWD(lhs), FWD(rest)...) : maximum(FWD(rhs), FWD(rest)...);
+		return first > second ? maximum(FWD(first), FWD(rest)...) : maximum(FWD(second), FWD(rest)...);
 	}
 
 	template <class Only

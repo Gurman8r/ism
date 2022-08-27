@@ -17,7 +17,7 @@ namespace ism
 		friend class SceneTree;
 
 	public:
-		enum
+		enum : Notification_
 		{
 			Notification_EnterTree = 10,
 			Notification_ExitTree,

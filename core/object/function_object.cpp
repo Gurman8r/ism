@@ -25,10 +25,5 @@ namespace ism
 	{
 	}
 
-	OBJ FunctionObject::cpp_function() const
-	{
-		return CPP_FUNCTION::check_((Object *)this) ? CPP_FUNCTION((CppFunctionObject *)this) : nullptr;
-	}
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

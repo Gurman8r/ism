@@ -33,43 +33,35 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class R, class T = f32
-	> constexpr auto ratio_cast(T v = T{ 1 }) noexcept
+	template <class T, i64 Num, i64 Den
+	> constexpr auto ratio_cast(T v, Ratio<Num, Den> const & r)
 	{
-		if constexpr (((T)R::num == (T)1) && ((T)R::den == (T)1))
+		constexpr T one{ (T)1 }, num{ (T)r.num }, den{ (T)r.den };
+
+		if constexpr (num == one && den == one)
 		{
 			return v;
 		}
-		else if constexpr ((T)R::num != (T)1 && (T)R::den == (T)1)
+		else if constexpr (num != one && den == one)
 		{
-			return v * (T)R::num;
+			return v * num;
 		}
-		else if constexpr ((T)R::num == (T)1 && (T)R::den != (T)1)
+		else if constexpr (num == one && den != one)
 		{
-			return v / (T)R::den;
+			return v / den;
 		}
 		else
 		{
-			return v * (T)R::num / (T)R::den;
+			return v * num / den;
 		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T, i64 Num, i64 Den
-	> constexpr auto ratio_cast(T v, Ratio<Num, Den> const & r)
+	template <class R, class T = f32
+	> constexpr auto ratio_cast(T v) noexcept
 	{
-		auto const
-			one{ static_cast<T>(1) },
-			num{ static_cast<T>(r.num) },
-			den{ static_cast<T>(r.den) };
-		return ((num == one) && (den == one))
-			? v
-			: (((num != one) && (den == one))
-				? v * num
-				: (((num == one) && (den != one))
-					? v / den
-					: v * num / den));
+		return ratio_cast(v, R{});
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
