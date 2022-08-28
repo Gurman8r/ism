@@ -136,6 +136,8 @@ bool Main::start()
 
 		Window * root{ tree->get_root() };
 
+		root->add_child<ImGuiNode>();
+
 #if TOOLS_ENABLED
 		if (editor) { root->add_child<EditorNode>(); }
 #endif
@@ -152,8 +154,8 @@ bool Main::start()
 
 bool Main::iteration()
 {
-	++m_iterating;
-	
+	++m_iterating; ON_SCOPE_EXIT(&) { --m_iterating; };
+
 	Clock const loop_timer{};
 	static Duration delta_time{ 16_ms };
 	ON_SCOPE_EXIT(&) { delta_time = loop_timer.get_elapsed_time(); };
@@ -182,8 +184,6 @@ bool Main::iteration()
 	}
 
 	g_display->swap_buffers();
-
-	--m_iterating;
 
 	return should_close;
 }

@@ -42,6 +42,7 @@ namespace ism::mpl
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// is_char
 	template <class C> using is_char = std::bool_constant<any_of_v<
 		std::is_same<C, char>,
 #if HAS_CXX_20
@@ -50,14 +51,17 @@ namespace ism::mpl
 		std::is_same<C, char16_t>,
 		std::is_same<C, char32_t>,
 		std::is_same<C, wchar_t>>>;
-
 	template <class C> constexpr bool is_char_v{ is_char<C>::value };
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	// is_alnum
+	template <class T> using is_alnum = std::bool_constant<std::is_arithmetic_v<T> || std::is_enum_v<T>>;
+	template <class T> constexpr bool is_alnum_v{ is_alnum<T>::value };
 
+	// is_number
 	template <class T> using is_number = std::bool_constant<!is_char_v<T> && (std::is_arithmetic_v<T> || std::is_enum_v<T>)>;
-
 	template <class T> constexpr bool is_number_v{ is_number<T>::value };
+	template <class T> constexpr bool is_number_float_v{ is_number_v<T> && std::is_floating_point_v<T> };
+	template <class T> constexpr bool is_number_integer_v{ is_number_v<T> && !std::is_floating_point_v<T> };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -309,15 +313,17 @@ namespace ism::priv
 	// maker helper
 	template <class T> struct _MakerHelper final
 	{
-		T value;
+		using type = mpl::intrinsic_t<T>;
+
+		type value;
 
 		template <class ... Args
 		> constexpr _MakerHelper(Args && ... args) noexcept : value{ FWD(args)... } {}
 
-		template <class Fn = void(*)(T &)
+		template <class Fn = void(*)(type &)
 		> constexpr decltype(auto) operator+(Fn fn) && noexcept
 		{
-			return fn(value), std::move(value);
+			return fn(static_cast<type &>(value)), std::move(value);
 		}
 	};
 

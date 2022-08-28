@@ -11,6 +11,11 @@ namespace ism
 	// type object
 	class ISM_API TypeObject : public Object
 	{
+	public:
+		using base_type = typename Object;
+
+		using typename base_type::Notification_;
+
 	private:
 		friend class TYPE;
 		friend class Internals;
@@ -32,19 +37,19 @@ namespace ism
 
 		FORCE_INLINE void (Object::*_get_notification() const)(i32) { return (void (Object::*)(i32))&TypeObject::_notification; }
 
-		virtual void _notificationv(i32 notification_id, bool reversed) override
+		virtual void _notificationv(Notification_ id, bool reversed) override
 		{
 			if (!reversed)
 			{
-				Object::_notificationv(notification_id, reversed);
+				Object::_notificationv(id, reversed);
 			}
 			if (TypeObject::_get_notification() != Object::_get_notification())
 			{
-				_notification(notification_id);
+				_notification(id);
 			}
 			if (reversed)
 			{
-				Object::_notificationv(notification_id, reversed);
+				Object::_notificationv(id, reversed);
 			}
 		}
 

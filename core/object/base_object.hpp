@@ -11,6 +11,8 @@
 public:																				\
 	using base_type = typename m_inherits;											\
 																					\
+	using typename base_type::Notification_;										\
+																					\
 private:																			\
 	friend class ism::Internals;													\
 	friend class ism::_EmbedClassHelper<m_class>;									\
@@ -49,24 +51,24 @@ protected:																			\
 		return m_class::get_type_static();											\
 	}																				\
 																					\
-	FORCE_INLINE void (Object::*_get_notification() const)(i32)						\
+	FORCE_INLINE void (Object::*_get_notification() const)(Notification_)			\
 	{																				\
-		return (void (Object::*)(i32))&m_class::_notification;						\
+		return (void (Object::*)(Notification_))&m_class::_notification;			\
 	}																				\
 																					\
-	virtual void _notificationv(i32 notification_id, bool reversed) override		\
+	virtual void _notificationv(Notification_ id, bool reversed) override			\
 	{																				\
 		if (!reversed)																\
 		{																			\
-			m_inherits::_notificationv(notification_id, reversed);					\
+			m_inherits::_notificationv(id, reversed);								\
 		}																			\
 		if (m_class::_get_notification() != m_inherits::_get_notification())		\
 		{																			\
-			_notification(notification_id);											\
+			_notification(id);														\
 		}																			\
 		if (reversed)																\
 		{																			\
-			m_inherits::_notificationv(notification_id, reversed);					\
+			m_inherits::_notificationv(id, reversed);								\
 		}																			\
 	}																				\
 																					\
@@ -126,6 +128,8 @@ namespace ism
 	class ISM_API Object : public ObjectAPI<Object>
 	{
 	public:
+		using base_type = typename void; // no base
+
 		using Notification_ = typename i32;
 
 		enum : Notification_
@@ -146,9 +150,9 @@ namespace ism
 
 		static TypeObject __type_static;
 
-		SafeRefCount m_refcount{}, m_refcount_init{};
+		SafeRefCount m_refcount{}, m_refcount_init{}; // ref count
 
-		mutable Ref<TypeObject> m_type{};
+		mutable Ref<TypeObject> m_type{}; // type
 
 	protected:
 		static void initialize_class();
@@ -163,15 +167,13 @@ namespace ism
 		FORCE_INLINE virtual StringView _get_classv() const noexcept { return get_class_static(); }
 		FORCE_INLINE virtual TYPE _get_typev() const noexcept;
 
-		virtual void _notificationv(i32 notification_id, bool reversed) {}
-		void _notification(i32 notification_id) {}
-		FORCE_INLINE void (Object::*_get_notification() const)(i32) { return &Object::_notification; }
+		virtual void _notificationv(Notification_ id, bool reversed) {}
+		void _notification(Notification_ id) {}
+		FORCE_INLINE void (Object::*_get_notification() const)(Notification_) { return &Object::_notification; }
 
 		Object() { _initialize_object(); }
 
 	public:
-		using base_type = typename void; // no base
-
 		virtual ~Object() { _finalize_object(); }
 
 		bool init_ref();
@@ -180,7 +182,7 @@ namespace ism
 		i32 get_ref_count() const { return m_refcount.get(); }
 		bool has_references() const { return m_refcount_init.get() != 1; }
 
-		void notification(i32 notification_id, bool reversed = false);
+		void notification(Notification_ id, bool reversed = false);
 
 		static constexpr StringView get_class_static() noexcept { return __name_static; }
 		StringView get_class() const noexcept { return _get_classv(); }

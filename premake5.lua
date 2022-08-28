@@ -31,10 +31,10 @@ filter{}
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 solution_items{
-	".engine", ".editor",
 	"premake5.lua",
 	"README.md",
 	"TODO.txt",
+	"engine.ini", "editor.ini",
 }
 
 group ""

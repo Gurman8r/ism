@@ -411,6 +411,10 @@ namespace ism
 		vp.size = { width, height };
 	}
 
+	void RendererStorage::viewport_set_camera(RID viewport, RID camera)
+	{
+	}
+
 	RID RendererStorage::viewport_get_texture(RID viewport) const
 	{
 		return VALIDATE((_Viewport const *)viewport)->render_target_texture;

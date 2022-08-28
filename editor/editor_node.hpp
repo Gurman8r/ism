@@ -44,7 +44,7 @@ namespace ism
 		FORCE_INLINE static EditorNode * get_singleton() noexcept { return __singleton; }
 
 	protected:
-		void _notification(i32 notification_id);
+		void _notification(Notification_ id);
 
 	private:
 		void _draw_dockspace();

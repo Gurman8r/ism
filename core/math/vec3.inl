@@ -14,61 +14,61 @@ namespace ism
 	template <class T
 	> NODISCARD TVec3<T> asin(TVec3<T> const & a) noexcept
 	{
-		return { ism::asin(a[0]), ism::asin(a[1]), ism::asin(a[2]) };
+		return { asin(a[0]), asin(a[1]), asin(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> acos(TVec3<T> const & a) noexcept
 	{
-		return { ism::acos(a[0]), ism::acos(a[1]), ism::acos(a[2]) };
+		return { acos(a[0]), acos(a[1]), acos(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> atan(TVec3<T> const & a) noexcept
 	{
-		return { ism::atan(a[0]), ism::atan(a[1]), ism::atan(a[2]) };
+		return { atan(a[0]), atan(a[1]), atan(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> sin(TVec3<T> const & a) noexcept
 	{
-		return { ism::sin(a[0]), ism::sin(a[1]), ism::sin(a[2]) };
+		return { sin(a[0]), sin(a[1]), sin(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> cos(TVec3<T> const & a) noexcept
 	{
-		return { ism::cos(a[0]), ism::cos(a[1]), ism::cos(a[2]) };
+		return { cos(a[0]), cos(a[1]), cos(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> tan(TVec3<T> const & a) noexcept
 	{
-		return { ism::tan(a[0]), ism::tan(a[1]), ism::tan(a[2]) };
+		return { tan(a[0]), tan(a[1]), tan(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> sqrt(TVec3<T> const & a) noexcept
 	{
-		return { ism::sqrt(a[0]), ism::sqrt(a[1]), ism::sqrt(a[2]) };
+		return { sqrt(a[0]), sqrt(a[1]), sqrt(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> inversesqrt(TVec3<T> const & a) noexcept
 	{
-		return { ism::inversesqrt(a[0]), ism::inversesqrt(a[1]), ism::inversesqrt(a[2]) };
+		return { inversesqrt(a[0]), inversesqrt(a[1]), inversesqrt(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> abs(TVec3<T> const & a) noexcept
 	{
-		return { ism::abs(a[0]), ism::abs(a[1]), ism::abs(a[2]) };
+		return { abs(a[0]), abs(a[1]), abs(a[2]) };
 	}
 
 	template <class T
 	> NODISCARD TVec3<T> pow(TVec3<T> const & a, T const b) noexcept
 	{
-		return { ism::pow(a[0], b), ism::pow(a[1], b), ism::pow(a[2], b) };
+		return { pow(a[0], b), pow(a[1], b), pow(a[2], b) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

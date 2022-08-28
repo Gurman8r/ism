@@ -209,7 +209,8 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class> constexpr bool is_matrix_v{ false };
+	template <class
+	> constexpr bool is_matrix_v{ false };
 
 	template <class T, size_t W, size_t H
 	> constexpr bool is_matrix_v<Mat<T, W, H>>{ true };
@@ -244,42 +245,41 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class To, class From
+	template <class To, class From, std::enable_if_t<std::is_same_v<To, From>, int> = 0
+	> NODISCARD constexpr auto matrix_cast(From && from) noexcept -> decltype(FWD(from))
+	{
+		static_assert(is_matrix_v<To> && is_matrix_v<From>);
+
+		return FWD(from);
+	}
+
+	template <class To, class From, std::enable_if_t<!std::is_same_v<To, From>, int> = 0
 	> NODISCARD constexpr To matrix_cast(From const & from) noexcept
 	{
-		if constexpr (std::is_same_v<To, From>)
-		{
-			// To and From are the same
-			return from;
-		}
-		else
-		{
-			static_assert(is_matrix_v<To> && is_matrix_v<From>);
+		static_assert(is_matrix_v<To> && is_matrix_v<From>);
 
-			To to{};
+		To to{};
 
-			for (size_t i{}; i < To::size(); ++i)
+		for (size_t i{}; i < To::size(); ++i)
+		{
+			// same dimensions
+			if constexpr (From::width() == To::width() && From::height() == To::height())
 			{
-				// same dimensions
-				if constexpr (From::width() == To::width() && From::height() == To::height())
-				{
-					to[i] = from.at<typename To::value_type>(i);
-				}
-				// different dimensions
-				else
-				{
-					size_t const x{ From::map_x(i) }, y{ From::map_y(i) };
+				to[i] = from.at<typename To::value_type>(i);
+			}
+			// different dimensions
+			else
+			{
+				size_t const x{ From::map_x(i) }, y{ From::map_y(i) };
 
-					if (x < From::width() && y < From::height())
-					{
-						to[i] = from.at<typename To::value_type>(x, y);
-					}
+				if (x < From::width() && y < From::height())
+				{
+					to[i] = from.at<typename To::value_type>(x, y);
 				}
 			}
-
-			return to;
 		}
 
+		return to;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -418,70 +418,70 @@ namespace ism
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> asin(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::asin(e); }
+		for (auto & e : a) { e = asin(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> acos(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::acos(e); }
+		for (auto & e : a) { e = acos(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> atan(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::atan(e); }
+		for (auto & e : a) { e = atan(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> sin(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::sin(e); }
+		for (auto & e : a) { e = sin(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> cos(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::cos(e); }
+		for (auto & e : a) { e = cos(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> tan(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::tan(e); }
+		for (auto & e : a) { e = tan(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> sqrt(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::sqrt(e); }
+		for (auto & e : a) { e = sqrt(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> inversesqrt(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::inversesqrt(e); }
+		for (auto & e : a) { e = inversesqrt(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> abs(Mat<T, W, H> a) noexcept
 	{
-		for (auto & e : a) { e = ism::abs(e); }
+		for (auto & e : a) { e = abs(e); }
 		return a;
 	}
 
 	template <class T, size_t W, size_t H
 	> NODISCARD Mat<T, W, H> pow(Mat<T, W, H> a, T const b) noexcept
 	{
-		for (auto & e : a) { e = ism::pow(e, b); }
+		for (auto & e : a) { e = pow(e, b); }
 		return a;
 	}
 

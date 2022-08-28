@@ -12,16 +12,16 @@
 		_IMPL_CAT(a, b)
 
 // compare
-#define CMP(lhs, rhs) \
-		(((lhs) != (rhs)) ? (((lhs) < (rhs)) ? -1 : 1) : 0)
+#define CMP(a, b) \
+		(((a) != (b)) ? (((a) < (b)) ? -1 : 1) : 0)
 
 // minimum
-#define MIN(lhs, rhs) \
-		((lhs) < (rhs) ? (lhs) : (rhs))
+#define MIN(a, b) \
+		((a) < (b) ? (a) : (b))
 
 // maximum
-#define MAX(lhs, rhs) \
-		((lhs) < (rhs) ? (rhs) : (lhs))
+#define MAX(a, b) \
+		((a) < (b) ? (b) : (a))
 
 // token literal to string
 #define TOSTR(expr) \
@@ -43,12 +43,9 @@
 #define UNUSED(expr) \
 		((void)(expr))
 
-// static string variable
-#define STRVAR(name, str) \
-		static char const name[] = (str)
-
-#define CONSTEXPR_VAR(type, name, value) \
-		static constexpr type CAT(name, _v) = (value)
+// branchless if statement
+#define BRANCHLESS(m_cond, m_expr) \
+		(UNUSED((!(m_cond)) || ((m_expr), 0)))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

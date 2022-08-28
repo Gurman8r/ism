@@ -5,6 +5,7 @@
 
 namespace ism
 {
+	// viewport component of the main editor
 	class ISM_API EditorViewport : public EditorPanel
 	{
 		OBJECT_CLASS(EditorViewport, EditorPanel);

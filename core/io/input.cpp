@@ -1,7 +1,15 @@
-#include <core/input/input.hpp>
+#include <core/io/input.hpp>
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	EMBED_OBJECT_CLASS(InputMap, t) {}
+
+	InputMap::InputMap() noexcept {}
+
+	InputMap::~InputMap() noexcept {}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// internal click state

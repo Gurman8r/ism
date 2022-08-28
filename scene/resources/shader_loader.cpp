@@ -14,9 +14,8 @@ Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData (&spec)[RD:
 	while (std::getline(file, line))
 	{
 		bool should_write{ true };
-		if (line.trim().empty()) { continue; }
-		else if (line.front() == '#')
-		{
+		if (line.erase_duplicates(' ').empty()) { continue; }
+		else if (line.front() == '#') {
 			switch (line.hash_code()) {
 			case "#pragma shader vertex"_hash: { stage_index = RD::ShaderStage_Vertex; should_write = false; } break;
 			case "#pragma shader pixel"_hash: { stage_index = RD::ShaderStage_Fragment; should_write = false; } break;
@@ -26,7 +25,6 @@ Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData (&spec)[RD:
 			case "#pragma shader compute"_hash: { stage_index = RD::ShaderStage_Compute; should_write = false; } break;
 			}
 		}
-		
 		if (should_write && stage_index != RD::ShaderStage_MAX)
 		{
 			spec[stage_index].code.printf("%.*s\n", line.size(), line.data());

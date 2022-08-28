@@ -82,6 +82,7 @@ namespace ism
 		virtual void viewport_destroy(RID viewport) override;
 		virtual void viewport_set_parent_viewport(RID viewport, RID parent_viewport) override;
 		virtual void viewport_set_size(RID viewport, i32 width, i32 height) override;
+		virtual void viewport_set_camera(RID viewport, RID camera) override;
 		virtual RID viewport_get_texture(RID viewport) const override;
 		virtual void viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen) override;
 	};

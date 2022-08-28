@@ -63,10 +63,10 @@ namespace ism
 	public:
 		virtual ~Node() override;
 
-		void propagate_notification(i32 notification_id, bool reverse = false);
+		void propagate_notification(i32 id, bool reverse = false);
 
 	protected:
-		void _notification(i32 notification_id);
+		void _notification(Notification_ id);
 
 	public:
 		SceneTree * get_tree() const noexcept { return m_tree; }

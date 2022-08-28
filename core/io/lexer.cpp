@@ -1,14 +1,10 @@
-#include <platform/windows/directory_windows.hpp>
+#include <core/io/lexer.hpp>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(DirectoryWindows, t) {}
-
-	DirectoryWindows::DirectoryWindows() {}
-
-	DirectoryWindows::~DirectoryWindows() {}
+	EMBED_OBJECT_CLASS(Lexer, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

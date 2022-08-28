@@ -14,61 +14,61 @@ namespace ism
 	template <class T
 	> NODISCARD TVec2<T> asin(TVec2<T> const & a) noexcept
 	{
-		return { ism::asin(a[0]), ism::asin(a[1]) };
+		return { asin(a[0]), asin(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> acos(TVec2<T> const & a) noexcept
 	{
-		return { ism::acos(a[0]), ism::acos(a[1]) };
+		return { acos(a[0]), acos(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> atan(TVec2<T> const & a) noexcept
 	{
-		return { ism::atan(a[0]), ism::atan(a[1]) };
+		return { atan(a[0]), atan(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> sin(TVec2<T> const & a) noexcept
 	{
-		return { ism::sin(a[0]), ism::sin(a[1]) };
+		return { sin(a[0]), sin(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> cos(TVec2<T> const & a) noexcept
 	{
-		return { ism::cos(a[0]), ism::cos(a[1]) };
+		return { cos(a[0]), cos(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> tan(TVec2<T> const & a) noexcept
 	{
-		return { ism::tan(a[0]), ism::tan(a[1]) };
+		return { tan(a[0]), tan(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> sqrt(TVec2<T> const & a) noexcept
 	{
-		return { ism::sqrt(a[0]), ism::sqrt(a[1]) };
+		return { sqrt(a[0]), sqrt(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> inversesqrt(TVec2<T> const & a) noexcept
 	{
-		return { ism::inversesqrt(a[0]), ism::inversesqrt(a[1]) };
+		return { inversesqrt(a[0]), inversesqrt(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> abs(TVec2<T> const & a) noexcept
 	{
-		return { ism::abs(a[0]), ism::abs(a[1]) };
+		return { abs(a[0]), abs(a[1]) };
 	}
 
 	template <class T
 	> NODISCARD TVec2<T> pow(TVec2<T> const & a, T const b) noexcept
 	{
-		return { ism::pow(a[0], b), ism::pow(a[1], b) };
+		return { pow(a[0], b), pow(a[1], b) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

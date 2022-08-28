@@ -87,6 +87,14 @@ namespace ism
 			while (!empty() && std::isspace(front())) { erase(begin()); }
 			return (*this);
 		}
+		
+		auto & erase_duplicates(C const c)
+		{
+			erase(std::unique(begin(), end(),
+				[c](char a, char b) { return (a == b) && (a == c);
+			}), end());
+			return (*this);
+		}
 
 	public:
 		static i32 format(BasicString & s, C const * fmt, va_list args)

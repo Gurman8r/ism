@@ -56,8 +56,6 @@ namespace ism
 		}
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class R, class T = f32
 	> constexpr auto ratio_cast(T v) noexcept
 	{

@@ -1,12 +1,25 @@
 #ifndef _ISM_INPUT_HPP_
 #define _ISM_INPUT_HPP_
 
-#include <core/input/input_event.hpp>
-#include <core/input/input_map.hpp>
 #include <core/io/resource.hpp>
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// input map
+	class ISM_API InputMap : public Object
+	{
+		OBJECT_CLASS(InputMap, Object);
+
+		friend class Input;
+
+	public:
+		InputMap() noexcept;
+
+		virtual ~InputMap() noexcept override;
+	};
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// input

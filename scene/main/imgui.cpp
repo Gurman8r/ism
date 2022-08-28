@@ -57,3 +57,15 @@ void ism::ImGui_RenderDrawData(ImDrawData * draw_data)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+EMBED_OBJECT_CLASS(ImGuiNode, t) {}
+
+ImGuiNode::ImGuiNode()
+{
+}
+
+ImGuiNode::~ImGuiNode()
+{
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

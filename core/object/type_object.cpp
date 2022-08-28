@@ -34,19 +34,31 @@ namespace ism
 	static MemberDef type_members[]
 	{
 		{"__dictoffset__", DataType_SSizeT, offsetof(TypeObject, tp_dictoffset) },
-		{0}
+		{/*SENTINAL*/}
 	};
 
 	static MethodDef type_methods[]
 	{
 		{ "", binaryfunc{} },
-		{0}
+		{/*SENTINAL*/}
 	};
 
 	static GetSetDef type_getsets[]
 	{
-		{ "", getter{}, setter{} },
-		{0}
+		{
+			"some_property",
+			(getter)[](OBJ obj, auto) -> OBJ
+			{
+				if (!obj) { return nullptr; }
+				return nullptr;
+			},
+			(setter)[](OBJ obj, OBJ value, auto) -> Error_
+			{
+				if (!obj) { return Error_Unknown; }
+				return Error_None;
+			}
+		},
+		{/*SENTINAL*/}
 	};
 
 	EMBED_OBJECT_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)

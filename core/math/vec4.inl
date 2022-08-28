@@ -14,61 +14,61 @@ namespace ism
 	template <class T
 	> NODISCARD TVec4<T> asin(TVec4<T> const & a) noexcept
 	{
-		return { ism::asin(a[0]), ism::asin(a[1]), ism::asin(a[2]), ism::asin(a[3]) };
+		return { asin(a[0]), asin(a[1]), asin(a[2]), asin(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> acos(TVec4<T> const & a) noexcept
 	{
-		return { ism::acos(a[0]), ism::acos(a[1]), ism::acos(a[2]), ism::acos(a[3]) };
+		return { acos(a[0]), acos(a[1]), acos(a[2]), acos(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> atan(TVec4<T> const & a) noexcept
 	{
-		return { ism::atan(a[0]), ism::atan(a[1]), ism::atan(a[2]), ism::atan(a[3]) };
+		return { atan(a[0]), atan(a[1]), atan(a[2]), atan(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> sin(TVec4<T> const & a) noexcept
 	{
-		return { ism::sin(a[0]), ism::sin(a[1]), ism::sin(a[2]), ism::sin(a[3]) };
+		return { sin(a[0]), sin(a[1]), sin(a[2]), sin(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> cos(TVec4<T> const & a) noexcept
 	{
-		return { ism::cos(a[0]), ism::cos(a[1]), ism::cos(a[2]), ism::cos(a[3]) };
+		return { cos(a[0]), cos(a[1]), cos(a[2]), cos(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> tan(TVec4<T> const & a) noexcept
 	{
-		return { ism::tan(a[0]), ism::tan(a[1]), ism::tan(a[2]), ism::tan(a[3]) };
+		return { tan(a[0]), tan(a[1]), tan(a[2]), tan(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> sqrt(TVec4<T> const & a) noexcept
 	{
-		return { ism::sqrt(a[0]), ism::sqrt(a[1]), ism::sqrt(a[2]), ism::sqrt(a[3]) };
+		return { sqrt(a[0]), sqrt(a[1]), sqrt(a[2]), sqrt(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> inversesqrt(TVec4<T> const & a) noexcept
 	{
-		return { ism::inversesqrt(a[0]), ism::inversesqrt(a[1]), ism::inversesqrt(a[2]), ism::inversesqrt(a[3]) };
+		return { inversesqrt(a[0]), inversesqrt(a[1]), inversesqrt(a[2]), inversesqrt(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> abs(TVec4<T> const & a, TVec4<T> const & b) noexcept
 	{
-		return { ism::abs(a[0]), ism::abs(a[1]), ism::abs(a[2]), ism::abs(a[3]) };
+		return { abs(a[0]), abs(a[1]), abs(a[2]), abs(a[3]) };
 	}
 
 	template <class T
 	> NODISCARD TVec4<T> pow(TVec4<T> const & a, T const b) noexcept
 	{
-		return { ism::pow(a[0], b), ism::pow(a[1], b), ism::pow(a[2], b), ism::pow(a[3], b) };
+		return { pow(a[0], b), pow(a[1], b), pow(a[2], b), pow(a[3], b) };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

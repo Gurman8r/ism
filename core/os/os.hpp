@@ -50,7 +50,7 @@ namespace ism
 		void printerrv(cstring fmt, va_list args);
 		void printerrf(cstring fmt, ...);
 
-		virtual String get_stdin_string(bool block = true) = 0;
+		virtual String get_stdin_string(bool blocking = true) = 0;
 
 		virtual Error_ open_dynamic_library(Path const & path, void *& instance) = 0;
 		virtual Error_ close_dynamic_library(void * instance) = 0;
@@ -76,7 +76,7 @@ namespace ism
 
 		virtual Ref<MainLoop> get_main_loop() const = 0;
 
-		enum Weekday
+		enum Weekday_
 		{
 			Weekday_Sunday,
 			Weekday_Monday,
@@ -87,7 +87,7 @@ namespace ism
 			Weekday_Saturday,
 		};
 
-		enum Month
+		enum Month_
 		{
 			Month_January,
 			Month_February,
@@ -105,11 +105,11 @@ namespace ism
 
 		struct Date
 		{
-			i32	year;
-			Month	month;
-			i32	day;
-			Weekday	weekday;
-			bool	dst;
+			i32			year;
+			Month_		month;
+			i32			day;
+			Weekday_	weekday;
+			bool		dst; // daylight saving time
 		};
 
 		struct Time

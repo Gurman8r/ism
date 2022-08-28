@@ -128,4 +128,19 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+namespace ism
+{
+	class ISM_API ImGuiNode : public Node
+	{
+		OBJECT_CLASS(ImGuiNode, Node);
+
+	public:
+		ImGuiNode();
+
+		virtual ~ImGuiNode() override;
+	};
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #endif // !_ISM_IMGUI_HPP_

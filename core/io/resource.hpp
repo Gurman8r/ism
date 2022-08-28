@@ -31,15 +31,12 @@ namespace ism
 		virtual RID get_rid() const { return {}; }
 
 		i32 get_subindex() const { return m_subindex; }
-		
-		String const & get_name() const { return m_name; }
-
-		Path const & get_path() const { return m_path_cache; }
-
 		void set_subindex(i32 value) { m_subindex = value; }
 
+		String const & get_name() const { return m_name; }
 		void set_name(String const & value) { m_name = value; }
 
+		Path const & get_path() const { return m_path_cache; }
 		virtual void set_path(Path const & value, bool take_over = true);
 	};
 

@@ -30,9 +30,9 @@ namespace ism
 	{
 	}
 
-	String OS_Windows::get_stdin_string(bool block)
+	String OS_Windows::get_stdin_string(bool blocking)
 	{
-		if (block) {
+		if (blocking) {
 			String temp;
 			std::getline(std::cin, temp);
 			return temp;

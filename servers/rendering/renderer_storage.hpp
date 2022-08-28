@@ -144,12 +144,14 @@ namespace ism
 			Vec2i position{}, size{};
 			RID camera{};
 			RID render_target{}, render_target_texture{};
+			RD::DrawListID draw_list{};
 		};
 
 		RID viewport_create();
 		void viewport_destroy(RID viewport);
 		void viewport_set_parent_viewport(RID viewport, RID parent_viewport);
 		void viewport_set_size(RID viewport, i32 width, i32 height);
+		void viewport_set_camera(RID viewport, RID camera);
 		RID viewport_get_texture(RID viewport) const;
 		void viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen);
 		void draw_viewports();

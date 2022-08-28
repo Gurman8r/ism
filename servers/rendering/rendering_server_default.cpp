@@ -310,6 +310,11 @@ namespace ism
 		m_storage->viewport_set_size(viewport, width, height);
 	}
 
+	void RenderingServerDefault::viewport_set_camera(RID viewport, RID camera)
+	{
+		m_storage->viewport_set_camera(viewport, camera);
+	}
+
 	RID RenderingServerDefault::viewport_get_texture(RID viewport) const
 	{
 		return m_storage->viewport_get_texture(viewport);

@@ -20,6 +20,13 @@ namespace ism
 #define CRASH(m_message) \
 		(ism::priv::_crash)(WIDE(m_message), WIDE(__FILE__), __LINE__)
 
+	// debug crash
+#if DEBUG_ENABLED
+#define DEBUG_CRASH(m_message) CRASH(m_message)
+#else
+#define DEBUG_CRASH(m_message) UNUSED(0)
+#endif
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// assert
@@ -41,7 +48,7 @@ namespace ism
 		template <class T
 		> auto _validate(T && expr, cwstring message, cwstring file, u32 line) noexcept -> decltype(FWD(expr))
 		{
-			return (UNUSED((!!(expr)) || (_crash(message, file, line), 0))), FWD(expr);
+			return BRANCHLESS(!(expr), _crash(message, file, line)), FWD(expr);
 		}
 	}
 

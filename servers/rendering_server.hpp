@@ -106,6 +106,7 @@ namespace ism
 		/* VIEWPORT */
 		virtual RID viewport_create() = 0;
 		virtual void viewport_destroy(RID viewport) = 0;
+		virtual void viewport_set_camera(RID viewport, RID camera) = 0;
 		virtual void viewport_set_parent_viewport(RID viewport, RID parent_viewport) = 0;
 		virtual void viewport_set_size(RID viewport, i32 width, i32 height) = 0;
 		virtual RID viewport_get_texture(RID viewport) const = 0;

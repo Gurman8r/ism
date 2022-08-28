@@ -286,6 +286,8 @@ namespace ism
 		ssize_t		offset{};
 		i32			flags{};
 		cstring		doc{};
+
+		NODISCARD operator bool() const noexcept { return name && *name; }
 	};
 
 	struct MethodDef
@@ -294,6 +296,8 @@ namespace ism
 		binaryfunc	func{};
 		i32			flags{};
 		cstring		doc{};
+
+		NODISCARD operator bool() const noexcept { return name && *name; }
 	};
 
 	struct GetSetDef
@@ -303,6 +307,8 @@ namespace ism
 		setter		set{};
 		void *		closure{};
 		cstring		doc{};
+
+		NODISCARD operator bool() const noexcept { return name && *name; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

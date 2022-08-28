@@ -1,9 +1,8 @@
 #ifndef _ISM_UTILITY_HPP_
 #define _ISM_UTILITY_HPP_
 
-#include <core/math/math.hpp>
-
 #include <core/os/copymem.hpp>
+#include <core/math/math.hpp>
 
 #include <stdarg.h>
 #include <algorithm>
@@ -12,6 +11,21 @@
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// bit_cast
+	template <class To, class From, class = std::enable_if_t<
+		sizeof(To) == sizeof(From) &&
+		std::is_trivially_copyable_v<From> &&
+		std::is_trivial_v<To> &&
+		(std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)>
+	> To bit_cast(From const & value) noexcept
+	{
+		To temp;
+		copymem(&temp, &value, sizeof(To));
+		return temp;
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// plus
@@ -102,18 +116,6 @@ namespace ism
 	> ALIAS(Pair) std::pair<First, Second>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class To, class From, class = std::enable_if_t<
-		sizeof(To) == sizeof(From) &&
-		std::is_trivially_copyable_v<From> &&
-		std::is_trivial_v<To> &&
-		(std::is_copy_constructible_v<To> || std::is_move_constructible_v<To>)>
-	> To bit_cast(From const & value) noexcept
-	{
-		To temp;
-		copymem(&temp, &value, sizeof(To));
-		return temp;
-	}
 
 	template <class A, class B
 	> constexpr auto compare(A const & a, B const & b) noexcept

@@ -217,9 +217,11 @@ namespace ism
 		if (pipeline) { RD::get_singleton()->render_pipeline_destroy(pipeline); }
 	}
 
-	void EditorNode::_notification(i32 notification_id)
+	void EditorNode::_notification(Notification_ id)
 	{
-		switch (notification_id)
+		String{}.erase_duplicates(' ');
+
+		switch (id)
 		{
 		case Notification_Process: {
 
@@ -230,6 +232,14 @@ namespace ism
 			Input * const input{ Input::get_singleton() };
 			Duration const delta_time{ get_tree()->get_delta_time() };
 
+			f32 const camera_move_speed{ 10.f * delta_time };
+			if (input->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_move_speed); }
+			else if (input->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_move_speed); }
+			if (input->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_move_speed); }
+			else if (input->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_move_speed); }
+			if (input->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_move_speed); }
+			else if (input->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_move_speed); }
+
 			if (m_viewport.get_window()) {
 				if (Vec2 const res{ m_viewport->InnerRect.GetWidth(), m_viewport->InnerRect.GetHeight() }
 				; screen_resolution != res) {
@@ -238,14 +248,6 @@ namespace ism
 					RD::get_singleton()->framebuffer_set_size(framebuffer, (i32)screen_resolution[0], (i32)screen_resolution[1]);
 				}
 			}
-
-			f32 const camera_speed{ 10.f * delta_time };
-			if (input->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_speed); }
-			else if (input->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_speed); }
-			if (input->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_speed); }
-			else if (input->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_speed); }
-			if (input->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_speed); }
-			else if (input->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_speed); }
 
 			if (m_viewport.m_is_dragging_view) {
 				Vec2 const drag{ input->get_mouse_delta() * (f32)delta_time };

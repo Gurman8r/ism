@@ -10,11 +10,11 @@
 #define DYNAMICBUFFER_PRINTV_STRING_SIZE 1024
 #endif
 
-// dynamic buffer
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// dynamic buffer
 	class DynamicBuffer
 	{
 		Vector<u8> m_data{};
@@ -280,20 +280,20 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-// static buffer
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <size_t _Size
+	// static buffer
+	template <size_t _SizeInBytes
 	> class StaticBuffer
 	{
-		static_assert(0 < _Size);
+		static_assert(0 < _SizeInBytes);
 
-		Array<u8, _Size> m_data{};
+		Array<u8, _SizeInBytes> m_data{};
 
 	public:
-		using self_type			= typename StaticBuffer<_Size>;
+		using self_type			= typename StaticBuffer<_SizeInBytes>;
 		using storage_type		= typename decltype(m_data);
 		using reference			= typename u8 &;
 		using const_reference	= typename u8 const &;
@@ -330,13 +330,13 @@ namespace ism
 	public:
 		self_type & clear() noexcept
 		{
-			zeromem(m_data, _Size);
+			zeromem(m_data, _SizeInBytes);
 			return (*this);
 		}
 
 		self_type & copy(storage_type const & value)
 		{
-			copymem(m_data, value, _Size);
+			copymem(m_data, value, _SizeInBytes);
 			return (*this);
 		}
 
@@ -349,9 +349,9 @@ namespace ism
 		self_type & swap(storage_type & value) noexcept
 		{
 			storage_type temp;
-			copymem(temp, m_data, _Size);
-			copymem(m_data, value, _Size);
-			copymem(value, temp, _Size);
+			copymem(temp, m_data, _SizeInBytes);
+			copymem(m_data, value, _SizeInBytes);
+			copymem(value, temp, _SizeInBytes);
 			return (*this);
 		}
 
@@ -363,9 +363,9 @@ namespace ism
 
 	public:
 		NODISCARD static constexpr bool empty() noexcept { return false; }
-		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _Size; }
-		NODISCARD static constexpr auto size() noexcept -> size_t { return _Size; }
-		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _SizeInBytes; }
+		NODISCARD static constexpr auto size() noexcept -> size_t { return _SizeInBytes; }
+		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _SizeInBytes; }
 
 		NODISCARD auto data() noexcept -> pointer { return m_data; }
 		NODISCARD auto data() const noexcept -> const_pointer { return m_data; }
@@ -375,29 +375,29 @@ namespace ism
 		NODISCARD auto begin() const noexcept -> const_iterator { return m_data; }
 		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_data; }
 
-		NODISCARD auto end() noexcept -> iterator { return m_data + _Size; }
-		NODISCARD auto end() const noexcept -> const_iterator { return m_data + _Size; }
-		NODISCARD auto cend() const noexcept -> const_iterator { return m_data + _Size; }
+		NODISCARD auto end() noexcept -> iterator { return m_data + size(); }
+		NODISCARD auto end() const noexcept -> const_iterator { return m_data + size(); }
+		NODISCARD auto cend() const noexcept -> const_iterator { return m_data + size(); }
 
 		NODISCARD auto front() noexcept -> reference { return *m_data; }
 		NODISCARD auto front() const noexcept -> const_reference { return *m_data; }
 
-		NODISCARD auto back() noexcept -> reference { return *(m_data + _Size - 1); }
-		NODISCARD auto back() const noexcept -> const_reference { return *(m_data + _Size - 1); }
+		NODISCARD auto back() noexcept -> reference { return *(m_data + size() - 1); }
+		NODISCARD auto back() const noexcept -> const_reference { return *(m_data + size() - 1); }
 
-		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < _Size); return m_data[i]; }
-		NODISCARD auto operator[](size_t i) const noexcept -> u8 { ASSERT(i < _Size); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < size()); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) const noexcept -> u8 { ASSERT(i < size()); return m_data[i]; }
 
 		NODISCARD operator void * () const noexcept { return (void *)data(); }
-		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
-		NODISCARD operator String() const noexcept { return { (cstring)m_data, _Size }; }
+		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, size() }; }
+		NODISCARD operator String() const noexcept { return { (cstring)m_data, size() }; }
 
 	public:
 		void do_read(size_t index, void * dst, size_t size_in_bytes) const
 		{
 			ASSERT(dst && "INVALID DESTINATION");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
-			ASSERT(index + size_in_bytes <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
+			ASSERT(index + size_in_bytes <= size() && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
 			copymem(dst, m_data + index, size_in_bytes);
 		}
 
@@ -426,7 +426,7 @@ namespace ism
 			ASSERT(src && "INVALID SOURCE");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
 			size_t n{ (0 < align && align % 2 == 0) ? SIZE_ROUND_UP(size_in_bytes, align) : size_in_bytes };
-			ASSERT(index + n <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
+			ASSERT(index + n <= size() && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
 			copymem(m_data + index, src, n);
 		}
 
@@ -459,12 +459,12 @@ namespace ism
 	public:
 		self_type & printv(size_t index, cstring fmt, va_list args)
 		{
-			return std::vsnprintf((char *)m_data + index, _Size - index, fmt, args), (*this);
+			return std::vsnprintf((char *)m_data + index, size() - index, fmt, args), (*this);
 		}
 
 		self_type & printv(cstring fmt, va_list args)
 		{
-			return printv(_Size, fmt, args);
+			return printv(size(), fmt, args);
 		}
 
 		self_type & printf(size_t index, cstring fmt, ...)
@@ -480,7 +480,7 @@ namespace ism
 		{
 			va_list args;
 			va_start(args, fmt);
-			printv(_Size, fmt, args);
+			printv(size(), fmt, args);
 			va_end(args);
 			return (*this);
 		}
@@ -497,12 +497,12 @@ namespace ism
 
 		self_type & print(cstring str, size_t size_in_bytes) noexcept
 		{
-			return print(_Size, str, size_in_bytes);
+			return print(size(), str, size_in_bytes);
 		}
 
 		self_type & print(cstring str) noexcept
 		{
-			return print(_Size, str, std::strlen(str));
+			return print(size(), str, std::strlen(str));
 		}
 
 		self_type & print(size_t index, self_type const & str) noexcept
@@ -522,7 +522,7 @@ namespace ism
 
 		self_type & print(String const & str) noexcept
 		{
-			return print(_Size, str.m_data, str.size());
+			return print(size(), str.m_data, str.size());
 		}
 	};
 
@@ -571,9 +571,9 @@ namespace ism
 			}
 		}
 
-		static constexpr size_t _Size{ _calc_size() };
+		static constexpr size_t _SizeInBytes{ _calc_size() };
 
-		Array<u8, _Size> m_data{};
+		Array<u8, _SizeInBytes> m_data{};
 
 	public:
 		using self_type			= typename ConstantBuffer<_Alignment, _Types...>;
@@ -613,13 +613,13 @@ namespace ism
 	public:
 		self_type & clear() noexcept
 		{
-			zeromem(m_data, _Size);
+			zeromem(m_data, _SizeInBytes);
 			return (*this);
 		}
 
 		self_type & copy(storage_type const & value)
 		{
-			copymem(m_data, value, _Size);
+			copymem(m_data, value, _SizeInBytes);
 			return (*this);
 		}
 
@@ -632,9 +632,9 @@ namespace ism
 		self_type & swap(storage_type & value) noexcept
 		{
 			storage_type temp;
-			copymem(temp, m_data, _Size);
-			copymem(m_data, value, _Size);
-			copymem(value, temp, _Size);
+			copymem(temp, m_data, _SizeInBytes);
+			copymem(m_data, value, _SizeInBytes);
+			copymem(value, temp, _SizeInBytes);
 			return (*this);
 		}
 
@@ -646,9 +646,9 @@ namespace ism
 
 	public:
 		NODISCARD static constexpr bool empty() noexcept { return false; }
-		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _Size; }
-		NODISCARD static constexpr auto size() noexcept -> size_t { return _Size; }
-		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _Size; }
+		NODISCARD static constexpr auto capacity() noexcept -> size_t { return _SizeInBytes; }
+		NODISCARD static constexpr auto size() noexcept -> size_t { return _SizeInBytes; }
+		NODISCARD static constexpr auto max_size() noexcept -> size_t { return _SizeInBytes; }
 
 		NODISCARD auto data() noexcept -> pointer { return m_data; }
 		NODISCARD auto data() const noexcept -> const_pointer { return m_data; }
@@ -658,29 +658,29 @@ namespace ism
 		NODISCARD auto begin() const noexcept -> const_iterator { return m_data; }
 		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_data; }
 
-		NODISCARD auto end() noexcept -> iterator { return m_data + _Size; }
-		NODISCARD auto end() const noexcept -> const_iterator { return m_data + _Size; }
-		NODISCARD auto cend() const noexcept -> const_iterator { return m_data + _Size; }
+		NODISCARD auto end() noexcept -> iterator { return m_data + size(); }
+		NODISCARD auto end() const noexcept -> const_iterator { return m_data + size(); }
+		NODISCARD auto cend() const noexcept -> const_iterator { return m_data + size(); }
 
 		NODISCARD auto front() noexcept -> reference { return *m_data; }
 		NODISCARD auto front() const noexcept -> const_reference { return *m_data; }
 
-		NODISCARD auto back() noexcept -> reference { return *(m_data + _Size - 1); }
-		NODISCARD auto back() const noexcept -> const_reference { return *(m_data + _Size - 1); }
+		NODISCARD auto back() noexcept -> reference { return *(m_data + size() - 1); }
+		NODISCARD auto back() const noexcept -> const_reference { return *(m_data + size() - 1); }
 
-		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < _Size); return m_data[i]; }
-		NODISCARD auto operator[](size_t i) const noexcept -> u8 { ASSERT(i < _Size); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) noexcept -> reference { ASSERT(i < size()); return m_data[i]; }
+		NODISCARD auto operator[](size_t i) const noexcept -> u8 { ASSERT(i < size()); return m_data[i]; }
 
 		NODISCARD operator void * () const noexcept { return (void *)data(); }
-		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, _Size }; }
-		NODISCARD operator String() const noexcept { return { (cstring)m_data, _Size }; }
+		NODISCARD operator DynamicBuffer() const noexcept { return { m_data, size() }; }
+		NODISCARD operator String() const noexcept { return { (cstring)m_data, size() }; }
 
 	public:
 		void do_read(size_t index, void * dst, size_t size_in_bytes) const
 		{
 			ASSERT(dst && "INVALID DESTINATION");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
-			ASSERT(index + size_in_bytes <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
+			ASSERT(index + size_in_bytes <= size() && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
 			copymem(dst, m_data + index, size_in_bytes);
 		}
 
@@ -714,7 +714,7 @@ namespace ism
 		{
 			ASSERT(src && "INVALID SOURCE");
 			ASSERT(0 < size_in_bytes && "SIZE MUST BE GREATER THAN ZERO");
-			ASSERT(index + size_in_bytes <= _Size && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
+			ASSERT(index + size_in_bytes <= size() && "OPERATION WOULD HAVE CAUSED AN OVERFLOW");
 			copymem(m_data + index, src, size_in_bytes);
 		}
 
@@ -751,12 +751,12 @@ namespace ism
 	public:
 		self_type & printv(size_t index, cstring fmt, va_list args)
 		{
-			return std::vsnprintf((char *)m_data + index, _Size - index, fmt, args), (*this);
+			return std::vsnprintf((char *)m_data + index, size() - index, fmt, args), (*this);
 		}
 
 		self_type & printv(cstring fmt, va_list args)
 		{
-			return printv(_Size, fmt, args);
+			return printv(size(), fmt, args);
 		}
 
 		self_type & printf(size_t index, cstring fmt, ...)
@@ -772,7 +772,7 @@ namespace ism
 		{
 			va_list args;
 			va_start(args, fmt);
-			printv(_Size, fmt, args);
+			printv(size(), fmt, args);
 			va_end(args);
 			return (*this);
 		}
@@ -789,12 +789,12 @@ namespace ism
 
 		self_type & print(cstring str, size_t size_in_bytes) noexcept
 		{
-			return print(_Size, str, size_in_bytes);
+			return print(size(), str, size_in_bytes);
 		}
 
 		self_type & print(cstring str) noexcept
 		{
-			return print(_Size, str, std::strlen(str));
+			return print(size(), str, std::strlen(str));
 		}
 
 		self_type & print(size_t index, self_type const & str) noexcept
@@ -814,7 +814,7 @@ namespace ism
 
 		self_type & print(String const & str) noexcept
 		{
-			return print(_Size, str.m_data, str.size());
+			return print(size(), str.m_data, str.size());
 		}
 	};
 

@@ -25,7 +25,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Node::_notification(i32 value)
+	void Node::_notification(Notification_ value)
 	{
 		switch (value)
 		{
@@ -76,13 +76,13 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Node::propagate_notification(i32 notification_id, bool reverse)
+	void Node::propagate_notification(i32 id, bool reverse)
 	{
-		notification(notification_id, reverse);
+		notification(id, reverse);
 
 		for (Node * child : m_nodes)
 		{
-			child->propagate_notification(notification_id, reverse);
+			child->propagate_notification(id, reverse);
 		}
 	}
 
@@ -159,7 +159,7 @@ namespace ism
 
 	bool Node::is_child_of(Node const * parent, bool recursive) const
 	{
-		if (!parent || (this == parent) || !m_parent) { return false; }
+		if ((this == parent) || !parent || !m_parent) { return false; }
 		else if (m_parent == parent) { return true; }
 		else if (recursive)
 		{
@@ -175,7 +175,7 @@ namespace ism
 
 	bool Node::is_parent_of(Node const * child, bool recursive) const
 	{
-		if (!child || (this == child) || !child->m_parent) { return false; }
+		if ((this == child) || !child || !child->m_parent) { return false; }
 		else if (this == child->m_parent) { return true; }
 		else if (recursive)
 		{

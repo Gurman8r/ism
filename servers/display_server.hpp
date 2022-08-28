@@ -2,7 +2,7 @@
 #define _ISM_DISPLAY_SERVER_HPP_
 
 #include <core/os/os.hpp>
-#include <core/input/input.hpp>
+#include <core/io/input.hpp>
 #include <core/io/image.hpp>
 
 namespace ism

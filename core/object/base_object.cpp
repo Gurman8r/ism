@@ -74,7 +74,7 @@ namespace ism
 
 	TYPE Object::get_type() const noexcept
 	{
-		return ((!!m_type) || (m_type = _get_typev())), m_type;
+		return BRANCHLESS(!m_type, m_type = _get_typev()), m_type;
 	}
 
 	void Object::set_type(TYPE const & value) noexcept
@@ -118,9 +118,9 @@ namespace ism
 		return die;
 	}
 
-	void Object::notification(i32 notification_id, bool reversed)
+	void Object::notification(Notification_ id, bool reversed)
 	{
-		_notificationv(notification_id, reversed);
+		_notificationv(id, reversed);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
