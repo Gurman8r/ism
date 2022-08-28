@@ -37,7 +37,7 @@ namespace ism
 
 	// string view base
 	template <class C
-	> ALIAS(_StringViewBase) std::basic_string_view<C, std::char_traits<C>>;
+	> using _StringViewBase = std::basic_string_view<C, std::char_traits<C>>;
 
 	// basic string view
 	template <class C
@@ -54,10 +54,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// string view
-	ALIAS(StringView) BasicStringView<char>;
+	using StringView = BasicStringView<char>;
 
 	// wide string view
-	ALIAS(WideStringView) BasicStringView<wchar_t>;
+	using WideStringView = BasicStringView<wchar_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

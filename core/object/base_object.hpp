@@ -128,7 +128,7 @@ namespace ism
 	class ISM_API Object : public ObjectAPI<Object>
 	{
 	public:
-		using base_type = typename void; // no base
+		using base_type = typename void;
 
 		using Notification_ = typename i32;
 

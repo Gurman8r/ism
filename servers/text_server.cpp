@@ -12,7 +12,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	TS * TS::__singleton{};
+	TextServer * TextServer::__singleton{};
 
 	EMBED_OBJECT_CLASS(TextServer, t) {}
 

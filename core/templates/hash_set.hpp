@@ -11,7 +11,7 @@ namespace ism
 
 	// hashset base
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
-	> ALIAS(_HashSetBase) std::unordered_set<T, H, E, PolymorphicAllocator<T>>;
+	> using _HashSetBase = std::unordered_set<T, H, E, PolymorphicAllocator<T>>;
 
 	// hashset
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
@@ -29,7 +29,7 @@ namespace ism
 
 	// multi hashset base
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>
-	> ALIAS(_HashMultiSetBase) std::unordered_multiset<T, H, E, PolymorphicAllocator<T>>;
+	> using _HashMultiSetBase = std::unordered_multiset<T, H, E, PolymorphicAllocator<T>>;
 
 	// multi hashset
 	template <class T, class H = Hasher<T>, class E = EqualTo<T>

@@ -138,6 +138,9 @@ namespace ism
 		ImGuiNode();
 
 		virtual ~ImGuiNode() override;
+
+	protected:
+		void _notification(Notification_ id);
 	};
 }
 

@@ -3,28 +3,25 @@
 #include <servers/rendering/rendering_server_default.hpp>
 #include <servers/text_server.hpp>
 
-using namespace ism;
-
-void ism::preregister_server_types()
+namespace ism
 {
-}
+	void register_server_types()
+	{
+		Internals::get_singleton()->initialize_class
+		<
+			DisplayServer,
+			RenderingDevice,
+			RenderingServerDefault,
+			RenderingServer,
+			TextServer
+		>();
+	}
 
-void ism::register_server_types()
-{
-	Internals::get_singleton()->initialize_class
-	<
-		DisplayServer,
-		RenderingDevice,
-		RenderingServerDefault,
-		RenderingServer,
-		TextServer
-	>();
-}
+	void register_server_singletons()
+	{
+	}
 
-void ism::register_server_singletons()
-{
-}
-
-void ism::unregister_server_types()
-{
+	void unregister_server_types()
+	{
+	}
 }

@@ -44,8 +44,8 @@
 		((void)(expr))
 
 // branchless if statement
-#define BRANCHLESS(m_cond, m_expr) \
-		(UNUSED((!(m_cond)) || ((m_expr), 0)))
+#define BRANCHLESS(m_condition, m_expr) \
+		(UNUSED((!(m_condition)) || ((m_expr), 0)))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

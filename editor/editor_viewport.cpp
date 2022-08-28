@@ -8,7 +8,7 @@ namespace ism
 	EMBED_OBJECT_CLASS(EditorViewport, t) {}
 
 	EditorViewport::EditorViewport()
-		: EditorPanel{ "Viewport##Editor", true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_MenuBar }
+		: EditorPanel{ "Viewport##Editor", true, ImGuiWindowFlags_NoScrollbar }
 		, m_main_texture{}
 		, m_grid_enabled{ true }
 		, m_grid_matrix{ identity_v<Mat4> }
@@ -42,10 +42,7 @@ namespace ism
 		bool const nav_enabled{ window == ImGui::GetCurrentContext()->NavWindow };
 		m_is_dragging_view = nav_enabled && !ImGuizmo::IsUsing() && ImGui::IsItemHovered() && ImGui::IsMouseDragging(0);
 
-		if (ImGui::BeginMenuBar()) {
-			ImGui::EndMenuBar();
-		}
-
+		// gizmos
 		ImGuizmo::SetDrawlist(window->DrawList);
 		ImGuizmo::SetRect(view_rect.Min.x, view_rect.Min.y, view_rect.GetWidth(), view_rect.GetHeight());
 		if (m_grid_enabled) { ImGuizmo::DrawGrid(m_camera_view, m_camera_proj, m_grid_matrix, m_grid_size); }

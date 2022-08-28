@@ -11,7 +11,7 @@ namespace ism
 
 	// set base
 	template <class T, class Pr = Less<T>
-	> ALIAS(_SetBase) std::set<T, Pr, PolymorphicAllocator<T>>;
+	> using _SetBase = std::set<T, Pr, PolymorphicAllocator<T>>;
 
 	// set
 	template <class T, class Pr = Less<T>
@@ -29,7 +29,7 @@ namespace ism
 
 	// multi set base
 	template <class T, class Pr = Less<T>
-	> ALIAS(_MultiSetBase) std::multiset<T, Pr, PolymorphicAllocator<T>>;
+	> using _MultiSetBase = std::multiset<T, Pr, PolymorphicAllocator<T>>;
 
 	// multi set
 	template <class T, class Pr = Less<T>

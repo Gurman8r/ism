@@ -194,14 +194,14 @@ ENUM_MAPPING(TO_GL, LogicOperation_, u32,
 	GL_SET
 );
 
-ALIAS(BufferType_) RD::BufferType_;
+using BufferType_ = RD::BufferType_;
 ENUM_MAPPING(TO_GL, BufferType_, u32,
 	GL_ARRAY_BUFFER,
 	GL_ELEMENT_ARRAY_BUFFER,
 	GL_UNIFORM_BUFFER
 );
 
-ALIAS(TextureType_) RD::TextureType_;
+using TextureType_ = RD::TextureType_;
 ENUM_MAPPING(TO_GL, TextureType_, u32,
 	GL_TEXTURE_1D,
 	GL_TEXTURE_2D,
@@ -215,7 +215,7 @@ ENUM_MAPPING(TO_GL, TextureType_, u32,
 	GL_PROXY_TEXTURE_CUBE_MAP
 );
 
-ALIAS(TextureSwizzle_) RD::TextureSwizzle_;
+using TextureSwizzle_ = RD::TextureSwizzle_;
 ENUM_MAPPING(TO_GL, TextureSwizzle_, i32,
 	0, // TextureSwizzle_Identity
 	GL_ZERO,
@@ -226,7 +226,7 @@ ENUM_MAPPING(TO_GL, TextureSwizzle_, i32,
 	GL_ALPHA
 );
 
-ALIAS(SamplerFilter_) RD::SamplerFilter_;
+using SamplerFilter_ = RD::SamplerFilter_;
 ENUM_MAPPING(TO_GL, SamplerFilter_, u32,
 	GL_NEAREST,
 	GL_LINEAR,
@@ -234,7 +234,7 @@ ENUM_MAPPING(TO_GL, SamplerFilter_, u32,
 	GL_LINEAR_MIPMAP_LINEAR
 );
 
-ALIAS(SamplerRepeatMode_) RD::SamplerRepeatMode_;
+using SamplerRepeatMode_ = RD::SamplerRepeatMode_;
 ENUM_MAPPING(TO_GL, SamplerRepeatMode_, u32,
 	GL_REPEAT,
 	GL_MIRRORED_REPEAT,
@@ -243,7 +243,7 @@ ENUM_MAPPING(TO_GL, SamplerRepeatMode_, u32,
 	GL_MIRROR_CLAMP_TO_EDGE
 );
 
-ALIAS(ShaderStage_) RD::ShaderStage_;
+using ShaderStage_ = RD::ShaderStage_;
 ENUM_MAPPING(TO_GL, ShaderStage_, u32,
 	GL_VERTEX_SHADER,
 	GL_FRAGMENT_SHADER,
@@ -253,7 +253,7 @@ ENUM_MAPPING(TO_GL, ShaderStage_, u32,
 	GL_COMPUTE_SHADER
 );
 
-ALIAS(RenderPrimitive_) RD::RenderPrimitive_;
+using RenderPrimitive_ = RD::RenderPrimitive_;
 ENUM_MAPPING(TO_GL, RenderPrimitive_, u32,
 	GL_POINTS,
 	GL_LINES,
@@ -268,20 +268,20 @@ ENUM_MAPPING(TO_GL, RenderPrimitive_, u32,
 	GL_PATCHES
 );
 
-ALIAS(PolygonCullMode_) RD::PolygonCullMode_;
+using PolygonCullMode_ = RD::PolygonCullMode_;
 ENUM_MAPPING(TO_GL, PolygonCullMode_, u32,
 	GL_FRONT_AND_BACK,
 	GL_FRONT,
 	GL_BACK
 );
 
-ALIAS(PolygonFrontFace_) RD::PolygonFrontFace_;
+using PolygonFrontFace_ = RD::PolygonFrontFace_;
 ENUM_MAPPING(TO_GL, PolygonFrontFace_, u32,
 	GL_CW,
 	GL_CCW
 );
 
-ALIAS(StencilOperation_) RD::StencilOperation_;
+using StencilOperation_ = RD::StencilOperation_;
 ENUM_MAPPING(TO_GL, StencilOperation_, u32,
 	GL_KEEP,
 	GL_ZERO,
@@ -293,7 +293,7 @@ ENUM_MAPPING(TO_GL, StencilOperation_, u32,
 	GL_DECR_WRAP
 );
 
-ALIAS(BlendFactor_) RD::BlendFactor_;
+using BlendFactor_ = RD::BlendFactor_;
 ENUM_MAPPING(TO_GL, BlendFactor_, u32,
 	GL_ZERO,
 	GL_ONE,
@@ -313,7 +313,7 @@ ENUM_MAPPING(TO_GL, BlendFactor_, u32,
 	GL_ONE_MINUS_SRC1_ALPHA
 );
 
-ALIAS(BlendOperation_) RD::BlendOperation_;
+using BlendOperation_ = RD::BlendOperation_;
 ENUM_MAPPING(TO_GL, BlendOperation_, u32,
 	GL_FUNC_ADD,
 	GL_FUNC_SUBTRACT,
@@ -815,6 +815,11 @@ String RenderingDeviceOpenGL::shader_get_code(RID shader)
 
 void RenderingDeviceOpenGL::shader_set_code(RID shader, String const & value)
 {
+}
+
+i32 RenderingDeviceOpenGL::shader_get_uniform_location(RID shader, String const & name)
+{
+	return -1;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

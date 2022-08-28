@@ -43,7 +43,7 @@ namespace ism
 		template <class T> auto cast() const -> T { return get_cache().cast<T>(); }
 
 	protected:
-		obj_type & get_cache() const { return ((!!m_cache) || (m_cache = Policy::get(m_obj, m_key))), m_cache; }
+		obj_type & get_cache() const { return BRANCHLESS(!m_cache, m_cache = Policy::get(m_obj, m_key)), m_cache; }
 
 	private:
 		obj_type m_obj;

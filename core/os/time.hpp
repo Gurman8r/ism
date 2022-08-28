@@ -10,7 +10,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// duration base
-	ALIAS(_DurationBase) std::chrono::duration<f32, Ratio<1>>;
+	using _DurationBase = std::chrono::duration<f32, Ratio<1>>;
 
 	// length of time measured in seconds
 	class Duration : public _DurationBase
@@ -162,7 +162,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// clock base
-	ALIAS(_ClockBase) std::chrono::high_resolution_clock;
+	using _ClockBase = std::chrono::high_resolution_clock;
 
 	// clock
 	class Clock final

@@ -10,26 +10,26 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <i64 N, i64 D = 1
-	> ALIAS(Ratio) std::ratio<N, D>;
+	> using Ratio = std::ratio<N, D>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(Atto)		Ratio<1, 1000000000000000000LL>;
-	ALIAS(Femto)	Ratio<1, 1000000000000000LL>;
-	ALIAS(Pico)		Ratio<1, 1000000000000LL>;
-	ALIAS(Nano)		Ratio<1, 1000000000>;
-	ALIAS(Micro)	Ratio<1, 1000000>;
-	ALIAS(Milli)	Ratio<1, 1000>;
-	ALIAS(Centi)	Ratio<1, 100>;
-	ALIAS(Deci)		Ratio<1, 10>;
-	ALIAS(Deca)		Ratio<10, 1>;
-	ALIAS(Hecto)	Ratio<100, 1>;
-	ALIAS(Kilo)		Ratio<1000, 1>;
-	ALIAS(Mega)		Ratio<1000000, 1>;
-	ALIAS(Giga)		Ratio<1000000000, 1>;
-	ALIAS(Tera)		Ratio<1000000000000LL, 1>;
-	ALIAS(Peta)		Ratio<1000000000000000LL, 1>;
-	ALIAS(Exa)		Ratio<1000000000000000000LL, 1>;
+	using Atto =		Ratio<1, 1000000000000000000LL>;
+	using Femto =	Ratio<1, 1000000000000000LL>;
+	using Pico =		Ratio<1, 1000000000000LL>;
+	using Nano =		Ratio<1, 1000000000>;
+	using Micro =	Ratio<1, 1000000>;
+	using Milli =	Ratio<1, 1000>;
+	using Centi =	Ratio<1, 100>;
+	using Deci =		Ratio<1, 10>;
+	using Deca =		Ratio<10, 1>;
+	using Hecto =	Ratio<100, 1>;
+	using Kilo =		Ratio<1000, 1>;
+	using Mega =		Ratio<1000000, 1>;
+	using Giga =		Ratio<1000000000, 1>;
+	using Tera =		Ratio<1000000000000LL, 1>;
+	using Peta =		Ratio<1000000000000000LL, 1>;
+	using Exa =		Ratio<1000000000000000000LL, 1>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -343,7 +343,7 @@ namespace ism
 			}
 			else
 			{
-				return std::nullopt;
+				return nullopt;
 			}
 		}
 
@@ -356,7 +356,7 @@ namespace ism
 			}
 			else
 			{
-				return std::nullopt;
+				return nullopt;
 			}
 		}
 
@@ -594,7 +594,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class _Kt, class _Vt, class _Pr = Less<_Kt>, size_t _Th = 42
-	> ALIAS(FlatMap) BasicFlatMap<_Kt, _Vt, _Pr, _Th>;
+	> using FlatMap = BasicFlatMap<_Kt, _Vt, _Pr, _Th>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

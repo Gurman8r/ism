@@ -19,7 +19,7 @@ namespace ism
 
 	class EventBus;
 
-	ALIAS(EventID) size_t;
+	using EventID = size_t;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

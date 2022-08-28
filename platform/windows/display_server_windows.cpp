@@ -17,12 +17,12 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	DisplayServerWindows::DisplayServerWindows(String const & title, WindowMode_ mode, Vec2i const & size)
+	DisplayServerWindows::DisplayServerWindows(String const & window_title, WindowMode_ window_mode, Vec2i const & window_size)
 	{
-		ASSERT(title);
-		ASSERT(0 < size[0]);
-		ASSERT(0 < size[1]);
-		VERIFY_RANGE(mode, -1, WindowMode_MAX);
+		ASSERT(window_title);
+		ASSERT(0 < window_size[0]);
+		ASSERT(0 < window_size[1]);
+		VERIFY_RANGE(window_mode, -1, WindowMode_MAX);
 
 		/* GLFW SETUP */
 
@@ -35,7 +35,7 @@ namespace ism
 
 		glfwSetMonitorCallback([](GLFWmonitor * monitor, i32 connected)
 		{
-			// monitor connected / disconnected
+			// monitor connected/disconnected
 		});
 
 		glfwSetJoystickCallback([](i32 device, i32 connected)
@@ -43,6 +43,7 @@ namespace ism
 			Input::get_singleton()->joy_connection_changed(device, connected == GLFW_CONNECTED, glfwGetJoystickName(device), glfwGetJoystickGUID(device));
 		});
 
+		// cursors
 		m_cursors[Input::CursorShape_Arrow] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 		m_cursors[Input::CursorShape_IBeam] = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
 		m_cursors[Input::CursorShape_Crosshair] = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
@@ -72,14 +73,14 @@ namespace ism
 
 		// window hints
 		glfwWindowHint(GLFW_RESIZABLE, true);
-		glfwWindowHint(GLFW_VISIBLE, mode != WindowMode_Maximized);
+		glfwWindowHint(GLFW_VISIBLE, window_mode != WindowMode_Maximized);
 		glfwWindowHint(GLFW_DECORATED, true);
 		glfwWindowHint(GLFW_FOCUSED, true);
 		glfwWindowHint(GLFW_AUTO_ICONIFY, true);
 		glfwWindowHint(GLFW_CENTER_CURSOR, true);
 		glfwWindowHint(GLFW_FOCUS_ON_SHOW, true);
 		glfwWindowHint(GLFW_FLOATING, false);
-		glfwWindowHint(GLFW_MAXIMIZED, mode == WindowMode_Maximized);
+		glfwWindowHint(GLFW_MAXIMIZED, window_mode == WindowMode_Maximized);
 
 		// framebuffer hints
 		glfwWindowHint(GLFW_RED_BITS, 8);
@@ -94,12 +95,12 @@ namespace ism
 		/* CREATE WINDOW */
 
 		_Window & w{ m_windows[MAIN_WINDOW_ID] = {} };
-		w.title = title;
-		w.window_mode = mode;
-		w.handle = VALIDATE(glfwCreateWindow(size[0], size[1], w.title.c_str(), nullptr, nullptr));
+		w.title = window_title;
+		w.window_mode = window_mode;
+		w.handle = VALIDATE(glfwCreateWindow(window_size[0], window_size[1], w.title.c_str(), nullptr, nullptr));
 		glfwSetWindowUserPointer(w.handle, &w);
 
-		switch (mode) {
+		switch (window_mode) {
 		case WindowMode_Windowed: {} break;
 		case WindowMode_Minimized: { glfwIconifyWindow(w.handle); } break;
 		case WindowMode_Maximized: { glfwMaximizeWindow(w.handle); } break;

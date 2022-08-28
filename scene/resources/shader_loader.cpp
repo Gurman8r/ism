@@ -6,6 +6,31 @@ using namespace ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+class ShaderBuilder
+{
+public:
+	ShaderBuilder()
+	{
+	}
+
+	~ShaderBuilder()
+	{
+	}
+
+public:
+	ShaderBuilder & version(String const & s)
+	{
+		return (*this);
+	}
+
+	ShaderBuilder & include(String const & s)
+	{
+		return (*this);
+	}
+};
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData (&spec)[RD::ShaderStage_MAX])
 {
 	RD::ShaderStage_ stage_index{ RD::ShaderStage_MAX };

@@ -9,84 +9,65 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Node::Node()
-	{
-	}
-
-	Node::~Node()
-	{
-		while (!m_nodes.empty())
-		{
-			memdelete(m_nodes.back());
-
-			m_nodes.pop_back();
-		}
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	void Node::_notification(Notification_ value)
 	{
 		switch (value)
 		{
-		case Notification_EnterTree: {
-		} break;
-		case Notification_ExitTree: {
-		} break;
-		case Notification_Ready: {
-		} break;
-		case Notification_Paused: {
-		} break;
-		case Notification_Unpaused: {
-		} break;
-		case Notification_Process: {
-		} break;
-		case Notification_PhysicsProcess: {
-		} break;
-		case Notification_Parented: {
-		} break;
-		case Notification_Unparented: {
-		} break;
-		case Notification_Instanced: {
-		} break;
-		case Notification_DragBegin: {
-		} break;
-		case Notification_DragEnd: {
-		} break;
-		case Notification_PathChanged: {
-		} break;
-		case Notification_Internal_Process: {
-		} break;
-		case Notification_Internal_PhysicsProcess: {
-		} break;
-		case Notification_MemoryWarning: {
-		} break;
-		case Notification_Crash: {
-		} break;
-		case Notification_ApplicationResumed: {
-		} break;
-		case Notification_ApplicationPaused: {
-		} break;
-		case Notification_ApplicationFocusIn: {
-		} break;
-		case Notification_ApplicationFocusOut: {
-		} break;
+		case Notification_EnterTree: { _enter_tree(); } break;
+		case Notification_ExitTree: { _exit_tree(); } break;
+		case Notification_Ready: { _ready(); } break;
+		case Notification_Paused: {} break;
+		case Notification_Unpaused: {} break;
+		case Notification_Process: { _process(get_tree()->get_delta_time()); } break;
+		case Notification_PhysicsProcess: { _physics_process(get_tree()->get_delta_time()); } break;
+		case Notification_Parented: {} break;
+		case Notification_Unparented: {} break;
+		case Notification_Instanced: {} break;
+		case Notification_DragBegin: {} break;
+		case Notification_DragEnd: {} break;
+		case Notification_PathChanged: {} break;
+		case Notification_Internal_Process: {} break;
+		case Notification_Internal_PhysicsProcess: {} break;
+		case Notification_MemoryWarning: {} break;
+		case Notification_Crash: {} break;
+		case Notification_ApplicationResumed: {} break;
+		case Notification_ApplicationPaused: {} break;
+		case Notification_ApplicationFocusIn: {} break;
+		case Notification_ApplicationFocusOut: {} break;
 		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Node::propagate_notification(i32 id, bool reverse)
+	void Node::_process(Duration const delta_time)
 	{
-		notification(id, reverse);
+	}
 
-		for (Node * child : m_nodes)
-		{
-			child->propagate_notification(id, reverse);
-		}
+	void Node::_physics_process(Duration const delta_time)
+	{
+	}
+
+	void Node::_enter_tree()
+	{
+	}
+
+	void Node::_exit_tree()
+	{
+	}
+
+	void Node::_ready()
+	{
+	}
+
+	void Node::_input()
+	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void Node::set_name(StringName const & name)
+	{
+	}
 
 	bool Node::set_tree(SceneTree * tree)
 	{
@@ -113,19 +94,18 @@ namespace ism
 		return true;
 	}
 
+	Node * Node::get_sibling(size_t const index) const
+	{
+		return nullptr;
+	}
+
 	size_t Node::get_sibling_index() const
 	{
-		if (m_parent)
-		{
-			for (size_t i{}; i < m_parent->m_nodes.size(); ++i)
-			{
-				if (this == m_parent->m_nodes[i])
-				{
-					return i;
-				}
-			}
-		}
-		return 0;
+		size_t i{};
+
+		while (m_parent && (i < m_parent->m_nodes.size()) && (this != m_parent->m_nodes[i])) { ++i; }
+
+		return i;
 	}
 
 	void Node::set_sibling_index(size_t new_index)
@@ -141,16 +121,22 @@ namespace ism
 		util::swap(m_parent->m_nodes[new_index], m_parent->m_nodes[old_index]);
 	}
 
+	Node * Node::get_child(size_t const index) const
+	{
+		VERIFY_RANGE(index, -1, get_child_count());
+		return m_nodes[index];
+	}
+
 	Node * Node::add_child(Node * child)
 	{
 		return (child && child->set_parent(this)) ? child : nullptr;
 	}
 
-	void Node::destroy_child(size_t i)
+	void Node::destroy_child(size_t const index)
 	{
-		ASSERT(i < m_nodes.size());
+		ASSERT(index < m_nodes.size());
 
-		auto const it{ m_nodes.begin() + i };
+		auto const it{ m_nodes.begin() + index };
 
 		if (*it) { memdelete(*it); }
 
@@ -187,6 +173,34 @@ namespace ism
 			}
 		}
 		return false;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void Node::propagate_notification(i32 id, bool reverse)
+	{
+		notification(id, reverse);
+
+		for (Node * child : m_nodes)
+		{
+			child->propagate_notification(id, reverse);
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	Node::Node()
+	{
+	}
+
+	Node::~Node()
+	{
+		while (!m_nodes.empty())
+		{
+			memdelete(m_nodes.back());
+
+			m_nodes.pop_back();
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

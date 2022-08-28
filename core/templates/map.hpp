@@ -11,7 +11,7 @@ namespace ism
 
 	// map base
 	template <class K, class V, class Pr = Less<K>
-	> ALIAS(_MapBase) std::map<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
+	> using _MapBase = std::map<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
 
 	// map
 	template <class K, class V, class Pr = Less<K>
@@ -32,7 +32,7 @@ namespace ism
 
 	// multi map base
 	template <class K, class V, class Pr = Less<K>
-	> ALIAS(_MultiMapBase) std::multimap<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
+	> using _MultiMapBase = std::multimap<K, V, Pr, PolymorphicAllocator<Pair<K const, V>>>;
 
 	// multi map
 	template <class K, class V, class Pr = Less<K>

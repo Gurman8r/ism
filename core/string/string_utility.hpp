@@ -19,7 +19,7 @@ namespace ism::util
 			return static_cast<T>(answer);
 		}
 		else {
-			return std::nullopt;
+			return nullopt;
 		}
 	}
 

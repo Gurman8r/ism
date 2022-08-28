@@ -535,6 +535,7 @@ namespace ism
 		virtual void shader_destroy(RID shader) = 0;
 		virtual String shader_get_code(RID shader) = 0;
 		virtual void shader_set_code(RID shader, String const & value) = 0;
+		virtual i32 shader_get_uniform_location(RID shader, String const & name) = 0;
 
 	public:
 		/* UNIFORMS */
@@ -779,7 +780,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(RD) RenderingDevice;
+	using RD = RenderingDevice;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

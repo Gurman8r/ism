@@ -13,6 +13,7 @@
 #include <core/register_core_types.hpp>
 #include <drivers/register_driver_types.hpp>
 #include <platform/register_platform_apis.hpp>
+#include <modules/register_module_types.hpp>
 #include <scene/register_scene_types.hpp>
 #include <servers/register_server_types.hpp>
 
@@ -30,21 +31,22 @@
 #include <servers/rendering/rendering_server_default.hpp>
 
 #include <servers/audio_server.hpp>
+#include <servers/physics_server.hpp>
 #include <servers/text_server.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 using namespace ism;
-
-static bool editor{ true };
-
 i32 Main::m_iterating{};
 u64 Main::m_frame{};
+
+static bool editor{ true };
 
 static Internals *			g_internals{};
 static Input *				g_input{};
 static AudioServer *		g_audio{};
 static DisplayServer *		g_display{};
+static PhysicsServer *		g_physics{};
 static RenderingServer *	g_renderer{};
 static ImGuiContext *		g_imgui{};
 static TextServer *			g_text{};
@@ -54,36 +56,27 @@ static TextServer *			g_text{};
 Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 {
 	OS::get_singleton()->initialize();
-	
 	g_internals = memnew(Internals);
-
 	register_core_types();
-	
 	register_core_driver_types();
-	
 	register_core_settings();
 
-	//preregister_module_types();
-	
-	preregister_server_types();
-	
 	register_server_types();
-	
-	register_scene_types();
-	
-	register_editor_types();
-
-	register_platform_apis();
 	
 	//register_module_types();
 
+	g_input = memnew(Input);
+	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
+	g_renderer = memnew(RenderingServerDefault);
 	g_audio = memnew(AudioServer);
-	
-	register_driver_types();
-	
-	//initialize_physics();
-
 	register_core_singletons();
+	register_scene_types();
+	register_driver_types();
+#if TOOLS_ENABLED
+	register_editor_types();
+#endif
+	register_platform_apis();
+
 	
 	register_server_singletons();
 	
@@ -91,11 +84,6 @@ Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 
 	g_text = memnew(TextServer);
 
-	g_input = memnew(Input);
-
-	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
-
-	g_renderer = memnew(RenderingServerDefault);
 
 	g_imgui = VALIDATE(ImGui::CreateContext());
 	g_imgui->IO.LogFilename = nullptr;
@@ -104,6 +92,8 @@ Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ASSERT(ImGui_Init());
+
+	g_physics = memnew(PhysicsServer);
 
 	return Error_None;
 }
@@ -203,29 +193,39 @@ void Main::cleanup()
 #endif
 
 	unregister_driver_types();
+	
 	//unregister_module_types();
+	
 	unregister_platform_apis();
+	
 	unregister_server_types();
+	
 	unregister_scene_types();
 
 	memdelete(g_audio);
 
 	OS::get_singleton()->finalize();
 
-	ImGui_Shutdown();
-	ImGui::DestroyContext(g_imgui);
+	ImGui_Shutdown(); ImGui::DestroyContext(g_imgui);
 
 	g_renderer->finalize();
+	
 	memdelete(g_renderer);
+	
 	memdelete(g_display);
 	
+	memdelete(g_physics);
+	
 	memdelete(g_input);
+	
 	memdelete(g_text);
 
 	unregister_core_driver_types();
+	
 	unregister_core_types();
 
 	memdelete(g_internals);
+	
 	OS::get_singleton()->finalize_core();
 }
 

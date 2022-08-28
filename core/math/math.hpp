@@ -1,13 +1,12 @@
 #ifndef _ISM_MATH_HPP_
 #define _ISM_MATH_HPP_
 
-#include <cmath>
-
 #include <core/templates/type_traits.hpp>
+
+#include <cmath>
 
 #include <gcem.hpp>
 
-//#define GLM_FORCE_LEFT_HANDED
 #define GLM_FORCE_SIZE_T_LENGTH
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>

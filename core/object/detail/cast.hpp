@@ -96,7 +96,7 @@ namespace ism
 
 	template <class T, class SFINAE = void> struct TypeCaster : TypeCasterBase<T> {};
 
-	template <class T> ALIAS(make_caster) TypeCaster<mpl::intrinsic_t<T>>;
+	template <class T> using make_caster = TypeCaster<mpl::intrinsic_t<T>>;
 
 	template <class T> auto cast_op(make_caster<T> & caster) -> typename make_caster<T>::template cast_op_type<T>
 	{
@@ -123,7 +123,7 @@ public:																							\
 																								\
 	operator m_type && () { return std::move(value); }											\
 																								\
-	template <class T_> ALIAS(cast_op_type) movable_cast_op_type<T_>;							\
+	template <class T_> using cast_op_type = movable_cast_op_type<T_>;							\
 																								\
 	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0	\
 	> static OBJ cast(T_ * src, ReturnPolicy_ policy, OBJ const & parent)						\

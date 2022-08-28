@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	AS * AS::__singleton{};
+	AudioServer * AudioServer::__singleton{};
 
 	EMBED_OBJECT_CLASS(AudioServer, t) {}
 

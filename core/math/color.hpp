@@ -8,7 +8,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// 32-bit Color
-	ALIAS(Color32) u32;
+	using Color32 = u32;
 
 #define COLOR32_R_SHIFT	0
 #define COLOR32_G_SHIFT	8

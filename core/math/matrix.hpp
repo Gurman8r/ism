@@ -13,101 +13,101 @@ namespace ism
 
 	// Mat<T, N, N>
 	template <class T, size_t N
-	> ALIAS(TMaxNxN) Mat<T, N, N>;
+	> using TMaxNxN = Mat<T, N, N>;
 
 	// Mat<T, 2, 2>
 	template <class T
-	> ALIAS(TMat2x2) TMaxNxN<T, 2>;
+	> using TMat2x2 = TMaxNxN<T, 2>;
 
 	// Mat<T, 3, 3>
 	template <class T
-	> ALIAS(TMat3x3) TMaxNxN<T, 3>;
+	> using TMat3x3 = TMaxNxN<T, 3>;
 
 	// Mat<T, 4 ,4>
 	template <class T
-	> ALIAS(TMat4x4) TMaxNxN<T, 4>;
+	> using TMat4x4 = TMaxNxN<T, 4>;
 
 	// Mat<T, N, 1>
 	template <class T, size_t N
-	> ALIAS(TVec) Mat<T, N, 1>;
+	> using TVec = Mat<T, N, 1>;
 
 	// Mat<T, 2, 1>
 	template <class T
-	> ALIAS(TVec2) TVec<T, 2>;
+	> using TVec2 = TVec<T, 2>;
 
 	// Mat<T, 3, 1>
 	template <class T
-	> ALIAS(TVec3) TVec<T, 3>;
+	> using TVec3 = TVec<T, 3>;
 
 	// Mat<T, 4, 1>
 	template <class T
-	> ALIAS(TVec4) TVec<T, 4>;
+	> using TVec4 = TVec<T, 4>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat2
-	ALIAS(Mat2b) TMat2x2<u8>;
-	ALIAS(Mat2i) TMat2x2<i32>;
-	ALIAS(Mat2u) TMat2x2<u32>;
-	ALIAS(Mat2f) TMat2x2<f32>;
-	ALIAS(Mat2d) TMat2x2<f64>;
-	ALIAS(Mat2s) TMat2x2<size_t>;
-	ALIAS(Mat2) Mat2f;
+	using Mat2b = TMat2x2<u8>;
+	using Mat2i = TMat2x2<i32>;
+	using Mat2u = TMat2x2<u32>;
+	using Mat2f = TMat2x2<f32>;
+	using Mat2d = TMat2x2<f64>;
+	using Mat2s = TMat2x2<size_t>;
+	using Mat2 = Mat2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat3
-	ALIAS(Mat3b) TMat3x3<u8>;
-	ALIAS(Mat3i) TMat3x3<i32>;
-	ALIAS(Mat3u) TMat3x3<u32>;
-	ALIAS(Mat3f) TMat3x3<f32>;
-	ALIAS(Mat3d) TMat3x3<f64>;
-	ALIAS(Mat3s) TMat3x3<size_t>;
-	ALIAS(Mat3) Mat3f;
+	using Mat3b = TMat3x3<u8>;
+	using Mat3i = TMat3x3<i32>;
+	using Mat3u = TMat3x3<u32>;
+	using Mat3f = TMat3x3<f32>;
+	using Mat3d = TMat3x3<f64>;
+	using Mat3s = TMat3x3<size_t>;
+	using Mat3 = Mat3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Mat4
-	ALIAS(Mat4b) TMat4x4<u8>;
-	ALIAS(Mat4i) TMat4x4<i32>;
-	ALIAS(Mat4u) TMat4x4<u32>;
-	ALIAS(Mat4f) TMat4x4<f32>;
-	ALIAS(Mat4d) TMat4x4<f64>;
-	ALIAS(Mat4s) TMat4x4<size_t>;
-	ALIAS(Mat4) Mat4f;
+	using Mat4b = TMat4x4<u8>;
+	using Mat4i = TMat4x4<i32>;
+	using Mat4u = TMat4x4<u32>;
+	using Mat4f = TMat4x4<f32>;
+	using Mat4d = TMat4x4<f64>;
+	using Mat4s = TMat4x4<size_t>;
+	using Mat4 = Mat4f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec2
-	ALIAS(Vec2b) TVec2<u8>;
-	ALIAS(Vec2i) TVec2<i32>;
-	ALIAS(Vec2u) TVec2<u32>;
-	ALIAS(Vec2f) TVec2<f32>;
-	ALIAS(Vec2d) TVec2<f64>;
-	ALIAS(Vec2s) TVec2<size_t>;
-	ALIAS(Vec2) Vec2f;
+	using Vec2b = TVec2<u8>;
+	using Vec2i = TVec2<i32>;
+	using Vec2u = TVec2<u32>;
+	using Vec2f = TVec2<f32>;
+	using Vec2d = TVec2<f64>;
+	using Vec2s = TVec2<size_t>;
+	using Vec2 = Vec2f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec3
-	ALIAS(Vec3b) TVec3<u8>;
-	ALIAS(Vec3i) TVec3<i32>;
-	ALIAS(Vec3u) TVec3<u32>;
-	ALIAS(Vec3f) TVec3<f32>;
-	ALIAS(Vec3d) TVec3<f64>;
-	ALIAS(Vec3s) TVec3<size_t>;
-	ALIAS(Vec3) Vec3f;
+	using Vec3b = TVec3<u8>;
+	using Vec3i = TVec3<i32>;
+	using Vec3u = TVec3<u32>;
+	using Vec3f = TVec3<f32>;
+	using Vec3d = TVec3<f64>;
+	using Vec3s = TVec3<size_t>;
+	using Vec3 = Vec3f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// Vec4
-	ALIAS(Vec4b) TVec4<u8>;
-	ALIAS(Vec4i) TVec4<i32>;
-	ALIAS(Vec4u) TVec4<u32>;
-	ALIAS(Vec4f) TVec4<f32>;
-	ALIAS(Vec4d) TVec4<f64>;
-	ALIAS(Vec4s) TVec4<size_t>;
-	ALIAS(Vec4) Vec4f;
+	using Vec4b = TVec4<u8>;
+	using Vec4i = TVec4<i32>;
+	using Vec4u = TVec4<u32>;
+	using Vec4f = TVec4<f32>;
+	using Vec4d = TVec4<f64>;
+	using Vec4s = TVec4<size_t>;
+	using Vec4 = Vec4f;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

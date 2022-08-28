@@ -111,37 +111,37 @@ namespace ism
 		template <class I> struct ItemPolicy;
 	}
 
-	template <class I> ALIAS(AttrAccessor) Accessor<accessor_policies::AttrPolicy<I>>;
-	template <class I> ALIAS(ItemAccessor) Accessor<accessor_policies::ItemPolicy<I>>;
+	template <class I> using AttrAccessor = Accessor<accessor_policies::AttrPolicy<I>>;
+	template <class I> using ItemAccessor = Accessor<accessor_policies::ItemPolicy<I>>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(unaryfunc)		OBJ(*)(OBJ a);
-	ALIAS(binaryfunc)		OBJ(*)(OBJ a, OBJ b);
-	ALIAS(ternaryfunc)		OBJ(*)(OBJ a, OBJ b, OBJ c);
+	using unaryfunc =		OBJ(*)(OBJ a);
+	using binaryfunc =		OBJ(*)(OBJ a, OBJ b);
+	using ternaryfunc =		OBJ(*)(OBJ a, OBJ b, OBJ c);
 
-	ALIAS(inquiry)			bool(*)(OBJ obj);
-	ALIAS(sizeargfunc)		OBJ(*)(OBJ obj, ssize_t i);
-	ALIAS(sizesizeargfunc)	OBJ(*)(OBJ obj, ssize_t i, ssize_t j);
-	ALIAS(objobjproc)		i32(*)(OBJ lhs, OBJ rhs);
+	using inquiry =			bool(*)(OBJ obj);
+	using sizeargfunc =		OBJ(*)(OBJ obj, ssize_t i);
+	using sizesizeargfunc =	OBJ(*)(OBJ obj, ssize_t i, ssize_t j);
+	using objobjproc =		i32(*)(OBJ lhs, OBJ rhs);
 
-	ALIAS(getattrfunc)		OBJ(*)(OBJ obj, cstring name);
-	ALIAS(setattrfunc)		Error_(*)(OBJ obj, cstring name, OBJ value);
-	ALIAS(getattrofunc)		OBJ(*)(OBJ obj, OBJ name);
-	ALIAS(setattrofunc)		Error_(*)(OBJ obj, OBJ name, OBJ value);
-	ALIAS(descrgetfunc)		OBJ(*)(OBJ descr, OBJ obj, OBJ cls);
-	ALIAS(descrsetfunc)		Error_(*)(OBJ descr, OBJ obj, OBJ value);
+	using getattrfunc =		OBJ(*)(OBJ obj, cstring name);
+	using setattrfunc =		Error_(*)(OBJ obj, cstring name, OBJ value);
+	using getattrofunc =		OBJ(*)(OBJ obj, OBJ name);
+	using setattrofunc =		Error_(*)(OBJ obj, OBJ name, OBJ value);
+	using descrgetfunc =		OBJ(*)(OBJ descr, OBJ obj, OBJ cls);
+	using descrsetfunc =		Error_(*)(OBJ descr, OBJ obj, OBJ value);
 
-	ALIAS(classproc)		TYPE(*)(TYPE type);
-	ALIAS(newfunc)			OBJ(*)(TYPE type, OBJ args);
-	ALIAS(delfunc)			void(*)(Object * ptr);
-	ALIAS(cmpfunc)			i32(*)(OBJ lhs, OBJ rhs);
-	ALIAS(hashfunc)			size_t(*)(OBJ obj);
-	ALIAS(lenfunc)			ssize_t(*)(OBJ obj);
-	ALIAS(reprfunc)			STR(*)(OBJ obj);
-	ALIAS(vectorcallfunc)	OBJ(*)(OBJ self, OBJ const * argv, size_t argc);
-	ALIAS(getter)			OBJ(*)(OBJ obj, void * closure);
-	ALIAS(setter)			Error_(*)(OBJ obj, OBJ value, void * closure);
+	using classproc =		TYPE(*)(TYPE type);
+	using newfunc =			OBJ(*)(TYPE type, OBJ args);
+	using delfunc =			void(*)(Object * ptr);
+	using cmpfunc =			i32(*)(OBJ lhs, OBJ rhs);
+	using hashfunc =			size_t(*)(OBJ obj);
+	using lenfunc =			ssize_t(*)(OBJ obj);
+	using reprfunc =			STR(*)(OBJ obj);
+	using vectorcallfunc =	OBJ(*)(OBJ self, OBJ const * argv, size_t argc);
+	using getter =			OBJ(*)(OBJ obj, void * closure);
+	using setter =			Error_(*)(OBJ obj, OBJ value, void * closure);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

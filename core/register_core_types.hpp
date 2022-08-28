@@ -1,7 +1,7 @@
 #ifndef _ISM_REGISTER_CORE_TYPES_HPP_
 #define _ISM_REGISTER_CORE_TYPES_HPP_
 
-#include <core/language_features.hpp>
+#include <core/extension/native_interface.hpp>
 
 namespace ism
 {

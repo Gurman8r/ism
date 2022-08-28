@@ -9,6 +9,30 @@
 #include <functional>
 #include <utility>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// round down size m_size to be a multiple of m_alignment, where m_alignment is a power of 2
+#define SIZE_ROUND_DOWN(m_size, m_alignment) \
+		((size_t)(m_size) & ~(size_t)((m_alignment) - 1))
+
+// round up size m_size to be m_alignment multiple of m_alignment, where m_alignment is a power of 2
+#define SIZE_ROUND_UP(m_size, m_alignment) \
+		(((size_t)(m_size) + (size_t)((m_alignment) - 1)) & ~(size_t)((m_alignment) - 1))
+
+// round pointer m_ptr down to the closest m_alignment-aligned address <= m_ptr, where m_alignment is a power of 2
+#define ALIGN_DOWN(m_ptr, m_alignment) \
+		((void *)((uintptr_t)(m_ptr) & ~(uintptr_t)((m_alignment) - 1)))
+
+// round pointer m_ptr up to the closest m_alignment-aligned address >= m_ptr, where m_alignment is a power of 2
+#define ALIGN_UP(m_ptr, m_alignment) \
+		((void *)(((uintptr_t)(m_ptr) + (uintptr_t)((m_alignment) - 1)) & ~(uintptr_t)((m_alignment) - 1)))
+
+// check if pointer m_ptr is aligned to m_alignment-bytes boundary, where m_alignment is a power of 2
+#define IS_ALIGNED(m_ptr, m_alignment) \
+		(!((uintptr_t)(m_ptr) & (uintptr_t)((m_alignment) - 1)))
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -31,89 +55,89 @@ namespace ism
 	// plus
 	template <class T> struct Plus
 	{
-		using result_type = typename T;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr T operator()(T const & lhs, T const & rhs) const { return lhs + rhs; }
+		using result_type = T;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr T operator()(T const & a, T const & b) const { return a + b; }
 	};
 
 	// minus
 	template <class T> struct Minus
 	{
-		using result_type = typename T;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr T operator()(T const & lhs, T const & rhs) const { return lhs - rhs; }
+		using result_type = T;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr T operator()(T const & a, T const & b) const { return a - b; }
 	};
 
 	// multiplies
 	template <class T> struct Multiplies
 	{
-		using result_type = typename T;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr T operator()(T const & lhs, T const & rhs) const { return lhs * rhs; }
+		using result_type = T;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr T operator()(T const & a, T const & b) const { return a * b; }
 	};
 
 	// equal to
 	template <class T> struct EqualTo
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr bool operator()(T const & lhs, T const & rhs) const { return lhs == rhs; }
+		using result_type = bool;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr bool operator()(T const & a, T const & b) const { return a == b; }
 	};
 
 	// not equal to
 	template <class T> struct NotEqualTo
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr bool operator()(T const & lhs, T const & rhs) const { return lhs != rhs; }
+		using result_type = bool;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr bool operator()(T const & a, T const & b) const { return a != b; }
 	};
 
 	// less
 	template <class T> struct Less
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr bool operator()(T const & lhs, T const & rhs) const { return lhs < rhs; }
+		using result_type = bool;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr bool operator()(T const & a, T const & b) const { return a < b; }
 	};
 
 	// greater
 	template <class T> struct Greater
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr bool operator()(T const & lhs, T const & rhs) const { return lhs > rhs; }
+		using result_type = bool;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr bool operator()(T const & a, T const & b) const { return a > b; }
 	};
 
 	// less or equal
 	template <class T> struct LessEqual
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr bool operator()(T const & lhs, T const & rhs) const { return lhs <= rhs; }
+		using result_type = bool;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr bool operator()(T const & a, T const & b) const { return a <= b; }
 	};
 
 	// greater or equal
 	template <class T> struct GreaterEqual
 	{
-		using result_type = typename bool;
-		using first_argument_type = typename T;
-		using second_argument_type = typename T;
-		constexpr bool operator()(T const & lhs, T const & rhs) const { return lhs >= rhs; }
+		using result_type = bool;
+		using first_argument_type = T;
+		using second_argument_type = T;
+		constexpr bool operator()(T const & a, T const & b) const { return a >= b; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// pair
 	template <class First, class Second
-	> ALIAS(Pair) std::pair<First, Second>;
+	> using Pair = std::pair<First, Second>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -252,7 +276,5 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #endif // !_ISM_UTILITY_HPP_

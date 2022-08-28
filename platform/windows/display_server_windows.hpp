@@ -30,7 +30,7 @@ namespace ism
 		GLFWcursor * m_cursors[Input::CursorShape_MAX]{};
 
 	public:
-		DisplayServerWindows(String const & title, WindowMode_ mode, Vec2i const & size);
+		DisplayServerWindows(String const & window_title, WindowMode_ window_mode, Vec2i const & window_size);
 		~DisplayServerWindows();
 
 	public:

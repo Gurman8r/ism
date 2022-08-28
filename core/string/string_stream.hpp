@@ -11,7 +11,7 @@ namespace ism
 
 	// string stream base
 	template <class C = char
-	> ALIAS(_StringStreamBase) std::basic_stringstream<C, std::char_traits<C>, PolymorphicAllocator<C>>;
+	> using _StringStreamBase = std::basic_stringstream<C, std::char_traits<C>, PolymorphicAllocator<C>>;
 
 	// basic string stream
 	template <class C = char
@@ -36,10 +36,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// string stream
-	ALIAS(StringStream) BasicStringStream<char>;
+	using StringStream = BasicStringStream<char>;
 
 	// wide string stream
-	ALIAS(WideStringStream) BasicStringStream<wchar_t>;
+	using WideStringStream = BasicStringStream<wchar_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

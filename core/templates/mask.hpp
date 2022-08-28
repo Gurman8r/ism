@@ -45,7 +45,7 @@ namespace ism
 {
 	// mask base
 	template <size_t _Bits
-	> ALIAS(_BitMaskBase) std::bitset<_Bits>;
+	> using _BitMaskBase = std::bitset<_Bits>;
 
 	// mask
 	template <size_t _Bits
@@ -82,8 +82,8 @@ namespace ism
 		using base_type::_Subscript;
 	};
 
-	ALIAS(Mask32) BitMask<32>;
-	ALIAS(Mask64) BitMask<64>;
+	using Mask32 = BitMask<32>;
+	using Mask64 = BitMask<64>;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

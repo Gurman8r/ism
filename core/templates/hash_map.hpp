@@ -11,7 +11,7 @@ namespace ism
 
 	// hashmap base
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
-	> ALIAS(_HashMapBase) std::unordered_map<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
+	> using _HashMapBase = std::unordered_map<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
 
 	// hashmap
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
@@ -32,7 +32,7 @@ namespace ism
 
 	// multi hashmap base
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>
-	> ALIAS(_HashMultiMapBase) std::unordered_multimap<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
+	> using _HashMultiMapBase = std::unordered_multimap<K, V, H, E, PolymorphicAllocator<Pair<K const, V>>>;
 
 	// multi hashmap
 	template <class K, class V, class H = Hasher<K>, class E = EqualTo<K>

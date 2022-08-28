@@ -5,14 +5,17 @@
 #define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
 #endif
 
-void ism::register_driver_types()
+namespace ism
 {
-	Internals::get_singleton()->initialize_class
-	<
-		RENDERING_DEVICE_DEFAULT
-	>();
-}
+	void register_driver_types()
+	{
+		Internals::get_singleton()->initialize_class
+		<
+			RENDERING_DEVICE_DEFAULT
+		>();
+	}
 
-void ism::unregister_driver_types()
-{
+	void unregister_driver_types()
+	{
+	}
 }

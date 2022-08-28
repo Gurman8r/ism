@@ -140,6 +140,7 @@ namespace ism
 		virtual void shader_destroy(RID shader) override;
 		virtual String shader_get_code(RID shader) override;
 		virtual void shader_set_code(RID shader, String const & value) override;
+		virtual i32 shader_get_uniform_location(RID shader, String const & name) override;
 
 	public:
 		/* UNIFORM  */

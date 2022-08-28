@@ -11,7 +11,7 @@ namespace ism
 
 	// tuple
 	template <class Type0, class ... Types
-	> ALIAS(Tuple) std::tuple<Type0, Types...>;
+	> using Tuple = std::tuple<Type0, Types...>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

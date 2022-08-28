@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RS * RS::__singleton{};
+	RenderingServer * RenderingServer::__singleton{};
 
 	EMBED_OBJECT_CLASS(RenderingServer, t, TypeFlags_IsAbstract) {}
 

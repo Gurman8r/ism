@@ -9,11 +9,12 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(nullopt_t) std::nullopt_t;
+	using typename std::nullopt_t;
 
-	constexpr nullopt_t nullopt{ std::nullopt };
+	using std::nullopt;
 
-	template <class T> ALIAS(Optional) std::optional<T>;
+	template <class T
+	> using Optional = std::optional<T>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

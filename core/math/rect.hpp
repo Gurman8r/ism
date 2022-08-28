@@ -92,11 +92,11 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(FloatRect)	Rect<f32>;
-	ALIAS(DoubleRect)	Rect<f64>;
-	ALIAS(IntRect)		Rect<i32>;
-	ALIAS(UintRect)		Rect<u32>;
-	ALIAS(SizeRect)		Rect<size_t>;
+	using FloatRect =	Rect<f32>;
+	using DoubleRect =	Rect<f64>;
+	using IntRect =		Rect<i32>;
+	using UintRect =		Rect<u32>;
+	using SizeRect =		Rect<size_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

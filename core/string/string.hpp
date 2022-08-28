@@ -13,7 +13,7 @@ namespace ism
 
 	// string base
 	template <class C = char
-	> ALIAS(_StringBase) std::basic_string<C, std::char_traits<C>, PolymorphicAllocator<C>>;
+	> using _StringBase = std::basic_string<C, std::char_traits<C>, PolymorphicAllocator<C>>;
 
 	// basic string
 	template <class C = char
@@ -139,10 +139,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// string
-	ALIAS(String) BasicString<char>;
+	using String = BasicString<char>;
 
 	// wide string
-	ALIAS(WideString) BasicString<wchar_t>;
+	using WideString = BasicString<wchar_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

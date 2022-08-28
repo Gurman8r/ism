@@ -9,7 +9,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(ProcessID) i64;
+	using ProcessID = i64;
 
 	struct Mutex { /* PLACEHOLDER */ };
 

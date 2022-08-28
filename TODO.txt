@@ -1,11 +1,6 @@
-redo math structures
-expand type database
-iterator objects
-tuple objects
-generic objects
-function objects are an absolute nightmare
-low level object types would benefit greatly from optimization & custom implementations
-
+expand internal type database
+iterator / tuple / generic objects
 must get viewports and render targets working
 add static draw functions to drawable resources like texture and mesh
 maybe unify "scene" and "servers" into "runtime"
+

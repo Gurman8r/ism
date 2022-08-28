@@ -2,7 +2,7 @@
 #define _ISM_DISPLAY_SERVER_HPP_
 
 #include <core/os/os.hpp>
-#include <core/io/input.hpp>
+#include <core/input/input.hpp>
 #include <core/io/image.hpp>
 
 namespace ism
@@ -22,7 +22,7 @@ namespace ism
 		FORCE_INLINE static DisplayServer * get_singleton() noexcept { return __singleton; }
 
 	public:
-		// TODO: global menu stuff goes here
+		// TODO: global menu goes here
 
 	public:
 		virtual void alert(String const & message, String const & title = "ALERT!") = 0;
@@ -150,7 +150,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(DS) DisplayServer;
+	using DS = DisplayServer;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

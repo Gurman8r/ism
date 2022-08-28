@@ -2,7 +2,6 @@
 #define _ISM_SHADER_LOADER_HPP_
 
 #include <scene/resources/shader.hpp>
-#include <core/io/json.hpp>
 
 namespace ism
 {

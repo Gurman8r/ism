@@ -15,8 +15,8 @@ namespace ism
 	class Viewport;
 	class Window;
 
-	ALIAS(EntityID) entt::entity;
-	ALIAS(EntityRegistry) entt::registry;
+	using EntityID = entt::entity;
+	using EntityRegistry = entt::registry;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

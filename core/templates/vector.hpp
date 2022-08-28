@@ -11,7 +11,7 @@ namespace ism
 
 	// vector base
 	template <class T
-	> ALIAS(_VectorBase) std::vector<T, PolymorphicAllocator<T>>;
+	> using _VectorBase = std::vector<T, PolymorphicAllocator<T>>;
 
 	// vector
 	template <class T

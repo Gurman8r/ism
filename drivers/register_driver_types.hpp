@@ -1,7 +1,7 @@
 #ifndef _ISM_REGISTER_DRIVER_TYPES_HPP_
 #define _ISM_REGISTER_DRIVER_TYPES_HPP_
 
-#include <core/language_features.hpp>
+#include <core/typedefs.hpp>
 
 namespace ism
 {

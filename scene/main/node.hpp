@@ -14,16 +14,23 @@ namespace ism
 	{
 		OBJECT_CLASS(Node, Object);
 
-		friend class SceneTree;
-
 	public:
+		enum ProcessMode_
+		{
+			ProcessMode_Inherit,
+			ProcessMode_Pausable,
+			ProcessMode_WhenPlayed,
+			ProcessMode_Always,
+			ProcessMode_Disabled,
+		};
+
 		enum : Notification_
 		{
 			Notification_EnterTree = 10,
 			Notification_ExitTree,
-			Notification_Ready,
 			Notification_Paused,
 			Notification_Unpaused,
+			Notification_Ready,
 			Notification_Process,
 			Notification_PhysicsProcess,
 			Notification_Parented,
@@ -54,40 +61,52 @@ namespace ism
 		};
 
 	protected:
+		friend class SceneTree;
+
+		StringName		m_name{};
 		SceneTree *		m_tree{};
 		Node *			m_parent{};
 		Vector<Node *>	m_nodes{};
 
-		Node();
-
-	public:
-		virtual ~Node() override;
-
-		void propagate_notification(i32 id, bool reverse = false);
-
-	protected:
 		void _notification(Notification_ id);
 
+		virtual void _process(Duration const delta_time);
+		virtual void _physics_process(Duration const delta_time);
+		virtual void _enter_tree();
+		virtual void _exit_tree();
+		virtual void _ready();
+		virtual void _input();
+
 	public:
+		StringName get_name() const noexcept { return m_name; }
+		void set_name(StringName const & name);
+
 		SceneTree * get_tree() const noexcept { return m_tree; }
 		bool set_tree(SceneTree * tree);
 
 		Node * get_parent() const noexcept { return m_parent; }
 		bool set_parent(Node * parent);
 
+		Node * get_sibling(size_t const index) const;
 		size_t get_sibling_index() const;
-		void set_sibling_index(size_t i);
+		void set_sibling_index(size_t const index);
 
-		Node * get_child(size_t i) const noexcept { VERIFY_RANGE(i, -1, get_child_count()); return m_nodes[i]; }
+		Node * get_child(size_t const index) const;
 		size_t get_child_count() const noexcept { return m_nodes.size(); }
 
 		template <class T, class ... Args
 		> T * add_child(Args && ... args) { return (T *)add_child(memnew(T(args...))); }
 		Node * add_child(Node * child);
-		void destroy_child(size_t i);
+		void destroy_child(size_t const index);
 		
 		bool is_child_of(Node const * parent, bool recursive = false) const;
 		bool is_parent_of(Node const * child, bool recursive = false) const;
+
+	public:
+		void propagate_notification(i32 id, bool reverse = false);
+
+		Node();
+		virtual ~Node() override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

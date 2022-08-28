@@ -1,0 +1,29 @@
+#ifndef _ISM_NATIVE_INTERFACE_HPP_
+#define _ISM_NATIVE_INTERFACE_HPP_
+
+// PLACEHOLDER
+
+#include <core/typedefs.hpp>
+
+namespace ism
+{
+	enum InitializationLevel_
+	{
+		InitializationLevel_Core,
+		InitializationLevel_Servers,
+		InitializationLevel_Scene,
+		InitializationLevel_Editor,
+	};
+
+	struct NativeInterface
+	{
+		u32		version_major;
+		u32		version_minor;
+		u32		version_patch;
+		cstring	version_string;
+		
+		// etc...
+	};
+}
+
+#endif // !_ISM_NATIVE_INTERFACE_HPP_

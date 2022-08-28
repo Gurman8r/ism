@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	DS * DS::__singleton{};
+	DisplayServer * DisplayServer::__singleton{};
 
 	EMBED_OBJECT_CLASS(DisplayServer, t, TypeFlags_IsAbstract) {}
 

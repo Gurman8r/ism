@@ -108,7 +108,7 @@ namespace ism
 
 	// polymorphic allocator base
 	template <class T
-	> ALIAS(_PolymorphicAllocatorBase) std::pmr::polymorphic_allocator<T>;
+	> using _PolymorphicAllocatorBase = std::pmr::polymorphic_allocator<T>;
 
 	// polymorphic allocator
 	template <class T = u8
@@ -121,7 +121,7 @@ namespace ism
 	};
 
 	// default allocator
-	ALIAS(DefaultAllocator) PolymorphicAllocator<u8>;
+	using DefaultAllocator = PolymorphicAllocator<u8>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

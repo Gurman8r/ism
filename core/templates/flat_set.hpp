@@ -498,10 +498,10 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class _Ty, class _Pr = Less<_Ty>, size_t _Th = 42
-	> ALIAS(FlatSet) BasicFlatSet<_Ty, _Pr, false, _Th>;
+	> using FlatSet = BasicFlatSet<_Ty, _Pr, false, _Th>;
 
 	template <class _Ty, class _Pr = Less<_Ty>, size_t _Th = 42
-	> ALIAS(FlatMultiset) BasicFlatSet<_Ty, _Pr, true, _Th>;
+	> using FlatMultiset = BasicFlatSet<_Ty, _Pr, true, _Th>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

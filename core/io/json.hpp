@@ -1,7 +1,7 @@
 #ifndef _ISM_JSON_HPP_
 #define _ISM_JSON_HPP_
 
-#include <core/typedefs.hpp>
+#include <core/object/dict_object.hpp>
 
 #include <nlohmann/json.hpp>
 
@@ -9,7 +9,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ALIAS(Json) nlohmann::basic_json
+	using Json = nlohmann::basic_json
 	<
 		std::map,
 		std::vector,
@@ -19,6 +19,24 @@ namespace ism
 		nlohmann::adl_serializer,
 		std::vector<u8>
 	>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API JsonUtility final
+	{
+	public:
+		template <class T
+		> static DICT to_json(T const & value)
+		{
+			return {};
+		}
+
+		template <class T
+		> static Optional<T> from_json(DICT const & json)
+		{
+			return nullopt;
+		}
+	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
