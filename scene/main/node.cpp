@@ -1,5 +1,6 @@
 #include <scene/main/node.hpp>
 #include <scene/main/scene_tree.hpp>
+#include <core/input/input.hpp>
 
 namespace ism
 {
@@ -7,37 +8,37 @@ namespace ism
 
 	EMBED_OBJECT_CLASS(Node, t, TypeFlags_IsAbstract) {}
 
+	i32 Node::__orphan_node_count{};
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	void Node::_notification(Notification_ value)
 	{
 		switch (value)
 		{
-		case Notification_EnterTree: { _enter_tree(); } break;
-		case Notification_ExitTree: { _exit_tree(); } break;
-		case Notification_Ready: { _ready(); } break;
-		case Notification_Paused: {} break;
-		case Notification_Unpaused: {} break;
-		case Notification_Process: { _process(get_tree()->get_delta_time()); } break;
-		case Notification_PhysicsProcess: { _physics_process(get_tree()->get_delta_time()); } break;
-		case Notification_Parented: {} break;
-		case Notification_Unparented: {} break;
-		case Notification_Instanced: {} break;
-		case Notification_DragBegin: {} break;
-		case Notification_DragEnd: {} break;
-		case Notification_PathChanged: {} break;
-		case Notification_Internal_Process: {} break;
-		case Notification_Internal_PhysicsProcess: {} break;
-		case Notification_MemoryWarning: {} break;
-		case Notification_Crash: {} break;
-		case Notification_ApplicationResumed: {} break;
-		case Notification_ApplicationPaused: {} break;
-		case Notification_ApplicationFocusIn: {} break;
-		case Notification_ApplicationFocusOut: {} break;
+		case Notification_Process: {
+			_process(get_tree()->get_delta_time());
+		} break;
+		case Notification_PhysicsProcess: {
+			_physics_process(get_tree()->get_delta_time());
+		} break;
+		case Notification_EnterTree: {
+			_enter_tree();
+		} break;
+		case Notification_ExitTree: {
+			_exit_tree();
+		} break;
+		case Notification_Ready: {
+			_ready();
+		} break;
+		case Notification_PathChanged: {
+		} break;
+		case Notification_PostInitialize: {
+		} break;
+		case Notification_PreDelete: {
+		} break;
 		}
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	void Node::_process(Duration const delta_time)
 	{
@@ -59,72 +60,93 @@ namespace ism
 	{
 	}
 
-	void Node::_input()
+	void Node::_input(InputEvent const & input_event)
 	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	StringName Node::get_name() const
+	{
+		return m_data.name;
+	}
+
 	void Node::set_name(StringName const & name)
 	{
 	}
 
+	SceneTree * Node::get_tree() const
+	{
+		return m_data.tree;
+	}
+
 	bool Node::set_tree(SceneTree * tree)
 	{
-		if (!tree || m_tree == tree) { return false; }
-		m_tree = tree;
-		for (Node * child : m_nodes) { child->set_tree(tree); }
+		if (!tree || m_data.tree == tree) { return false; }
+		m_data.tree = tree;
+		for (Node * child : m_data.children) { child->set_tree(tree); }
 		return true;
+	}
+
+	Node * Node::get_parent() const
+	{
+		return m_data.parent;
 	}
 
 	bool Node::set_parent(Node * parent)
 	{
-		if (!parent || this == parent || m_parent == parent) { return false; }
+		if (!parent || this == parent || m_data.parent == parent) { return false; }
 
 		// add to new parent
-		parent->m_nodes.push_back(this);
+		parent->m_data.children.push_back(this);
 
 		// remove from old parent
-		if (m_parent) {
-			m_parent->m_nodes.erase(m_parent->m_nodes.begin() + get_sibling_index());
+		if (m_data.parent) {
+			m_data.parent->m_data.children.erase(m_data.parent->m_data.children.begin() + get_sibling_index());
 		}
 
-		m_parent = parent;
-		m_tree = parent->m_tree;
+		m_data.parent = parent;
+		m_data.tree = parent->m_data.tree;
 		return true;
 	}
 
 	Node * Node::get_sibling(size_t const index) const
 	{
-		return nullptr;
+		ASSERT(m_data.parent && index < m_data.parent->m_data.children.size());
+
+		return m_data.parent->m_data.children[index];
 	}
 
 	size_t Node::get_sibling_index() const
 	{
 		size_t i{};
 
-		while (m_parent && (i < m_parent->m_nodes.size()) && (this != m_parent->m_nodes[i])) { ++i; }
+		while (m_data.parent && (i < m_data.parent->m_data.children.size()) && (this != m_data.parent->m_data.children[i])) { ++i; }
 
 		return i;
 	}
 
 	void Node::set_sibling_index(size_t new_index)
 	{
-		ASSERT(m_parent);
+		ASSERT(m_data.parent);
 
-		ASSERT(new_index < m_parent->m_nodes.size());
+		ASSERT(new_index < m_data.parent->m_data.children.size());
 		
 		size_t const old_index{ get_sibling_index() };
 
 		if (new_index == old_index) { return; }
 		
-		util::swap(m_parent->m_nodes[new_index], m_parent->m_nodes[old_index]);
+		util::swap(m_data.parent->m_data.children[new_index], m_data.parent->m_data.children[old_index]);
 	}
 
 	Node * Node::get_child(size_t const index) const
 	{
-		VERIFY_RANGE(index, -1, get_child_count());
-		return m_nodes[index];
+		VERIFY_RANGE(index, -1, get_child_count()); return m_data.children[index];
+	}
+
+	size_t Node::get_child_count() const
+	{
+		return m_data.children.size();
 	}
 
 	Node * Node::add_child(Node * child)
@@ -134,26 +156,26 @@ namespace ism
 
 	void Node::destroy_child(size_t const index)
 	{
-		ASSERT(index < m_nodes.size());
+		ASSERT(index < m_data.children.size());
 
-		auto const it{ m_nodes.begin() + index };
+		auto const it{ m_data.children.begin() + index };
 
 		if (*it) { memdelete(*it); }
 
-		m_nodes.erase(it);
+		m_data.children.erase(it);
 	}
 
 	bool Node::is_child_of(Node const * parent, bool recursive) const
 	{
-		if ((this == parent) || !parent || !m_parent) { return false; }
-		else if (m_parent == parent) { return true; }
+		if ((this == parent) || !parent || !m_data.parent) { return false; }
+		else if (m_data.parent == parent) { return true; }
 		else if (recursive)
 		{
-			Node * it{ m_parent->m_parent };
+			Node * it{ m_data.parent->m_data.parent };
 			while (it)
 			{
 				if (it == parent) { return true; }
-				it = it->m_parent;
+				it = it->m_data.parent;
 			}
 		}
 		return false;
@@ -161,15 +183,15 @@ namespace ism
 
 	bool Node::is_parent_of(Node const * child, bool recursive) const
 	{
-		if ((this == child) || !child || !child->m_parent) { return false; }
-		else if (this == child->m_parent) { return true; }
+		if ((this == child) || !child || !child->m_data.parent) { return false; }
+		else if (this == child->m_data.parent) { return true; }
 		else if (recursive)
 		{
-			Node * it{ child->m_parent->m_parent };
+			Node * it{ child->m_data.parent->m_data.parent };
 			while (it)
 			{
 				if (it == this) { return true; }
-				it = it->m_parent;
+				it = it->m_data.parent;
 			}
 		}
 		return false;
@@ -181,7 +203,7 @@ namespace ism
 	{
 		notification(id, reverse);
 
-		for (Node * child : m_nodes)
+		for (Node * child : m_data.children)
 		{
 			child->propagate_notification(id, reverse);
 		}
@@ -189,18 +211,16 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Node::Node()
-	{
-	}
+	Node::Node() { ++__orphan_node_count; }
 
 	Node::~Node()
 	{
-		while (!m_nodes.empty())
-		{
-			memdelete(m_nodes.back());
-
-			m_nodes.pop_back();
+		while (!m_data.children.empty()) {
+			memdelete(m_data.children.back());
+			m_data.children.pop_back();
 		}
+
+		--__orphan_node_count;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

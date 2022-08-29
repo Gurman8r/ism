@@ -37,38 +37,43 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 using namespace ism;
+
 i32 Main::m_iterating{};
 u64 Main::m_frame{};
 
-static bool editor{ true };
+static Internals *			internals{};
+static Performance *		performance{};
+static Input *				input{};
+static AudioServer *		audio_server{};
+static DisplayServer *		display_server{};
+static RenderingServer *	rendering_server{};
+static PhysicsServer *		physics_server{};
+static TextServer *			text_server{};
+static ImGuiContext *		gui_context{};
 
-static Internals *			g_internals{};
-static Input *				g_input{};
-static AudioServer *		g_audio{};
-static DisplayServer *		g_display{};
-static PhysicsServer *		g_physics{};
-static RenderingServer *	g_renderer{};
-static ImGuiContext *		g_imgui{};
-static TextServer *			g_text{};
+static bool editor{ true };
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 {
 	OS::get_singleton()->initialize();
-	g_internals = memnew(Internals);
+
+	internals = memnew(Internals);
+	performance = memnew(Performance);
+
 	register_core_types();
 	register_core_driver_types();
 	register_core_settings();
-
+	OS::get_singleton()->set_cmdline(exepath, { argv, argv + argc });
 	register_server_types();
-	
-	//register_module_types();
 
-	g_input = memnew(Input);
-	g_display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
-	g_renderer = memnew(RenderingServerDefault);
-	g_audio = memnew(AudioServer);
+	input = memnew(Input);
+	text_server = memnew(TextServer);
+	display_server = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
+	rendering_server = memnew(RenderingServerDefault);
+	audio_server = memnew(AudioServer);
+
 	register_core_singletons();
 	register_scene_types();
 	register_driver_types();
@@ -77,23 +82,21 @@ Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 #endif
 	register_platform_apis();
 
+	//initialize_theme();
+	
+	physics_server = memnew(PhysicsServer);
 	
 	register_server_singletons();
 	
-	OS::get_singleton()->set_cmdline(exepath, { argv, argv + argc });
-
-	g_text = memnew(TextServer);
-
-
-	g_imgui = VALIDATE(ImGui::CreateContext());
-	g_imgui->IO.LogFilename = nullptr;
-	g_imgui->IO.IniFilename = nullptr;
-	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	g_imgui->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	//init_languages();
+	
+	gui_context = VALIDATE(ImGui::CreateContext());
+	gui_context->IO.LogFilename = nullptr;
+	gui_context->IO.IniFilename = nullptr;
+	gui_context->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+	gui_context->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	gui_context->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	ASSERT(ImGui_Init());
-
-	g_physics = memnew(PhysicsServer);
 
 	return Error_None;
 }
@@ -108,7 +111,9 @@ bool Main::start()
 
 	TYPE main_loop_type{};
 
-	if (script) { /* TODO: load main loop from script */ }
+	if (script) {
+		/* TODO: load main loop from script */
+	}
 
 	if (!main_loop && !main_loop_type) {
 		main_loop_type = typeof<SceneTree>();
@@ -125,8 +130,6 @@ bool Main::start()
 		SceneTree * tree{ (SceneTree *)*main_loop };
 
 		Window * root{ tree->get_root() };
-
-		root->add_child<ImGuiNode>();
 
 #if TOOLS_ENABLED
 		if (editor) { root->add_child<EditorNode>(); }
@@ -154,9 +157,9 @@ bool Main::iteration()
 
 	bool should_close{ false };
 
-	// TODO: physics stuff goes here
+	// TODO: physics_server stuff goes here
 
-	g_display->poll_events();
+	display_server->poll_events();
 
 	Input::get_singleton()->iteration(delta_time);
 
@@ -165,67 +168,57 @@ bool Main::iteration()
 	ImGui::Render();
 
 	RD::get_singleton()->draw_list_begin_for_screen();
-	ImGui_RenderDrawData(&g_imgui->Viewports[0]->DrawDataP);
+	ImGui_RenderDrawData(&gui_context->Viewports[0]->DrawDataP);
 	RD::get_singleton()->draw_list_end();
 
-	if (g_imgui->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
+	if (gui_context->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
 	}
 
-	g_display->swap_buffers();
+	display_server->swap_buffers();
 
 	return should_close;
 }
 
 void Main::cleanup()
 {
-	//ResourceLoader::remove_custom_loaders();
-	//ResourceSaver::remove_custom_savers();
+	//remove_custom_loaders();
+	//remove_custom_savers();
 
 	OS::get_singleton()->get_main_loop()->finalize();
 	OS::get_singleton()->delete_main_loop();
 
-	//ScriptServer::finish_languages();
+	//finish_languages();
 
 #if TOOLS_ENABLED
 	unregister_editor_types();
 #endif
-
 	unregister_driver_types();
-	
-	//unregister_module_types();
-	
 	unregister_platform_apis();
-	
 	unregister_server_types();
-	
 	unregister_scene_types();
 
-	memdelete(g_audio);
+	memdelete(audio_server);
 
 	OS::get_singleton()->finalize();
 
-	ImGui_Shutdown(); ImGui::DestroyContext(g_imgui);
+	ImGui_Shutdown();
+	ImGui::DestroyContext(gui_context);
+	rendering_server->finalize();
 
-	g_renderer->finalize();
-	
-	memdelete(g_renderer);
-	
-	memdelete(g_display);
-	
-	memdelete(g_physics);
-	
-	memdelete(g_input);
-	
-	memdelete(g_text);
+	memdelete(rendering_server);
+	memdelete(display_server);
+	memdelete(physics_server);
+	memdelete(text_server);
+	memdelete(input);
 
 	unregister_core_driver_types();
-	
 	unregister_core_types();
 
-	memdelete(g_internals);
-	
+	memdelete(performance);
+	memdelete(internals);
+
 	OS::get_singleton()->finalize_core();
 }
 

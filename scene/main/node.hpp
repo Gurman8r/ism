@@ -14,6 +14,10 @@ namespace ism
 	{
 		OBJECT_CLASS(Node, Object);
 
+		friend class SceneTree;
+
+		static i32 __orphan_node_count;
+
 	public:
 		enum ProcessMode_
 		{
@@ -61,12 +65,15 @@ namespace ism
 		};
 
 	protected:
-		friend class SceneTree;
-
-		StringName		m_name{};
-		SceneTree *		m_tree{};
-		Node *			m_parent{};
-		Vector<Node *>	m_nodes{};
+		struct Data
+		{
+			StringName		name{};
+			SceneTree *		tree{};
+			Node *			parent{};
+			Vector<Node *>	children{};
+			Viewport *		viewport{};
+		}
+		m_data{};
 
 		void _notification(Notification_ id);
 
@@ -75,16 +82,16 @@ namespace ism
 		virtual void _enter_tree();
 		virtual void _exit_tree();
 		virtual void _ready();
-		virtual void _input();
+		virtual void _input(InputEvent const & input_event);
 
 	public:
-		StringName get_name() const noexcept { return m_name; }
+		StringName get_name() const;
 		void set_name(StringName const & name);
 
-		SceneTree * get_tree() const noexcept { return m_tree; }
+		SceneTree * get_tree() const;
 		bool set_tree(SceneTree * tree);
 
-		Node * get_parent() const noexcept { return m_parent; }
+		Node * get_parent() const;
 		bool set_parent(Node * parent);
 
 		Node * get_sibling(size_t const index) const;
@@ -92,17 +99,18 @@ namespace ism
 		void set_sibling_index(size_t const index);
 
 		Node * get_child(size_t const index) const;
-		size_t get_child_count() const noexcept { return m_nodes.size(); }
+		size_t get_child_count() const;
 
 		template <class T, class ... Args
-		> T * add_child(Args && ... args) { return (T *)add_child(memnew(T(args...))); }
+		> T * add_child(Args && ... args) noexcept { return (T *)add_child((Node *)memnew(T(args...))); }
 		Node * add_child(Node * child);
 		void destroy_child(size_t const index);
 		
 		bool is_child_of(Node const * parent, bool recursive = false) const;
 		bool is_parent_of(Node const * child, bool recursive = false) const;
 
-	public:
+		FORCE_INLINE Viewport * get_viewport() const { return m_data.viewport; }
+
 		void propagate_notification(i32 id, bool reverse = false);
 
 		Node();

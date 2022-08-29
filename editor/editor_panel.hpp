@@ -40,7 +40,6 @@ namespace ism
 		void set_flags(ImGuiWindowFlags value) noexcept { m_flags = value; }
 
 		auto get_window() const noexcept -> ImGuiWindow * { return m_window; }
-		auto operator->() const noexcept -> ImGuiWindow * { return m_window; }
 
 	protected:
 		virtual bool begin_window();

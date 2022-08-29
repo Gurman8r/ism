@@ -7,23 +7,30 @@
 
 namespace ism
 {
-	enum InitializationLevel_
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	enum NativeInitializationLevel_
 	{
-		InitializationLevel_Core,
-		InitializationLevel_Servers,
-		InitializationLevel_Scene,
-		InitializationLevel_Editor,
+		NativeInitializationLevel_Core,
+		NativeInitializationLevel_Servers,
+		NativeInitializationLevel_Scene,
+		NativeInitializationLevel_Editor,
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct NativeInterface
 	{
-		u32		version_major;
-		u32		version_minor;
-		u32		version_patch;
-		cstring	version_string;
+		u32		version_major{};
+		u32		version_minor{};
+		u32		version_patch{};
+		u32		version_build{};
+		cstring	version_string{};
 		
 		// etc...
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_NATIVE_INTERFACE_HPP_

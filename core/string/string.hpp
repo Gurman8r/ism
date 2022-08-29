@@ -141,8 +141,8 @@ namespace ism
 	// string
 	using String = BasicString<char>;
 
-	// wide string
-	using WideString = BasicString<wchar_t>;
+	// unicode
+	using Unicode = BasicString<wchar_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -150,7 +150,7 @@ namespace ism
 
 	inline String operator "" _s(cstring s, size_t n) noexcept { return String{ s, n }; }
 
-	inline WideString operator "" _s(cwstring s, size_t n) noexcept { return WideString{ s, n }; }
+	inline Unicode operator "" _s(cwstring s, size_t n) noexcept { return Unicode{ s, n }; }
 
 	template <class C> struct Hasher<BasicString<C>>
 	{

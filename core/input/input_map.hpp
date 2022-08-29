@@ -1,6 +1,8 @@
 #ifndef _ISM_INPUT_MAP_HPP_
 #define _ISM_INPUT_MAP_HPP_
 
+// PLACEHOLDER
+
 #include <core/input/input_event.hpp>
 
 namespace ism

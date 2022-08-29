@@ -2,6 +2,7 @@
 #define _ISM_SCENE_TREE_HPP_
 
 #include <core/os/main_loop.hpp>
+
 #include <main/performance.hpp>
 
 #include <entt/entt.hpp>
@@ -14,6 +15,7 @@ namespace ism
 	class Entity;
 	class Viewport;
 	class Window;
+	class InputEvent;
 
 	using EntityID = entt::entity;
 	using EntityRegistry = entt::registry;
@@ -30,12 +32,20 @@ namespace ism
 		friend class Entity;
 
 		static SceneTree * __singleton;
+		
+		bool			m_initialized : 1, m_should_close : 1;
+		Clock			m_main_timer{};
+		Duration		m_delta_time{};
+		FPS_Tracker		m_fps_tracker{};
+		Window *		m_root{};
+		EntityRegistry	m_ecs{};
 
 	public:
 		SceneTree();
 		virtual ~SceneTree() override;
 		FORCE_INLINE static SceneTree * get_singleton() noexcept { return __singleton; }
 
+	public:
 		virtual void initialize() override;
 		virtual bool process(Duration const & dt) override;
 		virtual void finalize() override;
@@ -51,14 +61,6 @@ namespace ism
 
 	protected:
 		template <class T> void on_component_added(class Entity &, T &) {}
-
-	private:
-		bool			m_initialized : 1, m_should_close : 1;
-		Clock			m_main_timer{};
-		Duration		m_delta_time{};
-		FPS_Tracker		m_fps_tracker{};
-		Window *		m_root{};
-		EntityRegistry	m_ecs{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

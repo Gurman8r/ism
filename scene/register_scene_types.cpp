@@ -1,7 +1,8 @@
 #include <scene/register_scene_types.hpp>
-#include <scene/main/window.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/components/script_component.hpp>
+#include <scene/main/window.hpp>
+#include <scene/main/missing_node.hpp>
+#include <scene/main/entity.hpp>
 
 #include <scene/resources/font.hpp>
 #include <scene/resources/material.hpp>
@@ -18,13 +19,10 @@ namespace ism
 		<
 			SceneTree,
 			Node,
+			MissingNode,
 			Viewport,
 			Window,
 			Entity,
-	
-			Component,
-			BehaviorComponent,
-			ScriptComponent,
 	
 			Font,
 			Material,

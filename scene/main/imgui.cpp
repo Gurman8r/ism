@@ -55,28 +55,3 @@ void ism::ImGui_RenderDrawData(ImDrawData * draw_data)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-namespace ism
-{
-	EMBED_OBJECT_CLASS(ImGuiNode, t) {}
-
-	ImGuiNode::ImGuiNode()
-	{
-	}
-
-	ImGuiNode::~ImGuiNode()
-	{
-	}
-
-	void ImGuiNode::_notification(Notification_ id)
-	{
-		switch (id)
-		{
-		case Notification_Process: {
-			// TOOD
-		} break;
-		}
-	}
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

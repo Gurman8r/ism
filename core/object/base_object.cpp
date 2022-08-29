@@ -74,7 +74,7 @@ namespace ism
 
 	TYPE Object::get_type() const noexcept
 	{
-		return BRANCHLESS(!m_type, m_type = _get_typev()), m_type;
+		return BRANCHLESS_IF(!m_type, m_type = _get_typev()), m_type;
 	}
 
 	void Object::set_type(TYPE const & value) noexcept

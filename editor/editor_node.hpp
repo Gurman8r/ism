@@ -1,17 +1,23 @@
 #ifndef _ISM_EDITOR_NODE_HPP_
 #define _ISM_EDITOR_NODE_HPP_
 
+#include <scene/main/window.hpp>
+#include <scene/main/scene_tree.hpp>
+
 #include <scene/resources/font.hpp>
 #include <scene/resources/material.hpp>
 #include <scene/resources/mesh.hpp>
 #include <scene/resources/text_file.hpp>
 
-#include <editor/editor_hierarchy.hpp>
-#include <editor/editor_log.hpp>
-#include <editor/editor_viewport.hpp>
-
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class EditorFileSystem;
+	class EditorHierarchy;
+	class EditorLog;
+	class EditorViewport;
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// main editor
@@ -21,15 +27,18 @@ namespace ism
 
 		static EditorNode * __singleton;
 
+		friend class EditorFileSystem;
 		friend class EditorHierarchy;
 		friend class EditorLog;
 		friend class EditorViewport;
 
-		bool				m_show_imgui_demo{};
-		bool				m_show_main_menu_bar{ true };
-		EditorHierarchy		m_hierarchy{};
-		EditorLog			m_log{};
-		EditorViewport		m_viewport{};
+		EditorFileSystem	* m_filesystem{};
+		EditorHierarchy		* m_hierarchy{};
+		EditorLog			* m_log{};
+		EditorViewport		* m_viewport{};
+
+		bool m_show_main_menu_bar{ true };
+		bool m_show_imgui_demo{};
 
 		Ref<SceneTree>				m_active_scene{};
 		Map<String, Ref<Image>>		m_images{};

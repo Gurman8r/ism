@@ -1,11 +1,12 @@
 #ifndef _ISM_PERFORMANCE_HPP_
 #define _ISM_PERFORMANCE_HPP_
 
-#include <core/os/time.hpp>
-#include <core/templates/vector.hpp>
+#include <core/object/detail/class.hpp>
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct FPS_Tracker final
 	{
 		f32			value{};
@@ -13,10 +14,7 @@ namespace ism
 		size_t		index{};
 		Vector<f32>	times{};
 
-		FPS_Tracker(size_t count = 120) noexcept : value{}, accum{}, index{}, times{}
-		{
-			times.resize(count);
-		}
+		FPS_Tracker(size_t count = 120) noexcept { times.resize(count); }
 
 		void update(Duration const & dt) noexcept
 		{
@@ -26,6 +24,21 @@ namespace ism
 			value = (0.f < accum) ? (1.f / (accum / (f32)times.size())) : FLT_MAX;
 		}
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ISM_API Performance : public Object
+	{
+		OBJECT_CLASS(Performance, Object);
+
+		static Performance * __singleton;
+
+	public:
+		Performance();
+		~Performance();
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_PERFORMANCE_HPP_

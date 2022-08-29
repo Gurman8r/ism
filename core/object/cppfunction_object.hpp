@@ -1,7 +1,7 @@
 #ifndef _ISM_CPPFUNCTION_OBJECT_HPP_
 #define _ISM_CPPFUNCTION_OBJECT_HPP_
 
-#include <core/object/detail/ctor.hpp>
+#include <core/object/detail/initimpl.hpp>
 
 // cppfunction
 namespace ism
@@ -100,21 +100,16 @@ namespace ism
 			rec->impl = [](FunctionCall & call) -> OBJ
 			{
 				ArgumentLoader<Args...> args{};
-
 				if (!args.load_args(call.args)) { call.try_next_overload = true; return nullptr; }
 
 				attr::process_attributes<Extra...>::precall(call); // precall
 
 				auto data{ (sizeof(Capture) <= sizeof(call.record.data) ? &call.record.data : call.record.data[0]) };
-
 				auto capture{ (Capture *)(reinterpret_cast<Capture const *>(data)) };
-
 				ReturnPolicy_ policy{ return_policy_override<Return>::policy(call.record.policy) };
 
 				using Guard = attr::extract_guard_t<Extra...>;
-
 				using Yield = make_caster<std::conditional_t<std::is_void_v<Return>, mpl::void_type, Return>>;
-
 				OBJ result{ Yield::cast(std::move(args).call<Return, Guard>(capture->value), policy, call.parent) };
 
 				attr::process_attributes<Extra...>::postcall(call, result); // postcall

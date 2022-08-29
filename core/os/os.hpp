@@ -22,7 +22,7 @@ namespace ism
 
 		Path				m_exepath{};
 		Vector<String>		m_cmdline{};
-		i32				m_exit_code{};
+		i32					m_exit_code{};
 		CompositeLogger *	m_logger{};
 
 	public:

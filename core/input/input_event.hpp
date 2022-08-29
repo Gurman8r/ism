@@ -1,6 +1,8 @@
 #ifndef _ISM_INPUT_EVENT_HPP_
 #define _ISM_INPUT_EVENT_HPP_
 
+// PLACEHOLDER
+
 #include <core/io/resource.hpp>
 
 namespace ism

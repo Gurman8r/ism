@@ -31,7 +31,7 @@ namespace ism
 
 	// assert
 #define ASSERT(m_expr) \
-		(UNUSED((!!(m_expr)) || (CRASH(TOSTR(m_expr)), 0)))
+		BRANCHLESS_IF(!(m_expr), CRASH(TOSTR(m_expr)))
 
 	// debug assert
 #if DEBUG_ENABLED
@@ -48,7 +48,7 @@ namespace ism
 		template <class T
 		> auto _validate(T && expr, cwstring message, cwstring file, u32 line) noexcept -> decltype(FWD(expr))
 		{
-			return BRANCHLESS(!(expr), _crash(message, file, line)), FWD(expr);
+			return BRANCHLESS_IF(!(expr), _crash(message, file, line)), FWD(expr);
 		}
 	}
 

@@ -7,10 +7,10 @@ namespace ism
 {
 	enum ModuleInitializationLevel_
 	{
-		ModuleInitializationLevel_Core = InitializationLevel_Core,
-		ModuleInitializationLevel_Servers = InitializationLevel_Servers,
-		ModuleInitializationLevel_Scene = InitializationLevel_Scene,
-		ModuleInitializationLevel_Editor = InitializationLevel_Editor,
+		ModuleInitializationLevel_Core = NativeInitializationLevel_Core,
+		ModuleInitializationLevel_Servers = NativeInitializationLevel_Servers,
+		ModuleInitializationLevel_Scene = NativeInitializationLevel_Scene,
+		ModuleInitializationLevel_Editor = NativeInitializationLevel_Editor,
 	};
 
 	ISM_API_FUNC(void) initialize_modules(ModuleInitializationLevel_ level);

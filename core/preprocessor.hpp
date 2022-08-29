@@ -44,7 +44,7 @@
 		((void)(expr))
 
 // branchless if statement
-#define BRANCHLESS(m_condition, m_expr) \
+#define BRANCHLESS_IF(m_condition, m_expr) \
 		(UNUSED((!(m_condition)) || ((m_expr), 0)))
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -59,18 +59,6 @@
 		{														\
 			return _MAP_##m_from##_TO_##m_to##_[(size_t)i];		\
 		}														\
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// non-copyable
-#define NON_COPYABLE(T)							\
-		T(T const &) = delete;					\
-		T & operator=(T const &) = delete;		\
-
-// non-movable
-#define NON_MOVABLE(T)							\
-		T(T &&) noexcept = delete;				\
-		T & operator=(T &&) noexcept = delete;	\
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -137,6 +125,43 @@ namespace ism::priv
 
 #define ON_SCOPE_EXIT(...) \
 		auto ANON(temp) = (ism::priv::OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// non-copyable
+#define NON_COPYABLE(T) \
+		T(T const &) = delete; \
+		T & operator=(T const &) = delete;
+
+// non-movable
+#define NON_MOVABLE(T) \
+		T(T &&) noexcept = delete; \
+		T & operator=(T &&) noexcept = delete;
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// wrap forward iterators
+#define WRAP_FORWARD_ITERATORS(m_container) \
+		NODISCARD auto begin() noexcept -> decltype(m_container)::iterator { return m_container.begin(); } \
+		NODISCARD auto begin() const noexcept -> decltype(m_container)::const_iterator { return m_container.begin(); } \
+		NODISCARD auto cbegin() const noexcept -> decltype(m_container)::const_iterator { return m_container.cbegin(); } \
+		NODISCARD auto end() noexcept -> decltype(m_container)::iterator { return m_container.end(); } \
+		NODISCARD auto end() const noexcept -> decltype(m_container)::const_iterator { return m_container.end(); } \
+		NODISCARD auto cend() const noexcept -> decltype(m_container)::const_iterator { return m_container.cend(); }
+
+// wrap reverse iterators
+#define WRAP_REVERSE_ITERATORS(m_container) \
+		NODISCARD auto rbegin() noexcept -> decltype(m_container)::reverse_iterator { return m_container.rbegin(); } \
+		NODISCARD auto rbegin() const noexcept -> decltype(m_container)::const_reverse_iterator { return m_container.rbegin(); } \
+		NODISCARD auto crbegin() const noexcept -> decltype(m_container)::const_reverse_iterator { return m_container.crbegin(); } \
+		NODISCARD auto rend() noexcept -> decltype(m_container)::reverse_iterator { return m_container.rend(); } \
+		NODISCARD auto rend() const noexcept -> decltype(m_container)::const_reverse_iterator { return m_container.rend(); } \
+		NODISCARD auto crend() const noexcept -> decltype(m_container)::const_reverse_iterator { return m_container.crend(); }
+
+// wrap all iterators
+#define WRAP_ALL_ITERATORS(m_container) \
+		WRAP_FORWARD_ITERATORS(m_container) \
+		WRAP_REVERSE_ITERATORS(m_container)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

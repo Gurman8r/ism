@@ -1,4 +1,9 @@
 #include <editor/editor_node.hpp>
+#include <editor/editor_filesystem.hpp>
+#include <editor/editor_hierarchy.hpp>
+#include <editor/editor_log.hpp>
+#include <editor/editor_viewport.hpp>
+
 #include <scene/main/imgui.hpp>
 #include <core/math/face3.hpp>
 #include <core/math/transform.hpp>
@@ -112,6 +117,12 @@ namespace ism
 	{
 		ASSERT(!__singleton); __singleton = this;
 
+		m_filesystem = memnew(EditorFileSystem);
+		m_hierarchy = memnew(EditorHierarchy);
+		m_log = memnew(EditorLog);
+		m_viewport = memnew(EditorViewport);
+
+
 		RID c{ RS::get_singleton()->camera_create() };
 		RS::get_singleton()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
 		RS::get_singleton()->camera_set_transform(c, camera.transform);
@@ -195,7 +206,7 @@ namespace ism
 			}),
 		};
 		framebuffer = RD::get_singleton()->framebuffer_create(fb_textures);
-		m_viewport.m_main_texture = fb_textures[0];
+		m_viewport->m_main_texture = fb_textures[0];
 	}
 
 	EditorNode::~EditorNode()
@@ -215,6 +226,11 @@ namespace ism
 		if (framebuffer) { RD::get_singleton()->framebuffer_destroy(framebuffer); }
 		if (backbuffer) { RD::get_singleton()->framebuffer_destroy(backbuffer); }
 		if (pipeline) { RD::get_singleton()->render_pipeline_destroy(pipeline); }
+
+		memdelete(m_filesystem);
+		memdelete(m_hierarchy);
+		memdelete(m_log);
+		memdelete(m_viewport);
 	}
 
 	void EditorNode::_notification(Notification_ id)
@@ -240,8 +256,8 @@ namespace ism
 			if (input->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_move_speed); }
 			else if (input->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_move_speed); }
 
-			if (m_viewport.get_window()) {
-				if (Vec2 const res{ m_viewport->InnerRect.GetWidth(), m_viewport->InnerRect.GetHeight() }
+			if (m_viewport->get_window()) {
+				if (Vec2 const res{ m_viewport->get_window()->InnerRect.GetWidth(), m_viewport->get_window()->InnerRect.GetHeight() }
 				; screen_resolution != res) {
 					screen_resolution = res;
 					camera.projection = perspective(camera.fov, screen_resolution[0] / screen_resolution[1], camera.znear, camera.zfar);
@@ -249,15 +265,15 @@ namespace ism
 				}
 			}
 
-			if (m_viewport.m_is_dragging_view) {
+			if (m_viewport->m_is_dragging_view) {
 				Vec2 const drag{ input->get_mouse_delta() * (f32)delta_time };
 				camera.yaw += drag[0];
 				camera.pitch = constrain(camera.pitch + drag[1], -89.f, 89.f);
 			}
 			camera.transform.set_rotation(camera.pitch, camera.yaw, camera.roll);
 
-			m_viewport.m_camera_proj = camera.projection;
-			m_viewport.m_camera_view = camera.transform;
+			m_viewport->m_camera_proj = camera.projection;
+			m_viewport->m_camera_view = camera.transform;
 
 			{
 				RD::Std140<Mat4, Mat4> scene_state_ubo;
@@ -301,10 +317,11 @@ namespace ism
 
 			// imgui
 			_draw_dockspace();
+			//m_filesystem->process(delta_time);
+			m_hierarchy->process(delta_time);
+			m_log->process(delta_time);
+			m_viewport->process(delta_time);
 			if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
-			m_hierarchy.process(delta_time);
-			m_log.process(delta_time);
-			m_viewport.process(delta_time);
 
 		} break;
 		}
@@ -370,9 +387,9 @@ namespace ism
 		ImGuiID right{ dockspace_id };
 		ImGuiID left_up{ ImGui::DockBuilderSplitNode(right, ImGuiDir_Left, 0.2f, nullptr, &right) };
 		ImGuiID left_down{ ImGui::DockBuilderSplitNode(left_up, ImGuiDir_Down, 0.5f, nullptr, &left_up) };
-		ImGui::DockBuilderDockWindow(m_viewport.get_name(), right);
-		ImGui::DockBuilderDockWindow(m_hierarchy.get_name(), left_up);
-		ImGui::DockBuilderDockWindow(m_log.get_name(), left_down);
+		ImGui::DockBuilderDockWindow(m_viewport->get_name(), right);
+		ImGui::DockBuilderDockWindow(m_hierarchy->get_name(), left_up);
+		ImGui::DockBuilderDockWindow(m_log->get_name(), left_down);
 	}
 
 	void EditorNode::_draw_menu_bar()
@@ -385,9 +402,10 @@ namespace ism
 	
 		if (ImGui::BeginMenu("View")) {
 			if (ImGui::MenuItem("Dear ImGui Demo")) { m_show_imgui_demo = !m_show_imgui_demo; }
-			if (ImGui::MenuItem(m_hierarchy.get_name(), "", m_hierarchy.is_open())) { m_hierarchy.toggle_open(); }
-			if (ImGui::MenuItem(m_log.get_name(), "", m_log.is_open())) { m_log.toggle_open(); }
-			if (ImGui::MenuItem(m_viewport.get_name(), "", m_viewport.is_open())) { m_viewport.toggle_open(); }
+			if (ImGui::MenuItem(m_filesystem->get_name(), "", m_filesystem->is_open())) { m_filesystem->toggle_open(); }
+			if (ImGui::MenuItem(m_hierarchy->get_name(), "", m_hierarchy->is_open())) { m_hierarchy->toggle_open(); }
+			if (ImGui::MenuItem(m_log->get_name(), "", m_log->is_open())) { m_log->toggle_open(); }
+			if (ImGui::MenuItem(m_viewport->get_name(), "", m_viewport->is_open())) { m_viewport->toggle_open(); }
 			ImGui::EndMenu();
 		}
 	}

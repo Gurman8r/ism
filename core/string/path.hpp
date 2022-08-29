@@ -263,18 +263,7 @@ namespace ism
 		NODISCARD bool has_stem() const noexcept { return !util::parse_stem(view()).empty(); }
 		NODISCARD bool has_extension() const noexcept { return !util::parse_extension(view()).empty(); }
 
-		NODISCARD auto begin() noexcept -> iterator { return m_text.begin(); }
-		NODISCARD auto begin() const noexcept -> const_iterator { return m_text.begin(); }
-		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
-		NODISCARD auto end() noexcept -> iterator { return m_text.end(); }
-		NODISCARD auto end() const noexcept -> const_iterator { return m_text.end(); }
-		NODISCARD auto cend() const noexcept -> const_iterator { return m_text.cend(); }
-		NODISCARD auto rbegin() noexcept -> reverse_iterator { return m_text.rbegin(); }
-		NODISCARD auto rbegin() const noexcept -> const_reverse_iterator { return m_text.rbegin(); }
-		NODISCARD auto crbegin() const noexcept -> const_reverse_iterator { return m_text.crbegin(); }
-		NODISCARD auto rend() noexcept -> reverse_iterator { return m_text.rend(); }
-		NODISCARD auto rend() const noexcept -> const_reverse_iterator { return m_text.rend(); }
-		NODISCARD auto crend() const noexcept -> const_reverse_iterator { return m_text.crend(); }
+		WRAP_ALL_ITERATORS(m_text);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

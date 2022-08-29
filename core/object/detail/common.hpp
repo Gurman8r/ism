@@ -1,6 +1,7 @@
 #ifndef _ISM_COMMON_HPP_
 #define _ISM_COMMON_HPP_
 
+#include <core/extension/native_interface.hpp>
 #include <core/os/safe_ref_count.hpp>
 #include <core/os/time.hpp>
 #include <core/math/color.hpp>

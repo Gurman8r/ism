@@ -1,4 +1,4 @@
-#include <core/io/file.hpp>
+#include <core/io/file_access.hpp>
 
 #include <filesystem>
 #include <fstream>
@@ -9,18 +9,18 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(File, t, TypeFlags_IsAbstract) {}
+	EMBED_OBJECT_CLASS(FileAccess, t, TypeFlags_IsAbstract) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ File::reopen(Path const & path, i32 flags)
+	Error_ FileAccess::reopen(Path const & path, i32 flags)
 	{
-		return BRANCHLESS(is_open(), close()), open(path, flags);
+		return BRANCHLESS_IF(is_open(), close()), open(path, flags);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	u16 File::get_16() const
+	u16 FileAccess::get_16() const
 	{
 		u8 a{ get_8() }, b{ get_8() };
 		if (BIG_ENDIAN) { util::swap(a, b); }
@@ -28,7 +28,7 @@ namespace ism
 		return c;
 	}
 
-	u32 File::get_32() const
+	u32 FileAccess::get_32() const
 	{
 		u16 a{ get_16() }, b{ get_16() };
 		if (BIG_ENDIAN) { util::swap(a, b); }
@@ -36,7 +36,7 @@ namespace ism
 		return c;
 	}
 
-	u64 File::get_64() const
+	u64 FileAccess::get_64() const
 	{
 		u32 a{ get_32() }, b{ get_32() };
 		if (BIG_ENDIAN) { util::swap(a, b); }
@@ -44,29 +44,29 @@ namespace ism
 		return c;
 	}
 
-	f32 File::get_float() const
+	f32 FileAccess::get_float() const
 	{
 		return f32();
 	}
 
-	f64 File::get_double() const
+	f64 FileAccess::get_double() const
 	{
 		return f64();
 	}
 
-	String File::get_string() const
+	String FileAccess::get_string() const
 	{
 		return String();
 	}
 
-	String File::get_line() const
+	String FileAccess::get_line() const
 	{
 		return String();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void File::put_16(u16 value)
+	void FileAccess::put_16(u16 value)
 	{
 		u8 a; a = value & 0xFF;
 		u8 b; b = value >> 8;
@@ -74,7 +74,7 @@ namespace ism
 		put_8(a); put_8(b);
 	}
 
-	void File::put_32(u32 value)
+	void FileAccess::put_32(u32 value)
 	{
 		u16 a; a = value & 0xFFFF;
 		u16 b; b = value >> 16;
@@ -82,7 +82,7 @@ namespace ism
 		put_16(a); put_16(b);
 	}
 
-	void File::put_64(u64 value)
+	void FileAccess::put_64(u64 value)
 	{
 		u32 a; a = value & 0xFFFFFFFF;
 		u32 b; b = value >> 32;
@@ -90,19 +90,19 @@ namespace ism
 		put_32(a); put_32(b);
 	}
 
-	void File::put_float(f32 value)
+	void FileAccess::put_float(f32 value)
 	{
 	}
 
-	void File::put_double(f64 value)
+	void FileAccess::put_double(f64 value)
 	{
 	}
 
-	void File::put_string(String const & value) const
+	void FileAccess::put_string(String const & value) const
 	{
 	}
 
-	void File::put_line(String const & value) const
+	void FileAccess::put_line(String const & value) const
 	{
 	}
 

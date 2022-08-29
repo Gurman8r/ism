@@ -1,12 +1,16 @@
-#include <scene/components/camera_component.hpp>
+#include <core/io/dir_access.hpp>
+
+#include <filesystem>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(CameraComponent, t) {}
+	EMBED_OBJECT_CLASS(DirAccess, t) {};
 
-	CameraComponent::CameraComponent(Entity * entity) noexcept : BehaviorComponent{ entity } {}
+	DirAccess::DirAccess() {}
+
+	DirAccess::~DirAccess() {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

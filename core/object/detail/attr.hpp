@@ -3,9 +3,6 @@
 
 #include <core/object/detail/call.hpp>
 
-// This is basically just ripped straight from pybind11.
-// I can't think of a better solution, so I'm rolling with this until I do.
-
 namespace ism::attr
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

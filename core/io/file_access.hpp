@@ -1,5 +1,5 @@
-#ifndef _ISM_FILE_HPP_
-#define _ISM_FILE_HPP_
+#ifndef _ISM_FILE_ACCESS_HPP_
+#define _ISM_FILE_ACCESS_HPP_
 
 #include <core/object/detail/class.hpp>
 
@@ -8,9 +8,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// file
-	class ISM_API File : public Object
+	class ISM_API FileAccess : public Object
 	{
-		OBJECT_CLASS(File, Object);
+		OBJECT_CLASS(FileAccess, Object);
 
 	public:
 		enum Access_
@@ -22,8 +22,8 @@ namespace ism
 		};
 
 	public:
-		File() noexcept {}
-		virtual ~File() noexcept override = default;
+		FileAccess() noexcept {}
+		virtual ~FileAccess() noexcept override = default;
 
 	public:
 		virtual Path get_path() const noexcept { return ""_path; }
@@ -59,14 +59,15 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// file default
-	class ISM_API FileDefault : public File
+	class ISM_API FileDefault : public FileAccess
 	{
-		OBJECT_CLASS(FileDefault, File);
+		OBJECT_CLASS(FileDefault, FileAccess);
 
 	public:
 		FileDefault();
 		FileDefault(Path const & path, i32 flags);
 		virtual ~FileDefault() override;
+
 		virtual bool is_open() const override;
 		virtual Error_ open(Path const & path, i32 flags) override;
 		virtual void close() override;
@@ -77,4 +78,4 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_FILE_HPP_
+#endif // !_ISM_FILE_ACCESS_HPP_
