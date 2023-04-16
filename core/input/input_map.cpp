@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(InputMap, t) {}
+	EMBED_CLASS(InputMap, t) {}
 
 	InputMap::InputMap() noexcept {}
 

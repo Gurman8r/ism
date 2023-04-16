@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API Font : public Resource
 	{
-		OBJECT_CLASS(Font, Resource);
+		DEFINE_CLASS(Font, Resource);
 
 		RID m_font;
 

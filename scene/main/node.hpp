@@ -12,7 +12,7 @@ namespace ism
 	// node
 	class ISM_API Node : public Object
 	{
-		OBJECT_CLASS(Node, Object);
+		DEFINE_CLASS(Node, Object);
 
 		friend class SceneTree;
 

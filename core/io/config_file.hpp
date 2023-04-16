@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API ConfigFile : public Resource
 	{
-		OBJECT_CLASS(ConfigFile, Resource);
+		DEFINE_CLASS(ConfigFile, Resource);
 
 		RID m_ini;
 

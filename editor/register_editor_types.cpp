@@ -1,4 +1,6 @@
 #include <editor/register_editor_types.hpp>
+#include <core/extension/extension_manager.hpp>
+
 #include <editor/editor_node.hpp>
 #include <editor/editor_hierarchy.hpp>
 #include <editor/editor_log.hpp>
@@ -8,14 +10,14 @@ namespace ism
 {
 	void register_editor_types()
 	{
-		Internals::get_singleton()->initialize_class
-		<
+		INITIALIZE_CLASS
+		(
 			EditorNode,
 			EditorPanel,
 			EditorHierarchy,
 			EditorLog,
 			EditorViewport
-		>();
+		);
 	}
 	
 	void unregister_editor_types()

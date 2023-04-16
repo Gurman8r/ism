@@ -73,17 +73,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// sink implementation
-#define _IMPL_SINK_(var, ...) \
-		int var[] = { ##__VA_ARGS__ }; \
-		UNUSED(var);
-
-// sink
-#define SINK(...) \
-		_IMPL_SINK_(ANON(temp), ##__VA_ARGS__)
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* ON SCOPE ENTER */
 
 namespace ism::priv

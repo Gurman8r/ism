@@ -9,7 +9,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(RenderingServerDefault, t) {}
+	EMBED_CLASS(RenderingServerDefault, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -59,35 +59,35 @@ namespace ism
 		RD::TextureSwizzle_ swizzle_r{}, swizzle_g{}, swizzle_b{}, swizzle_a{};
 		switch (image->get_format())
 		{
-		case Image::Format_L8: {
+		case ImageFormat_L8: {
 			color_format = RD::DataFormat_R8_UNORM;
 			swizzle_r = RD::TextureSwizzle_R;
 			swizzle_g = RD::TextureSwizzle_R;
 			swizzle_b = RD::TextureSwizzle_R;
 			swizzle_a = RD::TextureSwizzle_One;
 		} break;
-		case Image::Format_LA8: {
+		case ImageFormat_LA8: {
 			color_format = RD::DataFormat_R8G8_UNORM;
 			swizzle_r = RD::TextureSwizzle_R;
 			swizzle_g = RD::TextureSwizzle_R;
 			swizzle_b = RD::TextureSwizzle_R;
 			swizzle_a = RD::TextureSwizzle_G;
 		} break;
-		case Image::Format_R8: {
+		case ImageFormat_R8: {
 			color_format = RD::DataFormat_R8_UNORM;
 			swizzle_r = RD::TextureSwizzle_R;
 			swizzle_g = RD::TextureSwizzle_Zero;
 			swizzle_b = RD::TextureSwizzle_Zero;
 			swizzle_a = RD::TextureSwizzle_One;
 		} break;
-		case Image::Format_RG8: {
+		case ImageFormat_RG8: {
 			color_format = RD::DataFormat_R8G8_UNORM;
 			swizzle_r = RD::TextureSwizzle_R;
 			swizzle_g = RD::TextureSwizzle_G;
 			swizzle_b = RD::TextureSwizzle_Zero;
 			swizzle_a = RD::TextureSwizzle_One;
 		} break;
-		case Image::Format_RGB8: {
+		case ImageFormat_RGB8: {
 			color_format = RD::DataFormat_R8G8B8_UNORM;
 			color_format_srgb = RD::DataFormat_R8G8B8_SRGB;
 			swizzle_r = RD::TextureSwizzle_R;
@@ -96,7 +96,7 @@ namespace ism
 			swizzle_a = RD::TextureSwizzle_One;
 
 		} break;
-		case Image::Format_RGBA8: {
+		case ImageFormat_RGBA8: {
 			color_format = RD::DataFormat_R8G8B8A8_UNORM;
 			color_format_srgb = RD::DataFormat_R8G8B8A8_SRGB;
 			swizzle_r = RD::TextureSwizzle_R;

@@ -33,8 +33,7 @@ namespace ism
 
 				for (size_t i{}; i < records.size(); ++i)
 				{
-					records.expand_all(i, [&
-					](size_t index, size_t size, void * addr, cstring desc)
+					records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
 					{
 						std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr;
 						if (desc) { std::cerr << " | desc:\"" << desc; }

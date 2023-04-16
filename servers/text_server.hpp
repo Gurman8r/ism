@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Glyph : public Texture2D
 	{
-		OBJECT_CLASS(Glyph, Texture2D);
+		DEFINE_CLASS(Glyph, Texture2D);
 
 		RID m_texture{};
 		IntRect m_bounds{};
@@ -59,7 +59,7 @@ namespace ism
 
 	class ISM_API TextServer : public Object
 	{
-		OBJECT_CLASS(TextServer, Object);
+		DEFINE_CLASS(TextServer, Object);
 
 		static TextServer * __singleton;
 

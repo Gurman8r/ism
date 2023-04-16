@@ -11,7 +11,7 @@ targetname		"%{prj.name}"
 debugdir		"%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"
 targetdir		"%{wks.location}/bin-lib/%{cfg.platform}/%{cfg.buildcfg}/"
 objdir			"%{wks.location}/bin-obj/"
-location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}"
+location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}/"
 
 dependson{ "glfw", }
 
@@ -52,7 +52,7 @@ files{
 }
 
 postbuildcommands{
-	COPY_FILE("%{wks.location}bin-lib/%{cfg.platform}/%{cfg.buildcfg}/%{prj.targetname}%{DLL}", "%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+	"{COPY} %{cfg.targetdir}/%{prj.targetname}%{DLL} %{cfg.debugdir}",
 }
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

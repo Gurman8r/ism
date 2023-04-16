@@ -6,9 +6,9 @@
 namespace ism
 {
 	// hierarchy component of the main editor
-	class ISM_API EditorHierarchy : public EditorPanel
+	class ISM_EDITOR_API EditorHierarchy : public EditorPanel
 	{
-		OBJECT_CLASS(EditorHierarchy, EditorPanel);
+		DEFINE_CLASS(EditorHierarchy, EditorPanel);
 
 	public:
 		EditorHierarchy();

@@ -6,9 +6,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(TextFile, t)
+	EMBED_CLASS(TextFile, t)
 	{
-		t.tp_bind = CLASS_BINDER(TextFile, t)
+		t.tp_bind = BIND_CLASS(TextFile, t)
 		{
 			return t
 				.def("reload_from_file", &TextFile::reload_from_file)

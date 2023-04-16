@@ -1,7 +1,7 @@
 #ifndef _ISM_PERFORMANCE_HPP_
 #define _ISM_PERFORMANCE_HPP_
 
-#include <core/object/detail/class.hpp>
+#include <core/object/class.hpp>
 
 namespace ism
 {
@@ -29,13 +29,14 @@ namespace ism
 
 	class ISM_API Performance : public Object
 	{
-		OBJECT_CLASS(Performance, Object);
+		DEFINE_CLASS(Performance, Object);
 
 		static Performance * __singleton;
 
 	public:
 		Performance();
-		~Performance();
+		virtual ~Performance() override;
+		FORCE_INLINE static Performance * get_singleton() noexcept { return __singleton; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

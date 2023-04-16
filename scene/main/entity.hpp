@@ -9,7 +9,7 @@ namespace ism
 
 	class ISM_API Entity : public Node
 	{
-		OBJECT_CLASS(Entity, Node);
+		DEFINE_CLASS(Entity, Node);
 
 	protected:
 		friend class SceneTree;
@@ -32,7 +32,7 @@ namespace ism
 			ASSERT(m_tree);
 			C & c{ m_tree->m_ecs.emplace<C>(m_entity_id, FWD(args)...) };
 			m_tree->on_component_added<C>(*this, c);
-			return m_tree;
+			return c;
 		}
 
 		template <class ... C

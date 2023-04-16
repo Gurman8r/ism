@@ -1,4 +1,12 @@
 #include "register_launcher_types.hpp"
 
-using namespace ism;
+namespace ism
+{
+	void register_launcher_types()
+	{
+	}
 
+	void unregister_launcher_types()
+	{
+	}
+}

@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(EditorLog, t) {}
+	EMBED_CLASS(EditorLog, t) {}
 
 	EditorLog::EditorLog() : EditorPanel{ "Log##Editor" }
 	{

@@ -4,24 +4,24 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(Image, t) {}
+	EMBED_CLASS(Image, t) {}
 
-	Image::Image(i32 width, i32 height, Format_ format)
+	Image::Image(i32 width, i32 height, ImageFormat_ format)
 	{
 		m_width = width;
 		m_height = height;
 		m_format = format;
 		switch (format) {
 		default: { CRASH("UNSUPPORTED IMAGE FORMAT"); } break;
-		case Image::Format_R8: { m_depth = 1; } break;
-		case Image::Format_RG8: { m_depth = 2; } break;
-		case Image::Format_RGB8: { m_depth = 3; } break;
-		case Image::Format_RGBA8: { m_depth = 4; } break;
+		case ImageFormat_R8: { m_depth = 1; } break;
+		case ImageFormat_RG8: { m_depth = 2; } break;
+		case ImageFormat_RGB8: { m_depth = 3; } break;
+		case ImageFormat_RGBA8: { m_depth = 4; } break;
 		}
 		m_pixels.resize((size_t)(m_width * m_height * m_depth));
 	}
 
-	Image::Image(i32 width, i32 height, Format_ format, DynamicBuffer const & data)
+	Image::Image(i32 width, i32 height, ImageFormat_ format, DynamicBuffer const & data)
 	{
 		m_width = width;
 		m_height = height;
@@ -29,10 +29,10 @@ namespace ism
 		m_pixels = data;
 		switch (format) {
 		default: { CRASH("UNSUPPORTED IMAGE FORMAT"); } break;
-		case Image::Format_R8: { m_depth = 1; } break;
-		case Image::Format_RG8: { m_depth = 2; } break;
-		case Image::Format_RGB8: { m_depth = 3; } break;
-		case Image::Format_RGBA8: { m_depth = 4; } break;
+		case ImageFormat_R8: { m_depth = 1; } break;
+		case ImageFormat_RG8: { m_depth = 2; } break;
+		case ImageFormat_RGB8: { m_depth = 3; } break;
+		case ImageFormat_RGBA8: { m_depth = 4; } break;
 		}
 	}
 
@@ -45,21 +45,16 @@ namespace ism
 	{
 		DynamicBuffer{}.swap(m_pixels);
 		m_width = m_height = m_depth = 0;
-		m_format = Image::Format_MAX;
+		m_format = ImageFormat_MAX;
 	}
 
 	void Image::flip_vertically()
 	{
 		ptrdiff_t const columns{ m_width * m_depth };
-
-		for (ptrdiff_t y = 0; y < m_height; ++y)
-		{
+		for (ptrdiff_t y = 0; y < m_height; ++y) {
 			iterator left{ m_pixels.begin() + y * columns };
-
 			iterator right{ m_pixels.begin() + (y + 1) * columns - m_depth };
-
-			for (ptrdiff_t x = 0; x < m_width / 2; ++x)
-			{
+			for (ptrdiff_t x = 0; x < m_width / 2; ++x) {
 				std::swap_ranges(left, left + m_depth, right);
 				left += m_depth;
 				right -= m_depth;
@@ -70,13 +65,9 @@ namespace ism
 	void Image::flip_horizontally()
 	{
 		ptrdiff_t const columns{ m_width * m_depth };
-
 		iterator top{ m_pixels.begin() };
-
 		iterator bottom{ m_pixels.end() - columns };
-
-		for (ptrdiff_t y = 0; y < m_height / 2; ++y)
-		{
+		for (ptrdiff_t y = 0; y < m_height / 2; ++y) {
 			std::swap_ranges(top, top + columns, bottom);
 			top += columns;
 			bottom -= columns;

@@ -6,7 +6,7 @@
 namespace ism
 {
 	ISM_API_FUNC(void) register_scene_types();
-
+	ISM_API_FUNC(void) register_scene_singletons();
 	ISM_API_FUNC(void) unregister_scene_types();
 }
 

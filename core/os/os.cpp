@@ -26,14 +26,12 @@ namespace ism
 
 	void OS::_add_logger(Logger * value)
 	{
-		if (!value)
-		{
+		if (!value) {
 			Vector<Logger *> temp{};
 			temp.push_back(memnew(StdLogger));
 			_set_logger(memnew(CompositeLogger(std::move(temp))));
 		}
-		else
-		{
+		else {
 			m_logger->add_logger(value);
 		}
 	}

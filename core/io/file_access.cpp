@@ -1,146 +1,137 @@
 #include <core/io/file_access.hpp>
 
-#include <filesystem>
-#include <fstream>
-
-#define BIG_ENDIAN false
+#include <cstdio>
 
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(FileAccess, t, TypeFlags_IsAbstract) {}
+	EMBED_CLASS(FileAccess, t, TypeFlags_IsAbstract) {}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	decltype(FileAccess::__create_func) FileAccess::__create_func{};
 
-	Error_ FileAccess::reopen(Path const & path, i32 flags)
+	Ref<FileAccess> FileAccess::create(FileAccessType_ access_type)
 	{
-		return BRANCHLESS_IF(is_open(), close()), open(path, flags);
+		Ref<FileAccess> file{ VALIDATE(__create_func[access_type])() };
+		file->set_access_type(access_type);
+		return file;
+	}
+
+	Ref<FileAccess> FileAccess::create(Path const & path)
+	{
+		Ref<FileAccess> file;
+		file = create(FileAccessType_Filesystem);
+		return file;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	u16 FileAccess::get_16() const
+	Ref<FileAccess> FileAccess::open(Path const & path, FileMode_ mode)
 	{
-		u8 a{ get_8() }, b{ get_8() };
-		if (BIG_ENDIAN) { util::swap(a, b); }
+		Ref<FileAccess> file{ create(path) };
+		if (file->open_internal(path, mode) != Error_None) {
+			file = nullptr;
+		}
+		return file;
+	}
+
+	Error_ FileAccess::reopen(Path const & path, FileMode_ mode)
+	{
+		close();
+		open(path, mode);
+		return Error_None;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	u16 FileAccess::read_16() const
+	{
+		u8 a{ read_8() }, b{ read_8() };
+		if (m_big_endian) { util::swap(a, b); }
 		u16 c{ b }; c <<= 8; c |= a;
 		return c;
 	}
 
-	u32 FileAccess::get_32() const
+	u32 FileAccess::read_32() const
 	{
-		u16 a{ get_16() }, b{ get_16() };
-		if (BIG_ENDIAN) { util::swap(a, b); }
+		u16 a{ read_16() }, b{ read_16() };
+		if (m_big_endian) { util::swap(a, b); }
 		u32 c{ b }; c <<= 16; c |= a;
 		return c;
 	}
 
-	u64 FileAccess::get_64() const
+	u64 FileAccess::read_64() const
 	{
-		u32 a{ get_32() }, b{ get_32() };
-		if (BIG_ENDIAN) { util::swap(a, b); }
+		u32 a{ read_32() }, b{ read_32() };
+		if (m_big_endian) { util::swap(a, b); }
 		u64 c{ b }; c <<= 32; c |= a;
 		return c;
 	}
 
-	f32 FileAccess::get_float() const
+	f32 FileAccess::read_float() const
 	{
 		return f32();
 	}
 
-	f64 FileAccess::get_double() const
+	f64 FileAccess::read_double() const
 	{
 		return f64();
 	}
 
-	String FileAccess::get_string() const
+	String FileAccess::read_string() const
 	{
 		return String();
 	}
 
-	String FileAccess::get_line() const
+	String FileAccess::read_line() const
+	{
+		return String();
+	}
+
+	String FileAccess::read_token() const
 	{
 		return String();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void FileAccess::put_16(u16 value)
+	void FileAccess::write_16(u16 value)
 	{
 		u8 a; a = value & 0xFF;
 		u8 b; b = value >> 8;
-		if (BIG_ENDIAN) { util::swap(a, b); }
-		put_8(a); put_8(b);
+		if (m_big_endian) { util::swap(a, b); }
+		write_8(a); write_8(b);
 	}
 
-	void FileAccess::put_32(u32 value)
+	void FileAccess::write_32(u32 value)
 	{
 		u16 a; a = value & 0xFFFF;
 		u16 b; b = value >> 16;
-		if (BIG_ENDIAN) { util::swap(a, b); }
-		put_16(a); put_16(b);
+		if (m_big_endian) { util::swap(a, b); }
+		write_16(a); write_16(b);
 	}
 
-	void FileAccess::put_64(u64 value)
+	void FileAccess::write_64(u64 value)
 	{
 		u32 a; a = value & 0xFFFFFFFF;
 		u32 b; b = value >> 32;
-		if (BIG_ENDIAN) { util::swap(a, b); }
-		put_32(a); put_32(b);
+		if (m_big_endian) { util::swap(a, b); }
+		write_32(a); write_32(b);
 	}
 
-	void FileAccess::put_float(f32 value)
+	void FileAccess::write_float(f32 value)
 	{
 	}
 
-	void FileAccess::put_double(f64 value)
+	void FileAccess::write_double(f64 value)
 	{
 	}
 
-	void FileAccess::put_string(String const & value) const
+	void FileAccess::write_string(String const & value) const
 	{
 	}
 
-	void FileAccess::put_line(String const & value) const
-	{
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	EMBED_OBJECT_CLASS(FileDefault, t) {}
-
-	FileDefault::FileDefault() {}
-
-	FileDefault::FileDefault(Path const & path, i32 flags) { ASSERT(open(path, flags) == Error_None); }
-
-	FileDefault::~FileDefault() { if (is_open()) { close(); } }
-
-	bool FileDefault::is_open() const
-	{
-		return false;
-	}
-
-	Error_ FileDefault::open(Path const & path, i32 flags)
-	{
-		return Error_();
-	}
-
-	void FileDefault::close()
-	{
-	}
-
-	u8 FileDefault::get_8() const
-	{
-		return u8();
-	}
-
-	void FileDefault::put_8(u8 value)
+	void FileAccess::write_line(String const & value) const
 	{
 	}
 

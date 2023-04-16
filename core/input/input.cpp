@@ -13,7 +13,7 @@ namespace ism
 
 	Input::Funcs Input::m_funcs{};
 
-	EMBED_OBJECT_CLASS(Input, t) {}
+	EMBED_CLASS(Input, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

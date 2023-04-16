@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API Material : public Resource
 	{
-		OBJECT_CLASS(Material, Resource);
+		DEFINE_CLASS(Material, Resource);
 
 		RID m_material;
 
@@ -33,7 +33,7 @@ namespace ism
 
 	class ISM_API ShaderMaterial : public Material
 	{
-		OBJECT_CLASS(ShaderMaterial, Material);
+		DEFINE_CLASS(ShaderMaterial, Material);
 
 		Ref<Shader> m_shader;
 
@@ -60,9 +60,9 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API BaseMaterial3D : public Material
+	class ISM_API StandardMaterial3D : public Material
 	{
-		OBJECT_CLASS(BaseMaterial3D, Material);
+		DEFINE_CLASS(StandardMaterial3D, Material);
 
 	public:
 		enum Param_
@@ -83,11 +83,11 @@ namespace ism
 		};
 
 	public:
-		BaseMaterial3D();
+		StandardMaterial3D();
 
-		explicit BaseMaterial3D(Path const & path) noexcept { set_path(path); reload_from_file(); }
+		explicit StandardMaterial3D(Path const & path) noexcept { set_path(path); reload_from_file(); }
 
-		virtual ~BaseMaterial3D() override;
+		virtual ~StandardMaterial3D() override;
 
 		virtual Error_ reload_from_file() override;
 

@@ -37,6 +37,20 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// ignore that a variable is unused in compiler warnings
+	inline void ignore_unused(i32 const *) {}
+
+	// sink implementation
+	#define _IMPL_SINK_(var, ...) \
+		int var[] = { ##__VA_ARGS__ }; \
+		ignore_unused(var);
+
+	// sink
+	#define SINK(...) \
+		_IMPL_SINK_(ANON(temp), ##__VA_ARGS__)
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// bit_cast
 	template <class To, class From, class = std::enable_if_t<
 		sizeof(To) == sizeof(From) &&

@@ -12,7 +12,7 @@ namespace ism
 	// high-level graphics api
 	class ISM_API RenderingServer : public Object
 	{
-		OBJECT_CLASS(RenderingServer, Object);
+		DEFINE_CLASS(RenderingServer, Object);
 
 		static RenderingServer * __singleton;
 

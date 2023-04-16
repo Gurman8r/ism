@@ -10,7 +10,7 @@ namespace ism
 	// renderer storage
 	class ISM_API RendererStorage : public Object
 	{
-		OBJECT_CLASS(RendererStorage, Object);
+		DEFINE_CLASS(RendererStorage, Object);
 
 		friend class RenderingServerDefault;
 

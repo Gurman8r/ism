@@ -11,7 +11,7 @@ namespace ism
 	// low-level graphics api
 	class ISM_API RenderingDevice : public Object
 	{
-		OBJECT_CLASS(RenderingDevice, Object);
+		DEFINE_CLASS(RenderingDevice, Object);
 
 	private:
 		static RenderingDevice * __singleton;

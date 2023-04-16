@@ -21,9 +21,9 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// main editor
-	class ISM_API EditorNode : public Node
+	class ISM_EDITOR_API EditorNode : public Node
 	{
-		OBJECT_CLASS(EditorNode, Node);
+		DEFINE_CLASS(EditorNode, Node);
 
 		static EditorNode * __singleton;
 

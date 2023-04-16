@@ -5,6 +5,17 @@
 
 namespace ism
 {
+	class ResourceFormatLoader : public Object
+	{
+		DEFINE_CLASS(ResourceFormatLoader, Object);
+
+	public:
+		virtual ~ResourceFormatLoader() override;
+	};
+}
+
+namespace ism
+{
 	class ISM_API ResourceLoader
 	{
 		static ResourceLoader * __singleton;

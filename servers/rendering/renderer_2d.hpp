@@ -10,7 +10,7 @@ namespace ism
 	// canvas renderer
 	class ISM_API Renderer2D : public Object
 	{
-		OBJECT_CLASS(Renderer2D, Object);
+		DEFINE_CLASS(Renderer2D, Object);
 		
 		friend class RenderingServerDefault;
 
@@ -18,72 +18,9 @@ namespace ism
 		RendererStorage * const m_storage;
 
 	public:
-		using Index2D = typename u32;
-
-		struct Vertex2D
-		{
-			Vec2 position{};
-			Vec2 texcoord{};
-			Color color{};
-		};
-
-		struct Command2D
-		{
-			FloatRect rect{};
-			RID texture{};
-			u32 vertex_offset{};
-			u32 index_offset{};
-			u32 element_count{};
-		};
-
-	public:
 		Renderer2D(RenderingDevice * device, RendererStorage * storage);
 
 		virtual ~Renderer2D() override;
-
-	public:
-		void push_rect(FloatRect const & rect);
-		void pop_rect();
-		
-		void push_texture(RID texture);
-		void pop_texture();
-
-		FloatRect const & get_rect() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back(); }
-		Vec2 const & get_rect_min() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back().min(); }
-		Vec2 const & get_rect_max() const { ASSERT(!m_rect_stack.empty()); return m_rect_stack.back().max(); }
-		RID get_texture() const { ASSERT(!m_texture_stack.empty()); return m_texture_stack.back(); }
-
-	public:
-		void add_line(Vec2 const & p1, Vec2 const & p2, Color const & color, f32 thickness = 1.f);
-		void add_rect(Vec2 const & min, Vec2 const & max, Color const & color, f32 thickness = 1.f);
-		void add_rect_filled(Vec2 const & min, Vec2 const & max, Color const & color);
-		void add_quad(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Color const & color, f32 thickness = 1.f);
-		void add_quad_filled(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Color const & color);
-		void add_triangle(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Color const & color, f32 thickness = 1.f);
-		void add_triangle_filled(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Color const & color);
-		void add_circle(Vec2 const & center, f32 radius, Color const & color, i32 num_segments, f32 thickness = 1.f);
-		void add_circle_filled(Vec2 const & center, f32 radius, Color const & color, i32 num_segments);
-		void add_image(RID texture, Vec2 const & min, Vec2 const & max, Vec2 const & uv0, Vec2 const & uv1, Color const & color = Colors::white);
-		void add_image_quad(RID texture, Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Vec2 const & uv0, Vec2 const & uv1, Vec2 const & uv2, Vec2 const & uv3, Color const & color = Colors::white);
-
-	public:
-		void prim_reserve(u32 index_count, u32 vertex_count);
-		void prim_unreserve(u32 index_count, u32 vertex_count);
-		void prim_rect(Vec2 const & min, Vec2 const & max, Color const & color = Colors::white);
-		void prim_rect_uv(Vec2 const & min, Vec2 const & max, Vec2 const & uv0, Vec2 const & uv1, Color const & color = Colors::white);
-		void prim_quad_uv(Vec2 const & p1, Vec2 const & p2, Vec2 const & p3, Vec2 const & p4, Vec2 const & uv0, Vec2 const & uv1, Vec2 const & uv2, Vec2 const & uv3, Color const & color = Colors::white);
-
-	private:
-		Command2D m_cmd_head{};
-		Vector<Command2D> m_cmd_buffer{};
-		Vector<FloatRect> m_rect_stack{};
-		Vector<RID> m_texture_stack{};
-
-		Vector<Vertex2D> m_vertex_buffer{};
-		Vector<Index2D> m_index_buffer{};
-		Index2D m_vertex_current_index{};
-		Vertex2D * m_vertex_write_ptr{};
-		Index2D * m_index_write_ptr{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

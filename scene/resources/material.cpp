@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(Material, t, TypeFlags_IsAbstract) {}
+	EMBED_CLASS(Material, t, TypeFlags_IsAbstract) {}
 
 	Material::Material()
 	{
@@ -19,7 +19,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(ShaderMaterial, t) {}
+	EMBED_CLASS(ShaderMaterial, t) {}
 
 	ShaderMaterial::ShaderMaterial() : Material{} {}
 
@@ -55,41 +55,41 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(BaseMaterial3D, t) {}
+	EMBED_CLASS(StandardMaterial3D, t) {}
 
-	BaseMaterial3D::BaseMaterial3D() : Material{} {}
+	StandardMaterial3D::StandardMaterial3D() : Material{} {}
 
-	BaseMaterial3D::~BaseMaterial3D() {}
+	StandardMaterial3D::~StandardMaterial3D() {}
 
-	Error_ BaseMaterial3D::reload_from_file()
+	Error_ StandardMaterial3D::reload_from_file()
 	{
 		return MaterialLoader::load_from_file(*this, get_path());
 	}
 
-	RID BaseMaterial3D::get_shader_rid() const
+	RID StandardMaterial3D::get_shader_rid() const
 	{
 		return nullptr;
 	}
 
-	Shader::Mode_ BaseMaterial3D::get_shader_mode() const { return Shader::Mode_MAX; }
+	Shader::Mode_ StandardMaterial3D::get_shader_mode() const { return Shader::Mode_MAX; }
 
-	void BaseMaterial3D::_update_shader()
+	void StandardMaterial3D::_update_shader()
 	{
 	}
 
-	void BaseMaterial3D::set_albedo(Color const & value)
+	void StandardMaterial3D::set_albedo(Color const & value)
 	{
 		m_params.albedo = value;
 		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
 	}
 
-	void BaseMaterial3D::set_specular(f32 value)
+	void StandardMaterial3D::set_specular(f32 value)
 	{
 		m_params.specular = value;
 		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Specular], value);
 	}
 
-	void BaseMaterial3D::set_metallic(f32 value)
+	void StandardMaterial3D::set_metallic(f32 value)
 	{
 		m_params.metallic = value;
 		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Metallic], value);

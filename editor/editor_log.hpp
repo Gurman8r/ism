@@ -6,9 +6,9 @@
 namespace ism
 {
 	// log component of the main editor
-	class ISM_API EditorLog : public EditorPanel
+	class ISM_EDITOR_API EditorLog : public EditorPanel
 	{
-		OBJECT_CLASS(EditorLog, EditorPanel);
+		DEFINE_CLASS(EditorLog, EditorPanel);
 
 	public:
 		EditorLog();

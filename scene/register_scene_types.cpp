@@ -1,4 +1,6 @@
 #include <scene/register_scene_types.hpp>
+#include <core/extension/extension_manager.hpp>
+
 #include <scene/main/scene_tree.hpp>
 #include <scene/main/window.hpp>
 #include <scene/main/missing_node.hpp>
@@ -15,8 +17,8 @@ namespace ism
 {
 	void register_scene_types()
 	{
-		Internals::get_singleton()->initialize_class
-		<
+		INITIALIZE_CLASS
+		(
 			SceneTree,
 			Node,
 			MissingNode,
@@ -33,7 +35,11 @@ namespace ism
 			Texture2D,
 			Texture3D,
 			TextureCube
-		>();
+		);
+	}
+
+	void register_scene_singletons()
+	{
 	}
 	
 	void unregister_scene_types()

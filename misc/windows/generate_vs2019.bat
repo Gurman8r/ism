@@ -1,4 +1,5 @@
 @echo off
 cd ..\..\
-call .\misc\windows\premake5.exe vs2019
+call .\misc\windows\premake5.exe vs2019 --gfxapi=opengl --gl_loader=glew
 if %ERRORLEVEL% NEQ 0 ( pause )
+rem pause

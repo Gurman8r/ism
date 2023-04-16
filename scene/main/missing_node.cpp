@@ -2,7 +2,7 @@
 
 namespace ism
 {
-	EMBED_OBJECT_CLASS(MissingNode, t) {}
+	EMBED_CLASS(MissingNode, t) {}
 
 	MissingNode::MissingNode()
 	{

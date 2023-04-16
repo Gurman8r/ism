@@ -57,29 +57,31 @@ namespace ism
 
 	// nameof_t
 	template <class T
-	> struct nameof_t {
-		static constexpr StringView value{ ctti::nameof<T>() };
-	};
+	> struct nameof_t { static constexpr StringView value{ ctti::nameof<T>() }; };
 
 	// nameof_v
 	template <class T
-	> constexpr StringView nameof_v{
-		nameof_t<T>::value
-	};
+	> constexpr StringView nameof_v{ nameof_t<T>::value };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// hashof_t
 	template <class T
-	> struct hashof_t {
-		static constexpr size_t value{ nameof_v<T>.hash_code() };
-	};
+	> struct hashof_t { static constexpr size_t value{ nameof_v<T>.hash_code() }; };
 
 	// hashof_v
 	template <class T
-	> constexpr size_t hashof_v{
-		hashof_t<T>::value
-	};
+	> constexpr size_t hashof_v{ hashof_t<T>::value };
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	namespace rtti
+	{
+		inline bool same_type(std::type_info const & lhs, std::type_info const & rhs) noexcept
+		{
+			return lhs.name() == rhs.name() || std::strcmp(lhs.name(), rhs.name()) == 0;
+		}
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

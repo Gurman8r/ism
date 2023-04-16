@@ -3,7 +3,7 @@
 
 // PLACEHOLDER
 
-#include <core/object/detail/class.hpp>
+#include <core/object/class.hpp>
 
 namespace ism
 {
@@ -11,7 +11,7 @@ namespace ism
 
 	class ISM_API Lexer : public Object
 	{
-		OBJECT_CLASS(Lexer, Object);
+		DEFINE_CLASS(Lexer, Object);
 
 	protected:
 		Lexer() noexcept {}

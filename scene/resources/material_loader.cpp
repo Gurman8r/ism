@@ -9,7 +9,7 @@ Error_ MaterialLoader::load_from_file(Material & material, Path const & path)
 	if (isinstance<ShaderMaterial>(&material))
 	{
 	}
-	else if (isinstance<BaseMaterial3D>(&material))
+	else if (isinstance<StandardMaterial3D>(&material))
 	{
 	}
 	else

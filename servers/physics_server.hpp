@@ -3,7 +3,7 @@
 
 // PLACEHOLDER
 
-#include <core/object/detail/class.hpp>
+#include <core/object/class.hpp>
 
 namespace ism
 {
@@ -12,7 +12,7 @@ namespace ism
 	// audio server - PLACEHOLDER
 	class PhysicsServer : public Object
 	{
-		OBJECT_CLASS(PhysicsServer, Object);
+		DEFINE_CLASS(PhysicsServer, Object);
 
 		static PhysicsServer * __singleton;
 

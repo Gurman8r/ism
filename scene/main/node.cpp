@@ -6,7 +6,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(Node, t, TypeFlags_IsAbstract) {}
+	EMBED_CLASS(Node, t, TypeFlags_IsAbstract) {}
 
 	i32 Node::__orphan_node_count{};
 

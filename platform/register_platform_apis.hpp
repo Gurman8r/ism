@@ -6,7 +6,6 @@
 namespace ism
 {
 	ISM_API_FUNC(void) register_platform_apis();
-
 	ISM_API_FUNC(void) unregister_platform_apis();
 }
 

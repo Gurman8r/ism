@@ -11,7 +11,7 @@ namespace ism
 	// windows display server
 	class ISM_API DisplayServerWindows : public DisplayServer
 	{
-		OBJECT_CLASS(DisplayServerWindows, DisplayServer);
+		DEFINE_CLASS(DisplayServerWindows, DisplayServer);
 
 		struct _Window
 		{

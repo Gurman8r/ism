@@ -5,14 +5,30 @@
 #define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
 #endif
 
+#if SYSTEM_WINDOWS
+#include <drivers/windows/file_access_windows.hpp>
+#endif
+
 namespace ism
 {
+	void register_core_driver_types()
+	{
+#if SYSTEM_WINDOWS
+		INITIALIZE_CLASS(FileAccessWindows);
+		FileAccessWindows::initialize();
+#endif
+	}
+
+	void unregister_core_driver_types()
+	{
+#if SYSTEM_WINDOWS
+		FileAccessWindows::finalize();
+#endif
+	}
+
 	void register_driver_types()
 	{
-		Internals::get_singleton()->initialize_class
-		<
-			RENDERING_DEVICE_DEFAULT
-		>();
+		INITIALIZE_CLASS(RENDERING_DEVICE_DEFAULT);
 	}
 
 	void unregister_driver_types()

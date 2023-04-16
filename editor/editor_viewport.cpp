@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(EditorViewport, t) {}
+	EMBED_CLASS(EditorViewport, t) {}
 
 	EditorViewport::EditorViewport()
 		: EditorPanel{ "Viewport##Editor", true, ImGuiWindowFlags_NoScrollbar }

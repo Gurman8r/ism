@@ -10,7 +10,7 @@ namespace ism
 
 	class ISM_API RenderingDeviceOpenGL : public RenderingDevice
 	{
-		OBJECT_CLASS(RenderingDeviceOpenGL, RenderingDevice);
+		DEFINE_CLASS(RenderingDeviceOpenGL, RenderingDevice);
 
 	public:
 		~RenderingDeviceOpenGL();
@@ -97,7 +97,7 @@ namespace ism
 			u32 handle{};
 			u32 texture_type{};
 			DataFormat_ color_format{}, color_format_srgb{};
-			Image::Format_ image_format{};
+			ImageFormat_ image_format{};
 			i32 width{}, height{}, depth{}, layers{}, mipmaps{};
 			u32 min_filter{}, mag_filter{};
 			u32 repeat_s{}, repeat_t{};

@@ -11,7 +11,7 @@ targetname		"%{prj.name}"
 debugdir		"%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"
 targetdir		"%{wks.location}/bin-lib/%{cfg.platform}/%{cfg.buildcfg}/"
 objdir			"%{wks.location}/bin-obj/"
-location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}"
+location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}/"
 
 defines{ "_GLFW_BUILD_DLL", }
 
@@ -38,10 +38,11 @@ files{
 }
 
 postbuildcommands{
-	COPY_FILE("%{wks.location}bin-lib/%{cfg.platform}/%{cfg.buildcfg}/%{prj.targetname}%{DLL}", "%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+	"{COPY} %{cfg.targetdir}/%{prj.targetname}%{DLL} %{cfg.debugdir}",
 }
 
--- Windows
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+
 filter{ "system:windows" }
 	defines{ "_GLFW_WIN32=1", }
 	files{ "%{wks.location}/thirdparty/glfw/src/win32_**.c", }

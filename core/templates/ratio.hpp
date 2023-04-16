@@ -14,21 +14,21 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	using Atto =		Ratio<1, 1000000000000000000LL>;
+	using Atto =	Ratio<1, 1000000000000000000LL>;
 	using Femto =	Ratio<1, 1000000000000000LL>;
-	using Pico =		Ratio<1, 1000000000000LL>;
-	using Nano =		Ratio<1, 1000000000>;
+	using Pico =	Ratio<1, 1000000000000LL>;
+	using Nano =	Ratio<1, 1000000000>;
 	using Micro =	Ratio<1, 1000000>;
 	using Milli =	Ratio<1, 1000>;
 	using Centi =	Ratio<1, 100>;
-	using Deci =		Ratio<1, 10>;
-	using Deca =		Ratio<10, 1>;
+	using Deci =	Ratio<1, 10>;
+	using Deca =	Ratio<10, 1>;
 	using Hecto =	Ratio<100, 1>;
-	using Kilo =		Ratio<1000, 1>;
-	using Mega =		Ratio<1000000, 1>;
-	using Giga =		Ratio<1000000000, 1>;
-	using Tera =		Ratio<1000000000000LL, 1>;
-	using Peta =		Ratio<1000000000000000LL, 1>;
+	using Kilo =	Ratio<1000, 1>;
+	using Mega =	Ratio<1000000, 1>;
+	using Giga =	Ratio<1000000000, 1>;
+	using Tera =	Ratio<1000000000000LL, 1>;
+	using Peta =	Ratio<1000000000000000LL, 1>;
 	using Exa =		Ratio<1000000000000000000LL, 1>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

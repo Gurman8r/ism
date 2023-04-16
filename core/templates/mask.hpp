@@ -45,14 +45,14 @@ namespace ism
 {
 	// mask base
 	template <size_t _Bits
-	> using _BitMaskBase = std::bitset<_Bits>;
+	> using _MaskBase = std::bitset<_Bits>;
 
 	// mask
 	template <size_t _Bits
-	> class BitMask : public _BitMaskBase<_Bits>
+	> class Mask : public _MaskBase<_Bits>
 	{
 	public:
-		using base_type = _BitMaskBase<_Bits>;
+		using base_type = _MaskBase<_Bits>;
 		using base_type::base_type;
 		using base_type::operator=;
 		using base_type::operator&=;
@@ -82,8 +82,8 @@ namespace ism
 		using base_type::_Subscript;
 	};
 
-	using Mask32 = BitMask<32>;
-	using Mask64 = BitMask<64>;
+	using Mask32 = Mask<32>;
+	using Mask64 = Mask<64>;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

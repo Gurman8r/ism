@@ -2,11 +2,11 @@
 
 namespace ism
 {
-	void initialize_modules(ModuleInitializationLevel_ level)
+	void initialize_modules(ExtensionInitializationLevel_ level)
 	{
 	}
 
-	void uninitialize_modules(ModuleInitializationLevel_ level)
+	void finalize_modules(ExtensionInitializationLevel_ level)
 	{
 	}
 }

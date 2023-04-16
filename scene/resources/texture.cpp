@@ -4,11 +4,11 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(Texture, t) {}
+	EMBED_CLASS(Texture, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(Texture2D, t) {}
+	EMBED_CLASS(Texture2D, t) {}
 
 	Vec2i Texture2D::get_size() const
 	{
@@ -27,7 +27,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(ImageTexture, t) {}
+	EMBED_CLASS(ImageTexture, t) {}
 
 	ImageTexture::ImageTexture(Path const & path)
 	{
@@ -82,7 +82,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(Texture3D, t) {}
+	EMBED_CLASS(Texture3D, t) {}
 
 	Texture3D::Texture3D() {}
 
@@ -95,7 +95,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(TextureCube, t) {}
+	EMBED_CLASS(TextureCube, t) {}
 
 	TextureCube::TextureCube() {}
 

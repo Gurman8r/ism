@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(Performance, t) {}
+	EMBED_CLASS(Performance, t) {}
 
 	Performance * Performance::__singleton{};
 

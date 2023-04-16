@@ -108,38 +108,38 @@ void glCheckError(cstring expr, cstring file, u32 line)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void get_data_info(RD::DataFormat_ const data_format, Image::Format_ * image_format, u32 * internal_format, u32 * format, u32 * type) noexcept
+void get_data_info(RD::DataFormat_ const data_format, ImageFormat_ * image_format, u32 * internal_format, u32 * format, u32 * type) noexcept
 {
-	Image::Format_ _image_format{};
+	ImageFormat_ _image_format{};
 	u32 _internal_format{}, _format{}, _type{};
 	switch (data_format)
 	{
 	case RD::DataFormat_R8_UNORM: {
-		_image_format = Image::Format_R8;
+		_image_format = ImageFormat_R8;
 		_internal_format = GL_RGBA;
 		_format = GL_RED;
 		_type = GL_UNSIGNED_BYTE;
 	} break;
 	case RD::DataFormat_R8G8_UNORM: {
-		_image_format = Image::Format_RG8;
+		_image_format = ImageFormat_RG8;
 		_internal_format = GL_RGBA;
 		_format = GL_RG;
 		_type = GL_UNSIGNED_BYTE;
 	} break;
 	case RD::DataFormat_R8G8B8_UNORM: {
-		_image_format = Image::Format_RGB8;
+		_image_format = ImageFormat_RGB8;
 		_internal_format = GL_RGBA;
 		_format = GL_RGB;
 		_type = GL_UNSIGNED_BYTE;
 	} break;
 	case RD::DataFormat_R8G8B8A8_UNORM: {
-		_image_format = Image::Format_RGBA8;
+		_image_format = ImageFormat_RGBA8;
 		_internal_format = GL_RGBA;
 		_format = GL_RGBA;
 		_type = GL_UNSIGNED_BYTE;
 	} break;
 	case RD::DataFormat_D24_UNORM_S8_UINT: {
-		_image_format = Image::Format_L8;
+		_image_format = ImageFormat_L8;
 		_internal_format = GL_DEPTH24_STENCIL8;
 		_format = GL_DEPTH_STENCIL;
 		_type = GL_UNSIGNED_INT_24_8;
@@ -324,7 +324,7 @@ ENUM_MAPPING(TO_GL, BlendOperation_, u32,
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_OBJECT_CLASS(RenderingDeviceOpenGL, t) {}
+EMBED_CLASS(RenderingDeviceOpenGL, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

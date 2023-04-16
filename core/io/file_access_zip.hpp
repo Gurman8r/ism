@@ -9,20 +9,14 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API FileAccessZip : public FileAccess
-	{
-		OBJECT_CLASS(FileAccessZip, FileAccess);
-
-	public:
-		FileAccessZip();
-		virtual ~FileAccessZip() override;
-
-		virtual bool is_open() const override;
-		virtual Error_ open(Path const & path, i32 flags) override;
-		virtual void close() override;
-		virtual u8	get_8() const override;
-		virtual void put_8(u8 value) override;
-	};
+	//class ISM_API FileAccessZip : public FileAccess
+	//{
+	//	DEFINE_CLASS(FileAccessZip, FileAccess);
+	//
+	//public:
+	//	FileAccessZip();
+	//	virtual ~FileAccessZip() override;
+	//};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

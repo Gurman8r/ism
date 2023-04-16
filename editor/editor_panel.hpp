@@ -1,7 +1,7 @@
 #ifndef _ISM_EDITOR_PANEL_HPP_
 #define _ISM_EDITOR_PANEL_HPP_
 
-#include <scene/main/imgui.hpp>
+#include <scene/gui/imgui.hpp>
 #include <scene/main/scene_tree.hpp>
 
 #define EDITOR_PANEL_SCOPE(open)							\
@@ -11,9 +11,9 @@
 namespace ism
 {
 	// base class for editor windows
-	class ISM_API EditorPanel : public Object
+	class ISM_EDITOR_API EditorPanel : public Object
 	{
-		OBJECT_CLASS(EditorPanel, Object);
+		DEFINE_CLASS(EditorPanel, Object);
 
 		cstring				m_name;
 		bool				m_is_open;

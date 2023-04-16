@@ -11,14 +11,18 @@ targetname		"%{prj.name}"
 debugdir		"%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"
 targetdir		"%{wks.location}/bin-lib/%{cfg.platform}/%{cfg.buildcfg}/"
 objdir			"%{wks.location}/bin-obj/"
-location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}"
+location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}/"
+
+includedirs{
+	"%{wks.location}/thirdparty/assimp/include",
+}
 
 files{
 	"%{wks.location}/modules/%{prj.name}/%{prj.name}.premake5.lua",
 }
 
 prebuildcommands{
-	COPY_FILE("%{wks.location}misc/%{_TARGET_OS}/%{cfg.platform}/%{cfg.buildcfg}/assimp%{DLL}", "%{wks.location}bin/%{cfg.platform}/%{cfg.buildcfg}/"),
+	"{COPY} %{LIB_DIR}/assimp%{DLL} %{cfg.debugdir}",
 }
-	
+
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

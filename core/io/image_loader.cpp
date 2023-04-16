@@ -24,10 +24,10 @@ namespace ism
 
 		// TODO: properly deduce image format
 		switch (image.m_depth) {
-		case 1: { image.m_format = Image::Format_R8; } break;
-		case 2: { image.m_format = Image::Format_RG8; } break;
-		case 3: { image.m_format = Image::Format_RGB8; } break;
-		case 4: { image.m_format = Image::Format_RGBA8; } break;
+		case 1: { image.m_format = ImageFormat_R8; } break;
+		case 2: { image.m_format = ImageFormat_RG8; } break;
+		case 3: { image.m_format = ImageFormat_RGB8; } break;
+		case 4: { image.m_format = ImageFormat_RGBA8; } break;
 		}
 
 		return Error_None;

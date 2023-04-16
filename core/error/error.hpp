@@ -11,7 +11,7 @@ namespace ism
 	{
 		Error_Unknown = -1,
 		Error_None = 0,
-
+		Error_EOF,
 		// etc...
 
 		Error_MAX

@@ -4,7 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(EditorFileSystem, t) {}
+	EMBED_CLASS(EditorFileSystem, t) {}
 
 	EditorFileSystem::EditorFileSystem() : EditorPanel{ "FileSystem##Editor" }
 	{

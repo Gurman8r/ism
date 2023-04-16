@@ -25,7 +25,7 @@ namespace ism
 	// scene tree
 	class ISM_API SceneTree : public MainLoop
 	{
-		OBJECT_CLASS(SceneTree, MainLoop);
+		DEFINE_CLASS(SceneTree, MainLoop);
 
 		friend class Main;
 		friend class Node;

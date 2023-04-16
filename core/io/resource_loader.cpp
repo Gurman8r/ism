@@ -2,6 +2,13 @@
 
 namespace ism
 {
+	EMBED_CLASS(ResourceFormatLoader, t) {}
+
+	ResourceFormatLoader::~ResourceFormatLoader() {}
+}
+
+namespace ism
+{
 	ResourceLoader * ResourceLoader::__singleton{};
 
 	ResourceLoader::ResourceLoader()

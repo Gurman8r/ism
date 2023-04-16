@@ -4,7 +4,7 @@
 #include <editor/editor_log.hpp>
 #include <editor/editor_viewport.hpp>
 
-#include <scene/main/imgui.hpp>
+#include <scene/gui/imgui.hpp>
 #include <core/math/face3.hpp>
 #include <core/math/transform.hpp>
 
@@ -109,7 +109,7 @@ namespace ism
 
 	EditorNode * EditorNode::__singleton{};
 
-	EMBED_OBJECT_CLASS(EditorNode, t) {}
+	EMBED_CLASS(EditorNode, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -235,8 +235,6 @@ namespace ism
 
 	void EditorNode::_notification(Notification_ id)
 	{
-		String{}.erase_duplicates(' ');
-
 		switch (id)
 		{
 		case Notification_Process: {

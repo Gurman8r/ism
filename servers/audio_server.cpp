@@ -6,7 +6,7 @@ namespace ism
 
 	AudioServer * AudioServer::__singleton{};
 
-	EMBED_OBJECT_CLASS(AudioServer, t) {}
+	EMBED_CLASS(AudioServer, t) {}
 
 	AudioServer::AudioServer() { __singleton = this; }
 

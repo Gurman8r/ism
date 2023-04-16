@@ -1,14 +1,17 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 #include <main/main.hpp>
 #include <scene/main/scene_tree.hpp>
-#include <scene/main/imgui.hpp>
+#include <scene/gui/imgui.hpp>
+
+#include <core/config/engine.hpp>
+#include <core/config/project_settings.hpp>
+
+#include <core/extension/extension_manager.hpp>
+#include <core/object/script_language.hpp>
 
 #if TOOLS_ENABLED
 #include <editor/editor_node.hpp>
+#include <editor/register_editor_types.hpp>
 #endif
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include <core/register_core_types.hpp>
 #include <drivers/register_driver_types.hpp>
@@ -16,12 +19,6 @@
 #include <modules/register_module_types.hpp>
 #include <scene/register_scene_types.hpp>
 #include <servers/register_server_types.hpp>
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#if TOOLS_ENABLED
-#include <editor/register_editor_types.hpp>
-#endif
 
 #if SYSTEM_WINDOWS
 #include <platform/windows/display_server_windows.hpp>
@@ -34,192 +31,226 @@
 #include <servers/physics_server.hpp>
 #include <servers/text_server.hpp>
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-using namespace ism;
-
-i32 Main::m_iterating{};
-u64 Main::m_frame{};
-
-static Internals *			internals{};
-static Performance *		performance{};
-static Input *				input{};
-static AudioServer *		audio_server{};
-static DisplayServer *		display_server{};
-static RenderingServer *	rendering_server{};
-static PhysicsServer *		physics_server{};
-static TextServer *			text_server{};
-static ImGuiContext *		gui_context{};
-
-static bool editor{ true };
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
+namespace ism
 {
-	OS::get_singleton()->initialize();
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	internals = memnew(Internals);
-	performance = memnew(Performance);
+	i32 Main::m_iterating{};
+	u64 Main::m_frame{};
 
-	register_core_types();
-	register_core_driver_types();
-	register_core_settings();
-	OS::get_singleton()->set_cmdline(exepath, { argv, argv + argc });
-	register_server_types();
+	static Internals *			internals{};
+	static Engine *				engine{};
+	static ProjectSettings *	project{};
+	static Performance *		perf{};
+	static ExtensionManager *	ext{};
+	static ScriptServer *		scr{};
+	static Input *				input{};
 
-	input = memnew(Input);
-	text_server = memnew(TextServer);
-	display_server = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
-	rendering_server = memnew(RenderingServerDefault);
-	audio_server = memnew(AudioServer);
+	static AudioServer *		audio{};
+	static DisplayServer *		display{};
+	static RenderingServer *	graphics{};
+	static PhysicsServer *		physics{};
+	static TextServer *			text{};
+	static ImGuiContext *		imgui_context{};
 
-	register_core_singletons();
-	register_scene_types();
-	register_driver_types();
-#if TOOLS_ENABLED
-	register_editor_types();
-#endif
-	register_platform_apis();
+	static bool editor{ true };
 
-	//initialize_theme();
-	
-	physics_server = memnew(PhysicsServer);
-	
-	register_server_singletons();
-	
-	//init_languages();
-	
-	gui_context = VALIDATE(ImGui::CreateContext());
-	gui_context->IO.LogFilename = nullptr;
-	gui_context->IO.IniFilename = nullptr;
-	gui_context->IO.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-	gui_context->IO.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	gui_context->IO.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-	ASSERT(ImGui_Init());
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	return Error_None;
-}
-
-bool Main::start()
-{
-	Path script{};
-
-	Ref<MainLoop> main_loop{};
-
-	if (editor) { main_loop = memnew(SceneTree); }
-
-	TYPE main_loop_type{};
-
-	if (script) {
-		/* TODO: load main loop from script */
-	}
-
-	if (!main_loop && !main_loop_type) {
-		main_loop_type = typeof<SceneTree>();
-	}
-
-	if (!main_loop) {
-		ASSERT(TYPE::check_(main_loop_type));
-		main_loop = main_loop_type();
-		ASSERT(main_loop);
-	}
-
-	if (isinstance<SceneTree>(main_loop))
+	Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 	{
-		SceneTree * tree{ (SceneTree *)*main_loop };
+		OS::get_singleton()->initialize();
 
-		Window * root{ tree->get_root() };
+		internals = memnew(Internals);
+		engine = memnew(Engine);
+		project = memnew(ProjectSettings);
+		perf = memnew(Performance);
+		ext = memnew(ExtensionManager);
+		scr = memnew(ScriptServer);
+		input = memnew(Input);
+
+		register_core_types();
+		register_core_driver_types();
+		register_core_settings();
+		initialize_modules(ExtensionInitializationLevel_Core);
+		ext->initialize_extensions(ExtensionInitializationLevel_Core);
+		register_core_extensions();
+		register_core_singletons();
+
+		OS::get_singleton()->set_cmdline(exepath, { argv, argv + argc });
+
+		text = memnew(TextServer);
+		display = memnew(DISPLAY_SERVER_DEFAULT("ism", DS::WindowMode_Maximized, { 1280, 720 }));
+		graphics = memnew(RenderingServerDefault);
+		audio = memnew(AudioServer);
+		physics = memnew(PhysicsServer);
+
+		register_server_types();
+		initialize_modules(ExtensionInitializationLevel_Servers);
+		ext->initialize_extensions(ExtensionInitializationLevel_Servers);
+		register_server_singletons();
+
+		register_scene_types();
+		register_driver_types();
+		initialize_modules(ExtensionInitializationLevel_Scene);
+		ext->initialize_extensions(ExtensionInitializationLevel_Scene);
 
 #if TOOLS_ENABLED
-		if (editor) { root->add_child<EditorNode>(); }
+		register_editor_types();
+		initialize_modules(ExtensionInitializationLevel_Editor);
+		ext->initialize_extensions(ExtensionInitializationLevel_Editor);
 #endif
 
-		// etc...
-	}
+		register_platform_apis();
+
+		//initialize_theme();
+
+		register_scene_singletons();
+
+		//initialize_physics();
 	
-	OS::get_singleton()->set_main_loop(main_loop);
+		scr->initialize_languages();
+	
+		imgui_context = ImGui_Initialize();
 
-	main_loop->initialize();
-
-	return true;
-}
-
-bool Main::iteration()
-{
-	++m_iterating; ON_SCOPE_EXIT(&) { --m_iterating; };
-
-	Clock const loop_timer{};
-	static Duration delta_time{ 16_ms };
-	ON_SCOPE_EXIT(&) { delta_time = loop_timer.get_elapsed_time(); };
-
-	++m_frame;
-
-	bool should_close{ false };
-
-	// TODO: physics_server stuff goes here
-
-	display_server->poll_events();
-
-	Input::get_singleton()->iteration(delta_time);
-
-	ImGui_NewFrame();
-	if (OS::get_singleton()->get_main_loop()->process(delta_time)) { should_close = true; }
-	ImGui::Render();
-
-	RD::get_singleton()->draw_list_begin_for_screen();
-	ImGui_RenderDrawData(&gui_context->Viewports[0]->DrawDataP);
-	RD::get_singleton()->draw_list_end();
-
-	if (gui_context->IO.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
+		return Error_None;
 	}
 
-	display_server->swap_buffers();
+	bool Main::start()
+	{
+		Path script{};
 
-	return should_close;
-}
+		Ref<MainLoop> main_loop{};
 
-void Main::cleanup()
-{
-	//remove_custom_loaders();
-	//remove_custom_savers();
+		if (editor) { main_loop = memnew(SceneTree); }
 
-	OS::get_singleton()->get_main_loop()->finalize();
-	OS::get_singleton()->delete_main_loop();
+		TYPE main_loop_type{};
 
-	//finish_languages();
+		if (script) {
+			/* TODO: load main loop from script */
+		}
+
+		if (!main_loop && !main_loop_type) {
+			main_loop_type = typeof<SceneTree>();
+		}
+
+		if (!main_loop) {
+			ASSERT(TYPE::check_(main_loop_type));
+			main_loop = main_loop_type();
+			ASSERT(main_loop);
+		}
+
+		//OBJ o = object_or_cast(std::function<void()>{});
+
+		if (isinstance<SceneTree>(main_loop))
+		{
+			SceneTree * tree{ (SceneTree *)*main_loop };
+
+			Window * root{ tree->get_root() };
 
 #if TOOLS_ENABLED
-	unregister_editor_types();
+			if (editor) { root->add_child<EditorNode>(); }
 #endif
-	unregister_driver_types();
-	unregister_platform_apis();
-	unregister_server_types();
-	unregister_scene_types();
 
-	memdelete(audio_server);
+			// etc...
+		}
+	
+		OS::get_singleton()->set_main_loop(main_loop);
 
-	OS::get_singleton()->finalize();
+		main_loop->initialize();
 
-	ImGui_Shutdown();
-	ImGui::DestroyContext(gui_context);
-	rendering_server->finalize();
+		return true;
+	}
 
-	memdelete(rendering_server);
-	memdelete(display_server);
-	memdelete(physics_server);
-	memdelete(text_server);
-	memdelete(input);
+	bool Main::iteration()
+	{
+		++m_iterating; ON_SCOPE_EXIT(&) { --m_iterating; };
 
-	unregister_core_driver_types();
-	unregister_core_types();
+		Clock const loop_timer{};
+		static Duration delta_time{ 16_ms };
+		ON_SCOPE_EXIT(&) { delta_time = loop_timer.get_elapsed_time(); };
 
-	memdelete(performance);
-	memdelete(internals);
+		++m_frame;
 
-	OS::get_singleton()->finalize_core();
+		bool should_close{ false };
+
+		// TODO: physics stuff goes here
+
+		display->poll_events();
+
+		Input::get_singleton()->iteration(delta_time);
+
+		ImGui_BeginFrame(imgui_context);
+
+		if (OS::get_singleton()->get_main_loop()->process(delta_time)) { should_close = true; }
+
+		ImGui::Render();
+		RD::get_singleton()->draw_list_begin_for_screen();
+		ImGui_RenderDrawData(&imgui_context->Viewports[0]->DrawDataP);
+		RD::get_singleton()->draw_list_end();
+
+		ImGui_EndFrame(imgui_context);
+	
+		display->swap_buffers();
+
+		return should_close;
+	}
+
+	void Main::cleanup()
+	{
+		//remove_custom_loaders();
+		//remove_custom_savers();
+
+		OS::get_singleton()->get_main_loop()->finalize();
+		OS::get_singleton()->delete_main_loop();
+
+		scr->finalize_languages();
+
+#if TOOLS_ENABLED
+		finalize_modules(ExtensionInitializationLevel_Editor);
+		ext->finalize_extensions(ExtensionInitializationLevel_Editor);
+		unregister_editor_types();
+#endif
+
+		finalize_modules(ExtensionInitializationLevel_Scene);
+		ext->finalize_extensions(ExtensionInitializationLevel_Scene);
+		unregister_platform_apis();
+		unregister_driver_types();
+		unregister_scene_types();
+
+		//finalize_theme();
+
+		finalize_modules(ExtensionInitializationLevel_Servers);
+		ext->finalize_extensions(ExtensionInitializationLevel_Servers);
+		unregister_server_types();
+
+		OS::get_singleton()->finalize();
+
+		ImGui_Finalize(imgui_context);
+
+		graphics->finalize();
+
+		memdelete(audio);
+		memdelete(graphics);
+		memdelete(display);
+		memdelete(physics);
+		memdelete(text);
+
+		unregister_core_driver_types();
+		unregister_core_extensions();
+		finalize_modules(ExtensionInitializationLevel_Scene);
+		unregister_core_types();
+
+		memdelete(input);
+		memdelete(scr);
+		memdelete(ext);
+		memdelete(perf);
+		memdelete(project);
+		memdelete(engine);
+		memdelete(internals);
+
+		OS::get_singleton()->finalize_core();
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

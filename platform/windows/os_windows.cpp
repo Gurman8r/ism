@@ -1,4 +1,5 @@
 #include <platform/windows/os_windows.hpp>
+#include <drivers/windows/file_access_windows.hpp>
 #include <filesystem>
 
 namespace ism
@@ -19,6 +20,8 @@ namespace ism
 	void OS_Windows::initialize()
 	{
 		m_main_loop = nullptr;
+
+		FileAccessWindows::initialize();
 	}
 
 	void OS_Windows::finalize()
@@ -28,6 +31,7 @@ namespace ism
 
 	void OS_Windows::finalize_core()
 	{
+		FileAccessWindows::finalize();
 	}
 
 	String OS_Windows::get_stdin_string(bool blocking)

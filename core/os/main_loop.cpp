@@ -4,9 +4,9 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(MainLoop, t)
+	EMBED_CLASS(MainLoop, t)
 	{
-		t.tp_bind = CLASS_BINDER(MainLoop, t)
+		t.tp_bind = BIND_CLASS(MainLoop, t)
 		{
 			return t
 				.def("initialize", &MainLoop::initialize)

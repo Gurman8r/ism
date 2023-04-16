@@ -1,0 +1,177 @@
+#ifndef _ISM_CLASS_HPP_
+#define _ISM_CLASS_HPP_
+
+#include <core/object/impl/module_object.hpp>
+
+// class
+namespace ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// class interface
+	template <class T, class ... Options
+	> class CLASS_ : public TYPE
+	{
+	public:
+		using holder_type = std::conditional_t<is_base_object_v<T>, Ref<T>, T>;
+
+		using value_type = std::conditional_t<is_base_object_v<T>, T, typename holder_type::value_type>;
+		
+		using type = T;
+
+	public:
+		CLASS_(TYPE type) : TYPE{ type } { ASSERT(is_valid()); }
+
+		template <class ... Args, class ... Extra
+		> CLASS_ & def(initimpl::Constructor<Args...> && init, Extra const & ... extra)
+		{
+			return FWD(init).execute(*this, extra...); // init.hpp
+		}
+
+		template <class ... Args, class ... Extra
+		> CLASS_ & def(initimpl::Factory<Args...> && init, Extra const & ... extra)
+		{
+			return FWD(init).execute(*this, extra...); // init.hpp
+		}
+
+		template <class F, class ... Extra
+		> CLASS_ & def(cstring name, F && fn, Extra const & ... extra)
+		{
+			CPP_FUNCTION cf({
+				method_adaptor<type>(FWD(fn)),
+				attr::name(name),
+				attr::is_method(*this),
+				attr::sibling(getattr(*this, name, nullptr)),
+				extra... });
+			return add_object(cf.name(), cf), (*this);
+		}
+
+		template <class F, class ... Extra
+		> CLASS_ & def_static(cstring name, F && fn, Extra const & ... extra)
+		{
+			CPP_FUNCTION cf({
+				FWD(fn),
+				attr::name(name),
+				attr::scope(*this),
+				attr::sibling(getattr(*this, name, nullptr)),
+				extra... });
+			return add_object(cf.name(), cf), (*this);
+		}
+
+		template <class C, class D, class ... Extra
+		> CLASS_ & def_readwrite(cstring name, D C::*pm, Extra const & ... extra)
+		{
+			static_assert(std::is_same_v<C, type> || std::is_base_of_v<C, type>, "def_readwrite() requires a class member (or base class member)");
+			CPP_FUNCTION fget({ [pm](type const & c) -> D const & { return c.*pm; }, attr::is_method(*this) });
+			CPP_FUNCTION fset({ [pm](type & c, D const & value) { c.*pm = value; }, attr::is_method(*this) });
+			return def_property(name, fget, fset, ReturnValuePolicy_ReferenceInternal, extra...);
+		}
+
+		template <class C, class D, class ... Extra
+		> CLASS_ & def_readonly(cstring name, D const C::*pm, Extra const & ... extra)
+		{
+			static_assert(std::is_same_v<C, type> || std::is_base_of_v<C, type>, "def_readonly() requires a class member (or base class member)");
+			CPP_FUNCTION fget({ [pm](type const & c) -> D const & { return c.*pm; }, attr::is_method(*this) });
+			return def_property_readonly(name, fget, ReturnValuePolicy_ReferenceInternal, extra...);
+		}
+
+		template <class D, class ... Extra
+		> CLASS_ & def_readwrite_static(cstring name, D * pm, Extra const & ... extra)
+		{
+			CPP_FUNCTION fget({ [pm](OBJ) -> D const & { return *pm; }, attr::scope(*this) });
+			CPP_FUNCTION fset({ [pm](OBJ, D const & value) { *pm = value; }, attr::scope(*this) });
+			return def_property_static(name, fget, fset, ReturnValuePolicy_Reference, extra...);
+		}
+
+		template <class D, class ... Extra
+		> CLASS_ & def_readonly_static(cstring name, D const * pm, Extra const & ... extra)
+		{
+			CPP_FUNCTION fget({ [pm](OBJ) -> D const & { return *pm; }, attr::scope(*this) });
+			return def_property_readonly_static(name, fget, ReturnValuePolicy_Reference, extra...);
+		}
+
+		template <class Getter, class ... Extra
+		> CLASS_ & def_property_readonly(cstring name, Getter const & fget, Extra const & ... extra)
+		{
+			return def_property_readonly(name, CPP_FUNCTION({ method_adaptor<type>(fget) }), ReturnValuePolicy_ReferenceInternal, extra...);
+		}
+
+		template <class ... Extra
+		> CLASS_ & def_property_readonly(cstring name, CPP_FUNCTION const & fget, Extra const & ... extra)
+		{
+			return def_property(name, fget, nullptr, extra...);
+		}
+
+		template <class Getter, class ... Extra
+		> CLASS_ & def_property_readonly_static(cstring name, Getter const & fget, Extra const & ... extra)
+		{
+			return def_property_readonly_static(name, CPP_FUNCTION({ fget }), ReturnValuePolicy_Reference, extra...);
+		}
+
+		template <class ... Extra
+		> CLASS_ & def_property_readonly_static(cstring name, CPP_FUNCTION const & fget, Extra const & ... extra)
+		{
+			return def_property_static(name, fget, nullptr, extra...);
+		}
+
+		template <class Getter, class Setter, class ... Extra
+		> CLASS_ & def_property(cstring name, Getter const & fget, Setter const & fset, Extra const & ... extra)
+		{
+			return def_property(name, fget, CPP_FUNCTION({ method_adaptor<type>(fset) }), extra...);
+		}
+
+		template <class Getter, class ... Extra
+		> CLASS_ & def_property(cstring name, Getter const & fget, CPP_FUNCTION const & fset, Extra const & ... extra)
+		{
+			return def_property(name, CPP_FUNCTION({ method_adaptor<type>(fget) }), fset, ReturnValuePolicy_ReferenceInternal, extra...);
+		}
+
+		template <class ... Extra
+		> CLASS_ & def_property(cstring name, CPP_FUNCTION const & fget, CPP_FUNCTION const & fset, Extra const & ... extra)
+		{
+			return def_property_static(name, fget, fset, attr::is_method(*this), extra...);
+		}
+
+		template <class Getter, class ... Extra
+		> CLASS_ & def_property_static(cstring name, Getter const & fget, CPP_FUNCTION const & fset, Extra const & ... extra)
+		{
+			return def_property_static(name, CPP_FUNCTION({ fget }), fset, ReturnValuePolicy_Reference, extra...);
+		}
+	
+		template <class ... Extra
+		> CLASS_ & def_property_static(cstring name, CPP_FUNCTION const & fget, CPP_FUNCTION const & fset, Extra const & ... extra)
+		{
+			if (fget) { attr::process_attributes<Extra...>::init(***fget, extra...); }
+	
+			if (fset) { attr::process_attributes<Extra...>::init(***fset, extra...); }
+
+			return add_object(name, PROPERTY({ fget, fset })), (*this);
+		}
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+namespace ism::priv
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// class installer helper
+
+	template <class T> struct BindClassHelper final
+	{
+		constexpr BindClassHelper() noexcept = default;
+
+		constexpr auto operator+(CLASS_<T>(*fn)(CLASS_<T>)) const noexcept
+		{
+			return static_cast<classproc>(static_cast<void *>(fn));
+		}
+	};
+
+#define BIND_CLASS(m_class, m_var) \
+	(ism::priv::BindClassHelper<m_class>{}) + [](ism::CLASS_<m_class> m_var) -> ism::CLASS_<m_class>
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+#endif // !_ISM_CLASS_HPP_

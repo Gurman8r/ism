@@ -12,7 +12,7 @@ namespace ism
 	// input event
 	class ISM_API InputEvent : public Resource
 	{
-		OBJECT_CLASS(InputEvent, Resource);
+		DEFINE_CLASS(InputEvent, Resource);
 
 		friend class Input;
 

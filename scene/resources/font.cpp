@@ -5,7 +5,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_OBJECT_CLASS(Font, t) {}
+	EMBED_CLASS(Font, t) {}
 
 	Font::~Font()
 	{

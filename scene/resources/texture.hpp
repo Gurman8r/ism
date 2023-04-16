@@ -10,7 +10,7 @@ namespace ism
 	// texture
 	class ISM_API Texture : public Resource
 	{
-		OBJECT_CLASS(Texture, Resource);
+		DEFINE_CLASS(Texture, Resource);
 
 	protected:
 		Texture() noexcept {}
@@ -26,7 +26,7 @@ namespace ism
 	// texture 2D
 	class ISM_API Texture2D : public Texture
 	{
-		OBJECT_CLASS(Texture2D, Texture);
+		DEFINE_CLASS(Texture2D, Texture);
 
 	protected:
 		Texture2D() noexcept {}
@@ -49,7 +49,7 @@ namespace ism
 	// image texture
 	class ISM_API ImageTexture : public Texture2D
 	{
-		OBJECT_CLASS(ImageTexture, Texture2D);
+		DEFINE_CLASS(ImageTexture, Texture2D);
 
 		RID			m_texture{};
 		i32			m_width{};
@@ -79,7 +79,7 @@ namespace ism
 	// texture 3D (NYI)
 	class ISM_API Texture3D : public Texture
 	{
-		OBJECT_CLASS(Texture3D, Texture);
+		DEFINE_CLASS(Texture3D, Texture);
 
 	public:
 		Texture3D();
@@ -94,7 +94,7 @@ namespace ism
 	// texture cube (NYI)
 	class ISM_API TextureCube : public Texture
 	{
-		OBJECT_CLASS(TextureCube, Texture);
+		DEFINE_CLASS(TextureCube, Texture);
 
 	public:
 		TextureCube();

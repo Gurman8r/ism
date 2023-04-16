@@ -7,7 +7,7 @@ namespace ism
 {
 	class ISM_API Mesh : public Resource
 	{
-		OBJECT_CLASS(Mesh, Resource);
+		DEFINE_CLASS(Mesh, Resource);
 
 		friend class MeshLoader;
 
