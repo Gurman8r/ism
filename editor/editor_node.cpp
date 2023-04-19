@@ -122,7 +122,6 @@ namespace ism
 		m_log = memnew(EditorLog);
 		m_viewport = memnew(EditorViewport);
 
-
 		RID c{ RS::get_singleton()->camera_create() };
 		RS::get_singleton()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
 		RS::get_singleton()->camera_set_transform(c, camera.transform);

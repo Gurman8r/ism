@@ -75,9 +75,9 @@ CODE
 // [SECTION] DRAG AND DROP
 // [SECTION] LOGGING/CAPTURING
 // [SECTION] SETTINGS
-// [SECTION] VIEWPORTS, PLATFORM WINDOWS
+// [SECTION] VIEWPORTS, cfg.platform WINDOWS
 // [SECTION] DOCKING
-// [SECTION] PLATFORM DEPENDENT HELPERS
+// [SECTION] cfg.platform DEPENDENT HELPERS
 // [SECTION] METRICS/DEBUG WINDOW
 
 */
@@ -10932,7 +10932,7 @@ static void WindowSettingsHandler_WriteAll(ImGuiContext* ctx, ImGuiSettingsHandl
 
 
 //-----------------------------------------------------------------------------
-// [SECTION] VIEWPORTS, PLATFORM WINDOWS
+// [SECTION] VIEWPORTS, cfg.platform WINDOWS
 //-----------------------------------------------------------------------------
 // - GetMainViewport()
 // - FindViewportByID()
@@ -15324,7 +15324,7 @@ static void ImGui::DockSettingsHandler_WriteAll(ImGuiContext* ctx, ImGuiSettings
 
 
 //-----------------------------------------------------------------------------
-// [SECTION] PLATFORM DEPENDENT HELPERS
+// [SECTION] cfg.platform DEPENDENT HELPERS
 //-----------------------------------------------------------------------------
 
 #if defined(_WIN32) && !defined(IMGUI_DISABLE_WIN32_FUNCTIONS) && !defined(IMGUI_DISABLE_WIN32_DEFAULT_CLIPBOARD_FUNCTIONS)

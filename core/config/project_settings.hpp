@@ -19,6 +19,7 @@ namespace ism
 	public:
 		NODISCARD Path get_project_data_path() const;
 		NODISCARD Path get_resource_path() const;
+		NODISCARD Path get_user_data_dir() const;
 	};
 }
 

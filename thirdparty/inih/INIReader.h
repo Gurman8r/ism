@@ -354,15 +354,6 @@ public:
 	// and valid false values are "false", "no", "off", "0" (not case sensitive).
 	bool GetBoolean(std::string section, std::string name, bool default_value);
 
-	// Copy data into Other - Gurman8r/2019
-	inline INIReader & Copy(const INIReader & other)
-	{
-		_error = other._error;
-		_values = other._values;
-		_sections = other._sections;
-		return (*this);
-	}
-
 private:
 	int _error;
 	std::map<std::string, std::string> _values;

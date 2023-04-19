@@ -53,11 +53,11 @@ namespace ism
 		{
 			if constexpr (std::is_integral_v<Index>)
 			{
-				return m_list.erase(begin() + static_cast<size_t>(i)), Error_None;
+				return m_list.erase(begin() + static_cast<size_t>(i)), Error_OK;
 			}
 			else
 			{
-				return m_list.erase(begin() + FWD_OBJ(i).cast<size_t>()), Error_None;
+				return m_list.erase(begin() + FWD_OBJ(i).cast<size_t>()), Error_OK;
 			}
 		}
 

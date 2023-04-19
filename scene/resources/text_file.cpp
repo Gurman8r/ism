@@ -36,7 +36,7 @@ namespace ism
 			file.read((char *)m_text.data(), size);
 		}
 
-		return Error_None;
+		return Error_OK;
 	}
 
 	String const & TextFile::get_text() const

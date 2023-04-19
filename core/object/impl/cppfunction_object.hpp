@@ -36,46 +36,46 @@ namespace ism
 		CppFunctionObject & swap(CppFunctionObject & other) noexcept { if (this != std::addressof(other)) { util::swap(m_record, other.m_record); } return (*this); }
 
 		template <class Return, class ... Args, class ... Extra
-		> CppFunctionObject(Return(*f)(Args...), Extra const & ... extra) : CppFunctionObject{}
+		> CppFunctionObject(Return(*f)(Args...), Extra && ... extra) noexcept : CppFunctionObject{}
 		{
-			this->initialize(f, f, extra...);
+			this->initialize(f, f, FWD(extra)...);
 		}
 
 		template <class Func, class ... Extra, class = std::enable_if_t<mpl::is_lambda_v<Func>>
-		> CppFunctionObject(Func && f, Extra const & ... extra) : CppFunctionObject{}
+		> CppFunctionObject(Func && f, Extra && ... extra) noexcept : CppFunctionObject{}
 		{
-			this->initialize(FWD(f), (mpl::function_signature_t<Func> *)0, extra...);
+			this->initialize(FWD(f), (mpl::function_signature_t<Func> *)0, FWD(extra)...);
 		}
 
 		template <class Return, class Class, class ... Args, class ... Extra
-		> CppFunctionObject(Return(Class::*f)(Args...), Extra const & ... extra) : CppFunctionObject{}
+		> CppFunctionObject(Return(Class::*f)(Args...), Extra && ... extra) noexcept : CppFunctionObject{}
 		{
-			this->initialize([f](Class * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class *, Args...))0, extra...);
+			this->initialize([f](Class * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class *, Args...))0, FWD(extra)...);
 		}
 
 		template <class Return, class Class, class ... Args, class ... Extra
-		> CppFunctionObject(Return(Class::*f)(Args...) &, Extra const & ... extra) : CppFunctionObject{}
+		> CppFunctionObject(Return(Class::*f)(Args...) &, Extra && ... extra) noexcept : CppFunctionObject{}
 		{
-			this->initialize([f](Class * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class *, Args...))0, extra...);
+			this->initialize([f](Class * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class *, Args...))0, FWD(extra)...);
 		}
 
 		template <class Return, class Class, class ... Args, class ... Extra
-		> CppFunctionObject(Return(Class::*f)(Args...) const, Extra const & ... extra) : CppFunctionObject{}
+		> CppFunctionObject(Return(Class::*f)(Args...) const, Extra && ... extra) noexcept : CppFunctionObject{}
 		{
-			this->initialize([f](Class const * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class const *, Args...))0, extra...);
+			this->initialize([f](Class const * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class const *, Args...))0, FWD(extra)...);
 		}
 
 		template <class Return, class Class, class ... Args, class ... Extra
-		> CppFunctionObject(Return(Class::*f)(Args...) const &, Extra const & ... extra) : CppFunctionObject{}
+		> CppFunctionObject(Return(Class::*f)(Args...) const &, Extra && ... extra) noexcept : CppFunctionObject{}
 		{
-			this->initialize([f](Class const * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class const *, Args...))0, extra...);
+			this->initialize([f](Class const * c, Args ... args) -> Return { return (c->*f)(args...); }, (Return(*)(Class const *, Args...))0, FWD(extra)...);
 		}
 
 	protected:
 		void initialize_generic(FunctionRecord * record_in, std::type_info const * const * info_in, size_t argc_in, bool prepend = false);
 
 		template <class Func, class Return, class ... Args, class ... Extra
-		> void initialize(Func && f, Return(*)(Args...), Extra const & ... extra)
+		> void initialize(Func && f, Return(*)(Args...), Extra && ... extra) noexcept
 		{
 			static_assert(sizeof...(Args) < MAX_ARGUMENTS, "TOO MANY ARGUMENTS");
 
@@ -120,7 +120,7 @@ namespace ism
 				return result;
 			};
 
-			attr::process_attributes<Extra...>::init(*rec, extra...); // init
+			attr::process_attributes<Extra...>::init(*rec, FWD(extra)...); // init
 
 			// collect type info
 			constexpr size_t argc{ sizeof...(Args) };

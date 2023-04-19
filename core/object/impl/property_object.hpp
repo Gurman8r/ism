@@ -49,7 +49,7 @@ namespace ism
 	public:
 		OBJ get(OBJ const & self) const { return VALIDATE(m_ptr)->m_get(self); }
 
-		Error_ set(OBJ const & self, OBJ const & value) const { return VALIDATE(m_ptr)->m_set(self, value), Error_None; }
+		Error_ set(OBJ const & self, OBJ const & value) const { return VALIDATE(m_ptr)->m_set(self, value), Error_OK; }
 	};
 }
 

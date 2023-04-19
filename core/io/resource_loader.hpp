@@ -5,7 +5,7 @@
 
 namespace ism
 {
-	class ResourceFormatLoader : public Object
+	class ISM_API ResourceFormatLoader : public Object
 	{
 		DEFINE_CLASS(ResourceFormatLoader, Object);
 
@@ -23,6 +23,7 @@ namespace ism
 	public:
 		ResourceLoader();
 		~ResourceLoader();
+		FORCE_INLINE static ResourceLoader * get_singleton() noexcept { return __singleton; }
 	};
 }
 

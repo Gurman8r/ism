@@ -17,12 +17,13 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	DisplayServerWindows::DisplayServerWindows(String const & window_title, WindowMode_ window_mode, Vec2i const & window_size)
+	DisplayServerWindows::DisplayServerWindows(String const & title, DS::WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error)
+		: DisplayServer{ title, mode, position, size, screen, error }
 	{
-		ASSERT(window_title);
-		ASSERT(0 < window_size[0]);
-		ASSERT(0 < window_size[1]);
-		VERIFY_RANGE(window_mode, -1, WindowMode_MAX);
+		ASSERT(title);
+		ASSERT(0 < size[0]);
+		ASSERT(0 < size[1]);
+		VERIFY_RANGE(mode, -1, WindowMode_MAX);
 
 		/* GLFW SETUP */
 
@@ -73,14 +74,14 @@ namespace ism
 
 		// window hints
 		glfwWindowHint(GLFW_RESIZABLE, true);
-		glfwWindowHint(GLFW_VISIBLE, window_mode != WindowMode_Maximized);
+		glfwWindowHint(GLFW_VISIBLE, mode != WindowMode_Maximized);
 		glfwWindowHint(GLFW_DECORATED, true);
 		glfwWindowHint(GLFW_FOCUSED, true);
 		glfwWindowHint(GLFW_AUTO_ICONIFY, true);
 		glfwWindowHint(GLFW_CENTER_CURSOR, true);
 		glfwWindowHint(GLFW_FOCUS_ON_SHOW, true);
 		glfwWindowHint(GLFW_FLOATING, false);
-		glfwWindowHint(GLFW_MAXIMIZED, window_mode == WindowMode_Maximized);
+		glfwWindowHint(GLFW_MAXIMIZED, mode == WindowMode_Maximized);
 
 		// framebuffer hints
 		glfwWindowHint(GLFW_RED_BITS, 8);
@@ -95,12 +96,12 @@ namespace ism
 		/* CREATE WINDOW */
 
 		_Window & w{ m_windows[MAIN_WINDOW_ID] = {} };
-		w.title = window_title;
-		w.window_mode = window_mode;
-		w.handle = VALIDATE(glfwCreateWindow(window_size[0], window_size[1], w.title.c_str(), nullptr, nullptr));
+		w.title = title;
+		w.mode = mode;
+		w.handle = VALIDATE(glfwCreateWindow(size[0], size[1], w.title.c_str(), nullptr, nullptr));
 		glfwSetWindowUserPointer(w.handle, &w);
 
-		switch (window_mode) {
+		switch (mode) {
 		case WindowMode_Windowed: {} break;
 		case WindowMode_Minimized: { glfwIconifyWindow(w.handle); } break;
 		case WindowMode_Maximized: { glfwMaximizeWindow(w.handle); } break;
@@ -385,15 +386,15 @@ namespace ism
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return w.current_screen;
+		return w.screen;
 	}
 
 	void DisplayServerWindows::window_set_current_screen(i32 screen, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		if (w.current_screen == screen) { return; }
-		w.current_screen = screen;
+		if (w.screen == screen) { return; }
+		w.screen = screen;
 	}
 
 	Vec2i DisplayServerWindows::window_get_position(WindowID window) const
@@ -437,15 +438,15 @@ namespace ism
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		return w.window_mode;
+		return w.mode;
 	}
 
 	void DisplayServerWindows::window_set_mode(WindowMode_ mode, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
-		if (w.window_mode == mode) { return; }
-		w.window_mode = mode;
+		if (w.mode == mode) { return; }
+		w.mode = mode;
 		switch (mode) {
 		case WindowMode_Windowed: {
 			//glfwRestoreWindow(w.handle);
@@ -567,6 +568,21 @@ namespace ism
 		icon.width = width;
 		icon.height = height;
 		glfwSetWindowIcon(m_main_window->handle, 1, &icon);
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void DisplayServerWindows::initialize()
+	{
+		DisplayServer::__create_func = [](String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error) -> DisplayServer *
+		{
+			return memnew(DisplayServerWindows(title, mode, position, size, screen, error));
+		};
+	}
+
+	void DisplayServerWindows::finalize()
+	{
+		DisplayServer::__create_func = nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

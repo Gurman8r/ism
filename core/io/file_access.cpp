@@ -8,7 +8,7 @@ namespace ism
 
 	EMBED_CLASS(FileAccess, t, TypeFlags_IsAbstract) {}
 
-	decltype(FileAccess::__create_func) FileAccess::__create_func{};
+	FileAccess::CreateFunc FileAccess::__create_func[FileAccessType_MAX]{};
 
 	Ref<FileAccess> FileAccess::create(FileAccessType_ access_type)
 	{
@@ -28,18 +28,16 @@ namespace ism
 
 	Ref<FileAccess> FileAccess::open(Path const & path, FileMode_ mode)
 	{
-		Ref<FileAccess> file{ create(path) };
-		if (file->open_internal(path, mode) != Error_None) {
-			file = nullptr;
+		if (Ref<FileAccess> file{ create(path) }
+		; file->open_internal(path, mode) == Error_OK) {
+			return file;
 		}
-		return file;
+		return nullptr;
 	}
 
 	Error_ FileAccess::reopen(Path const & path, FileMode_ mode)
 	{
-		close();
-		open(path, mode);
-		return Error_None;
+		return open_internal(path, mode);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -78,19 +76,49 @@ namespace ism
 		return f64();
 	}
 
-	String FileAccess::read_string() const
+	String FileAccess::read_token() const
 	{
-		return String();
+		String token{};
+		u8 c{ read_8() };
+		while (!eof_reached()) {
+			if (c == ' ' && !token.empty()) { break; }
+			else { token.push_back(c); }
+			c = read_8();
+		}
+		return token;
 	}
 
 	String FileAccess::read_line() const
 	{
-		return String();
+		String line{};
+		u8 c{ read_8() };
+		while (!eof_reached()) {
+			if (c == '\n' || c == '\0') { return line.push_back(0), line; }
+			else if (c != '\r') { line.push_back(c); }
+			c = read_8();
+		}
+		if (!line.empty()) { line.push_back(0); }
+		return line;
 	}
 
-	String FileAccess::read_token() const
+	size_t FileAccess::read_buffer(u8 * data, size_t const size) const
 	{
-		return String();
+		size_t i{};
+		for (; i < size && !eof_reached(); ++i) {
+			data[i] = read_8();
+		}
+		return i;
+	}
+
+	DynamicBuffer FileAccess::read_buffer(size_t const size) const
+	{
+		DynamicBuffer buf{};
+		if (!size) { return buf; }
+		buf.resize(size);
+		if (size_t length{ read_buffer(buf.data(), buf.size()) }; length < size) {
+			buf.resize(length);
+		}
+		return buf;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -127,12 +155,28 @@ namespace ism
 	{
 	}
 
-	void FileAccess::write_string(String const & value) const
+	void FileAccess::write_token(String const & value)
 	{
+		if (value.empty()) { return; }
+		write_buffer((u8 *)value.data(), value.size());
 	}
 
-	void FileAccess::write_line(String const & value) const
+	void FileAccess::write_line(String const & value)
 	{
+		write_token(value);
+		write_8((u8)'\n');
+	}
+
+	void FileAccess::write_buffer(u8 const * data, size_t const size)
+	{
+		if (!data || !size) { return; }
+		for (size_t i{}; i < size; ++i) { write_8(data[i]); }
+	}
+
+	void FileAccess::write_buffer(DynamicBuffer const & buffer)
+	{
+		if (buffer.empty()) { return; }
+		write_buffer(buffer.data(), buffer.size());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

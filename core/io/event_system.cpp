@@ -19,19 +19,19 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EventHandler, t, TypeFlags_IsAbstract)
+	EMBED_CLASS(EventListener, t, TypeFlags_IsAbstract)
 	{
-		t.tp_bind = BIND_CLASS(EventHandler, t)
+		t.tp_bind = BIND_CLASS(EventListener, t)
 		{
 			return t
-				.def("handle_event", &EventHandler::handle_event)
+				.def("handle_event", &EventListener::handle_event)
 				;
 		};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DummyHandler, t) {}
+	EMBED_CLASS(DummyListener, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

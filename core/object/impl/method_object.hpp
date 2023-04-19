@@ -18,7 +18,7 @@ namespace ism
 
 		MethodObject() noexcept : FunctionObject{} {}
 
-		MethodObject(OBJ const & func, OBJ const & self, vectorcallfunc vectorcall = &method_vectorcall)
+		MethodObject(OBJ const & func, OBJ const & self, VectorCallFunc vectorcall = &method_vectorcall)
 			: FunctionObject{ vectorcall }
 			, m_func		{ func }
 			, m_self		{ self }

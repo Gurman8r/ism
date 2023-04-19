@@ -8,6 +8,8 @@ struct GLFWwindow;
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// windows display server
 	class ISM_API DisplayServerWindows : public DisplayServer
 	{
@@ -17,9 +19,8 @@ namespace ism
 		{
 			GLFWwindow *	handle{};
 			String			title{};
-			i32				current_screen{};
-			WindowMode_		window_mode{};
-
+			i32				screen{};
+			WindowMode_		mode{};
 		};
 
 		_Window * m_main_window{};
@@ -30,7 +31,7 @@ namespace ism
 		GLFWcursor * m_cursors[Input::CursorShape_MAX]{};
 
 	public:
-		DisplayServerWindows(String const & window_title, WindowMode_ window_mode, Vec2i const & window_size);
+		DisplayServerWindows(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
 		~DisplayServerWindows();
 
 	public:
@@ -40,6 +41,7 @@ namespace ism
 	public:
 		// TODO: global menu stuff goes here
 
+	public:
 		virtual void alert(String const & message, String const & title = "ALERT!") override;
 
 		virtual String get_clipboard() const override;
@@ -106,8 +108,12 @@ namespace ism
 		virtual void set_native_icon(Path const & path) override;
 		virtual void set_icon(u8 const * data, i32 width, i32 height) override;
 
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	public:
+		static void initialize();
+		static void finalize();
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_DISPLAY_SERVER_WINDOWS_HPP_

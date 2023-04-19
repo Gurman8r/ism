@@ -39,7 +39,7 @@ namespace ism
 
 	static MethodDef type_methods[]
 	{
-		{ "", binaryfunc{} },
+		{ "", BinaryFunc{} },
 		{/*SENTINAL*/}
 	};
 
@@ -47,15 +47,15 @@ namespace ism
 	{
 		{
 			"some_property",
-			(getter)[](OBJ obj, auto) -> OBJ
+			(GetterFunc)[](OBJ obj, auto) -> OBJ
 			{
 				if (!obj) { return nullptr; }
 				return nullptr;
 			},
-			(setter)[](OBJ obj, OBJ value, auto) -> Error_
+			(SetterFunc)[](OBJ obj, OBJ value, auto) -> Error_
 			{
 				if (!obj) { return Error_Unknown; }
-				return Error_None;
+				return Error_OK;
 			}
 		},
 		{/*SENTINAL*/}
@@ -73,20 +73,20 @@ namespace ism
 
 		t.tp_getsets = type_getsets;
 
-		t.tp_getattro = (getattrofunc)&TypeObject::type_getattro;
+		t.tp_getattro = (GetAttrOFunc)&TypeObject::type_getattro;
 
-		t.tp_setattro = (setattrofunc)&TypeObject::type_setattro;
+		t.tp_setattro = (SetAttrOFunc)&TypeObject::type_setattro;
 
-		t.tp_hash = (hashfunc)[](OBJ self) -> size_t { return ((TYPE)self)->tp_name.hash_code(); };
+		t.tp_hash = (HashFunc)[](OBJ self) -> size_t { return ((TYPE)self)->tp_name.hash_code(); };
 
-		t.tp_repr = (reprfunc)[](OBJ self) -> STR { return STR(TYPE(self)->tp_name); };
+		t.tp_repr = (ReprFunc)[](OBJ self) -> STR { return STR(TYPE(self)->tp_name); };
 
-		t.tp_str = (reprfunc)[](OBJ self) -> STR { return STR(TYPE(self)->tp_name); };
+		t.tp_str = (ReprFunc)[](OBJ self) -> STR { return STR(TYPE(self)->tp_name); };
 
-		t.tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ
+		t.tp_call = (BinaryFunc)[](OBJ self, OBJ args) -> OBJ
 		{
 			ASSERT(TYPE::check_(self));
-			newfunc fn{ TYPE(self)->tp_new };
+			NewFunc fn{ TYPE(self)->tp_new };
 			return fn ? fn(self, args) : nullptr;
 		};
 
@@ -146,18 +146,18 @@ namespace ism
 			tp_dict = DICT::new_();
 		}
 
-		ASSERT(add_operators() == Error_None);
+		ASSERT(add_operators() == Error_OK);
 
 		if (tp_methods) {
-			ASSERT(add_methods(tp_methods) == Error_None);
+			ASSERT(add_methods(tp_methods) == Error_OK);
 		}
 
 		if (tp_members) {
-			ASSERT(add_members(tp_members) == Error_None);
+			ASSERT(add_members(tp_members) == Error_OK);
 		}
 
 		if (tp_getsets) {
-			ASSERT(add_getsets(tp_getsets) == Error_None);
+			ASSERT(add_getsets(tp_getsets) == Error_OK);
 		}
 
 		ASSERT(mro_internal(nullptr));
@@ -257,22 +257,22 @@ namespace ism
 
 	Error_ TypeObject::add_operators()
 	{
-		return Error_None;
+		return Error_OK;
 	}
 
 	Error_ TypeObject::add_members(MemberDef * members)
 	{
-		return Error_None;
+		return Error_OK;
 	}
 
 	Error_ TypeObject::add_methods(MethodDef * methods)
 	{
-		return Error_None;
+		return Error_OK;
 	}
 
 	Error_ TypeObject::add_getsets(GetSetDef * getsets)
 	{
-		return Error_None;
+		return Error_OK;
 	}
 
 	void TypeObject::inherit_slots(TypeObject * base)
@@ -367,12 +367,12 @@ namespace ism
 		case "__getattr__"_hash:
 		case "__setattr__"_hash:
 		case "__delattr__"_hash:
-		default: return Error_None;
+		default: return Error_OK;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		case "__new__"_hash: {
-			tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ {
+			tp_new = (NewFunc)[](TYPE type, OBJ args) -> OBJ {
 				STR_IDENTIFIER(__new__);
 				if (OBJ f{ type.lookup(&ID___new__) }) { return call_object(f, args); }
 				return nullptr;
@@ -380,7 +380,7 @@ namespace ism
 		} break;
 
 		case "__del__"_hash: {
-			tp_del = (delfunc)[](Object * obj) -> void {
+			tp_del = (DelFunc)[](Object * obj) -> void {
 				STR_IDENTIFIER(__del__);
 				if (OBJ f{ typeof(obj).lookup(&ID___del__) }) { /* TODO */ }
 			};
@@ -389,7 +389,7 @@ namespace ism
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		case "__call__"_hash: {
-			tp_call = (binaryfunc)[](OBJ self, OBJ args) -> OBJ {
+			tp_call = (BinaryFunc)[](OBJ self, OBJ args) -> OBJ {
 				STR_IDENTIFIER(__call__);
 				if (OBJ f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
 				return nullptr;
@@ -397,7 +397,7 @@ namespace ism
 		} break;
 
 		case "__hash__"_hash: {
-			tp_hash = (hashfunc)[](OBJ self) -> size_t {
+			tp_hash = (HashFunc)[](OBJ self) -> size_t {
 				STR_IDENTIFIER(__hash__);
 				if (OBJ f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<size_t>(); }
 				return 0;
@@ -405,7 +405,7 @@ namespace ism
 		} break;
 
 		case "__len__"_hash: {
-			tp_len = (lenfunc)[](OBJ self) -> ssize_t {
+			tp_len = (LenFunc)[](OBJ self) -> ssize_t {
 				STR_IDENTIFIER(__len__);
 				if (OBJ f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
 				return -1;
@@ -413,7 +413,7 @@ namespace ism
 		} break;
 
 		case "__repr__"_hash: {
-			tp_repr = (reprfunc)[](OBJ self) -> STR {
+			tp_repr = (ReprFunc)[](OBJ self) -> STR {
 				STR_IDENTIFIER(__repr__);
 				if (OBJ f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
 				return nullptr;
@@ -421,7 +421,7 @@ namespace ism
 		} break;
 
 		case "__str__"_hash: {
-			tp_str = (reprfunc)[](OBJ self) -> STR {
+			tp_str = (ReprFunc)[](OBJ self) -> STR {
 				STR_IDENTIFIER(__str__);
 				if (OBJ f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
 				return nullptr;
@@ -429,7 +429,7 @@ namespace ism
 		} break;
 
 		case "__get__"_hash: {
-			tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ type) -> OBJ {
+			tp_descr_get = (DescrGetFunc)[](OBJ self, OBJ obj, OBJ type) -> OBJ {
 				STR_IDENTIFIER(__get__);
 				if (OBJ f{ typeof(self).lookup(&ID___get__) }) { /* TODO */ }
 				return nullptr;
@@ -437,7 +437,7 @@ namespace ism
 		} break;
 
 		case "__set__"_hash: {
-			tp_descr_set = (descrsetfunc)[](OBJ self, OBJ obj, OBJ type) -> Error_ {
+			tp_descr_set = (DescrSetFunc)[](OBJ self, OBJ obj, OBJ type) -> Error_ {
 				STR_IDENTIFIER(__set__);
 				if (OBJ f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
 				return Error_Unknown;
@@ -475,7 +475,7 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 		}
-		return Error_None;
+		return Error_OK;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -491,7 +491,7 @@ namespace ism
 
 		Error_ err{ generic_setattr_with_dict(type, name, value, nullptr) };
 
-		if (err == Error_None)
+		if (err == Error_OK)
 		{
 			type->modified();
 

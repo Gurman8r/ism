@@ -16,12 +16,15 @@ namespace ism
 
 		static PhysicsServer * __singleton;
 
-	public:
+	protected:
+		using CreateFunc = PhysicsServer * (*)();
+		static CreateFunc __create_func;
 		PhysicsServer();
 
+	public:
 		virtual ~PhysicsServer() override;
-
 		FORCE_INLINE static PhysicsServer * get_singleton() noexcept { return __singleton; }
+		static PhysicsServer * create();
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

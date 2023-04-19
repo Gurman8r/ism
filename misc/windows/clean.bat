@@ -1,7 +1,7 @@
 @echo off
 
-call .\clean_binaries.bat
-call .\clean_projects.bat
-call .\clean_temps.bat
+call .\clean_build.bat
+call .\clean_etc.bat
+call .\clean_workspace.bat
 
 if %ERRORLEVEL% NEQ 0 ( pause ) else ( echo all OK )

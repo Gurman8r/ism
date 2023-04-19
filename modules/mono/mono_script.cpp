@@ -1,4 +1,4 @@
-#include <modules/mono/mono_script_language.hpp>
+#include <modules/mono/mono_script.hpp>
 
 namespace ism
 {
@@ -14,7 +14,7 @@ namespace ism
 
 	Error_ MonoScript::reload_from_file()
 	{
-		return Error_None;
+		return Error_OK;
 	}
 
 	bool MonoScript::has_source_code() const
@@ -50,14 +50,23 @@ namespace ism
 	{
 	}
 
+	bool MonoInstance::get_constants(HashMap<StringName, OBJ> * out) const
+	{
+		return true;
+	}
+
 	bool MonoInstance::get_properties(HashMap<StringName, PROPERTY> * out) const
 	{
-		return false;
+		return true;
 	}
 
 	bool MonoInstance::get_functions(HashMap<StringName, FUNCTION> * out) const
 	{
-		return false;
+		return true;
+	}
+
+	void MonoInstance::notification(i32 notification)
+	{
 	}
 }
 
@@ -70,6 +79,14 @@ namespace ism
 	}
 
 	MonoLanguage::~MonoLanguage()
+	{
+	}
+
+	void MonoLanguage::initialize()
+	{
+	}
+
+	void MonoLanguage::finalize()
 	{
 	}
 }

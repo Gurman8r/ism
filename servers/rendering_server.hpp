@@ -17,14 +17,15 @@ namespace ism
 		static RenderingServer * __singleton;
 
 	protected:
+		using CreateFunc = RenderingServer * (*)();
+		static CreateFunc __create_func;
 		RenderingServer();
 
 	public:
 		virtual ~RenderingServer() override;
-
 		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return __singleton; }
+		static RenderingServer * create();
 
-	public:
 		virtual void initialize() = 0;
 		virtual void finalize() = 0;
 

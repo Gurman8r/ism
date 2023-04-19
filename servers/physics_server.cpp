@@ -4,13 +4,25 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	PhysicsServer * PhysicsServer::__singleton{};
-
 	EMBED_CLASS(PhysicsServer, t) {}
 
-	PhysicsServer::PhysicsServer() { __singleton = this; }
+	PhysicsServer * PhysicsServer::__singleton{};
 
-	PhysicsServer::~PhysicsServer() {}
+	PhysicsServer::CreateFunc PhysicsServer::__create_func{ []() { return memnew(PhysicsServer); } };
+
+	PhysicsServer::PhysicsServer()
+	{
+		__singleton = this;
+	}
+
+	PhysicsServer::~PhysicsServer()
+	{
+	}
+
+	PhysicsServer * PhysicsServer::create()
+	{
+		return VALIDATE(__create_func)();
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

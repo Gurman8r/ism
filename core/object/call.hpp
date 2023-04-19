@@ -14,11 +14,11 @@ namespace ism
 		{
 			TYPE type{ typeof(callable) };
 
-			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+			if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) })
 			{
 				return vcall(callable, nullptr, 0);
 			}
-			else if (binaryfunc tcall{ type->tp_call })
+			else if (BinaryFunc tcall{ type->tp_call })
 			{
 				return tcall(callable, nullptr);
 			}
@@ -36,7 +36,7 @@ namespace ism
 		{
 			TYPE type{ typeof(callable) };
 
-			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+			if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) })
 			{
 				if (args)
 				{
@@ -47,7 +47,7 @@ namespace ism
 					return vcall(callable, nullptr, 0);
 				}
 			}
-			else if (binaryfunc tcall{ type->tp_call })
+			else if (BinaryFunc tcall{ type->tp_call })
 			{
 				return tcall(callable, args);
 			}
@@ -65,11 +65,11 @@ namespace ism
 		{
 			TYPE type{ typeof(callable) };
 
-			if (vectorcallfunc vcall{ get_vectorcall_func(type, callable) })
+			if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) })
 			{
 				return vcall(callable, argv, argc);
 			}
-			else if (binaryfunc tcall{ type->tp_call })
+			else if (BinaryFunc tcall{ type->tp_call })
 			{
 				ListObject args{ argv, argv + argc };
 

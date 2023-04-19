@@ -12,6 +12,7 @@ namespace ism
 	public:
 		ResourceImporter();
 		~ResourceImporter();
+		FORCE_INLINE static ResourceImporter * get_singleton() noexcept { return __singleton; }
 	};
 }
 

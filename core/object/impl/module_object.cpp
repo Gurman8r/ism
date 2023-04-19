@@ -9,14 +9,14 @@ namespace ism
 	{
 		t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 
-		t.tp_getattro = (getattrofunc)&ModuleObject::module_getattro;
+		t.tp_getattro = (GetAttrOFunc)&ModuleObject::module_getattro;
 
-		t.tp_new = (newfunc)[](TYPE type, OBJ args) -> OBJ
+		t.tp_new = (NewFunc)[](TYPE type, OBJ args) -> OBJ
 		{
 			return memnew(ModuleObject(STR(args[0])));
 		};
 
-		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
+		t.tp_cmp = (CmpFunc)[](OBJ self, OBJ other) -> i32
 		{
 			if (MODULE::check_(other))
 			{

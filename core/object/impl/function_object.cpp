@@ -21,7 +21,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	FunctionObject::FunctionObject(vectorcallfunc vectorcall)
+	FunctionObject::FunctionObject(VectorCallFunc vectorcall)
 		: m_dict{ DICT::new_() }
 		, m_vectorcall{ vectorcall }
 	{

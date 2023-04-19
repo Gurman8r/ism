@@ -9,8 +9,6 @@ namespace ism
 
 	static ExtensionInterface extension_interface{};
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	EMBED_CLASS(Extension, t) {}
 
 	Extension::Extension()
@@ -38,10 +36,10 @@ namespace ism
 			return err;
 		}
 
-		ExtensionInitializationFunction initialization_function{ (ExtensionInitializationFunction)entry_func };
+		ExtensionInitializationFunc initialization_function{ (ExtensionInitializationFunc)entry_func };
 		if (initialization_function(&extension_interface, this, &m_initialization)) {
 			m_level_initialized = -1;
-			return Error_None;
+			return Error_OK;
 		}
 		else {
 			return Error_Unknown;
@@ -69,21 +67,33 @@ namespace ism
 	void Extension::initialize_library(ExtensionInitializationLevel_ level)
 	{
 		ASSERT(m_library);
-		ASSERT(level <= m_level_initialized);
-		m_level_initialized = (i32)level;
+		ASSERT(level > m_level_initialized);
+		m_level_initialized = level;
 		ASSERT(m_initialization.initialize);
-		m_initialization.initialize(m_initialization.userdata, level);
+		m_initialization.initialize(m_initialization.user, level);
 	}
 
 	void Extension::finalize_library(ExtensionInitializationLevel_ level)
 	{
 		ASSERT(m_library);
-		ASSERT(level > m_level_initialized);
-		m_level_initialized = (i32)level - 1;
-		m_initialization.finalize(m_initialization.userdata, level);
+		ASSERT(level <= m_level_initialized);
+		m_level_initialized = level - 1;
+		m_initialization.finalize(m_initialization.user, level);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	Ref<Extension> Extension::open(Path const & path, String const & entry_symbol)
+	{
+		ASSERT(!path.empty());
+		ASSERT(!entry_symbol.empty());
+		Ref<Extension> extension;
+		extension.instance();
+		if (extension->open_library(path, entry_symbol)) {
+			extension = nullptr;
+		}
+		return extension;
+	}
 
 	void Extension::initialize_extensions()
 	{
@@ -91,7 +101,7 @@ namespace ism
 
 	Path Extension::get_extension_list_config_file()
 	{
-		return ProjectSettings::get_singleton()->get_project_data_path();
+		return ProjectSettings::get_singleton()->get_project_data_path().string() + "extensions.cfg";
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

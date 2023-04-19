@@ -12,9 +12,6 @@ namespace ism
 		__singleton = this;
 
 		modules = DICT::new_();
-
-		//std::function<void()> f = OBJ();
-		//OBJ o = object_or_cast(f);
 	}
 
 	Internals::~Internals()

@@ -44,6 +44,8 @@ namespace ism
 		virtual void delete_main_loop() = 0;
 
 	public:
+		virtual void run() = 0;
+
 		void printv(cstring fmt, va_list args);
 		void printf(cstring fmt, ...);
 		void printerr(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);

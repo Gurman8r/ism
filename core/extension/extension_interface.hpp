@@ -7,8 +7,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class Extension;
-
 	enum ExtensionInitializationLevel_
 	{
 		ExtensionInitializationLevel_Core,
@@ -16,6 +14,8 @@ namespace ism
 		ExtensionInitializationLevel_Scene,
 		ExtensionInitializationLevel_Editor,
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	struct ExtensionInterface
 	{
@@ -28,15 +28,19 @@ namespace ism
 		// etc...
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	struct ExtensionInitialization
 	{
 		ExtensionInitializationLevel_ minimum_level{};
-		void * userdata{};
-		void(*initialize)(void * userdata, ExtensionInitializationLevel_ level);
-		void(*finalize)(void * userdata, ExtensionInitializationLevel_ level);
+		void * user{};
+		void(*initialize)(void * user, ExtensionInitializationLevel_ level) {};
+		void(*finalize)(void * user, ExtensionInitializationLevel_ level) {};
 	};
 
-	using ExtensionInitializationFunction = bool(*)(ExtensionInterface const * iface, Extension * library, ExtensionInitialization * init);
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	using ExtensionInitializationFunc = bool(*)(ExtensionInterface const * iface, class Extension * extension, ExtensionInitialization * initialization);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

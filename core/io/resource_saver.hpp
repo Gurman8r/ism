@@ -12,6 +12,7 @@ namespace ism
 	public:
 		ResourceSaver();
 		~ResourceSaver();
+		FORCE_INLINE static ResourceSaver * get_singleton() noexcept { return __singleton; }
 	};
 }
 

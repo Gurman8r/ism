@@ -46,7 +46,7 @@ namespace ism
 		auto hash_code() const
 		{
 			Object * const self{ derived().ptr() };
-			hashfunc const hasher{ typeof(self)->tp_hash };
+			HashFunc const hasher{ typeof(self)->tp_hash };
 			return hasher ? hasher(self) : Hasher<intptr_t>{}((intptr_t)self);
 		}
 
@@ -61,7 +61,7 @@ namespace ism
 			{
 				return compare((intptr_t)self, (intptr_t)other);
 			}
-			else if (cmpfunc cmp{ typeof(self)->tp_cmp })
+			else if (CmpFunc cmp{ typeof(self)->tp_cmp })
 			{
 				return cmp(self, other);
 			}

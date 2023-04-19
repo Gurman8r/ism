@@ -7,9 +7,9 @@ namespace ism
 
 	EMBED_CLASS(Object, t, TypeFlags_IsAbstract)
 	{
-		t.tp_getattro = (getattrofunc)&Object::generic_getattr;
+		t.tp_getattro = (GetAttrOFunc)&Object::generic_getattr;
 
-		t.tp_setattro = (setattrofunc)&Object::generic_setattr;
+		t.tp_setattro = (SetAttrOFunc)&Object::generic_setattr;
 
 		t.tp_bind = BIND_CLASS(Object, t)
 		{
@@ -136,7 +136,7 @@ namespace ism
 
 		OBJ descr{ type.lookup(name) };
 
-		descrgetfunc get{};
+		DescrGetFunc get{};
 
 		if (descr)
 		{
@@ -194,7 +194,7 @@ namespace ism
 
 		OBJ descr{ type.lookup(name) };
 
-		descrsetfunc set{};
+		DescrSetFunc set{};
 
 		if (descr)
 		{
@@ -217,7 +217,7 @@ namespace ism
 					dict = DICT::new_();
 				}
 
-				return (((DICT &)dict)[name] = value), Error_None;
+				return (((DICT &)dict)[name] = value), Error_OK;
 			}
 			else
 			{
@@ -226,7 +226,7 @@ namespace ism
 		}
 		else
 		{
-			return (((DICT &)dict)[name] = value), Error_None;
+			return (((DICT &)dict)[name] = value), Error_OK;
 		}
 	}
 

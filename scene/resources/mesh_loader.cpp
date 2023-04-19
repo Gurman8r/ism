@@ -135,7 +135,7 @@ Error_ MeshLoader::load_from_file(Mesh & mesh, Path const & path)
 	process_ainode(scene, scene->mRootNode, spec);
 	mesh.m_mesh = RS::get_singleton()->mesh_create(spec);
 	if (!mesh.m_mesh) { return Error_Unknown; }
-	return Error_None;
+	return Error_OK;
 }
 
 Error_ MeshLoader::load_from_file(Ref<Mesh> mesh, Path const & path)

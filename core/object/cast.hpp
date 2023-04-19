@@ -402,6 +402,7 @@ public:																							\
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// NOT FULLY WORKING!!!
 	template <class Return, class ... Args
 	> struct TypeCaster<std::function<Return(Args...)>>
 	{

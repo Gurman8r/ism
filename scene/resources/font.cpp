@@ -22,7 +22,7 @@ namespace ism
 
 		if (!m_font) { return Error_Unknown; }
 
-		return Error_None;
+		return Error_OK;
 	}
 
 	Glyph * Font::get_glyph(u32 character, u32 character_size)

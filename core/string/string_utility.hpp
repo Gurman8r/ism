@@ -133,6 +133,26 @@ namespace ism::util
 	inline String to_string(f80 value) noexcept { return floating_point_to_string(value); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	
+	inline Optional<bool> to_bool(String const & value) noexcept
+	{
+		switch (value.to_lower().hash_code()) {
+		case "1"_hash:
+		case "yes"_hash:
+		case "true"_hash: return make_optional(true);
+		case "0"_hash:
+		case "no"_hash:
+		case "false"_hash: return make_optional(false);
+		}
+		return nullopt;
+	}
+
+	inline String to_string(bool value) noexcept
+	{
+		return value ? "true"_s : "false"_s;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_STRING_UTILITY_HPP_

@@ -9,19 +9,19 @@ int _main()
 {
 	using namespace ism;
 
-	OS_Windows os{ nullptr };
+	OS_Windows os{ (HINSTANCE)nullptr };
 
 	switch (Main::setup(__argv[0], __argc, __argv)) {
-	case Error_None: break;
+	case Error_OK: break;
 	case Error_Unknown:
 	default: {
 		CRASH("An unknown error occurred during setup. The program was unable to start.");
 	} break;
 	}
 
-	ASSERT(Main::start());
-
-	while (Main::iteration() == EXIT_SUCCESS);
+	if (Main::start()) {
+		os.run();
+	}
 
 	Main::cleanup();
 

@@ -16,7 +16,7 @@ namespace ism
 	public:
 		void const * m_pointer{}, * m_context{};
 
-		delfunc m_closure{};
+		DelFunc m_closure{};
 
 		virtual ~CapsuleObject() override { if (m_closure) { m_closure(this); } }
 
@@ -24,7 +24,7 @@ namespace ism
 
 		CapsuleObject(nullptr_t) noexcept {}
 
-		CapsuleObject(void const * value, delfunc closure = nullptr)
+		CapsuleObject(void const * value, DelFunc closure = nullptr)
 		{
 			m_pointer = value;
 			m_context = nullptr;
@@ -50,7 +50,7 @@ namespace ism
 		{
 			m_pointer = closure;
 			m_context = nullptr;
-			m_closure = (delfunc)[](Object * obj)
+			m_closure = (DelFunc)[](Object * obj)
 			{
 				if (auto self{ dynamic_cast<CapsuleObject *>(obj) })
 				{

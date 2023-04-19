@@ -11,7 +11,7 @@ namespace ism
 
 		t.tp_vectorcalloffset = offsetof(CppFunctionObject, m_vectorcall);
 
-		t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ
+		t.tp_descr_get = (DescrGetFunc)[](OBJ self, OBJ obj, OBJ cls) -> OBJ
 		{
 			return !obj ? self : (OBJ)METHOD({ self, obj });
 		};

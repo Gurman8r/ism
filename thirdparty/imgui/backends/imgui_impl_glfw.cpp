@@ -386,7 +386,7 @@ static void ImGui_ImplGlfw_UpdateMouseCursor()
         else
         {
             // Show OS mouse cursor
-            // FIXME-PLATFORM: Unfocused windows seems to fail changing the mouse cursor with GLFW 3.2, but 3.3 works here.
+            // FIXME-cfg.platform: Unfocused windows seems to fail changing the mouse cursor with GLFW 3.2, but 3.3 works here.
             glfwSetCursor(window, g_MouseCursors[imgui_cursor] ? g_MouseCursors[imgui_cursor] : g_MouseCursors[ImGuiMouseCursor_Arrow]);
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         }
@@ -493,7 +493,7 @@ void ImGui_ImplGlfw_NewFrame()
 }
 
 //--------------------------------------------------------------------------------------------------------
-// MULTI-VIEWPORT / PLATFORM INTERFACE SUPPORT
+// MULTI-VIEWPORT / cfg.platform INTERFACE SUPPORT
 // This is an _advanced_ and _optional_ feature, allowing the backend to create and handle multiple viewports simultaneously.
 // If you are new to dear imgui or creating a new binding for dear imgui, it is recommended that you completely ignore this section first..
 //--------------------------------------------------------------------------------------------------------

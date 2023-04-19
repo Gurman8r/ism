@@ -44,7 +44,7 @@ namespace ism
 		void reserve(size_t count) { m_dict.reserve(count); }
 
 		template <class Index = OBJ
-		> auto del(Index && i) const -> Error_ { return m_dict.erase(FWD_OBJ(i)), Error_None; }
+		> auto del(Index && i) const -> Error_ { return m_dict.erase(FWD_OBJ(i)), Error_OK; }
 
 		template <class Index = OBJ, class Value = OBJ
 		> bool insert(Index && i, Value && v) const { return m_dict.try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second; }

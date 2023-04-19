@@ -1,5 +1,5 @@
-#ifndef _ISM_SCRIPT_LANGUAGE_HPP_
-#define _ISM_SCRIPT_LANGUAGE_HPP_
+#ifndef _ISM_SCRIPT_HPP_
+#define _ISM_SCRIPT_HPP_
 
 #include <core/io/resource.hpp>
 
@@ -21,9 +21,7 @@ namespace ism
 
 		static ScriptServer * __singleton;
 
-		enum : u32 { MAX_LANGUAGES = 16 };
-		ScriptLanguage * m_languages[MAX_LANGUAGES]{};
-		u32 m_language_count{};
+		Vector<ScriptLanguage *> m_languages{};
 		bool m_scripting_enabled{ true };
 		bool m_reload_scripts_on_save{};
 		bool m_languages_finalized{};
@@ -34,11 +32,11 @@ namespace ism
 		FORCE_INLINE static ScriptServer * get_singleton() noexcept { return __singleton; }
 
 	public:
-		NODISCARD bool is_scripting_enabled() const noexcept;
+		NODISCARD bool is_scripting_enabled() const noexcept { return m_scripting_enabled; }
 		void set_scripting_enabled(bool enabled);
 
-		NODISCARD u32 get_language_count() const noexcept { return m_language_count; }
-		NODISCARD ScriptLanguage * get_language(u32 index);
+		NODISCARD u32 get_language_count() const noexcept { return (u32)m_languages.size(); }
+		NODISCARD ScriptLanguage * get_language(u32 index) noexcept { return m_languages[(size_t)index]; }
 		Error_ register_language(ScriptLanguage * language);
 		Error_ unregister_language(ScriptLanguage const * language);
 
@@ -89,8 +87,8 @@ namespace ism
 	public:
 		virtual ~ScriptInstance();
 
+		virtual bool get_constants(HashMap<StringName, OBJ> * out) const = 0;
 		virtual bool get_properties(HashMap<StringName, PROPERTY> * out) const = 0;
-
 		virtual bool get_functions(HashMap<StringName, FUNCTION> * out) const = 0;
 
 		virtual void notification(i32 notification) = 0;
@@ -112,6 +110,11 @@ namespace ism
 	public:
 		ScriptLanguage();
 		virtual ~ScriptLanguage() override;
+
+		NODISCARD virtual StringName get_name() const = 0;
+
+		virtual void initialize() = 0;
+		virtual void finalize() = 0;
 	};
 }
 
@@ -128,6 +131,7 @@ namespace ism
 		PlaceHolderScriptInstance(ScriptLanguage * language, Ref<Script> script, Object * owner);
 		virtual ~PlaceHolderScriptInstance() override;
 
+		virtual bool get_constants(HashMap<StringName, OBJ> * out) const;
 		virtual bool get_properties(HashMap<StringName, PROPERTY> * out) const;
 		virtual bool get_functions(HashMap<StringName, FUNCTION> * out) const;
 
@@ -140,4 +144,4 @@ namespace ism
 	};
 }
 
-#endif // !_ISM_SCRIPT_LANGUAGE_HPP_
+#endif // !_ISM_SCRIPT_HPP_

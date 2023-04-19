@@ -11,12 +11,11 @@ namespace ism::attr
 	template <class T, class SFINAE = void> struct process_attribute;
 
 	// process attribute default
-	template <class T> struct process_attribute_default
-	{
+	template <class T> struct process_attribute_default {
 		using type = typename T;
-		static void init(FunctionRecord &, T &&) {}
-		static void precall(FunctionCall &) {}
-		static void postcall(FunctionCall &, OBJ) {}
+		static void init(FunctionRecord &, T &&) noexcept {}
+		static void precall(FunctionCall &) noexcept {}
+		static void postcall(FunctionCall &, OBJ) noexcept {}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -98,7 +97,7 @@ namespace ism::attr
 	{
 		struct type
 		{
-			T guard{}; // compose multiple guard types with left-to-right default-newfunc order
+			T guard{}; // compose multiple guard types with left-to-right default-NewFunc order
 
 			typename call_guard<Ts...>::type next{};
 		};
@@ -120,15 +119,15 @@ namespace ism::attr
 	// process attributes
 	template <class ... Args> struct process_attributes
 	{
-		template <class T> static void init(T & r, Args const & ... args) {
-			SINK(0, (process_attribute<std::decay_t<Args>>::init(r, args), 0) ...);
+		template <class T> static void init(T & r, Args && ... args) noexcept {
+			SINK(0, (process_attribute<std::decay_t<Args>>::init(r, FWD(args)), 0) ...);
 		}
 
-		static void precall(FunctionCall & call) {
+		static void precall(FunctionCall & call) noexcept {
 			SINK(0, (process_attribute<std::decay_t<Args>>::precall(call), 0) ...);
 		}
 
-		static void postcall(FunctionCall & call, OBJ retv) {
+		static void postcall(FunctionCall & call, OBJ retv) noexcept {
 			SINK(0, (process_attribute<std::decay_t<Args>>::postcall(call, retv), 0) ...);
 		}
 	};

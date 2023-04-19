@@ -62,7 +62,7 @@ Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData (&spec)[RD:
 		//OS::get_singleton()->printf("%.*s\n", spec[i].code.size(), spec[i].code.data());
 	}
 
-	return Error_None;
+	return Error_OK;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -79,10 +79,10 @@ Error_ ShaderLoader::load_from_file(Shader & shader, Path const & path)
 	case ".shader"_hash: {
 		if (shader.m_shader) { RD::get_singleton()->shader_destroy(shader.m_shader); }
 		RD::ShaderStageData spec[RD::ShaderStage_MAX]{};
-		if (auto const err{ load_shader_default(file, spec) }; err != Error_None) { return err; }
+		if (auto const err{ load_shader_default(file, spec) }; err != Error_OK) { return err; }
 		shader.m_shader = RD::get_singleton()->shader_create(spec);
 		if (!shader.m_shader) { return Error_Unknown; }
-		return Error_None;
+		return Error_OK;
 	} break;
 	}
 

@@ -11,7 +11,7 @@ namespace ism
 
 		t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
-		t.tp_descr_get = (descrgetfunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
+		t.tp_descr_get = (DescrGetFunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -21,7 +21,7 @@ namespace ism
 		if (!METHOD::check_(callable)) { return nullptr; }
 		OBJ & self{ ((METHOD &)callable)->m_self };
 		OBJ & func{ ((METHOD &)callable)->m_func };
-		vectorcallfunc vcall{ get_vectorcall_func(func) };
+		VectorCallFunc vcall{ get_vectorcall_func(func) };
 		if (argc == 0)
 		{
 			return vcall(func, &self, 1);

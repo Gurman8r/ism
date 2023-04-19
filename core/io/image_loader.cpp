@@ -30,7 +30,7 @@ namespace ism
 		case 4: { image.m_format = ImageFormat_RGBA8; } break;
 		}
 
-		return Error_None;
+		return Error_OK;
 	}
 
 	Error_ ImageLoader::load_from_file(Ref<Image> image, Path const & path)

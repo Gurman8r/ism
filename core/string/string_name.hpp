@@ -39,7 +39,6 @@ namespace ism
 		StringName(self_type const & value) : m_text{ value } {}
 		StringName(self_type && value) noexcept : m_text{ std::move(value) } {}
 
-		self_type & operator=(self_type const & value) { return (m_text = value.m_text), (*this); }
 		
 		self_type & swap(self_type & value) noexcept { return m_text.swap(value.m_text), (*this); }
 
@@ -67,6 +66,13 @@ namespace ism
 		NODISCARD operator view_type () const noexcept { return { m_text.data(), m_text.size() }; }
 
 		WRAP_ALL_ITERATORS(m_text);
+
+	public:
+		self_type & operator=(self_type const & value) { return (m_text = value.m_text), (*this); }
+		//self_type & operator+=(self_type const & value) { return (m_text += value.m_text), (*this); }
+		//self_type & operator+=(self_type && value) noexcept { return (m_text += std::move(value.m_text)), (*this); }
+		//template <class T> self_type & operator+=(T const & value) { return (m_text += value), (*this); }
+		//template <class T> self_type & operator+=(T && value) noexcept { return (m_text += std::move(value)), (*this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

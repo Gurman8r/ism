@@ -434,11 +434,11 @@ namespace ism
 
 		if (!obj) { return Error_Unknown; }
 
-		else if (DICT::check_(obj)) { return (((DICT &)obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
+		else if (DICT::check_(obj)) { return (((DICT &)obj)[FWD(index)] = FWD_OBJ(value)), Error_OK; }
 
-		else if (LIST::check_(obj)) { return (((LIST &)obj)[FWD(index)] = FWD_OBJ(value)), Error_None; }
+		else if (LIST::check_(obj)) { return (((LIST &)obj)[FWD(index)] = FWD_OBJ(value)), Error_OK; }
 
-		else if (OBJ set{ typeof(obj).lookup(&ID___setitem__) }) { return set(obj, FWD_OBJ(index), FWD_OBJ(value)), Error_None; }
+		else if (OBJ set{ typeof(obj).lookup(&ID___setitem__) }) { return set(obj, FWD_OBJ(index), FWD_OBJ(value)), Error_OK; }
 
 		else { return Error_Unknown; }
 	}

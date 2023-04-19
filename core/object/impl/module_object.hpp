@@ -31,14 +31,14 @@ namespace ism
 		}
 
 		template <class Func, class ... Extra
-		> ModuleObject & def(cstring name, Func && func, Extra const & ... extra)
+		> ModuleObject & def(cstring name, Func && func, Extra && ... extra) noexcept
 		{
 			CPP_FUNCTION cf({
 				FWD(func),
 				attr::name(name),
 				attr::scope(this),
 				attr::sibling(getattr(this, name, nullptr)),
-				extra... });
+				FWD(extra)... });
 			return add_object(name, cf, true), (*this);
 		}
 
@@ -69,9 +69,9 @@ namespace ism
 		}
 
 		template <class Func, class ... Extra
-		> MODULE & def(cstring name, Func && func, Extra const & ... extra)
+		> MODULE & def(cstring name, Func && func, Extra && ... extra) noexcept
 		{
-			return VALIDATE(m_ptr)->def(name, FWD(func), extra...), (*this);
+			return VALIDATE(m_ptr)->def(name, FWD(func), FWD(extra)...), (*this);
 		}
 
 		MODULE def_submodule(cstring name)

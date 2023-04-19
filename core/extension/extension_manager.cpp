@@ -1,23 +1,35 @@
 #include <core/extension/extension_manager.hpp>
-#include <fstream>
+#include <core/io/file_access.hpp>
+#include <core/os/os.hpp>
+#include <core/io/config_file.hpp>
+#include <core/config/project_settings.hpp>
 
 namespace ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	EMBED_CLASS(ExtensionManager, t) {}
 
 	ExtensionManager * ExtensionManager::__singleton{};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ExtensionManager::LoadStatus_ ExtensionManager::load_extension(Path const & path)
 	{
 		auto const it{ m_extensions.find(path) };
 		if (it != m_extensions.end()) { return LoadStatus_AlreadyLoaded; }
 
-		Ref<Extension> extension;
-		extension.instance();
-		extension->open_library(path, "initialize_mono_library");
+		Path const stem{ path.stem() };
+		ConfigFile const ini{ Path::format("%s%s.ini", ProjectSettings::get_singleton()->get_project_data_path().c_str(), stem.c_str()) };
+		String const library_name{ ini.get_string("configuration", "library_name", stem.string()) };
+		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("open_%s_library", library_name.c_str())) };
+		Ref<Extension> extension{ Extension::open(path, entry_symbol) };
+		if (!extension) {
+			return LoadStatus_Failure;
+		}
 
 		if (m_level >= 0) {
-			i32 minimum_level{ extension->get_minimum_library_initialization_level() };
+			i32 const minimum_level{ extension->get_minimum_library_initialization_level() };
 			if (minimum_level < minimum(m_level, ExtensionInitializationLevel_Scene)) {
 				return LoadStatus_NeedsRestart;
 			}
@@ -30,11 +42,6 @@ namespace ism
 		return LoadStatus_Success;
 	}
 
-	ExtensionManager::LoadStatus_ ExtensionManager::reload_extension(Path const & path)
-	{
-		return LoadStatus_Success;
-	}
-
 	ExtensionManager::LoadStatus_ ExtensionManager::unload_extension(Path const & path)
 	{
 		auto const it{ m_extensions.find(path) };
@@ -43,7 +50,7 @@ namespace ism
 		Ref<Extension> extension{ it->second };
 
 		if (m_level >= 0) {
-			i32 minimum_level{ extension->get_minimum_library_initialization_level() };
+			i32 const minimum_level{ extension->get_minimum_library_initialization_level() };
 			if (minimum_level < minimum(m_level, ExtensionInitializationLevel_Scene)) {
 				return LoadStatus_NeedsRestart;
 			}
@@ -55,6 +62,8 @@ namespace ism
 		m_extensions.erase(it);
 		return LoadStatus_Success;
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	bool ExtensionManager::is_extension_loaded(Path const & path)
 	{
@@ -79,6 +88,8 @@ namespace ism
 		return nullptr;
 	}
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	void ExtensionManager::initialize_extensions(ExtensionInitializationLevel_ level)
 	{
 		for (auto & [k, v] : m_extensions) {
@@ -97,13 +108,13 @@ namespace ism
 
 	void ExtensionManager::load_extensions()
 	{
-		std::ifstream file{ Extension::get_extension_list_config_file().c_str() };
-		ON_SCOPE_EXIT(&file) { file.close(); };
+		auto file{ FileAccess::open(Extension::get_extension_list_config_file(), FileMode_Read) };
 		if (!file) { return; }
-
-		String line;
-		while (std::getline(file, line)) {
-			load_extension(line.trim());
+		while (String line{ file->read_line().trim() }) {
+			load_extension(line);
 		}
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 }

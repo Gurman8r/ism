@@ -37,7 +37,7 @@ namespace ism
 			return Error_Unknown;
 		}
 
-		return Error_None;
+		return Error_OK;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -81,7 +81,7 @@ namespace ism
 	void FileAccessWindows::seek(u64 position)
 	{
 		ASSERT(m_file);
-		m_last_error = Error_None;
+		m_last_error = Error_OK;
 		if (_fseeki64(m_file, position, SEEK_SET)) {
 			_check_errors();
 		}
@@ -91,7 +91,7 @@ namespace ism
 	void FileAccessWindows::seek_end(i64 position)
 	{
 		ASSERT(m_file);
-		m_last_error = Error_None;
+		m_last_error = Error_OK;
 		if (_fseeki64(m_file, position, SEEK_END)) {
 			_check_errors();
 		}
@@ -120,7 +120,7 @@ namespace ism
 	bool FileAccessWindows::eof_reached() const
 	{
 		_check_errors();
-		return m_last_error == Error_Unknown;
+		return m_last_error == Error_EOF;
 	}
 
 	Error_ FileAccessWindows::get_error() const

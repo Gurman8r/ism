@@ -64,14 +64,14 @@ namespace ism
 			tp_size = sizeof(T);
 			tp_flags = flags;
 			tp_base = baseof<T>();
-			tp_del = (delfunc)memdelete<T>;
-			tp_bind = (classproc)[](TYPE t) -> TYPE { return t; };
-			tp_hash = (hashfunc)[](OBJ o) -> size_t { return Hasher<intptr_t>{}((intptr_t)*o); };
-			tp_cmp = (cmpfunc)[](OBJ a, OBJ b) -> i32 { return compare((intptr_t)*a, (intptr_t)*b); };
+			tp_del = (DelFunc)memdelete<T>;
+			tp_bind = (BindClassFunc)[](TYPE t) -> TYPE { return t; };
+			tp_hash = (HashFunc)[](OBJ o) -> size_t { return Hasher<intptr_t>{}((intptr_t)*o); };
+			tp_cmp = (CmpFunc)[](OBJ a, OBJ b) -> i32 { return compare((intptr_t)*a, (intptr_t)*b); };
 
 			if constexpr (std::is_default_constructible_v<T>)
 			{
-				tp_new = (newfunc)[](TYPE, OBJ) -> OBJ { return memnew(T); };
+				tp_new = (NewFunc)[](TYPE, OBJ) -> OBJ { return memnew(T); };
 			}
 
 			if constexpr (std::is_base_of_v<TypeObject, T>) { tp_flags |= TypeFlags_Type_Subclass; }
@@ -87,7 +87,7 @@ namespace ism
 		String				tp_name				{};
 		ssize_t				tp_size				{};
 		i32					tp_flags			{};
-		classproc			tp_bind				{};
+		BindClassFunc		tp_bind				{};
 		ssize_t				tp_dictoffset		{};
 		ssize_t				tp_vectorcalloffset	{};
 
@@ -95,22 +95,22 @@ namespace ism
 		MethodDef *			tp_methods			{};
 		GetSetDef *			tp_getsets			{};
 
-		getattrfunc			tp_getattr			{};
-		setattrfunc			tp_setattr			{};
-		getattrofunc		tp_getattro			{};
-		setattrofunc		tp_setattro			{};
-		descrgetfunc		tp_descr_get		{};
-		descrsetfunc		tp_descr_set		{};
+		GetAttrFunc			tp_getattr			{};
+		SetAttrFunc			tp_setattr			{};
+		GetAttrOFunc		tp_getattro			{};
+		SetAttrOFunc		tp_setattro			{};
+		DescrGetFunc		tp_descr_get		{};
+		DescrSetFunc		tp_descr_set		{};
 
-		binaryfunc			tp_call				{};
-		cmpfunc				tp_cmp				{};
-		delfunc				tp_del				{};
-		hashfunc			tp_hash				{};
-		lenfunc				tp_len				{};
-		newfunc				tp_new				{};
-		reprfunc			tp_repr				{};
-		reprfunc			tp_str				{};
-		vectorcallfunc		tp_vectorcall		{};
+		BinaryFunc			tp_call				{};
+		CmpFunc				tp_cmp				{};
+		DelFunc				tp_del				{};
+		HashFunc			tp_hash				{};
+		LenFunc				tp_len				{};
+		NewFunc				tp_new				{};
+		ReprFunc			tp_repr				{};
+		ReprFunc			tp_str				{};
+		VectorCallFunc		tp_vectorcall		{};
 		
 		Ref<TypeObject>		tp_base				{ /* TYPE */ };
 		OBJ					tp_bases			{ /* LIST */ };
@@ -120,28 +120,18 @@ namespace ism
 
 	public:
 		bool ready();
-
 		OBJ lookup(OBJ const & name) const;
-
 		bool is_subtype(TYPE const & value) const;
 
 	protected:
 		bool check_consistency() const;
-
 		Error_ add_operators();
-
 		Error_ add_methods(MethodDef * methods);
-
 		Error_ add_members(MemberDef * members);
-
 		Error_ add_getsets(GetSetDef * getsets);
-
 		void inherit_slots(TypeObject * base);
-
 		void modified();
-
 		bool mro_internal(OBJ * old_mro);
-
 		Error_ update_slot(STR const & name);
 
 	protected:
@@ -251,19 +241,19 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline vectorcallfunc get_vectorcall_func(TYPE const & t, OBJ const & o)
+	inline VectorCallFunc get_vectorcall_func(TYPE const & t, OBJ const & o)
 	{
 		if (t && o && 0 < t->tp_vectorcalloffset)
 		{
-			return *reinterpret_cast<vectorcallfunc *>(reinterpret_cast<char *>(*o) + t->tp_vectorcalloffset);
+			return *reinterpret_cast<VectorCallFunc *>(reinterpret_cast<char *>(*o) + t->tp_vectorcalloffset);
 		}
 		else
 		{
-			return (vectorcallfunc)nullptr;
+			return (VectorCallFunc)nullptr;
 		}
 	}
 
-	inline vectorcallfunc get_vectorcall_func(OBJ const & o) noexcept
+	inline VectorCallFunc get_vectorcall_func(OBJ const & o) noexcept
 	{
 		return o ? get_vectorcall_func(typeof(o), o) : nullptr;
 	}

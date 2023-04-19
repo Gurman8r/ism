@@ -7,9 +7,9 @@ namespace ism
 
 	EMBED_CLASS(ListObject, t)
 	{
-		t.tp_len = (lenfunc)[](OBJ self) -> ssize_t { return (ssize_t)LIST(self).size(); };
+		t.tp_len = (LenFunc)[](OBJ self) -> ssize_t { return (ssize_t)LIST(self).size(); };
 
-		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
+		t.tp_cmp = (CmpFunc)[](OBJ self, OBJ other) -> i32
 		{
 			if (self.is(other)) { return 0; }
 

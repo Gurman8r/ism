@@ -1,5 +1,7 @@
 #include <platform/windows/os_windows.hpp>
+#include <platform/windows/display_server_windows.hpp>
 #include <drivers/windows/file_access_windows.hpp>
+#include <main/main.hpp>
 #include <filesystem>
 
 namespace ism
@@ -20,8 +22,8 @@ namespace ism
 	void OS_Windows::initialize()
 	{
 		m_main_loop = nullptr;
-
 		FileAccessWindows::initialize();
+		DisplayServerWindows::initialize();
 	}
 
 	void OS_Windows::finalize()
@@ -31,7 +33,20 @@ namespace ism
 
 	void OS_Windows::finalize_core()
 	{
+		DisplayServerWindows::finalize();
 		FileAccessWindows::finalize();
+	}
+
+	void OS_Windows::run()
+	{
+		if (!m_main_loop) { return; }
+		m_main_loop->initialize();
+		while (true) {
+			DisplayServer::get_singleton()->poll_events();
+			if (Main::iteration()) { break; }
+			DisplayServer::get_singleton()->swap_buffers();
+		}
+		m_main_loop->finalize();
 	}
 
 	String OS_Windows::get_stdin_string(bool blocking)
@@ -49,13 +64,13 @@ namespace ism
 		if (!path) { return Error_Unknown; }
 		instance = LoadLibraryA(path.c_str());
 		if (!instance) { return Error_Unknown; }
-		return Error_None;
+		return Error_OK;
 	}
 
 	Error_ OS_Windows::close_dynamic_library(void * instance)
 	{
 		FreeLibrary((HMODULE)instance);
-		return Error_None;
+		return Error_OK;
 	}
 
 	Error_ OS_Windows::get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional)
@@ -63,7 +78,7 @@ namespace ism
 		if (!instance || name.empty()) { return Error_Unknown; }
 		symbol = GetProcAddress((HMODULE)instance, name.c_str());
 		if (!symbol && !is_optional) { return Error_Unknown; }
-		return Error_None;
+		return Error_OK;
 	}
 
 	Error_ OS_Windows::execute(Path const & path, Vector<String> const & args, String * pipe, i32 * exitcode, bool read_stderr, Mutex * pipe_mutex)
@@ -93,7 +108,7 @@ namespace ism
 
 	Error_ OS_Windows::set_cwd(Path const & path)
 	{
-		return std::filesystem::current_path((std::wstring)path.string().widen()), Error_None;
+		return std::filesystem::current_path((std::wstring)path.string().widen()), Error_OK;
 	}
 
 	Error_ OS_Windows::shell_open(Path const & path)
@@ -118,7 +133,7 @@ namespace ism
 
 	String OS_Windows::get_name() const
 	{
-		return "Windows"_s;
+		return "windows"_s;
 	}
 
 	String OS_Windows::get_model_name() const

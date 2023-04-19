@@ -20,17 +20,17 @@ namespace ism::initimpl
 	> struct Constructor
 	{
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
-		> static Class & execute(Class & c, Extra const & ... extra)
+		> static Class & execute(Class & c, Extra && ... extra) noexcept
 		{
 			return c.def("__new__", [](Args ... args)
 			{
 				return Holder<Class>::new_(args...);
 			}
-			, extra...);
+			, FWD(extra)...);
 		}
 
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
-		> static Class & execute(Class & c, Extra const & ... extra)
+		> static Class & execute(Class & c, Extra && ... extra) noexcept
 		{
 			static_assert(!"NOT IMPLEMENTED");
 			return c; // TODO
@@ -48,17 +48,17 @@ namespace ism::initimpl
 		Factory(Fn && fn) noexcept : class_factory{ FWD(fn) } {}
 
 		template <class Class, class ... Extra, std::enable_if_t<is_base_object_v<Cpp<Class>>, int> = 0
-		> Class & execute(Class & c, Extra const & ... extra)
+		> Class & execute(Class & c, Extra && ... extra) noexcept
 		{
 			return c.def("__new__", [func = std::move(class_factory)](Args ... args)
 			{
 				return Holder<Class>::new_(func(args...));
 			}
-			, extra...);
+			, FWD(extra)...);
 		}
 
 		template <class Class, class ... Extra, std::enable_if_t<!is_base_object_v<Cpp<Class>>, int> = 0
-		> Class & execute(Class & c, Extra const & ... extra)
+		> Class & execute(Class & c, Extra && ... extra) noexcept
 		{
 			static_assert(!"NOT IMPLEMENTED");
 			return c; // TODO

@@ -63,12 +63,15 @@ namespace ism
 
 		static TextServer * __singleton;
 
-	public:
+	protected:
+		using CreateFunc = TextServer * (*)();
+		static CreateFunc __create_func;
 		TextServer();
 
+	public:
 		virtual ~TextServer() override;
-
 		FORCE_INLINE static TextServer * get_singleton() noexcept { return __singleton; }
+		static TextServer * create();
 
 	public:
 		/* FONT API */

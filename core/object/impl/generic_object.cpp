@@ -7,7 +7,7 @@ namespace ism
 
 	EMBED_CLASS(GenericObject, t)
 	{
-		t.tp_cmp = (cmpfunc)[](OBJ self, OBJ other) -> i32
+		t.tp_cmp = (CmpFunc)[](OBJ self, OBJ other) -> i32
 		{
 			return compare(*self, *other);
 		};

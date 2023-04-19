@@ -12,13 +12,25 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	TextServer * TextServer::__singleton{};
-
 	EMBED_CLASS(TextServer, t) {}
 
-	TextServer::TextServer() { __singleton = this; }
+	TextServer * TextServer::__singleton{};
 
-	TextServer::~TextServer() {}
+	TextServer::CreateFunc TextServer::__create_func{ []() { return memnew(TextServer); } };
+
+	TextServer::TextServer()
+	{
+		__singleton = this;
+	}
+
+	TextServer::~TextServer()
+	{
+	}
+
+	TextServer * TextServer::create()
+	{
+		return VALIDATE(__create_func)();
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

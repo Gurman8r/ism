@@ -1,9 +1,11 @@
 /.vs
+/build
 /bin
 /bin-lib
 /bin-obj
 /proj
 /project
+/temps
 /workspace
 __pycache__/
 imgui.ini

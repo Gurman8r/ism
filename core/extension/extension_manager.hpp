@@ -30,7 +30,6 @@ namespace ism
 		};
 
 		LoadStatus_ load_extension(Path const & path);
-		LoadStatus_ reload_extension(Path const & path);
 		LoadStatus_ unload_extension(Path const & path);
 		bool is_extension_loaded(Path const & path);
 		Vector<Path> get_loaded_extensions() const;

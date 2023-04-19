@@ -8,9 +8,9 @@ cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"
-debugdir		"%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"
-targetdir		"%{wks.location}/bin-lib/%{cfg.platform}/%{cfg.buildcfg}/"
-objdir			"%{wks.location}/bin-obj/"
+debugdir		"%{wks.location}/build/bin/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
+targetdir		"%{wks.location}/temps/lib/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
+objdir			"%{wks.location}/temps/obj/%{_TARGET_OS}/"
 location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}/"
 
 includedirs{
@@ -22,7 +22,7 @@ files{
 }
 
 prebuildcommands{
-	"{COPY} %{LIB_DIR}/assimp%{DLL} %{cfg.debugdir}",
+	"{COPYFILE} %{LIB_DIR}/assimp%{DLL} %{cfg.debugdir}",
 }
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

@@ -6,8 +6,7 @@ namespace ism
 
 	Engine::Engine() noexcept
 	{
-		ASSERT(!__singleton);
-		__singleton = this;
+		ASSERT(!__singleton); __singleton = this;
 	}
 
 	Engine::~Engine() noexcept

@@ -16,11 +16,11 @@ namespace ism
 	public:
 		OBJ m_dict{};
 
-		vectorcallfunc m_vectorcall{};
+		VectorCallFunc m_vectorcall{};
 
 	public:
 		virtual ~FunctionObject() noexcept override = default;
-		FunctionObject(vectorcallfunc vectorcall = nullptr);
+		FunctionObject(VectorCallFunc vectorcall = nullptr);
 
 		NODISCARD OBJ cpp_function() const noexcept; // in cppfunction_object.hpp
 		NODISCARD bool is_cpp_function() const noexcept { return cpp_function().is_valid(); }

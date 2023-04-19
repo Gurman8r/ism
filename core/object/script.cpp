@@ -1,4 +1,4 @@
-#include <core/object/script_language.hpp>
+#include <core/object/script.hpp>
 
 // script server
 namespace ism
@@ -7,37 +7,41 @@ namespace ism
 
 	ScriptServer * ScriptServer::__singleton{};
 
-	bool ScriptServer::is_scripting_enabled() const noexcept
-	{
-		return m_scripting_enabled;
-	}
-
 	void ScriptServer::set_scripting_enabled(bool enabled)
 	{
-		if (m_scripting_enabled != enabled) { m_scripting_enabled = enabled; }
-	}
-
-	ScriptLanguage * ScriptServer::get_language(u32 index)
-	{
-		return m_languages[index];
+		if (m_scripting_enabled != enabled) {
+			m_scripting_enabled = enabled;
+		}
 	}
 	
 	Error_ ScriptServer::register_language(ScriptLanguage * language)
 	{
-		return Error_None;
+		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); })};
+		if (it != m_languages.end()) { return Error_Unknown; }
+		m_languages.push_back(language);
+		return Error_OK;
 	}
 	
 	Error_ ScriptServer::unregister_language(ScriptLanguage const * language)
 	{
-		return Error_None;
+		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); }) };
+		if (it == m_languages.end()) { return Error_Unknown; }
+		m_languages.erase(it);
+		return Error_OK;
 	}
 
 	void ScriptServer::initialize_languages()
 	{
+		for (auto const e : m_languages) {
+			e->initialize();
+		}
 	}
 
 	void ScriptServer::finalize_languages()
 	{
+		for (auto const e : m_languages) {
+			e->finalize();
+		}
 	}
 }
 
@@ -56,7 +60,7 @@ namespace ism
 
 	Error_ Script::reload_from_file()
 	{
-		return Error_None;
+		return Error_OK;
 	}
 }
 
@@ -94,6 +98,11 @@ namespace ism
 
 	PlaceHolderScriptInstance::~PlaceHolderScriptInstance()
 	{
+	}
+
+	bool PlaceHolderScriptInstance::get_constants(HashMap<StringName, OBJ> * out) const
+	{
+		return false;
 	}
 
 	bool PlaceHolderScriptInstance::get_properties(HashMap<StringName, PROPERTY> * out) const

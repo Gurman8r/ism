@@ -10,7 +10,7 @@ namespace ism
 
 	Error_ Resource::reload_from_file()
 	{
-		return Error_None;
+		return Error_OK;
 	}
 
 	void Resource::set_path(Path const & value, bool take_over)

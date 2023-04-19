@@ -7,9 +7,9 @@ rtti			"On"
 staticruntime	"Off"
 systemversion	"latest"
 targetname		"%{prj.name}"
-debugdir		"%{wks.location}/bin/%{cfg.platform}/%{cfg.buildcfg}/"
-targetdir		"%{wks.location}/bin-lib/%{cfg.platform}/%{cfg.buildcfg}/"
-objdir			"%{wks.location}/bin-obj/"
+debugdir		"%{wks.location}/build/bin/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
+targetdir		"%{wks.location}/temps/lib/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
+objdir			"%{wks.location}/temps/obj/%{_TARGET_OS}/"
 location		"%{wks.location}/workspace/%{_ACTION}/programs/%{prj.name}/"
 
 dependson{ "ism", "mono", }
@@ -34,5 +34,5 @@ files{
 }
 
 postbuildcommands{
-	"{COPY} %{cfg.targetdir}/%{prj.targetname}%{EXE} %{cfg.debugdir}",
+	"{COPYFILE} %{cfg.targetdir}/%{prj.targetname}%{EXE} %{cfg.debugdir}",
 }

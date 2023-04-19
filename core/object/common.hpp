@@ -105,32 +105,32 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	using unaryfunc =		OBJ(*)(OBJ a);
-	using binaryfunc =		OBJ(*)(OBJ a, OBJ b);
-	using ternaryfunc =		OBJ(*)(OBJ a, OBJ b, OBJ c);
+	using UnaryFunc =		OBJ(*)(OBJ a);
+	using BinaryFunc =		OBJ(*)(OBJ a, OBJ b);
+	using TernaryFunc =		OBJ(*)(OBJ a, OBJ b, OBJ c);
 
-	using inquiry =			bool(*)(OBJ obj);
-	using sizeargfunc =		OBJ(*)(OBJ obj, ssize_t i);
-	using sizesizeargfunc =	OBJ(*)(OBJ obj, ssize_t i, ssize_t j);
-	using objobjproc =		i32(*)(OBJ lhs, OBJ rhs);
+	using InquiryFunc =			bool(*)(OBJ obj);
+	using SizeArgFunc =		OBJ(*)(OBJ obj, ssize_t i);
+	using SizeSizeArgFunc =	OBJ(*)(OBJ obj, ssize_t i, ssize_t j);
+	using ObjObjFunc =		i32(*)(OBJ lhs, OBJ rhs);
 
-	using getattrfunc =		OBJ(*)(OBJ obj, cstring name);
-	using setattrfunc =		Error_(*)(OBJ obj, cstring name, OBJ value);
-	using getattrofunc =	OBJ(*)(OBJ obj, OBJ name);
-	using setattrofunc =	Error_(*)(OBJ obj, OBJ name, OBJ value);
-	using descrgetfunc =	OBJ(*)(OBJ descr, OBJ obj, OBJ cls);
-	using descrsetfunc =	Error_(*)(OBJ descr, OBJ obj, OBJ value);
+	using GetAttrFunc =		OBJ(*)(OBJ obj, cstring name);
+	using SetAttrFunc =		Error_(*)(OBJ obj, cstring name, OBJ value);
+	using GetAttrOFunc =	OBJ(*)(OBJ obj, OBJ name);
+	using SetAttrOFunc =	Error_(*)(OBJ obj, OBJ name, OBJ value);
+	using DescrGetFunc =	OBJ(*)(OBJ descr, OBJ obj, OBJ cls);
+	using DescrSetFunc =	Error_(*)(OBJ descr, OBJ obj, OBJ value);
 
-	using classproc =		TYPE(*)(TYPE type);
-	using newfunc =			OBJ(*)(TYPE type, OBJ args);
-	using delfunc =			void(*)(Object * ptr);
-	using cmpfunc =			i32(*)(OBJ lhs, OBJ rhs);
-	using hashfunc =		size_t(*)(OBJ obj);
-	using lenfunc =			ssize_t(*)(OBJ obj);
-	using reprfunc =		STR(*)(OBJ obj);
-	using vectorcallfunc =	OBJ(*)(OBJ self, OBJ const * argv, size_t argc);
-	using getter =			OBJ(*)(OBJ obj, void * closure);
-	using setter =			Error_(*)(OBJ obj, OBJ value, void * closure);
+	using BindClassFunc =	TYPE(*)(TYPE type);
+	using NewFunc =			OBJ(*)(TYPE type, OBJ args);
+	using DelFunc =			void(*)(Object * ptr);
+	using CmpFunc =			i32(*)(OBJ lhs, OBJ rhs);
+	using HashFunc =		size_t(*)(OBJ obj);
+	using LenFunc =			ssize_t(*)(OBJ obj);
+	using ReprFunc =		STR(*)(OBJ obj);
+	using VectorCallFunc =	OBJ(*)(OBJ self, OBJ const * argv, size_t argc);
+	using GetterFunc =		OBJ(*)(OBJ obj, void * closure);
+	using SetterFunc =		Error_(*)(OBJ obj, OBJ value, void * closure);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -282,7 +282,7 @@ namespace ism
 	struct MethodDef
 	{
 		cstring		name{};
-		binaryfunc	func{};
+		BinaryFunc	func{};
 		i32			flags{};
 		cstring		doc{};
 
@@ -292,8 +292,8 @@ namespace ism
 	struct GetSetDef
 	{
 		cstring		name{};
-		getter		get{};
-		setter		set{};
+		GetterFunc	get{};
+		SetterFunc	set{};
 		void *		closure{};
 		cstring		doc{};
 

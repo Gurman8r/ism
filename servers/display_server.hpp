@@ -17,9 +17,57 @@ namespace ism
 		static DisplayServer * __singleton;
 
 	public:
-		DisplayServer();
+		using WindowID = i32;
+
+		enum { MAIN_WINDOW_ID, INVALID_WINDOW_ID = -1 };
+
+		enum WindowMode_
+		{
+			WindowMode_Windowed,
+			WindowMode_Minimized,
+			WindowMode_Maximized,
+			WindowMode_Fullscreen,
+			WindowMode_MAX
+		};
+
+		enum WindowEvent_
+		{
+			WindowEvent_MouseEnter,
+			WindowEvent_MouseExit,
+			WindowEvent_FocusIn,
+			WindowEvent_FocusOut,
+			WindowEvent_CloseRequest,
+			WindowEvent_GoBackRequest,
+			WindowEvent_SizeChanged,
+			WindowEvent_ScaleChanged,
+			WindowEvent_MAX
+		};
+
+		struct VideoMode
+		{
+			Vec2i	size{ 1280, 720 };
+			Vec4b	bits_per_pixel{ 8, 8, 8, 8 };
+			i32		refresh_rate{ -1 };
+
+			NODISCARD constexpr auto compare(VideoMode const & vm) const
+			{
+				if (this == std::addressof(vm)) { return 0; }
+				if (auto const cmp{ CMP(size, vm.size) }; cmp != 0) { return cmp; }
+				if (auto const cmp{ CMP(refresh_rate, vm.refresh_rate) }; cmp != 0) { return cmp; }
+				if (auto const cmp{ CMP(bits_per_pixel, vm.bits_per_pixel) }; cmp != 0) { return cmp; }
+				return 0;
+			}
+		};
+
+	protected:
+		using CreateFunc = DisplayServer * (*)(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
+		static CreateFunc __create_func;
+		DisplayServer(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
+
+	public:
 		virtual ~DisplayServer() override;
 		FORCE_INLINE static DisplayServer * get_singleton() noexcept { return __singleton; }
+		static DisplayServer * create(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
 
 	public:
 		// TODO: global menu goes here
@@ -56,49 +104,6 @@ namespace ism
 			}
 			return scale;
 		}
-
-		struct VideoMode
-		{
-			Vec2i	size			{ 1280, 720 };
-			Vec4b	bits_per_pixel	{ 8, 8, 8, 8 };
-			i32		refresh_rate	{ -1 };
-
-			NODISCARD constexpr auto compare(VideoMode const & vm) const
-			{
-				if (this == std::addressof(vm)) { return 0; }
-				if (auto const cmp{ CMP(size, vm.size) }; cmp != 0) { return cmp; }
-				if (auto const cmp{ CMP(refresh_rate, vm.refresh_rate) }; cmp != 0) { return cmp; }
-				if (auto const cmp{ CMP(bits_per_pixel, vm.bits_per_pixel) }; cmp != 0) { return cmp; }
-				return 0;
-			}
-		};
-
-	public:
-		using WindowID = i32;
-
-		enum { MAIN_WINDOW_ID, INVALID_WINDOW_ID = -1 };
-
-		enum WindowMode_
-		{
-			WindowMode_Windowed,
-			WindowMode_Minimized,
-			WindowMode_Maximized,
-			WindowMode_Fullscreen,
-			WindowMode_MAX
-		};
-
-		enum WindowEvent_
-		{
-			WindowEvent_MouseEnter,
-			WindowEvent_MouseExit,
-			WindowEvent_FocusIn,
-			WindowEvent_FocusOut,
-			WindowEvent_CloseRequest,
-			WindowEvent_GoBackRequest,
-			WindowEvent_SizeChanged,
-			WindowEvent_ScaleChanged,
-			WindowEvent_MAX
-		};
 		
 		virtual Vector<WindowID> get_window_list() const = 0;
 
@@ -137,7 +142,6 @@ namespace ism
 		//virtual void window_set_input_event_callback(OBJ const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
 		//virtual void window_set_input_text_callback(OBJ const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
 
-	public:
 		virtual void poll_events() = 0;
 		virtual void swap_buffers() = 0;
 

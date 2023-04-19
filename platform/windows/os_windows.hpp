@@ -29,6 +29,8 @@ namespace ism
 		virtual void finalize() override;
 		virtual void finalize_core() override;
 
+		virtual void run() override;
+
 		virtual String get_stdin_string(bool block = true) override;
 
 		virtual Error_ open_dynamic_library(Path const & path, void *& instance) override;

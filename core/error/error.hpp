@@ -10,7 +10,7 @@ namespace ism
 	enum Error_
 	{
 		Error_Unknown = -1,
-		Error_None = 0,
+		Error_OK = 0,
 		Error_EOF,
 		// etc...
 
