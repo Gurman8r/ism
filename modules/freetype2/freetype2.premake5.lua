@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- freetype
-project			"freetype"
+-- freetype2
+project			"freetype2"
 kind			"Utility"
 language		"C++"
 cppdialect 		"C++17"
@@ -10,15 +10,10 @@ staticruntime	"Off"
 targetname		"%{prj.name}"
 debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
-objdir			"%{_BUILD_OBJ}"
+objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
 debugenvs{ "%{_BUILD_BIN}", }
-
-includedirs{
-	"%{wks.location}/thirdparty/freetype2/include",
-	"%{wks.location}/thirdparty/freetype2/include/freetype",
-}
 
 files{
 	"%{wks.location}/modules/%{prj.name}/%{prj.name}.premake5.lua",

@@ -10,8 +10,10 @@ staticruntime	"Off"
 targetname		"%{prj.name}"
 debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
-objdir			"%{_BUILD_OBJ}"
+objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
+
+manifest("glew32", "glew32d")
 
 debugenvs{ "%{_BUILD_BIN}", }
 
@@ -19,8 +21,8 @@ files{
 	"%{wks.location}/modules/%{prj.name}/%{prj.name}.premake5.lua",
 }
 
-filter{ "configurations:Debug" } postbuildcommands{ "{COPYFILE} %{_VENDOR}/glew32d.dll %{cfg.targetdir}", "{COPYFILE} %{_VENDOR}/glew32d.lib %{cfg.targetdir}", }
-filter{ "configurations:Release" } postbuildcommands{ "{COPYFILE} %{_VENDOR}/glew32.dll %{cfg.targetdir}", "{COPYFILE} %{_VENDOR}/glew32.lib %{cfg.targetdir}", }
+filter{ "configurations:Debug" } postbuildcommands{ "{COPYFILE} %{_VENDOR}/glew32d%{DLL} %{cfg.targetdir}", "{COPYFILE} %{_VENDOR}/glew32d%{LIB} %{cfg.targetdir}", }
+filter{ "configurations:Release" } postbuildcommands{ "{COPYFILE} %{_VENDOR}/glew32%{DLL} %{cfg.targetdir}", "{COPYFILE} %{_VENDOR}/glew32%{LIB} %{cfg.targetdir}", }
 filter{}
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

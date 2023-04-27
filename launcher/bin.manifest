@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+<assemblyIdentity type="win32" name="bin" version="1.0.0.0"/>
+	<file name="ism.dll"/>
+	<file name="assimp.dll"/>
+	<file name="glew32.dll"/>
+	<file name="glew32d.dll"/>
+	<file name="glfw.dll"/>
+	<file name="imgui.dll"/>
+</assembly>

@@ -10,14 +10,14 @@ staticruntime	"Off"
 targetname		"%{prj.name}"
 debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
-objdir			"%{_BUILD_OBJ}"
+objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
 debugenvs{ "%{_BUILD_BIN}", }
 
 dependson{ "ism", }
 
-links{ "assimp%{LIB}", "freetype%{LIB}", "IrrXML", "zlibstatic", "glfw", "imgui", "ism", }
+links{ "assimp%{LIB}", "freetype", "IrrXML", "zlibstatic", "glfw", "imgui", "ism", }
 
 defines{
 	"LUA_BUILD_AS_DLL",
@@ -52,7 +52,7 @@ files{
 }
 
 postbuildcommands{
-	"{COPYFILE} %{wks.location}/modules/lua/lua.ini %{_BUILD_DATA}",
+	"{COPYFILE} %{wks.location}/modules/lua/lua.ini %{_BUILD_DAT}",
 }
 	
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

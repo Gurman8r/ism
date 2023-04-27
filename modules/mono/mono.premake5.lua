@@ -10,14 +10,14 @@ staticruntime	"Off"
 targetname		"%{prj.name}"
 debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
-objdir			"%{_BUILD_OBJ}"
+objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
 debugenvs{ "%{_BUILD_BIN}", }
 
 dependson{ "ism", }
 
-links{ "assimp%{LIB}", "freetype%{LIB}", "IrrXML", "zlibstatic", "glfw", "imgui", "ism", "mono-2.0-sgen", }
+links{ "assimp%{LIB}", "freetype", "IrrXML", "zlibstatic", "glfw", "imgui", "ism", "mono-2.0-sgen", }
 
 defines{
 	"ISM_MOD_API=ISM_API_EXPORT",
@@ -42,7 +42,7 @@ prebuildcommands{
 }
 
 postbuildcommands{
-	"{COPYFILE} %{wks.location}/modules/mono/mono.ini %{_BUILD_DATA}",
+	"{COPYFILE} %{wks.location}/modules/mono/mono.ini %{_BUILD_DAT}",
 }
 	
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

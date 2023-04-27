@@ -9,14 +9,14 @@ systemversion	"latest"
 targetname		"%{prj.name}"
 debugdir		"%{_BUILD}"
 targetdir		"%{_BUILD}"
-objdir			"%{_BUILD_OBJ}"
+objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
 debugenvs{ "%{_BUILD}", }
 
 dependson{ "ism", "lua", "mono", }
 
-links{ "assimp%{LIB}", "IrrXML", "zlibstatic", "freetype%{LIB}", "glfw", "imgui", "ism", }
+links{ "assimp%{LIB}", "IrrXML", "zlibstatic", "freetype", "glfw", "imgui", "ism", }
 
 defines{
 	"MAIN_ENABLED=true",
@@ -36,5 +36,5 @@ srcdirs(
 )
 
 prebuildcommands{
-	"{COPYFILE} %{wks.location}/launcher/binaries.manifest %{_BUILD_BIN}",
+	"{COPYFILE} %{wks.location}/launcher/bin.manifest %{_BUILD_BIN}",
 }

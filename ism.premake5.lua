@@ -9,14 +9,16 @@ rtti			"On"
 targetname		"%{prj.name}"
 debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
-objdir			"%{_BUILD_OBJ}"
+objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
+
+manifest("ism")
 
 debugenvs{ "%{_BUILD_BIN}", }
 
-dependson{ "assimp", "freetype", "glfw", "imgui", }
+dependson{ "assimp", "freetype2", "glfw", "imgui", }
 
-links{ "assimp%{LIB}", "IrrXML", "zlibstatic", "freetype%{LIB}", "glfw", "imgui", }
+links{ "assimp%{LIB}", "IrrXML", "zlibstatic", "freetype", "glfw", "imgui", }
 
 defines{
 	"ISM_API_EXPORTS",
@@ -48,7 +50,7 @@ files{
 }
 
 postbuildcommands{
-	"{COPYFILE} %{wks.location}/engine.ini %{_BUILD_DATA}",
-	"{COPYFILE} %{wks.location}/editor.ini %{_BUILD_DATA}",
-	"{COPYFILE} %{wks.location}/extensions.cfg %{_BUILD_DATA}",
+	"{COPYFILE} %{wks.location}/engine.ini %{_BUILD_DAT}",
+	"{COPYFILE} %{wks.location}/editor.ini %{_BUILD_DAT}",
+	"{COPYFILE} %{wks.location}/extensions.cfg %{_BUILD_DAT}",
 }

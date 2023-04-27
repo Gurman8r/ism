@@ -10,8 +10,10 @@ staticruntime	"Off"
 targetname		"%{prj.name}"
 debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
-objdir			"%{_BUILD_OBJ}"
+objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
+
+manifest("imgui")
 
 debugenvs{ "%{_BUILD_BIN}", }
 

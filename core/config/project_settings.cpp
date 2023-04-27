@@ -20,9 +20,9 @@ namespace ism
 
 		// paths
 		m_bin_path = "../bin/"_path;
-		m_data_path = "../data/"_path;
+		m_data_path = "../dat/"_path;
 		m_res_path = "../res/"_path;
-		m_user_path = "../user/"_path;
+		m_user_path = "../usr/"_path;
 
 		// engine settings
 		Path const engine_ini{ get_data_path().string() + "engine.ini" };
