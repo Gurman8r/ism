@@ -8,10 +8,12 @@ cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"
-debugdir		"%{wks.location}/build/bin/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-targetdir		"%{wks.location}/temps/lib/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-objdir			"%{wks.location}/temps/obj/%{_TARGET_OS}/"
-location		"%{wks.location}/workspace/%{_ACTION}/%{prj.name}/"
+debugdir		"%{_BUILD_BIN}"
+targetdir		"%{_BUILD_BIN}"
+objdir			"%{_BUILD_OBJ}"
+location		"%{_PROJECT}"
+
+debugenvs{ "%{_BUILD_BIN}", }
 
 dependson{ "ism", }
 
@@ -33,10 +35,14 @@ files{
 	"%{wks.location}/modules/mono/mono.premake5.lua",
 }
 
+prebuildcommands{
+	"{COPYFILE} %{_VENDOR}/mono-2.0-sgen.dll %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/mono-2.0-sgen.lib %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/mono-2.0-sgen.pdb %{cfg.targetdir}",
+}
+
 postbuildcommands{
-	"{COPYFILE} %{wks.location}/modules/mono/mono.ini %{wks.location}/build/data/",
-	"{COPYFILE} %{LIB_DIR}/mono-2.0-sgen%{DLL} %{cfg.debugdir}",
-	"{COPYFILE} %{cfg.targetdir}/%{prj.targetname}%{DLL} %{cfg.debugdir}",
+	"{COPYFILE} %{wks.location}/modules/mono/mono.ini %{_BUILD_DATA}",
 }
 	
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

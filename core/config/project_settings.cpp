@@ -19,10 +19,10 @@ namespace ism
 		}
 
 		// paths
-		m_bin_path = "../../bin/"_path;
-		m_data_path = "../../data/"_path;
-		m_resource_path = "../../res/"_path;
-		m_user_path = "../../user/"_path;
+		m_bin_path = "../bin/"_path;
+		m_data_path = "../data/"_path;
+		m_res_path = "../res/"_path;
+		m_user_path = "../user/"_path;
 
 		// engine settings
 		Path const engine_ini{ get_data_path().string() + "engine.ini" };
@@ -49,7 +49,7 @@ namespace ism
 
 	Path ProjectSettings::get_data_path() const { return m_data_path; }
 
-	Path ProjectSettings::get_resource_path() const { return m_resource_path; }
+	Path ProjectSettings::get_resource_path() const { return m_res_path; }
 
 	Path ProjectSettings::get_user_path() const { return m_user_path; }
 

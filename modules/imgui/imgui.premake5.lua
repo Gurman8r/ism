@@ -8,10 +8,12 @@ cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"
-debugdir		"%{wks.location}/build/bin/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-targetdir		"%{wks.location}/temps/lib/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-objdir			"%{wks.location}/temps/obj/%{_TARGET_OS}/"
-location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}/"
+debugdir		"%{_BUILD_BIN}"
+targetdir		"%{_BUILD_BIN}"
+objdir			"%{_BUILD_OBJ}"
+location		"%{_PROJECT}"
+
+debugenvs{ "%{_BUILD_BIN}", }
 
 dependson{ "glfw", }
 
@@ -49,10 +51,6 @@ files{
 	--"%{wks.location}/thirdparty/imgui-node-editor/*.cpp",
 	--"%{wks.location}/thirdparty/implot/**.h",
 	--"%{wks.location}/thirdparty/implot/**.cpp",
-}
-
-postbuildcommands{
-	"{COPYFILE} %{cfg.targetdir}/%{prj.targetname}%{DLL} %{cfg.debugdir}",
 }
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

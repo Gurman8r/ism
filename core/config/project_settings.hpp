@@ -15,7 +15,7 @@ namespace ism
 
 		Path m_bin_path{};
 		Path m_data_path{};
-		Path m_resource_path{};
+		Path m_res_path{};
 		Path m_user_path{};
 
 		HashMap<String, HashMap<String, OBJ>> m_data{};

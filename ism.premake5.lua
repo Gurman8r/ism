@@ -7,10 +7,12 @@ systemversion	"latest"
 staticruntime	"Off"
 rtti			"On"
 targetname		"%{prj.name}"
-debugdir		"%{wks.location}/build/bin/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-targetdir		"%{wks.location}/temps/lib/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-objdir			"%{wks.location}/temps/obj/%{_TARGET_OS}/"
-location		"%{wks.location}/workspace/%{_ACTION}/%{prj.name}/"
+debugdir		"%{_BUILD_BIN}"
+targetdir		"%{_BUILD_BIN}"
+objdir			"%{_BUILD_OBJ}"
+location		"%{_PROJECT}"
+
+debugenvs{ "%{_BUILD_BIN}", }
 
 dependson{ "assimp", "freetype", "glfw", "imgui", }
 
@@ -46,8 +48,7 @@ files{
 }
 
 postbuildcommands{
-	"{COPYFILE} %{wks.location}/engine.ini %{wks.location}/build/data/",
-	"{COPYFILE} %{wks.location}/editor.ini %{wks.location}/build/data/",
-	"{COPYFILE} %{wks.location}/extensions.cfg %{wks.location}/build/data/",
-	"{COPYFILE} %{cfg.targetdir}/%{prj.targetname}%{DLL} %{cfg.debugdir}",
+	"{COPYFILE} %{wks.location}/engine.ini %{_BUILD_DATA}",
+	"{COPYFILE} %{wks.location}/editor.ini %{_BUILD_DATA}",
+	"{COPYFILE} %{wks.location}/extensions.cfg %{_BUILD_DATA}",
 }

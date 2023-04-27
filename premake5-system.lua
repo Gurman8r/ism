@@ -30,7 +30,6 @@ filter{ "system:windows" }
 	LIB=".lib" DLL = ".dll" EXE = ".exe"
 filter{}
 
-LIB_DIR="%{wks.location}/misc/%{_TARGET_OS}/%{cfg.platform}/%{cfg.buildcfg}/" -- path to precompiled binaries
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 

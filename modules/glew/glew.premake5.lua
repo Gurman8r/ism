@@ -8,17 +8,19 @@ cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"
-debugdir		"%{wks.location}/build/bin/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-targetdir		"%{wks.location}/temps/lib/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-objdir			"%{wks.location}/temps/obj/%{_TARGET_OS}/"
-location		"%{wks.location}/workspace/%{_ACTION}/modules/%{prj.name}/"
+debugdir		"%{_BUILD_BIN}"
+targetdir		"%{_BUILD_BIN}"
+objdir			"%{_BUILD_OBJ}"
+location		"%{_PROJECT}"
+
+debugenvs{ "%{_BUILD_BIN}", }
 
 files{
 	"%{wks.location}/modules/%{prj.name}/%{prj.name}.premake5.lua",
 }
 
-filter{ "configurations:Debug" } postbuildcommands{ "{COPYFILE} %{LIB_DIR}/glew32d%{DLL} %{cfg.debugdir}", }
-filter{ "configurations:Release" } postbuildcommands{ "{COPYFILE} %{LIB_DIR}/glew32%{DLL} %{cfg.debugdir}", }
+filter{ "configurations:Debug" } postbuildcommands{ "{COPYFILE} %{_VENDOR}/glew32d.dll %{cfg.targetdir}", "{COPYFILE} %{_VENDOR}/glew32d.lib %{cfg.targetdir}", }
+filter{ "configurations:Release" } postbuildcommands{ "{COPYFILE} %{_VENDOR}/glew32.dll %{cfg.targetdir}", "{COPYFILE} %{_VENDOR}/glew32.lib %{cfg.targetdir}", }
 filter{}
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

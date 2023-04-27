@@ -1,29 +1,27 @@
+#if MAIN_ENABLED
 #include <core/version.hpp>
-
-#if (SYSTEM_WINDOWS && MAIN_ENABLED)
-
+#if SYSTEM_WINDOWS
 #include <main/main.hpp>
 #include <platform/windows/os_windows.hpp>
 
+#pragma comment(linker, "/manifestdependency:\"name='binaries' version='1.0.0.0' type='win32'\"")
+
 int _main()
 {
-	using namespace ism;
+	ism::OS_Windows os{ (HINSTANCE)nullptr };
 
-	OS_Windows os{ (HINSTANCE)nullptr };
-
-	switch (Main::setup(__argv[0], __argc, __argv)) {
-	case Error_OK: break;
-	case Error_Unknown:
+	switch (ism::Main::setup(__argv[0], __argc, __argv)) {
+	case ism::Error_OK: break;
+	// etc...
+	case ism::Error_Unknown:
 	default: {
 		CRASH("An unknown error occurred during setup. The program was unable to start.");
 	} break;
 	}
 
-	if (Main::start()) {
-		os.run();
-	}
+	if (ism::Main::start()) { os.run(); }
 
-	Main::cleanup();
+	ism::Main::cleanup();
 
 	return os.get_exit_code();
 }
@@ -38,4 +36,5 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLin
 	return main(0, nullptr);
 }
 
-#endif // SYSTEM_WINDOWS
+#endif // !SYSTEM_WINDOWS
+#endif // !MAIN_ENABLED
