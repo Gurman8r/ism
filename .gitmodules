@@ -1,6 +1,3 @@
-[submodule "thirdparty/ziplib"]
-	path = thirdparty/ziplib
-	url = https://github.com/frk1/ziplib.git
 [submodule "thirdparty/lua"]
 	path = thirdparty/lua
 	url = https://github.com/lua/lua.git
