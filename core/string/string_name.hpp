@@ -71,8 +71,7 @@ namespace ism
 		self_type & operator=(self_type const & value) { return (m_text = value.m_text), (*this); }
 		//self_type & operator+=(self_type const & value) { return (m_text += value.m_text), (*this); }
 		//self_type & operator+=(self_type && value) noexcept { return (m_text += std::move(value.m_text)), (*this); }
-		//template <class T> self_type & operator+=(T const & value) { return (m_text += value), (*this); }
-		//template <class T> self_type & operator+=(T && value) noexcept { return (m_text += std::move(value)), (*this); }
+		//template <class T> self_type & operator+=(T && value) noexcept { return (m_text += FWD(value)), (*this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

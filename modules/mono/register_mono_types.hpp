@@ -5,9 +5,9 @@
 
 extern "C"
 {
-	ISM_MOD_API bool open_mono_library(ism::ExtensionInterface const * iface, ism::Extension * extension, ism::ExtensionInitialization * init);
-	ISM_MOD_API void initialize_mono_module(void * user, ism::ExtensionInitializationLevel_ level);
-	ISM_MOD_API void finalize_mono_module(void * user, ism::ExtensionInitializationLevel_ level);
+	ISM_MOD_API bool open_mono_library(IsmExtensionInterfacePtr iface, IsmExtensionPtr library, IsmExtensionInitializationPtr init);
+	ISM_MOD_API void initialize_mono_module(void * user, IsmExtensionInitializationLevel level);
+	ISM_MOD_API void finalize_mono_module(void * user, IsmExtensionInitializationLevel level);
 }
 
 #endif // !_ISM_REGISTER_MONO_TYPES_HPP_

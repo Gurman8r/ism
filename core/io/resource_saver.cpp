@@ -4,12 +4,12 @@ namespace ism
 {
 	ResourceSaver * ResourceSaver::__singleton{};
 
-	ResourceSaver::ResourceSaver()
-	{
-		__singleton = this;
-	}
+	ResourceSaver::ResourceSaver() { __singleton = this; }
 
-	ResourceSaver::~ResourceSaver()
+	ResourceSaver::~ResourceSaver() {}
+
+	Error_ ResourceSaver::save(RES const & res, Path const & path)
 	{
+		return Error_OK;
 	}
 }

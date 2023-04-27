@@ -20,23 +20,15 @@ namespace ism
 		};
 
 	private:
-		friend class ShaderLoader;
-
+		friend class ShaderLibrary;
 		RID m_shader{};
-
 		Mode_ m_mode{ Mode_MAX };
 
 	public:
 		Shader() noexcept {}
-
-		explicit Shader(Path const & path) noexcept { set_path(path); reload_from_file(); }
-
+		explicit Shader(Path const & path);
 		virtual ~Shader() override;
-
-		virtual Error_ reload_from_file() override;
-
 		virtual RID get_rid() const { return m_shader; }
-
 		virtual Mode_ get_mode() const { return m_mode; }
 
 	public:

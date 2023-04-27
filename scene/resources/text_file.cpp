@@ -11,7 +11,6 @@ namespace ism
 		t.tp_bind = BIND_CLASS(TextFile, t)
 		{
 			return t
-				.def("reload_from_file", &TextFile::reload_from_file)
 				.def("get_text", &TextFile::get_text)
 				.def("has_text", &TextFile::has_text)
 				.def("set_text", &TextFile::set_text)
@@ -19,24 +18,19 @@ namespace ism
 		};
 	}
 
-	Error_ TextFile::reload_from_file()
+	TextFile::TextFile(Path const & path)
 	{
-		if (!get_path()) { return Error_Unknown; }
-
-		// open file
-		std::ifstream file{ get_path().c_str(), std::ios_base::binary };
+		if (path.empty()) { return; }
+		std::ifstream file{ path.c_str(), std::ios_base::binary };
 		ON_SCOPE_EXIT(&) { file.close(); };
-		if (!file) { return Error_Unknown; }
-
-		// load contents
+		if (!file) { return; }
+		set_path(path);
 		file.seekg(0, std::ios_base::end);
 		if (std::streampos size{ file.tellg() }; 0 < size) {
 			file.seekg(0, std::ios_base::beg);
 			m_text.resize((size_t)size);
 			file.read((char *)m_text.data(), size);
 		}
-
-		return Error_OK;
 	}
 
 	String const & TextFile::get_text() const

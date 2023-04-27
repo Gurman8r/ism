@@ -12,7 +12,7 @@ targetdir		"%{wks.location}/temps/lib/%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildc
 objdir			"%{wks.location}/temps/obj/%{_TARGET_OS}/"
 location		"%{wks.location}/workspace/%{_ACTION}/programs/%{prj.name}/"
 
-dependson{ "ism", "mono", }
+dependson{ "ism", "lua", "mono", }
 
 links{ "assimp%{LIB}", "IrrXML", "zlibstatic", "freetype%{LIB}", "glfw", "imgui", "ism", }
 
@@ -21,9 +21,7 @@ defines{
 	"TOOLS_ENABLED=true",
 	"OPENGL_ENABLED=true",
 	"OPENGL_LOADER_GLEW=true",
-	"ISM_API=ISM_API_IMPORT",
 	"ISM_MOD_API=ISM_API_IMPORT",
-	"ISM_EDITOR_API=ISM_API_IMPORT",
 	"IMGUI_API=ISM_API_IMPORT",
 }
 

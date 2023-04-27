@@ -17,11 +17,10 @@ dependson{ "assimp", "freetype", "glfw", "imgui", }
 links{ "assimp%{LIB}", "IrrXML", "zlibstatic", "freetype%{LIB}", "glfw", "imgui", }
 
 defines{
+	"ISM_API_EXPORTS",
 	"TOOLS_ENABLED=true",
 	"OPENGL_ENABLED=true",
 	"OPENGL_LOADER_GLEW=true",
-	"ISM_API=ISM_API_EXPORT",
-	"ISM_EDITOR_API=ISM_API_EXPORT",
 	"IMGUI_API=ISM_API_IMPORT",
 }
 
@@ -46,12 +45,9 @@ files{
 	"%{wks.location}/platform/register_platform_apis.cpp",
 }
 
-prebuildcommands{
+postbuildcommands{
 	"{COPYFILE} %{wks.location}/engine.ini %{wks.location}/build/data/",
 	"{COPYFILE} %{wks.location}/editor.ini %{wks.location}/build/data/",
 	"{COPYFILE} %{wks.location}/extensions.cfg %{wks.location}/build/data/",
-}
-
-postbuildcommands{
 	"{COPYFILE} %{cfg.targetdir}/%{prj.targetname}%{DLL} %{cfg.debugdir}",
 }

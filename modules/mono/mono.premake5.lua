@@ -18,7 +18,6 @@ dependson{ "ism", }
 links{ "assimp%{LIB}", "freetype%{LIB}", "IrrXML", "zlibstatic", "glfw", "imgui", "ism", "mono-2.0-sgen", }
 
 defines{
-	"ISM_API=ISM_API_IMPORT",
 	"ISM_MOD_API=ISM_API_EXPORT",
 }
 
@@ -34,12 +33,9 @@ files{
 	"%{wks.location}/modules/mono/mono.premake5.lua",
 }
 
-prebuildcommands{
+postbuildcommands{
 	"{COPYFILE} %{wks.location}/modules/mono/mono.ini %{wks.location}/build/data/",
 	"{COPYFILE} %{LIB_DIR}/mono-2.0-sgen%{DLL} %{cfg.debugdir}",
-}
-
-postbuildcommands{
 	"{COPYFILE} %{cfg.targetdir}/%{prj.targetname}%{DLL} %{cfg.debugdir}",
 }
 	

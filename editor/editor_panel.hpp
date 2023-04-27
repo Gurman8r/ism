@@ -11,7 +11,7 @@
 namespace ism
 {
 	// base class for editor windows
-	class ISM_EDITOR_API EditorPanel : public Object
+	class ISM_API EditorPanel : public Object
 	{
 		DEFINE_CLASS(EditorPanel, Object);
 

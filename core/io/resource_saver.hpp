@@ -13,6 +13,10 @@ namespace ism
 		ResourceSaver();
 		~ResourceSaver();
 		FORCE_INLINE static ResourceSaver * get_singleton() noexcept { return __singleton; }
+#define RESOURCE_SAVER (ism::ResourceSaver::get_singleton())
+
+	public:
+		Error_ save(RES const & res, Path const & path);
 	};
 }
 

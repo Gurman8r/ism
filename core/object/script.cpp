@@ -48,25 +48,26 @@ namespace ism
 // script
 namespace ism
 {
-	EMBED_CLASS(Script, t) {}
+	EMBED_CLASS(Script, t, TypeFlags_IsAbstract) {}
 
 	Script::Script()
+	{
+	}
+
+	Script::Script(Path const & path)
 	{
 	}
 
 	Script::~Script()
 	{
 	}
-
-	Error_ Script::reload_from_file()
-	{
-		return Error_OK;
-	}
 }
 
 // script instance
 namespace ism
 {
+	EMBED_CLASS(ScriptInstance, t, TypeFlags_IsAbstract) {}
+
 	ScriptInstance::~ScriptInstance()
 	{
 	}
@@ -75,7 +76,7 @@ namespace ism
 // script language
 namespace ism
 {
-	EMBED_CLASS(ScriptLanguage, t) {}
+	EMBED_CLASS(ScriptLanguage, t, TypeFlags_IsAbstract) {}
 
 	ScriptLanguage::ScriptLanguage()
 	{
@@ -89,28 +90,30 @@ namespace ism
 // placeholder script instance
 namespace ism
 {
-	PlaceHolderScriptInstance::PlaceHolderScriptInstance(ScriptLanguage * language, Ref<Script> script, Object * owner)
+	EMBED_CLASS(PlaceholderScriptInstance, t) {}
+
+	PlaceholderScriptInstance::PlaceholderScriptInstance(ScriptLanguage * language, Ref<Script> script, Object * owner)
 		: m_owner{ owner }
 		, m_script{ script }
 		, m_language{ language }
 	{
 	}
 
-	PlaceHolderScriptInstance::~PlaceHolderScriptInstance()
+	PlaceholderScriptInstance::~PlaceholderScriptInstance()
 	{
 	}
 
-	bool PlaceHolderScriptInstance::get_constants(HashMap<StringName, OBJ> * out) const
-	{
-		return false;
-	}
-
-	bool PlaceHolderScriptInstance::get_properties(HashMap<StringName, PROPERTY> * out) const
+	bool PlaceholderScriptInstance::get_constants(HashMap<StringName, OBJ> * out) const
 	{
 		return false;
 	}
 
-	bool PlaceHolderScriptInstance::get_functions(HashMap<StringName, FUNCTION> * out) const
+	bool PlaceholderScriptInstance::get_properties(HashMap<StringName, PROPERTY> * out) const
+	{
+		return false;
+	}
+
+	bool PlaceholderScriptInstance::get_functions(HashMap<StringName, FUNCTION> * out) const
 	{
 		return false;
 	}

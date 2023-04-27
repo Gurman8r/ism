@@ -9,23 +9,15 @@ namespace ism
 
 	ConfigFile::~ConfigFile() {}
 
-	Error_ ConfigFile::reload_from_file()
+	ConfigFile::ConfigFile(Path const & path)
 	{
-		if (get_path().empty()) { return Error_Unknown; }
-		if (!ini_parse(get_path().c_str(), [
-		](void * user, cstring section, cstring name, cstring value) -> i32 {
-			auto const self{ VALIDATE((ConfigFile *)user) };
-			self->m_sections.insert(section);
-			String const key{ String{ section } + '=' + String{ name } };
-			String temp{ value };
-			if (temp.size() >= 2 && temp.front() == '\"' && temp.back() == '\"') {
-				temp.pop_back();
-				temp.erase(temp.begin());
-			}
-			self->m_values.insert({ key, std::move(temp) });
+		if (path.empty()) { return; }
+		if (ini_parse(path.c_str(), [](auto user, auto section, auto name, auto value) {
+			((ConfigFile *)user)->set_string(section, name, String{ value }.trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; }));
 			return 1;
-		}, this)) { return Error_Unknown; }
-		return Error_OK;
+		}, this)) {
+			set_path(path);
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -62,16 +54,19 @@ namespace ism
 
 	String ConfigFile::get_string(String const & section, String const & name, String const & default_value) const
 	{
-		String const key{ String{ section } + '=' + String{ name } };
-		if (auto const v{ util::getptr(m_values, key) }) { return *v; }
-		else { return default_value; }
+		if (auto const s{ util::getptr(m_data, section) })
+		{
+			if (auto const v{ util::getptr(*s, name) })
+			{
+				return *v;
+			}
+		}
+		return default_value;
 	}
 
 	bool ConfigFile::set_string(String const & section, String const & name, String const & value)
 	{
-		String const key{ String{ section } + '=' + String{ name } };
-		m_sections.insert(section);
-		return m_values.insert({ key, value }).second;
+		return m_data[section].insert({ name, value }).second;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

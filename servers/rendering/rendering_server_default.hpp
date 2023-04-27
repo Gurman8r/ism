@@ -50,9 +50,9 @@ namespace ism
 		virtual void material_destroy(RID material) override;
 		virtual RID material_get_shader(RID material) const override;
 		virtual void material_set_shader(RID material, RID shader) override;
-		virtual Variant material_get_param(RID material, StringName const & key) const override;
-		virtual void material_set_param(RID material, StringName const & key, Variant const & value) override;
-		virtual void material_update(RID material, Map<StringName, Variant> const & params) override;
+		virtual Var material_get_param(RID material, StringName const & key) const override;
+		virtual void material_set_param(RID material, StringName const & key, Var const & value) override;
+		virtual void material_update(RID material, Map<StringName, Var> const & params) override;
 
 	public:
 		/* MESH */

@@ -2,19 +2,39 @@
 
 namespace ism
 {
+	EMBED_CLASS(MonoLanguage, t) {}
+
+	MonoLanguage::MonoLanguage()
+	{
+	}
+
+	MonoLanguage::~MonoLanguage()
+	{
+	}
+
+	void MonoLanguage::initialize()
+	{
+	}
+
+	void MonoLanguage::finalize()
+	{
+	}
+}
+
+namespace ism
+{
 	EMBED_CLASS(MonoScript, t) {}
 
 	MonoScript::MonoScript()
 	{
 	}
 
-	MonoScript::~MonoScript()
+	MonoScript::MonoScript(Path const & path)
 	{
 	}
 
-	Error_ MonoScript::reload_from_file()
+	MonoScript::~MonoScript()
 	{
-		return Error_OK;
 	}
 
 	bool MonoScript::has_source_code() const
@@ -39,6 +59,8 @@ namespace ism
 
 namespace ism
 {
+	EMBED_CLASS(MonoInstance, t) {}
+
 	MonoInstance::MonoInstance(ScriptLanguage * language, Ref<Script> script, Object * owner)
 		: m_owner{ owner }
 		, m_script{ script }
@@ -66,27 +88,6 @@ namespace ism
 	}
 
 	void MonoInstance::notification(i32 notification)
-	{
-	}
-}
-
-namespace ism
-{
-	EMBED_CLASS(MonoLanguage, t) {}
-
-	MonoLanguage::MonoLanguage()
-	{
-	}
-
-	MonoLanguage::~MonoLanguage()
-	{
-	}
-
-	void MonoLanguage::initialize()
-	{
-	}
-
-	void MonoLanguage::finalize()
 	{
 	}
 }

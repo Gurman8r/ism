@@ -20,8 +20,6 @@ namespace ism
 	public:
 		virtual ~Material();
 
-		virtual Error_ reload_from_file() override = 0;
-
 		virtual RID get_rid() const override { return m_material; }
 
 		virtual RID get_shader_rid() const = 0;
@@ -39,23 +37,17 @@ namespace ism
 
 	public:
 		ShaderMaterial();
-
-		explicit ShaderMaterial(Path const & path) noexcept { set_path(path); reload_from_file(); }
-
+		explicit ShaderMaterial(Path const & path);
 		virtual ~ShaderMaterial() override;
-
-		virtual Error_ reload_from_file() override;
-
 		virtual RID get_shader_rid() const override;
-
 		virtual Shader::Mode_ get_shader_mode() const override;
 
 	public:
 		Ref<Shader> get_shader() const;
 		void set_shader(Ref<Shader> const & value);
 
-		Variant get_shader_param(StringName const & key) const;
-		void set_shader_param(StringName const & key, Variant const & value);
+		Var get_shader_param(StringName const & key) const;
+		void set_shader_param(StringName const & key, Var const & value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -84,15 +76,9 @@ namespace ism
 
 	public:
 		StandardMaterial3D();
-
-		explicit StandardMaterial3D(Path const & path) noexcept { set_path(path); reload_from_file(); }
-
+		explicit StandardMaterial3D(Path const & path);
 		virtual ~StandardMaterial3D() override;
-
-		virtual Error_ reload_from_file() override;
-
 		virtual RID get_shader_rid() const override;
-
 		virtual Shader::Mode_ get_shader_mode() const override;
 
 	private:

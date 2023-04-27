@@ -40,6 +40,11 @@ namespace ism
 
 	// OBJECT
 
+	struct _ObjectAPI_Tag {};
+
+	template <class T
+	> constexpr bool is_object_api_v{ std::is_base_of_v<_ObjectAPI_Tag, mpl::intrinsic_t<T>> };
+
 	class Object;
 	class TypeObject;
 	class IntObject;
@@ -109,7 +114,7 @@ namespace ism
 	using BinaryFunc =		OBJ(*)(OBJ a, OBJ b);
 	using TernaryFunc =		OBJ(*)(OBJ a, OBJ b, OBJ c);
 
-	using InquiryFunc =			bool(*)(OBJ obj);
+	using InquiryFunc =		bool(*)(OBJ obj);
 	using SizeArgFunc =		OBJ(*)(OBJ obj, ssize_t i);
 	using SizeSizeArgFunc =	OBJ(*)(OBJ obj, ssize_t i, ssize_t j);
 	using ObjObjFunc =		i32(*)(OBJ lhs, OBJ rhs);

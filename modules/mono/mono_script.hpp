@@ -5,6 +5,24 @@
 
 namespace ism
 {
+	// mono language
+	class ISM_MOD_API MonoLanguage : public ScriptLanguage
+	{
+		DEFINE_CLASS(MonoLanguage, ScriptLanguage);
+
+	public:
+		MonoLanguage();
+		virtual ~MonoLanguage() override;
+
+		virtual StringName get_name() const override { return "mono"; }
+
+		virtual void initialize() override;
+		virtual void finalize() override;
+	};
+}
+
+namespace ism
+{
 	// mono script
 	class ISM_MOD_API MonoScript : public Script
 	{
@@ -12,9 +30,8 @@ namespace ism
 
 	public:
 		MonoScript();
-		MonoScript(Path const & path) noexcept { set_path(path); reload_from_file(); }
+		explicit MonoScript(Path const & path);
 		virtual ~MonoScript() override;
-		virtual Error_ reload_from_file() override;
 		
 		virtual bool has_source_code() const override;
 		virtual String get_source_code() const override;
@@ -28,9 +45,11 @@ namespace ism
 	// mono instance
 	class ISM_MOD_API MonoInstance : public ScriptInstance
 	{
-		Object *			m_owner{};
-		Ref<Script>			m_script{};
-		ScriptLanguage *	m_language{};
+		DEFINE_CLASS(MonoInstance, ScriptInstance);
+
+		Object * m_owner{};
+		Ref<Script> m_script{};
+		ScriptLanguage * m_language{};
 
 	public:
 		MonoInstance(ScriptLanguage * language, Ref<Script> script, Object * owner);
@@ -46,24 +65,6 @@ namespace ism
 		virtual Ref<Script> get_script() const override { return m_script; }
 		virtual ScriptLanguage * get_language() { return m_language; }
 		virtual Object * get_owner() override { return m_owner; }
-	};
-}
-
-namespace ism
-{
-	// mono language
-	class ISM_MOD_API MonoLanguage : public ScriptLanguage
-	{
-		DEFINE_CLASS(MonoLanguage, ScriptLanguage);
-
-	public:
-		MonoLanguage();
-		virtual ~MonoLanguage() override;
-
-		virtual StringName get_name() const override { return "mono"; }
-
-		virtual void initialize() override;
-		virtual void finalize() override;
 	};
 }
 

@@ -71,6 +71,7 @@ namespace ism
 	public:
 		virtual ~TextServer() override;
 		FORCE_INLINE static TextServer * get_singleton() noexcept { return __singleton; }
+#define TEXT_SERVER (ism::TextServer::get_singleton())
 		static TextServer * create();
 
 	public:

@@ -10,7 +10,7 @@ namespace ism
 
 	OS::OS()
 	{
-		__singleton = this;
+		ASSERT(!__singleton); __singleton = this;
 
 		Vector<Logger *> temp{};
 		temp.push_back(memnew(StdLogger));
@@ -19,7 +19,11 @@ namespace ism
 
 	OS::~OS()
 	{
+		ASSERT(__singleton == this);
+
 		memdelete(m_logger);
+
+		__singleton = nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -57,11 +61,6 @@ namespace ism
 		va_end(args);
 	}
 
-	void OS::printerr(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type)
-	{
-		m_logger->log_error(func, file, line, desc, message, type);
-	}
-
 	void OS::printerrv(cstring fmt, va_list args)
 	{
 		m_logger->logv(fmt, args, true);
@@ -73,6 +72,11 @@ namespace ism
 		va_start(args, fmt);
 		printerrv(fmt, args);
 		va_end(args);
+	}
+
+	void OS::printerror(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type)
+	{
+		m_logger->log_error(func, file, line, desc, message, type);
 	}
 
 	Path OS::get_executable_path() const
@@ -156,32 +160,32 @@ namespace ism
 		return ".";
 	}
 
-	Path OS::get_bundle_resource_dir() const
+	Path OS::get_bundle_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_user_data_dir() const
+	Path OS::get_user_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_resource_dir() const
+	Path OS::get_resource_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_safe_dir_name(Path const & p_dir_name, bool p_allow_dir_separator) const
+	Path OS::get_safe_path(Path const & p_dir_name, bool p_allow_dir_separator) const
 	{
 		return ".";
 	}
 
-	Path OS::get_ism_dir_name() const
+	Path OS::get_bin_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_system_dir(SystemDir value) const
+	Path OS::get_system_dir(SystemDir_ value) const
 	{
 		return ".";
 	}
@@ -214,7 +218,7 @@ namespace ism
 		return {};
 	}
 
-	bool OS::has_feature(String const & value)
+	bool OS::has_feature(String const & value) const
 	{
 		return false;
 	}

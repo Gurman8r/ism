@@ -41,7 +41,7 @@ namespace ism
 			RID uniform_set{};
 			Vector<RID> texture_cache{};
 			DynamicBuffer ubo_data{};
-			Map<StringName, Variant> params{};
+			Map<StringName, Var> params{};
 			bool update_requested{};
 		};
 
@@ -50,9 +50,9 @@ namespace ism
 		void material_destroy(RID material);
 		RID material_get_shader(RID material);
 		void material_set_shader(RID material, RID shader);
-		Variant material_get_param(RID material, StringName const & key);
-		void material_set_param(RID material, StringName const & key, Variant const & value);
-		void material_update(RID material, Map<StringName, Variant> const & params);
+		Var material_get_param(RID material, StringName const & key);
+		void material_set_param(RID material, StringName const & key, Var const & value);
+		void material_update(RID material, Map<StringName, Var> const & params);
 
 	public:
 		/* MESH */

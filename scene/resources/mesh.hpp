@@ -9,7 +9,7 @@ namespace ism
 	{
 		DEFINE_CLASS(Mesh, Resource);
 
-		friend class MeshLoader;
+		friend class MeshLibrary;
 
 		RID m_mesh{};
 
@@ -20,11 +20,9 @@ namespace ism
 
 		explicit Mesh(RS::SurfaceData const & surface) : Mesh{ Vector<RS::SurfaceData>{ surface } } {}
 
-		explicit Mesh(Path const & path) noexcept { set_path(path); reload_from_file(); }
+		explicit Mesh(Path const & path);
 
 		virtual ~Mesh() override;
-
-		virtual Error_ reload_from_file() override;
 
 		virtual RID get_rid() const override { return m_mesh; }
 

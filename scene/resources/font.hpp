@@ -9,16 +9,16 @@ namespace ism
 	{
 		DEFINE_CLASS(Font, Resource);
 
+		friend class FontLibrary;
+
 		RID m_font;
 
 	public:
 		Font() noexcept {}
 		
-		explicit Font(Path const & path) noexcept { set_path(path); reload_from_file(); }
+		explicit Font(Path const & path);
 
 		virtual ~Font();
-
-		virtual Error_ reload_from_file() override;
 
 		virtual RID get_rid() const override { return m_font; }
 

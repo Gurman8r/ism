@@ -21,7 +21,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// main editor
-	class ISM_EDITOR_API EditorNode : public Node
+	class ISM_API EditorNode : public Node
 	{
 		DEFINE_CLASS(EditorNode, Node);
 
@@ -51,6 +51,7 @@ namespace ism
 		EditorNode();
 		virtual ~EditorNode() override;
 		FORCE_INLINE static EditorNode * get_singleton() noexcept { return __singleton; }
+#define EDITOR (ism::EditorNode::get_singleton())
 
 	protected:
 		void _notification(Notification_ id);

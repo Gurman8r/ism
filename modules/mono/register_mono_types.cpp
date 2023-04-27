@@ -8,10 +8,11 @@ using namespace ism;
 
 static MonoLanguage * mono_language{};
 
-bool open_mono_library(ism::ExtensionInterface const * iface, ism::Extension * extension, ism::ExtensionInitialization * init)
+bool open_mono_library(IsmExtensionInterfacePtr iface, IsmExtensionPtr library, IsmExtensionInitializationPtr initialization)
 {
-	if (!iface || !extension || !init) { return false; }
+	if (!iface || !library || !initialization) { return false; }
 	PRINT_LINE("open mono module");
+	auto init{ (ExtensionInitialization *)initialization };
 	init->minimum_level = ExtensionInitializationLevel_Scene;
 	init->user = nullptr;
 	init->initialize = &initialize_mono_module;
@@ -19,21 +20,22 @@ bool open_mono_library(ism::ExtensionInterface const * iface, ism::Extension * e
 	return true;
 }
 
-void initialize_mono_module(void * user, ism::ExtensionInitializationLevel_ level)
+void initialize_mono_module(void * user, IsmExtensionInitializationLevel level)
 {
 	if (level != ExtensionInitializationLevel_Scene) { return; }
 	PRINT_LINE("initialize mono module");
-	//INITIALIZE_CLASS(MonoLanguage, MonoScript, MonoBehavior);
+	REGISTER_CLASS(MonoLanguage, MonoScript, MonoInstance, MonoBehavior);
 	mono_language = memnew(MonoLanguage);
-	ScriptServer::get_singleton()->register_language(mono_language);
+	SCRIPT_SERVER->register_language(mono_language);
 }
 
-void finalize_mono_module(void * user, ism::ExtensionInitializationLevel_ level)
+void finalize_mono_module(void * user, IsmExtensionInitializationLevel level)
 {
 	if (level != ExtensionInitializationLevel_Scene) { return; }
 	PRINT_LINE("finalize mono module");
-	ScriptServer::get_singleton()->unregister_language(mono_language);
+	SCRIPT_SERVER->unregister_language(mono_language);
 	memdelete(mono_language);
+	UNREGISTER_CLASS(MonoLanguage, MonoScript, MonoInstance, MonoBehavior);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

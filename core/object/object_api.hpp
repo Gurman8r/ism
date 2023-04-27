@@ -8,13 +8,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	struct _ObjectAPI_Tag {};
-
-	template <class T
-	> constexpr bool is_object_api_v{ std::is_base_of_v<_ObjectAPI_Tag, mpl::intrinsic_t<T>> };
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	template <class Derived
 	> class ObjectAPI : public _ObjectAPI_Tag
 	{

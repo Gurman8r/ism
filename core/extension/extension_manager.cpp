@@ -1,8 +1,9 @@
 #include <core/extension/extension_manager.hpp>
-#include <core/io/file_access.hpp>
 #include <core/os/os.hpp>
-#include <core/io/config_file.hpp>
 #include <core/config/project_settings.hpp>
+#include <core/io/file_access.hpp>
+#include <core/io/config_file.hpp>
+#include <core/io/resource_loader.hpp>
 
 namespace ism
 {
@@ -20,7 +21,7 @@ namespace ism
 		if (it != m_extensions.end()) { return LoadStatus_AlreadyLoaded; }
 
 		Path const stem{ path.stem() };
-		ConfigFile const ini{ Path::format("%s%s.ini", ProjectSettings::get_singleton()->get_project_data_path().c_str(), stem.c_str()) };
+		ConfigFile const ini{ Path::format("%s%s.ini", ProjectSettings::get_singleton()->get_data_path().c_str(), stem.c_str()) };
 		String const library_name{ ini.get_string("configuration", "library_name", stem.string()) };
 		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("open_%s_library", library_name.c_str())) };
 		Ref<Extension> extension{ Extension::open(path, entry_symbol) };

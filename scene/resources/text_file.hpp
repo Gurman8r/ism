@@ -13,15 +13,9 @@ namespace ism
 
 	public:
 		TextFile() noexcept {}
-
-		explicit TextFile(Path const & path) noexcept { set_path(path); reload_from_file(); }
-
-		virtual Error_ reload_from_file() override;
-
+		explicit TextFile(Path const & path);
 		virtual String const & get_text() const;
-
 		virtual bool has_text(String const & compare_to = {}) const;
-
 		virtual void set_text(String const & value);
 	};
 }

@@ -21,14 +21,16 @@ namespace ism
 
 	void OS_Windows::initialize()
 	{
-		m_main_loop = nullptr;
 		FileAccessWindows::initialize();
 		DisplayServerWindows::initialize();
 	}
 
+	void OS_Windows::initialize_joysticks()
+	{
+	}
+
 	void OS_Windows::finalize()
 	{
-		m_main_loop = nullptr;
 	}
 
 	void OS_Windows::finalize_core()
@@ -42,11 +44,16 @@ namespace ism
 		if (!m_main_loop) { return; }
 		m_main_loop->initialize();
 		while (true) {
-			DisplayServer::get_singleton()->poll_events();
+			DISPLAY_SERVER->poll_events();
 			if (Main::iteration()) { break; }
-			DisplayServer::get_singleton()->swap_buffers();
+			DISPLAY_SERVER->swap_buffers();
 		}
 		m_main_loop->finalize();
+	}
+
+	Vector<String> OS_Windows::get_video_adapter_driver_info() const
+	{
+		return {};
 	}
 
 	String OS_Windows::get_stdin_string(bool blocking)
@@ -61,7 +68,7 @@ namespace ism
 
 	Error_ OS_Windows::open_dynamic_library(Path const & path, void *& instance)
 	{
-		if (!path) { return Error_Unknown; }
+		if (path.empty()) { return Error_Unknown; }
 		instance = LoadLibraryA(path.c_str());
 		if (!instance) { return Error_Unknown; }
 		return Error_OK;
@@ -69,6 +76,7 @@ namespace ism
 
 	Error_ OS_Windows::close_dynamic_library(void * instance)
 	{
+		if (!instance) { return Error_Unknown; }
 		FreeLibrary((HMODULE)instance);
 		return Error_OK;
 	}
@@ -96,7 +104,7 @@ namespace ism
 		return Error_Unknown;
 	}
 
-	i32 OS_Windows::get_process_id() const
+	i32 OS_Windows::get_pid() const
 	{
 		return -1;
 	}

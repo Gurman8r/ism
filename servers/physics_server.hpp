@@ -24,6 +24,7 @@ namespace ism
 	public:
 		virtual ~PhysicsServer() override;
 		FORCE_INLINE static PhysicsServer * get_singleton() noexcept { return __singleton; }
+#define PHYSICS_SERVER (ism::PhysicsServer::get_singleton())
 		static PhysicsServer * create();
 	};
 

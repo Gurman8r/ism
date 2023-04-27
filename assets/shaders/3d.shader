@@ -13,12 +13,12 @@ layout(location = 2) out vec4 Frag_Texcoord;
 layout(location = 3) out vec4 Frag_Tangent;
 layout(location = 4) out vec4 Frag_Bitangent;
 
-layout(std140, binding = 0) uniform Scene_State_Uniforms {
+layout(std140, binding = 0) uniform SceneState_Uniforms {
 	mat4 CameraProj;
 	mat4 CameraView;
 };
 
-layout(std140, binding = 1) uniform Render_Pass_Uniforms {
+layout(std140, binding = 1) uniform RenderPass_Uniforms {
 	mat4 Placeholder;
 };
 

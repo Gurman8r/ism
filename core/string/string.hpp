@@ -56,7 +56,7 @@ namespace ism
 			for (auto const c : *this) { temp.push_back(static_cast<wchar_t>(c)); }
 			return temp;
 		}
-		
+
 		auto to_upper() const {
 			self_type temp;
 			temp.reserve(size());
@@ -70,33 +70,34 @@ namespace ism
 			for (auto const c : *this) { temp.push_back(std::tolower(c)); }
 			return temp;
 		}
-
-		auto & make_upper() {
-			return std::transform(begin(), end(), begin(), std::toupper), (*this);
-		}
-
-		auto & make_lower() {
-			return std::transform(begin(), end(), begin(), std::tolower), (*this);
-		}
-
-		auto & trim_back() noexcept {
-			while (!empty() && std::isspace(back())) { pop_back(); }
-			return (*this);
-		}
-
-		auto & trim_front() noexcept {
-			while (!empty() && std::isspace(front())) { erase(begin()); }
-			return (*this);
-		}
-
-		auto & trim() noexcept {
-			while (!empty() && std::isspace(back())) { pop_back(); }
-			while (!empty() && std::isspace(front())) { erase(begin()); }
-			return (*this);
-		}
 		
+	public:
 		auto & erase_duplicates(C const c) {
 			return erase(std::unique(begin(), end(), [c](C a, C b) { return (a == b) && (a == c); }), end()), (*this);
+		}
+
+		template <class Fn
+		> auto & transform(Fn && fn) noexcept {
+			return std::transform(begin(), end(), begin(), FWD(fn)), (*this);
+		}
+		
+		template <class Fn = int(*)(int)
+		> auto & trim_back(Fn fn = std::isspace) {
+			while (!empty() && fn(back())) { pop_back(); }
+			return (*this);
+		}
+
+		template <class Fn = int(*)(int)
+		> auto & trim_front(Fn fn = std::isspace) {
+			while (!empty() && fn(front())) { erase(begin()); }
+			return (*this);
+		}
+
+		template <class Fn = int(*)(int)
+		> auto & trim(Fn fn = std::isspace) {
+			while (!empty() && fn(back())) { pop_back(); }
+			while (!empty() && fn(front())) { erase(begin()); }
+			return (*this);
 		}
 
 	public:
@@ -154,8 +155,7 @@ namespace ism
 	public:
 		self_type & operator+=(self_type const & value) { return base_type::operator+=((base_type const &)value), (*this); }
 		self_type & operator+=(self_type && value) noexcept { return base_type::operator+=(std::move((base_type &&)value)), (*this); }
-		template <class T> self_type & operator+=(T const & value) { return base_type::operator+=(value), (*this); }
-		template <class T> self_type & operator+=(T && value) noexcept { return base_type::operator+=(value), (*this); }
+		template <class T> self_type & operator+=(T && value) noexcept { return base_type::operator+=(FWD(value)), (*this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

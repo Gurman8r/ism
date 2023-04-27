@@ -17,7 +17,7 @@ namespace ism
 {
 	void register_scene_types()
 	{
-		INITIALIZE_CLASS
+		REGISTER_CLASS
 		(
 			SceneTree,
 			Node,

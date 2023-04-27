@@ -9,7 +9,7 @@ namespace ism
 {
 	void register_server_types()
 	{
-		INITIALIZE_CLASS
+		REGISTER_CLASS
 		(
 			DisplayServer,
 			RenderingDevice,

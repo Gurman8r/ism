@@ -1,4 +1,4 @@
-#include <scene/resources/shader_loader.hpp>
+#include <scene/resources/shader_library.hpp>
 
 namespace ism
 {
@@ -6,14 +6,14 @@ namespace ism
 
 	EMBED_CLASS(Shader, t) {}
 
-	Shader::~Shader()
+	Shader::Shader(Path const & path)
 	{
-		if (m_shader) { RD::get_singleton()->shader_destroy(m_shader); m_shader = nullptr; }
+		ASSERT(ShaderLibrary::load_shader(*this, path) == Error_OK);
 	}
 
-	Error_ Shader::reload_from_file()
+	Shader::~Shader()
 	{
-		return ShaderLoader::load_from_file(*this, get_path());
+		if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); m_shader = nullptr; }
 	}
 
 	String Shader::get_code() const

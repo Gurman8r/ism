@@ -10,7 +10,7 @@ namespace ism
 {
 	void register_editor_types()
 	{
-		INITIALIZE_CLASS
+		REGISTER_CLASS
 		(
 			EditorNode,
 			EditorPanel,
@@ -18,6 +18,10 @@ namespace ism
 			EditorLog,
 			EditorViewport
 		);
+	}
+
+	void register_editor_singletons()
+	{
 	}
 	
 	void unregister_editor_types()

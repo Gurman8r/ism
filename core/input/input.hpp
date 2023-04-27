@@ -18,6 +18,7 @@ namespace ism
 		Input() noexcept { __singleton = this; }
 		virtual ~Input() noexcept override = default;
 		FORCE_INLINE static Input * get_singleton() noexcept { return __singleton; }
+#define INPUT (ism::Input::get_singleton())
 
 	public:
 		enum Action_ : u8

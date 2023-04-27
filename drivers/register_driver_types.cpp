@@ -14,7 +14,7 @@ namespace ism
 	void register_core_driver_types()
 	{
 #if SYSTEM_WINDOWS
-		INITIALIZE_CLASS(FileAccessWindows);
+		REGISTER_CLASS(FileAccessWindows);
 		FileAccessWindows::initialize();
 #endif
 	}
@@ -28,7 +28,7 @@ namespace ism
 
 	void register_driver_types()
 	{
-		INITIALIZE_CLASS(RENDERING_DEVICE_DEFAULT);
+		REGISTER_CLASS(RENDERING_DEVICE_DEFAULT);
 	}
 
 	void unregister_driver_types()

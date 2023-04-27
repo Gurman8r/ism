@@ -9,42 +9,47 @@ namespace ism
 
 	Internals::Internals()
 	{
-		__singleton = this;
+		ASSERT(!__singleton); __singleton = this;
 
-		modules = DICT::new_();
+		m_modules = DICT::new_();
 	}
 
 	Internals::~Internals()
 	{
-		// manually clear all internal objects
-		Vector<OBJ>{}.swap(loader_stack);
-		modules = nullptr;
-		while (!class_db.empty()) {
-			TYPE & t{ class_db.back<TYPE>() };
-			if (!t) { continue; }
-			t->tp_base = nullptr;
-			t->tp_bases = nullptr;
-			t->tp_dict = nullptr;
-			t->tp_mro = nullptr;
-			t->tp_subclasses = nullptr;
-			class_db.pop_back();
+		Vector<OBJ>{}.swap(m_loader_stack);
+		m_modules = nullptr;
+		while (!m_classes.empty()) {
+			if (auto const type{ m_classes.back<TypeObject *>() }) { type->cleanup(); }
+			m_classes.pop_back();
 		}
 	}
 
-	void Internals::add_class(TYPE const & type)
+	void Internals::add_class(TypeObject * type)
 	{
 		ASSERT(type);
-		ASSERT(type.ready());
-		size_t const type_id{ type->tp_name.hash_code() };
-		ASSERT(!class_db.contains<size_t>(type_id));
-		class_db.push_back(type_id, type->tp_name, type);
+		ASSERT(type->ready());
+		auto const id{ type->tp_name.hash_code() };
+		ASSERT(!m_classes.contains<size_t>(id));
+		m_classes.push_back(id, type->tp_name, type);
 	}
 
-	TYPE Internals::get_class(StringName const & name) const
+	bool Internals::del_class(StringName const & name)
 	{
-		if (size_t const type_id{ name.hash_code() }
-		; TYPE const * e{ class_db.map<size_t, TYPE>(type_id) }) { return *e; }
-		else { return nullptr; }
+		auto const index{ m_classes.index_of<0>(name.hash_code()) };
+		if (index == m_classes.npos) { return false; }
+		if (auto const type{ m_classes.get<TypeObject *>(index) }) { type->cleanup(); }
+		m_classes.erase(index);
+		return true;
+	}
+
+	TypeObject * Internals::get_class(StringName const & name) const
+	{
+		if (auto const type{ m_classes.map<size_t, TypeObject *>(name.hash_code()) }) {
+			return *type;
+		}
+		else {
+			return nullptr;
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

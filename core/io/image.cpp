@@ -1,4 +1,4 @@
-#include <core/io/image_loader.hpp>
+#include <core/io/image_library.hpp>
 
 namespace ism
 {
@@ -6,13 +6,20 @@ namespace ism
 
 	EMBED_CLASS(Image, t) {}
 
+	Image::Image(Path const & path)
+	{
+		ASSERT(ImageLibrary::load_image(*this, path) == Error_OK);
+	}
+
 	Image::Image(i32 width, i32 height, ImageFormat_ format)
 	{
 		m_width = width;
 		m_height = height;
 		m_format = format;
 		switch (format) {
-		default: { CRASH("UNSUPPORTED IMAGE FORMAT"); } break;
+		default: {
+			CRASH("UNSUPPORTED IMAGE FORMAT");
+		} break;
 		case ImageFormat_R8: { m_depth = 1; } break;
 		case ImageFormat_RG8: { m_depth = 2; } break;
 		case ImageFormat_RGB8: { m_depth = 3; } break;
@@ -28,17 +35,14 @@ namespace ism
 		m_format = format;
 		m_pixels = data;
 		switch (format) {
-		default: { CRASH("UNSUPPORTED IMAGE FORMAT"); } break;
+		default: {
+			CRASH("UNSUPPORTED IMAGE FORMAT");
+		} break;
 		case ImageFormat_R8: { m_depth = 1; } break;
 		case ImageFormat_RG8: { m_depth = 2; } break;
 		case ImageFormat_RGB8: { m_depth = 3; } break;
 		case ImageFormat_RGBA8: { m_depth = 4; } break;
 		}
-	}
-
-	Error_ Image::reload_from_file()
-	{
-		return ImageLoader::load_from_file(*this, get_path());
 	}
 
 	void Image::clear()

@@ -70,14 +70,14 @@ private:
 
 		friend struct Less<EventListener *>;
 
-		EventBus * const m_event_bus;
+		EventBus * const m_bus;
 		
 		i32 const m_dispatch_order;
 
 	public:
 		virtual ~EventListener() noexcept override { unsubscribe(); }
 
-		auto get_event_bus() const noexcept -> EventBus * { return m_event_bus; }
+		auto get_event_bus() const noexcept -> EventBus * { return m_bus; }
 
 	protected:
 		friend class EventBus;
@@ -228,12 +228,12 @@ private:
 			}
 		}
 
-		template <class Ev> bool add_event_handler(EventListener * value) noexcept
+		template <class Ev> bool add_listener(EventListener * value) noexcept
 		{
 			return value && m_listeners[Ev::ID].insert(value).second;
 		}
 
-		template <class Ev> void remove_event_handler(EventListener * value) noexcept
+		template <class Ev> void remove_listener(EventListener * value) noexcept
 		{
 			if (auto const group{ m_listeners.find(Ev::ID) })
 			{
@@ -244,7 +244,7 @@ private:
 			}
 		}
 
-		void remove_event_handler(EventListener * value) noexcept
+		void remove_listener(EventListener * value) noexcept
 		{
 			m_listeners.for_each([&](auto, FlatSet<EventListener *> & group) noexcept
 			{
@@ -259,7 +259,7 @@ private:
 		NODISCARD Vector<Ref<DummyListener>> const & get_all_dummies() const noexcept { return m_dummies; }
 
 		template <class ... Events, class Fn
-		> Ref<DummyListener> add_dummy_handler(Fn && fn) noexcept
+		> Ref<DummyListener> add_dummy(Fn && fn) noexcept
 		{
 			Ref<DummyListener> dummy{ memnew(DummyListener(this, FWD(fn))) };
 
@@ -268,7 +268,7 @@ private:
 			return m_dummies.emplace_back(dummy);
 		}
 
-		auto remove_dummy_handler(Ref<DummyListener> const & value) noexcept
+		auto remove_dummy(Ref<DummyListener> const & value) noexcept
 		{
 			if (auto const it{ m_dummies.find(value) }; it != m_dummies.end())
 			{
@@ -280,7 +280,7 @@ private:
 			}
 		}
 
-		void remove_all_dummy_handlers() noexcept
+		void remove_all_dummys() noexcept
 		{
 			while (!m_dummies.empty()) { m_dummies.pop_back(); }
 		}
@@ -322,37 +322,37 @@ private:
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	inline EventListener::EventListener(EventBus * bus) noexcept
-		: m_event_bus{ bus ? bus : VALIDATE(EventBus::get_singleton()) }
-		, m_dispatch_order{ ++m_event_bus->m_next_index }
+		: m_bus{ bus ? bus : VALIDATE(EventBus::get_singleton()) }
+		, m_dispatch_order{ ++m_bus->m_next_index }
 	{
 	}
 
 	template <class Event0, class ... Events
 	> void EventListener::subscribe() noexcept
 	{
-		ASSERT(m_event_bus);
+		ASSERT(m_bus);
 
 		mpl::for_types<Event0, Events...>([&](auto tag) noexcept
 		{
-			m_event_bus->add_event_handler<TAG_TYPE(tag)>(this);
+			m_bus->add_listener<TAG_TYPE(tag)>(this);
 		});
 	}
 
 	template <class ... Events
 	> void EventListener::unsubscribe() noexcept
 	{
-		ASSERT(m_event_bus);
+		ASSERT(m_bus);
 
 		if constexpr (0 < sizeof...(Events))
 		{
 			mpl::for_types<Events...>([&](auto tag) noexcept
 			{
-				m_event_bus->remove_event_handler<TAG_TYPE(tag)>(this);
+				m_bus->remove_listener<TAG_TYPE(tag)>(this);
 			});
 		}
 		else
 		{
-			m_event_bus->remove_event_handler(this); // remove from all events
+			m_bus->remove_listener(this); // remove from all events
 		}
 	}
 

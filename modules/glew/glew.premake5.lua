@@ -17,8 +17,8 @@ files{
 	"%{wks.location}/modules/%{prj.name}/%{prj.name}.premake5.lua",
 }
 
-filter{ "configurations:Debug" } prebuildcommands{ "{COPYFILE} %{LIB_DIR}/glew32d%{DLL} %{cfg.debugdir}", }
-filter{ "configurations:Release" } prebuildcommands{ "{COPYFILE} %{LIB_DIR}/glew32%{DLL} %{cfg.debugdir}", }
+filter{ "configurations:Debug" } postbuildcommands{ "{COPYFILE} %{LIB_DIR}/glew32d%{DLL} %{cfg.debugdir}", }
+filter{ "configurations:Release" } postbuildcommands{ "{COPYFILE} %{LIB_DIR}/glew32%{DLL} %{cfg.debugdir}", }
 filter{}
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

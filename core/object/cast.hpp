@@ -1,20 +1,20 @@
 #ifndef _ISM_CAST_HPP_
 #define _ISM_CAST_HPP_
 
-#include <core/object/impl/base_object.hpp>
-#include <core/object/impl/type_object.hpp>
-#include <core/object/impl/int_object.hpp>
-#include <core/object/impl/float_object.hpp>
-#include <core/object/impl/iterator_object.hpp>
-#include <core/object/impl/string_object.hpp>
-#include <core/object/impl/tuple_object.hpp>
-#include <core/object/impl/list_object.hpp>
-#include <core/object/impl/dict_object.hpp>
-#include <core/object/impl/capsule_object.hpp>
-#include <core/object/impl/function_object.hpp>
-#include <core/object/impl/method_object.hpp>
-#include <core/object/impl/property_object.hpp>
-#include <core/object/impl/generic_object.hpp>
+#include <core/object/builtins/base_object.hpp>
+#include <core/object/builtins/type_object.hpp>
+#include <core/object/builtins/int_object.hpp>
+#include <core/object/builtins/float_object.hpp>
+#include <core/object/builtins/iterator_object.hpp>
+#include <core/object/builtins/string_object.hpp>
+#include <core/object/builtins/tuple_object.hpp>
+#include <core/object/builtins/list_object.hpp>
+#include <core/object/builtins/dict_object.hpp>
+#include <core/object/builtins/capsule_object.hpp>
+#include <core/object/builtins/function_object.hpp>
+#include <core/object/builtins/method_object.hpp>
+#include <core/object/builtins/property_object.hpp>
+#include <core/object/builtins/generic_object.hpp>
 
 namespace ism::priv
 {
@@ -25,12 +25,12 @@ namespace ism::priv
 	{
 		LoaderLifeSupport() noexcept
 		{
-			Internals::get_singleton()->loader_stack.push_back(nullptr);
+			INTERNALS->get_loader_stack().push_back(nullptr);
 		}
 
 		~LoaderLifeSupport() noexcept
 		{
-			Vector<OBJ> & stack{ Internals::get_singleton()->loader_stack };
+			Vector<OBJ> & stack{ INTERNALS->get_loader_stack() };
 			ASSERT(!stack.empty());
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
@@ -39,7 +39,7 @@ namespace ism::priv
 
 		static void add(OBJ const & value) noexcept
 		{
-			Vector<OBJ> & stack{ Internals::get_singleton()->loader_stack };
+			Vector<OBJ> & stack{ INTERNALS->get_loader_stack()};
 			ASSERT(!stack.empty());
 			LIST & list{ (LIST &)stack.back() };
 			if (!list) { list = LIST::new_(); }
@@ -126,17 +126,17 @@ public:																							\
 	template <class T_> using cast_op_type = movable_cast_op_type<T_>;							\
 																								\
 	template <class T_, std::enable_if_t<std::is_same_v<m_type, std::remove_cv_t<T_>>, int> = 0	\
-	> static OBJ cast(T_ * src, ReturnValuePolicy_ policy, OBJ const & parent)						\
+	> static OBJ cast(T_ * src, ReturnValuePolicy_ policy, OBJ const & parent)					\
 	{																							\
-		if (!src) { return nullptr; }															\
-		else if (policy == ReturnValuePolicy_TakeOwnership)											\
-		{																						\
+		if (!src) {																				\
+			return nullptr;																		\
+		}																						\
+		else if (policy == ReturnValuePolicy_TakeOwnership) {									\
 			OBJ h{ cast(std::move(*src), policy, parent) };										\
 			memdelete(src);																		\
 			return h;																			\
 		}																						\
-		else																					\
-		{																						\
+		else {																					\
 			return cast(*src, policy, parent);													\
 		}																						\
 	}																							\
@@ -611,7 +611,7 @@ namespace ism
 	> auto move(OBJ && o) -> std::enable_if_t<!move_never_v<T>, T>
 	{
 		if (o && o->get_ref_count() > 1) {
-			ASSERT(!"Unable to cast Core instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
+			CRASH("Unable to cast instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
 		}
 		T ret{ std::move(load_type<T>(o).operator T & ()) };
 		return ret;
@@ -644,6 +644,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// object or cast
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
 	> OBJ object_or_cast(T && o)
 	{

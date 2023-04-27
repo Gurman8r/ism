@@ -40,7 +40,7 @@ namespace ism
 		: m_bounds{ bounds }
 		, m_advance{ advance }
 	{
-		m_texture = RD::get_singleton()->texture_create(MAKE(RD::TextureCreateInfo, t) {
+		m_texture = RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_R8_UNORM;
 			t.width = bounds.width();
 			t.height = bounds.height();
@@ -49,12 +49,12 @@ namespace ism
 
 	Glyph::~Glyph()
 	{
-		if (m_texture) { RD::get_singleton()->texture_destroy(m_texture); m_texture = nullptr; }
+		if (m_texture) { RENDERING_DEVICE->texture_destroy(m_texture); m_texture = nullptr; }
 	}
 
 	Ref<Image> Glyph::get_data() const
 	{
-		return m_texture ? RS::get_singleton()->texture2d_get_data(m_texture) : nullptr;
+		return m_texture ? RENDERING_SERVER->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -66,25 +66,25 @@ namespace ism
 		FT_Stroker stroker;
 
 		if (FT_Init_FreeType(&library)) {
-			OS::get_singleton()->printerrf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
+			SYSTEM->printerrf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
 			return nullptr;
 		}
 
 		if (FT_New_Face(library, spec.path.c_str(), 0, &face)) {
-			OS::get_singleton()->printerrf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
+			SYSTEM->printerrf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
 			FT_Done_FreeType(library);
 			return nullptr;
 		}
 
 		if (FT_Stroker_New(library, &stroker)) {
-			OS::get_singleton()->printerrf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
+			SYSTEM->printerrf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
 			return nullptr;
 		}
 
 		if (FT_Select_Charmap(face, FT_ENCODING_UNICODE)) {
-			OS::get_singleton()->printerrf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
+			SYSTEM->printerrf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
 			FT_Stroker_Done(stroker);
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
@@ -121,7 +121,7 @@ namespace ism
 			FT_Face const face{ (FT_Face)f->font_face };
 			FT_Set_Pixel_Sizes(face, 0, character_size);
 			if (FT_Load_Char(face, character, FT_LOAD_RENDER)) {
-				OS::get_singleton()->printerrf("FAILED LOADING GLYPH: %s", f->path.c_str());
+				SYSTEM->printerrf("FAILED LOADING GLYPH: %s", f->path.c_str());
 				return nullptr;
 			}
 

@@ -58,19 +58,14 @@ namespace ism
 
 	public:
 		ImageTexture() noexcept {}
-		
 		ImageTexture(Path const & path);
-		
 		ImageTexture(Ref<Image> const & image);
-		
 		virtual ~ImageTexture() override;
-
 		virtual RID get_rid() const override;
 		virtual i32 get_width() const override;
 		virtual i32 get_height() const override;
 		virtual bool has_alpha() const override;
 		virtual Ref<Image> get_data() const override;
-
 		void update(Ref<Image> const & image, bool immediate = false);
 	};
 

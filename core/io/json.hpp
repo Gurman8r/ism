@@ -1,7 +1,7 @@
 #ifndef _ISM_JSON_HPP_
 #define _ISM_JSON_HPP_
 
-#include <core/object/impl/dict_object.hpp>
+#include <core/object/builtins/dict_object.hpp>
 
 #include <nlohmann/json.hpp>
 

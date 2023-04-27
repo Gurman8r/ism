@@ -301,8 +301,7 @@ namespace ism
 		self_type & operator=(self_type const & value) { return (m_text = value.m_text), (*this); }
 		//self_type & operator+=(self_type const & value) { return (m_text += value.m_text), (*this); }
 		//self_type & operator+=(self_type && value) noexcept { return (m_text += std::move(value.m_text)), (*this); }
-		//template <class T> self_type & operator+=(T const & value) { return (m_text += value), (*this); }
-		//template <class T> self_type & operator+=(T && value) noexcept { return (m_text += std::move(value)), (*this); }
+		//template <class T> self_type & operator+=(T && value) noexcept { return (m_text += FWD(value)), (*this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -315,13 +314,6 @@ namespace ism
 	{
 		size_t operator()(Path const & value) const { return value.hash_code(); }
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	//template <class T> NODISCARD Path operator+(Path const & a, T const & b) { return Path{ a.string() + b }; }
-	//template <class T> NODISCARD Path operator+(T const & a, Path const & b) { return Path{ a + b.string() }; }
-	//template <class T> NODISCARD Path operator+(Path && a, T const & b) noexcept { return Path{ std::move(a).string() + b }; }
-	//template <class T> NODISCARD Path operator+(T const & a, Path && b) noexcept { return Path{ a + std::move(b).string() }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

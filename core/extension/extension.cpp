@@ -17,22 +17,20 @@ namespace ism
 
 	Extension::~Extension()
 	{
-		if (m_library) {
-			close_library();
-		}
+		close_library();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Error_ Extension::open_library(Path const & path, String const & entry_symbol)
 	{
-		if (Error_ const err{ OS::get_singleton()->open_dynamic_library(path, m_library) }) {
+		if (Error_ const err{ SYSTEM->open_dynamic_library(path, m_library) }) {
 			return err;
 		}
 		
 		void * entry_func{};
-		if (Error_ const err{ OS::get_singleton()->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
-			OS::get_singleton()->close_dynamic_library(m_library);
+		if (Error_ const err{ SYSTEM->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
+			SYSTEM->close_dynamic_library(m_library);
 			return err;
 		}
 
@@ -49,7 +47,7 @@ namespace ism
 	void Extension::close_library()
 	{
 		if (m_library) {
-			OS::get_singleton()->close_dynamic_library(m_library);
+			SYSTEM->close_dynamic_library(m_library);
 			m_library = nullptr;
 		}
 	}
@@ -101,7 +99,7 @@ namespace ism
 
 	Path Extension::get_extension_list_config_file()
 	{
-		return ProjectSettings::get_singleton()->get_project_data_path().string() + "extensions.cfg";
+		return PROJECT_SETTINGS->get_data_path().string() + "extensions.cfg";
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

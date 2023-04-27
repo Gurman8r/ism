@@ -3,6 +3,11 @@
 
 #include <core/typedefs.hpp>
 
+using IsmExtensionInterfacePtr = void *;
+using IsmExtensionPtr = void *;
+using IsmExtensionInitializationPtr = void *;
+using IsmExtensionInitializationLevel = int;
+
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -34,13 +39,13 @@ namespace ism
 	{
 		ExtensionInitializationLevel_ minimum_level{};
 		void * user{};
-		void(*initialize)(void * user, ExtensionInitializationLevel_ level) {};
-		void(*finalize)(void * user, ExtensionInitializationLevel_ level) {};
+		void(*initialize)(void * user, IsmExtensionInitializationLevel level) {};
+		void(*finalize)(void * user, IsmExtensionInitializationLevel level) {};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	using ExtensionInitializationFunc = bool(*)(ExtensionInterface const * iface, class Extension * extension, ExtensionInitialization * initialization);
+	using ExtensionInitializationFunc = bool(*)(IsmExtensionInterfacePtr iface, IsmExtensionPtr library, IsmExtensionInitializationPtr init);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -24,6 +24,7 @@ namespace ism
 	public:
 		virtual ~AudioServer() override;
 		FORCE_INLINE static AudioServer * get_singleton() noexcept { return __singleton; }
+#define AUDIO_SERVER (ism::AudioServer::get_singleton())
 		static AudioServer * create();
 	};
 

@@ -22,11 +22,9 @@ namespace ism
 
 	protected:
 		Resource() noexcept {}
-		
+
 	public:
 		virtual ~Resource() noexcept override = default;
-
-		virtual Error_ reload_from_file();
 
 		virtual RID get_rid() const { return {}; }
 
@@ -43,6 +41,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	using RES = Ref<Resource>;
+	ISM_API_FUNC(RES) load_resource(Path const & path);
+	ISM_API_FUNC(Error_) save_resource(RES const & res, Path const & path);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

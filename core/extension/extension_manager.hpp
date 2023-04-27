@@ -19,6 +19,7 @@ namespace ism
 		ExtensionManager() noexcept { __singleton = this; }
 		virtual ~ExtensionManager() noexcept override = default;
 		FORCE_INLINE static ExtensionManager * get_singleton() noexcept { return __singleton; }
+#define EXTENSION_MANAGER (ism::ExtensionManager::get_singleton())
 
 	public:
 		enum LoadStatus_ {
@@ -37,7 +38,6 @@ namespace ism
 
 		void initialize_extensions(ExtensionInitializationLevel_ level);
 		void finalize_extensions(ExtensionInitializationLevel_ level);
-
 		void load_extensions();
 	};
 }

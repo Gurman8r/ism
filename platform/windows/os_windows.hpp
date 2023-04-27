@@ -26,10 +26,13 @@ namespace ism
 		void set_main_window(HWND value) { m_main_window = value; }
 
 		virtual void initialize() override;
+		virtual void initialize_joysticks() override;
 		virtual void finalize() override;
 		virtual void finalize_core() override;
 
 		virtual void run() override;
+
+		virtual Vector<String> get_video_adapter_driver_info() const override;
 
 		virtual String get_stdin_string(bool block = true) override;
 
@@ -40,7 +43,7 @@ namespace ism
 		virtual Error_ execute(Path const & path, Vector<String> const & args, String * pipe = nullptr, i32 * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) override;
 		virtual Error_ create_process(Path const & path, Vector<String> const & args, ProcessID * child_id = nullptr) override;
 		virtual Error_ kill(ProcessID const & pid) override;
-		virtual i32 get_process_id() const override;
+		virtual i32 get_pid() const override;
 
 		virtual Path get_cwd() const override;
 		virtual Error_ set_cwd(Path const & path) override;

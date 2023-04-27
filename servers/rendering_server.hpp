@@ -24,6 +24,7 @@ namespace ism
 	public:
 		virtual ~RenderingServer() override;
 		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return __singleton; }
+#define RENDERING_SERVER (ism::RenderingServer::get_singleton())
 		static RenderingServer * create();
 
 		virtual void initialize() = 0;
@@ -52,9 +53,9 @@ namespace ism
 		virtual void material_destroy(RID material) = 0;
 		virtual RID material_get_shader(RID material) const = 0;
 		virtual void material_set_shader(RID material, RID shader) = 0;
-		virtual Variant material_get_param(RID material, StringName const & key) const = 0;
-		virtual void material_set_param(RID material, StringName const & key, Variant const & value) = 0;
-		virtual void material_update(RID material, Map<StringName, Variant> const & params) = 0;
+		virtual Var material_get_param(RID material, StringName const & key) const = 0;
+		virtual void material_set_param(RID material, StringName const & key, Var const & value) = 0;
+		virtual void material_update(RID material, Map<StringName, Var> const & params) = 0;
 
 	public:
 		/* MESH */

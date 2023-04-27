@@ -15,6 +15,8 @@ filter{ "configurations:Debug" } symbols "On" _BUILDCFG="Debug"
 filter{ "configurations:Release" } optimize "Speed" _BUILDCFG="Release"
 filter{}
 
+_BUILDPATH="%{_TARGET_OS}_%{_PLATFORM}_%{_BUILDCFG}"
+
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 --FILES
@@ -81,6 +83,7 @@ includedirs{
 	"%{wks.location}/thirdparty/imgui/",
 	"%{wks.location}/thirdparty/json/include/",
 	"%{wks.location}/thirdparty/mono/include/",
+	"%{wks.location}/thirdparty/lua/",
 }
 
 defines{

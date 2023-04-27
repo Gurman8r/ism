@@ -73,6 +73,16 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// return static
+#define _IMPL_RETURN_STATIC(m_type, m_var, ...) \
+		static m_type m_var{ ##__VA_ARGS__ }; \
+		return (m_var)
+
+#define RETURN_STATIC(m_type, ...) \
+		_IMPL_RETURN_STATIC(m_type, ANON(static_return), ##__VA_ARGS__)
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 /* ON SCOPE ENTER */
 
 namespace ism::priv

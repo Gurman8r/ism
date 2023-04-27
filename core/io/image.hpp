@@ -66,7 +66,7 @@ namespace ism
 	{
 		DEFINE_CLASS(Image, Resource);
 
-		friend class ImageLoader;
+		friend class ImageLibrary;
 
 	private:
 		i32 m_width{}, m_height{}, m_depth{};
@@ -79,16 +79,10 @@ namespace ism
 
 	public:
 		Image() noexcept {}
-
-		explicit Image(Path const & path) noexcept { set_path(path); reload_from_file(); }
-
+		explicit Image(Path const & path);
 		Image(i32 width, i32 height, ImageFormat_ format);
-
 		Image(i32 width, i32 height, ImageFormat_ format, DynamicBuffer const & data);
-
 		virtual RID get_rid() const override { return RID{}; }
-
-		virtual Error_ reload_from_file() override;
 
 		void clear();
 		void flip_vertically();

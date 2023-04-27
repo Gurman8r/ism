@@ -1,6 +1,7 @@
 #include <platform/windows/display_server_windows.hpp>
 #include <scene/main/window.hpp>
 
+#undef INPUT
 #include <glfw/glfw3.h>
 #if defined(SYSTEM_WINDOWS)
 #	undef APIENTRY
@@ -8,6 +9,8 @@
 #	define GLFW_EXPOSE_NATIVE_WIN32
 #	include <glfw/glfw3native.h>
 #endif
+#undef INPUT
+#define INPUT (ism::Input::get_singleton())
 
 namespace ism
 {
@@ -31,7 +34,7 @@ namespace ism
 
 		glfwSetErrorCallback([](i32 code, cstring message)
 		{
-			OS::get_singleton()->printerrf("glfw error %i: %s", code, message);
+			SYSTEM->printerrf("glfw error %i: %s", code, message);
 		});
 
 		glfwSetMonitorCallback([](GLFWmonitor * monitor, i32 connected)
@@ -41,7 +44,7 @@ namespace ism
 
 		glfwSetJoystickCallback([](i32 device, i32 connected)
 		{
-			Input::get_singleton()->joy_connection_changed(device, connected == GLFW_CONNECTED, glfwGetJoystickName(device), glfwGetJoystickGUID(device));
+			INPUT->joy_connection_changed(device, connected == GLFW_CONNECTED, glfwGetJoystickName(device), glfwGetJoystickGUID(device));
 		});
 
 		// cursors
@@ -113,19 +116,19 @@ namespace ism
 		glfwSetCharCallback(w.handle, [](GLFWwindow *, u32 codepoint) {});
 		
 		glfwSetKeyCallback(w.handle, [](GLFWwindow *, i32 key, i32, i32 action, i32) {
-			Input::get_singleton()->set_key(key, (Input::Action_)action);
+			INPUT->set_key(key, (Input::Action_)action);
 		});
 
 		glfwSetMouseButtonCallback(w.handle, [](GLFWwindow *, i32 button, i32 action, i32) {
-			Input::get_singleton()->set_mouse_button(button, (Input::Action_)action);
+			INPUT->set_mouse_button(button, (Input::Action_)action);
 		});
 
 		glfwSetCursorPosCallback(w.handle, [](GLFWwindow *, f64 x, f64 y) {
-			Input::get_singleton()->set_mouse_position({ (f32)x, (f32)y });
+			INPUT->set_mouse_position({ (f32)x, (f32)y });
 		});
 
 		glfwSetScrollCallback(w.handle, [](GLFWwindow *, f64 x, f64 y) {
-			Input::get_singleton()->set_mouse_wheel({ (f32)x, (f32)y });
+			INPUT->set_mouse_wheel({ (f32)x, (f32)y });
 		});
 
 		glfwSetCursorEnterCallback(w.handle, [](GLFWwindow *, i32 entered) {
@@ -534,14 +537,14 @@ namespace ism
 			f32 const * axes{ glfwGetJoystickAxes(device, &num_axes) };
 			num_axes = MIN(num_axes, Input::JoyAxis_MAX);
 			for (i32 axis = 0; axis < num_axes; ++axis) {
-				Input::get_singleton()->set_joy_axis(device, axis, axes[axis]);
+				INPUT->set_joy_axis(device, axis, axes[axis]);
 			}
 
 			i32 num_buttons;
 			u8 const * buttons{ glfwGetJoystickButtons(device, &num_buttons) };
 			num_buttons = MIN(num_buttons, Input::JoyButton_MAX);
 			for (i32 i = 0; i < num_buttons; ++i) {
-				Input::get_singleton()->set_joy_button(device, i, (Input::Action_)buttons[i]);
+				INPUT->set_joy_button(device, i, (Input::Action_)buttons[i]);
 			}
 		}
 	}

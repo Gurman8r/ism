@@ -9,19 +9,15 @@ namespace ism
 	{
 		DEFINE_CLASS(ConfigFile, Resource);
 
-		Set<String> m_sections{};
-		Map<String, String> m_values{};
+		Map<String, Map<String, String>> m_data{};
 
 	public:
 		ConfigFile() noexcept {}
-		explicit ConfigFile(Path const & path) noexcept { set_path(path); reload_from_file(); }
+		explicit ConfigFile(Path const & path);
 		virtual ~ConfigFile();
-		virtual Error_ reload_from_file() override;
 		virtual RID get_rid() const override { return 0; }
 
 	public:
-		NODISCARD auto get_sections() const noexcept -> Set<String> const & { return m_sections; }
-		NODISCARD auto get_values() const noexcept -> Map<String, String> const & { return m_values; }
 		NODISCARD bool get_bool(String const & section, String const & name, bool default_value = {}) const;
 		NODISCARD i32 get_i32(String const & section, String const & name, i32 default_value = {}) const;
 		NODISCARD u32 get_u32(String const & section, String const & name, u32 default_value = {}) const;

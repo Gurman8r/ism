@@ -6,7 +6,7 @@
 namespace ism
 {
 	// filesystem component of the main editor
-	class ISM_EDITOR_API EditorFileSystem : public EditorPanel
+	class ISM_API EditorFileSystem : public EditorPanel
 	{
 		DEFINE_CLASS(EditorFileSystem, EditorPanel);
 

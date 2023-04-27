@@ -1,7 +1,7 @@
 #ifndef _ISM_CLASS_HPP_
 #define _ISM_CLASS_HPP_
 
-#include <core/object/impl/module_object.hpp>
+#include <core/object/builtins/module_object.hpp>
 
 // class
 namespace ism

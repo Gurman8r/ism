@@ -29,6 +29,7 @@ namespace ism
 		void initialize_library(ExtensionInitializationLevel_ level);
 		void finalize_library(ExtensionInitializationLevel_ level);
 
+	public:
 		static Ref<Extension> open(Path const & path, String const & entry_symbol);
 		static void initialize_extensions();
 		static Path get_extension_list_config_file();

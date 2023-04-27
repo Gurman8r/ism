@@ -1,4 +1,4 @@
-#include <scene/resources/material_loader.hpp>
+#include <scene/resources/material_library.hpp>
 #include <scene/resources/shader.hpp>
 
 namespace ism
@@ -9,25 +9,29 @@ namespace ism
 
 	Material::Material()
 	{
-		m_material = RS::get_singleton()->material_create();
+		m_material = RENDERING_SERVER->material_create();
 	}
 
 	Material::~Material()
 	{
-		if (m_material) { RS::get_singleton()->material_destroy(m_material); m_material = nullptr; }
+		if (m_material) { RENDERING_SERVER->material_destroy(m_material); m_material = nullptr; }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	EMBED_CLASS(ShaderMaterial, t) {}
 
-	ShaderMaterial::ShaderMaterial() : Material{} {}
-
-	ShaderMaterial::~ShaderMaterial() {}
-
-	Error_ ShaderMaterial::reload_from_file()
+	ShaderMaterial::ShaderMaterial() : Material{}
 	{
-		return MaterialLoader::load_from_file(*this, get_path());
+	}
+
+	ShaderMaterial::ShaderMaterial(Path const & path) : Material{}
+	{
+		ASSERT(MaterialLibrary::load_material(*this, path) == Error_OK);
+	}
+
+	ShaderMaterial::~ShaderMaterial()
+	{
 	}
 
 	RID ShaderMaterial::get_shader_rid() const { return m_shader ? m_shader->get_rid() : nullptr; }
@@ -40,30 +44,34 @@ namespace ism
 	{
 		if (m_shader == value) { return; }
 		m_shader = value;
-		RS::get_singleton()->material_set_shader(get_rid(), get_shader_rid());
+		RENDERING_SERVER->material_set_shader(get_rid(), get_shader_rid());
 	}
 
-	Variant ShaderMaterial::get_shader_param(StringName const & key) const
+	Var ShaderMaterial::get_shader_param(StringName const & key) const
 	{
-		return RS::get_singleton()->material_get_param(get_rid(), key);
+		return RENDERING_SERVER->material_get_param(get_rid(), key);
 	}
 
-	void ShaderMaterial::set_shader_param(StringName const & key, Variant const & value)
+	void ShaderMaterial::set_shader_param(StringName const & key, Var const & value)
 	{
-		RS::get_singleton()->material_set_param(get_rid(), key, value);
+		RENDERING_SERVER->material_set_param(get_rid(), key, value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	EMBED_CLASS(StandardMaterial3D, t) {}
 
-	StandardMaterial3D::StandardMaterial3D() : Material{} {}
-
-	StandardMaterial3D::~StandardMaterial3D() {}
-
-	Error_ StandardMaterial3D::reload_from_file()
+	StandardMaterial3D::StandardMaterial3D() : Material{}
 	{
-		return MaterialLoader::load_from_file(*this, get_path());
+	}
+
+	StandardMaterial3D::StandardMaterial3D(Path const & path) : Material{}
+	{
+		ASSERT(MaterialLibrary::load_material(*this, path) == Error_OK);
+	}
+
+	StandardMaterial3D::~StandardMaterial3D()
+	{
 	}
 
 	RID StandardMaterial3D::get_shader_rid() const
@@ -80,19 +88,19 @@ namespace ism
 	void StandardMaterial3D::set_albedo(Color const & value)
 	{
 		m_params.albedo = value;
-		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
+		RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
 	}
 
 	void StandardMaterial3D::set_specular(f32 value)
 	{
 		m_params.specular = value;
-		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Specular], value);
+		RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Specular], value);
 	}
 
 	void StandardMaterial3D::set_metallic(f32 value)
 	{
 		m_params.metallic = value;
-		RS::get_singleton()->material_set_param(get_rid(), parameter_names[Param_Metallic], value);
+		RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Metallic], value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
