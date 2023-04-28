@@ -2,7 +2,6 @@
 #define _ISM_ERROR_MACROS_HPP_
 
 #include <core/error/error.hpp>
-
 #include <cassert>
 #include <stdexcept>
 

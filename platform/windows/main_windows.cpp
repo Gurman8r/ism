@@ -1,5 +1,5 @@
 #if MAIN_ENABLED
-#include <core/version.hpp>
+#include <core/language_features.hpp>
 #if SYSTEM_WINDOWS
 #include <main/main.hpp>
 #include <platform/windows/os_windows.hpp>
@@ -8,20 +8,22 @@
 
 int _main()
 {
-	ism::OS_Windows os{ (HINSTANCE)nullptr };
+	using namespace ism;
 
-	switch (ism::Main::setup(__argv[0], __argc, __argv)) {
-	case ism::Error_OK: break;
+	OS_Windows os{ (HINSTANCE)nullptr };
+
+	switch (Main::setup(__argv[0], __argc, __argv)) {
+	case Error_OK: break;
 	// etc...
-	case ism::Error_Unknown:
+	case Error_Unknown:
 	default: {
 		CRASH("An unknown error occurred during setup. The program was unable to start.");
 	} break;
 	}
 
-	if (ism::Main::start()) { os.run(); }
+	if (Main::start()) { os.run(); }
 
-	ism::Main::cleanup();
+	Main::cleanup();
 
 	return os.get_exit_code();
 }

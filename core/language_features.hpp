@@ -1,8 +1,8 @@
 #ifndef _ISM_LANGUAGE_FEATURES_HPP_
 #define _ISM_LANGUAGE_FEATURES_HPP_
 
+#include <core/version.hpp>
 #include <core/preprocessor.hpp>
-
 #include <cstddef>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

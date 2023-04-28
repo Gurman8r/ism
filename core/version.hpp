@@ -1,8 +1,6 @@
 #ifndef _ISM_VERSION_HPP_
 #define _ISM_VERSION_HPP_
 
-#include <core/language_features.hpp>
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef VERSION_MAJOR
@@ -22,15 +20,13 @@
 #endif
 
 #ifndef VERSION_NAME
-#define VERSION_NAME ""
+#define VERSION_NAME "" VERSION_MAJOR "." VERSION_MINOR "." VERSION_PATCH "." VERSION_BUILD
 #endif
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#define VERSION_BRANCH "" XSTR(VERSION_MAJOR) "." XSTR(VERSION_MINOR)
+#define VERSION_BRANCH "" VERSION_MAJOR "." VERSION_MINOR
 
 #if VERSION_PATCH
-#define VERSION_NUMBER "" VERSION_BRANCH "." XSTR(VERSION_PATCH)
+#define VERSION_NUMBER "" VERSION_BRANCH "." VERSION_PATCH
 #else
 #define VERSION_NUMBER "" VERSION_BRANCH
 #endif
@@ -42,22 +38,6 @@
 #define VERSION_FULL_BUILD "" VERSION_FULL_CONFIG "." VERSION_BUILD
 
 #define VERSION_FULL_NAME "" VERSION_NAME " v" VERSION_FULL_BUILD
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/* NAMESPACES */
-
-// root namespace
-namespace ism {}
-
-// private namespace
-namespace ism::priv {}
-
-// utility namespace
-namespace ism::util {}
-
-// meta namespace
-namespace ism::mpl {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

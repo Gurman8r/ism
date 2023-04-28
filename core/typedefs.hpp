@@ -1,7 +1,7 @@
 #ifndef _ISM_TYPEDEFS_HPP_
 #define _ISM_TYPEDEFS_HPP_
 
-#include <core/version.hpp>
+#include <core/language_features.hpp>
 
 namespace ism
 {

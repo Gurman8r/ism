@@ -15,7 +15,7 @@ newoption{
 
 newoption{
 	trigger		= "glapi",
-	value		= "loader",
+	value		= "api",
 	description	= "opengl loader",
 	default		= "glew",
 	category	= "Build Options",

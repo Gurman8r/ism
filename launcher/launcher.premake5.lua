@@ -35,6 +35,15 @@ srcdirs(
 	"%{wks.location}/launcher/"
 )
 
-prebuildcommands{
-	"{COPYFILE} %{wks.location}/launcher/bin.manifest %{_BUILD_BIN}",
-}
+if _TARGET_OS=="windows" then
+	files{
+		"%{wks.location}/platform/windows/ism.rc",
+		"%{wks.location}/platform/windows/ism.ico",
+	}
+	prebuildcommands{
+		"{COPYFILE} %{wks.location}/launcher/bin.manifest %{_BUILD_BIN}",
+	}
+	postbuildcommands{
+		"{COPYFILE} %{wks.location}/platform/windows/ism.ico %{_BUILD_RES}",
+	}
+end
