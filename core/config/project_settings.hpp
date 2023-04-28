@@ -13,11 +13,6 @@ namespace ism
 
 		static ProjectSettings * __singleton;
 
-		Path m_bin_path{};
-		Path m_data_path{};
-		Path m_res_path{};
-		Path m_user_path{};
-
 		HashMap<String, HashMap<String, OBJ>> m_data{};
 
 	public:
@@ -31,6 +26,8 @@ namespace ism
 
 		NODISCARD Path get_bin_path() const;
 		NODISCARD Path get_data_path() const;
+		NODISCARD Path get_etc_path() const;
+		NODISCARD Path get_library_path() const;
 		NODISCARD Path get_resource_path() const;
 		NODISCARD Path get_user_path() const;
 

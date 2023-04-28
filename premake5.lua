@@ -9,8 +9,8 @@ filter{ "platforms:*64" } architecture "x64"
 filter{}
 
 configurations{ "Debug", "Release" }
-filter{ "configurations:Debug" } symbols "On"
-filter{ "configurations:Release" } optimize "Speed"
+filter{ "configurations:Debug" } symbols "On" optimize "Off"
+filter{ "configurations:Release" } symbols "Off" optimize "Speed"
 filter{}
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

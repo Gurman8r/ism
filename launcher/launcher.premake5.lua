@@ -44,6 +44,6 @@ if _TARGET_OS=="windows" then
 		"{COPYFILE} %{wks.location}/launcher/bin.manifest %{_BUILD_BIN}",
 	}
 	postbuildcommands{
-		"{COPYFILE} %{wks.location}/platform/windows/ism.ico %{_BUILD_RES}",
+		--"{COPYFILE} %{wks.location}/platform/windows/ism.ico %{_BUILD_RES}",
 	}
 end

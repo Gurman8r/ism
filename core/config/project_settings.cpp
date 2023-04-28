@@ -18,12 +18,6 @@ namespace ism
 			return Error_Unknown;
 		}
 
-		// paths
-		m_bin_path = "../bin/"_path;
-		m_data_path = "../dat/"_path;
-		m_res_path = "../res/"_path;
-		m_user_path = "../usr/"_path;
-
 		// engine settings
 		Path const engine_ini{ get_data_path().string() + "engine.ini" };
 		ini_parse(engine_ini.c_str(), [](auto user, auto section, auto name, auto value) {
@@ -45,13 +39,17 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Path ProjectSettings::get_bin_path() const { return m_bin_path; }
+	Path ProjectSettings::get_bin_path() const { return "./bin/"_path; }
 
-	Path ProjectSettings::get_data_path() const { return m_data_path; }
+	Path ProjectSettings::get_data_path() const { return "./dat/"_path; }
 
-	Path ProjectSettings::get_resource_path() const { return m_res_path; }
+	Path ProjectSettings::get_etc_path() const { return "./etc/"_path; }
 
-	Path ProjectSettings::get_user_path() const { return m_user_path; }
+	Path ProjectSettings::get_library_path() const { return "./lib/"_path; }
+
+	Path ProjectSettings::get_resource_path() const { return "./res/"_path; }
+
+	Path ProjectSettings::get_user_path() const { return "./usr/"_path; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
