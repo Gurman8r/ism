@@ -13,6 +13,8 @@ namespace ism
 
 		static ProjectSettings * __singleton;
 
+		Path m_bin_path{}, m_cfg_path{}, m_dat_path{}, m_lib_path{}, m_res_path{}, m_usr_path{};
+
 		HashMap<String, HashMap<String, OBJ>> m_data{};
 
 	public:
@@ -24,12 +26,13 @@ namespace ism
 	public:
 		Error_ setup(Path const & exepath, Path const & main_pack = {});
 
-		NODISCARD Path get_bin_path() const;
-		NODISCARD Path get_data_path() const;
-		NODISCARD Path get_etc_path() const;
-		NODISCARD Path get_library_path() const;
-		NODISCARD Path get_resource_path() const;
-		NODISCARD Path get_user_path() const;
+		NODISCARD Path globalize_path(Path const & path) const;
+		NODISCARD Path get_binary_path(Path const & path = {}) const;
+		NODISCARD Path get_config_path(Path const & path = {}) const;
+		NODISCARD Path get_data_path(Path const & path = {}) const;
+		NODISCARD Path get_library_path(Path const & path = {}) const;
+		NODISCARD Path get_resource_path(Path const & path = {}) const;
+		NODISCARD Path get_user_path(Path const & path = {}) const;
 
 		NODISCARD OBJ get(String const & section, String const & name) const;
 		Error_ set(String const & section, String const & name, OBJ const & value);

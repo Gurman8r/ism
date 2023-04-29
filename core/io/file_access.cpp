@@ -1,5 +1,5 @@
 #include <core/io/file_access.hpp>
-
+#include <core/io/file_access_pack.hpp>
 #include <cstdio>
 
 namespace ism
@@ -17,10 +17,18 @@ namespace ism
 		return file;
 	}
 
-	Ref<FileAccess> FileAccess::create(Path const & path)
+	Ref<FileAccess> FileAccess::create_for_path(Path const & path)
 	{
 		Ref<FileAccess> file;
-		file = create(FileAccessType_Filesystem);
+		if (path.string().begins_with("res://")) {
+			file = create(FileAccessType_Filesystem);
+		}
+		else if (path.string().begins_with("usr://")) {
+			file = create(FileAccessType_UserData);
+		}
+		else {
+			file = create(FileAccessType_Filesystem);
+		}
 		return file;
 	}
 
@@ -28,10 +36,16 @@ namespace ism
 
 	Ref<FileAccess> FileAccess::open(Path const & path, FileMode_ mode)
 	{
-		if (Ref<FileAccess> file{ create(path) }
-		; file->open_internal(path, mode) == Error_OK) {
+		Ref<FileAccess> file{};
+		
+		if ((mode != FileMode_Write) && PACKED_DATA && PACKED_DATA->is_enabled() && (file = PACKED_DATA->try_open_path(path))) {
 			return file;
 		}
+
+		if ((file = create_for_path(path)) && (file->open_internal(path, mode) == Error_OK)) {
+			return file;
+		}
+
 		return nullptr;
 	}
 

@@ -8,16 +8,13 @@ cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"
-debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
 objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
-debugenvs{ "%{_BUILD_BIN}", }
-
 dependson{ "ism", }
 
-links{ "assimp%{LIB}", "freetype", "IrrXML", "zlibstatic", "glfw", "imgui", "ism", }
+links{ "assimp%{LIB}", "freetype", "glfw", "imgui", "IrrXML", "ism", "zip", "zlibstatic", }
 
 defines{
 	"LUA_BUILD_AS_DLL",
@@ -52,7 +49,7 @@ files{
 }
 
 postbuildcommands{
-	"{COPYFILE} %{wks.location}/modules/lua/lua.ini %{_BUILD_DAT}",
+	"{COPYFILE} %{wks.location}/modules/lua/lua.ini %{_BUILD_CFG}",
 }
 	
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

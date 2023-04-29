@@ -1,10 +1,11 @@
 #if MAIN_ENABLED
 #include <core/language_features.hpp>
+
 #if SYSTEM_WINDOWS
 #include <main/main.hpp>
 #include <platform/windows/os_windows.hpp>
 
-#pragma comment(linker, "/manifestdependency:\"name='bin' version='1.0.0.0' type='win32'\"")
+#pragma comment(linker, "/manifestdependency:\"name='binaries' version='1.0.0.0' type='win32'\"")
 
 int _main()
 {

@@ -1,6 +1,7 @@
 /.vs
 /build**
 /bin**
+/object
 /proj
 /project
 /temps

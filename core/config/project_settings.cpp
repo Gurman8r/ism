@@ -18,8 +18,15 @@ namespace ism
 			return Error_Unknown;
 		}
 
+		m_bin_path = "./binaries/"_path;
+		m_cfg_path = "./config/"_path;
+		m_dat_path = "./data/"_path;
+		m_lib_path = "./library/"_path;
+		m_res_path = "./resources/"_path;
+		m_usr_path = "./user/"_path;
+
 		// engine settings
-		Path const engine_ini{ get_data_path().string() + "engine.ini" };
+		Path const engine_ini{ get_config_path("engine.ini") };
 		ini_parse(engine_ini.c_str(), [](auto user, auto section, auto name, auto value) {
 			((ProjectSettings *)user)->set(section, name, evaluate(value));
 			return 1;
@@ -27,7 +34,7 @@ namespace ism
 
 		// editor settings
 #if TOOLS_ENABLED
-		Path const editor_ini{ get_data_path().string() + "editor.ini" };
+		Path const editor_ini{ get_config_path("editor.ini") };
 		ini_parse(editor_ini.c_str(), [](auto user, auto section, auto name, auto value) {
 			((ProjectSettings *)user)->set(section, name, evaluate(value));
 			return 1;
@@ -39,17 +46,40 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Path ProjectSettings::get_bin_path() const { return "./bin/"_path; }
+	Path ProjectSettings::globalize_path(Path const & path) const
+	{
+		return path;
+	}
 
-	Path ProjectSettings::get_data_path() const { return "./dat/"_path; }
+	Path ProjectSettings::get_binary_path(Path const & path) const
+	{
+		return path.empty() ? m_bin_path : m_bin_path.string() + path.string();
+	}
 
-	Path ProjectSettings::get_etc_path() const { return "./etc/"_path; }
+	Path ProjectSettings::get_config_path(Path const & path) const
+	{
+		return path.empty() ? m_cfg_path : m_cfg_path.string() + path.string();
+	}
 
-	Path ProjectSettings::get_library_path() const { return "./lib/"_path; }
+	Path ProjectSettings::get_data_path(Path const & path) const
+	{
+		return path.empty() ? m_dat_path : m_dat_path.string() + path.string();
+	}
 
-	Path ProjectSettings::get_resource_path() const { return "./res/"_path; }
+	Path ProjectSettings::get_library_path(Path const & path) const
+	{
+		return path.empty() ? m_lib_path : m_lib_path.string() + path.string();
+	}
 
-	Path ProjectSettings::get_user_path() const { return "./usr/"_path; }
+	Path ProjectSettings::get_resource_path(Path const & path) const
+	{
+		return path.empty() ? m_res_path : m_res_path.string() + path.string();
+	}
+
+	Path ProjectSettings::get_user_path(Path const & path) const
+	{
+		return path.empty() ? m_usr_path : m_usr_path.string() + path.string();
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

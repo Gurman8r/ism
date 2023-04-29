@@ -127,41 +127,4 @@ namespace ism::priv
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// non-copyable
-#define NON_COPYABLE(T) \
-		T(T const &) = delete; \
-		T & operator=(T const &) = delete;
-
-// non-movable
-#define NON_MOVABLE(T) \
-		T(T &&) noexcept = delete; \
-		T & operator=(T &&) noexcept = delete;
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// wrap forward iterators
-#define WRAP_FORWARD_ITERATORS(m_container) \
-		NODISCARD auto begin() noexcept -> decltype(m_container)::iterator { return m_container.begin(); } \
-		NODISCARD auto begin() const noexcept -> decltype(m_container)::const_iterator { return m_container.begin(); } \
-		NODISCARD auto cbegin() const noexcept -> decltype(m_container)::const_iterator { return m_container.cbegin(); } \
-		NODISCARD auto end() noexcept -> decltype(m_container)::iterator { return m_container.end(); } \
-		NODISCARD auto end() const noexcept -> decltype(m_container)::const_iterator { return m_container.end(); } \
-		NODISCARD auto cend() const noexcept -> decltype(m_container)::const_iterator { return m_container.cend(); }
-
-// wrap reverse iterators
-#define WRAP_REVERSE_ITERATORS(m_container) \
-		NODISCARD auto rbegin() noexcept -> decltype(m_container)::reverse_iterator { return m_container.rbegin(); } \
-		NODISCARD auto rbegin() const noexcept -> decltype(m_container)::const_reverse_iterator { return m_container.rbegin(); } \
-		NODISCARD auto crbegin() const noexcept -> decltype(m_container)::const_reverse_iterator { return m_container.crbegin(); } \
-		NODISCARD auto rend() noexcept -> decltype(m_container)::reverse_iterator { return m_container.rend(); } \
-		NODISCARD auto rend() const noexcept -> decltype(m_container)::const_reverse_iterator { return m_container.rend(); } \
-		NODISCARD auto crend() const noexcept -> decltype(m_container)::const_reverse_iterator { return m_container.crend(); }
-
-// wrap all iterators
-#define WRAP_ALL_ITERATORS(m_container) \
-		WRAP_FORWARD_ITERATORS(m_container) \
-		WRAP_REVERSE_ITERATORS(m_container)
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 #endif // !_ISM_PREPROCESSOR_HPP_

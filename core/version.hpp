@@ -20,8 +20,10 @@
 #endif
 
 #ifndef VERSION_NAME
-#define VERSION_NAME "" VERSION_MAJOR "." VERSION_MINOR "." VERSION_PATCH "." VERSION_BUILD
+#define VERSION_NAME "ism"
 #endif
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define VERSION_BRANCH "" VERSION_MAJOR "." VERSION_MINOR
 
@@ -37,7 +39,7 @@
 
 #define VERSION_FULL_BUILD "" VERSION_FULL_CONFIG "." VERSION_BUILD
 
-#define VERSION_FULL_NAME "" VERSION_NAME " v" VERSION_FULL_BUILD
+#define VERSION_FULL_NAME "" VERSION_NAME " v" VERSION_FULL_BUILDS
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

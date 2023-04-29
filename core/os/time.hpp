@@ -171,14 +171,13 @@ namespace ism
 
 	public:
 		explicit Clock() noexcept : m_time{ _ClockBase::now() } {}
-
-		NON_COPYABLE(Clock);
-
-		NON_MOVABLE(Clock);
-
 		Duration get_elapsed_time() const noexcept { return _ClockBase::now() - m_time; }
-
 		void restart() noexcept { m_time = _ClockBase::now(); }
+
+		Clock(Clock const &) = delete;
+		Clock(Clock &&) noexcept = delete;
+		Clock & operator=(Clock const &) = delete;
+		Clock & operator=(Clock &&) noexcept = delete;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

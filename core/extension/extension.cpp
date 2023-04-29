@@ -99,7 +99,7 @@ namespace ism
 
 	Path Extension::get_extension_list_config_file()
 	{
-		return PROJECT_SETTINGS->get_data_path().string() + "extensions.cfg";
+		return PROJECT_SETTINGS->get_config_path("extensions.cfg");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

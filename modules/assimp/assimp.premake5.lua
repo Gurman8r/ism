@@ -8,14 +8,11 @@ cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"
-debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
 objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
 manifest("assimp")
-
-debugenvs{ "%{_BUILD_BIN}", }
 
 includedirs{
 	"%{wks.location}/thirdparty/assimp/include",
@@ -26,10 +23,10 @@ files{
 }
 
 postbuildcommands{
-	"{COPYFILE} %{_VENDOR}/assimp.dll %{cfg.targetdir}",
-	"{COPYFILE} %{_VENDOR}/assimp.lib %{cfg.targetdir}",
-	"{COPYFILE} %{_VENDOR}/IrrXML.lib %{cfg.targetdir}",
-	"{COPYFILE} %{_VENDOR}/zlibstatic.lib %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/assimp%{DLL} %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/assimp%{LIB} %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/IrrXML%{LIB} %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/zlibstatic%{LIB} %{cfg.targetdir}",
 }
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

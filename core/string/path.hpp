@@ -261,8 +261,6 @@ namespace ism
 		NODISCARD bool has_stem() const noexcept { return !util::parse_stem(view()).empty(); }
 		NODISCARD bool has_extension() const noexcept { return !util::parse_extension(view()).empty(); }
 
-		WRAP_ALL_ITERATORS(m_text);
-
 	public:
 		static constexpr size_t max_path{ 260 };
 
@@ -302,6 +300,20 @@ namespace ism
 		//self_type & operator+=(self_type const & value) { return (m_text += value.m_text), (*this); }
 		//self_type & operator+=(self_type && value) noexcept { return (m_text += std::move(value.m_text)), (*this); }
 		//template <class T> self_type & operator+=(T && value) noexcept { return (m_text += FWD(value)), (*this); }
+
+	public:
+		NODISCARD auto begin() noexcept -> iterator { return m_text.begin(); }
+		NODISCARD auto begin() const noexcept -> const_iterator { return m_text.begin(); }
+		NODISCARD auto cbegin() const noexcept -> const_iterator { return m_text.cbegin(); }
+		NODISCARD auto end() noexcept -> iterator { return m_text.end(); }
+		NODISCARD auto end() const noexcept -> const_iterator { return m_text.end(); }
+		NODISCARD auto cend() const noexcept -> const_iterator { return m_text.cend(); }
+		NODISCARD auto rbegin() noexcept -> reverse_iterator { return m_text.rbegin(); }
+		NODISCARD auto rbegin() const noexcept -> const_reverse_iterator { return m_text.rbegin(); }
+		NODISCARD auto crbegin() const noexcept -> const_reverse_iterator { return m_text.crbegin(); }
+		NODISCARD auto rend() noexcept -> reverse_iterator { return m_text.rend(); }
+		NODISCARD auto rend() const noexcept -> const_reverse_iterator { return m_text.rend(); }
+		NODISCARD auto crend() const noexcept -> const_reverse_iterator { return m_text.crend(); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -310,10 +322,7 @@ namespace ism
 
 	inline Path operator "" _path(cstring s, size_t n) noexcept { return Path{ String{ s, n } }; }
 
-	template <> struct Hasher<Path>
-	{
-		size_t operator()(Path const & value) const { return value.hash_code(); }
-	};
+	template <> struct Hasher<Path> { size_t operator()(Path const & value) const { return value.hash_code(); } };
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -95,6 +95,8 @@ namespace ism
 
 		NODISCARD virtual Ref<MainLoop> get_main_loop() const = 0;
 
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		enum Weekday_
 		{
 			Weekday_Sunday,
@@ -104,6 +106,7 @@ namespace ism
 			Weekday_Thursday,
 			Weekday_Friday,
 			Weekday_Saturday,
+			Weekday_MAX
 		};
 
 		enum Month_
@@ -120,28 +123,29 @@ namespace ism
 			Month_October,
 			Month_November,
 			Month_December,
+			Month_MAX
 		};
 
 		struct Date
 		{
-			i32			year;
-			Month_		month;
-			i32			day;
-			Weekday_	weekday;
-			bool		dst; // daylight saving time
+			i32			year	{};
+			Month_		month	{};
+			i32			day		{};
+			Weekday_	weekday	{};
+			bool		dst		{}; // daylight saving time
 		};
 
 		struct Time
 		{
-			i32 hour;
-			i32 min;
-			i32 sec;
+			i32 hour{};
+			i32 min	{};
+			i32 sec	{};
 		};
 
 		struct TimeZoneInfo
 		{
-			i32 bias;
-			String name;
+			i32		bias{};
+			String	name{};
 		};
 
 		NODISCARD virtual Date get_date(bool local = false) const = 0;
@@ -153,6 +157,8 @@ namespace ism
 		//virtual void add_frame_delay(bool can_draw);
 		//NODISCARD virtual Duration get_ticks() const = 0;
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		//NODISCARD bool is_stdout_verbose() const;
 		//NODISCARD bool is_stdout_debug_enabled() const;
 		//NODISCARD bool is_stdout_enabled() const;
@@ -160,21 +166,27 @@ namespace ism
 		//void set_stdout_enabled(bool enabled);
 		//void set_stderr_enabled(bool enabled);
 
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		NODISCARD virtual u64 get_static_memory_usage() const;
 		NODISCARD virtual u64 get_static_memory_peak_usage() const;
 		NODISCARD virtual u64 get_free_static_memory() const;
 
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 		NODISCARD virtual String get_locale() const;
-		//NODISCARD String get_locale_language() const;
+		NODISCARD String get_locale_language() const;
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		NODISCARD Path get_safe_path(Path const & path, bool allow_dir_separator = false) const;
-		NODISCARD virtual Path get_bin_path() const;
-		NODISCARD virtual Path get_data_path() const;
-		NODISCARD virtual Path get_config_path() const;
-		NODISCARD virtual Path get_cache_path() const;
+		NODISCARD virtual Path get_binary_path() const;
 		NODISCARD virtual Path get_bundle_path() const;
-		NODISCARD virtual Path get_user_path() const;
+		NODISCARD virtual Path get_cache_path() const;
+		NODISCARD virtual Path get_config_path() const;
+		NODISCARD virtual Path get_data_path() const;
 		NODISCARD virtual Path get_resource_path() const;
+		NODISCARD virtual Path get_user_path() const;
 
 		enum SystemDir_
 		{
@@ -186,9 +198,12 @@ namespace ism
 			SystemDir_Music,
 			SystemDir_Pictures,
 			SystemDir_Ringtones,
+			SystemDir_MAX
 		};
 
 		NODISCARD virtual Path get_system_dir(SystemDir_ value) const;
+
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 		virtual Error_ move_to_trash(Path const & path);
 
@@ -212,9 +227,9 @@ namespace ism
 		//NODISCARD virtual bool request_permission(String const & name) { return true; }
 		//NODISCARD virtual bool request_permissions() { return true; }
 		//NODISCARD virtual Vector<String> get_granted_permissions() const { return Vector<String>(); }
-	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	};
 }
 
 #endif // !_ISM_OS_HPP_

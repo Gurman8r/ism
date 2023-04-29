@@ -3,7 +3,7 @@
 
 #include <core/error/error_macros.hpp>
 #include <core/string/string_view.hpp>
-#include <core/os/memory.hpp>
+#include <core/templates/vector.hpp>
 
 #include <string>
 
@@ -20,18 +20,24 @@ namespace ism
 	> class BasicString : public _StringBase<C>
 	{
 	public:
-		using self_type = BasicString<C>;
-		using base_type = _StringBase<C>;
+		using self_type					= typename BasicString<C>;
+		using base_type					= typename _StringBase<C>;
+		using traits_type				= typename base_type::traits_type;
+		using value_type				= typename base_type::value_type;
+		using pointer					= typename base_type::pointer;
+		using const_pointer				= typename base_type::const_pointer;
+		using reference					= typename base_type::reference;
+		using const_reference			= typename base_type::const_reference;
+		using iterator					= typename base_type::iterator;
+		using const_iterator			= typename base_type::const_iterator;
+		using reverse_iterator			= typename base_type::reverse_iterator;
+		using const_reverse_iterator	= typename base_type::const_reverse_iterator;
+		using size_type					= typename base_type::size_type;
+		using difference_type			= typename base_type::difference_type;
+
+	public:
 		using base_type::base_type;
 		using base_type::operator=;
-
-		using typename base_type::traits_type;
-		using typename base_type::difference_type;
-		using typename base_type::size_type;
-		using typename base_type::iterator;
-		using typename base_type::const_iterator;
-		using typename base_type::reverse_iterator;
-		using typename base_type::const_reverse_iterator;
 
 	public:
 		static constexpr bool is_narrow{ 1 == sizeof(C) };
@@ -39,6 +45,24 @@ namespace ism
 		NODISCARD auto hash_code() const noexcept { return hash_representation(data(), size()); }
 		NODISCARD auto view() const noexcept { return BasicStringView<C>{ data(), size() }; }
 		NODISCARD operator BasicStringView<C>() const noexcept { return { data(), size() }; }
+		template <class T> self_type & operator+=(T && v) noexcept { return base_type::operator+=(FWD(v)), (*this); }
+
+	public:
+		NODISCARD bool contains(C const v) const noexcept { return std::find(begin(), end(), v) != end(); }
+		NODISCARD bool contains(C const * v) const noexcept { return find(v) != end(); }
+		NODISCARD bool contains(self_type const & v) const noexcept { return find(v) != end(); }
+
+		NODISCARD bool begins_with(C const v) const noexcept { return !empty() && front() == v; }
+		NODISCARD bool begins_with(self_type const & v) const noexcept { return (v.size() <= size()) && (v == substr(0, v.size())); }
+
+		NODISCARD bool ends_with(C const v) const noexcept { return !empty() && back() == v; }
+		NODISCARD bool ends_with(self_type const & v) const noexcept { return (v.size() <= size()) && (v == substr(size() - v.size(), v.size())); }
+
+	public:
+		auto & erase_duplicates(C const c) { return erase(std::unique(begin(), end(), [c](C a, C b) { return (a == b) && (a == c); }), end()), (*this); }
+
+		template <class Fn = C(*)(C)
+		> auto & transform(Fn fn) noexcept { return std::transform(begin(), end(), begin(), fn), (*this); }
 
 	public:
 		template <class = std::enable_if_t<!is_narrow>
@@ -72,15 +96,6 @@ namespace ism
 		}
 		
 	public:
-		auto & erase_duplicates(C const c) {
-			return erase(std::unique(begin(), end(), [c](C a, C b) { return (a == b) && (a == c); }), end()), (*this);
-		}
-
-		template <class Fn
-		> auto & transform(Fn && fn) noexcept {
-			return std::transform(begin(), end(), begin(), FWD(fn)), (*this);
-		}
-		
 		template <class Fn = int(*)(int)
 		> auto & trim_back(Fn fn = std::isspace) {
 			while (!empty() && fn(back())) { pop_back(); }
@@ -99,6 +114,49 @@ namespace ism
 			while (!empty() && fn(front())) { erase(begin()); }
 			return (*this);
 		}
+
+	public:
+		NODISCARD static auto split(self_type s, C const delimiter)
+		{
+			Vector<self_type> v{};
+			size_t i{};
+			while ((i = s.find(delimiter)) != npos) {
+				v.push_back((self_type)s.substr(0, i));
+				s.erase(0, i + 1);
+			}
+			v.push_back(s);
+			return v;
+		}
+
+		NODISCARD static auto split(self_type s, cstring delimiter)
+		{
+			Vector<self_type> v{};
+			size_t i{};
+			while ((i = s.find(delimiter)) != npos) {
+				v.push_back((self_type)s.substr(0, i));
+				s.erase(0, i + std::strlen(delimiter));
+			}
+			v.push_back(s);
+			return v;
+		}
+
+		NODISCARD static auto split(self_type s, self_type const & delimiter)
+		{
+			Vector<self_type> v{};
+			size_t i{};
+			while ((i = s.find(delimiter)) != npos) {
+				v.push_back((self_type)s.substr(0, i));
+				s.erase(0, i + delimiter.size());
+			}
+			v.push_back(s);
+			return v;
+		}
+
+		NODISCARD auto split(C const delimiter) const noexcept { return split(*this, delimiter); }
+
+		NODISCARD auto split(C const * delimiter) const noexcept { return split(*this, delimiter); }
+
+		NODISCARD auto split(self_type const & delimiter) const noexcept { return split(*this, delimiter); }
 
 	public:
 		template <size_t buffer_size = 0
@@ -151,11 +209,6 @@ namespace ism
 			va_end(args);
 			return s;
 		}
-
-	public:
-		self_type & operator+=(self_type const & value) { return base_type::operator+=((base_type const &)value), (*this); }
-		self_type & operator+=(self_type && value) noexcept { return base_type::operator+=(std::move((base_type &&)value)), (*this); }
-		template <class T> self_type & operator+=(T && value) noexcept { return base_type::operator+=(FWD(value)), (*this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -8,18 +8,17 @@ cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"
-debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
 objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
 manifest("glfw")
 
-debugenvs{ "%{_BUILD_BIN}", }
-
 defines{ "_GLFW_BUILD_DLL", }
 
 undefines{ "__NULL_IMPORT_DESCRIPTOR", }
+
+links_graphics()
 
 files{
 	"%{wks.location}/modules/%{prj.name}/%{prj.name}.premake5.lua",

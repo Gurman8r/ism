@@ -8,18 +8,17 @@ cppdialect 		"C++17"
 systemversion	"latest"
 staticruntime	"Off"
 targetname		"%{prj.name}"
-debugdir		"%{_BUILD_BIN}"
 targetdir		"%{_BUILD_BIN}"
 objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
 manifest("imgui")
 
-debugenvs{ "%{_BUILD_BIN}", }
-
 dependson{ "glfw", }
 
 links{ "glfw", }
+
+links_graphics()
 
 defines{
 	"IMGUI_API=__declspec(dllexport)",

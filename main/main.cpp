@@ -4,6 +4,7 @@
 #include <core/config/project_settings.hpp>
 #include <core/extension/extension_manager.hpp>
 #include <core/object/script.hpp>
+#include <core/io/file_access_zip.hpp>
 
 #include <core/io/resource_loader.hpp>
 #include <core/io/resource_saver.hpp>
@@ -37,6 +38,8 @@ namespace ism
 
 	static Internals *			internals{};
 	static Engine *				engine{};
+	static PackedData *			packed_data{};
+	static ZipArchive *			zip_archive{};
 	static ProjectSettings *	project{};
 	static Performance *		performance{};
 	static ExtensionManager *	extensions{};
@@ -44,6 +47,7 @@ namespace ism
 	static Input *				input{};
 	static ResourceLoader *		loader{};
 	static ResourceSaver *		saver{};
+
 	static AudioServer *		audio{};
 	static DisplayServer *		display{};
 	static RenderingServer *	graphics{};
@@ -61,10 +65,23 @@ namespace ism
 		Error_ error{ Error_OK };
 
 		SYSTEM->initialize();
+
 		internals = memnew(Internals);
 		engine = memnew(Engine);
-		project = memnew(ProjectSettings);
 		performance = memnew(Performance);
+
+		if (!(packed_data = PACKED_DATA)) { packed_data = memnew(PackedData); }
+		if (!(zip_archive = ZIP_ARCHIVE)) { zip_archive = memnew(ZipArchive); }
+		packed_data->add_pack_source(zip_archive);
+
+		packed_data->add_pack("../ism.zip", true, 0);
+		if (auto file{ FileAccess::open("test.txt", FileMode_Read) }) {
+			while (String line{ file->read_line() }) {
+				PRINT_LINE(line);
+			}
+		}
+
+		project = memnew(ProjectSettings);
 		extensions = memnew(ExtensionManager);
 		scripts = memnew(ScriptServer);
 		input = memnew(Input);
@@ -73,6 +90,7 @@ namespace ism
 
 		register_core_types();
 		register_core_driver_types();
+
 		project->setup(exepath);
 		register_core_settings();
 		initialize_modules(ExtensionInitializationLevel_Core);
@@ -237,8 +255,9 @@ namespace ism
 		memdelete(input);
 		memdelete(scripts);
 		memdelete(extensions);
-		memdelete(performance);
 		memdelete(project);
+		memdelete(performance);
+		memdelete(packed_data);
 		memdelete(engine);
 		memdelete(internals);
 		SYSTEM->finalize_core();

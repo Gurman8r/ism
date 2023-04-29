@@ -79,6 +79,8 @@ namespace ism
 		m_logger->log_error(func, file, line, desc, message, type);
 	}
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	Path OS::get_executable_path() const
 	{
 		return m_exepath;
@@ -115,6 +117,8 @@ namespace ism
 		return "GenericModel"_s;
 	}
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	String OS::get_iso_date_time(bool local) const
 	{
 		return {};
@@ -124,6 +128,8 @@ namespace ism
 	{
 		return {};
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	u64 OS::get_static_memory_usage() const
 	{
@@ -140,22 +146,26 @@ namespace ism
 		return {};
 	}
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	String OS::get_locale() const
 	{
 		return {};
 	}
 
-	Path OS::get_data_path() const
+	String OS::get_locale_language() const
+	{
+		return {};
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	Path OS::get_safe_path(Path const & path, bool allow_dir_separator) const
 	{
 		return ".";
 	}
 
-	Path OS::get_config_path() const
-	{
-		return ".";
-	}
-
-	Path OS::get_cache_path() const
+	Path OS::get_binary_path() const
 	{
 		return ".";
 	}
@@ -165,7 +175,17 @@ namespace ism
 		return ".";
 	}
 
-	Path OS::get_user_path() const
+	Path OS::get_cache_path() const
+	{
+		return ".";
+	}
+
+	Path OS::get_config_path() const
+	{
+		return ".";
+	}
+
+	Path OS::get_data_path() const
 	{
 		return ".";
 	}
@@ -175,12 +195,7 @@ namespace ism
 		return ".";
 	}
 
-	Path OS::get_safe_path(Path const & p_dir_name, bool p_allow_dir_separator) const
-	{
-		return ".";
-	}
-
-	Path OS::get_bin_path() const
+	Path OS::get_user_path() const
 	{
 		return ".";
 	}
@@ -189,6 +204,8 @@ namespace ism
 	{
 		return ".";
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Error_ OS::move_to_trash(Path const & path)
 	{

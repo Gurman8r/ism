@@ -22,15 +22,13 @@ namespace ism
 		void _check_errors() const;
 		void _close();
 
-	protected:
-		virtual Error_ open_internal(Path const & path, FileMode_ mode) override;
-
 	public:
 		FileAccessWindows() noexcept {}
 		virtual ~FileAccessWindows() noexcept override;
 
-		virtual void close() override;
+		virtual Error_ open_internal(Path const & path, FileMode_ mode) override;
 		virtual void flush() override;
+		virtual void close() override;
 		virtual bool exists(Path const & path) override;
 		virtual bool is_open() const override;
 		virtual Path get_path() const override;

@@ -23,11 +23,13 @@ namespace ism
 		auto * operator->() const { return (FunctionRecord *)(m_record); }
 
 	public:
+		CppFunctionObject(CppFunctionObject const &) = delete;
+
+		CppFunctionObject & operator=(CppFunctionObject const &) = delete;
+
 		virtual ~CppFunctionObject() override;
 
 		CppFunctionObject() noexcept : FunctionObject{ &cppfunction_vectorcall } {}
-
-		NON_COPYABLE(CppFunctionObject);
 		
 		CppFunctionObject(CppFunctionObject && value) noexcept : CppFunctionObject{} { swap(value); }
 		

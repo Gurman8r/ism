@@ -255,6 +255,10 @@
 //	API
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#if STATIC_BUILD_ENABLED && DYNAMIC_BUILD_ENABLED
+#	error "static and dynamic build are mutually exclusive"
+#endif
+
 #if STATIC_BUILD_ENABLED
 #	define ISM_API_EXPORT
 #	define ISM_API_IMPORT
@@ -273,7 +277,7 @@
 #endif
 
 #ifndef ISM_API
-#	ifdef ISM_API_EXPORTS
+#	if DYNAMIC_BUILD_ENABLED
 #		define ISM_API ISM_API_EXPORT
 #	else
 #		define ISM_API ISM_API_IMPORT

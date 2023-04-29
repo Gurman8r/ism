@@ -1,5 +1,7 @@
 @echo off
 
+rem CLEANUP PROJECT FILES
+
 if exist ..\..\ism_vs2017.sln del /q ..\..\ism_vs2017.sln
 if exist ..\..\ism_vs2019.sln del /q ..\..\ism_vs2019.sln
 if exist ..\..\ism_vs2022.sln del /q ..\..\ism_vs2022.sln

@@ -21,13 +21,13 @@ namespace ism
 		if (it != m_extensions.end()) { return LoadStatus_AlreadyLoaded; }
 
 		Path const stem{ path.stem() };
-		ConfigFile const ini{ Path::format("%s%s.ini", ProjectSettings::get_singleton()->get_data_path().c_str(), stem.c_str()) };
+		Path const ini_path{ Path::format("%s%s.ini", PROJECT_SETTINGS->get_config_path().c_str(), stem.c_str()) };
+		ConfigFile const ini{ ini_path };
 		String const library_name{ ini.get_string("configuration", "library_name", stem.string()) };
 		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("open_%s_library", library_name.c_str())) };
-		Ref<Extension> extension{ Extension::open(path, entry_symbol) };
-		if (!extension) {
-			return LoadStatus_Failure;
-		}
+		Path const dll_path{ Path::format("%s%s", PROJECT_SETTINGS->get_binary_path().c_str(), library_name.c_str()) };
+		Ref<Extension> extension{ Extension::open(dll_path, entry_symbol) };
+		if (!extension) { return LoadStatus_Failure; }
 
 		if (m_level >= 0) {
 			i32 const minimum_level{ extension->get_minimum_library_initialization_level() };

@@ -4,12 +4,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(FileAccessWindows, t) {}
-
-	FileAccessWindows::~FileAccessWindows() noexcept { _close(); }
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	void FileAccessWindows::_check_errors() const
 	{
 		ASSERT(m_file);
@@ -24,6 +18,14 @@ namespace ism
 		fclose(m_file);
 		m_file = nullptr;
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	EMBED_CLASS(FileAccessWindows, t) {}
+
+	FileAccessWindows::~FileAccessWindows() noexcept { _close(); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Error_ FileAccessWindows::open_internal(Path const & path, FileMode_ mode)
 	{
@@ -40,13 +42,6 @@ namespace ism
 		return Error_OK;
 	}
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	void FileAccessWindows::close()
-	{
-		_close();
-	}
-
 	void FileAccessWindows::flush()
 	{
 		ASSERT(m_file);
@@ -54,6 +49,11 @@ namespace ism
 		if (m_last_op == FileMode_Write) {
 			m_last_op = FileMode_MAX;
 		}
+	}
+
+	void FileAccessWindows::close()
+	{
+		_close();
 	}
 
 	bool FileAccessWindows::exists(Path const & path)

@@ -10,10 +10,9 @@
 #include <core/io/config_file.hpp>
 #include <core/io/dir_access.hpp>
 #include <core/io/event_system.hpp>
-#include <core/io/file_access.hpp>
+#include <core/io/file_access_zip.hpp>
 #include <core/io/image_library.hpp>
 #include <core/io/lexer.hpp>
-#include <core/io/pack.hpp>
 
 namespace ism
 {
@@ -64,12 +63,12 @@ namespace ism
 
 			DirAccess,
 			FileAccess,
+			FileAccessPack,
+			FileAccessZip,
 			ConfigFile,
 			Image,
 			ImageFormatLoader,
 			Lexer,
-			PackedData,
-			
 			MainLoop
 		);
 

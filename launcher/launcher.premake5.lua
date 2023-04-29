@@ -7,22 +7,19 @@ rtti			"On"
 staticruntime	"Off"
 systemversion	"latest"
 targetname		"%{prj.name}"
-debugdir		"%{_BUILD}"
 targetdir		"%{_BUILD}"
 objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
-debugenvs{ "%{_BUILD}", }
-
 dependson{ "ism", "lua", "mono", }
 
-links{ "assimp%{LIB}", "IrrXML", "zlibstatic", "freetype", "glfw", "imgui", "ism", }
+links{ "assimp%{LIB}", "freetype", "glfw", "imgui", "IrrXML", "ism", "zip", "zlibstatic", }
+
+links_graphics()
 
 defines{
-	"MAIN_ENABLED=true",
-	"TOOLS_ENABLED=true",
-	"OPENGL_ENABLED=true",
-	"OPENGL_LOADER_GLEW=true",
+	"MAIN_ENABLED=1",
+	"TOOLS_ENABLED=1",
 	"IMGUI_API=ISM_API_IMPORT",
 }
 
@@ -35,15 +32,14 @@ srcdirs(
 	"%{wks.location}/launcher/"
 )
 
-if _TARGET_OS=="windows" then
+filter{ "system:windows" }
 	files{
 		"%{wks.location}/platform/windows/ism.rc",
 		"%{wks.location}/platform/windows/ism.ico",
 	}
-	prebuildcommands{
-		"{COPYFILE} %{wks.location}/launcher/bin.manifest %{_BUILD_BIN}",
-	}
 	postbuildcommands{
-		--"{COPYFILE} %{wks.location}/platform/windows/ism.ico %{_BUILD_RES}",
+		"{COPYFILE} %{wks.location}/platform/windows/binaries.manifest %{_BUILD_BIN}",
+		"{COPYFILE} %{wks.location}/platform/windows/ism.ico %{_BUILD_RES}",
+		"{COPYFILE} %{wks.location}/assets/ism.png %{_BUILD_RES}",
 	}
-end
+filter{}

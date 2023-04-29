@@ -12,7 +12,6 @@ namespace ism
 
 	public:
 		DirAccess();
-
 		virtual ~DirAccess() override;
 	};
 }

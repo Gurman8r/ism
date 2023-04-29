@@ -1,5 +1,6 @@
 #include <core/io/dir_access.hpp>
-
+#include <core/os/os.hpp>
+#include <core/config/project_settings.hpp>
 #include <filesystem>
 
 namespace ism
