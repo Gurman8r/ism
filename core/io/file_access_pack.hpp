@@ -35,6 +35,7 @@ namespace ism
 			String name{};
 			HashMap<String, PackedDir *> subdirs{};
 			HashSet<String> files{};
+			~PackedDir() { for (auto & [k, v] : subdirs) { memdelete(v); } }
 		};
 
 	private:

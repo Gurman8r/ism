@@ -74,7 +74,7 @@ namespace ism
 		packages->add_pack_source(zip_archive);
 
 		packages->add_pack("../assets/test.zip", true, 0);
-		if (auto f{ FileAccess::open("test.zip://data/sub.txt", FileMode_Read) }) {
+		if (auto f{ FileAccess::open("test://data/test.txt", FileMode_Read) }) {
 			while (String line{ f->read_line() }) {
 				PRINT_LINE(line);
 			}

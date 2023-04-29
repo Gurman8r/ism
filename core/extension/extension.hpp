@@ -24,7 +24,7 @@ namespace ism
 		void close_library();
 
 		NODISCARD bool is_library_open() const;
-		NODISCARD ExtensionInitializationLevel_ get_minimum_library_initialization_level() const;
+		NODISCARD ExtensionInitializationLevel_ get_minimum_level() const;
 		
 		void initialize_library(ExtensionInitializationLevel_ level);
 		void finalize_library(ExtensionInitializationLevel_ level);

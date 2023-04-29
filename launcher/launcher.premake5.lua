@@ -33,7 +33,7 @@ srcdirs(
 )
 
 postbuildcommands{
-	"{COPYFILE} %{wks.location}/assets/test.zip %{_BUILD_RES}",
+	--"{COPYFILE} %{wks.location}/assets/test.zip %{_BUILD_RES}",
 }
 
 filter{ "system:windows" }

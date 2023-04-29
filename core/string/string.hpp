@@ -383,7 +383,7 @@ namespace ism
 				i32 const n{ std::vsnprintf(nullptr, 0, fmt, args_copy) };
 				va_end(args_copy);
 				if (0 < n) {
-					s.resize((size_t)n);
+					s.resize((size_t)n + 1);
 					std::vsnprintf(s.data(), s.size(), fmt, args);
 				}
 				return n;

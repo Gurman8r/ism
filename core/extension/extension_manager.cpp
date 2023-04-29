@@ -30,11 +30,11 @@ namespace ism
 		if (!extension) { return LoadStatus_Failure; }
 
 		if (m_level >= 0) {
-			i32 const minimum_level{ extension->get_minimum_library_initialization_level() };
-			if (minimum_level < minimum(m_level, ExtensionInitializationLevel_Scene)) {
+			i32 const minimum_level{ extension->get_minimum_level() };
+			if (minimum_level < MIN(m_level, ExtensionInitializationLevel_Scene)) {
 				return LoadStatus_NeedsRestart;
 			}
-			for (i32 i = minimum_level; i <= m_level; ++i) {
+			for (i32 i{ minimum_level }; i <= m_level; ++i) {
 				extension->initialize_library((ExtensionInitializationLevel_)i);
 			}
 		}
@@ -51,11 +51,11 @@ namespace ism
 		Ref<Extension> extension{ it->second };
 
 		if (m_level >= 0) {
-			i32 const minimum_level{ extension->get_minimum_library_initialization_level() };
-			if (minimum_level < minimum(m_level, ExtensionInitializationLevel_Scene)) {
+			i32 const minimum_level{ extension->get_minimum_level() };
+			if (minimum_level < MIN(m_level, ExtensionInitializationLevel_Scene)) {
 				return LoadStatus_NeedsRestart;
 			}
-			for (i32 i = minimum_level; i <= m_level; ++i) {
+			for (i32 i{ minimum_level }; i <= m_level; ++i) {
 				extension->finalize_library((ExtensionInitializationLevel_)i);
 			}
 		}
@@ -109,9 +109,9 @@ namespace ism
 
 	void ExtensionManager::load_extensions()
 	{
-		auto file{ FileAccess::open(Extension::get_extension_list_config_file(), FileMode_Read) };
-		if (!file) { return; }
-		while (String line{ file->read_line().trim() }) {
+		auto f{ FileAccess::open(Extension::get_extension_list_config_file(), FileMode_Read) };
+		if (!f) { return; }
+		while (String line{ f->read_line().trim() }) {
 			load_extension(line);
 		}
 	}

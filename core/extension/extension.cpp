@@ -57,7 +57,7 @@ namespace ism
 		return m_library;
 	}
 
-	ExtensionInitializationLevel_ Extension::get_minimum_library_initialization_level() const
+	ExtensionInitializationLevel_ Extension::get_minimum_level() const
 	{
 		return m_initialization.minimum_level;
 	}

@@ -4,14 +4,6 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	static void _free_packed_dirs(Packages::PackedDir * dir)
-	{
-		for (auto & [k, v] : dir->subdirs) {
-			_free_packed_dirs(v);
-		}
-		memdelete(dir);
-	}
-
 	Packages * Packages::__singleton{};
 
 	Packages::Packages()
@@ -26,7 +18,7 @@ namespace ism
 		for (size_t i{}; i < m_sources.size(); ++i) {
 			memdelete(m_sources[i]);
 		}
-		_free_packed_dirs(m_root);
+		memdelete(m_root);
 	}
 
 	Error_ Packages::add_pack(String const & path, bool replace_files, u64 offset)
