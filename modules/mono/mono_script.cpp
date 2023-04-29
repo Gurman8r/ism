@@ -29,7 +29,7 @@ namespace ism
 	{
 	}
 
-	MonoScript::MonoScript(Path const & path)
+	MonoScript::MonoScript(String const & path)
 	{
 	}
 
@@ -72,17 +72,17 @@ namespace ism
 	{
 	}
 
-	bool MonoInstance::get_constants(HashMap<StringName, OBJ> * out) const
+	bool MonoInstance::get_constants(HashMap<String, OBJ> * out) const
 	{
 		return true;
 	}
 
-	bool MonoInstance::get_properties(HashMap<StringName, PROPERTY> * out) const
+	bool MonoInstance::get_properties(HashMap<String, PROPERTY> * out) const
 	{
 		return true;
 	}
 
-	bool MonoInstance::get_functions(HashMap<StringName, FUNCTION> * out) const
+	bool MonoInstance::get_functions(HashMap<String, FUNCTION> * out) const
 	{
 		return true;
 	}

@@ -9,7 +9,7 @@ namespace ism
 
 	enum FileAccessType_ {
 		FileAccessType_Resources,
-		FileAccessType_UserData,
+		FileAccessType_User,
 		FileAccessType_Filesystem,
 		FileAccessType_MAX
 	};
@@ -43,23 +43,23 @@ namespace ism
 		using CreateFunc = Ref<FileAccess>(*)();
 		static CreateFunc __create_func[FileAccessType_MAX];
 		static Ref<FileAccess> create(FileAccessType_ access_type);
-		static Ref<FileAccess> create_for_path(Path const & path);
-		virtual Error_ open_internal(Path const & path, FileMode_ mode) = 0;
+		static Ref<FileAccess> create_for_path(String const & path);
+		virtual Error_ open_internal(String const & path, FileMode_ mode) = 0;
 
 		NODISCARD FileAccessType_ get_access_type() const noexcept { return m_access_type; }
 		void set_access_type(FileAccessType_ value) noexcept { m_access_type = value; }
 
 	public:
-		static Ref<FileAccess> open(Path const & path, FileMode_ mode);
-		virtual Error_ reopen(Path const & path, FileMode_ mode);
+		static Ref<FileAccess> open(String const & path, FileMode_ mode);
+		virtual Error_ reopen(String const & path, FileMode_ mode);
 
 		virtual void flush() = 0;
 		virtual void close() = 0;
 
-		NODISCARD virtual bool exists(Path const & path) = 0;
+		NODISCARD virtual bool exists(String const & path) = 0;
 		NODISCARD virtual bool is_open() const = 0;
-		NODISCARD virtual Path get_path() const { return {}; }
-		NODISCARD virtual Path get_path_absolute() const { return {}; }
+		NODISCARD virtual String get_path() const { return {}; }
+		NODISCARD virtual String get_path_absolute() const { return {}; }
 
 		virtual void seek(u64 position) = 0;
 		virtual void seek_end(i64 position = 0) = 0;

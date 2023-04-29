@@ -53,9 +53,9 @@ namespace ism
 		virtual void material_destroy(RID material) = 0;
 		virtual RID material_get_shader(RID material) const = 0;
 		virtual void material_set_shader(RID material, RID shader) = 0;
-		virtual Var material_get_param(RID material, StringName const & key) const = 0;
-		virtual void material_set_param(RID material, StringName const & key, Var const & value) = 0;
-		virtual void material_update(RID material, Map<StringName, Var> const & params) = 0;
+		virtual Var material_get_param(RID material, String const & key) const = 0;
+		virtual void material_set_param(RID material, String const & key, Var const & value) = 0;
+		virtual void material_update(RID material, Map<String, Var> const & params) = 0;
 
 	public:
 		/* MESH */

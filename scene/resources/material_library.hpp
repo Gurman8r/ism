@@ -8,8 +8,8 @@ namespace ism
 	class ISM_API MaterialLibrary final
 	{
 	public:
-		static Error_ load_material(Material & material, Path const & path);
-		static Error_ load_material(Ref<Material> material, Path const & path);
+		static Error_ load_material(Material & material, String const & path);
+		static Error_ load_material(Ref<Material> material, String const & path);
 	};
 }
 

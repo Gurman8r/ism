@@ -20,7 +20,7 @@ namespace ism
 
 		explicit Mesh(RS::SurfaceData const & surface) : Mesh{ Vector<RS::SurfaceData>{ surface } } {}
 
-		explicit Mesh(Path const & path);
+		explicit Mesh(String const & path);
 
 		virtual ~Mesh() override;
 

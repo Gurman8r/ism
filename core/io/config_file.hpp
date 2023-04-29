@@ -13,7 +13,7 @@ namespace ism
 
 	public:
 		ConfigFile() noexcept {}
-		explicit ConfigFile(Path const & path);
+		explicit ConfigFile(String const & path);
 		virtual ~ConfigFile();
 		virtual RID get_rid() const override { return 0; }
 

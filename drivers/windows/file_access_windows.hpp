@@ -17,7 +17,7 @@ namespace ism
 		FileMode_ m_mode{};
 		mutable FileMode_ m_last_op{};
 		mutable Error_ m_last_error{};
-		Path m_path{}, m_path_abs{}, m_path_save{};
+		String m_path{}, m_path_abs{}, m_path_save{};
 
 		void _check_errors() const;
 		void _close();
@@ -26,13 +26,13 @@ namespace ism
 		FileAccessWindows() noexcept {}
 		virtual ~FileAccessWindows() noexcept override;
 
-		virtual Error_ open_internal(Path const & path, FileMode_ mode) override;
+		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
 		virtual void flush() override;
 		virtual void close() override;
-		virtual bool exists(Path const & path) override;
+		virtual bool exists(String const & path) override;
 		virtual bool is_open() const override;
-		virtual Path get_path() const override;
-		virtual Path get_path_absolute() const override;
+		virtual String get_path() const override;
+		virtual String get_path_absolute() const override;
 		virtual void seek(u64 position) override;
 		virtual void seek_end(i64 position) override;
 		virtual u64 get_position() const override;

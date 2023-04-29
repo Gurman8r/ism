@@ -67,7 +67,7 @@ namespace ism
 	protected:
 		struct Data
 		{
-			StringName		name{};
+			String		name{};
 			SceneTree *		tree{};
 			Node *			parent{};
 			Vector<Node *>	children{};
@@ -85,8 +85,8 @@ namespace ism
 		virtual void _input(InputEvent const & input_event);
 
 	public:
-		StringName get_name() const;
-		void set_name(StringName const & name);
+		String get_name() const;
+		void set_name(String const & name);
 
 		SceneTree * get_tree() const;
 		bool set_tree(SceneTree * tree);

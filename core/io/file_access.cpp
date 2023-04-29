@@ -17,14 +17,14 @@ namespace ism
 		return file;
 	}
 
-	Ref<FileAccess> FileAccess::create_for_path(Path const & path)
+	Ref<FileAccess> FileAccess::create_for_path(String const & path)
 	{
 		Ref<FileAccess> file;
-		if (path.string().begins_with("res://")) {
-			file = create(FileAccessType_Filesystem);
+		if (path.begins_with("res://")) {
+			file = create(FileAccessType_Resources);
 		}
-		else if (path.string().begins_with("usr://")) {
-			file = create(FileAccessType_UserData);
+		else if (path.begins_with("usr://")) {
+			file = create(FileAccessType_User);
 		}
 		else {
 			file = create(FileAccessType_Filesystem);
@@ -34,11 +34,11 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Ref<FileAccess> FileAccess::open(Path const & path, FileMode_ mode)
+	Ref<FileAccess> FileAccess::open(String const & path, FileMode_ mode)
 	{
 		Ref<FileAccess> file{};
 		
-		if ((mode != FileMode_Write) && PACKED_DATA && PACKED_DATA->is_enabled() && (file = PACKED_DATA->try_open_path(path))) {
+		if ((mode != FileMode_Write) && PACKAGES && PACKAGES->is_enabled() && (file = PACKAGES->try_open_path(path))) {
 			return file;
 		}
 
@@ -49,7 +49,7 @@ namespace ism
 		return nullptr;
 	}
 
-	Error_ FileAccess::reopen(Path const & path, FileMode_ mode)
+	Error_ FileAccess::reopen(String const & path, FileMode_ mode)
 	{
 		return open_internal(path, mode);
 	}

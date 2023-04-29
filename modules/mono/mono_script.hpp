@@ -14,7 +14,7 @@ namespace ism
 		MonoLanguage();
 		virtual ~MonoLanguage() override;
 
-		virtual StringName get_name() const override { return "mono"; }
+		virtual String get_name() const override { return "mono"; }
 
 		virtual void initialize() override;
 		virtual void finalize() override;
@@ -30,7 +30,7 @@ namespace ism
 
 	public:
 		MonoScript();
-		explicit MonoScript(Path const & path);
+		explicit MonoScript(String const & path);
 		virtual ~MonoScript() override;
 		
 		virtual bool has_source_code() const override;
@@ -55,9 +55,9 @@ namespace ism
 		MonoInstance(ScriptLanguage * language, Ref<Script> script, Object * owner);
 		virtual ~MonoInstance() override;
 
-		virtual bool get_constants(HashMap<StringName, OBJ> * out) const override;
-		virtual bool get_properties(HashMap<StringName, PROPERTY> * out) const override;
-		virtual bool get_functions(HashMap<StringName, FUNCTION> * out) const override;
+		virtual bool get_constants(HashMap<String, OBJ> * out) const override;
+		virtual bool get_properties(HashMap<String, PROPERTY> * out) const override;
+		virtual bool get_functions(HashMap<String, FUNCTION> * out) const override;
 
 		virtual void notification(i32 notification) override;
 

@@ -8,8 +8,8 @@ namespace ism
 	class ISM_API MeshLibrary final
 	{
 	public:
-		static Error_ load_mesh(Mesh & mesh, Path const & path);
-		static Error_ load_mesh(Ref<Mesh> mesh, Path const & path);
+		static Error_ load_mesh(Mesh & mesh, String const & path);
+		static Error_ load_mesh(Ref<Mesh> mesh, String const & path);
 	};
 }
 

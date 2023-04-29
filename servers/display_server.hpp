@@ -146,7 +146,7 @@ namespace ism
 		virtual void poll_events() = 0;
 		virtual void swap_buffers() = 0;
 
-		virtual void set_native_icon(Path const & path) = 0;
+		virtual void set_native_icon(String const & path) = 0;
 		virtual void set_icon(u8 const * data, i32 width, i32 height) = 0;
 
 		void vsync_set_enabled(bool enabled);

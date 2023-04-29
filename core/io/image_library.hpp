@@ -11,8 +11,8 @@ namespace ism
 	class ISM_API ImageLibrary final
 	{
 	public:
-		static Error_ load_image(Image & image, Path const & path);
-		static Error_ load_image(Ref<Image> image, Path const & path);
+		static Error_ load_image(Image & image, String const & path);
+		static Error_ load_image(Ref<Image> image, String const & path);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -21,9 +21,9 @@ namespace ism
 	{
 		DEFINE_CLASS(ImageFormatLoader, ResourceFormatLoader);
 	public:
-		NODISCARD virtual RES load(Path const & path, Error_ * error = nullptr) override;
-		NODISCARD virtual void get_recognized_extensions(Vector<Path> * out) const override;
-		NODISCARD virtual TYPE get_resource_type(Path const & path) const override;
+		NODISCARD virtual RES load(String const & path, Error_ * error = nullptr) override;
+		NODISCARD virtual void get_recognized_extensions(Vector<String> * out) const override;
+		NODISCARD virtual TYPE get_resource_type(String const & path) const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

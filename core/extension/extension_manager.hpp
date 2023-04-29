@@ -13,7 +13,7 @@ namespace ism
 
 		i32 m_level{ -1 };
 
-		HashMap<Path, Ref<Extension>> m_extensions{};
+		HashMap<String, Ref<Extension>> m_extensions{};
 
 	public:
 		ExtensionManager() noexcept { __singleton = this; }
@@ -30,11 +30,11 @@ namespace ism
 			LoadStatus_NeedsRestart,
 		};
 
-		LoadStatus_ load_extension(Path const & path);
-		LoadStatus_ unload_extension(Path const & path);
-		bool is_extension_loaded(Path const & path);
-		Vector<Path> get_loaded_extensions() const;
-		Ref<Extension> get_extension(Path const & path);
+		LoadStatus_ load_extension(String const & path);
+		LoadStatus_ unload_extension(String const & path);
+		bool is_extension_loaded(String const & path);
+		Vector<String> get_loaded_extensions() const;
+		Ref<Extension> get_extension(String const & path);
 
 		void initialize_extensions(ExtensionInitializationLevel_ level);
 		void finalize_extensions(ExtensionInitializationLevel_ level);

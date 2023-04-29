@@ -11,35 +11,30 @@ namespace ism
 	{
 	public:
 		struct File {
-			File() noexcept = default;
 			i32 package{ -1 };
 			unz_file_pos file_pos{};
 		};
 
 		struct Package {
-			Package() noexcept = default;
-			Path path{};
+			String path{};
 			unzFile m_zfile{};
 		};
 		
 	private:
 		static ZipArchive * __singleton;
 		Vector<Package> m_packages{};
-		HashMap<Path, File> m_files{};
+		HashMap<String, File> m_files{};
 
 	public:
 		ZipArchive();
 		~ZipArchive();
 		static ZipArchive * get_singleton();
-#define ZIP_ARCHIVE (ism::ZipArchive::get_singleton())
 
 		void close_handle(unzFile file) const;
-		unzFile get_file_handle(Path const & path) const;
-		Error_ add_package(Path const & path);
-		bool file_exists(Path const & path) const;
-
-		virtual bool try_open_pack(Path const & path, bool replace_files, u64 offset) override;
-		virtual Ref<FileAccess> get_file(Path const & path, PackedData::PackedFile * file) override;
+		NODISCARD unzFile get_file_handle(String const & path) const;
+		NODISCARD bool file_exists(String const & path) const;
+		NODISCARD virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
+		NODISCARD virtual Ref<FileAccess> get_file(String const & path, Packages::PackedFile * file) override;
 	};
 }
 
@@ -54,13 +49,13 @@ namespace ism
 		mutable bool		m_eof{};
 
 	public:
-		FileAccessZip(Path const & path, PackedData::PackedFile const & file);
+		FileAccessZip(String const & path, Packages::PackedFile const & file);
 		virtual ~FileAccessZip() override;
 
-		virtual Error_ open_internal(Path const & path, FileMode_ mode) override;
+		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
 		virtual void close() override;
 		virtual void flush() override;
-		virtual bool exists(Path const & path) override;
+		virtual bool exists(String const & path) override;
 		virtual bool is_open() const override;
 		virtual void seek(u64 position) override;
 		virtual void seek_end(i64 position) override;
@@ -69,7 +64,7 @@ namespace ism
 		virtual bool eof_reached() const override;
 		virtual Error_ get_error() const override;
 		virtual u8 read_8() const override;
-		virtual u64 read_buffer(u8 * data, u64 size) const override;
+		virtual size_t read_buffer(u8 * data, size_t const size) const override;
 		virtual void write_8(u8) override;
 	};
 }

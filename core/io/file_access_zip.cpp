@@ -4,33 +4,33 @@ namespace ism
 {
 	struct ZipData { Ref<FileAccess> f{}; };
 
-	static void * ism_open(void * opaque, cstring path, i32 mode) {
+	static void * ism_open(voidpf opaque, cstring path, i32 mode) {
 		if (mode & ZLIB_FILEFUNC_MODE_WRITE) {
 			return nullptr;
 		}
-		Ref<FileAccess> f{ FileAccess::open(path, FileMode_Read) };
+		auto f{ FileAccess::open(path, FileMode_Read) };
 		ASSERT(f);
 		ZipData * zd{ memnew(ZipData) };
 		zd->f = f;
 		return zd;
 	}
 
-	static u64 ism_read(void * opaque, void * stream, void * buf, u64 size) {
+	static uLong ism_read(voidpf opaque, voidpf stream, voidpf buf, uLong size) {
 		ZipData * zd{ (ZipData *)stream };
 		zd->f->read_buffer((u8 *)buf, size);
 		return size;
 	}
 
-	static u64 ism_write(void * opaque, void * stream, void const * buf, u64 size) {
+	static uLong ism_write(voidpf opaque, voidpf stream, void const * buf, uLong size) {
 		return 0;
 	}
 
-	static i64 ism_tell(void * opaque, void * stream) {
+	static long ism_tell(voidpf opaque, voidpf stream) {
 		ZipData * zd{ (ZipData *)stream };
-		return zd->f->get_position();
+		return (long)zd->f->get_position();
 	}
 
-	static i64 ism_seek(void * opaque, void * stream, u64 offset, i32 origin) {
+	static long ism_seek(voidpf opaque, voidpf stream, uLong offset, i32 origin) {
 		ZipData * zd{ (ZipData *)stream };
 		u64 pos{ offset };
 		switch (origin) {
@@ -42,22 +42,22 @@ namespace ism
 		return 0;
 	}
 
-	static i32 ism_close(void * opaque, void * stream) {
+	static i32 ism_close(voidpf opaque, voidpf stream) {
 		ZipData * zd{ (ZipData *)stream };
 		memdelete(zd);
 		return 0;
 	}
 
-	static i32 ism_testerror(void * opaque, void * stream) {
+	static i32 ism_testerror(voidpf opaque, voidpf stream) {
 		ZipData * zd{ (ZipData *)stream };
 		return zd->f->get_error() != Error_OK ? 1 : 0;
 	}
 
-	static void * ism_alloc(void * opaque, u64 items, u64 size) {
-		return memalloc((size_t)items * size);
+	static voidpf ism_alloc(voidpf opaque, uInt items, uInt size) {
+		return memalloc(items * size);
 	}
 
-	static void ism_free(void * opaque, void * address) {
+	static void ism_free(voidpf opaque, voidpf address) {
 		memfree(address);
 	}
 }
@@ -91,7 +91,7 @@ namespace ism
 		unzClose(file);
 	}
 
-	unzFile ZipArchive::get_file_handle(Path const & path) const
+	unzFile ZipArchive::get_file_handle(String const & path) const
 	{
 		ASSERT(file_exists(path));
 		File file{ *util::getptr(m_files, path) };
@@ -99,93 +99,83 @@ namespace ism
 		zlib_filefunc_def io;
 		memset(&io, 0, sizeof(io));
 		io.opaque = nullptr;
-		io.zopen_file = (open_file_func)ism_open;
-		io.zread_file = (read_file_func)ism_read;
-		io.zwrite_file = (write_file_func)ism_write;
-		io.ztell_file = (tell_file_func)ism_tell;
-		io.zseek_file = (seek_file_func)ism_seek;
-		io.zclose_file = (close_file_func)ism_close;
-		io.zerror_file = (testerror_file_func)ism_testerror;
-		io.alloc_mem = (alloc_func)ism_alloc;
-		io.free_mem = (free_func)ism_free;
+		io.zopen_file = ism_open;
+		io.zread_file = ism_read;
+		io.zwrite_file = ism_write;
+		io.ztell_file = ism_tell;
+		io.zseek_file = ism_seek;
+		io.zclose_file = ism_close;
+		io.zerror_file = ism_testerror;
+		io.alloc_mem = ism_alloc;
+		io.free_mem = ism_free;
 
 		unzFile pkg{ unzOpen2(m_packages[file.package].path.c_str(), &io) };
 		ASSERT(pkg);
 		i32 unz_err{ unzGoToFilePos(pkg, &file.file_pos) };
 		if (unz_err != UNZ_OK || unzOpenCurrentFile(pkg) != UNZ_OK) {
 			unzClose(pkg);
-			ASSERT(nullptr);
+			CRASH("");
 		}
-
 		return pkg;
 	}
 
-	Error_ ZipArchive::add_package(Path const & path)
-	{
-		return Error_OK;
-	}
-
-	bool ZipArchive::file_exists(Path const & path) const
+	bool ZipArchive::file_exists(String const & path) const
 	{
 		return m_files.contains(path);
 	}
 
-	bool ZipArchive::try_open_pack(Path const & path, bool replace_files, u64 offset)
+	bool ZipArchive::try_open_pack(String const & package_path, bool replace_files, u64 offset)
 	{
-		if (path.extension() != ".zip") { return false; }
 		ASSERT((offset == 0) && "Invalid PCK data. Note that loading files with a non-zero offset isn't supported with ZIP archives.");
+		if (package_path.extension() != ".zip") { return false; }
 		
 		zlib_filefunc_def io;
 		memset(&io, 0, sizeof(io));
 		io.opaque = nullptr;
-		io.zopen_file = (open_file_func)ism_open;
-		io.zread_file = (read_file_func)ism_read;
-		io.zwrite_file = (write_file_func)ism_write;
-		io.ztell_file = (tell_file_func)ism_tell;
-		io.zseek_file = (seek_file_func)ism_seek;
-		io.zclose_file = (close_file_func)ism_close;
-		io.zerror_file = (testerror_file_func)ism_testerror;
+		io.zopen_file = ism_open;
+		io.zread_file = ism_read;
+		io.zwrite_file = ism_write;
+		io.ztell_file = ism_tell;
+		io.zseek_file = ism_seek;
+		io.zclose_file = ism_close;
+		io.zerror_file = ism_testerror;
 		
-		unzFile m_zfile = unzOpen2(path.c_str(), &io);
-		ASSERT(m_zfile);
+		unzFile zfile{ unzOpen2(package_path.c_str(), &io) };
+		ASSERT(zfile);
 		
 		unz_global_info64 gi;
-		i32 err = unzGetGlobalInfo64(m_zfile, &gi);
+		i32 err{ unzGetGlobalInfo64(zfile, &gi) };
 		ASSERT(err == UNZ_OK);
 		
-		Package pkg;
-		pkg.path = path;
-		pkg.m_zfile = m_zfile;
+		Package pkg{ package_path, zfile };
 		m_packages.push_back(pkg);
-		i32 pkg_num = (i32)m_packages.size() - 1;
+		i32 pkg_num{ (i32)m_packages.size() - 1 };
 		
-		for (u64 i = 0; i < gi.number_entry; ++i)
+		for (u64 i{}; i < gi.number_entry; ++i)
 		{
-			char filename_inzip[256];
+			char filename_inzip[260]{};
+
+			unz_file_info64 info;
+			err = unzGetCurrentFileInfo64(zfile, &info, filename_inzip, sizeof(filename_inzip), nullptr, 0, nullptr, 0);
+			if (err != UNZ_OK) { continue; }
 		
-			unz_file_info64 m_info;
-			err = unzGetCurrentFileInfo64(m_zfile, &m_info, filename_inzip, sizeof(filename_inzip), nullptr, 0, nullptr, 0);
-			ASSERT(err == UNZ_OK);
+			File f{ pkg_num };
+			unzGetFilePos(zfile, &f.file_pos);
 		
-			File f;
-			f.package = pkg_num;
-			unzGetFilePos(m_zfile, &f.file_pos);
-		
-			Path fname{ filename_inzip };
-			m_files[fname] = f;
-		
-			PACKED_DATA->add_path(path, fname, 1, 0, fname.hash_code(), this, replace_files, false);
-			printf("packed data add path %s, %s\n", path.c_str(), fname.c_str());
+			String const path{ package_path.filename() + "://" + String{filename_inzip} };
+			m_files[path] = f;
+
+			PACKAGES->add_path(package_path, path, 1, 0, path.hash_code(), this, replace_files, false);
 		
 			if ((i + 1) < gi.number_entry) {
-				unzGoToNextFile(m_zfile);
+				unzGoToNextFile(zfile);
 			}
 		}
 
 		return false;
 	}
 
-	Ref<FileAccess> ZipArchive::get_file(Path const & path, PackedData::PackedFile * file)
+	Ref<FileAccess> ZipArchive::get_file(String const & path, Packages::PackedFile * file)
 	{
 		return memnew(FileAccessZip(path, *file));
 	}
@@ -195,7 +185,7 @@ namespace ism
 {
 	EMBED_CLASS(FileAccessZip, t) {}
 
-	FileAccessZip::FileAccessZip(Path const & path, PackedData::PackedFile const & file)
+	FileAccessZip::FileAccessZip(String const & path, Packages::PackedFile const & file)
 	{
 		open_internal(path, FileMode_Read);
 	}
@@ -205,9 +195,9 @@ namespace ism
 		close();
 	}
 
-	Error_ FileAccessZip::open_internal(Path const & path, FileMode_ mode)
+	Error_ FileAccessZip::open_internal(String const & path, FileMode_ mode)
 	{
-		m_zfile = VALIDATE(ZIP_ARCHIVE)->get_file_handle(path);
+		m_zfile = VALIDATE(ZipArchive::get_singleton())->get_file_handle(path);
 		ASSERT(m_zfile);
 		ASSERT(UNZ_OK == unzGetCurrentFileInfo64(m_zfile, &m_info, nullptr, 0, nullptr, 0, nullptr, 0));
 		return Error_OK;
@@ -216,7 +206,7 @@ namespace ism
 	void FileAccessZip::close()
 	{
 		if (!m_zfile) { return; }
-		VALIDATE(ZIP_ARCHIVE)->close_handle(m_zfile);
+		VALIDATE(ZipArchive::get_singleton())->close_handle(m_zfile);
 		m_zfile = nullptr;
 	}
 
@@ -225,7 +215,7 @@ namespace ism
 		CRASH("this should never be called");
 	}
 
-	bool FileAccessZip::exists(Path const & path)
+	bool FileAccessZip::exists(String const & path)
 	{
 		return false;
 	}
@@ -283,7 +273,7 @@ namespace ism
 		return temp;
 	}
 
-	u64 FileAccessZip::read_buffer(u8 * data, u64 size) const
+	size_t FileAccessZip::read_buffer(u8 * data, size_t const size) const
 	{
 		ASSERT(data && size);
 		ASSERT(m_zfile);
@@ -297,7 +287,7 @@ namespace ism
 		if ((u64)read < size) {
 			m_eof = true;
 		}
-		return read;
+		return (size_t)read;
 	}
 
 	void FileAccessZip::write_8(u8 value)

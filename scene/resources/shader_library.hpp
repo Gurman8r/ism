@@ -8,8 +8,8 @@ namespace ism
 	class ISM_API ShaderLibrary final
 	{
 	public:
-		static Error_ load_shader(Shader & shader, Path const & path);
-		static Error_ load_shader(Ref<Shader> shader, Path const & path);
+		static Error_ load_shader(Shader & shader, String const & path);
+		static Error_ load_shader(Ref<Shader> shader, String const & path);
 	};
 }
 

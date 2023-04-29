@@ -82,7 +82,7 @@ void process_aimaterial(aiMaterial const * material, Vector<Ref<Texture>> & text
 		{
 			aiString path;
 			if (material->GetTexture(type, i, &path) != aiReturn_SUCCESS) { continue; }
-			Ref<ImageTexture> texture{ Path{ path.C_Str() } };
+			Ref<ImageTexture> texture{ String{ path.C_Str() } };
 			textures.push_back(texture);
 		}
 	};
@@ -116,7 +116,7 @@ void process_ainode(aiScene const * scene, aiNode const * node, Vector<RS::Surfa
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error_ MeshLibrary::load_mesh(Mesh & mesh, Path const & path)
+Error_ MeshLibrary::load_mesh(Mesh & mesh, String const & path)
 {
 	if (path.empty()) { return Error_Unknown; }
 	if (mesh.m_mesh) { RENDERING_SERVER->mesh_destroy(mesh.m_mesh); }
@@ -138,7 +138,7 @@ Error_ MeshLibrary::load_mesh(Mesh & mesh, Path const & path)
 	return Error_OK;
 }
 
-Error_ MeshLibrary::load_mesh(Ref<Mesh> mesh, Path const & path)
+Error_ MeshLibrary::load_mesh(Ref<Mesh> mesh, String const & path)
 {
 	return !mesh ? Error_Unknown : load_mesh(**mesh, path);
 }

@@ -16,7 +16,7 @@ namespace ism
 #define RESOURCE_SAVER (ism::ResourceSaver::get_singleton())
 
 	public:
-		Error_ save(RES const & res, Path const & path);
+		Error_ save(RES const & res, String const & path);
 	};
 }
 

@@ -32,6 +32,10 @@ srcdirs(
 	"%{wks.location}/launcher/"
 )
 
+postbuildcommands{
+	"{COPYFILE} %{wks.location}/assets/test.zip %{_BUILD_RES}",
+}
+
 filter{ "system:windows" }
 	files{
 		"%{wks.location}/platform/windows/ism.rc",

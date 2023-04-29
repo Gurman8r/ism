@@ -11,7 +11,7 @@ namespace ism
 	{
 	public:
 		static DICT generate_extension_api();
-		static void generate_extension_json_file(Path const & path);
+		static void generate_extension_json_file(String const & path);
 	};
 }
 

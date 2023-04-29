@@ -79,7 +79,7 @@ namespace ism
 
 	public:
 		Image() noexcept {}
-		explicit Image(Path const & path);
+		explicit Image(String const & path);
 		Image(i32 width, i32 height, ImageFormat_ format);
 		Image(i32 width, i32 height, ImageFormat_ format, DynamicBuffer const & data);
 		virtual RID get_rid() const override { return RID{}; }

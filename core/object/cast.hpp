@@ -315,10 +315,6 @@ public:																							\
 	> struct TypeCaster<std::basic_string<Ch, Tr, Al>, std::enable_if_t<mpl::is_char_v<Ch>>>
 		: StringCaster<std::basic_string<Ch, Tr, Al>> {};
 
-	template <> struct TypeCaster<Path> : StringCaster<String> {};
-
-	template <> struct TypeCaster<StringName> : StringCaster<String> {};
-
 	template <> struct TypeCaster<StringView> : StringCaster<String> {};
 
 	template <class T> struct TypeCaster<T, std::enable_if_t<mpl::is_char_v<T>>> : TypeCaster<BasicString<T>>

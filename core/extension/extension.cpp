@@ -22,7 +22,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ Extension::open_library(Path const & path, String const & entry_symbol)
+	Error_ Extension::open_library(String const & path, String const & entry_symbol)
 	{
 		if (Error_ const err{ SYSTEM->open_dynamic_library(path, m_library) }) {
 			return err;
@@ -81,7 +81,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Ref<Extension> Extension::open(Path const & path, String const & entry_symbol)
+	Ref<Extension> Extension::open(String const & path, String const & entry_symbol)
 	{
 		ASSERT(!path.empty());
 		ASSERT(!entry_symbol.empty());
@@ -97,7 +97,7 @@ namespace ism
 	{
 	}
 
-	Path Extension::get_extension_list_config_file()
+	String Extension::get_extension_list_config_file()
 	{
 		return PROJECT_SETTINGS->get_config_path("extensions.cfg");
 	}

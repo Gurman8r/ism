@@ -89,7 +89,7 @@ namespace ism
 
 		struct Font
 		{
-			Path path{};
+			String path{};
 
 			FontLibrary font_library{};
 
@@ -100,7 +100,7 @@ namespace ism
 
 		struct FontCreateInfo
 		{
-			Path path{};
+			String path{};
 		};
 
 		RID font_create(FontCreateInfo const & spec);

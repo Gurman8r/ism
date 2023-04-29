@@ -12,21 +12,21 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ ProjectSettings::setup(Path const & exepath, Path const & main_pack)
+	Error_ ProjectSettings::setup(String const & exepath, String const & main_pack)
 	{
 		if (exepath.empty()) {
 			return Error_Unknown;
 		}
 
-		m_bin_path = "./binaries/"_path;
-		m_cfg_path = "./config/"_path;
-		m_dat_path = "./data/"_path;
-		m_lib_path = "./library/"_path;
-		m_res_path = "./resources/"_path;
-		m_usr_path = "./user/"_path;
+		m_bin_path = "./binaries/";
+		m_cfg_path = "./config/";
+		m_dat_path = "./data/";
+		m_lib_path = "./library/";
+		m_res_path = "./resources/";
+		m_usr_path = "./user/";
 
 		// engine settings
-		Path const engine_ini{ get_config_path("engine.ini") };
+		String const engine_ini{ get_config_path("engine.ini") };
 		ini_parse(engine_ini.c_str(), [](auto user, auto section, auto name, auto value) {
 			((ProjectSettings *)user)->set(section, name, evaluate(value));
 			return 1;
@@ -34,7 +34,7 @@ namespace ism
 
 		// editor settings
 #if TOOLS_ENABLED
-		Path const editor_ini{ get_config_path("editor.ini") };
+		String const editor_ini{ get_config_path("editor.ini") };
 		ini_parse(editor_ini.c_str(), [](auto user, auto section, auto name, auto value) {
 			((ProjectSettings *)user)->set(section, name, evaluate(value));
 			return 1;
@@ -46,39 +46,39 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Path ProjectSettings::globalize_path(Path const & path) const
+	String ProjectSettings::globalize_path(String const & path) const
 	{
 		return path;
 	}
 
-	Path ProjectSettings::get_binary_path(Path const & path) const
+	String ProjectSettings::get_binary_path(String const & path) const
 	{
-		return path.empty() ? m_bin_path : m_bin_path.string() + path.string();
+		return path.empty() ? m_bin_path : m_bin_path + path;
 	}
 
-	Path ProjectSettings::get_config_path(Path const & path) const
+	String ProjectSettings::get_config_path(String const & path) const
 	{
-		return path.empty() ? m_cfg_path : m_cfg_path.string() + path.string();
+		return path.empty() ? m_cfg_path : m_cfg_path + path;
 	}
 
-	Path ProjectSettings::get_data_path(Path const & path) const
+	String ProjectSettings::get_data_path(String const & path) const
 	{
-		return path.empty() ? m_dat_path : m_dat_path.string() + path.string();
+		return path.empty() ? m_dat_path : m_dat_path + path;
 	}
 
-	Path ProjectSettings::get_library_path(Path const & path) const
+	String ProjectSettings::get_library_path(String const & path) const
 	{
-		return path.empty() ? m_lib_path : m_lib_path.string() + path.string();
+		return path.empty() ? m_lib_path : m_lib_path + path;
 	}
 
-	Path ProjectSettings::get_resource_path(Path const & path) const
+	String ProjectSettings::get_resource_path(String const & path) const
 	{
-		return path.empty() ? m_res_path : m_res_path.string() + path.string();
+		return path.empty() ? m_res_path : m_res_path + path;
 	}
 
-	Path ProjectSettings::get_user_path(Path const & path) const
+	String ProjectSettings::get_user_path(String const & path) const
 	{
-		return path.empty() ? m_usr_path : m_usr_path.string() + path.string();
+		return path.empty() ? m_usr_path : m_usr_path + path;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

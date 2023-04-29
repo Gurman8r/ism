@@ -25,7 +25,7 @@ namespace ism
 	{
 	}
 
-	ShaderMaterial::ShaderMaterial(Path const & path) : Material{}
+	ShaderMaterial::ShaderMaterial(String const & path) : Material{}
 	{
 		ASSERT(MaterialLibrary::load_material(*this, path) == Error_OK);
 	}
@@ -47,12 +47,12 @@ namespace ism
 		RENDERING_SERVER->material_set_shader(get_rid(), get_shader_rid());
 	}
 
-	Var ShaderMaterial::get_shader_param(StringName const & key) const
+	Var ShaderMaterial::get_shader_param(String const & key) const
 	{
 		return RENDERING_SERVER->material_get_param(get_rid(), key);
 	}
 
-	void ShaderMaterial::set_shader_param(StringName const & key, Var const & value)
+	void ShaderMaterial::set_shader_param(String const & key, Var const & value)
 	{
 		RENDERING_SERVER->material_set_param(get_rid(), key, value);
 	}
@@ -65,7 +65,7 @@ namespace ism
 	{
 	}
 
-	StandardMaterial3D::StandardMaterial3D(Path const & path) : Material{}
+	StandardMaterial3D::StandardMaterial3D(String const & path) : Material{}
 	{
 		ASSERT(MaterialLibrary::load_material(*this, path) == Error_OK);
 	}

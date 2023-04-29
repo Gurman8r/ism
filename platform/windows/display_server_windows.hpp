@@ -105,7 +105,7 @@ namespace ism
 		virtual void poll_events() override;
 		virtual void swap_buffers() override;
 
-		virtual void set_native_icon(Path const & path) override;
+		virtual void set_native_icon(String const & path) override;
 		virtual void set_icon(u8 const * data, i32 width, i32 height) override;
 
 	public:

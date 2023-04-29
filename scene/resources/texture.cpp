@@ -29,7 +29,7 @@ namespace ism
 
 	EMBED_CLASS(ImageTexture, t) {}
 
-	ImageTexture::ImageTexture(Path const & path)
+	ImageTexture::ImageTexture(String const & path)
 	{
 		m_image_cache = load_resource(path);
 		if (!m_image_cache) { return; }

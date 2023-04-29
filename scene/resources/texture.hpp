@@ -58,7 +58,7 @@ namespace ism
 
 	public:
 		ImageTexture() noexcept {}
-		ImageTexture(Path const & path);
+		ImageTexture(String const & path);
 		ImageTexture(Ref<Image> const & image);
 		virtual ~ImageTexture() override;
 		virtual RID get_rid() const override;

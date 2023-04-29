@@ -26,7 +26,7 @@ namespace ism
 
 	public:
 		Shader() noexcept {}
-		explicit Shader(Path const & path);
+		explicit Shader(String const & path);
 		virtual ~Shader() override;
 		virtual RID get_rid() const { return m_shader; }
 		virtual Mode_ get_mode() const { return m_mode; }

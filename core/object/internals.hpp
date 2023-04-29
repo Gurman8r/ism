@@ -13,7 +13,7 @@ namespace ism
 
 		Vector<OBJ> m_loader_stack; // loader life support stack
 		OBJ m_modules; // module dictionary
-		Batch<size_t, StringName, TypeObject *> m_classes; // class database
+		Batch<size_t, String, TypeObject *> m_classes; // class database
 
 	public:
 		Internals();
@@ -35,8 +35,8 @@ namespace ism
 #define UNREGISTER_CLASS(...) INTERNALS->unregister_class<##__VA_ARGS__>()
 
 		void add_class(TypeObject * type);
-		bool del_class(StringName const & name);
-		NODISCARD TypeObject * get_class(StringName const & name) const;
+		bool del_class(String const & name);
+		NODISCARD TypeObject * get_class(String const & name) const;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

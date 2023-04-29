@@ -556,7 +556,7 @@ namespace ism
 		glfwSwapBuffers(m_main_window->handle);
 	}
 
-	void DisplayServerWindows::set_native_icon(Path const & value)
+	void DisplayServerWindows::set_native_icon(String const & value)
 	{
 	}
 

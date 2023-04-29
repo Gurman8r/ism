@@ -33,7 +33,7 @@ namespace ism
 		m_classes.push_back(id, type->tp_name, type);
 	}
 
-	bool Internals::del_class(StringName const & name)
+	bool Internals::del_class(String const & name)
 	{
 		auto const index{ m_classes.index_of<0>(name.hash_code()) };
 		if (index == m_classes.npos) { return false; }
@@ -42,7 +42,7 @@ namespace ism
 		return true;
 	}
 
-	TypeObject * Internals::get_class(StringName const & name) const
+	TypeObject * Internals::get_class(String const & name) const
 	{
 		if (auto const type{ m_classes.map<size_t, TypeObject *>(name.hash_code()) }) {
 			return *type;

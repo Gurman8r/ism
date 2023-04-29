@@ -20,7 +20,7 @@ namespace ism
 		LuaLanguage();
 		virtual ~LuaLanguage() override;
 
-		virtual StringName get_name() const override { return "lua"; }
+		virtual String get_name() const override { return "lua"; }
 
 		virtual void initialize() override;
 		virtual void finalize() override;
@@ -36,7 +36,7 @@ namespace ism
 
 	public:
 		LuaScript();
-		explicit LuaScript(Path const & path);
+		explicit LuaScript(String const & path);
 		virtual ~LuaScript() override;
 
 		virtual bool has_source_code() const override;
@@ -61,9 +61,9 @@ namespace ism
 		LuaInstance(ScriptLanguage * language, Ref<Script> script, Object * owner);
 		virtual ~LuaInstance() override;
 
-		virtual bool get_constants(HashMap<StringName, OBJ> * out) const override;
-		virtual bool get_properties(HashMap<StringName, PROPERTY> * out) const override;
-		virtual bool get_functions(HashMap<StringName, FUNCTION> * out) const override;
+		virtual bool get_constants(HashMap<String, OBJ> * out) const override;
+		virtual bool get_properties(HashMap<String, PROPERTY> * out) const override;
+		virtual bool get_functions(HashMap<String, FUNCTION> * out) const override;
 
 		virtual void notification(i32 notification) override;
 

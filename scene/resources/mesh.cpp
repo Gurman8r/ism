@@ -13,7 +13,7 @@ namespace ism
 		if (!surfaces.empty()) { m_mesh = RENDERING_SERVER->mesh_create(surfaces); }
 	}
 
-	Mesh::Mesh(Path const & path)
+	Mesh::Mesh(String const & path)
 	{
 		ASSERT(MeshLibrary::load_mesh(*this, path) == Error_OK);
 	}

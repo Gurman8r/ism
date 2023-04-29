@@ -6,7 +6,7 @@ namespace ism
 
 	EMBED_CLASS(Image, t) {}
 
-	Image::Image(Path const & path)
+	Image::Image(String const & path)
 	{
 		ASSERT(ImageLibrary::load_image(*this, path) == Error_OK);
 	}

@@ -75,7 +75,7 @@ namespace ism
 		m.shader = shader;
 	}
 
-	Var RendererStorage::material_get_param(RID material, StringName const & key)
+	Var RendererStorage::material_get_param(RID material, String const & key)
 	{
 		_Material & m{ *VALIDATE((_Material *)material) };
 
@@ -89,7 +89,7 @@ namespace ism
 		}
 	}
 
-	void RendererStorage::material_set_param(RID material, StringName const & key, Var const & value)
+	void RendererStorage::material_set_param(RID material, String const & key, Var const & value)
 	{
 		_Material & m{ *VALIDATE((_Material *)material) };
 
@@ -103,7 +103,7 @@ namespace ism
 		}
 	}
 
-	void RendererStorage::material_update(RID material, Map<StringName, Var> const & params)
+	void RendererStorage::material_update(RID material, Map<String, Var> const & params)
 	{
 		_Material & m{ *VALIDATE((_Material *)material) };
 		m.texture_cache.clear();

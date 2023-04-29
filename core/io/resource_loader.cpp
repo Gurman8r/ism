@@ -6,9 +6,9 @@ namespace ism
 
 	EMBED_CLASS(ResourceFormatLoader, t) {}
 
-	bool ResourceFormatLoader::recognize_path(Path const & path, String const & hint) const
+	bool ResourceFormatLoader::recognize_path(String const & path, String const & hint) const
 	{
-		Vector<Path> recognized_extensions{};
+		Vector<String> recognized_extensions{};
 		get_recognized_extensions(&recognized_extensions);
 		return recognized_extensions.contains(path.extension());
 	}
@@ -21,7 +21,7 @@ namespace ism
 
 	ResourceLoader::~ResourceLoader() {}
 	
-	RES ResourceLoader::_load(Path const & path, Error_ * error)
+	RES ResourceLoader::_load(String const & path, Error_ * error)
 	{
 		RES result{};
 		for (size_t i{}; i < m_loaders.size(); ++i)
@@ -36,7 +36,7 @@ namespace ism
 		return result;
 	}
 	
-	RES ResourceLoader::load(Path const & path, Error_ * error)
+	RES ResourceLoader::load(String const & path, Error_ * error)
 	{
 		return _load(path, error);
 	}

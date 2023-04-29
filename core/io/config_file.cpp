@@ -9,7 +9,7 @@ namespace ism
 
 	ConfigFile::~ConfigFile() {}
 
-	ConfigFile::ConfigFile(Path const & path)
+	ConfigFile::ConfigFile(String const & path)
 	{
 		if (path.empty()) { return; }
 		if (ini_parse(path.c_str(), [](auto user, auto section, auto name, auto value) {

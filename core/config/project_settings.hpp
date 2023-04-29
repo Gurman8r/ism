@@ -13,7 +13,7 @@ namespace ism
 
 		static ProjectSettings * __singleton;
 
-		Path m_bin_path{}, m_cfg_path{}, m_dat_path{}, m_lib_path{}, m_res_path{}, m_usr_path{};
+		String m_bin_path{}, m_cfg_path{}, m_dat_path{}, m_lib_path{}, m_res_path{}, m_usr_path{};
 
 		HashMap<String, HashMap<String, OBJ>> m_data{};
 
@@ -24,15 +24,15 @@ namespace ism
 #define PROJECT_SETTINGS (ism::ProjectSettings::get_singleton())
 
 	public:
-		Error_ setup(Path const & exepath, Path const & main_pack = {});
+		Error_ setup(String const & exepath, String const & main_pack = {});
 
-		NODISCARD Path globalize_path(Path const & path) const;
-		NODISCARD Path get_binary_path(Path const & path = {}) const;
-		NODISCARD Path get_config_path(Path const & path = {}) const;
-		NODISCARD Path get_data_path(Path const & path = {}) const;
-		NODISCARD Path get_library_path(Path const & path = {}) const;
-		NODISCARD Path get_resource_path(Path const & path = {}) const;
-		NODISCARD Path get_user_path(Path const & path = {}) const;
+		NODISCARD String globalize_path(String const & path) const;
+		NODISCARD String get_binary_path(String const & path = {}) const;
+		NODISCARD String get_config_path(String const & path = {}) const;
+		NODISCARD String get_data_path(String const & path = {}) const;
+		NODISCARD String get_library_path(String const & path = {}) const;
+		NODISCARD String get_resource_path(String const & path = {}) const;
+		NODISCARD String get_user_path(String const & path = {}) const;
 
 		NODISCARD OBJ get(String const & section, String const & name) const;
 		Error_ set(String const & section, String const & name, OBJ const & value);

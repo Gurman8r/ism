@@ -10,7 +10,7 @@ namespace ism
 	{
 	}
 
-	void Resource::set_path(Path const & value, bool take_over)
+	void Resource::set_path(String const & value, bool take_over)
 	{
 		if (take_over || m_path_cache != value) {
 			m_path_cache = value;
@@ -19,12 +19,12 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RES load_resource(Path const & path)
+	RES load_resource(String const & path)
 	{
 		return RESOURCE_LOADER->load(path);
 	}
 
-	Error_ save_resource(RES const & res, Path const & path)
+	Error_ save_resource(RES const & res, String const & path)
 	{
 		return RESOURCE_SAVER->save(res, path);
 	}

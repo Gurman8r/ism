@@ -54,7 +54,7 @@ namespace ism
 	{
 	}
 
-	Script::Script(Path const & path)
+	Script::Script(String const & path)
 	{
 	}
 
@@ -103,17 +103,17 @@ namespace ism
 	{
 	}
 
-	bool PlaceholderScriptInstance::get_constants(HashMap<StringName, OBJ> * out) const
+	bool PlaceholderScriptInstance::get_constants(HashMap<String, OBJ> * out) const
 	{
 		return false;
 	}
 
-	bool PlaceholderScriptInstance::get_properties(HashMap<StringName, PROPERTY> * out) const
+	bool PlaceholderScriptInstance::get_properties(HashMap<String, PROPERTY> * out) const
 	{
 		return false;
 	}
 
-	bool PlaceholderScriptInstance::get_functions(HashMap<StringName, FUNCTION> * out) const
+	bool PlaceholderScriptInstance::get_functions(HashMap<String, FUNCTION> * out) const
 	{
 		return false;
 	}

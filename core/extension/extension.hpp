@@ -11,7 +11,7 @@ namespace ism
 	{
 		DEFINE_CLASS(Extension, Resource);
 
-		Path m_library_path{};
+		String m_library_path{};
 		void * m_library{};
 		i32 m_level_initialized{ -1 };
 		ExtensionInitialization m_initialization{};
@@ -20,7 +20,7 @@ namespace ism
 		Extension();
 		virtual ~Extension() override;
 
-		Error_ open_library(Path const & path, String const & entry_symbol);
+		Error_ open_library(String const & path, String const & entry_symbol);
 		void close_library();
 
 		NODISCARD bool is_library_open() const;
@@ -30,9 +30,9 @@ namespace ism
 		void finalize_library(ExtensionInitializationLevel_ level);
 
 	public:
-		static Ref<Extension> open(Path const & path, String const & entry_symbol);
+		static Ref<Extension> open(String const & path, String const & entry_symbol);
 		static void initialize_extensions();
-		static Path get_extension_list_config_file();
+		static String get_extension_list_config_file();
 	};
 }
 

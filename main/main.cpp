@@ -38,7 +38,7 @@ namespace ism
 
 	static Internals *			internals{};
 	static Engine *				engine{};
-	static PackedData *			packed_data{};
+	static Packages *			packages{};
 	static ZipArchive *			zip_archive{};
 	static ProjectSettings *	project{};
 	static Performance *		performance{};
@@ -68,19 +68,19 @@ namespace ism
 
 		internals = memnew(Internals);
 		engine = memnew(Engine);
-		performance = memnew(Performance);
 
-		if (!(packed_data = PACKED_DATA)) { packed_data = memnew(PackedData); }
-		if (!(zip_archive = ZIP_ARCHIVE)) { zip_archive = memnew(ZipArchive); }
-		packed_data->add_pack_source(zip_archive);
+		if (!(packages = Packages::get_singleton())) { packages = memnew(Packages); }
+		if (!(zip_archive = ZipArchive::get_singleton())) { zip_archive = memnew(ZipArchive); }
+		packages->add_pack_source(zip_archive);
 
-		packed_data->add_pack("../ism.zip", true, 0);
-		if (auto file{ FileAccess::open("test.txt", FileMode_Read) }) {
-			while (String line{ file->read_line() }) {
+		packages->add_pack("../assets/test.zip", true, 0);
+		if (auto f{ FileAccess::open("test.zip://data/sub.txt", FileMode_Read) }) {
+			while (String line{ f->read_line() }) {
 				PRINT_LINE(line);
 			}
 		}
 
+		performance = memnew(Performance);
 		project = memnew(ProjectSettings);
 		extensions = memnew(ExtensionManager);
 		scripts = memnew(ScriptServer);
@@ -137,7 +137,7 @@ namespace ism
 
 	bool Main::start()
 	{
-		Path script{};
+		String script{};
 
 		Ref<MainLoop> main_loop{};
 
@@ -257,7 +257,7 @@ namespace ism
 		memdelete(extensions);
 		memdelete(project);
 		memdelete(performance);
-		memdelete(packed_data);
+		memdelete(packages);
 		memdelete(engine);
 		memdelete(internals);
 		SYSTEM->finalize_core();

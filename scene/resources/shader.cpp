@@ -6,7 +6,7 @@ namespace ism
 
 	EMBED_CLASS(Shader, t) {}
 
-	Shader::Shader(Path const & path)
+	Shader::Shader(String const & path)
 	{
 		ASSERT(ShaderLibrary::load_shader(*this, path) == Error_OK);
 	}

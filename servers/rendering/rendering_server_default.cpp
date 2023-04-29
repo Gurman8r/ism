@@ -189,17 +189,17 @@ namespace ism
 		m_storage->material_set_shader(material, shader);
 	}
 
-	Var RenderingServerDefault::material_get_param(RID material, StringName const & key) const
+	Var RenderingServerDefault::material_get_param(RID material, String const & key) const
 	{
 		return m_storage->material_get_param(material, key);
 	}
 
-	void RenderingServerDefault::material_set_param(RID material, StringName const & key, Var const & value)
+	void RenderingServerDefault::material_set_param(RID material, String const & key, Var const & value)
 	{
 		m_storage->material_set_param(material, key, value);
 	}
 
-	void RenderingServerDefault::material_update(RID material, Map<StringName, Var> const & params)
+	void RenderingServerDefault::material_update(RID material, Map<String, Var> const & params)
 	{
 		m_storage->material_update(material, params);
 	}

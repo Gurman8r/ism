@@ -3,8 +3,6 @@
 
 #include <core/templates/optional.hpp>
 #include <core/string/string_stream.hpp>
-#include <core/string/string_name.hpp>
-#include <core/string/path.hpp>
 
 namespace ism::util
 {

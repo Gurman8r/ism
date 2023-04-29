@@ -66,7 +66,7 @@ namespace ism
 		return {};
 	}
 
-	Error_ OS_Windows::open_dynamic_library(Path const & path, void *& instance)
+	Error_ OS_Windows::open_dynamic_library(String const & path, void *& instance)
 	{
 		if (path.empty()) { return Error_Unknown; }
 		instance = LoadLibraryA(path.c_str());
@@ -89,12 +89,12 @@ namespace ism
 		return Error_OK;
 	}
 
-	Error_ OS_Windows::execute(Path const & path, Vector<String> const & args, String * pipe, i32 * exitcode, bool read_stderr, Mutex * pipe_mutex)
+	Error_ OS_Windows::execute(String const & path, Vector<String> const & args, String * pipe, i32 * exitcode, bool read_stderr, Mutex * pipe_mutex)
 	{
 		return Error_Unknown;
 	}
 
-	Error_ OS_Windows::create_process(Path const & path, Vector<String> const & args, ProcessID * child_id)
+	Error_ OS_Windows::create_process(String const & path, Vector<String> const & args, ProcessID * child_id)
 	{
 		return Error_Unknown;
 	}
@@ -109,24 +109,24 @@ namespace ism
 		return -1;
 	}
 
-	Path OS_Windows::get_cwd() const
+	String OS_Windows::get_cwd() const
 	{
-		return (Path)(String)std::filesystem::current_path().string();
+		return (String)std::filesystem::current_path().string();
 	}
 
-	Error_ OS_Windows::set_cwd(Path const & path)
+	Error_ OS_Windows::set_cwd(String const & path)
 	{
-		return std::filesystem::current_path((std::wstring)path.string().widen()), Error_OK;
+		return std::filesystem::current_path((std::wstring)path.widen()), Error_OK;
 	}
 
-	Error_ OS_Windows::shell_open(Path const & path)
+	Error_ OS_Windows::shell_open(String const & path)
 	{
 		return Error_Unknown;
 	}
 
-	Path OS_Windows::get_env(String const & key) const
+	String OS_Windows::get_env(String const & key) const
 	{
-		return ""_path;
+		return "";
 	}
 
 	bool OS_Windows::has_env(String const & key) const
@@ -134,7 +134,7 @@ namespace ism
 		return false;
 	}
 
-	bool OS_Windows::set_env(String const & key, Path const & value) const
+	bool OS_Windows::set_env(String const & key, String const & value) const
 	{
 		return false;
 	}

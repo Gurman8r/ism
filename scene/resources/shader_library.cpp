@@ -67,7 +67,7 @@ Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData (&spec)[RD:
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-Error_ ShaderLibrary::load_shader(Shader & shader, Path const & path)
+Error_ ShaderLibrary::load_shader(Shader & shader, String const & path)
 {
 	if (path.empty()) { return Error_Unknown; }
 	std::ifstream file{ path.c_str() };
@@ -89,7 +89,7 @@ Error_ ShaderLibrary::load_shader(Shader & shader, Path const & path)
 	return Error_Unknown;
 }
 
-Error_ ShaderLibrary::load_shader(Ref<Shader> shader, Path const & path)
+Error_ ShaderLibrary::load_shader(Ref<Shader> shader, String const & path)
 {
 	return !shader ? Error_Unknown : load_shader(**shader, path);
 }

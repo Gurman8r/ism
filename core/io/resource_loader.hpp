@@ -11,10 +11,10 @@ namespace ism
 		friend class ResourceLoader;
 	public:
 		virtual ~ResourceFormatLoader() noexcept override = default;
-		NODISCARD virtual RES load(Path const & path, Error_ * error = nullptr) = 0;
-		NODISCARD virtual void get_recognized_extensions(Vector<Path> * out) const = 0;
-		NODISCARD virtual TYPE get_resource_type(Path const & path) const = 0;
-		NODISCARD virtual bool recognize_path(Path const & path, String const & hint = {}) const;
+		NODISCARD virtual RES load(String const & path, Error_ * error = nullptr) = 0;
+		NODISCARD virtual void get_recognized_extensions(Vector<String> * out) const = 0;
+		NODISCARD virtual TYPE get_resource_type(String const & path) const = 0;
+		NODISCARD virtual bool recognize_path(String const & path, String const & hint = {}) const;
 	};
 }
 
@@ -33,10 +33,10 @@ namespace ism
 #define RESOURCE_LOADER (ism::ResourceLoader::get_singleton())
 
 	protected:
-		RES _load(Path const & path, Error_ * error = nullptr);
+		RES _load(String const & path, Error_ * error = nullptr);
 
 	public:
-		RES load(Path const & path, Error_ * error = nullptr);
+		RES load(String const & path, Error_ * error = nullptr);
 		bool add(Ref<ResourceFormatLoader> format);
 		bool remove(Ref<ResourceFormatLoader> format);
 	};

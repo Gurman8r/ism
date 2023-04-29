@@ -3,7 +3,7 @@
 
 namespace ism
 {
-	Error_ FontLibrary::load_font(Font & font, Path const & path)
+	Error_ FontLibrary::load_font(Font & font, String const & path)
 	{
 		if (path.empty()) { return Error_Unknown; }
 		if (font.m_font) { TEXT_SERVER->font_destroy(font.m_font); }
@@ -13,7 +13,7 @@ namespace ism
 		return Error_OK;
 	}
 
-	Error_ FontLibrary::load_font(Ref<Font> font, Path const & path)
+	Error_ FontLibrary::load_font(Ref<Font> font, String const & path)
 	{
 		return !font ? Error_Unknown : load_font(**font, path);
 	}

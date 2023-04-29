@@ -4,9 +4,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	PackedData * PackedData::__singleton{};
-
-	void PackedData::_free_packed_dirs(PackedDir * dir)
+	static void _free_packed_dirs(Packages::PackedDir * dir)
 	{
 		for (auto & [k, v] : dir->subdirs) {
 			_free_packed_dirs(v);
@@ -14,14 +12,16 @@ namespace ism
 		memdelete(dir);
 	}
 
-	PackedData::PackedData()
+	Packages * Packages::__singleton{};
+
+	Packages::Packages()
 	{
 		__singleton = this;
 		m_root = memnew(PackedDir);
-		add_pack_source(memnew(PackedSourcePCK));
+		add_pack_source(memnew(PackSourcePCK));
 	}
 	
-	PackedData::~PackedData()
+	Packages::~Packages()
 	{
 		for (size_t i{}; i < m_sources.size(); ++i) {
 			memdelete(m_sources[i]);
@@ -29,7 +29,7 @@ namespace ism
 		_free_packed_dirs(m_root);
 	}
 
-	Error_ PackedData::add_pack(Path const & path, bool replace_files, u64 offset)
+	Error_ Packages::add_pack(String const & path, bool replace_files, u64 offset)
 	{
 		for (size_t i{}; i < m_sources.size(); ++i) {
 			if (m_sources[i]->try_open_pack(path, replace_files, offset)) {
@@ -40,29 +40,34 @@ namespace ism
 		return Error_Unknown;
 	}
 
-	void PackedData::add_pack_source(PackSource * source)
+	void Packages::add_pack_source(PackSource * source)
 	{
 		if (source != nullptr) {
 			m_sources.push_back(source);
 		}
 	}
 
-	void PackedData::add_path(Path const & package_path, Path const & path, u64 offset, u64 size, PathID id, PackSource * src, bool replace_files, bool encrypted)
+	void Packages::add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackSource * src, bool replace_files, bool encrypted)
 	{
 		bool const exists{ m_files.contains(path) };
 
-		PackedFile pf{ package_path, offset, size, id, src, encrypted };
-		if (!exists || replace_files) {
-			m_files[path] = std::move(pf);
+		if ((!exists || replace_files) && !path.filename().empty()) {
+			m_files[path] = PackedFile{ package_path, offset, size, id, src, encrypted };
+			printf("%s\n", path.c_str());
 		}
 
 		if (!exists)
 		{
+			String p{ path };
+			if (size_t i{ p.find("://")}; i != String::npos) {
+				p.erase(p.begin(), p.begin() + i + 2);
+			}
+
 			PackedDir * cd{ m_root };
-			if (path.string().contains('/'))
+			if (p.contains('/'))
 			{
-				Vector<String> const ds{ path.root_directory().string().split('/') };
-				for (size_t j = 0; j < ds.size(); j++) {
+				Vector<String> const ds{ p.root_directory().split('/') };
+				for (size_t j{}; j < ds.size(); ++j) {
 					if (!cd->subdirs.contains(ds[j])) {
 						PackedDir * pd{ memnew(PackedDir) };
 						pd->name = ds[j];
@@ -75,13 +80,13 @@ namespace ism
 					}
 				}
 			}
-			if (Path filename{ path.filename() }; !filename.empty()) {
+			if (String filename{ path.filename() }) {
 				cd->files.insert(filename);
 			}
 		}
 	}
 
-	Ref<FileAccess> PackedData::try_open_path(Path const & path)
+	Ref<FileAccess> Packages::try_open_path(String const & path)
 	{
 		if (auto const it{ m_files.find(path) }; (it == m_files.end()) || !it->second.offset) {
 			return nullptr;
@@ -91,29 +96,29 @@ namespace ism
 		}
 	}
 
-	bool PackedData::has_path(Path const & path)
+	bool Packages::has_path(String const & path)
 	{
 		return m_files.contains(path);
 	}
 
-	Ref<DirAccess> PackedData::try_open_directory(Path const & path)
+	Ref<DirAccess> Packages::try_open_dir(String const & path)
 	{
 		return nullptr;
 	}
 
-	bool PackedData::has_directory(Path const & path)
+	bool Packages::has_dir(String const & path)
 	{
 		return false;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool PackedSourcePCK::try_open_pack(Path const & path, bool replace_files, u64 offset)
+	bool PackSourcePCK::try_open_pack(String const & path, bool replace_files, u64 offset)
 	{
 		return false;
 	}
 
-	Ref<FileAccess> PackedSourcePCK::get_file(Path const & path, PackedData::PackedFile * file)
+	Ref<FileAccess> PackSourcePCK::get_file(String const & path, Packages::PackedFile * file)
 	{
 		return Ref<FileAccess>();
 	}

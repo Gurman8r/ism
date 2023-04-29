@@ -12,7 +12,7 @@ namespace ism
 		if (m_font) { TEXT_SERVER->font_destroy(m_font); m_font = nullptr; }
 	}
 
-	Font::Font(Path const & path)
+	Font::Font(String const & path)
 	{
 		ASSERT(FontLibrary::load_font(*this, path) == Error_OK);
 	}

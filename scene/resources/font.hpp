@@ -16,7 +16,7 @@ namespace ism
 	public:
 		Font() noexcept {}
 		
-		explicit Font(Path const & path);
+		explicit Font(String const & path);
 
 		virtual ~Font();
 

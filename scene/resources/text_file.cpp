@@ -18,7 +18,7 @@ namespace ism
 		};
 	}
 
-	TextFile::TextFile(Path const & path)
+	TextFile::TextFile(String const & path)
 	{
 		if (path.empty()) { return; }
 		std::ifstream file{ path.c_str(), std::ios_base::binary };

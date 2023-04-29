@@ -81,22 +81,22 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Path OS::get_executable_path() const
+	String OS::get_executable_path() const
 	{
 		return m_exepath;
 	}
 
-	Path OS::get_cwd() const
+	String OS::get_cwd() const
 	{
 		return {};
 	}
 
-	Error_ OS::set_cwd(Path const & path)
+	Error_ OS::set_cwd(String const & path)
 	{
 		return Error_Unknown;
 	}
 
-	Error_ OS::shell_open(Path const & path)
+	Error_ OS::shell_open(String const & path)
 	{
 		return Error_Unknown;
 	}
@@ -160,54 +160,54 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Path OS::get_safe_path(Path const & path, bool allow_dir_separator) const
+	String OS::get_safe_path(String const & path, bool allow_dir_separator) const
 	{
 		return ".";
 	}
 
-	Path OS::get_binary_path() const
+	String OS::get_binary_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_bundle_path() const
+	String OS::get_bundle_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_cache_path() const
+	String OS::get_cache_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_config_path() const
+	String OS::get_config_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_data_path() const
+	String OS::get_data_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_resource_path() const
+	String OS::get_resource_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_user_path() const
+	String OS::get_user_path() const
 	{
 		return ".";
 	}
 
-	Path OS::get_system_dir(SystemDir_ value) const
+	String OS::get_system_dir(SystemDir_ value) const
 	{
 		return ".";
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ OS::move_to_trash(Path const & path)
+	Error_ OS::move_to_trash(String const & path)
 	{
 		return Error_Unknown;
 	}

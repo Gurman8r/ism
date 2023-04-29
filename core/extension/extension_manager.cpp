@@ -15,17 +15,17 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ExtensionManager::LoadStatus_ ExtensionManager::load_extension(Path const & path)
+	ExtensionManager::LoadStatus_ ExtensionManager::load_extension(String const & path)
 	{
 		auto const it{ m_extensions.find(path) };
 		if (it != m_extensions.end()) { return LoadStatus_AlreadyLoaded; }
 
-		Path const stem{ path.stem() };
-		Path const ini_path{ Path::format("%s%s.ini", PROJECT_SETTINGS->get_config_path().c_str(), stem.c_str()) };
+		String const stem{ path.stem() };
+		String const ini_path{ String::format("%s%s.ini", PROJECT_SETTINGS->get_config_path().c_str(), stem.c_str()) };
 		ConfigFile const ini{ ini_path };
-		String const library_name{ ini.get_string("configuration", "library_name", stem.string()) };
+		String const library_name{ ini.get_string("configuration", "library_name", stem) };
 		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("open_%s_library", library_name.c_str())) };
-		Path const dll_path{ Path::format("%s%s", PROJECT_SETTINGS->get_binary_path().c_str(), library_name.c_str()) };
+		String const dll_path{ String::format("%s%s", PROJECT_SETTINGS->get_binary_path().c_str(), library_name.c_str()) };
 		Ref<Extension> extension{ Extension::open(dll_path, entry_symbol) };
 		if (!extension) { return LoadStatus_Failure; }
 
@@ -43,7 +43,7 @@ namespace ism
 		return LoadStatus_Success;
 	}
 
-	ExtensionManager::LoadStatus_ ExtensionManager::unload_extension(Path const & path)
+	ExtensionManager::LoadStatus_ ExtensionManager::unload_extension(String const & path)
 	{
 		auto const it{ m_extensions.find(path) };
 		if (it == m_extensions.end()) { return LoadStatus_NotLoaded; }
@@ -66,14 +66,14 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool ExtensionManager::is_extension_loaded(Path const & path)
+	bool ExtensionManager::is_extension_loaded(String const & path)
 	{
 		return m_extensions.contains(path);
 	}
 
-	Vector<Path> ExtensionManager::get_loaded_extensions() const
+	Vector<String> ExtensionManager::get_loaded_extensions() const
 	{
-		Vector<Path> ext{};
+		Vector<String> ext{};
 		ext.reserve(m_extensions.size());
 		for (auto const & [k, v] : m_extensions) {
 			ext.push_back(k);
@@ -81,7 +81,7 @@ namespace ism
 		return ext;
 	}
 
-	Ref<Extension> ExtensionManager::get_extension(Path const & path)
+	Ref<Extension> ExtensionManager::get_extension(String const & path)
 	{
 		if (auto const it{ m_extensions.find(path) }; it != m_extensions.end()) {
 			return it->second;

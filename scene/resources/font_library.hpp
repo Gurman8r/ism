@@ -8,8 +8,8 @@ namespace ism
 	class ISM_API FontLibrary final
 	{
 	public:
-		static Error_ load_font(Font & font, Path const & path);
-		static Error_ load_font(Ref<Font> font, Path const & path);
+		static Error_ load_font(Font & font, String const & path);
+		static Error_ load_font(Ref<Font> font, String const & path);
 	};
 }
 

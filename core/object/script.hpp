@@ -58,7 +58,7 @@ namespace ism
 		ScriptLanguage();
 		virtual ~ScriptLanguage() override;
 
-		NODISCARD virtual StringName get_name() const = 0;
+		NODISCARD virtual String get_name() const = 0;
 
 		virtual void initialize() = 0;
 		virtual void finalize() = 0;
@@ -74,14 +74,14 @@ namespace ism
 
 	public:
 		Script();
-		explicit Script(Path const & path);
+		explicit Script(String const & path);
 		virtual ~Script() override;
 
 		//virtual bool can_instantiate() const = 0;
 		//virtual Ref<Script> get_base_script() const = 0;
-		//virtual StringName get_global_name() const = 0;
+		//virtual String get_global_name() const = 0;
 		//virtual bool inherits_script(Ref<Script> const & script) const = 0;
-		//virtual StringName get_instance_base_type() const = 0;
+		//virtual String get_instance_base_type() const = 0;
 		//virtual ScriptInstance * instance_create(Object * self) = 0;
 		//virtual PlaceholderScriptInstance * placeholder_instance_create(Object * self) { return nullptr; }
 		//virtual bool instance_has(Object const * self) const = 0;
@@ -107,9 +107,9 @@ namespace ism
 	public:
 		virtual ~ScriptInstance();
 
-		virtual bool get_constants(HashMap<StringName, OBJ> * out) const = 0;
-		virtual bool get_properties(HashMap<StringName, PROPERTY> * out) const = 0;
-		virtual bool get_functions(HashMap<StringName, FUNCTION> * out) const = 0;
+		virtual bool get_constants(HashMap<String, OBJ> * out) const = 0;
+		virtual bool get_properties(HashMap<String, PROPERTY> * out) const = 0;
+		virtual bool get_functions(HashMap<String, FUNCTION> * out) const = 0;
 
 		virtual void notification(i32 notification) = 0;
 
@@ -135,9 +135,9 @@ namespace ism
 		PlaceholderScriptInstance(ScriptLanguage * language, Ref<Script> script, Object * owner);
 		virtual ~PlaceholderScriptInstance() override;
 
-		virtual bool get_constants(HashMap<StringName, OBJ> * out) const;
-		virtual bool get_properties(HashMap<StringName, PROPERTY> * out) const;
-		virtual bool get_functions(HashMap<StringName, FUNCTION> * out) const;
+		virtual bool get_constants(HashMap<String, OBJ> * out) const;
+		virtual bool get_properties(HashMap<String, PROPERTY> * out) const;
+		virtual bool get_functions(HashMap<String, FUNCTION> * out) const;
 
 		virtual void notification(i32 notification) override {}
 		

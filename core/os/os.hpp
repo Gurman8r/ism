@@ -20,7 +20,7 @@ namespace ism
 	{
 		static OS * __singleton;
 
-		Path				m_exepath{};
+		String				m_exepath{};
 		Vector<String>		m_cmdline{};
 		i32					m_exit_code{};
 		CompositeLogger *	m_logger{};
@@ -69,23 +69,23 @@ namespace ism
 		//virtual void open_midi_inputs();
 		//virtual void close_midi_inputs();
 
-		virtual Error_ open_dynamic_library(Path const & path, void *& instance) = 0;
+		virtual Error_ open_dynamic_library(String const & path, void *& instance) = 0;
 		virtual Error_ close_dynamic_library(void * instance) = 0;
 		virtual Error_ get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional = false) = 0;
 
-		NODISCARD virtual Path get_executable_path() const;
-		virtual Error_ execute(Path const & path, Vector<String> const & args, String * pipe = nullptr, i32 * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) = 0;
-		virtual Error_ create_process(Path const & path, Vector<String> const & args, ProcessID * child_id = nullptr) = 0;
+		NODISCARD virtual String get_executable_path() const;
+		virtual Error_ execute(String const & path, Vector<String> const & args, String * pipe = nullptr, i32 * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) = 0;
+		virtual Error_ create_process(String const & path, Vector<String> const & args, ProcessID * child_id = nullptr) = 0;
 		virtual Error_ kill(ProcessID const & pid) = 0;
 		NODISCARD virtual i32 get_pid() const = 0;
 
-		NODISCARD virtual Path get_cwd() const;
-		virtual Error_ set_cwd(Path const & path);
-		virtual Error_ shell_open(Path const & path);
+		NODISCARD virtual String get_cwd() const;
+		virtual Error_ set_cwd(String const & path);
+		virtual Error_ shell_open(String const & path);
 
-		NODISCARD virtual Path get_env(String const & key) const = 0;
+		NODISCARD virtual String get_env(String const & key) const = 0;
 		NODISCARD virtual bool has_env(String const & key) const = 0;
-		virtual bool set_env(String const & key, Path const & value) const = 0;
+		virtual bool set_env(String const & key, String const & value) const = 0;
 
 		NODISCARD virtual String get_name() const = 0;
 		//NODISCARD virtual String get_distro() const = 0;
@@ -179,14 +179,14 @@ namespace ism
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		NODISCARD Path get_safe_path(Path const & path, bool allow_dir_separator = false) const;
-		NODISCARD virtual Path get_binary_path() const;
-		NODISCARD virtual Path get_bundle_path() const;
-		NODISCARD virtual Path get_cache_path() const;
-		NODISCARD virtual Path get_config_path() const;
-		NODISCARD virtual Path get_data_path() const;
-		NODISCARD virtual Path get_resource_path() const;
-		NODISCARD virtual Path get_user_path() const;
+		NODISCARD String get_safe_path(String const & path, bool allow_dir_separator = false) const;
+		NODISCARD virtual String get_binary_path() const;
+		NODISCARD virtual String get_bundle_path() const;
+		NODISCARD virtual String get_cache_path() const;
+		NODISCARD virtual String get_config_path() const;
+		NODISCARD virtual String get_data_path() const;
+		NODISCARD virtual String get_resource_path() const;
+		NODISCARD virtual String get_user_path() const;
 
 		enum SystemDir_
 		{
@@ -201,11 +201,11 @@ namespace ism
 			SystemDir_MAX
 		};
 
-		NODISCARD virtual Path get_system_dir(SystemDir_ value) const;
+		NODISCARD virtual String get_system_dir(SystemDir_ value) const;
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-		virtual Error_ move_to_trash(Path const & path);
+		virtual Error_ move_to_trash(String const & path);
 
 		virtual void debug_break();
 

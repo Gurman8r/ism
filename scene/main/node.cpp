@@ -66,12 +66,12 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	StringName Node::get_name() const
+	String Node::get_name() const
 	{
 		return m_data.name;
 	}
 
-	void Node::set_name(StringName const & name)
+	void Node::set_name(String const & name)
 	{
 	}
 

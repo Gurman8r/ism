@@ -36,22 +36,22 @@ namespace ism
 
 		virtual String get_stdin_string(bool block = true) override;
 
-		virtual Error_ open_dynamic_library(Path const & path, void *& instance) override;
+		virtual Error_ open_dynamic_library(String const & path, void *& instance) override;
 		virtual Error_ close_dynamic_library(void * instance) override;
 		virtual Error_ get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional = false) override;
 
-		virtual Error_ execute(Path const & path, Vector<String> const & args, String * pipe = nullptr, i32 * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) override;
-		virtual Error_ create_process(Path const & path, Vector<String> const & args, ProcessID * child_id = nullptr) override;
+		virtual Error_ execute(String const & path, Vector<String> const & args, String * pipe = nullptr, i32 * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) override;
+		virtual Error_ create_process(String const & path, Vector<String> const & args, ProcessID * child_id = nullptr) override;
 		virtual Error_ kill(ProcessID const & pid) override;
 		virtual i32 get_pid() const override;
 
-		virtual Path get_cwd() const override;
-		virtual Error_ set_cwd(Path const & path) override;
-		virtual Error_ shell_open(Path const & path) override;
+		virtual String get_cwd() const override;
+		virtual Error_ set_cwd(String const & path) override;
+		virtual Error_ shell_open(String const & path) override;
 
-		virtual Path get_env(String const & key) const override;
+		virtual String get_env(String const & key) const override;
 		virtual bool has_env(String const & key) const override;
-		virtual bool set_env(String const & key, Path const & value) const override;
+		virtual bool set_env(String const & key, String const & value) const override;
 
 		virtual String get_name() const override;
 		virtual String get_model_name() const;

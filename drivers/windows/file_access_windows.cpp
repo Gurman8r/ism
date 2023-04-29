@@ -27,7 +27,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ FileAccessWindows::open_internal(Path const & path, FileMode_ mode)
+	Error_ FileAccessWindows::open_internal(String const & path, FileMode_ mode)
 	{
 		_close();
 
@@ -56,7 +56,7 @@ namespace ism
 		_close();
 	}
 
-	bool FileAccessWindows::exists(Path const & path)
+	bool FileAccessWindows::exists(String const & path)
 	{
 		FILE * const fp{ fopen(path.c_str(), "rb") };
 		ON_SCOPE_EXIT(&fp) { fclose(fp); };
@@ -68,12 +68,12 @@ namespace ism
 		return m_file != nullptr;
 	}
 
-	Path FileAccessWindows::get_path() const
+	String FileAccessWindows::get_path() const
 	{
 		return m_path;
 	}
 
-	Path FileAccessWindows::get_path_absolute() const
+	String FileAccessWindows::get_path_absolute() const
 	{
 		return m_path_abs;
 	}
@@ -164,14 +164,14 @@ namespace ism
 	void FileAccessWindows::initialize()
 	{
 		FileAccess::__create_func[FileAccessType_Resources] = []() -> Ref<FileAccess> { return memnew(FileAccessWindows); };
-		FileAccess::__create_func[FileAccessType_UserData] = []() -> Ref<FileAccess> { return memnew(FileAccessWindows); };
+		FileAccess::__create_func[FileAccessType_User] = []() -> Ref<FileAccess> { return memnew(FileAccessWindows); };
 		FileAccess::__create_func[FileAccessType_Filesystem] = []() -> Ref<FileAccess> { return memnew(FileAccessWindows); };
 	}
 
 	void FileAccessWindows::finalize()
 	{
 		FileAccess::__create_func[FileAccessType_Resources] = nullptr;
-		FileAccess::__create_func[FileAccessType_UserData] = nullptr;
+		FileAccess::__create_func[FileAccessType_User] = nullptr;
 		FileAccess::__create_func[FileAccessType_Filesystem] = nullptr;
 	}
 

@@ -37,7 +37,7 @@ namespace ism
 
 	public:
 		ShaderMaterial();
-		explicit ShaderMaterial(Path const & path);
+		explicit ShaderMaterial(String const & path);
 		virtual ~ShaderMaterial() override;
 		virtual RID get_shader_rid() const override;
 		virtual Shader::Mode_ get_shader_mode() const override;
@@ -46,8 +46,8 @@ namespace ism
 		Ref<Shader> get_shader() const;
 		void set_shader(Ref<Shader> const & value);
 
-		Var get_shader_param(StringName const & key) const;
-		void set_shader_param(StringName const & key, Var const & value);
+		Var get_shader_param(String const & key) const;
+		void set_shader_param(String const & key, Var const & value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -76,7 +76,7 @@ namespace ism
 
 	public:
 		StandardMaterial3D();
-		explicit StandardMaterial3D(Path const & path);
+		explicit StandardMaterial3D(String const & path);
 		virtual ~StandardMaterial3D() override;
 		virtual RID get_shader_rid() const override;
 		virtual Shader::Mode_ get_shader_mode() const override;

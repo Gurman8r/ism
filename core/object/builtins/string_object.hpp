@@ -42,10 +42,6 @@ namespace ism
 
 		StringObject(Unicode const & value) : m_string{ value.narrow() } {}
 
-		StringObject(StringName const & value) : m_string{ value.string() } {}
-
-		StringObject(Path const & value) : m_string{ value.string() } {}
-
 		StringObject(StringView const value) : m_string{ value.data(), value.size() } {}
 
 		StringObject(std::initializer_list<char> init) : m_string{ init } {}

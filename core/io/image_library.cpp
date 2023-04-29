@@ -11,7 +11,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ ImageLibrary::load_image(Image & image, Path const & path)
+	Error_ ImageLibrary::load_image(Image & image, String const & path)
 	{
 		if (path.empty()) {
 			return Error_Unknown;
@@ -37,7 +37,7 @@ namespace ism
 		return Error_OK;
 	}
 
-	Error_ ImageLibrary::load_image(Ref<Image> image, Path const & path)
+	Error_ ImageLibrary::load_image(Ref<Image> image, String const & path)
 	{
 		return !image ? Error_Unknown : load_image(**image, path);
 	}
@@ -46,23 +46,23 @@ namespace ism
 
 	EMBED_CLASS(ImageFormatLoader, t) {}
 
-	RES ImageFormatLoader::load(Path const & path, Error_ * error)
+	RES ImageFormatLoader::load(String const & path, Error_ * error)
 	{
 		auto image{ Ref<Image>::new_() };
 		ImageLibrary::load_image(image, path);
 		return image;
 	}
 
-	void ImageFormatLoader::get_recognized_extensions(Vector<Path> * out) const
+	void ImageFormatLoader::get_recognized_extensions(Vector<String> * out) const
 	{
 		if (!out) { return; }
-		out->push_back(".jpg"_path);
-		out->push_back(".jpeg"_path);
-		out->push_back(".png"_path);
-		out->push_back(".bmp"_path);
+		out->push_back(".jpg");
+		out->push_back(".jpeg");
+		out->push_back(".png");
+		out->push_back(".bmp");
 	}
 
-	TYPE ImageFormatLoader::get_resource_type(Path const & path) const
+	TYPE ImageFormatLoader::get_resource_type(String const & path) const
 	{
 		return nullptr;
 	}

@@ -8,7 +8,7 @@ namespace ism
 
 	ResourceSaver::~ResourceSaver() {}
 
-	Error_ ResourceSaver::save(RES const & res, Path const & path)
+	Error_ ResourceSaver::save(RES const & res, String const & path)
 	{
 		return Error_OK;
 	}

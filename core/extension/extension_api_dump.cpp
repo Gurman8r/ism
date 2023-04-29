@@ -8,7 +8,7 @@ namespace ism
 		return api_dump;
 	}
 
-	void ExtensionAPIDump::generate_extension_json_file(Path const & path)
+	void ExtensionAPIDump::generate_extension_json_file(String const & path)
 	{
 		DICT api_dump{ generate_extension_api() };
 	}
