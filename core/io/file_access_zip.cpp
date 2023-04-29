@@ -162,7 +162,7 @@ namespace ism
 			File f{ pkg_num };
 			unzGetFilePos(zfile, &f.file_pos);
 		
-			String const path{ package_path.stem() + "://" + String{filename_inzip} };
+			String const path{ package_path.filename() + "://" + String{filename_inzip} };
 			m_files[path] = f;
 
 			PACKAGES->add_path(package_path, path, 1, 0, path.hash_code(), this, replace_files, false);
