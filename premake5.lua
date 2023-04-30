@@ -41,7 +41,19 @@ include "modules/zip/zip.premake5.lua"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
-project "*"
+group		""
+project		"TestCS"
+kind		"SharedLib"
+language	"C#"
+targetname	"%{prj.name}"
+targetdir	"%{_BUILD}"
+objdir		"%{_TEMPS}"
+location	"%{_PROJECT}"
+files		{ "%{wks.location}/assets/Test.cs" }
+
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+
+project "*" filter{ "language:C++" }
 
 debugdir "%{_BUILD}"
 

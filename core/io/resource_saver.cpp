@@ -4,9 +4,9 @@ namespace ism
 {
 	ResourceSaver * ResourceSaver::__singleton{};
 
-	ResourceSaver::ResourceSaver() { __singleton = this; }
+	ResourceSaver::ResourceSaver() { SINGLETON_CTOR(); }
 
-	ResourceSaver::~ResourceSaver() {}
+	ResourceSaver::~ResourceSaver() { SINGLETON_DTOR(); }
 
 	Error_ ResourceSaver::save(RES const & res, String const & path)
 	{

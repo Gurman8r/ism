@@ -16,7 +16,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API Packages
+	class ISM_API PackedData
 	{
 	public:
 		using PathID = size_t;
@@ -39,17 +39,16 @@ namespace ism
 		};
 
 	private:
-		static Packages * __singleton;
+		static PackedData * __singleton;
 		bool m_enabled{ true };
 		HashMap<String, PackedFile> m_files{};
 		Vector<PackSource *> m_sources{};
 		PackedDir * m_root{};
 
 	public:
-		Packages();
-		~Packages();
-		FORCE_INLINE static Packages * get_singleton() noexcept { return __singleton; }
-#define PACKAGES (ism::Packages::get_singleton())
+		PackedData();
+		~PackedData();
+		FORCE_INLINE static PackedData * get_singleton() noexcept { return __singleton; }
 
 		NODISCARD bool is_enabled() const { return m_enabled; }
 		void set_enabled(bool enabled) { m_enabled = enabled; }
@@ -65,19 +64,21 @@ namespace ism
 		NODISCARD bool has_dir(String const & path);
 	};
 
+	SINGLETON_WRAPPER(PackedData, get_packed_data);
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API PackSource {
 	public:
 		virtual ~PackSource() noexcept = default;
 		virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) = 0;
-		virtual Ref<FileAccess> get_file(String const & path, Packages::PackedFile * file) = 0;
+		virtual Ref<FileAccess> get_file(String const & path, PackedData::PackedFile * file) = 0;
 	};
 
 	class ISM_API PackSourcePCK : public PackSource {
 	public:
 		virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
-		virtual Ref<FileAccess> get_file(String const & path, Packages::PackedFile * file) override;
+		virtual Ref<FileAccess> get_file(String const & path, PackedData::PackedFile * file) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -66,13 +66,11 @@ namespace ism
 {
 	ZipArchive * ZipArchive::__singleton{};
 
-	ZipArchive::ZipArchive()
-	{
-		__singleton = this;
-	}
+	ZipArchive::ZipArchive() { SINGLETON_CTOR(); }
 
 	ZipArchive::~ZipArchive()
 	{
+		SINGLETON_DTOR();
 		for (size_t i{}; i < m_packages.size(); ++i) {
 			unzClose(m_packages[i].m_zfile);
 		}
@@ -165,7 +163,7 @@ namespace ism
 			String const path{ package_path.filename() + "://" + String{filename_inzip} };
 			m_files[path] = f;
 
-			PACKAGES->add_path(package_path, path, 1, 0, path.hash_code(), this, replace_files, false);
+			get_packed_data()->add_path(package_path, path, 1, 0, path.hash_code(), this, replace_files, false);
 		
 			if ((i + 1) < gi.number_entry) {
 				unzGoToNextFile(zfile);
@@ -175,7 +173,7 @@ namespace ism
 		return false;
 	}
 
-	Ref<FileAccess> ZipArchive::get_file(String const & path, Packages::PackedFile * file)
+	Ref<FileAccess> ZipArchive::get_file(String const & path, PackedData::PackedFile * file)
 	{
 		return memnew(FileAccessZip(path, *file));
 	}
@@ -185,7 +183,7 @@ namespace ism
 {
 	EMBED_CLASS(FileAccessZip, t) {}
 
-	FileAccessZip::FileAccessZip(String const & path, Packages::PackedFile const & file)
+	FileAccessZip::FileAccessZip(String const & path, PackedData::PackedFile const & file)
 	{
 		open_internal(path, FileMode_Read);
 	}
@@ -197,22 +195,25 @@ namespace ism
 
 	Error_ FileAccessZip::open_internal(String const & path, FileMode_ mode)
 	{
-		m_zfile = VALIDATE(ZipArchive::get_singleton())->get_file_handle(path);
+		m_zfile = VALIDATE(get_zip_archive())->get_file_handle(path);
 		ASSERT(m_zfile);
 		ASSERT(UNZ_OK == unzGetCurrentFileInfo64(m_zfile, &m_info, nullptr, 0, nullptr, 0, nullptr, 0));
 		return Error_OK;
 	}
 
-	void FileAccessZip::close()
+	FileAccessZip & FileAccessZip::close()
 	{
-		if (!m_zfile) { return; }
-		VALIDATE(ZipArchive::get_singleton())->close_handle(m_zfile);
-		m_zfile = nullptr;
+		if (m_zfile) {
+			VALIDATE(get_zip_archive())->close_handle(m_zfile);
+			m_zfile = nullptr;
+		}
+		return (*this);
 	}
 
-	void FileAccessZip::flush()
+	FileAccessZip & FileAccessZip::flush()
 	{
 		CRASH("this should never be called");
+		return (*this);
 	}
 
 	bool FileAccessZip::exists(String const & path)
@@ -225,16 +226,18 @@ namespace ism
 		return m_zfile;
 	}
 
-	void FileAccessZip::seek(u64 position)
+	FileAccessZip & FileAccessZip::seek(u64 position)
 	{
 		ASSERT(m_zfile);
 		unzSeekCurrentFile(m_zfile, (i32)position);
+		return (*this);
 	}
 
-	void FileAccessZip::seek_end(i64 position)
+	FileAccessZip & FileAccessZip::seek_end(i64 position)
 	{
 		ASSERT(m_zfile);
 		unzSeekCurrentFile(m_zfile, (i32)(get_length() + position));
+		return (*this);
 	}
 
 	u64 FileAccessZip::get_position() const
@@ -266,6 +269,16 @@ namespace ism
 		return Error_OK;
 	}
 
+	String FileAccessZip::get_path() const
+	{
+		return String();
+	}
+
+	String FileAccessZip::get_path_abs() const
+	{
+		return String();
+	}
+
 	u8 FileAccessZip::read_8() const
 	{
 		u8 temp{};
@@ -290,9 +303,10 @@ namespace ism
 		return (size_t)read;
 	}
 
-	void FileAccessZip::write_8(u8 value)
+	FileAccessZip & FileAccessZip::write_8(u8 value)
 	{
 		CRASH("this should never be called");
+		return (*this);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

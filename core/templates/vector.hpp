@@ -37,6 +37,9 @@ namespace ism
 
 		template <class Pr
 		> NODISCARD auto find_if(Pr && pr) const noexcept { return std::find_if(begin(), end(), FWD(pr)); }
+
+		template <class Fn = T(*)(T const &)
+		> auto & transform(Fn fn) noexcept { return std::transform(begin(), end(), begin(), fn), (*this); }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

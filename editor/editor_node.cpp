@@ -122,10 +122,10 @@ namespace ism
 		m_log = memnew(EditorLog);
 		m_viewport = memnew(EditorViewport);
 
-		RID c{ RENDERING_SERVER->camera_create() };
-		RENDERING_SERVER->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
-		RENDERING_SERVER->camera_set_transform(c, camera.transform);
-		RENDERING_SERVER->camera_destroy(c);
+		RID c{ get_rendering_server()->camera_create() };
+		get_rendering_server()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
+		get_rendering_server()->camera_set_transform(c, camera.transform);
+		get_rendering_server()->camera_destroy(c);
 
 		m_shaders["2d"].instance("../assets/shaders/2d.shader");
 		m_shaders["3d"].instance("../assets/shaders/3d.shader");
@@ -182,9 +182,9 @@ namespace ism
 		}, shader);
 	
 		// material (WIP)
-		material = RENDERING_SERVER->material_create();
-		RENDERING_SERVER->material_set_shader(material, shader);
-		RENDERING_SERVER->material_update(material, {
+		material = get_rendering_server()->material_create();
+		get_rendering_server()->material_set_shader(material, shader);
+		get_rendering_server()->material_update(material, {
 			{ "Ambient", Vec4{ 0.8f, 0.4f, 0.2f, 1.0f } },
 			{ "Diffuse", Vec4{ 0.5f, 0.5f, 0.5f, 1.0f } },
 			{ "Specular", Vec4{ 1.0f, 1.0f, 1.0f, 1.0f } },
@@ -212,7 +212,7 @@ namespace ism
 	{
 		ASSERT(this == __singleton); ON_SCOPE_EXIT(&) { __singleton = nullptr; };
 
-		if (material) { RENDERING_SERVER->material_destroy(material); }
+		if (material) { get_rendering_server()->material_destroy(material); }
 
 		for (size_t i{}; i < ARRAY_SIZE(uniform_buffers); ++i) {
 			if (uniform_buffers[i]) { RENDERING_DEVICE->buffer_destroy(uniform_buffers[i]); }
@@ -245,12 +245,12 @@ namespace ism
 			Duration const delta_time{ get_tree()->get_delta_time() };
 
 			f32 const camera_move_speed{ 10.f * delta_time };
-			if (INPUT->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_move_speed); }
-			else if (INPUT->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_move_speed); }
-			if (INPUT->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_move_speed); }
-			else if (INPUT->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_move_speed); }
-			if (INPUT->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_move_speed); }
-			else if (INPUT->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_move_speed); }
+			if (get_input()->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_move_speed); }
+			else if (get_input()->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_move_speed); }
+			if (get_input()->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_move_speed); }
+			else if (get_input()->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_move_speed); }
+			if (get_input()->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_move_speed); }
+			else if (get_input()->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_move_speed); }
 
 			if (m_viewport->get_window()) {
 				if (Vec2 const res{ m_viewport->get_window()->InnerRect.GetWidth(), m_viewport->get_window()->InnerRect.GetHeight() }
@@ -262,7 +262,7 @@ namespace ism
 			}
 
 			if (m_viewport->m_is_dragging_view) {
-				Vec2 const drag{ INPUT->get_mouse_delta() * (f32)delta_time };
+				Vec2 const drag{ get_input()->get_mouse_delta() * (f32)delta_time };
 				camera.yaw += drag[0];
 				camera.pitch = constrain(camera.pitch + drag[1], -89.f, 89.f);
 			}

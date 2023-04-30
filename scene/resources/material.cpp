@@ -9,12 +9,12 @@ namespace ism
 
 	Material::Material()
 	{
-		m_material = RENDERING_SERVER->material_create();
+		m_material = get_rendering_server()->material_create();
 	}
 
 	Material::~Material()
 	{
-		if (m_material) { RENDERING_SERVER->material_destroy(m_material); m_material = nullptr; }
+		if (m_material) { get_rendering_server()->material_destroy(m_material); m_material = nullptr; }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -44,17 +44,17 @@ namespace ism
 	{
 		if (m_shader == value) { return; }
 		m_shader = value;
-		RENDERING_SERVER->material_set_shader(get_rid(), get_shader_rid());
+		get_rendering_server()->material_set_shader(get_rid(), get_shader_rid());
 	}
 
 	Var ShaderMaterial::get_shader_param(String const & key) const
 	{
-		return RENDERING_SERVER->material_get_param(get_rid(), key);
+		return get_rendering_server()->material_get_param(get_rid(), key);
 	}
 
 	void ShaderMaterial::set_shader_param(String const & key, Var const & value)
 	{
-		RENDERING_SERVER->material_set_param(get_rid(), key, value);
+		get_rendering_server()->material_set_param(get_rid(), key, value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -88,19 +88,19 @@ namespace ism
 	void StandardMaterial3D::set_albedo(Color const & value)
 	{
 		m_params.albedo = value;
-		RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
+		get_rendering_server()->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
 	}
 
 	void StandardMaterial3D::set_specular(f32 value)
 	{
 		m_params.specular = value;
-		RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Specular], value);
+		get_rendering_server()->material_set_param(get_rid(), parameter_names[Param_Specular], value);
 	}
 
 	void StandardMaterial3D::set_metallic(f32 value)
 	{
 		m_params.metallic = value;
-		RENDERING_SERVER->material_set_param(get_rid(), parameter_names[Param_Metallic], value);
+		get_rendering_server()->material_set_param(get_rid(), parameter_names[Param_Metallic], value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

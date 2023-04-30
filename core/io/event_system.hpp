@@ -77,7 +77,7 @@ private:
 	public:
 		virtual ~EventListener() noexcept override { unsubscribe(); }
 
-		auto get_event_bus() const noexcept -> EventBus * { return m_bus; }
+		auto get_bus() const noexcept -> EventBus * { return m_bus; }
 
 	protected:
 		friend class EventBus;
@@ -212,8 +212,8 @@ private:
 		i32 m_next_index{};
 
 	public:
-		EventBus() noexcept { __singleton = this; }
-		virtual ~EventBus() noexcept override = default;
+		EventBus() noexcept { SINGLETON_CTOR(); }
+		virtual ~EventBus() noexcept override { SINGLETON_DTOR(); }
 		FORCE_INLINE static EventBus * get_singleton() noexcept { return __singleton; }
 
 	public:
@@ -321,8 +321,12 @@ private:
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	SINGLETON_WRAPPER(EventBus, get_event_bus);
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	inline EventListener::EventListener(EventBus * bus) noexcept
-		: m_bus{ bus ? bus : VALIDATE(EventBus::get_singleton()) }
+		: m_bus{ bus ? bus : VALIDATE(get_event_bus()) }
 		, m_dispatch_order{ ++m_bus->m_next_index }
 	{
 	}

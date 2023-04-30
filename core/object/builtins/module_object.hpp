@@ -93,7 +93,7 @@ namespace ism
 	template <class Name = cstring
 	> MODULE create_extension_module(Name && name) noexcept
 	{
-		DICT modules{ INTERNALS->get_module_dict() };
+		DICT modules{ get_internals()->get_module_dict() };
 		STR str_name{ FWD_OBJ(name) };
 		if (modules.contains(str_name)) { return nullptr; }
 		return modules[str_name] = MODULE({ str_name });
@@ -102,7 +102,7 @@ namespace ism
 	template <class Name = cstring
 	> MODULE import_module(Name && name) noexcept
 	{
-		DICT modules{ INTERNALS->get_module_dict() };
+		DICT modules{ get_internals()->get_module_dict() };
 		STR str_name{ FWD_OBJ(name) };
 		return modules.lookup(name);
 	}

@@ -1,23 +1,39 @@
 #include <modules/mono/mono_script.hpp>
+#include <core/config/project_settings.hpp>
 
 namespace ism
 {
 	EMBED_CLASS(MonoLanguage, t) {}
 
+	MonoLanguage * MonoLanguage::__singleton{};
+
 	MonoLanguage::MonoLanguage()
 	{
+		SINGLETON_CTOR();
 	}
 
 	MonoLanguage::~MonoLanguage()
 	{
+		SINGLETON_DTOR();
 	}
 
 	void MonoLanguage::initialize()
 	{
+		mono_set_dirs("C:\\Program Files\\Mono\\lib", "C:\\Program Files\\Mono\\etc");
+		m_domain = mono_jit_init("TestCS");
+		m_assembly = VALIDATE(mono_domain_assembly_open(m_domain, "TestCS.dll"));
+		m_image = VALIDATE(mono_assembly_get_image(m_assembly));
+		MonoClass * my_class = mono_class_from_name(m_image, "ISM", "Test");
+		MonoMethod * my_method;
+		MonoMethodDesc * desc = mono_method_desc_new(".Test:SayHello()", false);
+		my_method = mono_method_desc_search_in_class(desc, my_class);
+		mono_method_desc_free(desc);
+		mono_runtime_invoke(my_method, nullptr, nullptr, nullptr);
 	}
 
 	void MonoLanguage::finalize()
 	{
+		mono_jit_cleanup(m_domain);
 	}
 }
 

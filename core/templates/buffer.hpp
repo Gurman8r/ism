@@ -6,10 +6,6 @@
 #include <core/string/string.hpp>
 #include <core/templates/mpl.hpp>
 
-#ifndef DYNAMICBUFFER_PRINTV_STRING_SIZE
-#define DYNAMICBUFFER_PRINTV_STRING_SIZE 1024
-#endif
-
 namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -184,7 +180,7 @@ namespace ism
 	public:
 		self_type & printv(size_t index, cstring fmt, va_list args)
 		{
-			char s[DYNAMICBUFFER_PRINTV_STRING_SIZE]{};
+			char s[4096]{};
 			if (i32 const n{ std::vsnprintf(s, sizeof(s), fmt, args) }
 			; 0 < n) { do_write(index, s, (size_t)n); }
 			return (*this);
@@ -517,12 +513,12 @@ namespace ism
 
 		self_type & print(size_t index, String const & str) noexcept
 		{
-			return print(index, str.m_data, str.size());
+			return print(index, str.data(), str.size());
 		}
 
 		self_type & print(String const & str) noexcept
 		{
-			return print(size(), str.m_data, str.size());
+			return print(size(), str.data(), str.size());
 		}
 	};
 
@@ -809,12 +805,12 @@ namespace ism
 
 		self_type & print(size_t index, String const & str) noexcept
 		{
-			return print(index, str.m_data, str.size());
+			return print(index, str.data(), str.size());
 		}
 
 		self_type & print(String const & str) noexcept
 		{
-			return print(size(), str.m_data, str.size());
+			return print(size(), str.data(), str.size());
 		}
 	};
 

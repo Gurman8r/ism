@@ -8,21 +8,9 @@ namespace ism
 
 	AudioServer * AudioServer::__singleton{};
 
-	AudioServer::CreateFunc AudioServer::__create_func{ []() { return memnew(AudioServer); } };
+	AudioServer::AudioServer() { SINGLETON_CTOR(); }
 
-	AudioServer::AudioServer()
-	{
-		__singleton = this;
-	}
-
-	AudioServer::~AudioServer()
-	{
-	}
-
-	AudioServer * AudioServer::create()
-	{
-		return VALIDATE(__create_func)();
-	}
+	AudioServer::~AudioServer() { SINGLETON_DTOR(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

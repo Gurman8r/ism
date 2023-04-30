@@ -13,11 +13,12 @@ namespace ism
 		Engine() noexcept;
 		~Engine() noexcept;
 		FORCE_INLINE static Engine * get_singleton() noexcept { return __singleton; }
-#define ENGINE (ism::Engine::get_singleton())
 
 	public:
 
 	};
+
+	SINGLETON_WRAPPER(Engine, get_engine);
 }
 
 #endif // !_ISM_ENGINE_HPP_

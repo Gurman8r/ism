@@ -24,7 +24,6 @@ namespace ism
 	public:
 		virtual ~RenderingServer() override;
 		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return __singleton; }
-#define RENDERING_SERVER (ism::RenderingServer::get_singleton())
 		static RenderingServer * create();
 
 		virtual void initialize() = 0;
@@ -118,6 +117,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	using RS = RenderingServer;
+
+	SINGLETON_WRAPPER(RS, get_rendering_server);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

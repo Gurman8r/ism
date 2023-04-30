@@ -8,28 +8,28 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifdef CC_MSVC
-	using i8 =			signed __int8;
-	using i16 =			signed __int16;
-	using i32 =			signed __int32;
-	using i64 =			signed __int64;
-	using u8 =			unsigned __int8;
-	using u16 =			unsigned __int16;
-	using u32 =			unsigned __int32;
-	using u64 =			unsigned __int64;
+	using i8 =	signed __int8;
+	using i16 =	signed __int16;
+	using i32 =	signed __int32;
+	using i64 =	signed __int64;
+	using u8 =	unsigned __int8;
+	using u16 =	unsigned __int16;
+	using u32 =	unsigned __int32;
+	using u64 =	unsigned __int64;
 #else
-	using i8 =			signed char;
-	using i16 =			signed short;
-	using i32 =			signed int;
-	using i64 =			signed long long;
-	using u8 =			unsigned char;
-	using u16 =			unsigned short;
-	using u32 =			unsigned int;
-	using u64 =			unsigned long long;
+	using i8 =	signed char;
+	using i16 =	signed short;
+	using i32 =	signed int;
+	using i64 =	signed long long;
+	using u8 =	unsigned char;
+	using u16 =	unsigned short;
+	using u32 =	unsigned int;
+	using u64 =	unsigned long long;
 #endif
 
-	using f32 =			float;
-	using f64 =			double;
-	using f80 =			long double;
+	using f32 =	float;
+	using f64 =	double;
+	using f80 =	long double;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

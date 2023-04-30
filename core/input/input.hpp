@@ -15,10 +15,9 @@ namespace ism
 		static Input * __singleton;
 
 	public:
-		Input() noexcept { __singleton = this; }
-		virtual ~Input() noexcept override = default;
+		Input() noexcept { SINGLETON_CTOR(); }
+		virtual ~Input() noexcept override { SINGLETON_DTOR(); }
 		FORCE_INLINE static Input * get_singleton() noexcept { return __singleton; }
-#define INPUT (ism::Input::get_singleton())
 
 	public:
 		enum Action_ : u8
@@ -428,6 +427,10 @@ namespace ism
 	public:
 		void iteration(Duration const delta_time);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	SINGLETON_WRAPPER(Input, get_input);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

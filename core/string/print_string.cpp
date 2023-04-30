@@ -7,12 +7,12 @@ namespace ism
 
 	void ism::print_line(String const & s)
 	{
-		SYSTEM->printf("%.*s\n", s.size(), s.data());
+		get_os()->printf("%.*s\n", s.size(), s.data());
 	}
 
 	void ism::print_error(String const & s)
 	{
-		SYSTEM->printerrf("%.*s\n", s.size(), s.data());
+		get_os()->printerrf("%.*s\n", s.size(), s.data());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

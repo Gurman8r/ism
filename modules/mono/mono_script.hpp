@@ -3,12 +3,25 @@
 
 #include <core/object/script.hpp>
 
+#include <mono/jit/jit.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/object.h>
+#include <mono/metadata/appdomain.h>
+#include <mono/metadata/debug-helpers.h>
+
 namespace ism
 {
 	// mono language
 	class ISM_MOD_API MonoLanguage : public ScriptLanguage
 	{
 		DEFINE_CLASS(MonoLanguage, ScriptLanguage);
+
+		static MonoLanguage * __singleton;
+
+		MonoDomain * m_domain{};
+		MonoAssembly * m_assembly{};
+		MonoImage * m_image{};
+
 
 	public:
 		MonoLanguage();

@@ -34,8 +34,10 @@ namespace ism
 		NODISCARD unzFile get_file_handle(String const & path) const;
 		NODISCARD bool file_exists(String const & path) const;
 		NODISCARD virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
-		NODISCARD virtual Ref<FileAccess> get_file(String const & path, Packages::PackedFile * file) override;
+		NODISCARD virtual Ref<FileAccess> get_file(String const & path, PackedData::PackedFile * file) override;
 	};
+
+	SINGLETON_WRAPPER(ZipArchive, get_zip_archive);
 }
 
 namespace ism
@@ -44,28 +46,29 @@ namespace ism
 	{
 		DEFINE_CLASS(FileAccessZip, FileAccess);
 
-		unzFile				m_zfile{};
-		unz_file_info64		m_info{};
-		mutable bool		m_eof{};
+		unzFile			m_zfile{};
+		unz_file_info64	m_info{};
+		mutable bool	m_eof{};
 
 	public:
-		FileAccessZip(String const & path, Packages::PackedFile const & file);
+		FileAccessZip(String const & path, PackedData::PackedFile const & file);
 		virtual ~FileAccessZip() override;
-
 		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
-		virtual void close() override;
-		virtual void flush() override;
+		virtual FileAccessZip & close() override;
+		virtual FileAccessZip & flush() override;
 		virtual bool exists(String const & path) override;
 		virtual bool is_open() const override;
-		virtual void seek(u64 position) override;
-		virtual void seek_end(i64 position) override;
+		virtual FileAccessZip & seek(u64 position) override;
+		virtual FileAccessZip & seek_end(i64 position) override;
 		virtual u64 get_position() const override;
 		virtual u64 get_length() const override;
 		virtual bool eof_reached() const override;
 		virtual Error_ get_error() const override;
+		virtual String get_path() const override;
+		virtual String get_path_abs() const override;
 		virtual u8 read_8() const override;
 		virtual size_t read_buffer(u8 * data, size_t const size) const override;
-		virtual void write_8(u8) override;
+		virtual FileAccessZip & write_8(u8) override;
 	};
 }
 

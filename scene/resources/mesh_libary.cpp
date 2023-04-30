@@ -119,7 +119,7 @@ void process_ainode(aiScene const * scene, aiNode const * node, Vector<RS::Surfa
 Error_ MeshLibrary::load_mesh(Mesh & mesh, String const & path)
 {
 	if (path.empty()) { return Error_Unknown; }
-	if (mesh.m_mesh) { RENDERING_SERVER->mesh_destroy(mesh.m_mesh); }
+	if (mesh.m_mesh) { get_rendering_server()->mesh_destroy(mesh.m_mesh); }
 
 	Assimp::Importer ai;
 	aiScene const * scene{ ai.ReadFile(path.c_str(),
@@ -133,7 +133,7 @@ Error_ MeshLibrary::load_mesh(Mesh & mesh, String const & path)
 
 	Vector<RS::SurfaceData> spec;
 	process_ainode(scene, scene->mRootNode, spec);
-	mesh.m_mesh = RENDERING_SERVER->mesh_create(spec);
+	mesh.m_mesh = get_rendering_server()->mesh_create(spec);
 	if (!mesh.m_mesh) { return Error_Unknown; }
 	return Error_OK;
 }

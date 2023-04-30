@@ -4,24 +4,25 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Packages * Packages::__singleton{};
+	PackedData * PackedData::__singleton{};
 
-	Packages::Packages()
+	PackedData::PackedData()
 	{
-		__singleton = this;
+		SINGLETON_CTOR();
 		m_root = memnew(PackedDir);
 		add_pack_source(memnew(PackSourcePCK));
 	}
 	
-	Packages::~Packages()
+	PackedData::~PackedData()
 	{
+		SINGLETON_DTOR();
 		for (size_t i{}; i < m_sources.size(); ++i) {
 			memdelete(m_sources[i]);
 		}
 		memdelete(m_root);
 	}
 
-	Error_ Packages::add_pack(String const & path, bool replace_files, u64 offset)
+	Error_ PackedData::add_pack(String const & path, bool replace_files, u64 offset)
 	{
 		for (size_t i{}; i < m_sources.size(); ++i) {
 			if (m_sources[i]->try_open_pack(path, replace_files, offset)) {
@@ -32,14 +33,14 @@ namespace ism
 		return Error_Unknown;
 	}
 
-	void Packages::add_pack_source(PackSource * source)
+	void PackedData::add_pack_source(PackSource * source)
 	{
 		if (source != nullptr) {
 			m_sources.push_back(source);
 		}
 	}
 
-	void Packages::add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackSource * src, bool replace_files, bool encrypted)
+	void PackedData::add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackSource * src, bool replace_files, bool encrypted)
 	{
 		bool const exists{ m_files.contains(path) };
 
@@ -51,9 +52,8 @@ namespace ism
 		if (!exists)
 		{
 			String p{ path };
-			if (size_t i{ p.find("://")}; i != String::npos) {
-				p.erase(p.begin(), p.begin() + i + 2);
-			}
+			PRINT_LINE(p.root_directory());
+			if (size_t i{ p.find("://")}; i != p.npos) { p.erase(p.begin(), p.begin() + i + 2); }
 
 			PackedDir * cd{ m_root };
 			if (p.contains('/'))
@@ -78,7 +78,7 @@ namespace ism
 		}
 	}
 
-	Ref<FileAccess> Packages::try_open_path(String const & path)
+	Ref<FileAccess> PackedData::try_open_path(String const & path)
 	{
 		if (auto const it{ m_files.find(path) }; (it == m_files.end()) || !it->second.offset) {
 			return nullptr;
@@ -88,17 +88,17 @@ namespace ism
 		}
 	}
 
-	bool Packages::has_path(String const & path)
+	bool PackedData::has_path(String const & path)
 	{
 		return m_files.contains(path);
 	}
 
-	Ref<DirAccess> Packages::try_open_dir(String const & path)
+	Ref<DirAccess> PackedData::try_open_dir(String const & path)
 	{
 		return nullptr;
 	}
 
-	bool Packages::has_dir(String const & path)
+	bool PackedData::has_dir(String const & path)
 	{
 		return false;
 	}
@@ -110,7 +110,7 @@ namespace ism
 		return false;
 	}
 
-	Ref<FileAccess> PackSourcePCK::get_file(String const & path, Packages::PackedFile * file)
+	Ref<FileAccess> PackSourcePCK::get_file(String const & path, PackedData::PackedFile * file)
 	{
 		return Ref<FileAccess>();
 	}

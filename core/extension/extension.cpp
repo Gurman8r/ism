@@ -24,13 +24,13 @@ namespace ism
 
 	Error_ Extension::open_library(String const & path, String const & entry_symbol)
 	{
-		if (Error_ const err{ SYSTEM->open_dynamic_library(path, m_library) }) {
+		if (Error_ const err{ get_os()->open_dynamic_library(path, m_library) }) {
 			return err;
 		}
 		
 		void * entry_func{};
-		if (Error_ const err{ SYSTEM->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
-			SYSTEM->close_dynamic_library(m_library);
+		if (Error_ const err{ get_os()->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
+			get_os()->close_dynamic_library(m_library);
 			return err;
 		}
 
@@ -47,7 +47,7 @@ namespace ism
 	void Extension::close_library()
 	{
 		if (m_library) {
-			SYSTEM->close_dynamic_library(m_library);
+			get_os()->close_dynamic_library(m_library);
 			m_library = nullptr;
 		}
 	}
@@ -93,13 +93,13 @@ namespace ism
 		return extension;
 	}
 
-	void Extension::initialize_extensions()
+	void Extension::initialize_interface()
 	{
 	}
 
 	String Extension::get_extension_list_config_file()
 	{
-		return PROJECT_SETTINGS->get_config_path("extensions.cfg");
+		return get_project_settings()->get_config_path() + "extensions.cfg";
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

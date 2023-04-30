@@ -26,7 +26,7 @@ namespace ism
 		void set_main_window(HWND value) { m_main_window = value; }
 
 		virtual void initialize() override;
-		virtual void initialize_joysticks() override;
+		virtual void initialize_joysticks() override {}
 		virtual void finalize() override;
 		virtual void finalize_core() override;
 
@@ -44,6 +44,7 @@ namespace ism
 		virtual Error_ create_process(String const & path, Vector<String> const & args, ProcessID * child_id = nullptr) override;
 		virtual Error_ kill(ProcessID const & pid) override;
 		virtual i32 get_pid() const override;
+		virtual bool is_process_running(ProcessID const & pid) const override;
 
 		virtual String get_cwd() const override;
 		virtual Error_ set_cwd(String const & path) override;
@@ -51,9 +52,12 @@ namespace ism
 
 		virtual String get_env(String const & key) const override;
 		virtual bool has_env(String const & key) const override;
-		virtual bool set_env(String const & key, String const & value) const override;
+		virtual void set_env(String const & key, String const & value) const override;
+		virtual void unset_env(String const & key) const override;
 
 		virtual String get_name() const override;
+		virtual String get_distro() const override;
+		virtual String get_version() const override;
 		virtual String get_model_name() const;
 
 		virtual Ref<MainLoop> get_main_loop() const override;
@@ -63,6 +67,22 @@ namespace ism
 		virtual Date get_date(bool local = false) const override;
 		virtual Time get_time(bool local = false) const override;
 		virtual TimeZoneInfo get_time_zone() const override;
+		virtual void delay(Duration const & duration) override;
+		virtual Duration get_ticks() const override;
+
+		virtual String get_locale() const override;
+		virtual String get_processor_name() const override;
+		virtual String get_unique_id() const override;
+
+		virtual String get_bin_path() const override;
+		virtual String get_cache_path() const override;
+		virtual String get_config_path() const override;
+		virtual String get_data_path() const override;
+		virtual String get_exe_path() const override;
+		virtual String get_system_path(SystemDir_ value) const override;
+		virtual String get_user_path() const override;
+
+		virtual Error_ move_to_trash(String const & path) override;
 
 		virtual void debug_break() override;
 	};

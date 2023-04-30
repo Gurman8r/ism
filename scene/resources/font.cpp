@@ -9,7 +9,7 @@ namespace ism
 
 	Font::~Font()
 	{
-		if (m_font) { TEXT_SERVER->font_destroy(m_font); m_font = nullptr; }
+		if (m_font) { get_text_server()->font_destroy(m_font); m_font = nullptr; }
 	}
 
 	Font::Font(String const & path)
@@ -21,7 +21,7 @@ namespace ism
 	{
 		if (!m_font || !character || !character_size) { return nullptr; }
 
-		return TEXT_SERVER->font_get_glyph(m_font, character, character_size);
+		return get_text_server()->font_get_glyph(m_font, character, character_size);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

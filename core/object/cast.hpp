@@ -25,12 +25,12 @@ namespace ism::priv
 	{
 		LoaderLifeSupport() noexcept
 		{
-			INTERNALS->get_loader_stack().push_back(nullptr);
+			get_internals()->get_loader_stack().push_back(nullptr);
 		}
 
 		~LoaderLifeSupport() noexcept
 		{
-			Vector<OBJ> & stack{ INTERNALS->get_loader_stack() };
+			Vector<OBJ> & stack{ get_internals()->get_loader_stack() };
 			ASSERT(!stack.empty());
 			OBJ & ptr{ stack.back() };
 			stack.pop_back();
@@ -39,7 +39,7 @@ namespace ism::priv
 
 		static void add(OBJ const & value) noexcept
 		{
-			Vector<OBJ> & stack{ INTERNALS->get_loader_stack()};
+			Vector<OBJ> & stack{ get_internals()->get_loader_stack()};
 			ASSERT(!stack.empty());
 			LIST & list{ (LIST &)stack.back() };
 			if (!list) { list = LIST::new_(); }

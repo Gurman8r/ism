@@ -8,21 +8,9 @@ namespace ism
 
 	PhysicsServer * PhysicsServer::__singleton{};
 
-	PhysicsServer::CreateFunc PhysicsServer::__create_func{ []() { return memnew(PhysicsServer); } };
+	PhysicsServer::PhysicsServer() { SINGLETON_CTOR(); }
 
-	PhysicsServer::PhysicsServer()
-	{
-		__singleton = this;
-	}
-
-	PhysicsServer::~PhysicsServer()
-	{
-	}
-
-	PhysicsServer * PhysicsServer::create()
-	{
-		return VALIDATE(__create_func)();
-	}
+	PhysicsServer::~PhysicsServer() { SINGLETON_DTOR(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

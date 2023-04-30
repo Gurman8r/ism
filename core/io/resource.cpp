@@ -21,12 +21,12 @@ namespace ism
 
 	RES load_resource(String const & path)
 	{
-		return RESOURCE_LOADER->load(path);
+		return get_resource_loader()->load(path);
 	}
 
 	Error_ save_resource(RES const & res, String const & path)
 	{
-		return RESOURCE_SAVER->save(res, path);
+		return get_resource_saver()->save(res, path);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

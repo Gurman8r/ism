@@ -127,4 +127,28 @@ namespace ism::priv
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// singleton helpers
+
+// singleton constructor helper
+#define SINGLETON_CTOR2(singleton, self) \
+		ASSERT(!singleton); \
+		(singleton) = (self);
+
+#define SINGLETON_CTOR() \
+		SINGLETON_CTOR2(__singleton, this)
+
+// singleton destructor helper
+#define SINGLETON_DTOR2(singleton, self) \
+		ASSERT((singleton) == (self)); \
+		ON_SCOPE_EXIT() { (singleton) = nullptr; };
+
+#define SINGLETON_DTOR() \
+		SINGLETON_DTOR2(__singleton, this)
+
+// singleton wrapper helper
+#define SINGLETON_WRAPPER(T, F) \
+		NODISCARD FORCE_INLINE T * F() noexcept { return T::get_singleton(); }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #endif // !_ISM_PREPROCESSOR_HPP_

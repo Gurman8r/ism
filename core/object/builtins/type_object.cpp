@@ -8,7 +8,7 @@ namespace ism
 	void TypeObject::initialize_class()
 	{
 		static ON_SCOPE_ENTER(&) {
-			INTERNALS->add_class(&__type_static);
+			get_internals()->add_class(&__type_static);
 			ASSERT(__type_static.tp_bind);
 			ASSERT(__type_static.tp_bind(&__type_static));
 		};

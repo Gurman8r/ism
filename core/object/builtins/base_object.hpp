@@ -27,7 +27,7 @@ protected:																			\
 	{																				\
 		static ON_SCOPE_ENTER(&)													\
 		{																			\
-			INTERNALS->add_class(&m_class::__type_static);							\
+			get_internals()->add_class(&m_class::__type_static);							\
 																					\
 			if (m_class::__type_static.tp_bind) {									\
 				ASSERT(m_class::__type_static.tp_bind(&m_class::__type_static));	\

@@ -12,6 +12,8 @@ targetdir		"%{_BUILD_BIN}"
 objdir			"%{_TEMPS}"
 location		"%{_PROJECT}"
 
+manifest("mono-2.0-sgen")
+
 dependson{ "ism", }
 
 links{ "assimp%{LIB}", "freetype", "glfw", "imgui", "IrrXML", "ism", "mono-2.0-sgen", "zip", "zlibstatic", }

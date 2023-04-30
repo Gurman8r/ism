@@ -30,7 +30,6 @@ namespace ism
 		ResourceLoader();
 		~ResourceLoader();
 		FORCE_INLINE static ResourceLoader * get_singleton() noexcept { return __singleton; }
-#define RESOURCE_LOADER (ism::ResourceLoader::get_singleton())
 
 	protected:
 		RES _load(String const & path, Error_ * error = nullptr);
@@ -40,6 +39,8 @@ namespace ism
 		bool add(Ref<ResourceFormatLoader> format);
 		bool remove(Ref<ResourceFormatLoader> format);
 	};
+
+	SINGLETON_WRAPPER(ResourceLoader, get_resource_loader);
 }
 
 #endif // !_ISM_RESOURCE_LOADER_HPP_

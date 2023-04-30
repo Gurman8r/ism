@@ -16,21 +16,9 @@ namespace ism
 
 	TextServer * TextServer::__singleton{};
 
-	TextServer::CreateFunc TextServer::__create_func{ []() { return memnew(TextServer); } };
+	TextServer::TextServer() { SINGLETON_CTOR(); }
 
-	TextServer::TextServer()
-	{
-		__singleton = this;
-	}
-
-	TextServer::~TextServer()
-	{
-	}
-
-	TextServer * TextServer::create()
-	{
-		return VALIDATE(__create_func)();
-	}
+	TextServer::~TextServer() { SINGLETON_DTOR(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -54,7 +42,7 @@ namespace ism
 
 	Ref<Image> Glyph::get_data() const
 	{
-		return m_texture ? RENDERING_SERVER->texture2d_get_data(m_texture) : nullptr;
+		return m_texture ? get_rendering_server()->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -66,25 +54,25 @@ namespace ism
 		FT_Stroker stroker;
 
 		if (FT_Init_FreeType(&library)) {
-			SYSTEM->printerrf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
+			get_os()->printerrf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
 			return nullptr;
 		}
 
 		if (FT_New_Face(library, spec.path.c_str(), 0, &face)) {
-			SYSTEM->printerrf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
+			get_os()->printerrf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
 			FT_Done_FreeType(library);
 			return nullptr;
 		}
 
 		if (FT_Stroker_New(library, &stroker)) {
-			SYSTEM->printerrf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
+			get_os()->printerrf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
 			return nullptr;
 		}
 
 		if (FT_Select_Charmap(face, FT_ENCODING_UNICODE)) {
-			SYSTEM->printerrf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
+			get_os()->printerrf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
 			FT_Stroker_Done(stroker);
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
@@ -121,7 +109,7 @@ namespace ism
 			FT_Face const face{ (FT_Face)f->font_face };
 			FT_Set_Pixel_Sizes(face, 0, character_size);
 			if (FT_Load_Char(face, character, FT_LOAD_RENDER)) {
-				SYSTEM->printerrf("FAILED LOADING GLYPH: %s", f->path.c_str());
+				get_os()->printerrf("FAILED LOADING GLYPH: %s", f->path.c_str());
 				return nullptr;
 			}
 

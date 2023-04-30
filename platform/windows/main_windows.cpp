@@ -15,7 +15,7 @@ int _main()
 
 	switch (Main::setup(__argv[0], __argc, __argv)) {
 	case Error_OK: break;
-	// etc...
+	/* TODO: additional error checking */
 	case Error_Unknown:
 	default: {
 		CRASH("An unknown error occurred during setup. The program was unable to start.");

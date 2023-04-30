@@ -64,6 +64,10 @@ namespace ism
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	SINGLETON_WRAPPER(SceneTree, get_current_scene_tree);
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_SCENE_TREE_HPP_

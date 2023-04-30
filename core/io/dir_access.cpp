@@ -7,7 +7,7 @@ namespace ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DirAccess, t) {};
+	EMBED_CLASS(DirAccess, t, TypeFlags_IsAbstract) {};
 
 	DirAccess::DirAccess() {}
 

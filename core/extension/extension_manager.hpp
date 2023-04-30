@@ -11,15 +11,16 @@ namespace ism
 
 		static ExtensionManager * __singleton;
 
+		String m_config_file_path{};
+
 		i32 m_level{ -1 };
 
 		HashMap<String, Ref<Extension>> m_extensions{};
 
 	public:
-		ExtensionManager() noexcept { __singleton = this; }
-		virtual ~ExtensionManager() noexcept override = default;
+		ExtensionManager();
+		virtual ~ExtensionManager() override;
 		FORCE_INLINE static ExtensionManager * get_singleton() noexcept { return __singleton; }
-#define EXTENSION_MANAGER (ism::ExtensionManager::get_singleton())
 
 	public:
 		enum LoadStatus_ {
@@ -32,14 +33,18 @@ namespace ism
 
 		LoadStatus_ load_extension(String const & path);
 		LoadStatus_ unload_extension(String const & path);
-		bool is_extension_loaded(String const & path);
-		Vector<String> get_loaded_extensions() const;
-		Ref<Extension> get_extension(String const & path);
 
+		NODISCARD bool is_extension_loaded(String const & path);
+		NODISCARD Vector<String> get_loaded_extensions() const;
+		NODISCARD Ref<Extension> get_extension(String const & path);
+		NODISCARD String get_extension_list_config_file() const;
+
+		void load_extensions();
 		void initialize_extensions(ExtensionInitializationLevel_ level);
 		void finalize_extensions(ExtensionInitializationLevel_ level);
-		void load_extensions();
 	};
+
+	SINGLETON_WRAPPER(ExtensionManager, get_extension_manager)
 }
 
 #endif // !_ISM_EXTENSION_MANAGER_HPP_

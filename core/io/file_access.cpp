@@ -34,18 +34,21 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Ref<FileAccess> FileAccess::open(String const & path, FileMode_ mode)
+	Ref<FileAccess> FileAccess::open(String const & path, FileMode_ mode, Error_ * error)
 	{
 		Ref<FileAccess> file{};
 		
-		if ((mode != FileMode_Write) && PACKAGES && PACKAGES->is_enabled() && (file = PACKAGES->try_open_path(path))) {
+		if (PackedData * pack; (mode != FileMode_Write) && (pack = get_packed_data()) && pack->is_enabled() && (file = pack->try_open_path(path))) {
+			if (error) { *error = Error_OK; }
 			return file;
 		}
 
 		if ((file = create_for_path(path)) && (file->open_internal(path, mode) == Error_OK)) {
+			if (error) { *error = Error_OK; }
 			return file;
 		}
 
+		if (error) { *error = Error_Unknown; }
 		return nullptr;
 	}
 
@@ -137,60 +140,62 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void FileAccess::write_16(u16 value)
+	FileAccess & FileAccess::write_16(u16 value)
 	{
 		u8 a; a = value & 0xFF;
 		u8 b; b = value >> 8;
 		if (m_big_endian) { util::swap(a, b); }
-		write_8(a); write_8(b);
+		return write_8(a); write_8(b);
 	}
 
-	void FileAccess::write_32(u32 value)
+	FileAccess & FileAccess::write_32(u32 value)
 	{
 		u16 a; a = value & 0xFFFF;
 		u16 b; b = value >> 16;
 		if (m_big_endian) { util::swap(a, b); }
-		write_16(a); write_16(b);
+		return write_16(a).write_16(b);
 	}
 
-	void FileAccess::write_64(u64 value)
+	FileAccess & FileAccess::write_64(u64 value)
 	{
 		u32 a; a = value & 0xFFFFFFFF;
 		u32 b; b = value >> 32;
 		if (m_big_endian) { util::swap(a, b); }
-		write_32(a); write_32(b);
+		return write_32(a).write_32(b);
 	}
 
-	void FileAccess::write_float(f32 value)
+	FileAccess & FileAccess::write_float(f32 value)
 	{
+		return (*this);
 	}
 
-	void FileAccess::write_double(f64 value)
+	FileAccess & FileAccess::write_double(f64 value)
 	{
+		return (*this);
 	}
 
-	void FileAccess::write_token(String const & value)
+	FileAccess & FileAccess::write_token(String const & value)
 	{
-		if (value.empty()) { return; }
-		write_buffer((u8 *)value.data(), value.size());
+		if (value.empty()) { return (*this); }
+		else { return write_buffer((u8 *)value.data(), value.size()); }
 	}
 
-	void FileAccess::write_line(String const & value)
+	FileAccess & FileAccess::write_line(String const & value)
 	{
-		write_token(value);
-		write_8((u8)'\n');
+		return write_token(value).write_8((u8)'\n');
 	}
 
-	void FileAccess::write_buffer(u8 const * data, size_t const size)
+	FileAccess & FileAccess::write_buffer(u8 const * data, size_t const size)
 	{
-		if (!data || !size) { return; }
+		if (!data || !size) { return (*this); }
 		for (size_t i{}; i < size; ++i) { write_8(data[i]); }
+		return (*this);
 	}
 
-	void FileAccess::write_buffer(DynamicBuffer const & buffer)
+	FileAccess & FileAccess::write_buffer(DynamicBuffer const & buffer)
 	{
-		if (buffer.empty()) { return; }
-		write_buffer(buffer.data(), buffer.size());
+		if (buffer.empty()) { return (*this); }
+		else { return write_buffer(buffer.data(), buffer.size()); }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

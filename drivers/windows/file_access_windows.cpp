@@ -12,24 +12,17 @@ namespace ism
 		}
 	}
 
-	void FileAccessWindows::_close()
-	{
-		if (!m_file) { return; }
-		fclose(m_file);
-		m_file = nullptr;
-	}
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	EMBED_CLASS(FileAccessWindows, t) {}
 
-	FileAccessWindows::~FileAccessWindows() noexcept { _close(); }
+	FileAccessWindows::~FileAccessWindows() noexcept { FileAccessWindows::close(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Error_ FileAccessWindows::open_internal(String const & path, FileMode_ mode)
 	{
-		_close();
+		FileAccessWindows::close();
 
 		constexpr cstring m_mode[4]{ "rb", "wb", "rb+", "wb+" };
 
@@ -42,18 +35,23 @@ namespace ism
 		return Error_OK;
 	}
 
-	void FileAccessWindows::flush()
+	FileAccessWindows & FileAccessWindows::flush()
 	{
 		ASSERT(m_file);
 		fflush(m_file);
 		if (m_last_op == FileMode_Write) {
 			m_last_op = FileMode_MAX;
 		}
+		return (*this);
 	}
 
-	void FileAccessWindows::close()
+	FileAccessWindows & FileAccessWindows::close()
 	{
-		_close();
+		if (m_file) {
+			fclose(m_file);
+			m_file = nullptr;
+		}
+		return (*this);
 	}
 
 	bool FileAccessWindows::exists(String const & path)
@@ -73,12 +71,12 @@ namespace ism
 		return m_path;
 	}
 
-	String FileAccessWindows::get_path_absolute() const
+	String FileAccessWindows::get_path_abs() const
 	{
 		return m_path_abs;
 	}
 
-	void FileAccessWindows::seek(u64 position)
+	FileAccessWindows & FileAccessWindows::seek(u64 position)
 	{
 		ASSERT(m_file);
 		m_last_error = Error_OK;
@@ -86,9 +84,10 @@ namespace ism
 			_check_errors();
 		}
 		m_last_op = FileMode_MAX;
+		return (*this);
 	}
 
-	void FileAccessWindows::seek_end(i64 position)
+	FileAccessWindows & FileAccessWindows::seek_end(i64 position)
 	{
 		ASSERT(m_file);
 		m_last_error = Error_OK;
@@ -96,6 +95,7 @@ namespace ism
 			_check_errors();
 		}
 		m_last_op = FileMode_MAX;
+		return (*this);
 	}
 
 	u64 FileAccessWindows::get_position() const
@@ -145,7 +145,7 @@ namespace ism
 		return b;
 	}
 
-	void FileAccessWindows::write_8(u8 value)
+	FileAccessWindows & FileAccessWindows::write_8(u8 value)
 	{
 		ASSERT(m_file);
 		if (m_mode == FileMode_ReadWrite || m_mode == FileMode_WriteRead) {
@@ -157,6 +157,7 @@ namespace ism
 			m_last_op = FileMode_Write;
 		}
 		fwrite(&value, 1, 1, m_file);
+		return (*this);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

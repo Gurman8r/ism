@@ -9,13 +9,14 @@ namespace ism
 
 	Internals::Internals()
 	{
-		ASSERT(!__singleton); __singleton = this;
+		SINGLETON_CTOR();
 
 		m_modules = DICT::new_();
 	}
 
 	Internals::~Internals()
 	{
+		SINGLETON_DTOR();
 		Vector<OBJ>{}.swap(m_loader_stack);
 		m_modules = nullptr;
 		while (!m_classes.empty()) {

@@ -1,14 +1,5 @@
 #include <main/main.hpp>
 
-#include <core/config/engine.hpp>
-#include <core/config/project_settings.hpp>
-#include <core/extension/extension_manager.hpp>
-#include <core/object/script.hpp>
-#include <core/io/file_access_zip.hpp>
-
-#include <core/io/resource_loader.hpp>
-#include <core/io/resource_saver.hpp>
-
 #include <core/register_core_types.hpp>
 #include <drivers/register_driver_types.hpp>
 #include <platform/register_platform_apis.hpp>
@@ -16,18 +7,27 @@
 #include <scene/register_scene_types.hpp>
 #include <servers/register_server_types.hpp>
 
+#include <core/io/resource_loader.hpp>
+#include <core/io/resource_saver.hpp>
+#include <core/io/file_access_zip.hpp>
+
+#include <core/config/engine.hpp>
+#include <core/config/project_settings.hpp>
+#include <core/extension/extension_manager.hpp>
+#include <core/object/script.hpp>
+
 #include <servers/audio_server.hpp>
 #include <servers/physics_server.hpp>
 #include <servers/rendering_server.hpp>
 #include <servers/text_server.hpp>
-
 #include <scene/main/scene_tree.hpp>
-#include <scene/gui/imgui.hpp>
 
 #if TOOLS_ENABLED
 #include <editor/editor_node.hpp>
 #include <editor/register_editor_types.hpp>
 #endif
+
+#include <scene/gui/imgui.hpp>
 
 namespace ism
 {
@@ -36,17 +36,13 @@ namespace ism
 	i32 Main::m_iterating{};
 	u64 Main::m_frame{};
 
-	static Internals *			internals{};
 	static Engine *				engine{};
-	static Packages *			packages{};
-	static ZipArchive *			zip_archive{};
-	static ProjectSettings *	project{};
 	static Performance *		performance{};
-	static ExtensionManager *	extensions{};
-	static ScriptServer *		scripts{};
 	static Input *				input{};
-	static ResourceLoader *		loader{};
-	static ResourceSaver *		saver{};
+	static ProjectSettings *	settings{};
+
+	static PackedData *			packages{};
+	static ZipArchive *			zip_archive{};
 
 	static AudioServer *		audio{};
 	static DisplayServer *		display{};
@@ -63,62 +59,52 @@ namespace ism
 	Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 	{
 		Error_ error{ Error_OK };
+		Vector<String> args{ argv, argv + argc };
 
-		SYSTEM->initialize();
-
-		internals = memnew(Internals);
+		get_os()->initialize();
 		engine = memnew(Engine);
-
-		if (!(packages = Packages::get_singleton())) { packages = memnew(Packages); }
-		if (!(zip_archive = ZipArchive::get_singleton())) { zip_archive = memnew(ZipArchive); }
-		packages->add_pack_source(zip_archive);
-
-		packages->add_pack("../assets/test.zip", true, 0);
-		if (auto f{ FileAccess::open("test.zip://data/test.txt", FileMode_Read) }) {
-			while (String line{ f->read_line() }) {
-				PRINT_LINE(line);
-			}
-		}
-
-		performance = memnew(Performance);
-		project = memnew(ProjectSettings);
-		extensions = memnew(ExtensionManager);
-		scripts = memnew(ScriptServer);
-		input = memnew(Input);
-		loader = memnew(ResourceLoader);
-		saver = memnew(ResourceSaver);
-
 		register_core_types();
 		register_core_driver_types();
 
-		project->setup(exepath);
+		performance = memnew(Performance);
+		input = memnew(Input);
+		settings = memnew(ProjectSettings);
 		register_core_settings();
+
+		if (!(packages = get_packed_data())) { packages = memnew(PackedData); }
+		if (!(zip_archive = get_zip_archive())) { zip_archive = memnew(ZipArchive); }
+		packages->add_pack_source(zip_archive);
+
+		settings->setup(exepath);
+
 		initialize_modules(ExtensionInitializationLevel_Core);
 		register_core_extensions();
-		register_core_singletons();
-		SYSTEM->set_cmdline(exepath, { argv, argv + argc });
 
-		text = TS::create();
+		get_os()->set_cmdline(exepath, args);
+
 		display = DS::create("ism", DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error);
 		graphics = RS::create();
-		audio = AS::create();
-		physics = PS::create();
+		text = memnew(TextServer);
+		physics = memnew(PhysicsServer);
+		audio = memnew(AudioServer);
+
+		register_core_singletons();
 
 		register_server_types();
 		initialize_modules(ExtensionInitializationLevel_Servers);
-		extensions->initialize_extensions(ExtensionInitializationLevel_Servers);
+		get_extension_manager()->initialize_extensions(ExtensionInitializationLevel_Servers);
 		register_server_singletons();
 
 		register_scene_types();
 		register_driver_types();
 		initialize_modules(ExtensionInitializationLevel_Scene);
-		extensions->initialize_extensions(ExtensionInitializationLevel_Scene);
+		get_extension_manager()->initialize_extensions(ExtensionInitializationLevel_Scene);
 		register_scene_singletons();
 
 #if TOOLS_ENABLED
 		register_editor_types();
 		initialize_modules(ExtensionInitializationLevel_Editor);
-		extensions->initialize_extensions(ExtensionInitializationLevel_Editor);
+		get_extension_manager()->initialize_extensions(ExtensionInitializationLevel_Editor);
 		register_editor_singletons();
 #endif
 
@@ -128,9 +114,9 @@ namespace ism
 
 		//initialize_physics();
 	
-		scripts->initialize_languages();
+		SCRIPT_SERVER->initialize_languages();
 	
-		imgui_context = ImGui_Initialize();
+		imgui_context = VALIDATE(ImGui_Initialize());
 
 		return error;
 	}
@@ -172,7 +158,7 @@ namespace ism
 			// etc...
 		}
 	
-		SYSTEM->set_main_loop(main_loop);
+		get_os()->set_main_loop(main_loop);
 
 		return true;
 	}
@@ -191,11 +177,11 @@ namespace ism
 
 		// TODO: physics stuff goes here
 
-		INPUT->iteration(delta_time);
+		get_input()->iteration(delta_time);
 
 		ImGui_BeginFrame(imgui_context);
 
-		if (SYSTEM->get_main_loop()->process(delta_time)) { should_close = true; }
+		if (get_os()->get_main_loop()->process(delta_time)) { should_close = true; }
 
 		ImGui::Render();
 		RENDERING_DEVICE->draw_list_begin_for_screen();
@@ -212,18 +198,20 @@ namespace ism
 		//remove_custom_loaders();
 		//remove_custom_savers();
 
-		SYSTEM->delete_main_loop();
+		ImGui_Finalize(imgui_context);
 
-		scripts->finalize_languages();
+		get_os()->delete_main_loop();
+
+		SCRIPT_SERVER->finalize_languages();
 
 #if TOOLS_ENABLED
 		finalize_modules(ExtensionInitializationLevel_Editor);
-		extensions->finalize_extensions(ExtensionInitializationLevel_Editor);
+		get_extension_manager()->finalize_extensions(ExtensionInitializationLevel_Editor);
 		unregister_editor_types();
 #endif
 
 		finalize_modules(ExtensionInitializationLevel_Scene);
-		extensions->finalize_extensions(ExtensionInitializationLevel_Scene);
+		get_extension_manager()->finalize_extensions(ExtensionInitializationLevel_Scene);
 		unregister_platform_apis();
 		unregister_driver_types();
 		unregister_scene_types();
@@ -231,36 +219,27 @@ namespace ism
 		//finalize_theme();
 
 		finalize_modules(ExtensionInitializationLevel_Servers);
-		extensions->finalize_extensions(ExtensionInitializationLevel_Servers);
+		get_extension_manager()->finalize_extensions(ExtensionInitializationLevel_Servers);
 		unregister_server_types();
 
-		SYSTEM->finalize();
-
-		ImGui_Finalize(imgui_context);
-
-		graphics->finalize();
-
 		memdelete(audio);
+		get_os()->finalize();
+		graphics->finalize();
 		memdelete(graphics);
 		memdelete(display);
 		memdelete(physics);
 		memdelete(text);
 
+		memdelete(packages);
+		memdelete(input);
+		memdelete(settings);
+		memdelete(performance);
+
 		unregister_core_driver_types();
 		unregister_core_extensions();
 		unregister_core_types();
-
-		memdelete(loader);
-		memdelete(saver);
-		memdelete(input);
-		memdelete(scripts);
-		memdelete(extensions);
-		memdelete(project);
-		memdelete(performance);
-		memdelete(packages);
 		memdelete(engine);
-		memdelete(internals);
-		SYSTEM->finalize_core();
+		get_os()->finalize_core();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

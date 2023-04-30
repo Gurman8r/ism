@@ -59,7 +59,7 @@ Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData (&spec)[RD:
 	for (i32 i{}; i < RD::ShaderStage_MAX; ++i) {
 		spec[i].shader_stage = (RD::ShaderStage_)i;
 		if (!spec[i].code.empty() && spec[i].code.back() != '\0') { spec[i].code << '\0'; }
-		//SYSTEM->printf("%.*s\n", spec[i].code.size(), spec[i].code.data());
+		//get_os()->printf("%.*s\n", spec[i].code.size(), spec[i].code.data());
 	}
 
 	return Error_OK;

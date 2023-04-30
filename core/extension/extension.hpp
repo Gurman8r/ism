@@ -31,7 +31,7 @@ namespace ism
 
 	public:
 		static Ref<Extension> open(String const & path, String const & entry_symbol);
-		static void initialize_extensions();
+		static void initialize_interface();
 		static String get_extension_list_config_file();
 	};
 }

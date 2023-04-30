@@ -16,21 +16,17 @@ namespace ism
 
 		static AudioServer * __singleton;
 
-	protected:
-		using CreateFunc = AudioServer * (*)();
-		static CreateFunc __create_func;
-		AudioServer();
-
 	public:
+		AudioServer();
 		virtual ~AudioServer() override;
 		FORCE_INLINE static AudioServer * get_singleton() noexcept { return __singleton; }
-#define AUDIO_SERVER (ism::AudioServer::get_singleton())
-		static AudioServer * create();
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	using AS = AudioServer;
+
+	SINGLETON_WRAPPER(AS, get_audio_server);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

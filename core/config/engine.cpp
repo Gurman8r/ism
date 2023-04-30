@@ -6,10 +6,11 @@ namespace ism
 
 	Engine::Engine() noexcept
 	{
-		ASSERT(!__singleton); __singleton = this;
+		SINGLETON_CTOR();
 	}
 
 	Engine::~Engine() noexcept
 	{
+		SINGLETON_DTOR();
 	}
 }

@@ -7,4 +7,5 @@
 	<file name="glew32d.dll"/>
 	<file name="glfw.dll"/>
 	<file name="imgui.dll"/>
+	<file name="mono-2.0-sgen.dll"/>
 </assembly>
