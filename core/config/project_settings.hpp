@@ -3,7 +3,7 @@
 
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -14,14 +14,14 @@ namespace ism
 		static ProjectSettings * __singleton;
 
 		String
-			m_bin_path{},
-			m_cache_path{},
-			m_config_path{},
-			m_data_path{},
-			m_resource_path{},
-			m_user_path{};
+			m_bin_path		{},
+			m_cache_path	{},
+			m_config_path	{},
+			m_data_path		{},
+			m_resource_path	{},
+			m_user_path		{};
 
-		HashMap<String, HashMap<String, OBJ>> m_data{};
+		HashMap<String, HashMap<String, ObjectRef>> m_data{};
 
 	public:
 		ProjectSettings() noexcept { SINGLETON_CTOR(); }
@@ -39,8 +39,8 @@ namespace ism
 		NODISCARD String get_resource_path() const;
 		NODISCARD String get_user_path() const;
 
-		NODISCARD OBJ get(String const & section, String const & name) const;
-		Error_ set(String const & section, String const & name, OBJ const & value);
+		NODISCARD ObjectRef get(String const & section, String const & name) const;
+		Error_ set(String const & section, String const & name, ObjectRef const & value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

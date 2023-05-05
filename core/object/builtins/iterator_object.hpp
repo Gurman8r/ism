@@ -5,14 +5,14 @@
 
 #include <core/object/builtins/type_object.hpp>
 
-namespace ism
+namespace Ism
 {
 	// iterator object
 	class IteratorObject : public Object
 	{
 		DEFINE_CLASS(IteratorObject, Object);
 
-		friend class ITERATOR;
+		friend class IteratorRef;
 
 	public:
 	};
@@ -21,12 +21,12 @@ namespace ism
 	template <> struct DefaultDelete<IteratorObject> : DefaultDelete<Object> {};
 
 	// iterator check
-#define OBJECT_CHECK_TUPLE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Tuple_Subclass))
+#define OBJECT_CHECK_TUPLE(o) (Ism::typeof(o).has_feature(Ism::TypeFlags_Tuple_Subclass))
 
 	// iterator ref
-	class ITERATOR : public Ref<IteratorObject>
+	class IteratorRef : public Ref<IteratorObject>
 	{
-		REF_CLASS(ITERATOR, OBJECT_CHECK_TUPLE);
+		CUSTOM_REF(IteratorRef, OBJECT_CHECK_TUPLE);
 
 	public:
 	};

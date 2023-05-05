@@ -5,7 +5,7 @@
 
 #include <core/io/resource.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

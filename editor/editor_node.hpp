@@ -9,7 +9,7 @@
 #include <scene/resources/mesh.hpp>
 #include <scene/resources/text_file.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -51,7 +51,7 @@ namespace ism
 		EditorNode();
 		virtual ~EditorNode() override;
 		FORCE_INLINE static EditorNode * get_singleton() noexcept { return __singleton; }
-#define EDITOR (ism::EditorNode::get_singleton())
+#define EDITOR (Ism::EditorNode::get_singleton())
 
 	protected:
 		void _notification(Notification_ id);

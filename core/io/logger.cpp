@@ -1,6 +1,6 @@
 #include <core/io/logger.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

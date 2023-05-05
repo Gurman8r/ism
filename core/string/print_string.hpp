@@ -1,13 +1,13 @@
 #ifndef _ISM_PRINT_STRING_HPP_
 #define _ISM_PRINT_STRING_HPP_
 
-#include <core/string/string_utility.hpp>
+#include <core/string/string.hpp>
 
-#define PRINT_LINE (ism::print_line)
+#define PRINT_LINE (Ism::print_line)
 
-#define PRINT_ERROR (ism::print_error)
+#define PRINT_ERROR (Ism::print_error)
 
-namespace ism
+namespace Ism
 {
 	ISM_API_FUNC(void) print_line(String const & s);
 

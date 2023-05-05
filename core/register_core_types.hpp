@@ -3,7 +3,7 @@
 
 #include <core/extension/extension_interface.hpp>
 
-namespace ism
+namespace Ism
 {
 	ISM_API_FUNC(void) register_core_types();
 	ISM_API_FUNC(void) register_core_settings();

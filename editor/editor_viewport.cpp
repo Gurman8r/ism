@@ -1,7 +1,7 @@
 #include <editor/editor_viewport.hpp>
 #include <editor/editor_node.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -35,7 +35,7 @@ namespace ism
 		ImRect const view_rect{ window->InnerRect };
 
 		if (ImGui::ItemAdd(view_rect, NULL)) {
-			void * texture_handle{ RENDERING_DEVICE->texture_get_handle(m_main_texture) };
+			void * texture_handle{ get_gpu()->texture_get_handle(m_main_texture) };
 			window->DrawList->AddImage(texture_handle, view_rect.Min, view_rect.Max, { 0, 1 }, { 1, 0 });
 		}
 

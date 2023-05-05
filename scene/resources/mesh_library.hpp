@@ -3,7 +3,7 @@
 
 #include <scene/resources/mesh.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API MeshLibrary final
 	{

@@ -3,7 +3,7 @@
 
 #include <scene/resources/font.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API FontLibrary final
 	{

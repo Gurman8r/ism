@@ -1,12 +1,8 @@
 #include <modules/lua/register_lua_types.hpp>
-#include <modules/lua/lua_script.hpp>
-#include <modules/lua/lua_behavior.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-using namespace ism;
-
-static LuaLanguage * lua_language{};
+using namespace Ism;
 
 bool open_lua_library(IsmExtensionInterfacePtr iface, IsmExtensionPtr library, IsmExtensionInitializationPtr initialization)
 {
@@ -24,18 +20,12 @@ void initialize_lua_module(void * user, IsmExtensionInitializationLevel level)
 {
 	if (level != ExtensionInitializationLevel_Scene) { return; }
 	PRINT_LINE("initialize lua module");
-	REGISTER_CLASS(LuaLanguage, LuaScript, LuaInstance, LuaBehavior);
-	lua_language = memnew(LuaLanguage);
-	SCRIPT_SERVER->register_language(lua_language);
 }
 
 void finalize_lua_module(void * user, IsmExtensionInitializationLevel level)
 {
 	if (level != ExtensionInitializationLevel_Scene) { return; }
 	PRINT_LINE("finalize lua module");
-	SCRIPT_SERVER->unregister_language(lua_language);
-	memdelete(lua_language);
-	UNREGISTER_CLASS(LuaLanguage, LuaScript, LuaInstance, LuaBehavior);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

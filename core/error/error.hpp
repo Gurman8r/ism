@@ -5,7 +5,7 @@
 
 #include <core/templates/type_traits.hpp>
 
-namespace ism
+namespace Ism
 {
 	enum Error_
 	{

@@ -3,7 +3,7 @@
 
 #include <core/typedefs.hpp>
 
-namespace ism
+namespace Ism
 {
 	ISM_API_FUNC(void) register_editor_types();
 	ISM_API_FUNC(void) register_editor_singletons();

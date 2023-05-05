@@ -4,7 +4,7 @@
 #include <core/io/dir_access.hpp>
 #include <core/io/file_access.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -16,6 +16,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// packed data
 	class ISM_API PackedData
 	{
 	public:
@@ -68,6 +69,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// pack source
 	class ISM_API PackSource {
 	public:
 		virtual ~PackSource() noexcept = default;
@@ -75,6 +77,7 @@ namespace ism
 		virtual Ref<FileAccess> get_file(String const & path, PackedData::PackedFile * file) = 0;
 	};
 
+	// pack source PCK
 	class ISM_API PackSourcePCK : public PackSource {
 	public:
 		virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
@@ -83,6 +86,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// file access pack
 	class ISM_API FileAccessPack : public Object
 	{
 		DEFINE_CLASS(FileAccessPack, Object);
@@ -92,6 +96,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// dir access pack
 	class ISM_API DirAccessPack : public Object
 	{
 		DEFINE_CLASS(DirAccessPack, Object);

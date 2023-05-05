@@ -5,7 +5,7 @@
 #include <servers/rendering/rendering_device.hpp>
 #include <servers/rendering/shader_language.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -118,7 +118,7 @@ namespace ism
 
 	using RS = RenderingServer;
 
-	SINGLETON_WRAPPER(RS, get_rendering_server);
+	SINGLETON_WRAPPER(RS, get_graphics);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

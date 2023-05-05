@@ -5,7 +5,7 @@
 
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -26,7 +26,7 @@ namespace ism
 
 	using AS = AudioServer;
 
-	SINGLETON_WRAPPER(AS, get_audio_server);
+	SINGLETON_WRAPPER(AS, get_audio);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

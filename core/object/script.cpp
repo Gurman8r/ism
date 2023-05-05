@@ -1,7 +1,7 @@
 #include <core/object/script.hpp>
 
 // script server
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(ScriptServer, t) {}
 
@@ -46,7 +46,7 @@ namespace ism
 }
 
 // script
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(Script, t, TypeFlags_IsAbstract) {}
 
@@ -64,7 +64,7 @@ namespace ism
 }
 
 // script instance
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(ScriptInstance, t, TypeFlags_IsAbstract) {}
 
@@ -74,7 +74,7 @@ namespace ism
 }
 
 // script language
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(ScriptLanguage, t, TypeFlags_IsAbstract) {}
 
@@ -88,7 +88,7 @@ namespace ism
 }
 
 // placeholder script instance
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(PlaceholderScriptInstance, t) {}
 
@@ -103,17 +103,17 @@ namespace ism
 	{
 	}
 
-	bool PlaceholderScriptInstance::get_constants(HashMap<String, OBJ> * out) const
+	bool PlaceholderScriptInstance::get_constants(HashMap<String, ObjectRef> * out) const
 	{
 		return false;
 	}
 
-	bool PlaceholderScriptInstance::get_properties(HashMap<String, PROPERTY> * out) const
+	bool PlaceholderScriptInstance::get_properties(HashMap<String, PropertyRef> * out) const
 	{
 		return false;
 	}
 
-	bool PlaceholderScriptInstance::get_functions(HashMap<String, FUNCTION> * out) const
+	bool PlaceholderScriptInstance::get_functions(HashMap<String, FunctionRef> * out) const
 	{
 		return false;
 	}

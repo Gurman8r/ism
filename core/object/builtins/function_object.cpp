@@ -1,7 +1,7 @@
 #include <core/object/builtins/function_object.hpp>
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,9 +11,9 @@ namespace ism
 
 		t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-		t.tp_bind = BIND_CLASS(FunctionObject, t)
+		t.tp_bind = BIND_CLASS(FunctionObject, klass)
 		{
-			return t
+			return klass
 				.def_readwrite("__dict__", &FunctionObject::m_dict)
 				;
 		};
@@ -22,7 +22,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	FunctionObject::FunctionObject(VectorCallFunc vectorcall)
-		: m_dict{ DICT::new_() }
+		: m_dict{ DictRef::new_() }
 		, m_vectorcall{ vectorcall }
 	{
 	}

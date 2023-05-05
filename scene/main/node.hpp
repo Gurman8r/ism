@@ -3,7 +3,7 @@
 
 #include <scene/main/scene_tree.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

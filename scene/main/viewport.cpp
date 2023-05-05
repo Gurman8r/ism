@@ -1,7 +1,7 @@
 #include <scene/main/viewport.hpp>
 
 // viewport texture
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -49,7 +49,7 @@ namespace ism
 }
 
 // viewport
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

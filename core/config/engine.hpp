@@ -3,7 +3,7 @@
 
 #include <core/os/main_loop.hpp>
 
-namespace ism
+namespace Ism
 {
 	class Engine final
 	{

@@ -1,6 +1,6 @@
 #include <platform/register_platform_apis.hpp>
 
-namespace ism
+namespace Ism
 {
 	void register_platform_apis()
 	{

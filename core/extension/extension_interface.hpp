@@ -8,7 +8,7 @@ using IsmExtensionPtr = void *;
 using IsmExtensionInitializationPtr = void *;
 using IsmExtensionInitializationLevel = int;
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

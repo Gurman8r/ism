@@ -1,6 +1,6 @@
 #include <core/io/resource_saver.hpp>
 
-namespace ism
+namespace Ism
 {
 	ResourceSaver * ResourceSaver::__singleton{};
 

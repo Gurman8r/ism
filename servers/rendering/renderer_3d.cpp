@@ -1,6 +1,6 @@
 #include <servers/rendering/renderer_3d.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

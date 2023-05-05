@@ -13,7 +13,7 @@
 #include <scene/resources/text_file.hpp>
 #include <scene/resources/texture.hpp>
 
-namespace ism
+namespace Ism
 {
 	void register_scene_types()
 	{

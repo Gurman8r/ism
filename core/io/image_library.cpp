@@ -7,7 +7,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -50,6 +50,7 @@ namespace ism
 	{
 		auto image{ Ref<Image>::new_() };
 		ImageLibrary::load_image(image, path);
+		if (error) { *error = Error_OK; }
 		return image;
 	}
 
@@ -60,11 +61,6 @@ namespace ism
 		out->push_back(".jpeg");
 		out->push_back(".png");
 		out->push_back(".bmp");
-	}
-
-	TYPE ImageFormatLoader::get_resource_type(String const & path) const
-	{
-		return nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

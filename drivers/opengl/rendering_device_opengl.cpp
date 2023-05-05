@@ -4,7 +4,7 @@
 
 #include <drivers/opengl/rendering_device_opengl.hpp>
 
-using namespace ism;
+using namespace Ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -397,7 +397,7 @@ void RenderingDeviceOpenGL::buffer_destroy(RID buffer)
 	_BufferBase & b{ *VALIDATE((_BufferBase *)buffer) };
 	if (b.handle) { glCheck(glDeleteBuffers(1, &b.handle)); }
 	switch (b.buffer_type) {
-	default: { CRASH("INVALID BUFFER TYPE"); } break;
+	default: { CRASH("INVALID BUFFER TypeRef"); } break;
 	case GL_ARRAY_BUFFER: { memdelete((_VertexBuffer *)buffer); } break;
 	case GL_ELEMENT_ARRAY_BUFFER: { memdelete((_IndexBuffer *)buffer); } break;
 	case GL_UNIFORM_BUFFER: { memdelete((_UniformBuffer *)buffer); } break;
@@ -558,7 +558,7 @@ void RenderingDeviceOpenGL::_texture_update(_Texture & t, void const * data)
 
 	switch (t.texture_type) {
 	default: {
-		CRASH("INVALID TEXTURE TYPE");
+		CRASH("INVALID TEXTURE TypeRef");
 	} break;
 	case GL_TEXTURE_2D: {
 		glCheck(glTexImage2D(GL_TEXTURE_2D, 0, _internal_format, t.width, t.height, 0, _format, _type, data));
@@ -992,7 +992,7 @@ RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(DS::WindowID wi
 	DrawListID const draw_list{ m_draw_list.size() };
 	_DrawList & dl{ m_draw_list.emplace_back(_DrawList{}) };
 
-	Vec2i const size{ get_display_server()->window_get_size(window) };
+	Vec2i const size{ get_display()->window_get_size(window) };
 	glCheck(glViewport(0, 0, size[0], size[1]));
 	glCheck(glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT));

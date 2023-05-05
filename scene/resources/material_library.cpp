@@ -1,6 +1,6 @@
 #include <scene/resources/material_library.hpp>
 
-namespace ism
+namespace Ism
 {
 	Error_ MaterialLibrary::load_material(Material & material, String const & path)
 	{

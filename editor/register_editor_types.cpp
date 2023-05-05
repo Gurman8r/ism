@@ -6,7 +6,7 @@
 #include <editor/editor_log.hpp>
 #include <editor/editor_viewport.hpp>
 
-namespace ism
+namespace Ism
 {
 	void register_editor_types()
 	{

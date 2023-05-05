@@ -11,7 +11,7 @@
 #define CLEAR_FINAL_ALLOCATIONS 0
 #endif
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -115,22 +115,22 @@ namespace ism
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void * operator new(ism::size_t size, ism::cstring desc)
+void * operator new(Ism::size_t size, Ism::cstring desc)
 {
-	return ism::Memory::alloc_static(size, desc);
+	return Ism::Memory::alloc_static(size, desc);
 }
 
-void * operator new(ism::size_t size, void * (*alloc_fn)(ism::size_t))
+void * operator new(Ism::size_t size, void * (*alloc_fn)(Ism::size_t))
 {
 	return alloc_fn(size);
 }
 
-void operator delete(void * ptr, ism::cstring desc)
+void operator delete(void * ptr, Ism::cstring desc)
 {
 	CRASH("this should never be called");
 }
 
-void operator delete(void * ptr, void * (*alloc_fn)(ism::size_t))
+void operator delete(void * ptr, void * (*alloc_fn)(Ism::size_t))
 {
 	CRASH("this should never be called");
 }

@@ -6,7 +6,7 @@
 #include <typeinfo>
 #include <typeindex>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -26,15 +26,15 @@ namespace ism
 
 #if CC_MSVC
 #define PRETTY_FUNCTION		__FUNCSIG__
-#define PRETTY_TYPE_PREFIX	"class ism::ctti::NameView __cdecl ism::ctti::nameof<"
+#define PRETTY_TYPE_PREFIX	"class Ism::ctti::NameView __cdecl Ism::ctti::nameof<"
 #define PRETTY_TYPE_SUFFIX	">(void)"
 #elif CC_CLANG
 #define PRETTY_FUNCTION		__PRETTY_FUNCTION__
-#define PRETTY_TYPE_PREFIX	"ism::ctti::NameView ism::ctti::nameof() [T = "
+#define PRETTY_TYPE_PREFIX	"Ism::ctti::NameView Ism::ctti::nameof() [T = "
 #define PRETTY_TYPE_SUFFIX	"]"
 #elif CC_GCC
 #define PRETTY_FUNCTION		__PRETTY_FUNCTION__
-#define PRETTY_TYPE_PREFIX	"constexpr ism::ctti::NameView ism::ctti::nameof() [with T = "
+#define PRETTY_TYPE_PREFIX	"constexpr Ism::ctti::NameView Ism::ctti::nameof() [with T = "
 #define PRETTY_TYPE_SUFFIX	"]"
 #else
 #error "ctti is unavailable"

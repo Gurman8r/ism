@@ -1,6 +1,6 @@
 #include <scene/component/renderer_component.hpp>
 
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(RendererComponent, t) {}
 

@@ -24,18 +24,28 @@ newoption{
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
-_BUILD="%{wks.location}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-_BUILD_BIN="%{wks.location}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/binaries/"
-_BUILD_CFG="%{wks.location}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/config/"
-_BUILD_DAT="%{wks.location}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/data/"
-_BUILD_LIB="%{wks.location}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/library/"
-_BUILD_RES="%{wks.location}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/resources/"
-_BUILD_USR="%{wks.location}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/user/"
-_MODULES="%{wks.location}/modules/"
-_PROJECT="%{wks.location}/workspace/%{_ACTION}/%{prj.name}/"
-_TEMPS="%{wks.location}/temporary/%{_ACTION}/%{_TARGET_OS}/"
-_THIRDPARTY="%{wks.location}/thirdparty/"
-_VENDOR="%{wks.location}/misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}/"
+-- paths
+_SLN="%{wks.location}/"
+_CORE="%{_SLN}core/"
+_DRIVERS="%{_SLN}drivers/"
+_EDITOR="%{_SLN}editor/"
+_MAIN="%{_SLN}main/"
+_MODULES="%{_SLN}modules/"
+_PLATFORM="%{_SLN}platform/"
+_SCENE="%{_SLN}scene/"
+_SERVERS="%{_SLN}servers/"
+
+_THIRDPARTY="%{_SLN}thirdparty/"
+_PROJECT="%{_SLN}workspace/%{_ACTION}/%{prj.name}/"
+_TEMPS="%{_SLN}temporary/%{_ACTION}/%{_TARGET_OS}/"
+_VENDOR="%{_SLN}misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}/"
+
+_BUILD="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
+_BUILD_BIN="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/binaries/"
+_BUILD_CFG="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/config/"
+_BUILD_DAT="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/data/"
+_BUILD_RES="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/resources/"
+_BUILD_USR="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/user/"
 
 -- platform specific extensions
 LIB=".a" DLL=".so" EXE=""
@@ -45,21 +55,63 @@ end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
-function srcdirs(...)
-	local arg = { ... }
-	for i, v in ipairs(arg) do
-		files{
-			""..v.."/**.hpp",
-			""..v.."/**.cpp",
-			""..v.."/**.h",
-			""..v.."/**.c",
-			""..v.."/**.inl",
-			""..v.."/**.ini",
-			""..v.."/**.cfg",
-			""..v.."/**.lua",
-			""..v.."/**.cs",
-		}
-	end
+-- C++ project common
+function cpp_project_common(_group, _project, _kind, _targetdir)
+	group			(_group)
+	project			(_project)
+	kind			(_kind)
+	language		("C++")
+	cppdialect		("C++17")
+	systemversion	("latest")
+	staticruntime	("Off")
+	rtti			("On")
+	targetname		("%{prj.name}")
+	targetdir		(_targetdir)
+	objdir			("%{_TEMPS}")
+	location		("%{_PROJECT}")
+	prebuildcommands{
+		"{MKDIR} %{_BUILD}",
+		"{MKDIR} %{_BUILD_BIN}",
+		"{MKDIR} %{_BUILD_DAT}",
+		"{MKDIR} %{_BUILD_CFG}",
+		"{MKDIR} %{_BUILD_RES}",
+		"{MKDIR} %{_BUILD_USR}",
+	}
+end
+
+-- C# project common
+function csharp_project_common(_group, _project, _kind, _targetdir)
+	group		(_group)
+	project		(_project)
+	kind		(_kind)
+	language	("C#")
+	framework	("4.0")
+	targetname	("%{prj.name}")
+	targetdir	(_targetdir)
+	objdir		("%{_TEMPS}")
+	location	("%{_PROJECT}")
+end
+
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+
+-- graphics links
+function links_graphics()
+	filter{ "language:C++", "options:gfxapi=opengl" } links{ "opengl32" } defines{ "OPENGL_ENABLED=1" }
+	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glad" } dependson{ "glad" } links{ "glad" } defines{ "OPENGL_LOADER_GLAD=1" }
+	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew" } dependson{ "glew" } defines{ "OPENGL_LOADER_GLEW=1" }
+	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew", "configurations:Debug" } links{ "glew32d" }
+	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew", "configurations:Release" } links{ "glew32" }
+	filter{ "language:C++", "options:gfxapi=vulkan" } -- WIP --
+	filter{ "language:C++", "options:gfxapi=directx" } -- WIP --
+	filter{}
+end
+
+-- windows links
+function links_win32()
+	filter{ "language:C++", "system:windows" } links{ "dwmapi", } buildoptions{ "/bigobj" } defines{ "_CRT_SECURE_NO_WARNINGS" } undefines{ "NDEBUG" }
+	filter{ "language:C++", "system:windows", "configurations:Debug" } linkoptions{ "/NODEFAULTLIB:MSVCRT.lib", "/NODEFAULTLIB:LIBCMT.lib", "/NODEFAULTLIB:LIBCMTD.lib" }
+	filter{ "language:C++", "system:windows", "configurations:Release" } linkoptions{ "/NODEFAULTLIB:LIBCMT.lib" }
+	filter{}
 end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
@@ -82,26 +134,6 @@ function generate_manifest(path)
 	end
 	text=text.."</assembly>"
 	io.writefile(path, text);
-end
-
--- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
-
-function links_graphics()
-	filter{ "language:C++", "options:gfxapi=opengl" } links{ "opengl32" } defines{ "OPENGL_ENABLED=1" }
-	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glad" } dependson{ "glad" } links{ "glad" } defines{ "OPENGL_LOADER_GLAD=1" }
-	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew" } dependson{ "glew" } defines{ "OPENGL_LOADER_GLEW=1" }
-	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew", "configurations:Debug" } links{ "glew32d" }
-	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew", "configurations:Release" } links{ "glew32" }
-	filter{ "language:C++", "options:gfxapi=vulkan" } -- WIP --
-	filter{ "language:C++", "options:gfxapi=directx" } -- WIP --
-	filter{}
-end
-
-function links_win32()
-	filter{ "language:C++", "system:windows" } links{ "dwmapi", } buildoptions{ "/bigobj" } defines{ "_CRT_SECURE_NO_WARNINGS" } undefines{ "NDEBUG" }
-	filter{ "language:C++", "system:windows", "configurations:Debug" } linkoptions{ "/NODEFAULTLIB:MSVCRT.lib", "/NODEFAULTLIB:LIBCMT.lib", "/NODEFAULTLIB:LIBCMTD.lib" }
-	filter{ "language:C++", "system:windows", "configurations:Release" } linkoptions{ "/NODEFAULTLIB:LIBCMT.lib" }
-	filter{}
 end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

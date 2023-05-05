@@ -13,7 +13,7 @@
 #include <glm/glm/gtc/matrix_transform.hpp>
 #include <glm/glm/gtx/quaternion.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

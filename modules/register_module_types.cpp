@@ -1,6 +1,6 @@
 #include <modules/register_module_types.hpp>
 
-namespace ism
+namespace Ism
 {
 	void initialize_modules(ExtensionInitializationLevel_ level)
 	{

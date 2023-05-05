@@ -1,6 +1,6 @@
 #include <servers/rendering/shader_language.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

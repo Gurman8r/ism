@@ -1,7 +1,7 @@
 #include <servers/rendering_server.hpp>
 #include <servers/rendering/rendering_server_default.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

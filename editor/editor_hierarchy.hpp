@@ -3,7 +3,7 @@
 
 #include <editor/editor_panel.hpp>
 
-namespace ism
+namespace Ism
 {
 	// hierarchy component of the main editor
 	class ISM_API EditorHierarchy : public EditorPanel

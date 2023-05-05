@@ -1,6 +1,6 @@
 #include <scene/component/mesh_renderer_component.hpp>
 
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(MeshRendererComponent, t) {}
 

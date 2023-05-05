@@ -3,7 +3,7 @@
 
 #include <scene/component/component.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API Behavior : public Component
 	{
@@ -17,6 +17,7 @@ namespace ism
 
 		NODISCARD bool is_enabled() const noexcept { return m_enabled; }
 		void set_enabled(bool enabled);
+
 		virtual void on_enable();
 		virtual void on_disable();
 	};

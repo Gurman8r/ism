@@ -3,7 +3,7 @@
 
 #include <scene/resources/shader.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API ShaderLibrary final
 	{

@@ -8,7 +8,7 @@
 #include <core/math/face3.hpp>
 #include <core/math/transform.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -49,7 +49,7 @@ namespace ism
 
 	static void _setup_pipeline(RID const shader)
 	{
-		pipeline = RENDERING_DEVICE->render_pipeline_create
+		pipeline = get_gpu()->render_pipeline_create
 		(
 			shader,
 			RD::RenderPrimitive_Triangles,
@@ -115,17 +115,17 @@ namespace ism
 
 	EditorNode::EditorNode()
 	{
-		ASSERT(!__singleton); __singleton = this;
+		SINGLETON_CTOR();
 
 		m_filesystem = memnew(EditorFileSystem);
 		m_hierarchy = memnew(EditorHierarchy);
 		m_log = memnew(EditorLog);
 		m_viewport = memnew(EditorViewport);
 
-		RID c{ get_rendering_server()->camera_create() };
-		get_rendering_server()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
-		get_rendering_server()->camera_set_transform(c, camera.transform);
-		get_rendering_server()->camera_destroy(c);
+		RID c{ get_graphics()->camera_create() };
+		get_graphics()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
+		get_graphics()->camera_set_transform(c, camera.transform);
+		get_graphics()->camera_destroy(c);
 
 		m_shaders["2d"].instance("../assets/shaders/2d.shader");
 		m_shaders["3d"].instance("../assets/shaders/3d.shader");
@@ -159,32 +159,32 @@ namespace ism
 		RID const shader{ m_shaders["3d"]->get_rid() };
 		_setup_pipeline(shader);
 
-		uniform_buffers[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
-		uniform_sets[SCENE_STATE_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		uniform_buffers[SCENE_STATE_UNIFORMS] = get_gpu()->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
+		uniform_sets[SCENE_STATE_UNIFORMS] = get_gpu()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, SCENE_STATE_UNIFORMS, { uniform_buffers[SCENE_STATE_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[RENDER_PASS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
-		uniform_sets[RENDER_PASS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		uniform_buffers[RENDER_PASS_UNIFORMS] = get_gpu()->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+		uniform_sets[RENDER_PASS_UNIFORMS] = get_gpu()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, RENDER_PASS_UNIFORMS, { uniform_buffers[RENDER_PASS_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
-		uniform_sets[TRANSFORMS_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		uniform_buffers[TRANSFORMS_UNIFORMS] = get_gpu()->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+		uniform_sets[TRANSFORMS_UNIFORMS] = get_gpu()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, TRANSFORMS_UNIFORMS, { uniform_buffers[TRANSFORMS_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, f32>));
-		uniform_sets[MATERIAL_UNIFORMS] = RENDERING_DEVICE->uniform_set_create({
+		uniform_buffers[MATERIAL_UNIFORMS] = get_gpu()->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, f32>));
+		uniform_sets[MATERIAL_UNIFORMS] = get_gpu()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, MATERIAL_UNIFORMS, { uniform_buffers[MATERIAL_UNIFORMS] } },
 			{ RD::UniformType_Texture, 0, { m_textures["earth_dm_2k"]->get_rid() } },
 			{ RD::UniformType_Texture, 1, { m_textures["earth_sm_2k"]->get_rid() } },
 		}, shader);
 	
 		// material (WIP)
-		material = get_rendering_server()->material_create();
-		get_rendering_server()->material_set_shader(material, shader);
-		get_rendering_server()->material_update(material, {
+		material = get_graphics()->material_create();
+		get_graphics()->material_set_shader(material, shader);
+		get_graphics()->material_update(material, {
 			{ "Ambient", Vec4{ 0.8f, 0.4f, 0.2f, 1.0f } },
 			{ "Diffuse", Vec4{ 0.5f, 0.5f, 0.5f, 1.0f } },
 			{ "Specular", Vec4{ 1.0f, 1.0f, 1.0f, 1.0f } },
@@ -195,36 +195,36 @@ namespace ism
 	
 		// framebuffers
 		Vector<RID> fb_textures{
-			RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
+			get_gpu()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 				t.color_format = RD::DataFormat_R8G8B8_UNORM;
 				t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
 			}),
-			RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
+			get_gpu()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 				t.color_format = RD::DataFormat_D24_UNORM_S8_UINT;
 				t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_DepthStencilAttachment;
 			}),
 		};
-		framebuffer = RENDERING_DEVICE->framebuffer_create(fb_textures);
+		framebuffer = get_gpu()->framebuffer_create(fb_textures);
 		m_viewport->m_main_texture = fb_textures[0];
 	}
 
 	EditorNode::~EditorNode()
 	{
-		ASSERT(this == __singleton); ON_SCOPE_EXIT(&) { __singleton = nullptr; };
+		SINGLETON_DTOR();
 
-		if (material) { get_rendering_server()->material_destroy(material); }
+		if (material) { get_graphics()->material_destroy(material); }
 
 		for (size_t i{}; i < ARRAY_SIZE(uniform_buffers); ++i) {
-			if (uniform_buffers[i]) { RENDERING_DEVICE->buffer_destroy(uniform_buffers[i]); }
+			if (uniform_buffers[i]) { get_gpu()->buffer_destroy(uniform_buffers[i]); }
 		}
 
 		for (size_t i{}; i < ARRAY_SIZE(uniform_sets); ++i) {
-			if (uniform_sets[i]) { RENDERING_DEVICE->uniform_set_destroy(uniform_sets[i]); }
+			if (uniform_sets[i]) { get_gpu()->uniform_set_destroy(uniform_sets[i]); }
 		}
 
-		if (framebuffer) { RENDERING_DEVICE->framebuffer_destroy(framebuffer); }
-		if (backbuffer) { RENDERING_DEVICE->framebuffer_destroy(backbuffer); }
-		if (pipeline) { RENDERING_DEVICE->render_pipeline_destroy(pipeline); }
+		if (framebuffer) { get_gpu()->framebuffer_destroy(framebuffer); }
+		if (backbuffer) { get_gpu()->framebuffer_destroy(backbuffer); }
+		if (pipeline) { get_gpu()->render_pipeline_destroy(pipeline); }
 
 		memdelete(m_filesystem);
 		memdelete(m_hierarchy);
@@ -238,9 +238,7 @@ namespace ism
 		{
 		case Notification_Process: {
 
-			char window_title[32];
-			std::sprintf(window_title, "ism @ %.3f fps", get_tree()->get_fps().value);
-			get_tree()->get_root()->set_title(window_title);
+			get_tree()->get_root()->set_title(String::format<64>("Pneumatic Engine @ %.3f fps", get_tree()->get_fps().value));
 
 			Duration const delta_time{ get_tree()->get_delta_time() };
 
@@ -257,7 +255,7 @@ namespace ism
 				; screen_resolution != res) {
 					screen_resolution = res;
 					camera.projection = perspective(camera.fov, screen_resolution[0] / screen_resolution[1], camera.znear, camera.zfar);
-					RENDERING_DEVICE->framebuffer_set_size(framebuffer, (i32)screen_resolution[0], (i32)screen_resolution[1]);
+					get_gpu()->framebuffer_set_size(framebuffer, (i32)screen_resolution[0], (i32)screen_resolution[1]);
 				}
 			}
 
@@ -275,40 +273,40 @@ namespace ism
 				RD::Std140<Mat4, Mat4> scene_state_ubo;
 				scene_state_ubo.set<0>(camera.projection); // camera projection
 				scene_state_ubo.set<1>(camera.transform); // camera view
-				RENDERING_DEVICE->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
+				get_gpu()->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
 
 				RD::Std140<Mat4> render_pass_ubo;
 				render_pass_ubo.set<0>(identity_v<Mat4>); // placeholder
-				RENDERING_DEVICE->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
+				get_gpu()->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
 
 				RD::Std140<Mat4> transforms_ubo;
 				transforms_ubo.set<0>(transform[0]); // model transform
-				RENDERING_DEVICE->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
+				get_gpu()->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
 
 				RD::Std140<Vec4, Vec4, Vec4, f32> material_ubo;
 				material_ubo.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
 				material_ubo.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
 				material_ubo.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
 				material_ubo.set<3>(32.f); // shininess
-				RENDERING_DEVICE->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
+				get_gpu()->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
 
 				static Vector<Color> clear_colors{ Colors::magenta };
 				clear_colors[0] = rotate_hue(clear_colors[0], 10.f * delta_time);
 
-				RD::DrawListID const draw_list{ RENDERING_DEVICE->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
-				RENDERING_DEVICE->draw_list_bind_pipeline(draw_list, pipeline);
-				RENDERING_DEVICE->draw_list_bind_uniform_set(draw_list, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
-				RENDERING_DEVICE->draw_list_bind_uniform_set(draw_list, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
-				RENDERING_DEVICE->draw_list_bind_uniform_set(draw_list, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
-				RENDERING_DEVICE->draw_list_bind_uniform_set(draw_list, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
+				RD::DrawListID const draw_list{ get_gpu()->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
+				get_gpu()->draw_list_bind_pipeline(draw_list, pipeline);
+				get_gpu()->draw_list_bind_uniform_set(draw_list, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
+				get_gpu()->draw_list_bind_uniform_set(draw_list, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
+				get_gpu()->draw_list_bind_uniform_set(draw_list, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
+				get_gpu()->draw_list_bind_uniform_set(draw_list, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
 				static Mesh * mesh{ *m_meshes["sphere32x24"] };
 				for (size_t i{}; i < mesh->get_surface_count(); ++i) {
-					RENDERING_DEVICE->draw_list_bind_vertex_array(draw_list, mesh->surface_get_vertex_array(i));
+					get_gpu()->draw_list_bind_vertex_array(draw_list, mesh->surface_get_vertex_array(i));
 					RID const ia{ mesh->surface_get_index_array(i) };
-					RENDERING_DEVICE->draw_list_bind_index_array(draw_list, ia);
-					RENDERING_DEVICE->draw_list_draw(draw_list, ia != nullptr, 1, 0);
+					get_gpu()->draw_list_bind_index_array(draw_list, ia);
+					get_gpu()->draw_list_draw(draw_list, ia != nullptr, 1, 0);
 				}
-				RENDERING_DEVICE->draw_list_end();
+				get_gpu()->draw_list_end();
 			}
 
 			// imgui

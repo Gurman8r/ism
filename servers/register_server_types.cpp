@@ -5,7 +5,7 @@
 #include <servers/rendering/rendering_server_default.hpp>
 #include <servers/text_server.hpp>
 
-namespace ism
+namespace Ism
 {
 	void register_server_types()
 	{

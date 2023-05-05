@@ -4,7 +4,7 @@
 #include <core/object/object_api.hpp>
 
 // accessors
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -58,10 +58,10 @@ namespace ism
 	{
 		using key_type = T;
 
-		template <class O = OBJ, class Index = T
+		template <class O = ObjectRef, class Index = T
 		> static auto get(O && o, Index && i) { return getattr(FWD(o), FWD(i)); }
 
-		template <class O = OBJ, class Index = T, class Value = OBJ
+		template <class O = ObjectRef, class Index = T, class Value = ObjectRef
 		> static void set(O && o, Index && i, Value && v) { setattr(FWD(o), FWD(i), FWD(v)); }
 	};
 
@@ -72,10 +72,10 @@ namespace ism
 	{
 		using key_type = T;
 
-		template <class O = OBJ, class Index = T
+		template <class O = ObjectRef, class Index = T
 		> static auto get(O && o, Index && i) { return getitem(FWD(o), FWD(i)); }
 
-		template <class O = OBJ, class Index = T, class Value = OBJ
+		template <class O = ObjectRef, class Index = T, class Value = ObjectRef
 		> static void set(O && o, Index && i, Value && v) { setitem(FWD(o), FWD(i), FWD(v)); }
 	};
 

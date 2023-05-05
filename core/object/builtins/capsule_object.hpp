@@ -4,14 +4,14 @@
 #include <core/object/builtins/type_object.hpp>
 
 // capsule
-namespace ism
+namespace Ism
 {
 	// capsule object
 	class ISM_API CapsuleObject : public Object
 	{
 		DEFINE_CLASS(CapsuleObject, Object);
 
-		friend class CAPSULE;
+		friend class CapsuleRef;
 
 	public:
 		void const * m_pointer{}, * m_context{};
@@ -66,12 +66,12 @@ namespace ism
 	template <> struct DefaultDelete<CapsuleObject> : DefaultDelete<Object> {};
 
 	// capsule check
-#define OBJECT_CHECK_CAPSULE(o) (isinstance<CAPSULE>(o))
+#define OBJECT_CHECK_CAPSULE(o) (isinstance<CapsuleRef>(o))
 
 	// capsule ref
-	class CAPSULE : public Ref<CapsuleObject>
+	class CapsuleRef : public Ref<CapsuleObject>
 	{
-		REF_CLASS(CAPSULE, OBJECT_CHECK_CAPSULE);
+		CUSTOM_REF(CapsuleRef, OBJECT_CHECK_CAPSULE);
 
 	public:
 		template <class T

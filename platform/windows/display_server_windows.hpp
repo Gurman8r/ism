@@ -6,7 +6,7 @@
 struct GLFWcursor;
 struct GLFWwindow;
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

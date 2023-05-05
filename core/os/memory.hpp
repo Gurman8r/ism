@@ -9,7 +9,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // memory
-namespace ism
+namespace Ism
 {
 	class ISM_API Memory final
 	{
@@ -26,43 +26,43 @@ namespace ism
 
 // memalloc
 #define memalloc \
-		(ism::Memory::alloc_static)
+		(Ism::Memory::alloc_static)
 
 // memrealloc
 #define memrealloc(ptr, size_in_bytes) \
-		(ism::Memory::realloc_static((size_in_bytes), (size), (size)))
+		(Ism::Memory::realloc_static((size_in_bytes), (size), (size)))
 
 // memrealloc (sized)
 #define memrealloc_sized(ptr, old_size, new_size) \
-		(ism::Memory::realloc_static((ptr), (old_size), (new_size)))
+		(Ism::Memory::realloc_static((ptr), (old_size), (new_size)))
 
 // memfree
 #define memfree \
-		(ism::Memory::free_static)
+		(Ism::Memory::free_static)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // operator new
 
-ISM_API_FUNC(void *) operator new(ism::size_t size, ism::cstring desc);
+ISM_API_FUNC(void *) operator new(Ism::size_t size, Ism::cstring desc);
 
-ISM_API_FUNC(void *) operator new(ism::size_t size, void * (*alloc_fn)(ism::size_t));
+ISM_API_FUNC(void *) operator new(Ism::size_t size, void * (*alloc_fn)(Ism::size_t));
 
-FORCE_INLINE void * operator new(ism::size_t size, void * ptr, ism::size_t check, ism::cstring desc) { return ptr; }
+FORCE_INLINE void * operator new(Ism::size_t size, void * ptr, Ism::size_t check, Ism::cstring desc) { return ptr; }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // operator delete
 
-ISM_API_FUNC(void) operator delete(void * ptr, ism::cstring desc);
+ISM_API_FUNC(void) operator delete(void * ptr, Ism::cstring desc);
 
-ISM_API_FUNC(void) operator delete(void * ptr, void * (*alloc_fn)(ism::size_t));
+ISM_API_FUNC(void) operator delete(void * ptr, void * (*alloc_fn)(Ism::size_t));
 
-FORCE_INLINE void operator delete(void * placement, void * ptr, ism::size_t check, ism::cstring desc) {}
+FORCE_INLINE void operator delete(void * placement, void * ptr, Ism::size_t check, Ism::cstring desc) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -78,7 +78,7 @@ namespace ism
 
 	// memnew
 #define memnew(T) \
-		(ism::_post_initialize(new (TOSTR(T)) T))
+		(Ism::_post_initialize(new (TOSTR(T)) T))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -100,7 +100,7 @@ namespace ism
 		do {							\
 			if (ptr)					\
 			{							\
-				ism::memdelete(ptr);	\
+				Ism::memdelete(ptr);	\
 			}							\
 		} while (0)
 
@@ -160,7 +160,7 @@ namespace ism
 }
 
 // test memory resource
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

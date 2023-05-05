@@ -2,9 +2,9 @@
 
 rem CLEANUP PROJECT FILES
 
-if exist ..\..\ism_vs2017.sln del /q ..\..\ism_vs2017.sln
-if exist ..\..\ism_vs2019.sln del /q ..\..\ism_vs2019.sln
-if exist ..\..\ism_vs2022.sln del /q ..\..\ism_vs2022.sln
+if exist ..\..\ism_sdk_vs2017.sln del /q ..\..\ism_sdk_vs2017.sln
+if exist ..\..\ism_sdk_vs2019.sln del /q ..\..\ism_sdk_vs2019.sln
+if exist ..\..\ism_sdk_vs2022.sln del /q ..\..\ism_sdk_vs2022.sln
 
 if exist ..\..\.vs rd /s /q ..\..\.vs
 if exist ..\..\project rd /s /q ..\..\project

@@ -29,7 +29,7 @@
 
 #include <scene/gui/imgui.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -82,7 +82,7 @@ namespace ism
 
 		get_os()->set_cmdline(exepath, args);
 
-		display = DS::create("ism", DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error);
+		display = DS::create("Pneumatic Engine", DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error);
 		graphics = RS::create();
 		text = memnew(TextServer);
 		physics = memnew(PhysicsServer);
@@ -114,7 +114,7 @@ namespace ism
 
 		//initialize_physics();
 	
-		SCRIPT_SERVER->initialize_languages();
+		get_script_server()->initialize_languages();
 	
 		imgui_context = VALIDATE(ImGui_Initialize());
 
@@ -129,7 +129,7 @@ namespace ism
 
 		if (editor) { main_loop = memnew(SceneTree); }
 
-		TYPE main_loop_type{};
+		TypeRef main_loop_type{};
 
 		if (script) {
 			/* TODO: load main loop from script */
@@ -140,7 +140,7 @@ namespace ism
 		}
 
 		if (!main_loop) {
-			ASSERT(TYPE::check_(main_loop_type));
+			ASSERT(TypeRef::check_(main_loop_type));
 			main_loop = main_loop_type();
 			ASSERT(main_loop);
 		}
@@ -177,17 +177,13 @@ namespace ism
 
 		// TODO: physics stuff goes here
 
-		get_input()->iteration(delta_time);
-
+		input->iteration(delta_time);
 		ImGui_BeginFrame(imgui_context);
-
 		if (get_os()->get_main_loop()->process(delta_time)) { should_close = true; }
-
 		ImGui::Render();
-		RENDERING_DEVICE->draw_list_begin_for_screen();
+		get_gpu()->draw_list_begin_for_screen();
 		ImGui_RenderDrawData(&imgui_context->Viewports[0]->DrawDataP);
-		RENDERING_DEVICE->draw_list_end();
-
+		get_gpu()->draw_list_end();
 		ImGui_EndFrame(imgui_context);
 	
 		return should_close;
@@ -202,7 +198,7 @@ namespace ism
 
 		get_os()->delete_main_loop();
 
-		SCRIPT_SERVER->finalize_languages();
+		get_script_server()->finalize_languages();
 
 #if TOOLS_ENABLED
 		finalize_modules(ExtensionInitializationLevel_Editor);

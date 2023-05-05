@@ -4,14 +4,14 @@
 #include <core/object/builtins/type_object.hpp>
 
 // string
-namespace ism
+namespace Ism
 {
 	// string object
 	class ISM_API StringObject : public Object
 	{
 		DEFINE_CLASS(StringObject, Object);
 
-		friend class STR;
+		friend class StringRef;
 
 	public:
 		String m_string{};
@@ -48,11 +48,11 @@ namespace ism
 
 		template <class T> StringObject(Ref<T> const & value) : m_string{}
 		{
-			if (STR::check_(value))
+			if (StringRef::check_(value))
 			{
-				m_string = (storage_type)(STR)value;
+				m_string = (storage_type)(StringRef)value;
 			}
-			else if (TYPE t{ typeof(value) }; t->tp_str)
+			else if (TypeRef t{ typeof(value) }; t->tp_str)
 			{
 				m_string = (storage_type)t->tp_str(value);
 			}
@@ -87,12 +87,12 @@ namespace ism
 	template <> struct DefaultDelete<StringObject> : DefaultDelete<Object> {};
 
 	// string check
-#define OBJECT_CHECK_STR(o) (ism::typeof(o).has_feature(ism::TypeFlags_Str_Subclass))
+#define OBJECT_CHECK_STRING(o) (Ism::typeof(o).has_feature(Ism::TypeFlags_Str_Subclass))
 
 	// string ref
-	class STR : public Ref<StringObject>
+	class StringRef : public Ref<StringObject>
 	{
-		REF_CLASS(STR, OBJECT_CHECK_STR);
+		CUSTOM_REF(StringRef, OBJECT_CHECK_STRING);
 
 	public:
 		using storage_type		= value_type::storage_type;
@@ -126,7 +126,7 @@ namespace ism
 		auto end() const -> const_iterator { return VALIDATE(m_ptr)->end(); }
 
 		template <class T, class = std::enable_if_t<mpl::is_string_v<T>> // std::is_convertible_v<T, storage_type>
-		> STR & operator=(T && value) noexcept
+		> StringRef & operator=(T && value) noexcept
 		{
 			if (VALIDATE(m_ptr)) { VALIDATE(m_ptr)->m_string = FWD(value); }
 			else { instance(FWD(value)); }
@@ -135,15 +135,15 @@ namespace ism
 	};
 }
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> STR repr(Ref<T> const & o) noexcept
+	template <class T> StringRef repr(Ref<T> const & o) noexcept
 	{
 		if (!o) { return nullptr; }
 
-		TYPE t{ typeof(o) };
+		TypeRef t{ typeof(o) };
 
 		return t->tp_repr ? t->tp_repr(o) : nullptr;
 	}
@@ -151,11 +151,11 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// "__x__"
-	inline bool is_dunder_name(OBJ name)
+	inline bool is_dunder_name(ObjectRef name)
 	{
-		if (!STR::check_(name)) { return false; }
+		if (!StringRef::check_(name)) { return false; }
 
-		String const & s{ STR(name) };
+		String const & s{ StringRef(name) };
 
 		size_t const n{ s.size() };
 

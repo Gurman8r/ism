@@ -1,6 +1,6 @@
 #include <scene/main/resource_preloader.hpp>
 
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(ResourcePreloader, t) {}
 

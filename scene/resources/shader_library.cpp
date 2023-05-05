@@ -2,7 +2,7 @@
 #include <servers/rendering_server.hpp>
 #include <fstream>
 
-using namespace ism;
+using namespace Ism;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -36,7 +36,7 @@ Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData (&spec)[RD:
 	RD::ShaderStage_ stage_index{ RD::ShaderStage_MAX };
 
 	String line;
-	while (std::getline(file, line))
+	while (std::getline(file, line.native()))
 	{
 		bool should_write{ true };
 		if (line.erase_duplicates(' ').empty()) { continue; }
@@ -77,10 +77,10 @@ Error_ ShaderLibrary::load_shader(Shader & shader, String const & path)
 	switch (path.extension().hash_code())
 	{
 	case ".shader"_hash: {
-		if (shader.m_shader) { RENDERING_DEVICE->shader_destroy(shader.m_shader); }
+		if (shader.m_shader) { get_gpu()->shader_destroy(shader.m_shader); }
 		RD::ShaderStageData spec[RD::ShaderStage_MAX]{};
 		if (auto const err{ load_shader_default(file, spec) }; err != Error_OK) { return err; }
-		shader.m_shader = RENDERING_DEVICE->shader_create(spec);
+		shader.m_shader = get_gpu()->shader_create(spec);
 		if (!shader.m_shader) { return Error_Unknown; }
 		return Error_OK;
 	} break;

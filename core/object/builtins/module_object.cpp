@@ -1,7 +1,7 @@
 #include <core/object/builtins/module_object.hpp>
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,16 +11,16 @@ namespace ism
 
 		t.tp_getattro = (GetAttrOFunc)&ModuleObject::module_getattro;
 
-		t.tp_new = (NewFunc)[](TYPE type, OBJ args) -> OBJ
+		t.tp_new = (NewFunc)[](TypeRef type, ObjectRef args) -> ObjectRef
 		{
-			return memnew(ModuleObject(STR(args[0])));
+			return memnew(ModuleObject(StringRef(args[0])));
 		};
 
-		t.tp_cmp = (CmpFunc)[](OBJ self, OBJ other) -> i32
+		t.tp_cmp = (CmpFunc)[](ObjectRef self, ObjectRef other) -> i32
 		{
-			if (MODULE::check_(other))
+			if (ModuleRef::check_(other))
 			{
-				return (*self == *other) ? 0 : compare(MODULE(self)->m_name, MODULE(other)->m_name);
+				return (*self == *other) ? 0 : compare(ModuleRef(self)->m_name, ModuleRef(other)->m_name);
 			}
 			else
 			{
@@ -28,10 +28,10 @@ namespace ism
 			}
 		};
 
-		t.tp_bind = BIND_CLASS(ModuleObject, t)
+		t.tp_bind = BIND_CLASS(ModuleObject, klass)
 		{
-			return t
-				.def("__contains__", [](ModuleObject const & self, OBJ const & value) { return self.m_dict.contains(value); })
+			return klass
+				.def("__contains__", [](ModuleObject const & self, ObjectRef const & value) { return self.m_dict.contains(value); })
 				.def_readonly("__name__", &ModuleObject::m_name)
 				.def_readonly("__dict__", &ModuleObject::m_dict)
 				;
@@ -40,7 +40,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MODULE ModuleObject::def_submodule(cstring name)
+	ModuleRef ModuleObject::def_submodule(cstring name)
 	{
 		return nullptr;
 	}
@@ -51,7 +51,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJ ModuleObject::module_getattro(MODULE m, OBJ name)
+	ObjectRef ModuleObject::module_getattro(ModuleRef m, ObjectRef name)
 	{
 		return generic_getattr(m, name);
 	}

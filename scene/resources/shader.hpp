@@ -3,7 +3,7 @@
 
 #include <servers/rendering_server.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API Shader : public Resource
 	{

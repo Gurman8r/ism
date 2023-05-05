@@ -2,7 +2,7 @@
 #include <scene/main/scene_tree.hpp>
 #include <core/input/input.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

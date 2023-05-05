@@ -3,7 +3,7 @@
 
 #include <core/templates/utility.hpp>
 
-namespace ism
+namespace Ism
 {
 	// fixed size array
 	template <class _Ty, size_t _Size

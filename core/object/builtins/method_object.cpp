@@ -1,7 +1,7 @@
 #include <core/object/builtins/method_object.hpp>
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,16 +11,16 @@ namespace ism
 
 		t.tp_vectorcalloffset = offsetof(MethodObject, m_vectorcall);
 
-		t.tp_descr_get = (DescrGetFunc)[](OBJ self, OBJ obj, OBJ cls) { return self; };
+		t.tp_descr_get = (DescrGetFunc)[](ObjectRef self, ObjectRef obj, ObjectRef klass) { return self; };
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJ MethodObject::method_vectorcall(OBJ callable, OBJ const * argv, size_t argc)
+	ObjectRef MethodObject::method_vectorcall(ObjectRef callable, ObjectRef const * argv, size_t argc)
 	{
-		if (!METHOD::check_(callable)) { return nullptr; }
-		OBJ & self{ ((METHOD &)callable)->m_self };
-		OBJ & func{ ((METHOD &)callable)->m_func };
+		if (!MethodRef::check_(callable)) { return nullptr; }
+		ObjectRef & self{ ((MethodRef &)callable)->m_self };
+		ObjectRef & func{ ((MethodRef &)callable)->m_func };
 		VectorCallFunc vcall{ get_vectorcall_func(func) };
 		if (argc == 0)
 		{
@@ -29,13 +29,9 @@ namespace ism
 		else
 		{
 			ASSERT("too many arguments" && (argc + 1) < MAX_ARGUMENTS);
-
-			OBJ stack[MAX_ARGUMENTS]{};
-
+			ObjectRef stack[MAX_ARGUMENTS]{};
 			stack[0] = self;
-
 			std::copy(argv, argv + 1, stack + 1);
-
 			return vcall(func, stack, argc + 1);
 		}
 	}

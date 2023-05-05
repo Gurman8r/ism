@@ -9,7 +9,7 @@
 #include <drivers/windows/file_access_windows.hpp>
 #endif
 
-namespace ism
+namespace Ism
 {
 	void register_core_driver_types()
 	{

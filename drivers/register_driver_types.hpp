@@ -3,7 +3,7 @@
 
 #include <core/typedefs.hpp>
 
-namespace ism
+namespace Ism
 {
 	ISM_API_FUNC(void) register_core_driver_types();
 	ISM_API_FUNC(void) unregister_core_driver_types();

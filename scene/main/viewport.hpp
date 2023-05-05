@@ -4,7 +4,7 @@
 #include <scene/main/node.hpp>
 #include <scene/resources/texture.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

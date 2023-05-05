@@ -1,6 +1,6 @@
 #include <scene/component/behavior.hpp>
 
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(Behavior, t) {}
 

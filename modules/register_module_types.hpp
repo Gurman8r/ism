@@ -3,7 +3,7 @@
 
 #include <core/extension/extension_interface.hpp>
 
-namespace ism
+namespace Ism
 {
 	ISM_API_FUNC(void) initialize_modules(ExtensionInitializationLevel_ level);
 	ISM_API_FUNC(void) finalize_modules(ExtensionInitializationLevel_ level);

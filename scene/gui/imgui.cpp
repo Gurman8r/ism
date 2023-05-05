@@ -28,7 +28,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism
+namespace Ism
 {
 	ImGuiContext * ImGui_Initialize()
 	{

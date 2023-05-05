@@ -1,13 +1,13 @@
 #include <core/object/builtins/generic_object.hpp>
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(GenericObject, t)
+	EMBED_CLASS(GenericTypeObject, t)
 	{
-		t.tp_cmp = (CmpFunc)[](OBJ self, OBJ other) -> i32
+		t.tp_cmp = (CmpFunc)[](ObjectRef self, ObjectRef other) -> i32
 		{
 			return compare(*self, *other);
 		};

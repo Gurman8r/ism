@@ -2,11 +2,10 @@
 #define _ISM_BUFFER_HPP_
 
 #include <core/templates/array.hpp>
-#include <core/templates/vector.hpp>
 #include <core/string/string.hpp>
 #include <core/templates/mpl.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -276,7 +275,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -526,7 +525,7 @@ namespace ism
 }
 
 // constant buffer
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	

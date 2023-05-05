@@ -3,7 +3,7 @@
 
 #include <core/extension/extension.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API ExtensionManager : public Object
 	{

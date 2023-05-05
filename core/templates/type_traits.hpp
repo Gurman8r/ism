@@ -7,7 +7,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism::mpl
+namespace Ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -308,7 +308,7 @@ namespace ism::mpl
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* MAKER */
-namespace ism::priv
+namespace Ism::priv
 {
 	// maker helper
 	template <class T> struct _MakerHelper final
@@ -329,7 +329,7 @@ namespace ism::priv
 
 	// maker
 #define MAKER(m_class, ...) \
-		(ism::priv::_MakerHelper<m_class>{ ##__VA_ARGS__ })
+		(Ism::priv::_MakerHelper<m_class>{ ##__VA_ARGS__ })
 
 	// make
 #define MAKE(m_class, m_var, ...) \
@@ -339,7 +339,7 @@ namespace ism::priv
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* HASH */
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

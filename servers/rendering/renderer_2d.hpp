@@ -3,7 +3,7 @@
 
 #include <servers/rendering/renderer_storage.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

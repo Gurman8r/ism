@@ -3,7 +3,7 @@
 
 #include <editor/editor_panel.hpp>
 
-namespace ism
+namespace Ism
 {
 	// filesystem component of the main editor
 	class ISM_API EditorFileSystem : public EditorPanel

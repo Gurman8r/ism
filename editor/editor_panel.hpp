@@ -5,10 +5,10 @@
 #include <scene/main/scene_tree.hpp>
 
 #define EDITOR_PANEL_SCOPE(open)							\
-	(open) = ism::EditorPanel::begin_window();				\
-	ON_SCOPE_EXIT(&) { ism::EditorPanel::end_window(); };	\
+	(open) = Ism::EditorPanel::begin_window();				\
+	ON_SCOPE_EXIT(&) { Ism::EditorPanel::end_window(); };	\
 
-namespace ism
+namespace Ism
 {
 	// base class for editor windows
 	class ISM_API EditorPanel : public Object

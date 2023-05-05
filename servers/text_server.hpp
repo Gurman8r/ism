@@ -3,7 +3,7 @@
 
 #include <scene/resources/texture.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -53,7 +53,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -107,7 +107,7 @@ namespace ism
 
 	using TS = TextServer;
 
-	SINGLETON_WRAPPER(TS, get_text_server);
+	SINGLETON_WRAPPER(TS, get_ts);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

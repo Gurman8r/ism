@@ -4,7 +4,7 @@
 #include <core/io/image.hpp>
 #include <core/io/resource_loader.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -21,9 +21,8 @@ namespace ism
 	{
 		DEFINE_CLASS(ImageFormatLoader, ResourceFormatLoader);
 	public:
-		NODISCARD virtual RES load(String const & path, Error_ * error = nullptr) override;
-		NODISCARD virtual void get_recognized_extensions(Vector<String> * out) const override;
-		NODISCARD virtual TYPE get_resource_type(String const & path) const override;
+		virtual RES load(String const & path, Error_ * error = nullptr) override;
+		virtual void get_recognized_extensions(Vector<String> * out) const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

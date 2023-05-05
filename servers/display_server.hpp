@@ -5,7 +5,7 @@
 #include <core/input/input.hpp>
 #include <core/io/image.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -138,9 +138,9 @@ namespace ism
 		virtual void window_grab_focus(WindowID window = MAIN_WINDOW_ID) = 0;
 		virtual bool window_has_focus(WindowID window = MAIN_WINDOW_ID) const = 0;
 
-		//virtual void window_set_window_event_callback(OBJ const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
-		//virtual void window_set_input_event_callback(OBJ const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
-		//virtual void window_set_input_text_callback(OBJ const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
+		//virtual void window_set_window_event_callback(ObjectRef const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
+		//virtual void window_set_input_event_callback(ObjectRef const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
+		//virtual void window_set_input_text_callback(ObjectRef const & callable, WindowID window = MAIN_WINDOW_ID) = 0;
 
 		virtual void poll_events() = 0;
 		virtual void swap_buffers() = 0;
@@ -156,7 +156,7 @@ namespace ism
 
 	using DS = DisplayServer;
 
-	SINGLETON_WRAPPER(DS, get_display_server);
+	SINGLETON_WRAPPER(DS, get_display);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

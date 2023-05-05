@@ -4,17 +4,17 @@
 #include <core/object/builtins/type_object.hpp>
 
 // dict
-namespace ism
+namespace Ism
 {
 	// dict object
 	class ISM_API DictObject : public Object
 	{
 		DEFINE_CLASS(DictObject, Object);
 
-		friend class DICT;
+		friend class DictRef;
 
 	public:
-		HashMap<OBJ, OBJ> m_dict{};
+		HashMap<ObjectRef, ObjectRef> m_dict{};
 
 		using storage_type		= decltype(m_dict);
 		using hasher			= storage_type::hasher;
@@ -34,7 +34,7 @@ namespace ism
 
 		DictObject(storage_type && value) noexcept : m_dict{ std::move(value) } {}
 
-		DictObject(std::initializer_list<Pair<OBJ, OBJ>> init) : m_dict{}
+		DictObject(std::initializer_list<Pair<ObjectRef, ObjectRef>> init) : m_dict{}
 		{
 			for (auto const & e : init) { m_dict.insert(e); }
 		}
@@ -43,33 +43,33 @@ namespace ism
 
 		void reserve(size_t count) { m_dict.reserve(count); }
 
-		template <class Index = OBJ
+		template <class Index = ObjectRef
 		> auto del(Index && i) -> Error_ { return m_dict.erase(FWD_OBJ(i)), Error_OK; }
 
-		template <class Index = OBJ, class Value = OBJ
+		template <class Index = ObjectRef, class Value = ObjectRef
 		> bool insert(Index && i, Value && v) { return m_dict.try_emplace(FWD_OBJ(i), FWD_OBJ(v)).second; }
 
-		template <class Index = OBJ
+		template <class Index = ObjectRef
 		> bool contains(Index && i) const { return find(FWD(i)) != end(); }
 
-		template <class Index = OBJ
+		template <class Index = ObjectRef
 		> auto find(Index && i) -> iterator { return m_dict.find(FWD_OBJ(i)); }
 
-		template <class Index = OBJ
+		template <class Index = ObjectRef
 		> auto find(Index && i) const -> const_iterator { return m_dict.find(FWD_OBJ(i)); }
 
-		template <class Index = OBJ
-		> auto lookup(Index && i) const -> OBJ { return this->lookup(FWD_OBJ(i), OBJ{}); }
+		template <class Index = ObjectRef
+		> auto lookup(Index && i) const -> ObjectRef { return this->lookup(FWD_OBJ(i), ObjectRef{}); }
 
-		template <class Index = OBJ, class Defval = OBJ
-		> auto lookup(Index && i, Defval && dv) const -> OBJ
+		template <class Index = ObjectRef, class Defval = ObjectRef
+		> auto lookup(Index && i, Defval && dv) const -> ObjectRef
 		{
 			if (auto const ptr{ util::getptr(m_dict, FWD_OBJ(i)) }) { return *ptr; }
 			else { return FWD_OBJ(dv); }
 		}
 
-		template <class Index = OBJ
-		> auto operator[](Index && i) -> OBJ & { return m_dict[FWD_OBJ(i)]; }
+		template <class Index = ObjectRef
+		> auto operator[](Index && i) -> ObjectRef & { return m_dict[FWD_OBJ(i)]; }
 
 		bool empty() const { return m_dict.empty(); }
 
@@ -88,12 +88,12 @@ namespace ism
 	template <> struct DefaultDelete<DictObject> : DefaultDelete<Object> {};
 
 	// dict check
-#define OBJECT_CHECK_DICT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Dict_Subclass))
+#define OBJECT_CHECK_DICT(o) (Ism::typeof(o).has_feature(Ism::TypeFlags_Dict_Subclass))
 
 	// dict ref
-	class DICT : public Ref<DictObject>
+	class DictRef : public Ref<DictObject>
 	{
-		REF_CLASS(DICT, OBJECT_CHECK_DICT);
+		CUSTOM_REF(DictRef, OBJECT_CHECK_DICT);
 
 	public:
 		using storage_type		= value_type::storage_type;
@@ -108,29 +108,29 @@ namespace ism
 
 		void reserve(size_t count) const { VALIDATE(m_ptr)->reserve(count); }
 
-		template <class Index = OBJ
+		template <class Index = ObjectRef
 		> auto del(Index && i) -> Error_ { return VALIDATE(m_ptr)->del(FWD(i)); }
 
-		template <class Index = OBJ, class Value = OBJ
+		template <class Index = ObjectRef, class Value = ObjectRef
 		> bool insert(Index && i, Value && v) { return VALIDATE(m_ptr)->insert(FWD(i), FWD(v)); }
 
-		template <class Index = OBJ
+		template <class Index = ObjectRef
 		> bool contains(Index && i) const { return VALIDATE(m_ptr)->contains(FWD(i)); }
 
-		template <class Index = OBJ
+		template <class Index = ObjectRef
 		> auto find(Index && i) -> iterator { return VALIDATE(m_ptr)->find(FWD(i)); }
 
-		template <class Index = OBJ
+		template <class Index = ObjectRef
 		> auto find(Index && i) const -> const_iterator { return VALIDATE(m_ptr)->find(FWD(i)); }
 
-		template <class Index = OBJ
-		> auto lookup(Index && i) const -> OBJ { return VALIDATE(m_ptr)->lookup(FWD(i)); }
+		template <class Index = ObjectRef
+		> auto lookup(Index && i) const -> ObjectRef { return VALIDATE(m_ptr)->lookup(FWD(i)); }
 
-		template <class Index = OBJ, class Defval = OBJ
-		> auto lookup(Index && i, Defval && dv) const -> OBJ { return VALIDATE(m_ptr)->lookup(FWD(i), FWD(dv)); }
+		template <class Index = ObjectRef, class Defval = ObjectRef
+		> auto lookup(Index && i, Defval && dv) const -> ObjectRef { return VALIDATE(m_ptr)->lookup(FWD(i), FWD(dv)); }
 
-		template <class Index = OBJ
-		> auto operator[](Index && i) const -> OBJ & { return VALIDATE(m_ptr)->operator[](FWD(i)); }
+		template <class Index = ObjectRef
+		> auto operator[](Index && i) const -> ObjectRef & { return VALIDATE(m_ptr)->operator[](FWD(i)); }
 
 		bool empty() const { return VALIDATE(m_ptr)->empty(); }
 

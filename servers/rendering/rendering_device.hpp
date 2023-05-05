@@ -4,7 +4,7 @@
 #include <servers/display_server.hpp>
 
 // rendering device
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -20,7 +20,6 @@ namespace ism
 		RenderingDevice() noexcept { __singleton = this; }
 		virtual ~RenderingDevice() noexcept override = default;
 		FORCE_INLINE static RenderingDevice * get_singleton() noexcept { return __singleton; }
-#define RENDERING_DEVICE (ism::RenderingDevice::get_singleton())
 
 	public:
 		virtual void initialize() = 0;
@@ -309,7 +308,7 @@ namespace ism
 					, type		{ type }
 					, count		{ (u32)count }
 					, normalized{ normalized }
-					, size		{ (u32)(ism::get_data_type_size(type) * count) }
+					, size		{ (u32)(Ism::get_data_type_size(type) * count) }
 					, offset	{}
 				{
 				}
@@ -742,7 +741,7 @@ namespace ism
 		virtual void render_pipeline_destroy(RID pipeline) = 0;
 		
 	public:
-		/* DRAW LIST */
+		/* DRAW ListRef */
 		using DrawListID = typename size_t;
 
 		enum InitialAction_
@@ -780,6 +779,8 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	using RD = RenderingDevice;
+
+	SINGLETON_WRAPPER(RD, get_gpu);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

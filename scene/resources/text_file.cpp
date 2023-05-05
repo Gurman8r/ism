@@ -2,15 +2,15 @@
 #include <servers/text_server.hpp>
 #include <fstream>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	EMBED_CLASS(TextFile, t)
 	{
-		t.tp_bind = BIND_CLASS(TextFile, t)
+		t.tp_bind = BIND_CLASS(TextFile, klass)
 		{
-			return t
+			return klass
 				.def("get_text", &TextFile::get_text)
 				.def("has_text", &TextFile::has_text)
 				.def("set_text", &TextFile::set_text)

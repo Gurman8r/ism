@@ -1,6 +1,6 @@
 #include <scene/component/transform_component.hpp>
 
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(TransformComponent, t) {}
 

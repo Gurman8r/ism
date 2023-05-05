@@ -3,9 +3,9 @@
 
 #include <core/object/common.hpp>
 
-namespace ism
+namespace Ism
 {
-	ISM_API_FUNC(OBJ) evaluate(String text);
+	ISM_API_FUNC(ObjectRef) evaluate(String text);
 }
 
 #endif // !_ISM_EVAL_HPP_

@@ -1,6 +1,6 @@
 #include <scene/component/sprite_renderer_component.hpp>
 
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(SpriteRendererComponent, t) {}
 

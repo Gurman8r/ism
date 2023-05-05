@@ -1,7 +1,7 @@
 #include <scene/component/component.hpp>
 #include <scene/main/entity.hpp>
 
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(Component, t) {}
 

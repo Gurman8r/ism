@@ -3,7 +3,7 @@
 
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -32,6 +32,7 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// file access
 	class ISM_API FileAccess : public Object
 	{
 		DEFINE_CLASS(FileAccess, Object);
@@ -56,7 +57,7 @@ namespace ism
 
 		virtual FileAccess & flush() = 0;
 		virtual FileAccess & close() = 0;
-		NODISCARD virtual bool exists(String const & path) = 0;
+		NODISCARD virtual bool file_exists(String const & path) = 0;
 		NODISCARD virtual bool is_open() const = 0;
 		virtual FileAccess & seek(u64 position) = 0;
 		virtual FileAccess & seek_end(i64 position = 0) = 0;
@@ -92,6 +93,9 @@ namespace ism
 		virtual FileAccess & write_line(String const & value);
 		virtual FileAccess & write_buffer(u8 const * data, size_t const size);
 		FileAccess & write_buffer(DynamicBuffer const & buffer);
+
+	public:
+		static bool exists(String const & path);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

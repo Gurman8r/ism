@@ -9,16 +9,16 @@
 
 int _main()
 {
-	using namespace ism;
+	using namespace Ism;
 
 	OS_Windows os{ (HINSTANCE)nullptr };
 
 	switch (Main::setup(__argv[0], __argc, __argv)) {
 	case Error_OK: break;
-	/* TODO: additional error checking */
+	/* TODO: additional error checking goes here */
 	case Error_Unknown:
 	default: {
-		CRASH("An unknown error occurred during setup. The program was unable to start.");
+		CRASH("An error occurred during setup and program was unable to start.");
 	} break;
 	}
 

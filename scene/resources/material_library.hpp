@@ -3,7 +3,7 @@
 
 #include <scene/resources/material.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API MaterialLibrary final
 	{

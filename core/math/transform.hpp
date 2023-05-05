@@ -3,7 +3,7 @@
 
 #include <core/math/quat.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -350,7 +350,7 @@ namespace ism
 
 		NODISCARD Mat4 get_translation() const noexcept
 		{
-			return ism::translate(identity_v<Mat4>, m_position);
+			return Ism::translate(identity_v<Mat4>, m_position);
 		}
 
 		NODISCARD Mat4 get_orientation() const noexcept
@@ -360,7 +360,7 @@ namespace ism
 
 		NODISCARD Mat4 get_scaling() const noexcept
 		{
-			return ism::scale(identity_v<Mat4>, m_scale);
+			return Ism::scale(identity_v<Mat4>, m_scale);
 		}
 
 		NODISCARD Mat4 const & get_matrix() const noexcept

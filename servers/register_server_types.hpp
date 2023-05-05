@@ -3,7 +3,7 @@
 
 #include <core/typedefs.hpp>
 
-namespace ism
+namespace Ism
 {
 	ISM_API_FUNC(void) register_server_types();
 	ISM_API_FUNC(void) register_server_singletons();

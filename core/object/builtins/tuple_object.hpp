@@ -5,14 +5,14 @@
 
 #include <core/object/builtins/type_object.hpp>
 
-namespace ism
+namespace Ism
 {
 	// tuple object
 	class TupleObject : public Object
 	{
 		DEFINE_CLASS(TupleObject, Object);
 
-		friend class TUPLE;
+		friend class TupleRef;
 
 	public:
 	};
@@ -21,12 +21,12 @@ namespace ism
 	template <> struct DefaultDelete<TupleObject> : DefaultDelete<Object> {};
 
 	// tuple check
-#define OBJECT_CHECK_TUPLE(o) (ism::typeof(o).has_feature(ism::TypeFlags_Tuple_Subclass))
+#define OBJECT_CHECK_TUPLE(o) (Ism::typeof(o).has_feature(Ism::TypeFlags_Tuple_Subclass))
 
 	// tuple ref
-	class TUPLE : public Ref<TupleObject>
+	class TupleRef : public Ref<TupleObject>
 	{
-		REF_CLASS(TUPLE, OBJECT_CHECK_TUPLE);
+		CUSTOM_REF(TupleRef, OBJECT_CHECK_TUPLE);
 
 	public:
 	};

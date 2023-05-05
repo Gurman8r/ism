@@ -2,10 +2,11 @@
 #define _ISM_ERROR_MACROS_HPP_
 
 #include <core/error/error.hpp>
+#include <core/string/print_string.hpp>
 #include <cassert>
 #include <stdexcept>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -17,7 +18,7 @@ namespace ism
 
 	// crash
 #define CRASH(m_message) \
-		(ism::priv::_crash)(WIDE(m_message), WIDE(__FILE__), __LINE__)
+		(Ism::priv::_crash)(WIDE(m_message), WIDE(__FILE__), __LINE__)
 
 	// debug crash
 #if DEBUG_ENABLED
@@ -53,7 +54,7 @@ namespace ism
 
 	// validate
 #define VALIDATE(m_expr) \
-		(ism::priv::_validate)((m_expr), WIDE(TOSTR(m_expr)), WIDE(__FILE__), __LINE__)
+		(Ism::priv::_validate)((m_expr), WIDE(TOSTR(m_expr)), WIDE(__FILE__), __LINE__)
 
 	// debug validate
 #if DEBUG_ENABLED
@@ -69,7 +70,7 @@ namespace ism
 		do {																	\
 			if (m_expr) { /* contextually convertible to bool paranoia */ }		\
 			else {																\
-				ism::priv::_crash(WIDE(m_message), WIDE(__FILE__), __LINE__);	\
+				Ism::priv::_crash(WIDE(m_message), WIDE(__FILE__), __LINE__);	\
 			}																	\
 		} while (0)
 
@@ -100,7 +101,7 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -117,16 +118,16 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ERR_PRINT_ERROR(m_desc) \
-		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), ism::ErrorHandlerType_Error))
+		(Ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), Ism::ErrorHandlerType_Error))
 
 #define ERR_PRINT_ERROR_MSG(m_desc, m_message) \
-		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), (m_message), ism::ErrorHandlerType_Error))
+		(Ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), (m_message), Ism::ErrorHandlerType_Error))
 
 #define ERR_PRINT_WARNING(m_desc) \
-		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), ism::ErrorHandlerType_Warning))
+		(Ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), Ism::ErrorHandlerType_Warning))
 
 #define ERR_PRINT_WARNING_MSG(m_desc, m_message) \
-		(ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), (m_message), ism::ErrorHandlerType_Error))
+		(Ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), (m_message), Ism::ErrorHandlerType_Error))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -3,7 +3,7 @@
 
 #include <servers/text_server.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API Font : public Resource
 	{

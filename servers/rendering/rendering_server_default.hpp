@@ -5,7 +5,7 @@
 #include <servers/rendering/renderer_2d.hpp>
 #include <servers/rendering/renderer_3d.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

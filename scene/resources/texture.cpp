@@ -1,6 +1,6 @@
 #include <scene/resources/texture.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -35,7 +35,7 @@ namespace ism
 		if (!m_image_cache) { return; }
 		m_width = m_image_cache->get_width();
 		m_height = m_image_cache->get_height();
-		m_texture = get_rendering_server()->texture2d_create(m_image_cache);
+		m_texture = get_graphics()->texture2d_create(m_image_cache);
 	}
 
 	ImageTexture::ImageTexture(Ref<Image> const & image)
@@ -43,12 +43,12 @@ namespace ism
 		m_image_cache = VALIDATE(image);
 		m_width = m_image_cache->get_width();
 		m_height = m_image_cache->get_height();
-		m_texture = get_rendering_server()->texture2d_create(m_image_cache);
+		m_texture = get_graphics()->texture2d_create(m_image_cache);
 	}
 
 	ImageTexture::~ImageTexture()
 	{
-		if (m_texture) { RENDERING_DEVICE->texture_destroy(m_texture); m_texture = nullptr; }
+		if (m_texture) { get_gpu()->texture_destroy(m_texture); m_texture = nullptr; }
 	}
 
 	RID ImageTexture::get_rid() const
@@ -73,7 +73,7 @@ namespace ism
 
 	Ref<Image> ImageTexture::get_data() const
 	{
-		return m_texture ? get_rendering_server()->texture2d_get_data(m_texture) : nullptr;
+		return m_texture ? get_graphics()->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	void ImageTexture::update(Ref<Image> const & image, bool immediate)

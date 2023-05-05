@@ -85,7 +85,7 @@
 
 /* ON SCOPE ENTER */
 
-namespace ism::priv
+namespace Ism::priv
 {
 	template <class F> struct OnScopeEnter final
 	{
@@ -99,13 +99,13 @@ namespace ism::priv
 }
 
 #define ON_SCOPE_ENTER(...) \
-		auto ANON(temp) = (ism::priv::OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+		auto ANON(temp) = (Ism::priv::OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /* ON SCOPE EXIT */
 
-namespace ism::priv
+namespace Ism::priv
 {
 	template <class F> struct OnScopeExit final
 	{
@@ -123,7 +123,7 @@ namespace ism::priv
 }
 
 #define ON_SCOPE_EXIT(...) \
-		auto ANON(temp) = (ism::priv::OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+		auto ANON(temp) = (Ism::priv::OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

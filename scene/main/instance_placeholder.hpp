@@ -3,7 +3,7 @@
 
 #include <scene/main/node.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API InstancePlaceholder : public Node
 	{

@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
-workspace "ism_%{_ACTION}"
-startproject "ism-launcher"
+workspace "ism_sdk_%{_ACTION}"
+startproject "demo"
 
 configurations{ "Debug", "Release" }
 filter{ "configurations:Debug" } symbols "On" optimize "Off"
@@ -19,17 +19,10 @@ solution_items{
 	"README.md",
 	"premake5.lua",
 	"premake5-system.lua",
-	"engine.ini",
-	"editor.ini",
-	"extensions.cfg",
 	"TODO.txt",
 }
 
-group ""
-include "ism.premake5.lua"
-include "launcher/launcher.premake5.lua"
-
-group "Modules"
+-- modules
 include "modules/assimp/assimp.premake5.lua"
 include "modules/freetype2/freetype2.premake5.lua"
 include "modules/glew/glew.premake5.lua"
@@ -39,58 +32,40 @@ include "modules/lua/lua.premake5.lua"
 include "modules/mono/mono.premake5.lua"
 include "modules/zip/zip.premake5.lua"
 
--- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+-- engine
+include "ism.premake5.lua"
 
-group		""
-project		"TestCS"
-kind		"SharedLib"
-language	"C#"
-targetname	"%{prj.name}"
-targetdir	"%{_BUILD}"
-objdir		"%{_TEMPS}"
-location	"%{_PROJECT}"
-files		{ "%{wks.location}/assets/Test.cs" }
+-- programs
+include "demo/demo.premake5.lua"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
-project "*" filter{ "language:C++" }
+-- global project settings
+project "*"
 
 debugdir "%{_BUILD}"
 
-debugenvs{ "%{_BUILD}", "%{_BUILD_BIN}", }
+debugenvs{ "%{_BUILD}" }
 
 libdirs{ "%{_BUILD_BIN}", }
 
 includedirs{
-	"%{wks.location}",
-	"%{_THIRDPARTY}/",
-	"%{_THIRDPARTY}/assimp/include/",
-	"%{_THIRDPARTY}/entt/src/",
-	"%{_THIRDPARTY}/freetype2/include/",
-	"%{_THIRDPARTY}/freetype2/include/freetype/",
-	"%{_THIRDPARTY}/gcem/include/",
-	"%{_THIRDPARTY}/glfw/include/",
-	"%{_THIRDPARTY}/imgui/",
-	"%{_THIRDPARTY}/json/include/",
-	"%{_THIRDPARTY}/mono/include/",
-	"%{_THIRDPARTY}/lua/",
-	"%{_THIRDPARTY}/zlib/",
-	"%{_THIRDPARTY}/minizip/",
+	"%{_SLN}",
+	"%{_THIRDPARTY}",
+	"%{_THIRDPARTY}assimp/include/",
+	"%{_THIRDPARTY}entt/src/",
+	"%{_THIRDPARTY}freetype2/include/",
+	"%{_THIRDPARTY}freetype2/include/freetype/",
+	"%{_THIRDPARTY}gcem/include/",
+	"%{_THIRDPARTY}glfw/include/",
+	"%{_THIRDPARTY}imgui/",
+	"%{_THIRDPARTY}json/include/",
+	"%{_THIRDPARTY}mono/include/",
+	"%{_THIRDPARTY}lua/",
+	"%{_THIRDPARTY}zlib/",
+	"%{_THIRDPARTY}minizip/",
 }
 
-prebuildcommands{
-	"{MKDIR} %{_BUILD}",
-	"{MKDIR} %{_BUILD_BIN}",
-	"{MKDIR} %{_BUILD_DAT}",
-	"{MKDIR} %{_BUILD_CFG}",
-	"{MKDIR} %{_BUILD_LIB}",
-	"{MKDIR} %{_BUILD_RES}",
-	"{MKDIR} %{_BUILD_USR}",
-}
-
--- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
-
--- windows specific
 if _TARGET_OS=="windows" then
 	links_win32()
 	generate_manifest("platform/windows/binaries.manifest")

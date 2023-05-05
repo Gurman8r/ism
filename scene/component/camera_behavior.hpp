@@ -3,7 +3,7 @@
 
 #include <scene/component/behavior.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API CameraBehavior : public Behavior
 	{

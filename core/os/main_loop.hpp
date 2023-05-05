@@ -3,7 +3,7 @@
 
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,7 +11,7 @@ namespace ism
 	{
 		DEFINE_CLASS(MainLoop, Object);
 
-		OBJ m_script{};
+		ObjectRef m_script{};
 
 	public:
 		enum : Notification_
@@ -31,7 +31,7 @@ namespace ism
 		virtual bool process(Duration const & dt);
 		virtual void finalize();
 
-		void set_startup_script(OBJ const & value) { m_script = value; }
+		void set_startup_script(ObjectRef const & value) { m_script = value; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

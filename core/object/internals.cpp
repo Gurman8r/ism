@@ -1,7 +1,7 @@
 #include <core/object/internals.hpp>
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,14 +11,19 @@ namespace ism
 	{
 		SINGLETON_CTOR();
 
-		m_modules = DICT::new_();
+		m_modules = DictRef::new_();
+
+		m_main_module = create_extension_module("__main__");
 	}
 
 	Internals::~Internals()
 	{
 		SINGLETON_DTOR();
-		Vector<OBJ>{}.swap(m_loader_stack);
-		m_modules = nullptr;
+
+		decltype(m_loader_stack){}.swap(m_loader_stack);
+
+		m_modules = m_main_module = nullptr;
+
 		while (!m_classes.empty()) {
 			if (auto const type{ m_classes.back<TypeObject *>() }) { type->cleanup(); }
 			m_classes.pop_back();

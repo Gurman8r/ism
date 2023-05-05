@@ -1,6 +1,6 @@
 #include <scene/resources/shader_library.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -13,7 +13,7 @@ namespace ism
 
 	Shader::~Shader()
 	{
-		if (m_shader) { RENDERING_DEVICE->shader_destroy(m_shader); m_shader = nullptr; }
+		if (m_shader) { get_gpu()->shader_destroy(m_shader); m_shader = nullptr; }
 	}
 
 	String Shader::get_code() const

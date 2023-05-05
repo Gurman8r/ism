@@ -5,7 +5,7 @@
 
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -26,7 +26,7 @@ namespace ism
 
 	using PS = PhysicsServer;
 
-	SINGLETON_WRAPPER(PS, get_physics_server);
+	SINGLETON_WRAPPER(PS, get_physics);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -5,8 +5,11 @@
 
 #include <minizip/unzip.h>
 
-namespace ism
+namespace Ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// zip archive
 	class ISM_API ZipArchive : public PackSource
 	{
 	public:
@@ -38,10 +41,10 @@ namespace ism
 	};
 
 	SINGLETON_WRAPPER(ZipArchive, get_zip_archive);
-}
 
-namespace ism
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// file access zip
 	class ISM_API FileAccessZip : public FileAccess
 	{
 		DEFINE_CLASS(FileAccessZip, FileAccess);
@@ -56,7 +59,7 @@ namespace ism
 		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
 		virtual FileAccessZip & close() override;
 		virtual FileAccessZip & flush() override;
-		virtual bool exists(String const & path) override;
+		virtual bool file_exists(String const & path) override;
 		virtual bool is_open() const override;
 		virtual FileAccessZip & seek(u64 position) override;
 		virtual FileAccessZip & seek_end(i64 position) override;
@@ -70,6 +73,8 @@ namespace ism
 		virtual size_t read_buffer(u8 * data, size_t const size) const override;
 		virtual FileAccessZip & write_8(u8) override;
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_FILE_ACCESS_ZIP_HPP_

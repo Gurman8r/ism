@@ -1,12 +1,12 @@
 #include <modules/mono/register_mono_types.hpp>
-#include <modules/mono/mono_script.hpp>
-#include <modules/mono/mono_behavior.hpp>
+#include <modules/mono/csharp.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-using namespace ism;
+using namespace Ism;
 
-static MonoLanguage * mono_language{};
+static CSharpLanguage * cs_language;
+static Ref<CSharpScriptFormatLoader> cs_loader;
 
 bool open_mono_library(IsmExtensionInterfacePtr iface, IsmExtensionPtr library, IsmExtensionInitializationPtr initialization)
 {
@@ -24,18 +24,18 @@ void initialize_mono_module(void * user, IsmExtensionInitializationLevel level)
 {
 	if (level != ExtensionInitializationLevel_Scene) { return; }
 	PRINT_LINE("initialize mono module");
-	REGISTER_CLASS(MonoLanguage, MonoScript, MonoInstance, MonoBehavior);
-	mono_language = memnew(MonoLanguage);
-	SCRIPT_SERVER->register_language(mono_language);
+	cs_loader.instance(); get_resource_loader()->add(cs_loader);
+	REGISTER_CLASS(CSharpLanguage, CSharpScript, CSharpInstance);
+	cs_language = memnew(CSharpLanguage); get_script_server()->register_language(cs_language);
 }
 
 void finalize_mono_module(void * user, IsmExtensionInitializationLevel level)
 {
 	if (level != ExtensionInitializationLevel_Scene) { return; }
 	PRINT_LINE("finalize mono module");
-	SCRIPT_SERVER->unregister_language(mono_language);
-	memdelete(mono_language);
-	UNREGISTER_CLASS(MonoLanguage, MonoScript, MonoInstance, MonoBehavior);
+	get_script_server()->unregister_language(cs_language); memdelete(cs_language);
+	UNREGISTER_CLASS(CSharpLanguage, CSharpScript, CSharpInstance);
+	get_resource_loader()->remove(cs_loader); cs_loader = nullptr;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

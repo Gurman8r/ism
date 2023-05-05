@@ -20,7 +20,7 @@
 #endif
 
 #ifndef VERSION_NAME
-#define VERSION_NAME "ism"
+#define VERSION_NAME "ism-engine"
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

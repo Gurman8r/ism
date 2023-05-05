@@ -2,7 +2,7 @@
 #include <scene/main/missing_node.hpp>
 #include <scene/main/window.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -10,9 +10,9 @@ namespace ism
 
 	EMBED_CLASS(SceneTree, t)
 	{
-		t.tp_bind = BIND_CLASS(SceneTree, t)
+		t.tp_bind = BIND_CLASS(SceneTree, klass)
 		{
-			return t
+			return klass
 				.def("initialize", &SceneTree::initialize)
 				.def("process", &SceneTree::process)
 				.def("finalize", &SceneTree::finalize)

@@ -4,7 +4,7 @@
 #include <core/templates/mpl.hpp>
 #include <core/templates/vector.hpp>
 
-namespace ism
+namespace Ism
 {
 	// tuple<vector<T>...>
 	template <class ... _Types
@@ -17,7 +17,7 @@ namespace ism
 		using allocator_type	= typename PolymorphicAllocator<u8>;
 		using value_types		= typename mpl::type_list<_Types...>;
 		using value_tuple		= typename mpl::tuple<value_types>;
-		using vector_types		= typename mpl::remap<ism::Vector, value_types>;
+		using vector_types		= typename mpl::remap<Ism::Vector, value_types>;
 		using vector_tuple		= typename mpl::tuple<vector_types>;
 		using init_type			= typename std::initializer_list<value_tuple>;
 
@@ -43,7 +43,7 @@ namespace ism
 		template <size_t I>	using element_i			= mpl::nth<I, value_types>;
 		template <class  T> using element_t			= T;
 		template <size_t I>	using vector_i			= mpl::nth<I, vector_types>;
-		template <class  T> using vector_t			= ism::Vector<T>;
+		template <class  T> using vector_t			= Ism::Vector<T>;
 		template <size_t I>	using iterator_i		= typename vector_i<I>::iterator;
 		template <class  T>	using iterator_t		= typename vector_t<T>::iterator;
 		template <size_t I>	using const_iterator_i	= typename vector_i<I>::const_iterator;

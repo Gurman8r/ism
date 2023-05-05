@@ -4,7 +4,7 @@
 #include <core/object/object_api.hpp>
 
 // ref
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -13,34 +13,17 @@ namespace ism
 	> class NOVTABLE Ref : public _Ref_Tag, public ObjectAPI<Ref<T>>
 	{
 	public:
-		using value_type = typename T;
+		using value_type	= typename T;
+		using pointer		= typename value_type *;
+		using const_pointer	= typename value_type const *;
 
-	protected:
-		value_type * m_ptr{};
-
-		void ref(Ref const & value)
-		{
-			if (value.m_ptr == m_ptr) { return; }
-			unref();
-			m_ptr = value.m_ptr;
-			if (m_ptr) { m_ptr->inc_ref(); }
-		}
-
-		void ref_pointer(value_type * value)
-		{
-			ASSERT("invalid ref pointer" && value);
-
-			if (value->init_ref()) { m_ptr = value; }
-		}
-
-	public:
 		~Ref() noexcept { unref(); }
 
 		Ref() noexcept = default;
 
 		Ref(nullptr_t) noexcept {}
 
-		Ref(value_type * value) { if (value) { ref_pointer(value); } }
+		Ref(pointer value) { if (value) { ref_pointer(value); } }
 
 		Ref(Ref const & value) { ref(value); }
 
@@ -62,7 +45,7 @@ namespace ism
 		template <class ... Args
 		> static auto new_(Args && ... args) { return Ref<value_type>{ value_type{ FWD(args)... } }; }
 
-		static constexpr auto get_class_static() noexcept { return value_type::get_class_static(); }
+		static constexpr auto get_class_name_static() noexcept { return value_type::get_class_name_static(); }
 
 		static auto get_type_static() noexcept { return value_type::get_type_static(); }
 
@@ -87,7 +70,7 @@ namespace ism
 		void unref()
 		{
 			if (m_ptr && m_ptr->dec_ref()) {
-				ism::call_default_delete(m_ptr);
+				Ism::call_default_delete(m_ptr);
 			}
 			m_ptr = nullptr;
 		}
@@ -101,7 +84,7 @@ namespace ism
 		{
 			if (m_ptr == value) { return; }
 			unref();
-			value_type * r{ dynamic_cast<value_type *>(value) };
+			pointer r{ dynamic_cast<pointer>(value) };
 			if (r) { ref_pointer(r); }
 		}
 
@@ -110,7 +93,7 @@ namespace ism
 			Object * other{ static_cast<Object *>(value.ptr()) };
 			if (!other) { unref(); return; }
 			Ref r;
-			r.m_ptr = dynamic_cast<value_type *>(other);
+			r.m_ptr = dynamic_cast<pointer>(other);
 			ref(r);
 			r.m_ptr = nullptr;
 		}
@@ -122,7 +105,7 @@ namespace ism
 		
 		bool is_valid() const noexcept { return m_ptr != nullptr; }
 		
-		auto ptr() const noexcept { return (value_type *)m_ptr; }
+		auto ptr() const noexcept { return (pointer)m_ptr; }
 
 		auto operator*() noexcept { return m_ptr; }
 		
@@ -139,6 +122,24 @@ namespace ism
 		template <class U> friend bool operator==(U const * a, Ref const & b) noexcept { return (void *)a == (void *)b.m_ptr; }
 		
 		template <class U> friend bool operator!=(U const * a, Ref const & b) noexcept { return (void *)a != (void *)b.m_ptr; }
+
+	protected:
+		pointer m_ptr{};
+
+		void ref(Ref const & value)
+		{
+			if (value.m_ptr == m_ptr) { return; }
+			unref();
+			m_ptr = value.m_ptr;
+			if (m_ptr) { m_ptr->inc_ref(); }
+		}
+
+		void ref_pointer(pointer value)
+		{
+			ASSERT("invalid ref pointer" && value);
+
+			if (value->init_ref()) { m_ptr = value; }
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -154,11 +155,11 @@ namespace ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// ref class
-#define REF_CLASS(m_class, m_check)																		\
+#define CUSTOM_REF(m_class, m_check)																	\
 public:																									\
-	using base_type = ism::Ref<value_type>;																\
+	using base_type = Ism::Ref<value_type>;																\
 																										\
-	static bool check_(ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }					\
+	static bool check_(Ism::Ref<Object> const & o) { return o && (bool)(m_check(o)); }					\
 																										\
 	~m_class() noexcept = default;																		\
 																										\
@@ -166,11 +167,11 @@ public:																									\
 																										\
 	m_class(nullptr_t) noexcept {}																		\
 																										\
-	m_class(value_type * value) { if (value) { ref_pointer(value); } }									\
+	m_class(pointer value) { if (value) { ref_pointer(value); } }										\
 																										\
 	m_class(base_type const & value) { ref(value); }													\
 																										\
-	template <class U> m_class(ism::Ref<U> const & value) { reset(value); }								\
+	template <class U> m_class(Ism::Ref<U> const & value) { reset(value); }								\
 																										\
 	m_class(value_type && value) noexcept { instance(std::move(value)); }								\
 																										\
@@ -178,7 +179,7 @@ public:																									\
 																										\
 	m_class & operator=(base_type const & value) { return reset(value), (*this); }						\
 																										\
-	template <class U> m_class & operator=(ism::Ref<U> const & value) { return reset(value), (*this); }	\
+	template <class U> m_class & operator=(Ism::Ref<U> const & value) { return reset(value), (*this); }	\
 																										\
 	m_class & operator=(value_type && value) noexcept { return instance(std::move(value)), (*this); }	\
 																										\

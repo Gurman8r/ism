@@ -3,7 +3,7 @@
 
 #include <scene/component/renderer_component.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API SpriteRendererComponent : public RendererComponent
 	{

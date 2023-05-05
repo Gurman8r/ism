@@ -3,7 +3,7 @@
 
 #include <scene/component/component.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API TransformComponent : public Component
 	{

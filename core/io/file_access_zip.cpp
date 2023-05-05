@@ -1,6 +1,6 @@
 #include <core/io/file_access_zip.hpp>
 
-namespace ism
+namespace Ism
 {
 	struct ZipData { Ref<FileAccess> f{}; };
 
@@ -62,7 +62,7 @@ namespace ism
 	}
 }
 
-namespace ism
+namespace Ism
 {
 	ZipArchive * ZipArchive::__singleton{};
 
@@ -179,7 +179,7 @@ namespace ism
 	}
 }
 
-namespace ism
+namespace Ism
 {
 	EMBED_CLASS(FileAccessZip, t) {}
 
@@ -216,7 +216,7 @@ namespace ism
 		return (*this);
 	}
 
-	bool FileAccessZip::exists(String const & path)
+	bool FileAccessZip::file_exists(String const & path)
 	{
 		return false;
 	}

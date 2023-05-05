@@ -3,7 +3,7 @@
 
 #include <core/templates/tuple.hpp>
 
-namespace ism::mpl
+namespace Ism::mpl
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

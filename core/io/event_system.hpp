@@ -3,7 +3,7 @@
 
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -50,14 +50,14 @@ namespace ism
 	// event class
 #define EVENT_CLASS(m_class, m_inherits)										\
 private:																		\
-	static_assert(std::is_base_of_v<ism::Event, m_inherits>);					\
+	static_assert(std::is_base_of_v<Ism::Event, m_inherits>);					\
 																				\
 	DEFINE_CLASS(m_class, m_inherits);											\
 																				\
 public:																			\
-	enum : ism::EventID { ID = m_class::get_class_static().hash_code() };		\
+	enum : Ism::EventID { ID = m_class::get_class_name_static().hash_code() };		\
 																				\
-	virtual ism::EventID get_event_id() const override { return m_class::ID; }	\
+	virtual Ism::EventID get_event_id() const override { return m_class::ID; }	\
 																				\
 private:
 

@@ -1,6 +1,6 @@
 #include <editor/editor_filesystem.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

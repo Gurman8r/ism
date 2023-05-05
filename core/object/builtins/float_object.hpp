@@ -4,14 +4,14 @@
 #include <core/object/builtins/type_object.hpp>
 
 // float
-namespace ism
+namespace Ism
 {
 	// float object
 	class ISM_API FloatObject : public Object
 	{
 		DEFINE_CLASS(FloatObject, Object);
 
-		friend class FLT;
+		friend class FloatRef;
 
 	public:
 		f64 m_float{};
@@ -36,24 +36,24 @@ namespace ism
 	template <> struct DefaultDelete<FloatObject> : DefaultDelete<Object> {};
 
 	// float check
-#define OBJECT_CHECK_FLOAT(o) (ism::typeof(o).has_feature(ism::TypeFlags_Float_Subclass))
+#define OBJECT_CHECK_FLOAT(o) (Ism::typeof(o).has_feature(Ism::TypeFlags_Float_Subclass))
 
 	// float ref
-	class FLT : public Ref<FloatObject>
+	class FloatRef : public Ref<FloatObject>
 	{
-		REF_CLASS(FLT, OBJECT_CHECK_FLOAT);
+		CUSTOM_REF(FloatRef, OBJECT_CHECK_FLOAT);
 
 	public:
 		using storage_type = value_type::storage_type;
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> FLT(T const value) noexcept { instance(value); }
+		> FloatRef(T const value) noexcept { instance(value); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
 		> operator T () const { return (T)(**VALIDATE(m_ptr)); }
 
 		template <class T, class = std::enable_if_t<std::is_floating_point_v<T>>
-		> FLT & operator=(T const value) noexcept
+		> FloatRef & operator=(T const value) noexcept
 		{
 			if (m_ptr) { m_ptr->m_float = value; }
 			else { instance(value); }

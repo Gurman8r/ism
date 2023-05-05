@@ -5,12 +5,12 @@
 
 #include <core/extension/extension.hpp>
 
-namespace ism
+namespace Ism
 {
 	class ISM_API ExtensionAPIDump final
 	{
 	public:
-		static DICT generate_extension_api();
+		static DictRef generate_extension_api();
 		static void generate_extension_json_file(String const & path);
 	};
 }

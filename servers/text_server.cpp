@@ -8,7 +8,7 @@
 #include FT_BITMAP_H
 #include FT_STROKER_H
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -28,7 +28,7 @@ namespace ism
 		: m_bounds{ bounds }
 		, m_advance{ advance }
 	{
-		m_texture = RENDERING_DEVICE->texture_create(MAKE(RD::TextureCreateInfo, t) {
+		m_texture = get_gpu()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_R8_UNORM;
 			t.width = bounds.width();
 			t.height = bounds.height();
@@ -37,12 +37,12 @@ namespace ism
 
 	Glyph::~Glyph()
 	{
-		if (m_texture) { RENDERING_DEVICE->texture_destroy(m_texture); m_texture = nullptr; }
+		if (m_texture) { get_gpu()->texture_destroy(m_texture); m_texture = nullptr; }
 	}
 
 	Ref<Image> Glyph::get_data() const
 	{
-		return m_texture ? get_rendering_server()->texture2d_get_data(m_texture) : nullptr;
+		return m_texture ? get_graphics()->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

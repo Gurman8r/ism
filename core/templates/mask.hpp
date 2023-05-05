@@ -41,7 +41,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-namespace ism
+namespace Ism
 {
 	// mask base
 	template <size_t _Bits

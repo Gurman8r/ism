@@ -1,7 +1,7 @@
 #include <core/object/builtins/base_object.hpp>
 #include <core/object/class.hpp>
 
-namespace ism
+namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,9 +11,9 @@ namespace ism
 
 		t.tp_setattro = (SetAttrOFunc)&Object::generic_setattr;
 
-		t.tp_bind = BIND_CLASS(Object, t)
+		t.tp_bind = BIND_CLASS(Object, klass)
 		{
-			return t
+			return klass
 				.def("init_ref", &Object::init_ref)
 				.def("inc_ref", &Object::inc_ref)
 				.def("dec_ref", &Object::dec_ref)
@@ -62,22 +62,22 @@ namespace ism
 		m_type = nullptr;
 	}
 
-	TYPE Object::_get_typev() const noexcept
+	TypeRef Object::_get_typev() const noexcept
 	{
 		return get_type_static();
 	}
 
-	TYPE Object::get_type_static() noexcept
+	TypeRef Object::get_type_static() noexcept
 	{
 		return &__type_static;
 	}
 
-	TYPE Object::get_type() const noexcept
+	TypeRef Object::get_type() const noexcept
 	{
 		return BRANCHLESS_IF(!m_type, m_type = _get_typev()), m_type;
 	}
 
-	void Object::set_type(TYPE const & value) noexcept
+	void Object::set_type(TypeRef const & value) noexcept
 	{
 		m_type = value;
 	}
@@ -125,22 +125,22 @@ namespace ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OBJ Object::generic_getattr_with_dict(OBJ obj, OBJ name, OBJ dict)
+	ObjectRef Object::generic_getattr_with_dict(ObjectRef obj, ObjectRef name, ObjectRef dict)
 	{
-		TYPE type{ typeof(obj) };
+		TypeRef type{ typeof(obj) };
 
 		if (!type->tp_dict && !type->ready())
 		{
 			return nullptr;
 		}
 
-		OBJ descr{ type.lookup(name) };
+		ObjectRef descr{ type.lookup(name) };
 
 		DescrGetFunc get{};
 
 		if (descr)
 		{
-			TYPE descr_type{ typeof(descr) };
+			TypeRef descr_type{ typeof(descr) };
 
 			get = descr_type->tp_descr_get;
 
@@ -152,7 +152,7 @@ namespace ism
 
 		if (!dict)
 		{
-			if (OBJ * dictptr{ get_dict_ptr(type, obj) })
+			if (ObjectRef * dictptr{ get_dict_ptr(type, obj) })
 			{
 				dict = *dictptr;
 			}
@@ -160,7 +160,7 @@ namespace ism
 
 		if (dict)
 		{
-			return ((DICT &)dict).lookup(name);
+			return ((DictRef &)dict).lookup(name);
 		}
 
 		if (get)
@@ -176,23 +176,23 @@ namespace ism
 		return nullptr;
 	}
 
-	OBJ Object::generic_getattr(OBJ obj, OBJ name) noexcept
+	ObjectRef Object::generic_getattr(ObjectRef obj, ObjectRef name) noexcept
 	{
 		return generic_getattr_with_dict(obj, name, nullptr);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ Object::generic_setattr_with_dict(OBJ obj, OBJ name, OBJ value, OBJ dict)
+	Error_ Object::generic_setattr_with_dict(ObjectRef obj, ObjectRef name, ObjectRef value, ObjectRef dict)
 	{
-		TYPE type{ typeof(obj) };
+		TypeRef type{ typeof(obj) };
 
 		if (!type->tp_dict && !type->ready())
 		{
 			return Error_Unknown;
 		}
 
-		OBJ descr{ type.lookup(name) };
+		ObjectRef descr{ type.lookup(name) };
 
 		DescrSetFunc set{};
 
@@ -208,16 +208,16 @@ namespace ism
 
 		if (!dict)
 		{
-			if (OBJ * dictptr{ get_dict_ptr(type, obj) })
+			if (ObjectRef * dictptr{ get_dict_ptr(type, obj) })
 			{
 				dict = *dictptr;
 
 				if (!dict)
 				{
-					dict = DICT::new_();
+					dict = DictRef::new_();
 				}
 
-				return (((DICT &)dict)[name] = value), Error_OK;
+				return (((DictRef &)dict)[name] = value), Error_OK;
 			}
 			else
 			{
@@ -226,11 +226,11 @@ namespace ism
 		}
 		else
 		{
-			return (((DICT &)dict)[name] = value), Error_OK;
+			return (((DictRef &)dict)[name] = value), Error_OK;
 		}
 	}
 
-	Error_ Object::generic_setattr(OBJ obj, OBJ name, OBJ value) noexcept
+	Error_ Object::generic_setattr(ObjectRef obj, ObjectRef name, ObjectRef value) noexcept
 	{
 		return generic_setattr_with_dict(obj, name, value, nullptr);
 	}
