@@ -10,20 +10,14 @@ namespace Ism
 	Internals::Internals()
 	{
 		SINGLETON_CTOR();
-
 		m_modules = DictRef::new_();
-
-		m_main_module = create_extension_module("__main__");
 	}
 
 	Internals::~Internals()
 	{
 		SINGLETON_DTOR();
-
-		decltype(m_loader_stack){}.swap(m_loader_stack);
-
-		m_modules = m_main_module = nullptr;
-
+		Vector<ObjectRef>{}.swap(m_loader_stack);
+		m_modules = nullptr;
 		while (!m_classes.empty()) {
 			if (auto const type{ m_classes.back<TypeObject *>() }) { type->cleanup(); }
 			m_classes.pop_back();

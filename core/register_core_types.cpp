@@ -10,9 +10,9 @@
 #include <core/object/script.hpp>
 #include <core/os/main_loop.hpp>
 #include <core/io/config_file.hpp>
-#include <core/io/dir_access.hpp>
+#include <core/io/directory.hpp>
 #include <core/io/event_system.hpp>
-#include <core/io/file_access_zip.hpp>
+#include <core/io/zip.hpp>
 #include <core/io/lexer.hpp>
 
 namespace Ism
@@ -22,7 +22,7 @@ namespace Ism
 	static ResourceSaver *		saver{};
 
 	static ExtensionManager *	extensions{};
-	static ScriptServer *		scripts{};
+	static ScriptManager *		scripts{};
 
 	static Ref<ExtensionFormatLoader> extension_format_loader{};
 	static Ref<ImageFormatLoader> image_format_loader{};
@@ -33,7 +33,7 @@ namespace Ism
 		loader = memnew(ResourceLoader);
 		saver = memnew(ResourceSaver);
 		extensions = memnew(ExtensionManager);
-		scripts = memnew(ScriptServer);
+		scripts = memnew(ScriptManager);
 
 		extension_format_loader.instance(); get_resource_loader()->add(extension_format_loader);
 		image_format_loader.instance(); get_resource_loader()->add(image_format_loader);
@@ -59,11 +59,11 @@ namespace Ism
 
 			Resource,
 
-			ScriptServer, Script, ScriptInstance, ScriptLanguage, PlaceholderScriptInstance,
+			ScriptManager, Script, ScriptInstance, ScriptLanguage, PlaceholderScriptInstance,
 
 			Extension, ExtensionFormatLoader, ExtensionManager,
 
-			DirAccess, FileAccess, FileAccessPack, FileAccessZip,
+			Directory, File, PackageFile, ZipFile,
 
 			Event, EventListener, DummyListener, EventDelegate<Event>, EventBus,
 

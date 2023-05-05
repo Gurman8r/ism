@@ -11,11 +11,11 @@ namespace Ism
 	class ScriptLanguage;
 	class PlaceholderScriptInstance;
 
-	class ISM_API ScriptServer : public Object
+	class ISM_API ScriptManager : public Object
 	{
-		DEFINE_CLASS(ScriptServer, Object);
+		DEFINE_CLASS(ScriptManager, Object);
 
-		static ScriptServer * __singleton;
+		static ScriptManager * __singleton;
 
 		Vector<ScriptLanguage *> m_languages{};
 		bool m_scripting_enabled{ true };
@@ -23,9 +23,9 @@ namespace Ism
 		bool m_languages_finalized{};
 
 	public:
-		ScriptServer() noexcept { SINGLETON_CTOR(); }
-		virtual ~ScriptServer() noexcept override { SINGLETON_DTOR(); }
-		FORCE_INLINE static ScriptServer * get_singleton() noexcept { return __singleton; }
+		ScriptManager() noexcept { SINGLETON_CTOR(); }
+		virtual ~ScriptManager() noexcept override { SINGLETON_DTOR(); }
+		FORCE_INLINE static ScriptManager * get_singleton() noexcept { return __singleton; }
 
 		NODISCARD bool is_scripting_enabled() const noexcept { return m_scripting_enabled; }
 		void set_scripting_enabled(bool enabled);
@@ -41,7 +41,7 @@ namespace Ism
 		NODISCARD bool are_languages_finalized() const noexcept { return m_languages_finalized; }
 	};
 
-	SINGLETON_WRAPPER(ScriptServer, get_script_server);
+	SINGLETON_WRAPPER(ScriptManager, get_scripting);
 }
 
 // script language

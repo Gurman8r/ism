@@ -1,7 +1,7 @@
-#ifndef _ISM_FILE_ACCESS_ZIP_HPP_
-#define _ISM_FILE_ACCESS_ZIP_HPP_
+#ifndef _ISM_ZIP_HPP_
+#define _ISM_ZIP_HPP_
 
-#include <core/io/file_access_pack.hpp>
+#include <core/io/package.hpp>
 
 #include <minizip/unzip.h>
 
@@ -10,23 +10,23 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// zip archive
-	class ISM_API ZipArchive : public PackSource
+	class ISM_API ZipArchive : public PackageSource
 	{
 	public:
-		struct File {
+		struct ZippedFile {
 			i32 package{ -1 };
 			unz_file_pos file_pos{};
 		};
 
-		struct Package {
+		struct ZippedPackage {
 			String path{};
 			unzFile m_zfile{};
 		};
 		
 	private:
 		static ZipArchive * __singleton;
-		Vector<Package> m_packages{};
-		HashMap<String, File> m_files{};
+		Vector<ZippedPackage> m_packages{};
+		HashMap<String, ZippedFile> m_files{};
 
 	public:
 		ZipArchive();
@@ -37,7 +37,7 @@ namespace Ism
 		NODISCARD unzFile get_file_handle(String const & path) const;
 		NODISCARD bool file_exists(String const & path) const;
 		NODISCARD virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
-		NODISCARD virtual Ref<FileAccess> get_file(String const & path, PackedData::PackedFile * file) override;
+		NODISCARD virtual Ref<File> get_file(String const & path, PackageManager::PackedFile * file) override;
 	};
 
 	SINGLETON_WRAPPER(ZipArchive, get_zip_archive);
@@ -45,24 +45,24 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// file access zip
-	class ISM_API FileAccessZip : public FileAccess
+	class ISM_API ZipFile : public File
 	{
-		DEFINE_CLASS(FileAccessZip, FileAccess);
+		DEFINE_CLASS(ZipFile, File);
 
 		unzFile			m_zfile{};
 		unz_file_info64	m_info{};
 		mutable bool	m_eof{};
 
 	public:
-		FileAccessZip(String const & path, PackedData::PackedFile const & file);
-		virtual ~FileAccessZip() override;
+		ZipFile(String const & path, PackageManager::PackedFile const & file);
+		virtual ~ZipFile() override;
 		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
-		virtual FileAccessZip & close() override;
-		virtual FileAccessZip & flush() override;
+		virtual ZipFile & close() override;
+		virtual ZipFile & flush() override;
 		virtual bool file_exists(String const & path) override;
 		virtual bool is_open() const override;
-		virtual FileAccessZip & seek(u64 position) override;
-		virtual FileAccessZip & seek_end(i64 position) override;
+		virtual ZipFile & seek(u64 position) override;
+		virtual ZipFile & seek_end(i64 position) override;
 		virtual u64 get_position() const override;
 		virtual u64 get_length() const override;
 		virtual bool eof_reached() const override;
@@ -71,10 +71,10 @@ namespace Ism
 		virtual String get_path_abs() const override;
 		virtual u8 read_8() const override;
 		virtual size_t read_buffer(u8 * data, size_t const size) const override;
-		virtual FileAccessZip & write_8(u8) override;
+		virtual ZipFile & write_8(u8) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_FILE_ACCESS_ZIP_HPP_
+#endif // !_ISM_ZIP_HPP_

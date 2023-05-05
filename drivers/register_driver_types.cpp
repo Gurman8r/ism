@@ -6,7 +6,7 @@
 #endif
 
 #if SYSTEM_WINDOWS
-#include <drivers/windows/file_access_windows.hpp>
+#include <drivers/windows/windows_file.hpp>
 #endif
 
 namespace Ism
@@ -14,15 +14,15 @@ namespace Ism
 	void register_core_driver_types()
 	{
 #if SYSTEM_WINDOWS
-		REGISTER_CLASS(FileAccessWindows);
-		FileAccessWindows::initialize();
+		REGISTER_CLASS(WindowsFile);
+		WindowsFile::initialize();
 #endif
 	}
 
 	void unregister_core_driver_types()
 	{
 #if SYSTEM_WINDOWS
-		FileAccessWindows::finalize();
+		WindowsFile::finalize();
 #endif
 	}
 

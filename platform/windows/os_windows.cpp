@@ -1,7 +1,7 @@
 #include <platform/windows/os_windows.hpp>
 #include <platform/windows/display_server_windows.hpp>
-#include <drivers/windows/dir_access_windows.hpp>
-#include <drivers/windows/file_access_windows.hpp>
+#include <drivers/windows/windows_directory.hpp>
+#include <drivers/windows/windows_file.hpp>
 #include <main/main.hpp>
 
 namespace Ism
@@ -21,8 +21,8 @@ namespace Ism
 
 	void OS_Windows::initialize()
 	{
-		DirAccessWindows::initialize();
-		FileAccessWindows::initialize();
+		WindowsDir::initialize();
+		WindowsFile::initialize();
 		DisplayServerWindows::initialize();
 	}
 
@@ -33,8 +33,8 @@ namespace Ism
 	void OS_Windows::finalize_core()
 	{
 		DisplayServerWindows::finalize();
-		FileAccessWindows::finalize();
-		DirAccessWindows::finalize();
+		WindowsFile::finalize();
+		WindowsDir::finalize();
 	}
 
 	void OS_Windows::run()
@@ -72,7 +72,7 @@ namespace Ism
 
 	Error_ OS_Windows::open_dynamic_library(String path, void *& instance, bool set_library_path, String * resolved_path)
 	{
-		if (!FileAccess::exists(path)) {
+		if (!File::exists(path)) {
 			path += ".dll";
 		}
 

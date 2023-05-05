@@ -1,4 +1,4 @@
-#include <core/io/dir_access.hpp>
+#include <core/io/directory.hpp>
 #include <core/os/os.hpp>
 #include <core/config/project_settings.hpp>
 #include <filesystem>
@@ -7,25 +7,25 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DirAccess, t, TypeFlags_IsAbstract) {};
+	EMBED_CLASS(Directory, t, TypeFlags_IsAbstract) {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	DirAccess::CreateFunc DirAccess::__create_func{};
+	Directory::CreateFunc Directory::__create_func{};
 
-	Ref<DirAccess> DirAccess::create()
+	Ref<Directory> Directory::create()
 	{
 		return nullptr;
 	}
 
-	Ref<DirAccess> DirAccess::create_for_path(String const & path)
+	Ref<Directory> Directory::create_for_path(String const & path)
 	{
 		return nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Ref<DirAccess> DirAccess::open(String const & path, Error_ * error)
+	Ref<Directory> Directory::open(String const & path, Error_ * error)
 	{
 		return nullptr;
 	}

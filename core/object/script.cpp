@@ -3,18 +3,18 @@
 // script server
 namespace Ism
 {
-	EMBED_CLASS(ScriptServer, t) {}
+	EMBED_CLASS(ScriptManager, t) {}
 
-	ScriptServer * ScriptServer::__singleton{};
+	ScriptManager * ScriptManager::__singleton{};
 
-	void ScriptServer::set_scripting_enabled(bool enabled)
+	void ScriptManager::set_scripting_enabled(bool enabled)
 	{
 		if (m_scripting_enabled != enabled) {
 			m_scripting_enabled = enabled;
 		}
 	}
 	
-	Error_ ScriptServer::register_language(ScriptLanguage * language)
+	Error_ ScriptManager::register_language(ScriptLanguage * language)
 	{
 		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); })};
 		if (it != m_languages.end()) { return Error_Unknown; }
@@ -22,7 +22,7 @@ namespace Ism
 		return Error_OK;
 	}
 	
-	Error_ ScriptServer::unregister_language(ScriptLanguage const * language)
+	Error_ ScriptManager::unregister_language(ScriptLanguage const * language)
 	{
 		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); }) };
 		if (it == m_languages.end()) { return Error_Unknown; }
@@ -30,14 +30,14 @@ namespace Ism
 		return Error_OK;
 	}
 
-	void ScriptServer::initialize_languages()
+	void ScriptManager::initialize_languages()
 	{
 		for (auto const e : m_languages) {
 			e->initialize();
 		}
 	}
 
-	void ScriptServer::finalize_languages()
+	void ScriptManager::finalize_languages()
 	{
 		for (auto const e : m_languages) {
 			e->finalize();

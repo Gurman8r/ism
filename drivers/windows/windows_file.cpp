@@ -1,10 +1,10 @@
-#include <drivers/windows/file_access_windows.hpp>
+#include <drivers/windows/windows_file.hpp>
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void FileAccessWindows::_check_errors() const
+	void WindowsFile::_check_errors() const
 	{
 		ASSERT(m_file);
 		if (feof(m_file)) {
@@ -14,15 +14,15 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(FileAccessWindows, t) {}
+	EMBED_CLASS(WindowsFile, t) {}
 
-	FileAccessWindows::~FileAccessWindows() noexcept { FileAccessWindows::close(); }
+	WindowsFile::~WindowsFile() noexcept { WindowsFile::close(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ FileAccessWindows::open_internal(String const & path, FileMode_ mode)
+	Error_ WindowsFile::open_internal(String const & path, FileMode_ mode)
 	{
-		FileAccessWindows::close();
+		WindowsFile::close();
 
 		constexpr cstring m_mode[4]{ "rb", "wb", "rb+", "wb+" };
 
@@ -35,7 +35,7 @@ namespace Ism
 		return Error_OK;
 	}
 
-	FileAccessWindows & FileAccessWindows::flush()
+	WindowsFile & WindowsFile::flush()
 	{
 		ASSERT(m_file);
 		fflush(m_file);
@@ -45,7 +45,7 @@ namespace Ism
 		return (*this);
 	}
 
-	FileAccessWindows & FileAccessWindows::close()
+	WindowsFile & WindowsFile::close()
 	{
 		if (m_file) {
 			fclose(m_file);
@@ -54,29 +54,29 @@ namespace Ism
 		return (*this);
 	}
 
-	bool FileAccessWindows::file_exists(String const & path)
+	bool WindowsFile::file_exists(String const & path)
 	{
 		FILE * const fp{ fopen(path.c_str(), "rb") };
 		ON_SCOPE_EXIT(&fp) { fclose(fp); };
 		return fp != nullptr;
 	}
 
-	bool FileAccessWindows::is_open() const
+	bool WindowsFile::is_open() const
 	{
 		return m_file != nullptr;
 	}
 
-	String FileAccessWindows::get_path() const
+	String WindowsFile::get_path() const
 	{
 		return m_path;
 	}
 
-	String FileAccessWindows::get_path_abs() const
+	String WindowsFile::get_path_abs() const
 	{
 		return m_path_abs;
 	}
 
-	FileAccessWindows & FileAccessWindows::seek(u64 position)
+	WindowsFile & WindowsFile::seek(u64 position)
 	{
 		ASSERT(m_file);
 		m_last_error = Error_OK;
@@ -87,7 +87,7 @@ namespace Ism
 		return (*this);
 	}
 
-	FileAccessWindows & FileAccessWindows::seek_end(i64 position)
+	WindowsFile & WindowsFile::seek_end(i64 position)
 	{
 		ASSERT(m_file);
 		m_last_error = Error_OK;
@@ -98,7 +98,7 @@ namespace Ism
 		return (*this);
 	}
 
-	u64 FileAccessWindows::get_position() const
+	u64 WindowsFile::get_position() const
 	{
 		i64 const pos{ _ftelli64(m_file) };
 		if (pos < 0) {
@@ -107,7 +107,7 @@ namespace Ism
 		return pos;
 	}
 
-	u64 FileAccessWindows::get_length() const
+	u64 WindowsFile::get_length() const
 	{
 		ASSERT(m_file);
 		u64 const pos{ get_position() };
@@ -117,18 +117,18 @@ namespace Ism
 		return size;
 	}
 
-	bool FileAccessWindows::eof_reached() const
+	bool WindowsFile::eof_reached() const
 	{
 		_check_errors();
 		return m_last_error == Error_EOF;
 	}
 
-	Error_ FileAccessWindows::get_error() const
+	Error_ WindowsFile::get_error() const
 	{
 		return m_last_error;
 	}
 
-	u8 FileAccessWindows::read_8() const
+	u8 WindowsFile::read_8() const
 	{
 		ASSERT(m_file);
 		if (m_mode == FileMode_Write || m_mode == FileMode_Read) {
@@ -145,7 +145,7 @@ namespace Ism
 		return b;
 	}
 
-	FileAccessWindows & FileAccessWindows::write_8(u8 value)
+	WindowsFile & WindowsFile::write_8(u8 value)
 	{
 		ASSERT(m_file);
 		if (m_mode == FileMode_ReadWrite || m_mode == FileMode_WriteRead) {
@@ -162,18 +162,18 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void FileAccessWindows::initialize()
+	void WindowsFile::initialize()
 	{
-		FileAccess::__create_func[FileAccessType_Resources] = []() -> Ref<FileAccess> { return memnew(FileAccessWindows); };
-		FileAccess::__create_func[FileAccessType_User] = []() -> Ref<FileAccess> { return memnew(FileAccessWindows); };
-		FileAccess::__create_func[FileAccessType_Filesystem] = []() -> Ref<FileAccess> { return memnew(FileAccessWindows); };
+		File::__create_func[FileType_Resources] = []() -> Ref<File> { return memnew(WindowsFile); };
+		File::__create_func[FileType_User] = []() -> Ref<File> { return memnew(WindowsFile); };
+		File::__create_func[FileType_Filesystem] = []() -> Ref<File> { return memnew(WindowsFile); };
 	}
 
-	void FileAccessWindows::finalize()
+	void WindowsFile::finalize()
 	{
-		FileAccess::__create_func[FileAccessType_Resources] = nullptr;
-		FileAccess::__create_func[FileAccessType_User] = nullptr;
-		FileAccess::__create_func[FileAccessType_Filesystem] = nullptr;
+		File::__create_func[FileType_Resources] = nullptr;
+		File::__create_func[FileType_User] = nullptr;
+		File::__create_func[FileType_Filesystem] = nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

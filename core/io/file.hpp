@@ -1,5 +1,5 @@
-#ifndef _ISM_FILE_ACCESS_HPP_
-#define _ISM_FILE_ACCESS_HPP_
+#ifndef _ISM_FILE_HPP_
+#define _ISM_FILE_HPP_
 
 #include <core/object/class.hpp>
 
@@ -7,11 +7,11 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum FileAccessType_ {
-		FileAccessType_Resources,
-		FileAccessType_User,
-		FileAccessType_Filesystem,
-		FileAccessType_MAX
+	enum FileType_ {
+		FileType_Resources,
+		FileType_User,
+		FileType_Filesystem,
+		FileType_MAX
 	};
 
 	enum FileMode_ {
@@ -33,34 +33,34 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// file access
-	class ISM_API FileAccess : public Object
+	class ISM_API File : public Object
 	{
-		DEFINE_CLASS(FileAccess, Object);
+		DEFINE_CLASS(File, Object);
 
 		bool m_big_endian{};
-		FileAccessType_ m_access_type{};
+		FileType_ m_access_type{};
 
 	protected:
-		using CreateFunc = Ref<FileAccess>(*)();
-		static CreateFunc __create_func[FileAccessType_MAX];
-		static Ref<FileAccess> create(FileAccessType_ access_type);
-		static Ref<FileAccess> create_for_path(String const & path);
+		using CreateFunc = Ref<File>(*)();
+		static CreateFunc __create_func[FileType_MAX];
+		static Ref<File> create(FileType_ access_type);
+		static Ref<File> create_for_path(String const & path);
 
-		NODISCARD FileAccessType_ get_access_type() const noexcept { return m_access_type; }
-		void set_access_type(FileAccessType_ value) noexcept { m_access_type = value; }
+		NODISCARD FileType_ get_access_type() const noexcept { return m_access_type; }
+		void set_access_type(FileType_ value) noexcept { m_access_type = value; }
 
 		virtual Error_ open_internal(String const & path, FileMode_ mode) = 0;
 
 	public:
-		static Ref<FileAccess> open(String const & path, FileMode_ mode, Error_ * error = nullptr);
+		static Ref<File> open(String const & path, FileMode_ mode, Error_ * error = nullptr);
 		virtual Error_ reopen(String const & path, FileMode_ mode);
 
-		virtual FileAccess & flush() = 0;
-		virtual FileAccess & close() = 0;
+		virtual File & flush() = 0;
+		virtual File & close() = 0;
 		NODISCARD virtual bool file_exists(String const & path) = 0;
 		NODISCARD virtual bool is_open() const = 0;
-		virtual FileAccess & seek(u64 position) = 0;
-		virtual FileAccess & seek_end(i64 position = 0) = 0;
+		virtual File & seek(u64 position) = 0;
+		virtual File & seek_end(i64 position = 0) = 0;
 		NODISCARD virtual u64 get_position() const = 0;
 		NODISCARD virtual u64 get_length() const = 0;
 		NODISCARD virtual bool eof_reached() const = 0;
@@ -83,16 +83,16 @@ namespace Ism
 		virtual size_t read_buffer(u8 * data, size_t const size) const;
 		NODISCARD DynamicBuffer read_buffer(size_t const size) const;
 
-		virtual FileAccess & write_8(u8 value) = 0;
-		virtual FileAccess & write_16(u16 value);
-		virtual FileAccess & write_32(u32 value);
-		virtual FileAccess & write_64(u64 value);
-		virtual FileAccess & write_float(f32 value);
-		virtual FileAccess & write_double(f64 value);
-		virtual FileAccess & write_token(String const & value);
-		virtual FileAccess & write_line(String const & value);
-		virtual FileAccess & write_buffer(u8 const * data, size_t const size);
-		FileAccess & write_buffer(DynamicBuffer const & buffer);
+		virtual File & write_8(u8 value) = 0;
+		virtual File & write_16(u16 value);
+		virtual File & write_32(u32 value);
+		virtual File & write_64(u64 value);
+		virtual File & write_float(f32 value);
+		virtual File & write_double(f64 value);
+		virtual File & write_token(String const & value);
+		virtual File & write_line(String const & value);
+		virtual File & write_buffer(u8 const * data, size_t const size);
+		File & write_buffer(DynamicBuffer const & buffer);
 
 	public:
 		static bool exists(String const & path);
@@ -101,4 +101,4 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_FILE_ACCESS_HPP_
+#endif // !_ISM_FILE_HPP_

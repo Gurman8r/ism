@@ -1,7 +1,7 @@
 #include <core/extension/extension_manager.hpp>
 #include <core/os/os.hpp>
 #include <core/config/project_settings.hpp>
-#include <core/io/file_access.hpp>
+#include <core/io/file.hpp>
 #include <core/io/resource_loader.hpp>
 
 namespace Ism
@@ -95,16 +95,11 @@ namespace Ism
 		return nullptr;
 	}
 
-	String ExtensionManager::get_extension_list_config_file() const
-	{
-		return get_project_settings()->get_config_path() + "extensions.cfg";
-	}
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	void ExtensionManager::load_extensions()
 	{
-		auto f{ FileAccess::open(Extension::get_extension_list_config_file(), FileMode_Read) };
+		auto f{ File::open(Extension::get_extension_list_config_file(), FileMode_Read) };
 		if (!f) { return; }
 		while (String line{ f->read_line().trim() }) {
 			load_extension(line);

@@ -1,19 +1,19 @@
-#include <core/io/file_access_pack.hpp>
+#include <core/io/package.hpp>
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	PackedData * PackedData::__singleton{};
+	PackageManager * PackageManager::__singleton{};
 
-	PackedData::PackedData()
+	PackageManager::PackageManager()
 	{
 		SINGLETON_CTOR();
 		m_root = memnew(PackedDir);
-		add_pack_source(memnew(PackSourcePCK));
+		add_package_source(memnew(PackageSourcePCK));
 	}
 	
-	PackedData::~PackedData()
+	PackageManager::~PackageManager()
 	{
 		SINGLETON_DTOR();
 		for (size_t i{}; i < m_sources.size(); ++i) {
@@ -22,7 +22,7 @@ namespace Ism
 		memdelete(m_root);
 	}
 
-	Error_ PackedData::add_pack(String const & path, bool replace_files, u64 offset)
+	Error_ PackageManager::add_package(String const & path, bool replace_files, u64 offset)
 	{
 		for (size_t i{}; i < m_sources.size(); ++i) {
 			if (m_sources[i]->try_open_pack(path, replace_files, offset)) {
@@ -33,14 +33,14 @@ namespace Ism
 		return Error_Unknown;
 	}
 
-	void PackedData::add_pack_source(PackSource * source)
+	void PackageManager::add_package_source(PackageSource * source)
 	{
 		if (source != nullptr) {
 			m_sources.push_back(source);
 		}
 	}
 
-	void PackedData::add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackSource * src, bool replace_files, bool encrypted)
+	void PackageManager::add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackageSource * src, bool replace_files, bool encrypted)
 	{
 		bool const exists{ m_files.contains(path) };
 
@@ -78,7 +78,7 @@ namespace Ism
 		}
 	}
 
-	Ref<FileAccess> PackedData::try_open_path(String const & path)
+	Ref<File> PackageManager::try_open_path(String const & path)
 	{
 		if (auto const it{ m_files.find(path) }; (it == m_files.end()) || !it->second.offset) {
 			return nullptr;
@@ -88,40 +88,40 @@ namespace Ism
 		}
 	}
 
-	bool PackedData::has_path(String const & path)
+	bool PackageManager::has_path(String const & path)
 	{
 		return m_files.contains(path);
 	}
 
-	Ref<DirAccess> PackedData::try_open_dir(String const & path)
+	Ref<Directory> PackageManager::try_open_dir(String const & path)
 	{
 		return nullptr;
 	}
 
-	bool PackedData::has_dir(String const & path)
+	bool PackageManager::has_dir(String const & path)
 	{
 		return false;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool PackSourcePCK::try_open_pack(String const & path, bool replace_files, u64 offset)
+	bool PackageSourcePCK::try_open_pack(String const & path, bool replace_files, u64 offset)
 	{
 		return false;
 	}
 
-	Ref<FileAccess> PackSourcePCK::get_file(String const & path, PackedData::PackedFile * file)
+	Ref<File> PackageSourcePCK::get_file(String const & path, PackageManager::PackedFile * file)
 	{
-		return Ref<FileAccess>();
+		return Ref<File>();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(FileAccessPack, t) {}
+	EMBED_CLASS(PackageFile, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DirAccessPack, t) {}
+	EMBED_CLASS(PackageDir, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

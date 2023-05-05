@@ -55,7 +55,7 @@ namespace Ism
 	public:
 		auto get_root() const noexcept -> Window * { return m_root; }
 		auto get_delta_time() const noexcept -> Duration { return m_delta_time; }
-		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.get_elapsed_time(); }
+		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.get_time(); }
 		auto get_fps() const noexcept -> FPS_Tracker const & { return m_fps_tracker; }
 		auto get_ecs() const noexcept -> EntityRegistry & { return (EntityRegistry &)(m_ecs); }
 

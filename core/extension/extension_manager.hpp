@@ -37,14 +37,13 @@ namespace Ism
 		NODISCARD bool is_extension_loaded(String const & path);
 		NODISCARD Vector<String> get_loaded_extensions() const;
 		NODISCARD Ref<Extension> get_extension(String const & path);
-		NODISCARD String get_extension_list_config_file() const;
 
 		void load_extensions();
 		void initialize_extensions(ExtensionInitializationLevel_ level);
 		void finalize_extensions(ExtensionInitializationLevel_ level);
 	};
 
-	SINGLETON_WRAPPER(ExtensionManager, get_extension_manager)
+	SINGLETON_WRAPPER(ExtensionManager, get_ext)
 }
 
 #endif // !_ISM_EXTENSION_MANAGER_HPP_

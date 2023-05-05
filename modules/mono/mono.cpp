@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	inline void CS_Ismmatic_Object_print(MonoString * message) {
+	inline void CS_Ism_Object_print(MonoString * message) {
 		PRINT_LINE(mono_string_to_utf8(message));
 	}
 
@@ -40,7 +40,7 @@ namespace Ism
 	bool Mono::load_assemblies()
 	{
 		m_img.push_back(mono_assembly_get_image(m_asm.emplace_back(mono_domain_assembly_open(m_dom, "./binaries/ism-CS.dll"))));
-		mono_add_internal_call("Ism.Object::print", &CS_Ismmatic_Object_print);
+		mono_add_internal_call("Ism.Object::print", &CS_Ism_Object_print);
 		if (!(m_object_base = mono_class_from_name(m_img[0], "Ism", "Object"))) { return false; }
 		if (!(m_script_base = mono_class_from_name(m_img[0], "Ism", "Script"))) { return false; }
 

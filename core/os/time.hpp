@@ -171,9 +171,10 @@ namespace Ism
 
 	public:
 		explicit Clock() noexcept : m_time{ _ClockBase::now() } {}
-		Duration get_elapsed_time() const noexcept { return _ClockBase::now() - m_time; }
+		NODISCARD Duration get_time() const noexcept { return _ClockBase::now() - m_time; }
 		void restart() noexcept { m_time = _ClockBase::now(); }
 
+	private:
 		Clock(Clock const &) = delete;
 		Clock(Clock &&) noexcept = delete;
 		Clock & operator=(Clock const &) = delete;

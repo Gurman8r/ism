@@ -1,7 +1,11 @@
+using System;
+using System.Runtime.CompilerServices;
+
 namespace Demo
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	[Serializable]
 	public class Test : Ism.Script
 	{
 		string m_name = "Test";

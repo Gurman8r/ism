@@ -1,7 +1,7 @@
-#ifndef _ISM_FILE_ACCESS_WINDOWS_HPP_
-#define _ISM_FILE_ACCESS_WINDOWS_HPP_
+#ifndef _ISM_WINDOWS_FILE_HPP_
+#define _ISM_WINDOWS_FILE_HPP_
 
-#include <core/io/file_access.hpp>
+#include <core/io/file.hpp>
 
 #include <stdio.h>
 
@@ -9,9 +9,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API FileAccessWindows : public FileAccess
+	class ISM_API WindowsFile : public File
 	{
-		DEFINE_CLASS(FileAccessWindows, FileAccess);
+		DEFINE_CLASS(WindowsFile, File);
 
 		FILE * m_file{};
 		FileMode_ m_mode{};
@@ -22,23 +22,23 @@ namespace Ism
 		void _check_errors() const;
 
 	public:
-		FileAccessWindows() noexcept = default;
-		virtual ~FileAccessWindows() noexcept override;
+		WindowsFile() noexcept = default;
+		virtual ~WindowsFile() noexcept override;
 		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
-		virtual FileAccessWindows & flush() override;
-		virtual FileAccessWindows & close() override;
+		virtual WindowsFile & flush() override;
+		virtual WindowsFile & close() override;
 		virtual bool file_exists(String const & path) override;
 		virtual bool is_open() const override;
 		virtual String get_path() const override;
 		virtual String get_path_abs() const override;
-		virtual FileAccessWindows & seek(u64 position) override;
-		virtual FileAccessWindows & seek_end(i64 position) override;
+		virtual WindowsFile & seek(u64 position) override;
+		virtual WindowsFile & seek_end(i64 position) override;
 		virtual u64 get_position() const override;
 		virtual u64 get_length() const override;
 		virtual bool eof_reached() const override;
 		virtual Error_ get_error() const override;
 		virtual u8 read_8() const override;
-		virtual FileAccessWindows & write_8(u8 value) override;
+		virtual WindowsFile & write_8(u8 value) override;
 
 		static void initialize();
 		static void finalize();
@@ -47,4 +47,4 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_FILE_ACCESS_WINDOWS_HPP_
+#endif // !_ISM_WINDOWS_FILE_HPP_

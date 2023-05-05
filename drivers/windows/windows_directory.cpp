@@ -1,4 +1,4 @@
-#include <drivers/windows/dir_access_windows.hpp>
+#include <drivers/windows/windows_directory.hpp>
 #include <core/os/os.hpp>
 #include <core/config/project_settings.hpp>
 #include <filesystem>
@@ -7,22 +7,22 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DirAccessWindows, t) {};
+	EMBED_CLASS(WindowsDir, t) {};
 
-	DirAccessWindows::DirAccessWindows() {}
+	WindowsDir::WindowsDir() {}
 
-	DirAccessWindows::~DirAccessWindows() {}
+	WindowsDir::~WindowsDir() {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void DirAccessWindows::initialize()
+	void WindowsDir::initialize()
 	{
-		DirAccess::__create_func = []() -> Ref<DirAccess> { return memnew(DirAccessWindows); };
+		Directory::__create_func = []() -> Ref<Directory> { return memnew(WindowsDir); };
 	}
 
-	void DirAccessWindows::finalize()
+	void WindowsDir::finalize()
 	{
-		DirAccess::__create_func = nullptr;
+		Directory::__create_func = nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -13,7 +13,6 @@ namespace Ism
 		Batch<size_t, String, TypeObject *> m_classes; // class database
 
 		ObjectRef m_modules; // module dictionary
-		ObjectRef m_main_module; // main module
 
 		Vector<ObjectRef> m_loader_stack; // loader life support stack
 
