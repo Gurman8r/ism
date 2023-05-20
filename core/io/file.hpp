@@ -7,11 +7,11 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum FileType_ {
-		FileType_Resources,
-		FileType_User,
-		FileType_Filesystem,
-		FileType_MAX
+	enum FileAccess_ {
+		FileAccess_Resources,
+		FileAccess_User,
+		FileAccess_Filesystem,
+		FileAccess_MAX
 	};
 
 	enum FileMode_ {
@@ -22,12 +22,12 @@ namespace Ism
 		FileMode_MAX
 	};
 
-	enum FileCompressionMode_ {
-		FileCompressionMode_FastLZ,
-		FileCompressionMode_Deflate,
-		FileCompressionMode_ZSTD,
-		FileCompressionMode_GZip,
-		FileCompressionMode_MAX
+	enum FileCompression_ {
+		FileCompression_FastLZ,
+		FileCompression_Deflate,
+		FileCompression_ZSTD,
+		FileCompression_GZip,
+		FileCompression_MAX
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -38,21 +38,21 @@ namespace Ism
 		DEFINE_CLASS(File, Object);
 
 		bool m_big_endian{};
-		FileType_ m_access_type{};
+		FileAccess_ m_access_type{};
 
 	protected:
 		using CreateFunc = Ref<File>(*)();
-		static CreateFunc __create_func[FileType_MAX];
-		static Ref<File> create(FileType_ access_type);
+		static CreateFunc __create_func[FileAccess_MAX];
+		static Ref<File> create(FileAccess_ access_type);
 		static Ref<File> create_for_path(String const & path);
 
-		NODISCARD FileType_ get_access_type() const noexcept { return m_access_type; }
-		void set_access_type(FileType_ value) noexcept { m_access_type = value; }
+		NODISCARD FileAccess_ get_access_type() const noexcept { return m_access_type; }
+		void set_access_type(FileAccess_ value) noexcept { m_access_type = value; }
 
 		virtual Error_ open_internal(String const & path, FileMode_ mode) = 0;
 
 	public:
-		static Ref<File> open(String const & path, FileMode_ mode, Error_ * error = nullptr);
+		static Ref<File> open(String const & path, FileMode_ mode, Error_ * r_error = nullptr);
 		virtual Error_ reopen(String const & path, FileMode_ mode);
 
 		virtual File & flush() = 0;

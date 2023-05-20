@@ -6,11 +6,6 @@ namespace Ism
 
 	EMBED_CLASS(Shader, t) {}
 
-	Shader::Shader(String const & path)
-	{
-		ASSERT(ShaderLibrary::load_shader(*this, path) == Error_OK);
-	}
-
 	Shader::~Shader()
 	{
 		if (m_shader) { get_gpu()->shader_destroy(m_shader); m_shader = nullptr; }

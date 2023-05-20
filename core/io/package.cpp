@@ -9,7 +9,7 @@ namespace Ism
 	PackageManager::PackageManager()
 	{
 		SINGLETON_CTOR();
-		m_root = memnew(PackedDir);
+		m_root = memnew(PackDir);
 		add_package_source(memnew(PackageSourcePCK));
 	}
 	
@@ -30,7 +30,7 @@ namespace Ism
 			}
 		}
 
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
 	void PackageManager::add_package_source(PackageSource * source)
@@ -45,7 +45,7 @@ namespace Ism
 		bool const exists{ m_files.contains(path) };
 
 		if ((!exists || replace_files) && !path.filename().empty()) {
-			m_files[path] = PackedFile{ package_path, offset, size, id, src, encrypted };
+			m_files[path] = PackFile{ package_path, offset, size, id, src, encrypted };
 			printf("%s\n", path.c_str());
 		}
 
@@ -55,13 +55,13 @@ namespace Ism
 			PRINT_LINE(p.root_directory());
 			if (size_t i{ p.find("://")}; i != p.npos) { p.erase(p.begin(), p.begin() + i + 2); }
 
-			PackedDir * cd{ m_root };
+			PackDir * cd{ m_root };
 			if (p.contains('/'))
 			{
 				Vector<String> const ds{ p.root_directory().split('/') };
 				for (size_t j{}; j < ds.size(); ++j) {
 					if (!cd->subdirs.contains(ds[j])) {
-						PackedDir * pd{ memnew(PackedDir) };
+						PackDir * pd{ memnew(PackDir) };
 						pd->name = ds[j];
 						pd->parent = cd;
 						cd->subdirs[pd->name] = pd;
@@ -93,7 +93,7 @@ namespace Ism
 		return m_files.contains(path);
 	}
 
-	Ref<Directory> PackageManager::try_open_dir(String const & path)
+	Ref<Dir> PackageManager::try_open_dir(String const & path)
 	{
 		return nullptr;
 	}
@@ -110,7 +110,7 @@ namespace Ism
 		return false;
 	}
 
-	Ref<File> PackageSourcePCK::get_file(String const & path, PackageManager::PackedFile * file)
+	Ref<File> PackageSourcePCK::get_file(String const & path, PackageManager::PackFile * file)
 	{
 		return Ref<File>();
 	}

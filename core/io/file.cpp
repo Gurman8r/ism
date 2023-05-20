@@ -8,9 +8,9 @@ namespace Ism
 
 	EMBED_CLASS(File, t, TypeFlags_IsAbstract) {}
 
-	File::CreateFunc File::__create_func[FileType_MAX]{};
+	File::CreateFunc File::__create_func[FileAccess_MAX]{};
 
-	Ref<File> File::create(FileType_ access_type)
+	Ref<File> File::create(FileAccess_ access_type)
 	{
 		Ref<File> file{ VALIDATE(__create_func[access_type])() };
 		file->set_access_type(access_type);
@@ -21,34 +21,34 @@ namespace Ism
 	{
 		Ref<File> file;
 		if (path.has_prefix("res://")) {
-			file = create(FileType_Resources);
+			file = create(FileAccess_Resources);
 		}
 		else if (path.has_prefix("usr://")) {
-			file = create(FileType_User);
+			file = create(FileAccess_User);
 		}
 		else {
-			file = create(FileType_Filesystem);
+			file = create(FileAccess_Filesystem);
 		}
 		return file;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Ref<File> File::open(String const & path, FileMode_ mode, Error_ * error)
+	Ref<File> File::open(String const & path, FileMode_ mode, Error_ * r_error)
 	{
 		Ref<File> file{};
 		
 		if (PackageManager * pack; (mode != FileMode_Write) && (pack = get_packages()) && pack->is_enabled() && (file = pack->try_open_path(path))) {
-			if (error) { *error = Error_OK; }
+			if (r_error) { *r_error = Error_OK; }
 			return file;
 		}
 
 		if ((file = create_for_path(path)) && (file->open_internal(path, mode) == Error_OK)) {
-			if (error) { *error = Error_OK; }
+			if (r_error) { *r_error = Error_OK; }
 			return file;
 		}
 
-		if (error) { *error = Error_Unknown; }
+		if (r_error) { *r_error = Error_Failed; }
 		return nullptr;
 	}
 
@@ -149,7 +149,7 @@ namespace Ism
 		u8 a; a = value & 0xFF;
 		u8 b; b = value >> 8;
 		if (m_big_endian) { util::swap(a, b); }
-		return write_8(a); write_8(b);
+		return write_8(a).write_8(b);
 	}
 
 	File & File::write_32(u32 value)

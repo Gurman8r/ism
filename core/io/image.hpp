@@ -66,7 +66,7 @@ namespace Ism
 	{
 		DEFINE_CLASS(Image, Resource);
 
-		friend class ImageLibrary;
+		friend class ImageFormatLoader;
 
 	private:
 		i32 m_width{}, m_height{}, m_depth{};
@@ -78,8 +78,7 @@ namespace Ism
 		using const_iterator = typename decltype(m_pixels)::const_iterator;
 
 	public:
-		Image() noexcept {}
-		explicit Image(String const & path);
+		Image() noexcept = default;
 		Image(i32 width, i32 height, ImageFormat_ format);
 		Image(i32 width, i32 height, ImageFormat_ format, DynamicBuffer const & data);
 		virtual RID get_rid() const override { return RID{}; }

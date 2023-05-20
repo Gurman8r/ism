@@ -1,19 +1,19 @@
-#include <servers/rendering/rendering_server_default.hpp>
+#include <servers/rendering/default_rendering_server.hpp>
 
 #if OPENGL_ENABLED
-#include <drivers/opengl/rendering_device_opengl.hpp>
-#define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
+#include <drivers/opengl/opengl_rendering_device.hpp>
+#define RENDERING_DEVICE_DEFAULT OpenGlRenderingDevice
 #endif
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(RenderingServerDefault, t) {}
+	EMBED_CLASS(DefaultRenderingServer, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RenderingServerDefault::RenderingServerDefault()
+	DefaultRenderingServer::DefaultRenderingServer()
 		: RenderingServer	{}
 		, m_device			{ memnew(RENDERING_DEVICE_DEFAULT()) }
 		, m_storage			{ memnew(RendererStorage(m_device)) }
@@ -22,7 +22,7 @@ namespace Ism
 	{
 	}
 
-	RenderingServerDefault::~RenderingServerDefault()
+	DefaultRenderingServer::~DefaultRenderingServer()
 	{
 		if (m_scene) { memdelete(m_scene); m_scene = nullptr; }
 		if (m_canvas) { memdelete(m_canvas); m_canvas = nullptr; }
@@ -32,27 +32,27 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void RenderingServerDefault::initialize()
+	void DefaultRenderingServer::initialize()
 	{
 	}
 
-	void RenderingServerDefault::finalize()
+	void DefaultRenderingServer::finalize()
 	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void RenderingServerDefault::texture_destroy(RID texture)
+	void DefaultRenderingServer::texture_destroy(RID texture)
 	{
 		m_device->texture_destroy(texture);
 	}
 
-	RID RenderingServerDefault::texture_replace(RID old_texture, RID new_texture)
+	RID DefaultRenderingServer::texture_replace(RID old_texture, RID new_texture)
 	{
 		return {};
 	}
 
-	RID RenderingServerDefault::texture2d_create(Ref<Image> const & image)
+	RID DefaultRenderingServer::texture2d_create(Ref<Image> const & image)
 	{
 		if (!image) { return nullptr; }
 		RD::DataFormat_ color_format{}, color_format_srgb{};
@@ -120,12 +120,12 @@ namespace Ism
 		}, image->get_data());
 	}
 
-	RID RenderingServerDefault::texture2d_placeholder_create()
+	RID DefaultRenderingServer::texture2d_placeholder_create()
 	{
 		return m_storage->texture2d_placeholder_create();
 	}
 
-	Ref<Image> RenderingServerDefault::texture2d_get_data(RID texture)
+	Ref<Image> DefaultRenderingServer::texture2d_get_data(RID texture)
 	{
 		if (!texture) { return nullptr; }
 
@@ -136,191 +136,191 @@ namespace Ism
 		return image;
 	}
 
-	RID RenderingServerDefault::texture3d_placeholder_create()
+	RID DefaultRenderingServer::texture3d_placeholder_create()
 	{
 		return m_storage->texture3d_placeholder_create();
 	}
 
-	RID RenderingServerDefault::texturecube_placeholder_create()
+	RID DefaultRenderingServer::texturecube_placeholder_create()
 	{
 		return m_storage->texturecube_placeholder_create();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RenderingServerDefault::shader_create()
+	RID DefaultRenderingServer::shader_create()
 	{
 		return RID();
 	}
 
-	RID RenderingServerDefault::shader_placeholder_create()
+	RID DefaultRenderingServer::shader_placeholder_create()
 	{
 		return m_storage->shader_placeholder_create();
 	}
 
-	void RenderingServerDefault::shader_destroy(RID shader)
+	void DefaultRenderingServer::shader_destroy(RID shader)
 	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RenderingServerDefault::material_create()
+	RID DefaultRenderingServer::material_create()
 	{
 		return m_storage->material_create();
 	}
 
-	RID RenderingServerDefault::material_placeholder_create()
+	RID DefaultRenderingServer::material_placeholder_create()
 	{
 		return m_storage->material_placeholder_create();
 	}
 
-	void RenderingServerDefault::material_destroy(RID material)
+	void DefaultRenderingServer::material_destroy(RID material)
 	{
 		m_storage->material_destroy(material);
 	}
 
-	RID RenderingServerDefault::material_get_shader(RID material) const
+	RID DefaultRenderingServer::material_get_shader(RID material) const
 	{
 		return m_storage->material_get_shader(material);
 	}
 
-	void RenderingServerDefault::material_set_shader(RID material, RID shader)
+	void DefaultRenderingServer::material_set_shader(RID material, RID shader)
 	{
 		m_storage->material_set_shader(material, shader);
 	}
 
-	Var RenderingServerDefault::material_get_param(RID material, String const & key) const
+	Var DefaultRenderingServer::material_get_param(RID material, String const & key) const
 	{
 		return m_storage->material_get_param(material, key);
 	}
 
-	void RenderingServerDefault::material_set_param(RID material, String const & key, Var const & value)
+	void DefaultRenderingServer::material_set_param(RID material, String const & key, Var const & value)
 	{
 		m_storage->material_set_param(material, key, value);
 	}
 
-	void RenderingServerDefault::material_update(RID material, Map<String, Var> const & params)
+	void DefaultRenderingServer::material_update(RID material, Map<String, Var> const & params)
 	{
 		m_storage->material_update(material, params);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RenderingServerDefault::mesh_create(Vector<SurfaceData> const & surfaces)
+	RID DefaultRenderingServer::mesh_create(Vector<SurfaceData> const & surfaces)
 	{
 		return m_storage->mesh_create(surfaces);
 	}
 
-	RID RenderingServerDefault::mesh_placeholder_create()
+	RID DefaultRenderingServer::mesh_placeholder_create()
 	{
 		return m_storage->mesh_placeholder_create();
 	}
 
-	void RenderingServerDefault::mesh_destroy(RID mesh)
+	void DefaultRenderingServer::mesh_destroy(RID mesh)
 	{
 		m_storage->mesh_destroy(mesh);
 	}
 
-	void RenderingServerDefault::mesh_clear(RID mesh)
+	void DefaultRenderingServer::mesh_clear(RID mesh)
 	{
 		m_storage->mesh_clear(mesh);
 	}
 
-	size_t RenderingServerDefault::mesh_get_surface_count(RID mesh)
+	size_t DefaultRenderingServer::mesh_get_surface_count(RID mesh)
 	{
 		return m_storage->mesh_get_surface_count(mesh);
 	}
 
-	void RenderingServerDefault::mesh_add_surface(RID mesh, SurfaceData const & surface)
+	void DefaultRenderingServer::mesh_add_surface(RID mesh, SurfaceData const & surface)
 	{
 		m_storage->mesh_add_surface(mesh, surface);
 	}
 
-	RS::Primitive_ RenderingServerDefault::mesh_surface_get_primitive(RID mesh, size_t index)
+	RS::Primitive_ DefaultRenderingServer::mesh_surface_get_primitive(RID mesh, size_t index)
 	{
 		return m_storage->mesh_surface_get_primitive(mesh, index);
 	}
 
-	RID RenderingServerDefault::mesh_surface_get_vertex_array(RID mesh, size_t index)
+	RID DefaultRenderingServer::mesh_surface_get_vertex_array(RID mesh, size_t index)
 	{
 		return m_storage->mesh_surface_get_vertex_array(mesh, index);
 	}
 
-	RID RenderingServerDefault::mesh_surface_get_index_array(RID mesh, size_t index)
+	RID DefaultRenderingServer::mesh_surface_get_index_array(RID mesh, size_t index)
 	{
 		return m_storage->mesh_surface_get_index_array(mesh, index);
 	}
 
-	RID RenderingServerDefault::mesh_surface_get_material(RID mesh, size_t index)
+	RID DefaultRenderingServer::mesh_surface_get_material(RID mesh, size_t index)
 	{
 		return m_storage->mesh_surface_get_material(mesh, index);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RenderingServerDefault::camera_create()
+	RID DefaultRenderingServer::camera_create()
 	{
 		return m_storage->camera_create();
 	}
 
-	void RenderingServerDefault::camera_destroy(RID camera)
+	void DefaultRenderingServer::camera_destroy(RID camera)
 	{
 		m_storage->camera_destroy(camera);
 	}
 
-	void RenderingServerDefault::camera_set_perspective(RID camera, f32 fov, f32 znear, f32 zfar)
+	void DefaultRenderingServer::camera_set_perspective(RID camera, f32 fov, f32 znear, f32 zfar)
 	{
 		m_storage->camera_set_perspective(camera, fov, znear, zfar);
 	}
 
-	void RenderingServerDefault::camera_set_orthographic(RID camera, f32 size, f32 znear, f32 zfar)
+	void DefaultRenderingServer::camera_set_orthographic(RID camera, f32 size, f32 znear, f32 zfar)
 	{
 		m_storage->camera_set_orthographic(camera, size, znear, zfar);
 	}
 
-	void RenderingServerDefault::camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 znear, f32 zfar)
+	void DefaultRenderingServer::camera_set_frustum(RID camera, f32 size, Vec2 offset, f32 znear, f32 zfar)
 	{
 		m_storage->camera_set_frustum(camera, size, offset, znear, zfar);
 	}
 
-	void RenderingServerDefault::camera_set_transform(RID camera, Mat4 const & transform)
+	void DefaultRenderingServer::camera_set_transform(RID camera, Mat4 const & transform)
 	{
 		m_storage->camera_set_transform(camera, transform);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RID RenderingServerDefault::viewport_create()
+	RID DefaultRenderingServer::viewport_create()
 	{
 		return m_storage->viewport_create();
 	}
 
-	void RenderingServerDefault::viewport_destroy(RID viewport)
+	void DefaultRenderingServer::viewport_destroy(RID viewport)
 	{
 		m_storage->viewport_destroy(viewport);
 	}
 
-	void RenderingServerDefault::viewport_set_parent_viewport(RID viewport, RID parent_viewport)
+	void DefaultRenderingServer::viewport_set_parent_viewport(RID viewport, RID parent_viewport)
 	{
 		m_storage->viewport_set_parent_viewport(viewport, parent_viewport);
 	}
 
-	void RenderingServerDefault::viewport_set_size(RID viewport, i32 width, i32 height)
+	void DefaultRenderingServer::viewport_set_size(RID viewport, i32 width, i32 height)
 	{
 		m_storage->viewport_set_size(viewport, width, height);
 	}
 
-	void RenderingServerDefault::viewport_set_camera(RID viewport, RID camera)
+	void DefaultRenderingServer::viewport_set_camera(RID viewport, RID camera)
 	{
 		m_storage->viewport_set_camera(viewport, camera);
 	}
 
-	RID RenderingServerDefault::viewport_get_texture(RID viewport) const
+	RID DefaultRenderingServer::viewport_get_texture(RID viewport) const
 	{
 		return m_storage->viewport_get_texture(viewport);
 	}
 
-	void RenderingServerDefault::viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen)
+	void DefaultRenderingServer::viewport_attach_to_screen(RID viewport, IntRect const & rect, DS::WindowID screen)
 	{
 		m_storage->viewport_attach_to_screen(viewport, rect, screen);
 	}

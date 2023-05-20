@@ -3,10 +3,14 @@
 
 #include <core/typedefs.hpp>
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 using IsmExtensionInterfacePtr = void *;
 using IsmExtensionPtr = void *;
 using IsmExtensionInitializationPtr = void *;
 using IsmExtensionInitializationLevel = int;
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 namespace Ism
 {
@@ -29,8 +33,8 @@ namespace Ism
 		u32		version_patch{};
 		u32		version_build{};
 		cstring	version_string{};
-		
-		// etc...
+
+		// TODO: implement interface functions
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

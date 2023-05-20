@@ -84,9 +84,9 @@ namespace Ism
 
 		display = DS::create("Ism Engine", DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error);
 		graphics = RS::create();
-		text = memnew(TextServer);
-		physics = memnew(PhysicsServer);
-		audio = memnew(AudioServer);
+		text = memnew(TS);
+		physics = memnew(PS);
+		audio = memnew(AS);
 
 		register_core_singletons();
 

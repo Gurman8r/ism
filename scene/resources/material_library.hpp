@@ -2,15 +2,21 @@
 #define _ISM_MATERIAL_LIBRARY_HPP_
 
 #include <scene/resources/material.hpp>
+#include <core/io/resource_loader.hpp>
 
 namespace Ism
 {
-	class ISM_API MaterialLibrary final
-	{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class MaterialFormatLoader : public ResourceFormatLoader {
+		DEFINE_CLASS(MaterialFormatLoader, ResourceFormatLoader);
 	public:
-		static Error_ load_material(Material & material, String const & path);
 		static Error_ load_material(Ref<Material> material, String const & path);
+		virtual RES load(String const & path, Error_ * r_error = nullptr) override;
+		virtual void get_recognized_extensions(Vector<String> * out) const override;
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_MATERIAL_LIBRARY_HPP_

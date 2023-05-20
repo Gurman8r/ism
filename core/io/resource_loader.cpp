@@ -21,7 +21,7 @@ namespace Ism
 
 	ResourceLoader::~ResourceLoader() { SINGLETON_DTOR(); }
 	
-	RES ResourceLoader::_load(String const & path, Error_ * error)
+	RES ResourceLoader::_load(String const & path, Error_ * r_error)
 	{
 		RES result{};
 		for (size_t i{}; i < m_loaders.size(); ++i)
@@ -29,16 +29,16 @@ namespace Ism
 			if (!m_loaders[i]->recognize_path(path)) {
 				continue;
 			}
-			if (result = m_loaders[i]->load(path, error)) {
+			if (result = m_loaders[i]->load(path, r_error)) {
 				break;
 			}
 		}
 		return result;
 	}
 	
-	RES ResourceLoader::load(String const & path, Error_ * error)
+	RES ResourceLoader::load(String const & path, Error_ * r_error)
 	{
-		return _load(path, error);
+		return _load(path, r_error);
 	}
 
 	bool ResourceLoader::add(Ref<ResourceFormatLoader> format)

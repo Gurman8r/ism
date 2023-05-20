@@ -68,7 +68,7 @@ namespace Ism
 
 		BasicString(size_type const count, value_type const elem, allocator_type const & alloc) : m_string{ count, elem, alloc } {}
 
-		template <class Iter, std::enable_if_t<std::_Is_iterator_v<Iter>, int> = 0
+		template <class Iter, std::enable_if_t<std::_Is_iterator_v<Iter>, i32> = 0
 		> BasicString(Iter first, Iter last, allocator_type const & alloc = {}) : m_string{ first, last, alloc } {}
 		
 		BasicString(self_type && value) noexcept : m_string{ std::move(value.m_string) } {}
@@ -236,7 +236,6 @@ namespace Ism
 
 		NODISCARD bool equal_to(self_type const & value) const noexcept { return (this == std::addressof(value)) || m_string._Equal(value.m_string); }
 
-	public:
 		NODISCARD size_type find(value_type const value, size_type const offset = 0) const { return m_string.find(value, offset); }
 		
 		NODISCARD size_type find(self_type const & value, size_type const offset = 0) const { return m_string.find(value.m_string, offset); }
@@ -274,6 +273,25 @@ namespace Ism
 		NODISCARD bool has_suffix(self_type const & a) const noexcept { return (a.size() <= size()) && (a == substr(size() - a.size(), a.size())); }
 
 	public:
+		NODISCARD self_type replace(self_type const & from, self_type const & to) const
+		{
+			self_type copy{ *this };
+			for (size_t i{}; (i = copy.m_string.find(from.m_string, i)) != npos; i += to.size()) {
+				copy.m_string.replace(i, from.size(), to.m_string);
+			}
+			return copy;
+		}
+
+		NODISCARD self_type replace_first(self_type const & from, self_type const & to) const
+		{
+			self_type copy{ *this };
+			if (size_t i; (i = copy.m_string.find(from.m_string, i)) != npos) {
+				copy.m_string.replace(i, from.size(), to.m_string);
+			}
+			return copy;
+		}
+
+	public:
 		NODISCARD auto narrow() const noexcept -> std::conditional_t<is_narrow, BasicString<char> const &, BasicString<char>> {
 			if constexpr (is_narrow) {
 				return (*this);
@@ -299,14 +317,14 @@ namespace Ism
 		}
 
 	public:
-		NODISCARD self_type to_upper() const {
+		NODISCARD self_type uppercase() const {
 			self_type temp;
 			temp.reserve(size());
 			for (auto const c : *this) { temp.push_back(std::toupper(c)); }
 			return temp;
 		}
 
-		NODISCARD self_type to_lower() const {
+		NODISCARD self_type lowercase() const {
 			self_type temp;
 			temp.reserve(size());
 			for (auto const c : *this) { temp.push_back(std::tolower(c)); }
@@ -314,19 +332,19 @@ namespace Ism
 		}
 
 	public:
-		template <class Fn = int(*)(int)
+		template <class Fn = i32(*)(i32)
 		> auto & trim_back(Fn fn = std::isspace) {
 			while (!empty() && fn(back())) { pop_back(); }
 			return (*this);
 		}
 
-		template <class Fn = int(*)(int)
+		template <class Fn = i32(*)(i32)
 		> auto & trim_front(Fn fn = std::isspace) {
 			while (!empty() && fn(front())) { pop_front(); }
 			return (*this);
 		}
 
-		template <class Fn = int(*)(int)
+		template <class Fn = i32(*)(i32)
 		> auto & trim(Fn fn = std::isspace) {
 			while (!empty() && fn(back())) { pop_back(); }
 			while (!empty() && fn(front())) { pop_front(); }
@@ -374,37 +392,45 @@ namespace Ism
 		NODISCARD auto split(self_type const & delimiter) const noexcept { return split(*this, delimiter); }
 
 	public:
-		NODISCARD auto root_name() const noexcept -> self_type { return util::parse_root_name(narrow().view()); }
+		NODISCARD auto root_name() const noexcept -> self_type { return util::parse_root_name(view()); }
 		
-		NODISCARD auto root_directory() const noexcept -> self_type { return util::parse_root_directory(narrow().view()); }
+		NODISCARD auto root_directory() const noexcept -> self_type { return util::parse_root_directory(view()); }
 		
-		NODISCARD auto root_path() const noexcept -> self_type { return util::parse_root_path(narrow().view()); }
+		NODISCARD auto root_path() const noexcept -> self_type { return util::parse_root_path(view()); }
 		
-		NODISCARD auto relative_path() const noexcept -> self_type { return util::parse_relative_path(narrow().view()); }
+		NODISCARD auto relative_path() const noexcept -> self_type { return util::parse_relative_path(view()); }
 		
-		NODISCARD auto parent_path() const noexcept -> self_type { return util::parse_parent_path(narrow().view()); }
+		NODISCARD auto parent_path() const noexcept -> self_type { return util::parse_parent_path(view()); }
 		
-		NODISCARD auto filename() const noexcept -> self_type { return util::parse_filename(narrow().view()); }
+		NODISCARD auto filename() const noexcept -> self_type { return util::parse_filename(view()); }
 		
-		NODISCARD auto stem() const noexcept -> self_type { return util::parse_stem(narrow().view()); }
+		NODISCARD auto stem() const noexcept -> self_type { return util::parse_stem(view()); }
 		
-		NODISCARD auto extension() const noexcept -> self_type { return util::parse_extension(narrow().view()); }
+		NODISCARD auto extension() const noexcept -> self_type { return util::parse_extension(view()); }
 
-		NODISCARD bool has_root_name() const noexcept { return !util::parse_root_name(narrow().view()).empty(); }
+		NODISCARD bool has_root_name() const noexcept { return !util::parse_root_name(view()).empty(); }
 		
-		NODISCARD bool has_root_directory() const noexcept { return !util::parse_root_directory(narrow().view()).empty(); }
+		NODISCARD bool has_root_directory() const noexcept { return !util::parse_root_directory(view()).empty(); }
 		
-		NODISCARD bool has_root_path() const noexcept { return !util::parse_root_path(narrow().view()).empty(); }
+		NODISCARD bool has_root_path() const noexcept { return !util::parse_root_path(view()).empty(); }
 		
-		NODISCARD bool has_relative_path() const noexcept { return !util::parse_relative_path(narrow().view()).empty(); }
+		NODISCARD bool has_relative_path() const noexcept { return !util::parse_relative_path(view()).empty(); }
 		
-		NODISCARD bool has_parent_path() const noexcept { return !util::parse_parent_path(narrow().view()).empty(); }
+		NODISCARD bool has_parent_path() const noexcept { return !util::parse_parent_path(view()).empty(); }
 		
-		NODISCARD bool has_filename() const noexcept { return !util::parse_filename(narrow().view()).empty(); }
+		NODISCARD bool has_filename() const noexcept { return !util::parse_filename(view()).empty(); }
 		
-		NODISCARD bool has_stem() const noexcept { return !util::parse_stem(narrow().view()).empty(); }
+		NODISCARD bool has_stem() const noexcept { return !util::parse_stem(view()).empty(); }
 		
-		NODISCARD bool has_extension() const noexcept { return !util::parse_extension(narrow().view()).empty(); }
+		NODISCARD bool has_extension() const noexcept { return !util::parse_extension(view()).empty(); }
+
+		NODISCARD auto path_join(self_type const & value) const -> self_type { return (*this) + '/' + value; }
+
+		NODISCARD auto simplify_path() const -> self_type {
+			self_type copy{ *this };
+			/* TODO */
+			return copy;
+		}
 
 	public:
 		template <size_type buffer_size = 0
@@ -692,7 +718,7 @@ namespace Ism::util
 
 	inline Optional<bool> to_bool(String const & value) noexcept
 	{
-		switch (value.to_lower().hash_code()) {
+		switch (value.lowercase().hash_code()) {
 		case "1"_hash:
 		case "yes"_hash:
 		case "true"_hash: return make_optional(true);
@@ -886,6 +912,8 @@ namespace Ism::util
 		auto const extension{ find_extension(filename, ads) };
 		return { extension, static_cast<size_t>(ads - extension) };
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

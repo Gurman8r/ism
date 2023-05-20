@@ -6,11 +6,6 @@ namespace Ism
 
 	EMBED_CLASS(Image, t) {}
 
-	Image::Image(String const & path)
-	{
-		ASSERT(ImageLibrary::load_image(*this, path) == Error_OK);
-	}
-
 	Image::Image(i32 width, i32 height, ImageFormat_ format)
 	{
 		m_width = width;

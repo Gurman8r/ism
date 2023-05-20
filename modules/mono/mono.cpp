@@ -39,12 +39,12 @@ namespace Ism
 
 	bool Mono::load_assemblies()
 	{
-		m_img.push_back(mono_assembly_get_image(m_asm.emplace_back(mono_domain_assembly_open(m_dom, "./binaries/ism-CS.dll"))));
+		m_img.push_back(mono_assembly_get_image(m_asm.emplace_back(mono_domain_assembly_open(m_dom, "./bin/ism-CS.dll"))));
 		mono_add_internal_call("Ism.Object::print", &CS_Ism_Object_print);
 		if (!(m_object_base = mono_class_from_name(m_img[0], "Ism", "Object"))) { return false; }
 		if (!(m_script_base = mono_class_from_name(m_img[0], "Ism", "Script"))) { return false; }
 
-		m_img.push_back(mono_assembly_get_image(m_asm.emplace_back(mono_domain_assembly_open(m_dom, "./binaries/demo-CS.dll"))));
+		m_img.push_back(mono_assembly_get_image(m_asm.emplace_back(mono_domain_assembly_open(m_dom, "./bin/demo-CS.dll"))));
 		i32 const rows{ mono_image_get_table_rows(m_img[1], MONO_TABLE_TYPEDEF) };
 		for (i32 i{ 1 }; i < rows; ++i)
 		{

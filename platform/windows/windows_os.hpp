@@ -1,5 +1,5 @@
-#ifndef _ISM_OS_WINDOWS_HPP_
-#define _ISM_OS_WINDOWS_HPP_
+#ifndef _ISM_WINDOWS_OS_HPP_
+#define _ISM_WINDOWS_OS_HPP_
 
 #include <core/os/os.hpp>
 
@@ -11,16 +11,16 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// windows operating system
-	class ISM_API OS_Windows : public OS
+	// windows os
+	class ISM_API WindowsOS : public OS
 	{
 		Ref<MainLoop> m_main_loop{};
 		HINSTANCE m_hinstance{};
 		HWND m_main_window{};
 
 	public:
-		explicit OS_Windows(HINSTANCE hInstance);
-		virtual ~OS_Windows() override;
+		explicit WindowsOS(HINSTANCE hInstance);
+		virtual ~WindowsOS() override;
 
 		HINSTANCE get_instance() { return m_hinstance; }
 		void set_main_window(HWND value) { m_main_window = value; }
@@ -90,4 +90,4 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_OS_WINDOWS_HPP_
+#endif // !_ISM_WINDOWS_OS_HPP_

@@ -41,7 +41,7 @@ namespace Ism
 	class ISM_API ExtensionFormatLoader : public ResourceFormatLoader {
 		DEFINE_CLASS(ExtensionFormatLoader, ResourceFormatLoader);
 	public:
-		virtual RES load(String const & path, Error_ * error = nullptr) override;
+		virtual RES load(String const & path, Error_ * r_error = nullptr) override;
 		virtual void get_recognized_extensions(Vector<String> * out) const override;
 	};
 

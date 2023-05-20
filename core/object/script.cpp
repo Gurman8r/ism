@@ -17,7 +17,7 @@ namespace Ism
 	Error_ ScriptManager::register_language(ScriptLanguage * language)
 	{
 		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); })};
-		if (it != m_languages.end()) { return Error_Unknown; }
+		if (it != m_languages.end()) { return Error_Failed; }
 		m_languages.push_back(language);
 		return Error_OK;
 	}
@@ -25,7 +25,7 @@ namespace Ism
 	Error_ ScriptManager::unregister_language(ScriptLanguage const * language)
 	{
 		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); }) };
-		if (it == m_languages.end()) { return Error_Unknown; }
+		if (it == m_languages.end()) { return Error_Failed; }
 		m_languages.erase(it);
 		return Error_OK;
 	}

@@ -10,7 +10,7 @@
 #include <core/object/script.hpp>
 #include <core/os/main_loop.hpp>
 #include <core/io/config_file.hpp>
-#include <core/io/directory.hpp>
+#include <core/io/dir.hpp>
 #include <core/io/event_system.hpp>
 #include <core/io/zip.hpp>
 #include <core/io/lexer.hpp>
@@ -63,7 +63,7 @@ namespace Ism
 
 			Extension, ExtensionFormatLoader, ExtensionManager,
 
-			Directory, File, PackageFile, ZipFile,
+			Dir, File, PackageFile, ZipFile,
 
 			Event, EventListener, DummyListener, EventDelegate<Event>, EventBus,
 

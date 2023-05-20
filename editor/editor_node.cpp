@@ -7,6 +7,7 @@
 #include <scene/gui/imgui.hpp>
 #include <core/math/face3.hpp>
 #include <core/math/transform.hpp>
+#include <core/io/resource_loader.hpp>
 
 namespace Ism
 {
@@ -122,16 +123,18 @@ namespace Ism
 		m_log = memnew(EditorLog);
 		m_viewport = memnew(EditorViewport);
 
-		RID c{ get_graphics()->camera_create() };
-		get_graphics()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
-		get_graphics()->camera_set_transform(c, camera.transform);
-		get_graphics()->camera_destroy(c);
+		RID c{ get_gfx()->camera_create() };
+		get_gfx()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
+		get_gfx()->camera_set_transform(c, camera.transform);
+		get_gfx()->camera_destroy(c);
 
-		m_shaders["2d"].instance("../assets/shaders/2d.shader");
-		m_shaders["3d"].instance("../assets/shaders/3d.shader");
+		
+
+		m_shaders["2d"] = get_resource_loader()->load("../assets/shaders/2d.shader");
+		m_shaders["3d"] = get_resource_loader()->load("../assets/shaders/3d.shader");
 		m_textures["earth_dm_2k"].instance<ImageTexture>("../assets/textures/earth/earth_dm_2k.png");
 		m_textures["earth_sm_2k"].instance<ImageTexture>("../assets/textures/earth/earth_sm_2k.png");
-		m_meshes["sphere32x24"].instance("../assets/meshes/sphere32x24.obj");
+		m_meshes["sphere32x24"] = get_resource_loader()->load("../assets/meshes/sphere32x24.obj");
 
 		//RS::SurfaceData quad_spec{};
 		//quad_spec.primitive = RS::Primitive_Triangles;
@@ -182,9 +185,9 @@ namespace Ism
 		}, shader);
 	
 		// material (WIP)
-		material = get_graphics()->material_create();
-		get_graphics()->material_set_shader(material, shader);
-		get_graphics()->material_update(material, {
+		material = get_gfx()->material_create();
+		get_gfx()->material_set_shader(material, shader);
+		get_gfx()->material_update(material, {
 			{ "Ambient", Vec4{ 0.8f, 0.4f, 0.2f, 1.0f } },
 			{ "Diffuse", Vec4{ 0.5f, 0.5f, 0.5f, 1.0f } },
 			{ "Specular", Vec4{ 1.0f, 1.0f, 1.0f, 1.0f } },
@@ -212,7 +215,7 @@ namespace Ism
 	{
 		SINGLETON_DTOR();
 
-		if (material) { get_graphics()->material_destroy(material); }
+		if (material) { get_gfx()->material_destroy(material); }
 
 		for (size_t i{}; i < ARRAY_SIZE(uniform_buffers); ++i) {
 			if (uniform_buffers[i]) { get_gpu()->buffer_destroy(uniform_buffers[i]); }

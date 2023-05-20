@@ -8,7 +8,7 @@ namespace Ism
 	public class Object
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern void print(string message);
+		protected static extern void print(string message);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

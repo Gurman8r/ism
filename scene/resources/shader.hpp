@@ -9,6 +9,8 @@ namespace Ism
 	{
 		DEFINE_CLASS(Shader, Resource);
 
+		friend class ShaderFormatLoader;
+
 	public:
 		enum Mode_
 		{
@@ -20,13 +22,11 @@ namespace Ism
 		};
 
 	private:
-		friend class ShaderLibrary;
 		RID m_shader{};
 		Mode_ m_mode{ Mode_MAX };
 
 	public:
-		Shader() noexcept {}
-		explicit Shader(String const & path);
+		Shader() noexcept = default;
 		virtual ~Shader() override;
 		virtual RID get_rid() const { return m_shader; }
 		virtual Mode_ get_mode() const { return m_mode; }

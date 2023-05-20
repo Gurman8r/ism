@@ -107,12 +107,12 @@ namespace Ism
 
 	Error_ OS::set_cwd(String const & path)
 	{
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
 	Error_ OS::shell_open(String const & path)
 	{
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
 	Vector<String> OS::get_cmdline_args() const
@@ -253,7 +253,7 @@ namespace Ism
 
 	Error_ OS::move_to_trash(String const & path)
 	{
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

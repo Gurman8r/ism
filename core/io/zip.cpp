@@ -173,7 +173,7 @@ namespace Ism
 		return false;
 	}
 
-	Ref<File> ZipArchive::get_file(String const & path, PackageManager::PackedFile * file)
+	Ref<File> ZipArchive::get_file(String const & path, PackageManager::PackFile * file)
 	{
 		return memnew(ZipFile(path, *file));
 	}
@@ -183,7 +183,7 @@ namespace Ism
 {
 	EMBED_CLASS(ZipFile, t) {}
 
-	ZipFile::ZipFile(String const & path, PackageManager::PackedFile const & file)
+	ZipFile::ZipFile(String const & path, PackageManager::PackFile const & file)
 	{
 		open_internal(path, FileMode_Read);
 	}
@@ -261,7 +261,7 @@ namespace Ism
 	Error_ ZipFile::get_error() const
 	{
 		if (!m_zfile) {
-			return Error_Unknown;
+			return Error_Failed;
 		}
 		if (eof_reached()) {
 			return Error_EOF;

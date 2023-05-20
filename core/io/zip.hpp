@@ -37,7 +37,7 @@ namespace Ism
 		NODISCARD unzFile get_file_handle(String const & path) const;
 		NODISCARD bool file_exists(String const & path) const;
 		NODISCARD virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
-		NODISCARD virtual Ref<File> get_file(String const & path, PackageManager::PackedFile * file) override;
+		NODISCARD virtual Ref<File> get_file(String const & path, PackageManager::PackFile * file) override;
 	};
 
 	SINGLETON_WRAPPER(ZipArchive, get_zip_archive);
@@ -54,7 +54,7 @@ namespace Ism
 		mutable bool	m_eof{};
 
 	public:
-		ZipFile(String const & path, PackageManager::PackedFile const & file);
+		ZipFile(String const & path, PackageManager::PackFile const & file);
 		virtual ~ZipFile() override;
 		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
 		virtual ZipFile & close() override;

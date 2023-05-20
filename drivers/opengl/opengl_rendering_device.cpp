@@ -2,7 +2,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#include <drivers/opengl/rendering_device_opengl.hpp>
+#include <drivers/opengl/opengl_rendering_device.hpp>
 
 using namespace Ism;
 
@@ -324,11 +324,11 @@ ENUM_MAPPING(TO_GL, BlendOperation_, u32,
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(RenderingDeviceOpenGL, t) {}
+EMBED_CLASS(OpenGlRenderingDevice, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RenderingDeviceOpenGL::RenderingDeviceOpenGL() : RenderingDevice{}
+OpenGlRenderingDevice::OpenGlRenderingDevice() : RenderingDevice{}
 {
 	OPENGL_INIT();
 
@@ -337,23 +337,23 @@ RenderingDeviceOpenGL::RenderingDeviceOpenGL() : RenderingDevice{}
 	glCheck(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 }
 
-RenderingDeviceOpenGL::~RenderingDeviceOpenGL()
+OpenGlRenderingDevice::~OpenGlRenderingDevice()
 {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void RenderingDeviceOpenGL::initialize()
+void OpenGlRenderingDevice::initialize()
 {
 }
 
-void RenderingDeviceOpenGL::finalize()
+void OpenGlRenderingDevice::finalize()
 {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & data)
+RID OpenGlRenderingDevice::buffer_create(BufferType_ buffer_type, size_t size_in_bytes, DynamicBuffer const & data)
 {
 	ASSERT(0 < size_in_bytes);
 
@@ -392,7 +392,7 @@ RID RenderingDeviceOpenGL::buffer_create(BufferType_ buffer_type, size_t size_in
 	return (RID)b;
 }
 
-void RenderingDeviceOpenGL::buffer_destroy(RID buffer)
+void OpenGlRenderingDevice::buffer_destroy(RID buffer)
 {
 	_BufferBase & b{ *VALIDATE((_BufferBase *)buffer) };
 	if (b.handle) { glCheck(glDeleteBuffers(1, &b.handle)); }
@@ -404,7 +404,7 @@ void RenderingDeviceOpenGL::buffer_destroy(RID buffer)
 	}
 }
 
-void RenderingDeviceOpenGL::buffer_update(RID buffer, size_t offset, void const * data, size_t size_in_bytes)
+void OpenGlRenderingDevice::buffer_update(RID buffer, size_t offset, void const * data, size_t size_in_bytes)
 {
 	_BufferBase & b{ *VALIDATE((_BufferBase *)buffer) };
 	b.data.write(offset, data, size_in_bytes);
@@ -416,13 +416,13 @@ void RenderingDeviceOpenGL::buffer_update(RID buffer, size_t offset, void const 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data)
+RID OpenGlRenderingDevice::vertex_buffer_create(size_t size_in_bytes, DynamicBuffer const & data)
 {
 	ASSERT(0 < size_in_bytes);
 	return buffer_create(BufferType_VertexBuffer, size_in_bytes, data);
 }
 
-RID RenderingDeviceOpenGL::vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers)
+RID OpenGlRenderingDevice::vertex_array_create(size_t vertex_count, VertexLayout const & layout, Vector<RID> const & buffers)
 {
 	ASSERT(0 < vertex_count);
 	RID const vertex_array{ (RID)memnew(_VertexArray{}) };
@@ -464,7 +464,7 @@ RID RenderingDeviceOpenGL::vertex_array_create(size_t vertex_count, VertexLayout
 	return vertex_array;
 }
 
-void RenderingDeviceOpenGL::vertex_array_destroy(RID vertex_array)
+void OpenGlRenderingDevice::vertex_array_destroy(RID vertex_array)
 {
 	_VertexArray & va{ *VALIDATE((_VertexArray *)vertex_array) };
 	for (RID const vertex_buffer : va.buffers) { if (vertex_buffer) { buffer_destroy(vertex_buffer); } }
@@ -474,7 +474,7 @@ void RenderingDeviceOpenGL::vertex_array_destroy(RID vertex_array)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::index_buffer_create(size_t index_count, DataType_ index_type, DynamicBuffer const & data)
+RID OpenGlRenderingDevice::index_buffer_create(size_t index_count, DataType_ index_type, DynamicBuffer const & data)
 {
 	ASSERT(0 < index_count);
 	ASSERT(index_type == DataType_U8 || index_type == DataType_U16 || index_type == DataType_U32);
@@ -485,7 +485,7 @@ RID RenderingDeviceOpenGL::index_buffer_create(size_t index_count, DataType_ ind
 	return index_buffer;
 }
 
-RID RenderingDeviceOpenGL::index_array_create(RID index_buffer, size_t index_offset, size_t index_count)
+RID OpenGlRenderingDevice::index_array_create(RID index_buffer, size_t index_offset, size_t index_count)
 {
 	RID const index_array{ (RID)memnew(_IndexArray{}) };
 	_IndexBuffer & ib{ *VALIDATE((_IndexBuffer *)index_buffer) };
@@ -497,7 +497,7 @@ RID RenderingDeviceOpenGL::index_array_create(RID index_buffer, size_t index_off
 	return index_array;
 }
 
-void RenderingDeviceOpenGL::index_array_destroy(RID index_array)
+void OpenGlRenderingDevice::index_array_destroy(RID index_array)
 {
 	_IndexArray & ia{ *VALIDATE((_IndexArray *)index_array) };
 	if (ia.index_buffer) { buffer_destroy(ia.index_buffer); }
@@ -506,7 +506,7 @@ void RenderingDeviceOpenGL::index_array_destroy(RID index_array)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::texture_create(TextureCreateInfo const & spec, DynamicBuffer const & data)
+RID OpenGlRenderingDevice::texture_create(TextureCreateInfo const & spec, DynamicBuffer const & data)
 {
 	RID const texture{ (RID)memnew(_Texture{}) };
 	_Texture & t{ *VALIDATE((_Texture *)texture) };
@@ -534,21 +534,21 @@ RID RenderingDeviceOpenGL::texture_create(TextureCreateInfo const & spec, Dynami
 	return texture;
 }
 
-void RenderingDeviceOpenGL::texture_destroy(RID texture)
+void OpenGlRenderingDevice::texture_destroy(RID texture)
 {
 	_Texture & t{ *VALIDATE((_Texture *)texture) };
 	if (t.handle) { glCheck(glDeleteTextures(1, &t.handle)); }
 	memdelete((_Texture *)texture);
 }
 
-void RenderingDeviceOpenGL::texture_update(RID texture, DynamicBuffer const & data)
+void OpenGlRenderingDevice::texture_update(RID texture, DynamicBuffer const & data)
 {
 	_Texture & t{ *VALIDATE((_Texture *)texture) };
 	if (t.handle) { glCheck(glDeleteTextures(1, &t.handle)); }
 	_texture_update(t, data.data());
 }
 
-void RenderingDeviceOpenGL::_texture_update(_Texture & t, void const * data)
+void OpenGlRenderingDevice::_texture_update(_Texture & t, void const * data)
 {
 	u32 _internal_format, _format, _type;
 	get_data_info(t.color_format, nullptr, &_internal_format, &_format, &_type);
@@ -579,12 +579,12 @@ void RenderingDeviceOpenGL::_texture_update(_Texture & t, void const * data)
 	glCheck(glTexParameteriv(t.texture_type, GL_TEXTURE_SWIZZLE_RGBA, t.swizzle_mask));
 }
 
-void * RenderingDeviceOpenGL::texture_get_handle(RID texture)
+void * OpenGlRenderingDevice::texture_get_handle(RID texture)
 {
 	return (void *)(intptr_t)(VALIDATE((_Texture *)texture)->handle);
 }
 
-DynamicBuffer RenderingDeviceOpenGL::texture_get_data(RID texture)
+DynamicBuffer OpenGlRenderingDevice::texture_get_data(RID texture)
 {
 	_Texture & t{ *VALIDATE((_Texture *)texture) };
 
@@ -600,7 +600,7 @@ DynamicBuffer RenderingDeviceOpenGL::texture_get_data(RID texture)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attachments)
+RID OpenGlRenderingDevice::framebuffer_create(Vector<RID> const & texture_attachments)
 {
 	_Framebuffer * const fb{ memnew(_Framebuffer{}) };
 	fb->texture_attachments = texture_attachments;
@@ -631,7 +631,7 @@ RID RenderingDeviceOpenGL::framebuffer_create(Vector<RID> const & texture_attach
 	return (RID)fb;
 }
 
-void RenderingDeviceOpenGL::framebuffer_destroy(RID framebuffer)
+void OpenGlRenderingDevice::framebuffer_destroy(RID framebuffer)
 {
 	_Framebuffer & fb{ *VALIDATE((_Framebuffer *)framebuffer) };
 	for (RID texture : fb.texture_attachments) { texture_destroy(texture); }
@@ -639,7 +639,7 @@ void RenderingDeviceOpenGL::framebuffer_destroy(RID framebuffer)
 	memdelete((_Framebuffer *)framebuffer);
 }
 
-void RenderingDeviceOpenGL::framebuffer_set_size(RID framebuffer, i32 width, i32 height)
+void OpenGlRenderingDevice::framebuffer_set_size(RID framebuffer, i32 width, i32 height)
 {
 	_Framebuffer & fb{ *VALIDATE((_Framebuffer *)framebuffer) };
 	if (fb.width == width && fb.height == height) { return; }
@@ -675,7 +675,7 @@ void RenderingDeviceOpenGL::framebuffer_set_size(RID framebuffer, i32 width, i32
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::sampler_create(SamplerCreateInfo const & sampler_state)
+RID OpenGlRenderingDevice::sampler_create(SamplerCreateInfo const & sampler_state)
 {
 	_Sampler * const ss{ memnew(_Sampler{}) };
 	ss->mag_filter = TO_GL(sampler_state.mag_filter);
@@ -738,7 +738,7 @@ RID RenderingDeviceOpenGL::sampler_create(SamplerCreateInfo const & sampler_stat
 	return (RID)ss;
 }
 
-void RenderingDeviceOpenGL::sampler_destroy(RID sampler)
+void OpenGlRenderingDevice::sampler_destroy(RID sampler)
 {
 	_Sampler & ss{ *VALIDATE((_Sampler *)sampler) };
 	if (ss.handle) { glCheck(glDeleteSamplers(1, &ss.handle)); }
@@ -747,7 +747,7 @@ void RenderingDeviceOpenGL::sampler_destroy(RID sampler)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderStage_MAX])
+RID OpenGlRenderingDevice::shader_create(ShaderStageData const (&spec)[ShaderStage_MAX])
 {
 	_Shader * const s{ memnew(_Shader{}) };
 	glCheck(s->handle = glCreateProgramObjectARB());
@@ -801,36 +801,36 @@ RID RenderingDeviceOpenGL::shader_create(ShaderStageData const (&spec)[ShaderSta
 	return (RID)s;
 }
 
-void RenderingDeviceOpenGL::shader_destroy(RID shader)
+void OpenGlRenderingDevice::shader_destroy(RID shader)
 {
 	_Shader & s{ *VALIDATE((_Shader *)shader) };
 	if (s.handle) { glCheck(glDeleteProgramsARB(1, &s.handle)); }
 	memdelete((_Shader *)shader);
 }
 
-String RenderingDeviceOpenGL::shader_get_code(RID shader)
+String OpenGlRenderingDevice::shader_get_code(RID shader)
 {
 	return {};
 }
 
-void RenderingDeviceOpenGL::shader_set_code(RID shader, String const & value)
+void OpenGlRenderingDevice::shader_set_code(RID shader, String const & value)
 {
 }
 
-i32 RenderingDeviceOpenGL::shader_get_uniform_location(RID shader, String const & name)
+i32 OpenGlRenderingDevice::shader_get_uniform_location(RID shader, String const & name)
 {
 	return -1;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data)
+RID OpenGlRenderingDevice::uniform_buffer_create(size_t size_in_bytes, DynamicBuffer const & data)
 {
 	ASSERT(0 < size_in_bytes);
 	return buffer_create(BufferType_UniformBuffer, size_in_bytes, data);
 }
 
-RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, RID shader)
+RID OpenGlRenderingDevice::uniform_set_create(Vector<Uniform> const & uniforms, RID shader)
 {
 	RID const uniform_set{ (RID)memnew(_UniformSet{}) };
 	_UniformSet & us{ *VALIDATE((_UniformSet *)uniform_set) };
@@ -872,13 +872,13 @@ RID RenderingDeviceOpenGL::uniform_set_create(Vector<Uniform> const & uniforms, 
 	return uniform_set;
 }
 
-void RenderingDeviceOpenGL::uniform_set_destroy(RID uniform_set)
+void OpenGlRenderingDevice::uniform_set_destroy(RID uniform_set)
 {
 	_UniformSet & us{ *VALIDATE((_UniformSet *)uniform_set) };
 	memdelete((_UniformSet *)uniform_set);
 }
 
-void RenderingDeviceOpenGL::_uniform_set_bind(_UniformSet const & us)
+void OpenGlRenderingDevice::_uniform_set_bind(_UniformSet const & us)
 {
 	for (_UniformDescriptor const & ud : us.uniforms)
 	{
@@ -919,7 +919,7 @@ void RenderingDeviceOpenGL::_uniform_set_bind(_UniformSet const & us)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RID RenderingDeviceOpenGL::render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state)
+RID OpenGlRenderingDevice::render_pipeline_create(RID shader, RenderPrimitive_ primitive, RasterizationState const & rasterization_state, MultisampleState const & multisample_state, DepthStencilState const & depth_stencil_state, ColorBlendState const & color_blend_state)
 {
 	RID const pipeline{ (RID)memnew(_RenderPipeline{}) };
 	_RenderPipeline & rp{ *VALIDATE((_RenderPipeline *)pipeline) };
@@ -932,13 +932,13 @@ RID RenderingDeviceOpenGL::render_pipeline_create(RID shader, RenderPrimitive_ p
 	return pipeline;
 }
 
-void RenderingDeviceOpenGL::render_pipeline_destroy(RID pipeline)
+void OpenGlRenderingDevice::render_pipeline_destroy(RID pipeline)
 {
 	_RenderPipeline & rp{ *VALIDATE((_RenderPipeline *)pipeline) };
 	memdelete((_RenderPipeline *)pipeline);
 }
 
-void RenderingDeviceOpenGL::_render_pipeline_bind(_RenderPipeline const & rp)
+void OpenGlRenderingDevice::_render_pipeline_bind(_RenderPipeline const & rp)
 {
 	// pipeline shader
 	_Shader & s{ *VALIDATE((_Shader *)rp.shader) };
@@ -987,7 +987,7 @@ void RenderingDeviceOpenGL::_render_pipeline_bind(_RenderPipeline const & rp)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(DS::WindowID window, Color const & clear_color)
+RD::DrawListID OpenGlRenderingDevice::draw_list_begin_for_screen(DS::WindowID window, Color const & clear_color)
 {
 	DrawListID const draw_list{ m_draw_list.size() };
 	_DrawList & dl{ m_draw_list.emplace_back(_DrawList{}) };
@@ -1000,7 +1000,7 @@ RD::DrawListID RenderingDeviceOpenGL::draw_list_begin_for_screen(DS::WindowID wi
 	return draw_list;
 }
 
-RD::DrawListID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors, f32 clear_depth, i32 clear_stencil)
+RD::DrawListID OpenGlRenderingDevice::draw_list_begin(RID framebuffer, InitialAction_ initial_color_action, FinalAction_ final_color_action, InitialAction_ initial_depth_action, FinalAction_ final_depth_action, Vector<Color> const & clear_colors, f32 clear_depth, i32 clear_stencil)
 {
 	DrawListID const draw_list{ m_draw_list.size() };
 	_DrawList & dl{ m_draw_list.emplace_back(_DrawList{}) };
@@ -1027,21 +1027,21 @@ RD::DrawListID RenderingDeviceOpenGL::draw_list_begin(RID framebuffer, InitialAc
 	return draw_list;
 }
 
-void RenderingDeviceOpenGL::draw_list_bind_pipeline(DrawListID draw_list, RID pipeline)
+void OpenGlRenderingDevice::draw_list_bind_pipeline(DrawListID draw_list, RID pipeline)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	_DrawList & dl{ m_draw_list[draw_list] };
 	if (pipeline == dl.state.pipeline) { return; }
 	dl.state.pipeline = pipeline;
 	_RenderPipeline const & rp{ *VALIDATE((_RenderPipeline const *)pipeline) };
-	dl.command_buffer.push_back(std::bind(&RenderingDeviceOpenGL::_render_pipeline_bind, this, rp));
+	dl.command_buffer.push_back(std::bind(&OpenGlRenderingDevice::_render_pipeline_bind, this, rp));
 	if (dl.state.pipeline_shader != rp.shader) {
 		dl.state.pipeline_shader = rp.shader;
 		// shader changed...
 	}
 }
 
-void RenderingDeviceOpenGL::draw_list_bind_uniform_set(DrawListID draw_list, RID uniform_set, size_t index)
+void OpenGlRenderingDevice::draw_list_bind_uniform_set(DrawListID draw_list, RID uniform_set, size_t index)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	_DrawList & dl{ m_draw_list[draw_list] };
@@ -1051,7 +1051,7 @@ void RenderingDeviceOpenGL::draw_list_bind_uniform_set(DrawListID draw_list, RID
 	dl.state.sets[index].bound = false;
 }
 
-void RenderingDeviceOpenGL::draw_list_bind_vertex_array(DrawListID draw_list, RID vertex_array)
+void OpenGlRenderingDevice::draw_list_bind_vertex_array(DrawListID draw_list, RID vertex_array)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	_DrawList & dl{ m_draw_list[draw_list] };
@@ -1064,7 +1064,7 @@ void RenderingDeviceOpenGL::draw_list_bind_vertex_array(DrawListID draw_list, RI
 	});
 }
 
-void RenderingDeviceOpenGL::draw_list_bind_index_array(DrawListID draw_list, RID index_array)
+void OpenGlRenderingDevice::draw_list_bind_index_array(DrawListID draw_list, RID index_array)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	_DrawList & dl{ m_draw_list[draw_list] };
@@ -1078,7 +1078,7 @@ void RenderingDeviceOpenGL::draw_list_bind_index_array(DrawListID draw_list, RID
 	});
 }
 
-void RenderingDeviceOpenGL::draw_list_set_line_width(DrawListID draw_list, f32 width)
+void OpenGlRenderingDevice::draw_list_set_line_width(DrawListID draw_list, f32 width)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	m_draw_list[draw_list].command_buffer.push_back([width]()
@@ -1087,7 +1087,7 @@ void RenderingDeviceOpenGL::draw_list_set_line_width(DrawListID draw_list, f32 w
 	});
 }
 
-void RenderingDeviceOpenGL::draw_list_set_push_constant(DrawListID draw_list, void const * data, size_t data_size)
+void OpenGlRenderingDevice::draw_list_set_push_constant(DrawListID draw_list, void const * data, size_t data_size)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	m_draw_list[draw_list].command_buffer.push_back([data, data_size]()
@@ -1096,7 +1096,7 @@ void RenderingDeviceOpenGL::draw_list_set_push_constant(DrawListID draw_list, vo
 	});
 }
 
-void RenderingDeviceOpenGL::draw_list_enable_scissor(DrawListID draw_list, IntRect const & rect)
+void OpenGlRenderingDevice::draw_list_enable_scissor(DrawListID draw_list, IntRect const & rect)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	m_draw_list[draw_list].command_buffer.push_back([rect]()
@@ -1106,7 +1106,7 @@ void RenderingDeviceOpenGL::draw_list_enable_scissor(DrawListID draw_list, IntRe
 	});
 }
 
-void RenderingDeviceOpenGL::draw_list_disable_scissor(DrawListID draw_list)
+void OpenGlRenderingDevice::draw_list_disable_scissor(DrawListID draw_list)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	m_draw_list[draw_list].command_buffer.push_back([]()
@@ -1115,7 +1115,7 @@ void RenderingDeviceOpenGL::draw_list_disable_scissor(DrawListID draw_list)
 	});
 }
 
-void RenderingDeviceOpenGL::draw_list_draw(DrawListID draw_list, bool use_indices, size_t instances, size_t procedural_vertices)
+void OpenGlRenderingDevice::draw_list_draw(DrawListID draw_list, bool use_indices, size_t instances, size_t procedural_vertices)
 {
 	ASSERT(draw_list < m_draw_list.size());
 	_DrawList & dl{ m_draw_list[draw_list] };
@@ -1125,7 +1125,7 @@ void RenderingDeviceOpenGL::draw_list_draw(DrawListID draw_list, bool use_indice
 	{
 		if (!dl.state.sets[i].bound) {
 			_UniformSet const & us{ *VALIDATE((_UniformSet *)dl.state.sets[i].uniform_set) };
-			dl.command_buffer.push_back(std::bind(&RenderingDeviceOpenGL::_uniform_set_bind, this, us));
+			dl.command_buffer.push_back(std::bind(&OpenGlRenderingDevice::_uniform_set_bind, this, us));
 			dl.state.sets[i].bound = true;
 		}
 	}
@@ -1171,7 +1171,7 @@ void RenderingDeviceOpenGL::draw_list_draw(DrawListID draw_list, bool use_indice
 	}
 }
 
-void RenderingDeviceOpenGL::draw_list_end()
+void OpenGlRenderingDevice::draw_list_end()
 {
 	// end the draw list
 	ASSERT(!m_draw_list.empty());

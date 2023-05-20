@@ -1,8 +1,8 @@
 #include <drivers/register_driver_types.hpp>
 
 #if OPENGL_ENABLED
-#include <drivers/opengl/rendering_device_opengl.hpp>
-#define RENDERING_DEVICE_DEFAULT RenderingDeviceOpenGL
+#include <drivers/opengl/opengl_rendering_device.hpp>
+#define RENDERING_DEVICE_DEFAULT OpenGlRenderingDevice
 #endif
 
 #if SYSTEM_WINDOWS

@@ -1,6 +1,6 @@
-#include <platform/windows/os_windows.hpp>
-#include <platform/windows/display_server_windows.hpp>
-#include <drivers/windows/windows_directory.hpp>
+#include <platform/windows/windows_os.hpp>
+#include <platform/windows/windows_display_server.hpp>
+#include <drivers/windows/windows_dir.hpp>
 #include <drivers/windows/windows_file.hpp>
 #include <main/main.hpp>
 
@@ -8,36 +8,36 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OS_Windows::OS_Windows(HINSTANCE hInstance) : OS{}
+	WindowsOS::WindowsOS(HINSTANCE hInstance) : OS{}
 	{
 		m_hinstance = hInstance ? hInstance : GetModuleHandle(NULL);
 	}
 
-	OS_Windows::~OS_Windows()
+	WindowsOS::~WindowsOS()
 	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void OS_Windows::initialize()
+	void WindowsOS::initialize()
 	{
 		WindowsDir::initialize();
 		WindowsFile::initialize();
-		DisplayServerWindows::initialize();
+		WindowsDisplayServer::initialize();
 	}
 
-	void OS_Windows::finalize()
+	void WindowsOS::finalize()
 	{
 	}
 
-	void OS_Windows::finalize_core()
+	void WindowsOS::finalize_core()
 	{
-		DisplayServerWindows::finalize();
+		WindowsDisplayServer::finalize();
 		WindowsFile::finalize();
 		WindowsDir::finalize();
 	}
 
-	void OS_Windows::run()
+	void WindowsOS::run()
 	{
 		if (!m_main_loop) { return; }
 		m_main_loop->initialize();
@@ -51,14 +51,14 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Vector<String> OS_Windows::get_video_adapter_driver_info() const
+	Vector<String> WindowsOS::get_video_adapter_driver_info() const
 	{
 		return {};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String OS_Windows::get_stdin_string(bool blocking)
+	String WindowsOS::get_stdin_string(bool blocking)
 	{
 		if (blocking) {
 			String temp;
@@ -70,7 +70,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ OS_Windows::open_dynamic_library(String path, void *& instance, bool set_library_path, String * resolved_path)
+	Error_ WindowsOS::open_dynamic_library(String path, void *& instance, bool set_library_path, String * resolved_path)
 	{
 		if (!File::exists(path)) {
 			path += ".dll";
@@ -87,71 +87,71 @@ namespace Ism
 		return Error_OK;
 	}
 
-	Error_ OS_Windows::close_dynamic_library(void * instance)
+	Error_ WindowsOS::close_dynamic_library(void * instance)
 	{
-		if (!instance) { return Error_Unknown; }
+		if (!instance) { return Error_Failed; }
 		FreeLibrary((HMODULE)instance);
 		return Error_OK;
 	}
 
-	Error_ OS_Windows::get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional)
+	Error_ WindowsOS::get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional)
 	{
-		if (!instance || name.empty()) { return Error_Unknown; }
+		if (!instance || name.empty()) { return Error_Failed; }
 		symbol = GetProcAddress((HMODULE)instance, name.c_str());
-		if (!symbol && !is_optional) { return Error_Unknown; }
+		if (!symbol && !is_optional) { return Error_Failed; }
 		return Error_OK;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ OS_Windows::execute(String const & path, Vector<String> const & args, String * pipe, i32 * exitcode, bool read_stderr, Mutex * pipe_mutex)
+	Error_ WindowsOS::execute(String const & path, Vector<String> const & args, String * pipe, i32 * exitcode, bool read_stderr, Mutex * pipe_mutex)
 	{
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
-	Error_ OS_Windows::create_process(String const & path, Vector<String> const & args, ProcessID * child_id)
+	Error_ WindowsOS::create_process(String const & path, Vector<String> const & args, ProcessID * child_id)
 	{
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
-	Error_ OS_Windows::kill(ProcessID const & pid)
+	Error_ WindowsOS::kill(ProcessID const & pid)
 	{
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
-	i32 OS_Windows::get_pid() const
+	i32 WindowsOS::get_pid() const
 	{
 		return -1;
 	}
 
-	bool OS_Windows::is_process_running(ProcessID const & pid) const
+	bool WindowsOS::is_process_running(ProcessID const & pid) const
 	{
 		return false;
 	}
 
-	String OS_Windows::get_cwd() const
+	String WindowsOS::get_cwd() const
 	{
 		return ".";
 	}
 
-	Error_ OS_Windows::set_cwd(String const & path)
+	Error_ WindowsOS::set_cwd(String const & path)
 	{
 		return Error_OK;
 	}
 
-	Error_ OS_Windows::shell_open(String const & path)
+	Error_ WindowsOS::shell_open(String const & path)
 	{
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String OS_Windows::get_env(String const & key) const
+	String WindowsOS::get_env(String const & key) const
 	{
 		return "";
 	}
 
-	bool OS_Windows::has_env(String const & key) const
+	bool WindowsOS::has_env(String const & key) const
 	{
 		//WCHAR * env; size_t len;
 		//_wdupenv_s(&env, &len, (LPCWSTR)(key.widen().c_str()));
@@ -160,119 +160,119 @@ namespace Ism
 		return false;
 	}
 
-	void OS_Windows::set_env(String const & key, String const & value) const
+	void WindowsOS::set_env(String const & key, String const & value) const
 	{
 	}
 
-	void OS_Windows::unset_env(String const & key) const
+	void WindowsOS::unset_env(String const & key) const
 	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String OS_Windows::get_name() const
+	String WindowsOS::get_name() const
 	{
 		return "windows"_s;
 	}
 
-	String OS_Windows::get_distro() const
+	String WindowsOS::get_distro() const
 	{
 		return {};
 	}
 
-	String OS_Windows::get_version() const
+	String WindowsOS::get_version() const
 	{
 		return {};
 	}
 
-	String OS_Windows::get_model_name() const
+	String WindowsOS::get_model_name() const
 	{
 		return ""_s;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Ref<MainLoop> OS_Windows::get_main_loop() const
+	Ref<MainLoop> WindowsOS::get_main_loop() const
 	{
 		return m_main_loop;
 	}
 
-	void OS_Windows::set_main_loop(Ref<MainLoop> value)
+	void WindowsOS::set_main_loop(Ref<MainLoop> value)
 	{
 		m_main_loop = value;
 	}
 
-	void OS_Windows::delete_main_loop()
+	void WindowsOS::delete_main_loop()
 	{
 		m_main_loop = nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OS::Date OS_Windows::get_date(bool local) const
+	OS::Date WindowsOS::get_date(bool local) const
 	{
 		return Date{};
 	}
 
-	OS::Time OS_Windows::get_time(bool local) const
+	OS::Time WindowsOS::get_time(bool local) const
 	{
 		return Time{};
 	}
 
-	OS::TimeZoneInfo OS_Windows::get_time_zone() const
+	OS::TimeZoneInfo WindowsOS::get_time_zone() const
 	{
 		return TimeZoneInfo{};
 	}
 
-	void OS_Windows::delay(Duration const & duration)
+	void WindowsOS::delay(Duration const & duration)
 	{
 	}
 
-	Duration OS_Windows::get_ticks() const
+	Duration WindowsOS::get_ticks() const
 	{
 		return Duration();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String OS_Windows::get_locale() const
+	String WindowsOS::get_locale() const
 	{
 		return {};
 	}
 
-	String OS_Windows::get_processor_name() const
+	String WindowsOS::get_processor_name() const
 	{
 		return {};
 	}
 
-	String OS_Windows::get_unique_id() const
+	String WindowsOS::get_unique_id() const
 	{
 		return {};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String OS_Windows::get_bin_path() const
+	String WindowsOS::get_bin_path() const
 	{
 		return ".";
 	}
 
-	String OS_Windows::get_cache_path() const
+	String WindowsOS::get_cache_path() const
 	{
 		return ".";
 	}
 
-	String OS_Windows::get_config_path() const
+	String WindowsOS::get_config_path() const
 	{
 		return ".";
 	}
 
-	String OS_Windows::get_data_path() const
+	String WindowsOS::get_data_path() const
 	{
 		return ".";
 	}
 
-	String OS_Windows::get_exe_path() const
+	String WindowsOS::get_exe_path() const
 	{
 		WCHAR buf[4096];
 		GetModuleFileNameW(nullptr, buf, 4096);
@@ -280,24 +280,24 @@ namespace Ism
 		return {};
 	}
 
-	String OS_Windows::get_system_path(SystemDir_ value) const
+	String WindowsOS::get_system_path(SystemDir_ value) const
 	{
 		return ".";
 	}
 
-	String OS_Windows::get_user_path() const
+	String WindowsOS::get_user_path() const
 	{
 		return ".";
 	}
 
-	Error_ OS_Windows::move_to_trash(String const & path)
+	Error_ WindowsOS::move_to_trash(String const & path)
 	{
-		return Error_Unknown;
+		return Error_Failed;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void OS_Windows::debug_break()
+	void WindowsOS::debug_break()
 	{
 		_CSTD __debugbreak();
 	}

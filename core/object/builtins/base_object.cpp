@@ -189,7 +189,7 @@ namespace Ism
 
 		if (!type->tp_dict && !type->ready())
 		{
-			return Error_Unknown;
+			return Error_Failed;
 		}
 
 		ObjectRef descr{ type.lookup(name) };
@@ -221,7 +221,7 @@ namespace Ism
 			}
 			else
 			{
-				return Error_Unknown;
+				return Error_Failed;
 			}
 		}
 		else

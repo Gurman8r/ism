@@ -2,7 +2,7 @@
 #include <core/extension/extension_manager.hpp>
 
 #include <servers/display_server.hpp>
-#include <servers/rendering/rendering_server_default.hpp>
+#include <servers/rendering/default_rendering_server.hpp>
 #include <servers/text_server.hpp>
 
 namespace Ism
@@ -13,7 +13,7 @@ namespace Ism
 		(
 			DisplayServer,
 			RenderingDevice,
-			RenderingServerDefault,
+			DefaultRenderingServer,
 			RenderingServer,
 			TextServer
 		);

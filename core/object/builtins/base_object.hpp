@@ -278,7 +278,7 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
-	> TypeRef baseof() noexcept
+	> TypeRef super() noexcept
 	{
 		if constexpr (std::is_void_v<T::base_type>) { return nullptr; }
 
@@ -349,7 +349,7 @@ namespace Ism
 	template <class Index = ObjectRef, class Value = ObjectRef
 	> Error_ setattr(ObjectRef const & obj, Index && index, Value && value)
 	{
-		if (!obj) { return Error_Unknown; }
+		if (!obj) { return Error_Failed; }
 
 		TypeRef type{ typeof(obj) };
 		
@@ -359,7 +359,7 @@ namespace Ism
 
 			else if (type->tp_getattro) { return type->tp_setattro(obj, FWD_OBJ(index), FWD_OBJ(value)); }
 
-			else { return Error_Unknown; }
+			else { return Error_Failed; }
 		}
 		else
 		{
@@ -367,7 +367,7 @@ namespace Ism
 
 			else if (type->tp_setattr) { return type->tp_setattr(obj, StringRef(FWD(index)).c_str(), FWD_OBJ(value)); }
 
-			else { return Error_Unknown; }
+			else { return Error_Failed; }
 		}
 	}
 
@@ -426,7 +426,7 @@ namespace Ism
 	{
 		STR_IDENTIFIER(__setitem__);
 
-		if (!obj) { return Error_Unknown; }
+		if (!obj) { return Error_Failed; }
 
 		else if (DictRef::check_(obj)) { return (((DictRef &)obj)[FWD(index)] = FWD_OBJ(value)), Error_OK; }
 
@@ -434,7 +434,7 @@ namespace Ism
 
 		else if (ObjectRef set{ typeof(obj).lookup(&ID___setitem__) }) { return set(obj, FWD_OBJ(index), FWD_OBJ(value)), Error_OK; }
 
-		else { return Error_Unknown; }
+		else { return Error_Failed; }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

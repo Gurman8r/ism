@@ -12,7 +12,7 @@ namespace Ism
 		String m_text{};
 
 	public:
-		TextFile() noexcept {}
+		TextFile() noexcept = default;
 		explicit TextFile(String const & path);
 		virtual String const & get_text() const;
 		virtual bool has_text(String const & compare_to = {}) const;

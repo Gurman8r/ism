@@ -15,10 +15,10 @@ namespace Ism
 	Error_ ProjectSettings::setup(String const & exepath, String const & main_pack)
 	{
 		if (exepath.empty()) {
-			return Error_Unknown;
+			return Error_Failed;
 		}
 
-		m_bin_path = "./binaries/";
+		m_bin_path = "./bin/";
 		m_cache_path = "./cache/";
 		m_config_path = "./config/";
 		m_data_path = "./data/";
@@ -105,12 +105,12 @@ namespace Ism
 		// remove
 		else if (auto const s{ m_data.find(section) }; s != m_data.end()) {
 			if (auto const v{ s->second.find(name) }; v != s->second.end()) { s->second.erase(v); }
-			else { return Error_Unknown; } // value not found
+			else { return Error_Failed; } // value not found
 			if (s->second.empty()) { m_data.erase(s); }
 			return Error_OK;
 		}
 		else {
-			return Error_Unknown; // section not found
+			return Error_Failed; // section not found
 		}
 	}
 

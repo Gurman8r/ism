@@ -29,7 +29,7 @@ namespace Ism
 		m_file = fopen(path.c_str(), m_mode[mode]);
 
 		if (!m_file) {
-			return Error_Unknown;
+			return Error_Failed;
 		}
 
 		return Error_OK;
@@ -164,16 +164,16 @@ namespace Ism
 
 	void WindowsFile::initialize()
 	{
-		File::__create_func[FileType_Resources] = []() -> Ref<File> { return memnew(WindowsFile); };
-		File::__create_func[FileType_User] = []() -> Ref<File> { return memnew(WindowsFile); };
-		File::__create_func[FileType_Filesystem] = []() -> Ref<File> { return memnew(WindowsFile); };
+		File::__create_func[FileAccess_Resources] = []() -> Ref<File> { return memnew(WindowsFile); };
+		File::__create_func[FileAccess_User] = []() -> Ref<File> { return memnew(WindowsFile); };
+		File::__create_func[FileAccess_Filesystem] = []() -> Ref<File> { return memnew(WindowsFile); };
 	}
 
 	void WindowsFile::finalize()
 	{
-		File::__create_func[FileType_Resources] = nullptr;
-		File::__create_func[FileType_User] = nullptr;
-		File::__create_func[FileType_Filesystem] = nullptr;
+		File::__create_func[FileAccess_Resources] = nullptr;
+		File::__create_func[FileAccess_User] = nullptr;
+		File::__create_func[FileAccess_Filesystem] = nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

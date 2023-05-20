@@ -54,7 +54,7 @@ namespace Ism
 			},
 			(SetterFunc)[](ObjectRef obj, ObjectRef value, auto) -> Error_
 			{
-				if (!obj) { return Error_Unknown; }
+				if (!obj) { return Error_Failed; }
 				return Error_OK;
 			}
 		},
@@ -370,7 +370,7 @@ namespace Ism
 	Error_ TypeObject::update_slot(StringRef const & name)
 	{
 		if (!name || name.empty()) {
-			return Error_Unknown;
+			return Error_Failed;
 		}
 		switch (name.hash_code())
 		{
@@ -453,7 +453,7 @@ namespace Ism
 			tp_descr_set = (DescrSetFunc)[](ObjectRef self, ObjectRef obj, ObjectRef type) -> Error_ {
 				STR_IDENTIFIER(__set__);
 				if (ObjectRef f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
-				return Error_Unknown;
+				return Error_Failed;
 			};
 		} break;
 

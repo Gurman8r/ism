@@ -1,4 +1,4 @@
-#include <platform/windows/display_server_windows.hpp>
+#include <platform/windows/windows_display_server.hpp>
 #include <scene/main/window.hpp>
 
 #include <glfw/glfw3.h>
@@ -13,11 +13,11 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DisplayServerWindows, t) {}
+	EMBED_CLASS(WindowsDisplayServer, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	DisplayServerWindows::DisplayServerWindows(String const & title, DS::WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error)
+	WindowsDisplayServer::WindowsDisplayServer(String const & title, DS::WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error)
 		: DisplayServer{ title, mode, position, size, screen, error }
 	{
 		ASSERT(title);
@@ -164,7 +164,7 @@ namespace Ism
 		m_main_window = &w;
 	}
 
-	DisplayServerWindows::~DisplayServerWindows()
+	WindowsDisplayServer::~WindowsDisplayServer()
 	{
 		// cleanup windows
 		for (auto const & [k, v] : m_windows) {
@@ -183,7 +183,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void DisplayServerWindows::get_desktop_video_mode(VideoMode & out) const
+	void WindowsDisplayServer::get_desktop_video_mode(VideoMode & out) const
 	{
 		DEVMODE dm; dm.dmSize = sizeof(dm);
 		EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dm);
@@ -192,7 +192,7 @@ namespace Ism
 		out.refresh_rate = dm.dmDisplayFrequency;
 	}
 
-	void DisplayServerWindows::get_fullscreen_video_modes(Vector<VideoMode> & out) const
+	void WindowsDisplayServer::get_fullscreen_video_modes(Vector<VideoMode> & out) const
 	{
 		DEVMODE dm; dm.dmSize = sizeof(dm);
 		for (i32 i = 0; EnumDisplaySettings(nullptr, i, &dm); ++i)
@@ -215,17 +215,17 @@ namespace Ism
 
 	// TODO: global menu stuff goes here
 
-	void DisplayServerWindows::alert(String const & message, String const & title)
+	void WindowsDisplayServer::alert(String const & message, String const & title)
 	{
 	}
 
-	String DisplayServerWindows::get_clipboard() const
+	String WindowsDisplayServer::get_clipboard() const
 	{
 		ASSERT(m_main_window);
 		return glfwGetClipboardString(m_main_window->handle);
 	}
 
-	void DisplayServerWindows::set_clipboard(String const & text)
+	void WindowsDisplayServer::set_clipboard(String const & text)
 	{
 		ASSERT(m_main_window);
 		glfwSetClipboardString(m_main_window->handle, text.c_str());
@@ -233,7 +233,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Input::MouseMode_ DisplayServerWindows::mouse_get_mode() const
+	Input::MouseMode_ WindowsDisplayServer::mouse_get_mode() const
 	{
 		ASSERT(m_main_window);
 		switch (glfwGetInputMode(m_main_window->handle, GLFW_CURSOR)) {
@@ -244,26 +244,26 @@ namespace Ism
 		return Input::MouseMode_MAX;
 	}
 
-	void DisplayServerWindows::mouse_set_mode(Input::MouseMode_ mode)
+	void WindowsDisplayServer::mouse_set_mode(Input::MouseMode_ mode)
 	{
 		ASSERT(m_main_window);
 		glfwSetInputMode(m_main_window->handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
-	i32 DisplayServerWindows::mouse_get_button(Input::MouseButton_ button) const
+	i32 WindowsDisplayServer::mouse_get_button(Input::MouseButton_ button) const
 	{
 		ASSERT(m_main_window);
 		return glfwGetMouseButton(m_main_window->handle, (i32)button);
 	}
 
-	Vec2 DisplayServerWindows::mouse_get_position() const
+	Vec2 WindowsDisplayServer::mouse_get_position() const
 	{
 		ASSERT(m_main_window);
 		Vec2d pos; glfwGetCursorPos(m_main_window->handle, &pos[0], &pos[1]);
 		return { (f32)pos[0], (f32)pos[1] };
 	}
 
-	void DisplayServerWindows::mouse_set_position(Vec2 const & position)
+	void WindowsDisplayServer::mouse_set_position(Vec2 const & position)
 	{
 		ASSERT(m_main_window);
 		glfwSetCursorPos(m_main_window->handle, position[0], position[1]);
@@ -271,12 +271,12 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Input::CursorShape_ DisplayServerWindows::cursor_get_shape() const
+	Input::CursorShape_ WindowsDisplayServer::cursor_get_shape() const
 	{
 		return m_cursor_shape;
 	}
 
-	void DisplayServerWindows::cursor_set_shape(Input::CursorShape_ shape)
+	void WindowsDisplayServer::cursor_set_shape(Input::CursorShape_ shape)
 	{
 		ASSERT(m_main_window);
 		if (m_cursor_shape == shape) { return; }
@@ -284,20 +284,20 @@ namespace Ism
 		glfwSetCursor(m_main_window->handle, m_cursors[shape]);
 	}
 
-	void DisplayServerWindows::cursor_set_custom_image(RES const & cursor, Input::CursorShape_ shape, Vec2 const & hotspot)
+	void WindowsDisplayServer::cursor_set_custom_image(RES const & cursor, Input::CursorShape_ shape, Vec2 const & hotspot)
 	{
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	i32 DisplayServerWindows::get_screen_count() const
+	i32 WindowsDisplayServer::get_screen_count() const
 	{
 		i32 monitor_count;
 		UNUSED(glfwGetMonitors(&monitor_count));
 		return monitor_count;
 	}
 
-	String DisplayServerWindows::screen_get_name(i32 screen) const
+	String WindowsDisplayServer::screen_get_name(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -306,7 +306,7 @@ namespace Ism
 		return glfwGetMonitorName(monitors[screen]);
 	}
 
-	Vec2i DisplayServerWindows::screen_get_physical_size(i32 screen) const
+	Vec2i WindowsDisplayServer::screen_get_physical_size(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -316,7 +316,7 @@ namespace Ism
 		return size;
 	}
 
-	IntRect DisplayServerWindows::screen_get_workrect(i32 screen) const
+	IntRect WindowsDisplayServer::screen_get_workrect(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -326,7 +326,7 @@ namespace Ism
 		return rect;
 	}
 
-	Vec2i DisplayServerWindows::screen_get_workpos(i32 screen) const
+	Vec2i WindowsDisplayServer::screen_get_workpos(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -336,7 +336,7 @@ namespace Ism
 		return pos;
 	}
 
-	Vec2i DisplayServerWindows::screen_get_worksize(i32 screen) const
+	Vec2i WindowsDisplayServer::screen_get_worksize(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -346,7 +346,7 @@ namespace Ism
 		return { vm->width, vm->height };
 	}
 
-	Vec2 DisplayServerWindows::screen_get_scale(i32 screen) const
+	Vec2 WindowsDisplayServer::screen_get_scale(i32 screen) const
 	{
 		i32 monitor_count;
 		GLFWmonitor ** monitors{ glfwGetMonitors(&monitor_count) };
@@ -358,7 +358,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Vector<DS::WindowID> DisplayServerWindows::get_window_list() const
+	Vector<DS::WindowID> WindowsDisplayServer::get_window_list() const
 	{
 		Vector<WindowID> temp{};
 		temp.reserve(m_windows.size());
@@ -366,14 +366,14 @@ namespace Ism
 		return temp;
 	}
 
-	String DisplayServerWindows::window_get_title(WindowID window) const
+	String WindowsDisplayServer::window_get_title(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		return w.title;
 	}
 
-	void DisplayServerWindows::window_set_title(String const & title, WindowID window)
+	void WindowsDisplayServer::window_set_title(String const & title, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
@@ -382,14 +382,14 @@ namespace Ism
 		glfwSetWindowTitle(w.handle, w.title.c_str());
 	}
 
-	i32 DisplayServerWindows::window_get_current_screen(WindowID window) const
+	i32 WindowsDisplayServer::window_get_current_screen(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		return w.screen;
 	}
 
-	void DisplayServerWindows::window_set_current_screen(i32 screen, WindowID window)
+	void WindowsDisplayServer::window_set_current_screen(i32 screen, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
@@ -397,7 +397,7 @@ namespace Ism
 		w.screen = screen;
 	}
 
-	Vec2i DisplayServerWindows::window_get_position(WindowID window) const
+	Vec2i WindowsDisplayServer::window_get_position(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
@@ -405,14 +405,14 @@ namespace Ism
 		return pos;
 	}
 
-	void DisplayServerWindows::window_set_position(Vec2i const & position, WindowID window)
+	void WindowsDisplayServer::window_set_position(Vec2i const & position, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		glfwSetWindowPos(w.handle, (i32)position[0], (i32)position[1]);
 	}
 
-	Vec2i DisplayServerWindows::window_get_size(WindowID window) const
+	Vec2i WindowsDisplayServer::window_get_size(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
@@ -420,28 +420,28 @@ namespace Ism
 		return size;
 	}
 
-	void DisplayServerWindows::window_set_size(Vec2i const & size, WindowID window)
+	void WindowsDisplayServer::window_set_size(Vec2i const & size, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		glfwSetWindowSize(w.handle, (i32)size[0], (i32)size[1]);
 	}
 
-	Vec2i DisplayServerWindows::window_get_real_size(WindowID window) const
+	Vec2i WindowsDisplayServer::window_get_real_size(WindowID window) const
 	{
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		Vec2i size; glfwGetFramebufferSize(w.handle, &size[0], &size[1]);
 		return size;
 	}
 
-	DS::WindowMode_ DisplayServerWindows::window_get_mode(WindowID window) const
+	DS::WindowMode_ WindowsDisplayServer::window_get_mode(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		return w.mode;
 	}
 
-	void DisplayServerWindows::window_set_mode(WindowMode_ mode, WindowID window)
+	void WindowsDisplayServer::window_set_mode(WindowMode_ mode, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
@@ -462,41 +462,41 @@ namespace Ism
 		}
 	}
 
-	bool DisplayServerWindows::window_get_flag(i32 flag, WindowID window) const
+	bool WindowsDisplayServer::window_get_flag(i32 flag, WindowID window) const
 	{
 		return false;
 	}
 
-	void DisplayServerWindows::window_set_flag(i32 flag, bool enabled, WindowID window)
+	void WindowsDisplayServer::window_set_flag(i32 flag, bool enabled, WindowID window)
 	{
 	}
 
-	void DisplayServerWindows::request_window_attention(WindowID window)
+	void WindowsDisplayServer::request_window_attention(WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		glfwRequestWindowAttention(w.handle);
 	}
 
-	void DisplayServerWindows::move_window_to_foreground(WindowID window)
+	void WindowsDisplayServer::move_window_to_foreground(WindowID window)
 	{
 	}
 
-	void DisplayServerWindows::window_set_visible(bool enabled, WindowID window)
+	void WindowsDisplayServer::window_set_visible(bool enabled, WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		enabled ? glfwShowWindow(w.handle) : glfwHideWindow(w.handle);
 	}
 
-	bool DisplayServerWindows::window_is_visible(WindowID window) const
+	bool WindowsDisplayServer::window_is_visible(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		return glfwGetWindowAttrib(w.handle, GLFW_VISIBLE);
 	}
 
-	Vec2 DisplayServerWindows::window_get_scale(WindowID window) const
+	Vec2 WindowsDisplayServer::window_get_scale(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
@@ -504,14 +504,14 @@ namespace Ism
 		return scale;
 	}
 
-	void DisplayServerWindows::window_grab_focus(WindowID window)
+	void WindowsDisplayServer::window_grab_focus(WindowID window)
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window & w{ *VALIDATE(util::getptr(m_windows, window)) };
 		glfwFocusWindow(w.handle);
 	}
 
-	bool DisplayServerWindows::window_has_focus(WindowID window) const
+	bool WindowsDisplayServer::window_has_focus(WindowID window) const
 	{
 		ASSERT(INVALID_WINDOW_ID < window);
 		_Window const & w{ *VALIDATE(util::getptr(m_windows, window)) };
@@ -520,7 +520,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void DisplayServerWindows::poll_events()
+	void WindowsDisplayServer::poll_events()
 	{
 		glfwPollEvents();
 
@@ -546,18 +546,18 @@ namespace Ism
 		}
 	}
 
-	void DisplayServerWindows::swap_buffers()
+	void WindowsDisplayServer::swap_buffers()
 	{
 		ASSERT(m_main_window);
 		glfwMakeContextCurrent(m_main_window->handle);
 		glfwSwapBuffers(m_main_window->handle);
 	}
 
-	void DisplayServerWindows::set_native_icon(String const & value)
+	void WindowsDisplayServer::set_native_icon(String const & value)
 	{
 	}
 
-	void DisplayServerWindows::set_icon(u8 const * data, i32 width, i32 height)
+	void WindowsDisplayServer::set_icon(u8 const * data, i32 width, i32 height)
 	{
 		ASSERT(m_main_window);
 		ASSERT(data);
@@ -572,15 +572,15 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void DisplayServerWindows::initialize()
+	void WindowsDisplayServer::initialize()
 	{
 		DisplayServer::__create_func = [](String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error) -> DisplayServer *
 		{
-			return memnew(DisplayServerWindows(title, mode, position, size, screen, error));
+			return memnew(WindowsDisplayServer(title, mode, position, size, screen, error));
 		};
 	}
 
-	void DisplayServerWindows::finalize()
+	void WindowsDisplayServer::finalize()
 	{
 		DisplayServer::__create_func = nullptr;
 	}

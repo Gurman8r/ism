@@ -9,18 +9,16 @@ namespace Ism
 	{
 		DEFINE_CLASS(Mesh, Resource);
 
-		friend class MeshLibrary;
+		friend class MeshFormatLoader;
 
 		RID m_mesh{};
 
 	public:
-		Mesh() noexcept {}
+		Mesh() noexcept = default;
 
-		explicit Mesh(Vector<RS::SurfaceData> const & surfaces);
+		Mesh(Vector<RS::SurfaceData> const & surfaces);
 
-		explicit Mesh(RS::SurfaceData const & surface) : Mesh{ Vector<RS::SurfaceData>{ surface } } {}
-
-		explicit Mesh(String const & path);
+		Mesh(RS::SurfaceData const & surface) : Mesh{ Vector<RS::SurfaceData>{ surface } } {}
 
 		virtual ~Mesh() override;
 

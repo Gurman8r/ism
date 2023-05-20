@@ -42,7 +42,7 @@ namespace Ism
 
 	Ref<Image> Glyph::get_data() const
 	{
-		return m_texture ? get_graphics()->texture2d_get_data(m_texture) : nullptr;
+		return m_texture ? get_gfx()->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

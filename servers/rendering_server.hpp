@@ -118,7 +118,7 @@ namespace Ism
 
 	using RS = RenderingServer;
 
-	SINGLETON_WRAPPER(RS, get_graphics);
+	SINGLETON_WRAPPER(RS, get_gfx);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

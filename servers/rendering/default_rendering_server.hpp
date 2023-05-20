@@ -1,5 +1,5 @@
-#ifndef _ISM_RENDERING_SERVER_DEFAULT_HPP_
-#define _ISM_RENDERING_SERVER_DEFAULT_HPP_
+#ifndef _ISM_DEFAULT_RENDERING_SERVER_HPP_
+#define _ISM_DEFAULT_RENDERING_SERVER_HPP_
 
 #include <servers/rendering/renderer_storage.hpp>
 #include <servers/rendering/renderer_2d.hpp>
@@ -9,9 +9,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API RenderingServerDefault : public RenderingServer
+	class ISM_API DefaultRenderingServer : public RenderingServer
 	{
-		DEFINE_CLASS(RenderingServerDefault, RenderingServer);
+		DEFINE_CLASS(DefaultRenderingServer, RenderingServer);
 
 	protected:
 		RenderingDevice * m_device{};
@@ -20,8 +20,8 @@ namespace Ism
 		Renderer3D * m_scene{};
 
 	public:
-		RenderingServerDefault();
-		virtual ~RenderingServerDefault() override;
+		DefaultRenderingServer();
+		virtual ~DefaultRenderingServer() override;
 
 	public:
 		virtual void initialize() override;
@@ -90,4 +90,4 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_RENDERING_SERVER_DEFAULT_HPP_
+#endif // !_ISM_DEFAULT_RENDERING_SERVER_HPP_

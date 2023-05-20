@@ -68,7 +68,7 @@ includedirs{
 
 if _TARGET_OS=="windows" then
 	links_win32()
-	generate_manifest("platform/windows/binaries.manifest")
+	generate_manifest("platform/windows/bin.manifest")
 end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

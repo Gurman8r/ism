@@ -41,9 +41,10 @@ _TEMPS="%{_SLN}temporary/%{_ACTION}/%{_TARGET_OS}/"
 _VENDOR="%{_SLN}misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}/"
 
 _BUILD="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-_BUILD_BIN="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/binaries/"
+_BUILD_BIN="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/bin/"
 _BUILD_CFG="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/config/"
 _BUILD_DAT="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/data/"
+_BUILD_MOD="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/mods/"
 _BUILD_RES="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/resources/"
 _BUILD_USR="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/user/"
 
@@ -74,6 +75,7 @@ function cpp_project_common(_group, _project, _kind, _targetdir)
 		"{MKDIR} %{_BUILD_BIN}",
 		"{MKDIR} %{_BUILD_DAT}",
 		"{MKDIR} %{_BUILD_CFG}",
+		"{MKDIR} %{_BUILD_MOD}",
 		"{MKDIR} %{_BUILD_RES}",
 		"{MKDIR} %{_BUILD_USR}",
 	}
@@ -128,7 +130,7 @@ end
 function generate_manifest(path)
 	local text="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
 	text=text.."<assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\">\n"
-	text=text.."<assemblyIdentity type=\"win32\" name=\"binaries\" version=\"1.0.0.0\"/>\n"
+	text=text.."<assemblyIdentity type=\"win32\" name=\"bin\" version=\"1.0.0.0\"/>\n"
 	for i, v in ipairs(_MANIFEST) do
 		text=text..string.format("\t<file name=\"%s%s\"/>\n", v, DLL)
 	end

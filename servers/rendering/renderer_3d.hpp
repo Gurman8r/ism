@@ -12,7 +12,7 @@ namespace Ism
 	{
 		DEFINE_CLASS(Renderer3D, Object);
 
-		friend class RenderingServerDefault;
+		friend class DefaultRenderingServer;
 
 		RenderingDevice * const m_device;
 		RendererStorage * const m_storage;

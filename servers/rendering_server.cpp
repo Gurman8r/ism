@@ -1,5 +1,5 @@
 #include <servers/rendering_server.hpp>
-#include <servers/rendering/rendering_server_default.hpp>
+#include <servers/rendering/default_rendering_server.hpp>
 
 namespace Ism
 {
@@ -9,7 +9,7 @@ namespace Ism
 
 	RenderingServer * RenderingServer::__singleton{};
 
-	RenderingServer::CreateFunc RenderingServer::__create_func{ []() { return (RenderingServer *)memnew(RenderingServerDefault); } };
+	RenderingServer::CreateFunc RenderingServer::__create_func{ []() { return (RenderingServer *)memnew(DefaultRenderingServer); } };
 
 	RenderingServer::RenderingServer() { SINGLETON_CTOR(); }
 

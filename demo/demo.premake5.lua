@@ -16,13 +16,13 @@ defines{
 files{
 	"%{_SLN}demo/demo.premake5.lua",
 	"%{_SLN}assets/**.**",
-	"%{_PLATFORM}%{_TARGET_OS}/main_%{_TARGET_OS}.cpp",
+	"%{_PLATFORM}%{_TARGET_OS}/%{_TARGET_OS}_main.cpp",
 	"%{_PLATFORM}windows/ism.rc",
 	"%{_PLATFORM}windows/ism.ico",
 }
 
 prebuildcommands{
-	"{COPYFILE} %{_PLATFORM}windows/binaries.manifest %{_BUILD_BIN}",
+	"{COPYFILE} %{_PLATFORM}windows/bin.manifest %{_BUILD_BIN}",
 }
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

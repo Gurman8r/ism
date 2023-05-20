@@ -9,7 +9,7 @@ namespace Ism
 {
 	enum Error_
 	{
-		Error_Unknown = -1,
+		Error_Failed = -1,
 		Error_OK = 0,
 		Error_EOF,
 		// etc...

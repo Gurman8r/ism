@@ -9,15 +9,13 @@ namespace Ism
 	{
 		DEFINE_CLASS(Font, Resource);
 
-		friend class FontLibrary;
+		friend class FontFormatLoader;
 
 		RID m_font;
 
 	public:
-		Font() noexcept {}
+		Font() noexcept = default;
 		
-		explicit Font(String const & path);
-
 		virtual ~Font();
 
 		virtual RID get_rid() const override { return m_font; }

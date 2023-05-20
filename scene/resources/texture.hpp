@@ -13,7 +13,7 @@ namespace Ism
 		DEFINE_CLASS(Texture, Resource);
 
 	protected:
-		Texture() noexcept {}
+		Texture() noexcept = default;
 
 	public:
 		virtual ~Texture() noexcept override = default;
@@ -29,11 +29,10 @@ namespace Ism
 		DEFINE_CLASS(Texture2D, Texture);
 
 	protected:
-		Texture2D() noexcept {}
+		Texture2D() noexcept = default;
 
 	public:
 		virtual ~Texture2D() noexcept override = default;
-
 		virtual RID get_rid() const = 0;
 		virtual i32 get_width() const = 0;
 		virtual i32 get_height() const = 0;
@@ -57,7 +56,7 @@ namespace Ism
 		Ref<Image>	m_image_cache{};
 
 	public:
-		ImageTexture() noexcept {}
+		ImageTexture() noexcept = default;
 		ImageTexture(String const & path);
 		ImageTexture(Ref<Image> const & image);
 		virtual ~ImageTexture() override;

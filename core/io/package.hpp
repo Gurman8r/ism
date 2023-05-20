@@ -1,16 +1,16 @@
 #ifndef _ISM_PACKAGE_HPP_
 #define _ISM_PACKAGE_HPP_
 
-#include <core/io/directory.hpp>
+#include <core/io/dir.hpp>
 #include <core/io/file.hpp>
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	enum PackDirFlags_ { PackDirFlags_Encrypted = 1 << 0 };
+	enum PackageDirFlags_ { PackageDirFlags_Encrypted = 1 << 0 };
 
-	enum PackFileFlags_ { PackFileFlags_Encrypted = 1 << 0 };
+	enum PackageFileFlags_ { PackageFileFlags_Encrypted = 1 << 0 };
 
 	class PackageSource;
 
@@ -22,7 +22,7 @@ namespace Ism
 	public:
 		using PathID = size_t;
 
-		struct PackedFile {
+		struct PackFile {
 			String pack{};
 			u64 offset{}; //if offset is ZERO, the file was ERASED
 			u64 size{};
@@ -31,20 +31,20 @@ namespace Ism
 			bool encrypted{};
 		};
 
-		struct PackedDir {
-			PackedDir * parent{};
+		struct PackDir {
+			PackDir * parent{};
 			String name{};
-			HashMap<String, PackedDir *> subdirs{};
+			HashMap<String, PackDir *> subdirs{};
 			HashSet<String> files{};
-			~PackedDir() { for (auto & [k, v] : subdirs) { memdelete(v); } }
+			~PackDir() { for (auto & [k, v] : subdirs) { memdelete(v); } }
 		};
 
 	private:
 		static PackageManager * __singleton;
 		bool m_enabled{ true };
-		HashMap<String, PackedFile> m_files{};
+		HashMap<String, PackFile> m_files{};
 		Vector<PackageSource *> m_sources{};
-		PackedDir * m_root{};
+		PackDir * m_root{};
 
 	public:
 		PackageManager();
@@ -61,7 +61,7 @@ namespace Ism
 		NODISCARD Ref<File> try_open_path(String const & path);
 		NODISCARD bool has_path(String const & path);
 
-		NODISCARD Ref<Directory> try_open_dir(String const & path);
+		NODISCARD Ref<Dir> try_open_dir(String const & path);
 		NODISCARD bool has_dir(String const & path);
 	};
 
@@ -74,14 +74,14 @@ namespace Ism
 	public:
 		virtual ~PackageSource() noexcept = default;
 		virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) = 0;
-		virtual Ref<File> get_file(String const & path, PackageManager::PackedFile * file) = 0;
+		virtual Ref<File> get_file(String const & path, PackageManager::PackFile * file) = 0;
 	};
 
 	// pack source PCK
 	class ISM_API PackageSourcePCK : public PackageSource {
 	public:
 		virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
-		virtual Ref<File> get_file(String const & path, PackageManager::PackedFile * file) override;
+		virtual Ref<File> get_file(String const & path, PackageManager::PackFile * file) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

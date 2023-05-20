@@ -1,5 +1,5 @@
-#ifndef _ISM_DISPLAY_SERVER_WINDOWS_HPP_
-#define _ISM_DISPLAY_SERVER_WINDOWS_HPP_
+#ifndef _ISM_WINDOWS_DISPLAY_SERVER_HPP_
+#define _ISM_WINDOWS_DISPLAY_SERVER_HPP_
 
 #include <servers/display_server.hpp>
 
@@ -11,9 +11,9 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// windows display server
-	class ISM_API DisplayServerWindows : public DisplayServer
+	class ISM_API WindowsDisplayServer : public DisplayServer
 	{
-		DEFINE_CLASS(DisplayServerWindows, DisplayServer);
+		DEFINE_CLASS(WindowsDisplayServer, DisplayServer);
 
 		struct _Window
 		{
@@ -31,8 +31,8 @@ namespace Ism
 		GLFWcursor * m_cursors[Input::CursorShape_MAX]{};
 
 	public:
-		DisplayServerWindows(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
-		~DisplayServerWindows();
+		WindowsDisplayServer(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
+		~WindowsDisplayServer();
 
 	public:
 		void get_desktop_video_mode(VideoMode & out) const;
@@ -116,4 +116,4 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_DISPLAY_SERVER_WINDOWS_HPP_
+#endif // !_ISM_WINDOWS_DISPLAY_SERVER_HPP_

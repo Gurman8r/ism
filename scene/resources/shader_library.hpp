@@ -2,15 +2,21 @@
 #define _ISM_SHADER_LIBRARY_HPP_
 
 #include <scene/resources/shader.hpp>
+#include <core/io/resource_loader.hpp>
 
 namespace Ism
 {
-	class ISM_API ShaderLibrary final
-	{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class ShaderFormatLoader : public ResourceFormatLoader {
+		DEFINE_CLASS(ShaderFormatLoader, ResourceFormatLoader);
 	public:
-		static Error_ load_shader(Shader & shader, String const & path);
 		static Error_ load_shader(Ref<Shader> shader, String const & path);
+		virtual RES load(String const & path, Error_ * r_error = nullptr) override;
+		virtual void get_recognized_extensions(Vector<String> * out) const override;
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_SHADER_LIBRARY_HPP_

@@ -63,7 +63,7 @@ namespace Ism
 			tp_name = name;
 			tp_size = sizeof(T);
 			tp_flags = flags;
-			tp_base = baseof<T>();
+			tp_base = super<T>();
 			tp_del = (DelFunc)memdelete<T>;
 			tp_bind = (BindClassFunc)[](TypeRef t) -> TypeRef { return t; };
 			tp_hash = (HashFunc)[](ObjectRef o) -> size_t { return Hasher<intptr_t>{}((intptr_t)*o); };

@@ -23,14 +23,14 @@ namespace Ism
 
 	Error_ Extension::open_library(String const & path, String const & entry_symbol)
 	{
-		if (Error_ const err{ get_os()->open_dynamic_library(path, m_library) }) {
-			return err;
+		if (Error_ const error{ get_os()->open_dynamic_library(path, m_library) }) {
+			return error;
 		}
 		
 		void * entry_func{};
-		if (Error_ const err{ get_os()->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
+		if (Error_ const error{ get_os()->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
 			get_os()->close_dynamic_library(m_library);
-			return err;
+			return error;
 		}
 
 		ExtensionInitializationFunc initialization_function{ (ExtensionInitializationFunc)entry_func };
@@ -39,7 +39,7 @@ namespace Ism
 			return Error_OK;
 		}
 		else {
-			return Error_Unknown;
+			return Error_Failed;
 		}
 	}
 
@@ -91,7 +91,7 @@ namespace Ism
 
 	EMBED_CLASS(ExtensionFormatLoader, t) {}
 
-	RES ExtensionFormatLoader::load(String const & path, Error_ * error)
+	RES ExtensionFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		String const stem{ path.stem() };
 		String const ini_path{ get_project_settings()->get_config_path() + stem };
@@ -106,7 +106,7 @@ namespace Ism
 			extension = nullptr;
 		}
 		
-		if (error) { *error = Error_OK; }
+		if (r_error) { *r_error = Error_OK; }
 		return extension;
 	}
 

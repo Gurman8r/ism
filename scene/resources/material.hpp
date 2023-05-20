@@ -12,6 +12,8 @@ namespace Ism
 	{
 		DEFINE_CLASS(Material, Resource);
 
+		friend class MaterialFormatLoader;
+
 		RID m_material;
 
 	protected:
@@ -33,11 +35,12 @@ namespace Ism
 	{
 		DEFINE_CLASS(ShaderMaterial, Material);
 
+		friend class MaterialFormatLoader;
+
 		Ref<Shader> m_shader;
 
 	public:
 		ShaderMaterial();
-		explicit ShaderMaterial(String const & path);
 		virtual ~ShaderMaterial() override;
 		virtual RID get_shader_rid() const override;
 		virtual Shader::Mode_ get_shader_mode() const override;
@@ -55,6 +58,8 @@ namespace Ism
 	class ISM_API StandardMaterial3D : public Material
 	{
 		DEFINE_CLASS(StandardMaterial3D, Material);
+
+		friend class MaterialFormatLoader;
 
 	public:
 		enum Param_
@@ -76,7 +81,6 @@ namespace Ism
 
 	public:
 		StandardMaterial3D();
-		explicit StandardMaterial3D(String const & path);
 		virtual ~StandardMaterial3D() override;
 		virtual RID get_shader_rid() const override;
 		virtual Shader::Mode_ get_shader_mode() const override;

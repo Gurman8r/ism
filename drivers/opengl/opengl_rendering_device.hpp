@@ -1,6 +1,6 @@
 #if OPENGL_ENABLED
-#ifndef _ISM_RENDERING_DEVICE_OPENGL_HPP_
-#define _ISM_RENDERING_DEVICE_OPENGL_HPP_
+#ifndef _ISM_OPENGL_RENDERING_DEVICE_HPP_
+#define _ISM_OPENGL_RENDERING_DEVICE_HPP_
 
 #include <servers/rendering_server.hpp>
 
@@ -8,13 +8,13 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API RenderingDeviceOpenGL : public RenderingDevice
+	class ISM_API OpenGlRenderingDevice : public RenderingDevice
 	{
-		DEFINE_CLASS(RenderingDeviceOpenGL, RenderingDevice);
+		DEFINE_CLASS(OpenGlRenderingDevice, RenderingDevice);
 
 	public:
-		~RenderingDeviceOpenGL();
-		RenderingDeviceOpenGL();
+		~OpenGlRenderingDevice();
+		OpenGlRenderingDevice();
 
 	public:
 		virtual void initialize() override;
@@ -228,5 +228,5 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-#endif // !_ISM_RENDERING_DEVICE_OPENGL_HPP_
+#endif // !_ISM_OPENGL_RENDERING_DEVICE_HPP_
 #endif // OPENGL_ENABLED
