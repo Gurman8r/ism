@@ -67,7 +67,7 @@ namespace Ism
 	protected:
 		struct Data
 		{
-			String		name{};
+			String			name{};
 			SceneTree *		tree{};
 			Node *			parent{};
 			Vector<Node *>	children{};

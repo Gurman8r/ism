@@ -5,6 +5,7 @@
 #include <core/string/string_view.hpp>
 #include <core/templates/vector.hpp>
 #include <string>
+#include <cwctype>
 
 namespace Ism
 {
@@ -275,20 +276,20 @@ namespace Ism
 	public:
 		NODISCARD self_type replace(self_type const & from, self_type const & to) const
 		{
-			self_type copy{ *this };
-			for (size_t i{}; (i = copy.m_string.find(from.m_string, i)) != npos; i += to.size()) {
-				copy.m_string.replace(i, from.size(), to.m_string);
+			self_type temp{ *this };
+			for (size_t i{}; (i = temp.m_string.find(from.m_string, i)) != npos; i += to.size()) {
+				temp.m_string.replace(i, from.size(), to.m_string);
 			}
-			return copy;
+			return temp;
 		}
 
 		NODISCARD self_type replace_first(self_type const & from, self_type const & to) const
 		{
-			self_type copy{ *this };
-			if (size_t i; (i = copy.m_string.find(from.m_string, i)) != npos) {
-				copy.m_string.replace(i, from.size(), to.m_string);
+			self_type temp{ *this };
+			if (size_t i; (i = temp.m_string.find(from.m_string, i)) != npos) {
+				temp.m_string.replace(i, from.size(), to.m_string);
 			}
-			return copy;
+			return temp;
 		}
 
 	public:
@@ -297,8 +298,7 @@ namespace Ism
 				return (*this);
 			}
 			else {
-				BasicString<char> temp;
-				temp.reserve(size());
+				BasicString<char> temp; temp.reserve(size());
 				for (auto const c : *this) { temp.push_back(static_cast<char>(c)); }
 				return temp;
 			}
@@ -309,46 +309,51 @@ namespace Ism
 				return (*this);
 			}
 			else {
-				BasicString<wchar_t> temp;
-				temp.reserve(size());
+				BasicString<wchar_t> temp; temp.reserve(size());
 				for (auto const c : *this) { temp.push_back(static_cast<wchar_t>(c)); }
 				return temp;
 			}
 		}
 
-	public:
-		NODISCARD self_type uppercase() const {
-			self_type temp;
-			temp.reserve(size());
-			for (auto const c : *this) { temp.push_back(std::toupper(c)); }
+		NODISCARD auto uppercase() const {
+			self_type temp; temp.reserve(size());
+			for (auto const c : *this) {
+				if constexpr (is_narrow) { temp.push_back(std::toupper(c)); }
+				else { temp.push_back(std::towupper(c)); }
+			}
 			return temp;
 		}
 
-		NODISCARD self_type lowercase() const {
-			self_type temp;
-			temp.reserve(size());
-			for (auto const c : *this) { temp.push_back(std::tolower(c)); }
+		NODISCARD auto lowercase() const {
+			self_type temp; temp.reserve(size());
+			for (auto const c : *this) {
+				if constexpr (is_narrow) { temp.push_back(std::tolower(c)); }
+				else { temp.push_back(std::towlower(c)); }
+			}
 			return temp;
 		}
 
 	public:
 		template <class Fn = i32(*)(i32)
-		> auto & trim_back(Fn fn = std::isspace) {
-			while (!empty() && fn(back())) { pop_back(); }
-			return (*this);
+		> NODISCARD auto trim_back(Fn fn = std::isspace) const {
+			self_type temp{ *this };
+			while (!temp.empty() && fn(temp.back())) { temp.pop_back(); }
+			return temp;
 		}
 
 		template <class Fn = i32(*)(i32)
-		> auto & trim_front(Fn fn = std::isspace) {
-			while (!empty() && fn(front())) { pop_front(); }
-			return (*this);
+		> NODISCARD auto trim_front(Fn fn = std::isspace) const {
+			self_type temp{ *this };
+			while (!temp.empty() && fn(temp.front())) { temp.pop_front(); }
+			return temp;
 		}
 
 		template <class Fn = i32(*)(i32)
-		> auto & trim(Fn fn = std::isspace) {
-			while (!empty() && fn(back())) { pop_back(); }
-			while (!empty() && fn(front())) { pop_front(); }
-			return (*this);
+		> NODISCARD auto trim(Fn fn = std::isspace) const {
+			self_type temp{ *this };
+			while (!temp.empty() && fn(temp.back())) { temp.pop_back(); }
+			while (!temp.empty() && fn(temp.front())) { temp.pop_front(); }
+			return temp;
 		}
 
 	public:
@@ -427,9 +432,9 @@ namespace Ism
 		NODISCARD auto path_join(self_type const & value) const -> self_type { return (*this) + '/' + value; }
 
 		NODISCARD auto simplify_path() const -> self_type {
-			self_type copy{ *this };
+			self_type temp{ *this };
 			/* TODO */
-			return copy;
+			return temp;
 		}
 
 	public:

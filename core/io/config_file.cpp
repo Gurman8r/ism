@@ -13,7 +13,7 @@ namespace Ism
 	{
 		if (path.empty()) { return; }
 		if (ini_parse(path.c_str(), [](auto user, auto section, auto name, auto value) {
-			((ConfigFile *)user)->set_string(section, name, String{ value }.trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; }));
+			((ConfigFile *)user)->set_string(section, name, String(value).trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; }));
 			return 1;
 		}, this)) {
 			set_path(path);

@@ -2,8 +2,6 @@
 
 #include <core/register_core_types.hpp>
 #include <drivers/register_driver_types.hpp>
-#include <platform/register_platform_apis.hpp>
-#include <modules/register_module_types.hpp>
 #include <scene/register_scene_types.hpp>
 #include <servers/register_server_types.hpp>
 
@@ -41,7 +39,7 @@ namespace Ism
 	static Input *				input{};
 	static ProjectSettings *	settings{};
 
-	static PackageManager *			packages{};
+	static PackedData *			packed_data{};
 	static ZipArchive *			zip_archive{};
 
 	static AudioServer *		audio{};
@@ -71,13 +69,12 @@ namespace Ism
 		settings = memnew(ProjectSettings);
 		register_core_settings();
 
-		if (!(packages = get_packages())) { packages = memnew(PackageManager); }
+		if (!(packed_data = get_packed_data())) { packed_data = memnew(PackedData); }
 		if (!(zip_archive = get_zip_archive())) { zip_archive = memnew(ZipArchive); }
-		packages->add_package_source(zip_archive);
+		packed_data->add_package_source(zip_archive);
 
 		settings->setup(exepath);
 
-		initialize_modules(ExtensionInitializationLevel_Core);
 		register_core_extensions();
 
 		get_os()->set_cmdline(exepath, args);
@@ -91,24 +88,19 @@ namespace Ism
 		register_core_singletons();
 
 		register_server_types();
-		initialize_modules(ExtensionInitializationLevel_Servers);
 		get_ext()->initialize_extensions(ExtensionInitializationLevel_Servers);
 		register_server_singletons();
 
 		register_scene_types();
 		register_driver_types();
-		initialize_modules(ExtensionInitializationLevel_Scene);
 		get_ext()->initialize_extensions(ExtensionInitializationLevel_Scene);
 		register_scene_singletons();
 
 #if TOOLS_ENABLED
 		register_editor_types();
-		initialize_modules(ExtensionInitializationLevel_Editor);
 		get_ext()->initialize_extensions(ExtensionInitializationLevel_Editor);
 		register_editor_singletons();
 #endif
-
-		register_platform_apis();
 
 		//initialize_theme();
 
@@ -178,6 +170,7 @@ namespace Ism
 		// TODO: physics stuff goes here
 
 		input->iteration(delta_time);
+
 		ImGui_BeginFrame(imgui_context);
 		if (get_os()->get_main_loop()->process(delta_time)) { should_close = true; }
 		ImGui::Render();
@@ -201,20 +194,16 @@ namespace Ism
 		get_scripting()->finalize_languages();
 
 #if TOOLS_ENABLED
-		finalize_modules(ExtensionInitializationLevel_Editor);
 		get_ext()->finalize_extensions(ExtensionInitializationLevel_Editor);
 		unregister_editor_types();
 #endif
 
-		finalize_modules(ExtensionInitializationLevel_Scene);
 		get_ext()->finalize_extensions(ExtensionInitializationLevel_Scene);
-		unregister_platform_apis();
 		unregister_driver_types();
 		unregister_scene_types();
 
 		//finalize_theme();
 
-		finalize_modules(ExtensionInitializationLevel_Servers);
 		get_ext()->finalize_extensions(ExtensionInitializationLevel_Servers);
 		unregister_server_types();
 
@@ -226,7 +215,7 @@ namespace Ism
 		memdelete(physics);
 		memdelete(text);
 
-		memdelete(packages);
+		memdelete(packed_data);
 		memdelete(input);
 		memdelete(settings);
 		memdelete(performance);

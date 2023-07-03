@@ -5,7 +5,7 @@ namespace Ism
 {
 	ObjectRef evaluate(String text)
 	{
-		if (text.trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; }).empty()) { return nullptr; }
+		if ((text = text.trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; })).empty()) { return nullptr; }
 		else if (auto const o{ util::to_i64(text) }) { return IntRef(*o); }
 		else if (auto const o{ util::to_f64(text) }) { return FloatRef(*o); }
 		else if (auto const o{ util::to_bool(text) }) { return BoolRef(*o); }

@@ -160,10 +160,10 @@ namespace Ism
 			ZippedFile f{ pkg_num };
 			unzGetFilePos(zfile, &f.file_pos);
 		
-			String const path{ package_path.filename() + "://" + String{filename_inzip} };
+			String const path{ "res://" + String{filename_inzip} };
 			m_files[path] = f;
 
-			get_packages()->add_path(package_path, path, 1, 0, path.hash_code(), this, replace_files, false);
+			get_packed_data()->add_path(package_path, path, 1, 0, path.hash_code(), this, replace_files, false);
 		
 			if ((i + 1) < gi.number_entry) {
 				unzGoToNextFile(zfile);
@@ -173,7 +173,7 @@ namespace Ism
 		return false;
 	}
 
-	Ref<File> ZipArchive::get_file(String const & path, PackageManager::PackFile * file)
+	Ref<File> ZipArchive::get_file(String const & path, PackedData::PackedFile * file)
 	{
 		return memnew(ZipFile(path, *file));
 	}
@@ -183,7 +183,7 @@ namespace Ism
 {
 	EMBED_CLASS(ZipFile, t) {}
 
-	ZipFile::ZipFile(String const & path, PackageManager::PackFile const & file)
+	ZipFile::ZipFile(String const & path, PackedData::PackedFile const & file)
 	{
 		open_internal(path, FileMode_Read);
 	}

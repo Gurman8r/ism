@@ -29,18 +29,10 @@ namespace Ism
 
 	EMBED_CLASS(ImageTexture, t) {}
 
-	ImageTexture::ImageTexture(String const & path)
-	{
-		m_image_cache = load_resource(path);
-		if (!m_image_cache) { return; }
-		m_width = m_image_cache->get_width();
-		m_height = m_image_cache->get_height();
-		m_texture = get_gfx()->texture2d_create(m_image_cache);
-	}
-
 	ImageTexture::ImageTexture(Ref<Image> const & image)
 	{
-		m_image_cache = VALIDATE(image);
+		m_image_cache = image;
+		if (!m_image_cache) { CRASH("failed loading texture"); }
 		m_width = m_image_cache->get_width();
 		m_height = m_image_cache->get_height();
 		m_texture = get_gfx()->texture2d_create(m_image_cache);
@@ -49,6 +41,14 @@ namespace Ism
 	ImageTexture::~ImageTexture()
 	{
 		if (m_texture) { get_gpu()->texture_destroy(m_texture); m_texture = nullptr; }
+	}
+
+	Ref<ImageTexture> ImageTexture::create(Ref<Image> const & image)
+	{
+		if (!image) { return nullptr; }
+		Ref<ImageTexture> temp;
+		temp.instance(image);
+		return temp;
 	}
 
 	RID ImageTexture::get_rid() const

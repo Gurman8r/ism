@@ -1,5 +1,5 @@
-#ifndef _ISM_PACKAGE_HPP_
-#define _ISM_PACKAGE_HPP_
+#ifndef _ISM_PACK_HPP_
+#define _ISM_PACK_HPP_
 
 #include <core/io/dir.hpp>
 #include <core/io/file.hpp>
@@ -12,51 +12,51 @@ namespace Ism
 
 	enum PackageFileFlags_ { PackageFileFlags_Encrypted = 1 << 0 };
 
-	class PackageSource;
+	class PackSource;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// packed data
-	class ISM_API PackageManager
+	// package manager
+	class ISM_API PackedData
 	{
 	public:
 		using PathID = size_t;
 
-		struct PackFile {
+		struct PackedFile {
 			String pack{};
 			u64 offset{}; //if offset is ZERO, the file was ERASED
 			u64 size{};
 			PathID id{};
-			PackageSource * src{};
+			PackSource * src{};
 			bool encrypted{};
 		};
 
-		struct PackDir {
-			PackDir * parent{};
+		struct PackedDir {
+			PackedDir * parent{};
 			String name{};
-			HashMap<String, PackDir *> subdirs{};
+			HashMap<String, PackedDir *> subdirs{};
 			HashSet<String> files{};
-			~PackDir() { for (auto & [k, v] : subdirs) { memdelete(v); } }
+			~PackedDir() { for (auto & [k, v] : subdirs) { memdelete(v); } }
 		};
 
 	private:
-		static PackageManager * __singleton;
+		static PackedData * __singleton;
 		bool m_enabled{ true };
-		HashMap<String, PackFile> m_files{};
-		Vector<PackageSource *> m_sources{};
-		PackDir * m_root{};
+		HashMap<String, PackedFile> m_files{};
+		Vector<PackSource *> m_sources{};
+		PackedDir * m_root{};
 
 	public:
-		PackageManager();
-		~PackageManager();
-		FORCE_INLINE static PackageManager * get_singleton() noexcept { return __singleton; }
+		PackedData();
+		~PackedData();
+		FORCE_INLINE static PackedData * get_singleton() noexcept { return __singleton; }
 
 		NODISCARD bool is_enabled() const { return m_enabled; }
 		void set_enabled(bool enabled) { m_enabled = enabled; }
 
 		Error_ add_package(String const & path, bool replace_files, u64 offset);
-		void add_package_source(PackageSource * source);
-		void add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackageSource * src, bool replace_files, bool encrypted = false);
+		void add_package_source(PackSource * source);
+		void add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackSource * src, bool replace_files, bool encrypted = false);
 
 		NODISCARD Ref<File> try_open_path(String const & path);
 		NODISCARD bool has_path(String const & path);
@@ -65,41 +65,41 @@ namespace Ism
 		NODISCARD bool has_dir(String const & path);
 	};
 
-	SINGLETON_WRAPPER(PackageManager, get_packages);
+	SINGLETON_WRAPPER(PackedData, get_packed_data);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// pack source
-	class ISM_API PackageSource {
+	class ISM_API PackSource {
 	public:
-		virtual ~PackageSource() noexcept = default;
+		virtual ~PackSource() noexcept = default;
 		virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) = 0;
-		virtual Ref<File> get_file(String const & path, PackageManager::PackFile * file) = 0;
+		virtual Ref<File> get_file(String const & path, PackedData::PackedFile * file) = 0;
 	};
 
-	// pack source PCK
-	class ISM_API PackageSourcePCK : public PackageSource {
+	// pack source PAK
+	class ISM_API PackSourcePAK : public PackSource {
 	public:
 		virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
-		virtual Ref<File> get_file(String const & path, PackageManager::PackFile * file) override;
+		virtual Ref<File> get_file(String const & path, PackedData::PackedFile * file) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// file access pack
-	class ISM_API PackageFile : public Object
+	// pack file
+	class ISM_API PackFile : public Object
 	{
-		DEFINE_CLASS(PackageFile, Object);
+		DEFINE_CLASS(PackFile, Object);
 
 	public:
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// dir access pack
-	class ISM_API PackageDir : public Object
+	// pack directory
+	class ISM_API PackDir : public Object
 	{
-		DEFINE_CLASS(PackageDir, Object);
+		DEFINE_CLASS(PackDir, Object);
 
 	public:
 	};

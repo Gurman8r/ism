@@ -1,19 +1,19 @@
-#include <core/io/package.hpp>
+#include <core/io/pack.hpp>
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	PackageManager * PackageManager::__singleton{};
+	PackedData * PackedData::__singleton{};
 
-	PackageManager::PackageManager()
+	PackedData::PackedData()
 	{
 		SINGLETON_CTOR();
-		m_root = memnew(PackDir);
-		add_package_source(memnew(PackageSourcePCK));
+		m_root = memnew(PackedDir);
+		add_package_source(memnew(PackSourcePAK));
 	}
 	
-	PackageManager::~PackageManager()
+	PackedData::~PackedData()
 	{
 		SINGLETON_DTOR();
 		for (size_t i{}; i < m_sources.size(); ++i) {
@@ -22,7 +22,7 @@ namespace Ism
 		memdelete(m_root);
 	}
 
-	Error_ PackageManager::add_package(String const & path, bool replace_files, u64 offset)
+	Error_ PackedData::add_package(String const & path, bool replace_files, u64 offset)
 	{
 		for (size_t i{}; i < m_sources.size(); ++i) {
 			if (m_sources[i]->try_open_pack(path, replace_files, offset)) {
@@ -33,19 +33,19 @@ namespace Ism
 		return Error_Failed;
 	}
 
-	void PackageManager::add_package_source(PackageSource * source)
+	void PackedData::add_package_source(PackSource * source)
 	{
 		if (source != nullptr) {
 			m_sources.push_back(source);
 		}
 	}
 
-	void PackageManager::add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackageSource * src, bool replace_files, bool encrypted)
+	void PackedData::add_path(String const & package_path, String const & path, u64 offset, u64 size, PathID id, PackSource * src, bool replace_files, bool encrypted)
 	{
 		bool const exists{ m_files.contains(path) };
 
 		if ((!exists || replace_files) && !path.filename().empty()) {
-			m_files[path] = PackFile{ package_path, offset, size, id, src, encrypted };
+			m_files[path] = PackedFile{ package_path, offset, size, id, src, encrypted };
 			printf("%s\n", path.c_str());
 		}
 
@@ -55,13 +55,13 @@ namespace Ism
 			PRINT_LINE(p.root_directory());
 			if (size_t i{ p.find("://")}; i != p.npos) { p.erase(p.begin(), p.begin() + i + 2); }
 
-			PackDir * cd{ m_root };
+			PackedDir * cd{ m_root };
 			if (p.contains('/'))
 			{
 				Vector<String> const ds{ p.root_directory().split('/') };
 				for (size_t j{}; j < ds.size(); ++j) {
 					if (!cd->subdirs.contains(ds[j])) {
-						PackDir * pd{ memnew(PackDir) };
+						PackedDir * pd{ memnew(PackedDir) };
 						pd->name = ds[j];
 						pd->parent = cd;
 						cd->subdirs[pd->name] = pd;
@@ -78,7 +78,7 @@ namespace Ism
 		}
 	}
 
-	Ref<File> PackageManager::try_open_path(String const & path)
+	Ref<File> PackedData::try_open_path(String const & path)
 	{
 		if (auto const it{ m_files.find(path) }; (it == m_files.end()) || !it->second.offset) {
 			return nullptr;
@@ -88,40 +88,40 @@ namespace Ism
 		}
 	}
 
-	bool PackageManager::has_path(String const & path)
+	bool PackedData::has_path(String const & path)
 	{
 		return m_files.contains(path);
 	}
 
-	Ref<Dir> PackageManager::try_open_dir(String const & path)
+	Ref<Dir> PackedData::try_open_dir(String const & path)
 	{
 		return nullptr;
 	}
 
-	bool PackageManager::has_dir(String const & path)
+	bool PackedData::has_dir(String const & path)
 	{
 		return false;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	bool PackageSourcePCK::try_open_pack(String const & path, bool replace_files, u64 offset)
+	bool PackSourcePAK::try_open_pack(String const & path, bool replace_files, u64 offset)
 	{
 		return false;
 	}
 
-	Ref<File> PackageSourcePCK::get_file(String const & path, PackageManager::PackFile * file)
+	Ref<File> PackSourcePAK::get_file(String const & path, PackedData::PackedFile * file)
 	{
 		return Ref<File>();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(PackageFile, t) {}
+	EMBED_CLASS(PackFile, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(PackageDir, t) {}
+	EMBED_CLASS(PackDir, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

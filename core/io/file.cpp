@@ -1,5 +1,5 @@
 #include <core/io/file.hpp>
-#include <core/io/package.hpp>
+#include <core/io/pack.hpp>
 #include <cstdio>
 
 namespace Ism
@@ -38,7 +38,7 @@ namespace Ism
 	{
 		Ref<File> file{};
 		
-		if (PackageManager * pack; (mode != FileMode_Write) && (pack = get_packages()) && pack->is_enabled() && (file = pack->try_open_path(path))) {
+		if (PackedData * pack; (mode != FileMode_Write) && (pack = get_packed_data()) && pack->is_enabled() && (file = pack->try_open_path(path))) {
 			if (r_error) { *r_error = Error_OK; }
 			return file;
 		}
@@ -204,7 +204,7 @@ namespace Ism
 
 	bool File::exists(String const & path)
 	{
-		return (get_packages() && get_packages()->has_path(path))
+		return (get_packed_data() && get_packed_data()->has_path(path))
 			|| open(path, FileMode_Read).is_valid();
 	}
 

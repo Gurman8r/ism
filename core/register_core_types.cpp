@@ -63,7 +63,7 @@ namespace Ism
 
 			Extension, ExtensionFormatLoader, ExtensionManager,
 
-			Dir, File, PackageFile, ZipFile,
+			Dir, File, PackFile, ZipFile,
 
 			Event, EventListener, DummyListener, EventDelegate<Event>, EventBus,
 

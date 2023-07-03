@@ -1,7 +1,7 @@
 #ifndef _ISM_ZIP_HPP_
 #define _ISM_ZIP_HPP_
 
-#include <core/io/package.hpp>
+#include <core/io/pack.hpp>
 
 #include <minizip/unzip.h>
 
@@ -10,7 +10,7 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// zip archive
-	class ISM_API ZipArchive : public PackageSource
+	class ISM_API ZipArchive : public PackSource
 	{
 	public:
 		struct ZippedFile {
@@ -37,7 +37,7 @@ namespace Ism
 		NODISCARD unzFile get_file_handle(String const & path) const;
 		NODISCARD bool file_exists(String const & path) const;
 		NODISCARD virtual bool try_open_pack(String const & path, bool replace_files, u64 offset) override;
-		NODISCARD virtual Ref<File> get_file(String const & path, PackageManager::PackFile * file) override;
+		NODISCARD virtual Ref<File> get_file(String const & path, PackedData::PackedFile * file) override;
 	};
 
 	SINGLETON_WRAPPER(ZipArchive, get_zip_archive);
@@ -54,7 +54,7 @@ namespace Ism
 		mutable bool	m_eof{};
 
 	public:
-		ZipFile(String const & path, PackageManager::PackFile const & file);
+		ZipFile(String const & path, PackedData::PackedFile const & file);
 		virtual ~ZipFile() override;
 		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
 		virtual ZipFile & close() override;

@@ -128,13 +128,11 @@ namespace Ism
 		get_gfx()->camera_set_transform(c, camera.transform);
 		get_gfx()->camera_destroy(c);
 
-		
-
-		m_shaders["2d"] = get_resource_loader()->load("../assets/shaders/2d.shader");
-		m_shaders["3d"] = get_resource_loader()->load("../assets/shaders/3d.shader");
-		m_textures["earth_dm_2k"].instance<ImageTexture>("../assets/textures/earth/earth_dm_2k.png");
-		m_textures["earth_sm_2k"].instance<ImageTexture>("../assets/textures/earth/earth_sm_2k.png");
-		m_meshes["sphere32x24"] = get_resource_loader()->load("../assets/meshes/sphere32x24.obj");
+		m_shaders["2d"] = load_resource("../assets/shaders/2d.shader");
+		m_shaders["3d"] = load_resource("../assets/shaders/3d.shader");
+		m_textures["earth_dm_2k"] = ImageTexture::create(load_resource("../assets/textures/earth/earth_dm_2k.png"));
+		m_textures["earth_sm_2k"] = ImageTexture::create(load_resource("../assets/textures/earth/earth_sm_2k.png"));
+		m_meshes["sphere32x24"] = load_resource("../assets/meshes/sphere32x24.obj");
 
 		//RS::SurfaceData quad_spec{};
 		//quad_spec.primitive = RS::Primitive_Triangles;

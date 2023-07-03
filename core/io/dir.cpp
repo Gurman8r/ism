@@ -47,7 +47,14 @@ namespace Ism
 
 	i32 Dir::get_current_drive()
 	{
-		return i32();
+		String const path{ get_current_dir().lowercase() };
+		for (i32 i{}; i < get_drive_count(); ++i) {
+			String const d{ get_drive(i).lowercase() };
+			if (path.has_prefix(d)) {
+				return i;
+			}
+		}
+		return 0;
 	}
 
 	bool Dir::drives_are_shortcuts()
@@ -60,9 +67,14 @@ namespace Ism
 		return Error_();
 	}
 
+	static Error_ _erase_recursive(Dir * dir)
+	{
+		return Error_OK;
+	}
+
 	Error_ Dir::erase_contents_recursive()
 	{
-		return Error_();
+		return _erase_recursive(this);
 	}
 
 	bool Dir::exists(String path)

@@ -94,11 +94,11 @@ namespace Ism
 
 	RES CSharpScriptFormatLoader::load(String const & path, Error_ * error)
 	{
-		Ref<CSharpScript> scr{ memnew(CSharpScript) };
-		scr->set_path(path);
-		scr->reload();
+		Ref<CSharpScript> temp{ memnew(CSharpScript) };
+		temp->set_path(path);
+		temp->reload();
 		if (error) { *error = Error_OK; }
-		return scr;
+		return temp;
 	}
 
 	void CSharpScriptFormatLoader::get_recognized_extensions(Vector<String> * out) const

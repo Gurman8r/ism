@@ -82,8 +82,7 @@ namespace Ism
 			{
 				aiString path;
 				if (material->GetTexture(type, i, &path) != aiReturn_SUCCESS) { continue; }
-				Ref<ImageTexture> texture{ String{ path.C_Str() } };
-				textures.push_back(texture);
+				textures.push_back(ImageTexture::create(load_resource(path.C_Str())));
 			}
 		};
 		_load_material_texture(aiTextureType_DIFFUSE, "dm"); // diffuse

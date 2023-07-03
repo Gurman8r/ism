@@ -40,11 +40,6 @@ files{
 	"%{_MAIN}**.hpp",
 	"%{_MAIN}**.cpp",
 
-	"%{_MODULES}register_module_types.hpp",
-	"%{_MODULES}register_module_types.cpp",
-
-	"%{_PLATFORM}register_platform_apis.cpp",
-	"%{_PLATFORM}register_platform_apis.hpp",
 	"%{_PLATFORM}%{_TARGET_OS}/**.hpp",
 	"%{_PLATFORM}%{_TARGET_OS}/**.cpp",
 	
