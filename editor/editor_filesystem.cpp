@@ -6,7 +6,7 @@ namespace Ism
 
 	EMBED_CLASS(EditorFileSystem, t) {}
 
-	EditorFileSystem::EditorFileSystem() : EditorPanel{ "FileSystem##Editor" }
+	EditorFileSystem::EditorFileSystem() : EditorPanel{ "File System##Editor" }
 	{
 	}
 
@@ -23,7 +23,7 @@ namespace Ism
 		bool open; EDITOR_PANEL_SCOPE(open);
 		if (!open) { return; }
 
-		ImGui::Text("editor filesystem goes here");
+		ImGui::Text("filesystem goes here");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

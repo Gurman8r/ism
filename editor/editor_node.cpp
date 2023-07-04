@@ -33,6 +33,8 @@ namespace Ism
 
 	static struct Camera
 	{
+		RID rid{};
+
 		f32 fov{ radians(45) }, znear{ 0.001f }, zfar{ 1000.f };
 
 		f32 pitch{}, yaw{}, roll{};
@@ -123,10 +125,9 @@ namespace Ism
 		m_log = memnew(EditorLog);
 		m_viewport = memnew(EditorViewport);
 
-		RID c{ get_gfx()->camera_create() };
-		get_gfx()->camera_set_perspective(c, radians(45), 0.001f, 1000.f);
-		get_gfx()->camera_set_transform(c, camera.transform);
-		get_gfx()->camera_destroy(c);
+		camera.rid = get_gfx()->camera_create();
+		get_gfx()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
+		get_gfx()->camera_set_transform(camera.rid, camera.transform);
 
 		m_shaders["2d"] = load_resource("../assets/shaders/2d.shader");
 		m_shaders["3d"] = load_resource("../assets/shaders/3d.shader");
@@ -213,6 +214,8 @@ namespace Ism
 	{
 		SINGLETON_DTOR();
 
+		if (camera.rid) { get_gfx()->camera_destroy(camera.rid); camera.rid = nullptr; }
+
 		if (material) { get_gfx()->material_destroy(material); }
 
 		for (size_t i{}; i < ARRAY_SIZE(uniform_buffers); ++i) {
@@ -256,6 +259,7 @@ namespace Ism
 				; screen_resolution != res) {
 					screen_resolution = res;
 					camera.projection = perspective(camera.fov, screen_resolution[0] / screen_resolution[1], camera.znear, camera.zfar);
+					get_gfx()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
 					get_gpu()->framebuffer_set_size(framebuffer, (i32)screen_resolution[0], (i32)screen_resolution[1]);
 				}
 			}
@@ -267,6 +271,8 @@ namespace Ism
 			}
 			camera.transform.set_rotation(camera.pitch, camera.yaw, camera.roll);
 
+			get_gfx()->camera_set_transform(camera.rid, camera.transform);
+			m_viewport->m_camera = camera.rid;
 			m_viewport->m_camera_proj = camera.projection;
 			m_viewport->m_camera_view = camera.transform;
 
@@ -312,7 +318,7 @@ namespace Ism
 
 			// imgui
 			_draw_dockspace();
-			//m_filesystem->process(delta_time);
+			m_filesystem->process(delta_time);
 			m_hierarchy->process(delta_time);
 			m_log->process(delta_time);
 			m_viewport->process(delta_time);
@@ -379,12 +385,14 @@ namespace Ism
 	void EditorNode::_build_dockspace()
 	{
 		ImGuiID const dockspace_id{ ImGui::GetID("##EditorDockSpace") };
-		ImGuiID right{ dockspace_id };
-		ImGuiID left_up{ ImGui::DockBuilderSplitNode(right, ImGuiDir_Left, 0.2f, nullptr, &right) };
+		ImGuiID right_up{ dockspace_id };
+		ImGuiID left_up{ ImGui::DockBuilderSplitNode(right_up, ImGuiDir_Left, 0.2f, nullptr, &right_up) };
 		ImGuiID left_down{ ImGui::DockBuilderSplitNode(left_up, ImGuiDir_Down, 0.5f, nullptr, &left_up) };
-		ImGui::DockBuilderDockWindow(m_viewport->get_name(), right);
+		ImGuiID right_down{ ImGui::DockBuilderSplitNode(right_up, ImGuiDir_Down, 0.2f, nullptr, &right_up) };
+		ImGui::DockBuilderDockWindow(m_viewport->get_name(), right_up);
 		ImGui::DockBuilderDockWindow(m_hierarchy->get_name(), left_up);
 		ImGui::DockBuilderDockWindow(m_log->get_name(), left_down);
+		ImGui::DockBuilderDockWindow(m_filesystem->get_name(), right_down);
 	}
 
 	void EditorNode::_draw_menu_bar()

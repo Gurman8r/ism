@@ -12,12 +12,28 @@ namespace Ism
 	ConfigFile::ConfigFile(String const & path)
 	{
 		if (path.empty()) { return; }
-		if (ini_parse(path.c_str(), [](auto user, auto section, auto name, auto value) {
-			((ConfigFile *)user)->set_string(section, name, String(value).trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; }));
+		if (ini_parse(path.c_str(), [](auto user, auto section, auto name, auto value)
+		{
+			auto value_fmt{ String(value).trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; }) };
+			((ConfigFile *)user)->set_string(section, name, value_fmt);
 			return 1;
-		}, this)) {
-			set_path(path);
 		}
+		, this)) { set_path(path); }
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	String ConfigFile::get_string(String const & section, String const & name, String const & default_value) const
+	{
+		Section const * s;
+		String const * v;
+		if ((s = util::getptr(m_data, section)) && (v = util::getptr(*s, name))) { return *v; }
+		else { return default_value; }
+	}
+
+	bool ConfigFile::set_string(String const & section, String const & name, String const & value)
+	{
+		return m_data[section].insert({ name, value }).second;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -52,17 +68,120 @@ namespace Ism
 		else { return default_value; }
 	}
 
-	String ConfigFile::get_string(String const & section, String const & name, String const & default_value) const
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	Vec2f ConfigFile::get_vec2f(String const & section, String const & name, Vec2f const & default_value) const
 	{
-		Section const * s;
-		String const * v;
-		if ((s = util::getptr(m_data, section)) && (v = util::getptr(*s, name))) { return *v; }
-		else { return default_value; }
+		String s{ get_string(section, name) };
+		if (s.empty()) { return default_value; }
+		Vector<String> v{ s.split(",") };
+
+		Vec2f temp;
+		switch (v.size())
+		{
+		case 0: {
+			temp = default_value;
+		} break;
+		case 1: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			temp[1] = default_value[1];
+		} break;
+		default: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; }
+			else { temp[1] = default_value[1]; }
+		} break;
+		}
+		return temp;
 	}
 
-	bool ConfigFile::set_string(String const & section, String const & name, String const & value)
+	Vec3f ConfigFile::get_vec3f(String const & section, String const & name, Vec3f const & default_value) const
 	{
-		return m_data[section].insert({ name, value }).second;
+		String s{ get_string(section, name) };
+		if (s.empty()) { return default_value; }
+		Vector<String> v{ s.split(",") };
+
+		Vec3f temp;
+		switch (v.size())
+		{
+		case 0: {
+			temp = default_value;
+		} break;
+		case 1: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			temp[1] = default_value[1];
+			temp[2] = default_value[2];
+		} break;
+		case 2: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; }
+			else { temp[1] = default_value[1]; }
+			temp[2] = default_value[2];
+		} break;
+		default: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; }
+			else { temp[1] = default_value[1]; }
+			if (auto const z{ util::to_f32(v[2]) }) { temp[2] = *z; }
+			else { temp[2] = default_value[2]; }
+		} break;
+		}
+		return temp;
+	}
+
+	Vec4f ConfigFile::get_vec4f(String const & section, String const & name, Vec4f const & default_value) const
+	{
+		String s{ get_string(section, name) };
+		if (s.empty()) { return default_value; }
+		Vector<String> v{ s.split(",") };
+
+		Vec4f temp;
+		switch (v.size())
+		{
+		case 0: {
+			temp = default_value;
+		} break;
+		case 1: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			temp[1] = default_value[1];
+			temp[2] = default_value[2];
+			temp[3] = default_value[3];
+		} break;
+		case 2: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; }
+			else { temp[1] = default_value[1]; }
+			temp[2] = default_value[2];
+			temp[3] = default_value[3];
+		} break;
+		case 3: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; }
+			else { temp[1] = default_value[1]; }
+			if (auto const z{ util::to_f32(v[2]) }) { temp[2] = *z; }
+			else { temp[2] = default_value[2]; }
+			temp[3] = default_value[3];
+		} break;
+		default: {
+			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; }
+			else { temp[0] = default_value[0]; }
+			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; }
+			else { temp[1] = default_value[1]; }
+			if (auto const z{ util::to_f32(v[2]) }) { temp[2] = *z; }
+			else { temp[2] = default_value[2]; }
+			if (auto const w{ util::to_f32(v[3]) }) { temp[3] = *w; }
+			else { temp[3] = default_value[3]; }
+		} break;
+		}
+		return temp;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

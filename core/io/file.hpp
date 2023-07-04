@@ -41,15 +41,19 @@ namespace Ism
 		FileAccess_ m_access_type{};
 
 	protected:
+		NODISCARD virtual String fix_path(String const & path) const;
+		virtual Error_ open_internal(String const & path, FileMode_ mode) = 0;
+		NODISCARD virtual u64 _get_modified_time(String const & path) = 0;
+		NODISCARD virtual u32 _get_unix_permissions(String const & path) = 0;
+		virtual Error_ _set_unix_permissions(String const & path, u32 permissions) = 0;
+		NODISCARD FileAccess_ get_access_type() const noexcept { return m_access_type; }
+		void set_access_type(FileAccess_ value) noexcept { m_access_type = value; }
+
+	protected:
 		using CreateFunc = Ref<File>(*)();
 		static CreateFunc __create_func[FileAccess_MAX];
 		static Ref<File> create(FileAccess_ access_type);
 		static Ref<File> create_for_path(String const & path);
-
-		NODISCARD FileAccess_ get_access_type() const noexcept { return m_access_type; }
-		void set_access_type(FileAccess_ value) noexcept { m_access_type = value; }
-
-		virtual Error_ open_internal(String const & path, FileMode_ mode) = 0;
 
 	public:
 		static Ref<File> open(String const & path, FileMode_ mode, Error_ * r_error = nullptr);
@@ -72,30 +76,34 @@ namespace Ism
 		NODISCARD bool is_big_endian() const noexcept { return m_big_endian; }
 		virtual void set_big_endian(bool big_endian) noexcept { m_big_endian = big_endian; }
 
-		NODISCARD virtual u8 read_8() const = 0;
-		NODISCARD virtual u16 read_16() const;
-		NODISCARD virtual u32 read_32() const;
-		NODISCARD virtual u64 read_64() const;
-		NODISCARD virtual f32 read_float() const;
-		NODISCARD virtual f64 read_double() const;
-		NODISCARD virtual String read_token() const;
-		NODISCARD virtual String read_line() const;
-		virtual size_t read_buffer(u8 * data, size_t const size) const;
-		NODISCARD DynamicBuffer read_buffer(size_t const size) const;
+		NODISCARD virtual u8 get_8() const = 0;
+		NODISCARD virtual u16 get_16() const;
+		NODISCARD virtual u32 get_32() const;
+		NODISCARD virtual u64 get_64() const;
+		NODISCARD virtual f32 get_float() const;
+		NODISCARD virtual f64 get_double() const;
+		NODISCARD virtual String get_token() const;
+		NODISCARD virtual String get_line() const;
+		virtual size_t get_buffer(u8 * data, size_t const size) const;
+		NODISCARD DynamicBuffer get_buffer(size_t const size) const;
 
-		virtual File & write_8(u8 value) = 0;
-		virtual File & write_16(u16 value);
-		virtual File & write_32(u32 value);
-		virtual File & write_64(u64 value);
-		virtual File & write_float(f32 value);
-		virtual File & write_double(f64 value);
-		virtual File & write_token(String const & value);
-		virtual File & write_line(String const & value);
-		virtual File & write_buffer(u8 const * data, size_t const size);
-		File & write_buffer(DynamicBuffer const & buffer);
+		virtual File & put_8(u8 value) = 0;
+		virtual File & put_16(u16 value);
+		virtual File & put_32(u32 value);
+		virtual File & put_64(u64 value);
+		virtual File & put_float(f32 value);
+		virtual File & put_double(f64 value);
+		virtual File & put_token(String const & value);
+		virtual File & put_line(String const & value);
+		virtual File & put_buffer(u8 const * data, size_t const size);
+		File & put_buffer(DynamicBuffer const & buffer);
 
 	public:
+		static CreateFunc get_create_func(FileAccess_ p_access);
 		static bool exists(String const & path);
+		static u64 get_modified_time(String const & path);
+		static u32 get_unix_permissions(String const & path);
+		static Error_ set_unix_permissions(String const & path, u32 permissions);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

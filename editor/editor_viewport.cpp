@@ -47,7 +47,7 @@ namespace Ism
 		ImGuizmo::SetRect(view_rect.Min.x, view_rect.Min.y, view_rect.GetWidth(), view_rect.GetHeight());
 		if (m_grid_enabled) { ImGuizmo::DrawGrid(m_camera_view, m_camera_proj, m_grid_matrix, m_grid_size); }
 		//if (0 < m_object_count) { ImGuizmo::DrawCubes(view_matrix, proj_matrix, &m_object_matrix[0][0], m_object_count); }
-		//for (i32 i = 0; i < m_object_count; ++i) {
+		//for (i32 i{}; i < m_object_count; ++i) {
 		//	ImGuizmo::SetID(i);
 		//	if (m_xeditor.Manipulate(view_matrix, proj_matrix, m_object_matrix[i])) { m_object_index = i; }
 		//}

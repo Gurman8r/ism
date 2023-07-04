@@ -1,5 +1,7 @@
 #include <core/io/file.hpp>
 #include <core/io/pack.hpp>
+#include <core/os/os.hpp>
+#include <core/config/project_settings.hpp>
 #include <cstdio>
 
 namespace Ism
@@ -9,6 +11,45 @@ namespace Ism
 	EMBED_CLASS(File, t, TypeFlags_IsAbstract) {}
 
 	File::CreateFunc File::__create_func[FileAccess_MAX]{};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	String File::fix_path(String const & path) const
+	{
+		String const r_path{ path.replace("\\", "/") };
+		switch (m_access_type)
+		{
+		case FileAccess_Resources: {
+			if (get_project_settings()) {
+				if (r_path.has_prefix("res://")) {
+					String resource_path{ ProjectSettings::get_singleton()->get_resource_path() };
+					if (!resource_path.empty()) {
+						return r_path.replace("res:/", resource_path);
+					}
+					return r_path.replace("res://", "");
+				}
+			}
+
+		} break;
+		case FileAccess_User: {
+			if (r_path.has_prefix("usr://")) {
+				if (String data_dir{ get_os()->get_user_path() }; !data_dir.empty()) {
+					return r_path.replace("usr:/", data_dir);
+				}
+				return r_path.replace("usr://", "");
+			}
+		} break;
+		case FileAccess_Filesystem: {
+			return r_path;
+		} break;
+		case FileAccess_MAX: {
+			/* can't happen, but silences warning */
+		} break;
+		}
+		return r_path;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Ref<File> File::create(FileAccess_ access_type)
 	{
@@ -59,56 +100,56 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	u16 File::read_16() const
+	u16 File::get_16() const
 	{
-		u8 a{ read_8() }, b{ read_8() };
+		u8 a{ get_8() }, b{ get_8() };
 		if (m_big_endian) { util::swap(a, b); }
 		u16 c{ b }; c <<= 8; c |= a;
 		return c;
 	}
 
-	u32 File::read_32() const
+	u32 File::get_32() const
 	{
-		u16 a{ read_16() }, b{ read_16() };
+		u16 a{ get_16() }, b{ get_16() };
 		if (m_big_endian) { util::swap(a, b); }
 		u32 c{ b }; c <<= 16; c |= a;
 		return c;
 	}
 
-	u64 File::read_64() const
+	u64 File::get_64() const
 	{
-		u32 a{ read_32() }, b{ read_32() };
+		u32 a{ get_32() }, b{ get_32() };
 		if (m_big_endian) { util::swap(a, b); }
 		u64 c{ b }; c <<= 32; c |= a;
 		return c;
 	}
 
-	f32 File::read_float() const
+	f32 File::get_float() const
 	{
 		return f32();
 	}
 
-	f64 File::read_double() const
+	f64 File::get_double() const
 	{
 		return f64();
 	}
 
-	String File::read_token() const
+	String File::get_token() const
 	{
 		String token{};
-		u8 c{ read_8() };
+		u8 c{ get_8() };
 		while (!eof_reached()) {
 			if (c == ' ' && !token.empty()) { break; }
 			else { token += c; }
-			c = read_8();
+			c = get_8();
 		}
 		return token;
 	}
 
-	String File::read_line() const
+	String File::get_line() const
 	{
 		String line{};
-		u8 c{ read_8() };
+		u8 c{ get_8() };
 		while (!eof_reached()) {
 			if (c == '\0' || c == '\n') {
 				line += '\n';
@@ -117,26 +158,26 @@ namespace Ism
 			else if (c != '\r') {
 				line += c;
 			}
-			c = read_8();
+			c = get_8();
 		}
 		return line;
 	}
 
-	size_t File::read_buffer(u8 * data, size_t const size) const
+	size_t File::get_buffer(u8 * data, size_t const size) const
 	{
 		size_t i{};
 		for (; i < size && !eof_reached(); ++i) {
-			data[i] = read_8();
+			data[i] = get_8();
 		}
 		return i;
 	}
 
-	DynamicBuffer File::read_buffer(size_t const size) const
+	DynamicBuffer File::get_buffer(size_t const size) const
 	{
 		DynamicBuffer buf{};
 		if (!size) { return buf; }
 		buf.resize(size);
-		if (size_t length{ read_buffer(buf.data(), buf.size()) }; length < size) {
+		if (size_t length{ get_buffer(buf.data(), buf.size()) }; length < size) {
 			buf.resize(length);
 		}
 		return buf;
@@ -144,68 +185,118 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	File & File::write_16(u16 value)
+	File & File::put_16(u16 value)
 	{
 		u8 a; a = value & 0xFF;
 		u8 b; b = value >> 8;
 		if (m_big_endian) { util::swap(a, b); }
-		return write_8(a).write_8(b);
+		return put_8(a).put_8(b);
 	}
 
-	File & File::write_32(u32 value)
+	File & File::put_32(u32 value)
 	{
 		u16 a; a = value & 0xFFFF;
 		u16 b; b = value >> 16;
 		if (m_big_endian) { util::swap(a, b); }
-		return write_16(a).write_16(b);
+		return put_16(a).put_16(b);
 	}
 
-	File & File::write_64(u64 value)
+	File & File::put_64(u64 value)
 	{
 		u32 a; a = value & 0xFFFFFFFF;
 		u32 b; b = value >> 32;
 		if (m_big_endian) { util::swap(a, b); }
-		return write_32(a).write_32(b);
+		return put_32(a).put_32(b);
 	}
 
-	File & File::write_float(f32 value)
+	File & File::put_float(f32 value)
 	{
 		return (*this);
 	}
 
-	File & File::write_double(f64 value)
+	File & File::put_double(f64 value)
 	{
 		return (*this);
 	}
 
-	File & File::write_token(String const & value)
+	File & File::put_token(String const & value)
 	{
 		if (value.empty()) { return (*this); }
-		else { return write_buffer((u8 *)value.data(), value.size()); }
+		else { return put_buffer((u8 *)value.data(), value.size()); }
 	}
 
-	File & File::write_line(String const & value)
+	File & File::put_line(String const & value)
 	{
-		return write_token(value).write_8((u8)'\n');
+		return put_token(value).put_8((u8)'\n');
 	}
 
-	File & File::write_buffer(u8 const * data, size_t const size)
+	File & File::put_buffer(u8 const * data, size_t const size)
 	{
 		if (!data || !size) { return (*this); }
-		for (size_t i{}; i < size; ++i) { write_8(data[i]); }
+		for (size_t i{}; i < size; ++i) { put_8(data[i]); }
 		return (*this);
 	}
 
-	File & File::write_buffer(DynamicBuffer const & buffer)
+	File & File::put_buffer(DynamicBuffer const & buffer)
 	{
 		if (buffer.empty()) { return (*this); }
-		else { return write_buffer(buffer.data(), buffer.size()); }
+		else { return put_buffer(buffer.data(), buffer.size()); }
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	File::CreateFunc File::get_create_func(FileAccess_ p_access)
+	{
+		return CreateFunc();
 	}
 
 	bool File::exists(String const & path)
 	{
-		return (get_packed_data() && get_packed_data()->has_path(path))
-			|| open(path, FileMode_Read).is_valid();
+		return (get_packed_data() && get_packed_data()->has_path(path)) || open(path, FileMode_Read).is_valid();
+	}
+
+	u64 File::get_modified_time(String const & path)
+	{
+		if (get_packed_data() && get_packed_data()->is_enabled() && (get_packed_data()->has_path(path) || get_packed_data()->has_dir(path))) {
+			return 0;
+		}
+
+		Ref<File> fa{ create_for_path(path) };
+		if (fa.is_null()) {
+			CRASH("cannot create file for path");
+		}
+
+		u64 mt{ fa->_get_modified_time(path) };
+		return mt;
+	}
+
+	u32 File::get_unix_permissions(String const & path)
+	{
+		if (get_packed_data() && get_packed_data()->is_enabled() && (get_packed_data()->has_path(path) || get_packed_data()->has_dir(path))) {
+			return 0;
+		}
+
+		Ref<File> fa{ create_for_path(path) };
+		if (fa.is_null()) {
+			CRASH("cannot create file for path");
+		}
+
+		uint32_t mt = fa->_get_unix_permissions(path);
+		return mt;
+	}
+
+	Error_ File::set_unix_permissions(String const & path, u32 permissions)
+	{
+		if (get_packed_data() && get_packed_data()->is_enabled() && (get_packed_data()->has_path(path) || get_packed_data()->has_dir(path))) {
+			return Error_Unavailable;
+		}
+
+		Ref<File> fa{ create_for_path(path) };
+		if (fa.is_null()) {
+			CRASH("cannot create file for path");
+		}
+
+		return fa->_set_unix_permissions(path, permissions);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

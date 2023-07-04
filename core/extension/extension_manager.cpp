@@ -101,7 +101,7 @@ namespace Ism
 	{
 		auto f{ File::open(Extension::get_extension_list_config_file(), FileMode_Read) };
 		if (!f) { return; }
-		while (String line{ f->read_line().trim() }) {
+		while (String line{ f->get_line().trim() }) {
 			load_extension(line);
 		}
 	}

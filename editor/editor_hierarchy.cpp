@@ -23,7 +23,7 @@ namespace Ism
 		bool open; EDITOR_PANEL_SCOPE(open);
 		if (!open) { return; }
 
-		ImGui::Text("editor hierarchy goes here");
+		ImGui::Text("hierarchy goes here");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

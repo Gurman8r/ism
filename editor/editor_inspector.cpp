@@ -1,20 +1,20 @@
-#include <editor/editor_log.hpp>
+#include <editor/editor_inspector.hpp>
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorLog, t) {}
+	EMBED_CLASS(EditorInspector, t) {}
 
-	EditorLog::EditorLog() : EditorPanel{ "Log##Editor" }
+	EditorInspector::EditorInspector() : EditorPanel{ "Inspector##Editor" }
 	{
 	}
 
-	EditorLog::~EditorLog()
+	EditorInspector::~EditorInspector()
 	{
 	}
 
-	void EditorLog::process(Duration const & delta_time)
+	void EditorInspector::process(Duration const & delta_time)
 	{
 		if (!is_open()) { return; }
 		ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };
@@ -23,7 +23,7 @@ namespace Ism
 		bool open; EDITOR_PANEL_SCOPE(open);
 		if (!open) { return; }
 
-		ImGui::Text("log goes here");
+		ImGui::Text("inspector goes here");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

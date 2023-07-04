@@ -137,7 +137,7 @@ namespace Ism
 
 	bool Input::is_any_key_down() const
 	{
-		for (i32 i = 0; i < Key_MAX; ++i)
+		for (i32 i{}; i < Key_MAX; ++i)
 		{
 			if (m_key[i] != Action_Release)
 			{
@@ -149,7 +149,7 @@ namespace Ism
 
 	bool Input::is_any_mouse_button_down() const
 	{
-		for (i32 i = 0; i < MouseButton_MAX; ++i)
+		for (i32 i{}; i < MouseButton_MAX; ++i)
 		{
 			if (m_mouse_button[i] != Action_Release)
 			{
@@ -163,7 +163,7 @@ namespace Ism
 	{
 		if (is_joy_known(device))
 		{
-			for (i32 i = 0; i < JoyButton_MAX; ++i)
+			for (i32 i{}; i < JoyButton_MAX; ++i)
 			{
 				if (m_joy_button[device][i] != Action_Release)
 				{
@@ -176,7 +176,7 @@ namespace Ism
 
 	bool Input::is_any_nav_input_down() const
 	{
-		for (i32 i = 0; i < NavInput_MAX; ++i)
+		for (i32 i{}; i < NavInput_MAX; ++i)
 		{
 			if (m_nav_input[i] != Action_Release)
 			{
@@ -310,12 +310,12 @@ namespace Ism
 			m_joy_name[device] = ""_s;
 			m_joy_guid[device] = ""_s;
 
-			for (i32 i = 0; i < JoyButton_MAX; ++i) {
+			for (i32 i{}; i < JoyButton_MAX; ++i) {
 				m_joy_button[device][i] = Action_Release;
 				m_joy_button_time[device][i] = 0.f;
 			}
 
-			for (i32 i = 0; i < JoyAxis_MAX; ++i) {
+			for (i32 i{}; i < JoyAxis_MAX; ++i) {
 				m_joy_axes[device][i] = 0.f;
 			}
 		}
@@ -437,7 +437,7 @@ namespace Ism
 
 		m_mouse_position_prev = m_mouse_position;
 
-		for (i32 i = 0; i < MouseButton_MAX; ++i)
+		for (i32 i{}; i < MouseButton_MAX; ++i)
 		{
 			m_mouse_button_time_prev[i] = m_mouse_button_time[i];
 			m_mouse_button_time[i] = m_mouse_button[i] ? (m_mouse_button_time[i] < 0.f ? 0.f : m_mouse_button_time[i] + delta_time) : -1.f;
@@ -487,7 +487,7 @@ namespace Ism
 
 		/* UPDATE KEYBOARD */
 
-		for (i32 i = 0; i < Key_MAX; ++i)
+		for (i32 i{}; i < Key_MAX; ++i)
 		{
 			m_key_time_prev[i] = m_key_time[i];
 			m_key_time[i] = m_key[i] ? (m_key_time[i] < 0.f ? 0.f : m_key_time[i] + delta_time) : -1.f;
@@ -501,7 +501,7 @@ namespace Ism
 				continue;
 			}
 
-			for (i32 i = 0; i < JoyButton_MAX; ++i)
+			for (i32 i{}; i < JoyButton_MAX; ++i)
 			{
 				m_joy_button_time_prev[j][i] = m_joy_button_time[j][i];
 				m_joy_button_time[j][i] = m_joy_button[j][i] ? (m_joy_button_time[j][i] < 0.f ? 0.f : m_joy_button_time[j][i] + delta_time) : -1.f;
@@ -510,7 +510,7 @@ namespace Ism
 
 		/* UPDATE NAV INPUTS */
 
-		for (i32 i = 0; i < NavInput_MAX; ++i)
+		for (i32 i{}; i < NavInput_MAX; ++i)
 		{
 			m_nav_input_time_prev[i] = m_nav_input_time[i];
 			m_nav_input_time[i] = m_nav_input[i] ? (m_nav_input_time[i] < 0.f ? 0.f : m_nav_input_time[i] + delta_time) : -1.f;

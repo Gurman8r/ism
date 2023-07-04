@@ -195,7 +195,7 @@ namespace Ism
 	void WindowsDisplayServer::get_fullscreen_video_modes(Vector<VideoMode> & out) const
 	{
 		DEVMODE dm; dm.dmSize = sizeof(dm);
-		for (i32 i = 0; EnumDisplaySettings(nullptr, i, &dm); ++i)
+		for (i32 i{}; EnumDisplaySettings(nullptr, i, &dm); ++i)
 		{
 			VideoMode vm;
 			vm.size = { (i32)dm.dmPelsWidth, (i32)dm.dmPelsHeight };
@@ -540,7 +540,7 @@ namespace Ism
 			i32 num_buttons;
 			u8 const * buttons{ glfwGetJoystickButtons(device, &num_buttons) };
 			num_buttons = MIN(num_buttons, Input::JoyButton_MAX);
-			for (i32 i = 0; i < num_buttons; ++i) {
+			for (i32 i{}; i < num_buttons; ++i) {
 				get_input()->set_joy_button(device, i, (Input::Action_)buttons[i]);
 			}
 		}

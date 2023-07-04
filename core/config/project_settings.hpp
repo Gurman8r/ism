@@ -18,6 +18,7 @@ namespace Ism
 			m_cache_path	{},
 			m_config_path	{},
 			m_data_path		{},
+			m_mods_path		{},
 			m_resource_path	{},
 			m_user_path		{};
 
@@ -36,6 +37,7 @@ namespace Ism
 		NODISCARD String get_cache_path() const;
 		NODISCARD String get_config_path() const;
 		NODISCARD String get_data_path() const;
+		NODISCARD String get_mods_path() const;
 		NODISCARD String get_resource_path() const;
 		NODISCARD String get_user_path() const;
 

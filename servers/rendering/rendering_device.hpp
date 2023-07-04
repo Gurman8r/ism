@@ -717,7 +717,7 @@ namespace Ism
 			{
 				ColorBlendState temp{};
 				temp.attachments.reserve(num_attachments);
-				for (i32 i = 0; i < num_attachments; ++i) {
+				for (i32 i{}; i < num_attachments; ++i) {
 					temp.attachments.push_back({});
 				}
 				return temp;
@@ -727,7 +727,7 @@ namespace Ism
 			{
 				ColorBlendState temp{};
 				temp.attachments.reserve(num_attachments);
-				for (i32 i = 0; i < num_attachments; ++i) {
+				for (i32 i{}; i < num_attachments; ++i) {
 					temp.attachments.push_back({ true,
 						BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add,
 						BlendFactor_SrcAlpha, BlendFactor_OneMinusSrcAlpha, BlendOperation_Add,

@@ -11,7 +11,11 @@ namespace Ism
 	{
 		Error_Failed = -1,
 		Error_OK = 0,
+		Error_Bug,
 		Error_EOF,
+		Error_AlreadyExists,
+		Error_Unavailable,
+
 		// etc...
 
 		Error_MAX

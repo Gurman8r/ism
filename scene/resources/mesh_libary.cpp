@@ -21,33 +21,27 @@ namespace Ism
 			data << Vec4f{ mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1.f };
 
 			// normals
-			if (mesh->HasNormals())
-			{
+			if (mesh->HasNormals()) {
 				data << Vec4f{ mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z, 1.f };
 			}
-			else
-			{
+			else {
 				data << Vec4f{};
 			}
 
 			// texcoords
-			if (mesh->HasTextureCoords(0))
-			{
+			if (mesh->HasTextureCoords(0)) {
 				data << Vec4f{ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, mesh->mTextureCoords[0][i].z, 1.f };
 			}
-			else
-			{
+			else {
 				data << Vec4f{};
 			}
 
 			// tangents & bitantents
-			if (mesh->HasTangentsAndBitangents())
-			{
+			if (mesh->HasTangentsAndBitangents()) {
 				data << Vec4f{ mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z, 1.f };
 				data << Vec4f{ mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z, 1.f };
 			}
-			else
-			{
+			else {
 				data << Vec4f{} << Vec4f{};
 			}
 		}
@@ -76,10 +70,8 @@ namespace Ism
 	{
 		if (!material) { return; }
 
-		auto _load_material_texture = [&](aiTextureType type, cstring type_name)
-		{
-			for (u32 i = 0; i < material->GetTextureCount(type); ++i)
-			{
+		auto _load_material_texture = [&](aiTextureType type, cstring type_name) {
+			for (u32 i = 0; i < material->GetTextureCount(type); ++i) {
 				aiString path;
 				if (material->GetTexture(type, i, &path) != aiReturn_SUCCESS) { continue; }
 				textures.push_back(ImageTexture::create(load_resource(path.C_Str())));
@@ -131,7 +123,7 @@ namespace Ism
 			aiProcess_SortByPType |
 			aiProcess_GenSmoothNormals |
 			aiProcess_GenUVCoords) };
-		ON_SCOPE_EXIT(&) { ai.FreeScene(); };
+		ON_SCOPE_EXIT(&ai) { ai.FreeScene(); };
 
 		Vector<RS::SurfaceData> spec;
 		process_ainode(scene, scene->mRootNode, spec);

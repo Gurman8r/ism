@@ -413,6 +413,8 @@ namespace Ism
 
 	void RendererStorage::viewport_set_camera(RID viewport, RID camera)
 	{
+		_Viewport & vp{ *VALIDATE((_Viewport *)viewport) };
+		vp.camera = camera;
 	}
 
 	RID RendererStorage::viewport_get_texture(RID viewport) const

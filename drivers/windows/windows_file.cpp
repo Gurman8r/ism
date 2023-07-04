@@ -20,20 +20,50 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	String WindowsFile::fix_path(String const & path) const
+	{
+		return String();
+	}
+
 	Error_ WindowsFile::open_internal(String const & path, FileMode_ mode)
 	{
 		WindowsFile::close();
-
 		constexpr cstring m_mode[4]{ "rb", "wb", "rb+", "wb+" };
-
 		m_file = fopen(path.c_str(), m_mode[mode]);
-
-		if (!m_file) {
-			return Error_Failed;
-		}
-
+		if (!m_file) { return Error_Failed; }
 		return Error_OK;
 	}
+
+	u64 WindowsFile::_get_modified_time(String const & path)
+	{
+		// if (is_path_invalid(path)) { return 0; }
+
+		String file{ fix_path(path) };
+		if (file.has_suffix("/") && file != "/") { file = file.substr(0, file.size() - 1); }
+
+		struct _stat st;
+
+		i32 rv{ _wstat(file.widen().data(), &st) };
+
+		if (rv == 0) { return st.st_mtime;
+		}
+		else {
+			PRINT_LINE("Failed to get modified time for: " + path + "");
+			return 0;
+		}
+	}
+
+	u32 WindowsFile::_get_unix_permissions(String const & path)
+	{
+		return 0;
+	}
+
+	Error_ WindowsFile::_set_unix_permissions(String const & path, u32 permissions)
+	{
+		return Error_Unavailable;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	WindowsFile & WindowsFile::flush()
 	{
@@ -128,7 +158,7 @@ namespace Ism
 		return m_last_error;
 	}
 
-	u8 WindowsFile::read_8() const
+	u8 WindowsFile::get_8() const
 	{
 		ASSERT(m_file);
 		if (m_mode == FileMode_Write || m_mode == FileMode_Read) {
@@ -145,7 +175,7 @@ namespace Ism
 		return b;
 	}
 
-	WindowsFile & WindowsFile::write_8(u8 value)
+	WindowsFile & WindowsFile::put_8(u8 value)
 	{
 		ASSERT(m_file);
 		if (m_mode == FileMode_ReadWrite || m_mode == FileMode_WriteRead) {

@@ -16,6 +16,8 @@ namespace Ism
 
 		RID m_main_texture{};
 
+		RID m_camera{};
+
 		Mat4 m_camera_view{}, m_camera_proj{};
 
 		bool m_is_dragging_view{};

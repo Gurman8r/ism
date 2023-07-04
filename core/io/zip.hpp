@@ -56,7 +56,14 @@ namespace Ism
 	public:
 		ZipFile(String const & path, PackedData::PackedFile const & file);
 		virtual ~ZipFile() override;
+
+	protected:
 		virtual Error_ open_internal(String const & path, FileMode_ mode) override;
+		virtual u64 _get_modified_time(String const & path) override { return 0; }
+		virtual u32 _get_unix_permissions(String const & path) override { return 0; }
+		virtual Error_ _set_unix_permissions(String const & path, u32 permissions) override { return Error_Failed; }
+
+	public:
 		virtual ZipFile & close() override;
 		virtual ZipFile & flush() override;
 		virtual bool file_exists(String const & path) override;
@@ -69,9 +76,9 @@ namespace Ism
 		virtual Error_ get_error() const override;
 		virtual String get_path() const override;
 		virtual String get_path_abs() const override;
-		virtual u8 read_8() const override;
-		virtual size_t read_buffer(u8 * data, size_t const size) const override;
-		virtual ZipFile & write_8(u8) override;
+		virtual u8 get_8() const override;
+		virtual size_t get_buffer(u8 * data, size_t const size) const override;
+		virtual ZipFile & put_8(u8) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

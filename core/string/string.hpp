@@ -437,6 +437,8 @@ namespace Ism
 			return temp;
 		}
 
+		NODISCARD bool is_network_share_path() const noexcept { if constexpr (is_narrow) { return has_prefix("//") || has_prefix("\\\\"); } else { return has_prefix(L"//") || has_prefix(L"\\\\"); } }
+
 	public:
 		template <size_type buffer_size = 0
 		> static i32 format(self_type & s, const_pointer fmt, va_list args)
@@ -618,7 +620,7 @@ namespace Ism::util
 			while (value > 0xFFFFFFFFU) {
 				auto chunk{ static_cast<u32>(value % 1000000000) };
 				value /= 1000000000;
-				for (i32 i = 0; i != 9; ++i) {
+				for (i32 i{}; i != 9; ++i) {
 					*--next = static_cast<char>('0' + chunk % 10);
 					chunk /= 10;
 				}
@@ -917,8 +919,6 @@ namespace Ism::util
 		auto const extension{ find_extension(filename, ads) };
 		return { extension, static_cast<size_t>(ads - extension) };
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

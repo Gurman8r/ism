@@ -71,6 +71,11 @@ namespace Ism
 		return m_data_path;
 	}
 
+	String ProjectSettings::get_mods_path() const
+	{
+		return m_mods_path;
+	}
+
 	String ProjectSettings::get_resource_path() const
 	{
 		return m_resource_path;

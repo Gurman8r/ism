@@ -25,6 +25,7 @@ namespace Ism
 		using CreateFunc = Ref<Dir>(*)();
 		static CreateFunc __create_func[DirAccess_MAX];
 
+		Error_ _copy_dir(Ref<Dir> & from, String const & to, i32 chmod_flags, bool copy_links);
 		String _get_root_path() const;
 		virtual String _get_root_string() const;
 
@@ -99,7 +100,7 @@ namespace Ism
 		NODISCARD static Ref<Dir> open(String const & path, Error_ * r_error = nullptr);
 
 		NODISCARD static i32 _get_drive_count();
-		NODISCARD static String get_drive_name(i32 idx);
+		NODISCARD static String get_drive_name(i32 index);
 
 		static Error_ make_dir_abs(String const & dir);
 		static Error_ make_dir_recursive_abs(String const & dir);

@@ -99,7 +99,7 @@ namespace Ism
 		virtual Vec2 screen_get_scale(i32 screen = -1) const = 0;
 		virtual Vec2 screen_get_max_scale() const {
 			Vec2 scale{ 1.f, 1.f };
-			for (i32 i = 0; i < get_screen_count(); ++i) {
+			for (i32 i{}; i < get_screen_count(); ++i) {
 				scale = maximum(scale, screen_get_scale(i));
 			}
 			return scale;

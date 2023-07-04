@@ -21,11 +21,8 @@ namespace Ism
 
 	public:
 		virtual ~Material();
-
 		virtual RID get_rid() const override { return m_material; }
-
 		virtual RID get_shader_rid() const = 0;
-
 		virtual Shader::Mode_ get_shader_mode() const = 0;
 	};
 
@@ -48,7 +45,6 @@ namespace Ism
 	public:
 		Ref<Shader> get_shader() const;
 		void set_shader(Ref<Shader> const & value);
-
 		Var get_shader_param(String const & key) const;
 		void set_shader_param(String const & key, Var const & value);
 	};
@@ -60,6 +56,12 @@ namespace Ism
 		DEFINE_CLASS(StandardMaterial3D, Material);
 
 		friend class MaterialFormatLoader;
+
+	public:
+		StandardMaterial3D();
+		virtual ~StandardMaterial3D() override;
+		virtual RID get_shader_rid() const override;
+		virtual Shader::Mode_ get_shader_mode() const override;
 
 	public:
 		enum Param_
@@ -78,12 +80,6 @@ namespace Ism
 			"Metallic",
 			// etc...
 		};
-
-	public:
-		StandardMaterial3D();
-		virtual ~StandardMaterial3D() override;
-		virtual RID get_shader_rid() const override;
-		virtual Shader::Mode_ get_shader_mode() const override;
 
 	private:
 		void _update_shader();

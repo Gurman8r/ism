@@ -17,7 +17,7 @@ namespace Ism
 
 	static uLong ism_read(voidpf opaque, voidpf stream, voidpf buf, uLong size) {
 		ZipData * zd{ (ZipData *)stream };
-		zd->f->read_buffer((u8 *)buf, size);
+		zd->f->get_buffer((u8 *)buf, size);
 		return size;
 	}
 
@@ -279,14 +279,14 @@ namespace Ism
 		return String();
 	}
 
-	u8 ZipFile::read_8() const
+	u8 ZipFile::get_8() const
 	{
 		u8 temp{};
-		read_buffer(&temp, 1);
+		get_buffer(&temp, 1);
 		return temp;
 	}
 
-	size_t ZipFile::read_buffer(u8 * data, size_t const size) const
+	size_t ZipFile::get_buffer(u8 * data, size_t const size) const
 	{
 		ASSERT(data && size);
 		ASSERT(m_zfile);
@@ -303,7 +303,7 @@ namespace Ism
 		return (size_t)read;
 	}
 
-	ZipFile & ZipFile::write_8(u8 value)
+	ZipFile & ZipFile::put_8(u8 value)
 	{
 		CRASH("this should never be called");
 		return (*this);

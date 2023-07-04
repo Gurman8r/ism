@@ -15,13 +15,9 @@ namespace Ism
 
 	public:
 		Mesh() noexcept = default;
-
 		Mesh(Vector<RS::SurfaceData> const & surfaces);
-
 		Mesh(RS::SurfaceData const & surface) : Mesh{ Vector<RS::SurfaceData>{ surface } } {}
-
 		virtual ~Mesh() override;
-
 		virtual RID get_rid() const override { return m_mesh; }
 
 	public:
@@ -30,6 +26,9 @@ namespace Ism
 		virtual RID surface_get_vertex_array(size_t index) const;
 		virtual RID surface_get_index_array(size_t index) const;
 		virtual RID surface_get_material(size_t index) const;
+
+	public:
+		static void draw(Ref<Mesh> const & mesh);
 	};
 }
 
