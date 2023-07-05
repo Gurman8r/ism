@@ -1,0 +1,8 @@
+[material]
+name = "3D/Test"
+shader = "3D/Test"
+
+[parameters]
+albedo = 0.0,0.0,0.0,0.0
+metallic = 1.0
+specular = 1.0
