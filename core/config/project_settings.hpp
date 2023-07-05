@@ -1,7 +1,7 @@
 #ifndef _ISM_PROJECT_SETTINGS_HPP_
 #define _ISM_PROJECT_SETTINGS_HPP_
 
-#include <core/object/class.hpp>
+#include <core/io/config_file.hpp>
 
 namespace Ism
 {
@@ -13,18 +13,7 @@ namespace Ism
 
 		static ProjectSettings * __singleton;
 
-		String
-			m_bin_path			{ "./bin/" },
-			m_cache_path		{ "./cache/" },
-			m_config_path		{ "./config/" },
-			m_data_path			{ "./data/" },
-			m_defaults_path		{ "./defaultconfigs/" },
-			m_downloads_path	{ "./downloads/" },
-			m_mods_path			{ "./mods/" },
-			m_profiles_path		{ "./profiles/" },
-			m_resources_path	{ "./resources/" },
-			m_saves_path		{ "./saves/" },
-			m_user_path			{ "./user/" };
+		Ref<ConfigFile> m_ini{};
 
 		HashMap<String, HashMap<String, ObjectRef>> m_data{};
 
@@ -37,26 +26,15 @@ namespace Ism
 		Error_ setup(String const & exepath, String const & main_pack = {});
 
 	public:
-		NODISCARD String globalize_path(String const & path) const;
-		NODISCARD String get_bin_path() const;
-		NODISCARD String get_cache_path() const;
-		NODISCARD String get_config_path() const;
-		NODISCARD String get_data_path() const;
-		NODISCARD String get_downloads_path() const;
-		NODISCARD String get_mods_path() const;
-		NODISCARD String get_profiles_path() const;
-		NODISCARD String get_resources_path() const;
-		NODISCARD String get_saves_path() const;
-		NODISCARD String get_user_path() const;
-
-	public:
 		NODISCARD ObjectRef get(String const & section, String const & name) const;
 		Error_ set(String const & section, String const & name, ObjectRef const & value);
+
+	public:
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SINGLETON_WRAPPER(ProjectSettings, get_project_settings);
+	SINGLETON_WRAPPER(ProjectSettings, get_globals);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

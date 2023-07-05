@@ -1,8 +1,6 @@
 #include <core/extension/extension.hpp>
 #include <core/extension/extension_manager.hpp>
 #include <core/os/os.hpp>
-#include <core/config/project_settings.hpp>
-#include <core/io/config_file.hpp>
 
 namespace Ism
 {
@@ -12,14 +10,11 @@ namespace Ism
 
 	EMBED_CLASS(Extension, t) {}
 
-	Extension::Extension()
-	{
-	}
+	Extension::Extension(ConfigFile const & config_file) : m_config_file{ config_file } {}
 
-	Extension::~Extension()
-	{
-		close_library();
-	}
+	Extension::~Extension() { close_library(); }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Error_ Extension::open_library(String const & path, String const & entry_symbol)
 	{
@@ -84,7 +79,7 @@ namespace Ism
 
 	String Extension::get_extension_list_config_file()
 	{
-		return get_project_settings()->get_config_path() + "extensions.cfg";
+		return get_os()->get_config_dir() + "extensions.cfg";
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -94,20 +89,16 @@ namespace Ism
 	RES ExtensionFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		String const stem{ path.stem() };
-		String const ini_path{ get_project_settings()->get_config_path() + stem };
+		String const ini_path{ get_os()->get_config_dir() + stem };
 		ConfigFile const ini{ ini_path };
 		String const library_name{ ini.get_string("configuration", "library_name", stem) };
 		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("open_%s_library", library_name.c_str())) };
-		String const dll_path{ get_project_settings()->get_bin_path() + library_name };
+		String const dll_path{ get_os()->get_bin_dir() + library_name };
 
-		Ref<Extension> extension;
-		extension.instance();
-		if (extension->open_library(dll_path, entry_symbol)) {
-			extension = nullptr;
-		}
-		
+		Ref<Extension> ext; ext.instance(ini);
+		if (ext->open_library(dll_path, entry_symbol)) { ext = nullptr; }
 		if (r_error) { *r_error = Error_OK; }
-		return extension;
+		return ext;
 	}
 
 	void ExtensionFormatLoader::get_recognized_extensions(Vector<String> * out) const

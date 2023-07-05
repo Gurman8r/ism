@@ -9,26 +9,37 @@ namespace Ism
 	{
 		DEFINE_CLASS(ConfigFile, Resource);
 
-		using Section = HashMap<String, String>;
+		using Section = typename HashMap<String, String>;
+
 		HashMap<String, Section> m_data{};
 
 	public:
 		ConfigFile() noexcept {}
-		explicit ConfigFile(String const & path);
-		virtual ~ConfigFile();
-		virtual RID get_rid() const override { return 0; }
+		ConfigFile(ConfigFile const &) = default;
+		ConfigFile(ConfigFile &&) noexcept = default;
+		ConfigFile & operator=(ConfigFile const &) = default;
+		ConfigFile & operator=(ConfigFile &&) noexcept = default;
+		virtual ~ConfigFile() noexcept override = default;
+		virtual RID get_rid() const override { return nullptr; }
 
 	public:
+		explicit ConfigFile(String const & path) { parse(path); }
+		
+		Error_ parse(String const & path);
+
+		static Ref<ConfigFile> parse(String const & path, Error_ * r_error);
+
+	public:
+		bool set_string(String const & section, String const & name, String const & value);
 		NODISCARD String get_string(String const & section, String const & name, String const & default_value = {}) const;
 		NODISCARD Vector<String> get_strings(String const & section, String const & name, String const & delim, Vector<String> const & default_value = {}) const;
-		bool set_string(String const & section, String const & name, String const & value);
 
 	public:
-		NODISCARD bool get_bool(String const & section, String const & name, bool default_value = {}) const;
-		NODISCARD i32 get_i32(String const & section, String const & name, i32 default_value = {}) const;
-		NODISCARD u32 get_u32(String const & section, String const & name, u32 default_value = {}) const;
-		NODISCARD f32 get_f32(String const & section, String const & name, f32 default_value = {}) const;
-		NODISCARD f64 get_f64(String const & section, String const & name, f64 default_value = {}) const;
+		NODISCARD bool get_bool(String const & section, String const & name, bool const default_value = {}) const;
+		NODISCARD i32 get_i32(String const & section, String const & name, i32 const default_value = {}) const;
+		NODISCARD u32 get_u32(String const & section, String const & name, u32 const default_value = {}) const;
+		NODISCARD f32 get_f32(String const & section, String const & name, f32 const default_value = {}) const;
+		NODISCARD f64 get_f64(String const & section, String const & name, f64 const default_value = {}) const;
 
 	public:
 		NODISCARD Vec2f get_vec2f(String const & section, String const & name, Vec2f const & default_value = {}) const;

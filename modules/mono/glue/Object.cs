@@ -5,6 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	[Serializable]
 	public class Object
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

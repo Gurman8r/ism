@@ -15,67 +15,12 @@ namespace Ism
 
 	Error_ ProjectSettings::setup(String const & exepath, String const & main_pack)
 	{
-		if (exepath.empty()) {
-			return Error_Failed;
-		}
-
-		// engine settings
-		String const engine_ini{ get_config_path() + "engine.ini" };
-		ini_parse(engine_ini.c_str(), [](auto user, auto section, auto name, auto value) {
-			((ProjectSettings *)user)->set(section, name, evaluate(value));
-			return 1;
-		}, this);
-
-#if TOOLS_ENABLED
-		// editor settings
-		String const editor_ini{ get_config_path() + "editor.ini" };
-		ini_parse(editor_ini.c_str(), [](auto user, auto section, auto name, auto value) {
-			((ProjectSettings *)user)->set(section, name, evaluate(value));
-			return 1;
-		}, this);
-#endif
-
+		if (exepath.empty()) { return Error_Failed; }
+		if (m_ini) { m_ini = nullptr; } m_ini = memnew(ConfigFile);
+		if (Error_ const err{ m_ini->parse(get_os()->get_config_dir() + "engine.ini") }) { return err; }
+		if (Error_ const err{ m_ini->parse(get_os()->get_config_dir() + "editor.ini") }) { return err; }
 		return Error_OK;
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	String ProjectSettings::globalize_path(String const & path) const
-	{
-		if (path.has_prefix("res://")) {
-			if (!m_resources_path.empty()) {
-				return path.replace("res:/", m_resources_path);
-			}
-			return path.replace("res://", "");
-		}
-		else if (path.has_prefix("user://")) {
-			if (String data_dir{ get_os()->get_user_path() }; !data_dir.empty()) {
-				return path.replace("user:/", data_dir);
-			}
-			return path.replace("user://", "");
-		}
-		return path;
-	}
-
-	String ProjectSettings::get_bin_path() const { return m_bin_path; }
-
-	String ProjectSettings::get_config_path() const { return m_config_path; }
-
-	String ProjectSettings::get_cache_path() const { return m_cache_path; }
-
-	String ProjectSettings::get_data_path() const { return m_data_path; }
-
-	String ProjectSettings::get_downloads_path() const { return m_downloads_path; }
-
-	String ProjectSettings::get_mods_path() const { return m_mods_path; }
-
-	String ProjectSettings::get_profiles_path() const { return m_profiles_path; }
-
-	String ProjectSettings::get_resources_path() const { return m_resources_path; }
-
-	String ProjectSettings::get_saves_path() const { return m_saves_path; }
-
-	String ProjectSettings::get_user_path() const { return m_user_path; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

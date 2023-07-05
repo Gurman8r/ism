@@ -2,7 +2,7 @@
 #include <scene/resources/texture.hpp>
 #include <servers/rendering_server.hpp>
 #include <servers/rendering/renderer_storage.hpp>
-#include <core/config/project_settings.hpp>
+#include <core/os/os.hpp>
 
 #include <assimp/Importer.hpp>
 #include <assimp/cimport.h>
@@ -136,7 +136,7 @@ namespace Ism
 	RES MeshFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Mesh> temp{}; temp.instance();
-		if (auto const error{ load_mesh(temp, get_project_settings()->globalize_path(path)) }) { if (r_error) { *r_error = error; } temp = nullptr; }
+		if (auto const error{ load_mesh(temp, get_os()->globalize_path(path)) }) { if (r_error) { *r_error = error; } temp = nullptr; }
 		else if (r_error) { *r_error = Error_OK; }
 		return temp;
 	}

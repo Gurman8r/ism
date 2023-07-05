@@ -38,8 +38,8 @@ _SERVERS	= "%{_SLN}servers/"
 
 -- project paths
 _ASSETS		= "%{_SLN}assets/"
-_TEMPS		= "%{_SLN}tmp/%{_ACTION}/%{_TARGET_OS}/"
 _THIRDPARTY	= "%{_SLN}thirdparty/"
+_TMP		= "%{_SLN}tmp/%{_ACTION}/%{_TARGET_OS}/"
 _VENDOR		= "%{_SLN}misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}/"
 _PROJECT	= "%{_SLN}workspace/%{_ACTION}/%{prj.name}/"
 
@@ -67,8 +67,8 @@ end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- C++ project common
-function cpp_project_common(_group, _project, _kind, _targetdir)
+-- cpp project
+function cpp_project(_group, _project, _kind, _targetdir)
 	group			(_group)
 	project			(_project)
 	kind			(_kind)
@@ -79,12 +79,12 @@ function cpp_project_common(_group, _project, _kind, _targetdir)
 	rtti			("On")
 	targetname		("%{prj.name}")
 	targetdir		(_targetdir)
-	objdir			("%{_TEMPS}")
+	objdir			("%{_TMP}")
 	location		("%{_PROJECT}")
 end
 
--- C# project common
-function csharp_project_common(_group, _project, _kind, _targetdir)
+-- csharp project
+function csharp_project(_group, _project, _kind, _targetdir)
 	group		(_group)
 	project		(_project)
 	kind		(_kind)
@@ -92,7 +92,7 @@ function csharp_project_common(_group, _project, _kind, _targetdir)
 	framework	("4.0")
 	targetname	("%{prj.name}")
 	targetdir	(_targetdir)
-	objdir		("%{_TEMPS}")
+	objdir		("%{_TMP}")
 	location	("%{_PROJECT}")
 end
 
@@ -118,9 +118,10 @@ function links_win32()
 	filter{}
 end
 
--- mark executable
-function mark_as_executable()
+-- main executable
+function main_executable()
 	dependson{ "ism", "lua", "mono", }
+	defines{ "MAIN_ENABLED=1", "IMGUI_API=ISM_API_IMPORT", }
 	links{ "assimp%{LIB}", "freetype", "glfw", "imgui", "IrrXML", "ism", "mono-2.0-sgen", "zip", "zlibstatic", }
 	files{ "%{_PLATFORM}%{_TARGET_OS}/%{_TARGET_OS}_main.cpp", }
 end

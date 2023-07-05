@@ -88,8 +88,7 @@ namespace Ism
 		{
 			if (!has_references() && m_refcount_init.dec_ref())
 			{
-				// first referencing is already 1, so compensate for the ref above
-				dec_ref();
+				dec_ref(); /* first referencing is already 1, so compensate for the ref above */
 			}
 			return true;
 		}
@@ -100,10 +99,7 @@ namespace Ism
 	{
 		u32 const rc_val{ m_refcount.refval() };
 		bool const ok{ rc_val != 0 };
-		if (ok && rc_val <= 2 /* higher is not relevant */)
-		{
-			/* nothing to do */
-		}
+		if (ok && rc_val <= 2 /* higher is not relevant */) { /* nothing to do here */ }
 		return ok;
 	}
 
@@ -111,10 +107,7 @@ namespace Ism
 	{
 		u32 const rc_val{ m_refcount.unrefval() };
 		bool const die{ rc_val == 0 };
-		if (rc_val <= 1 /* higher is not relevant */)
-		{
-			/* nothing to do */
-		}
+		if (rc_val <= 1 /* higher is not relevant */) { /* nothing to do here */ }
 		return die;
 	}
 

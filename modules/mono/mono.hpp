@@ -44,9 +44,9 @@ namespace Ism
 		friend class CSharpScript;
 		friend class CSharpInstance;
 
-		MonoDomain *			m_dom{};
-		Vector<MonoAssembly *>	m_asm{};
-		Vector<MonoImage *>		m_img{};
+		MonoDomain * m_dom{};
+
+		Batch<String, MonoAssembly *, MonoImage *> m_data{};
 
 		MonoClass * m_object_base{};
 		MonoClass * m_script_base{};
@@ -60,7 +60,9 @@ namespace Ism
 		bool initialize();
 		bool finalize();
 
-		bool load_assemblies();
+		Error_ load_assemblies();
+
+		Error_ load_dll(String const & path);
 	};
 
 	SINGLETON_WRAPPER(Mono, get_mono);

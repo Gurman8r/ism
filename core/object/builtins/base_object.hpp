@@ -94,7 +94,7 @@ private:
 																					\
 		static void embed(Ism::TypeObject & t)										\
 		{																			\
-			/* TODO: can add extra stuff here */									\
+			/* TODO: can add extra stuff here if needed */							\
 																					\
 			do_embed(t);															\
 		}																			\
@@ -173,30 +173,30 @@ namespace Ism
 		bool init_ref();
 		bool inc_ref();
 		bool dec_ref();
-		i32 get_ref_count() const { return m_refcount.get(); }
-		bool has_references() const { return m_refcount_init.get() != 1; }
+		NODISCARD i32 get_ref_count() const { return m_refcount.get(); }
+		NODISCARD bool has_references() const { return m_refcount_init.get() != 1; }
 
 		void notification(Notification_ id, bool reversed = false);
 
-		static constexpr StringView get_class_name_static() noexcept { return __name_static; }
-		StringView get_class_name() const noexcept { return _get_class_namev(); }
+		NODISCARD static constexpr StringView get_class_name_static() noexcept { return __name_static; }
+		NODISCARD StringView get_class_name() const noexcept { return _get_class_namev(); }
 
-		static TypeRef get_type_static() noexcept;
-		TypeRef get_type() const noexcept;
+		NODISCARD static TypeRef get_type_static() noexcept;
+		NODISCARD TypeRef get_type() const noexcept;
 		void set_type(TypeRef const & value) noexcept;
 
-		template <class T> T cast() const &;
-		template <class T> T cast() &&;
+		template <class T> NODISCARD T cast() const &;
+		template <class T> NODISCARD T cast() &&;
 
-		Object * ptr() const noexcept { return (Object *)this; }
+		NODISCARD Object * ptr() const noexcept { return (Object *)this; }
 
 		// generic_getattr
-		static ObjectRef generic_getattr_with_dict(ObjectRef obj, ObjectRef name, ObjectRef dict);
-		static ObjectRef generic_getattr(ObjectRef obj, ObjectRef name) noexcept;
+		NODISCARD static ObjectRef generic_getattr_with_dict(ObjectRef obj, ObjectRef name, ObjectRef dict);
+		NODISCARD static ObjectRef generic_getattr(ObjectRef obj, ObjectRef name) noexcept;
 
 		// generic_setattr
-		static Error_ generic_setattr_with_dict(ObjectRef obj, ObjectRef name, ObjectRef value, ObjectRef dict);
-		static Error_ generic_setattr(ObjectRef obj, ObjectRef name, ObjectRef value) noexcept;
+		NODISCARD static Error_ generic_setattr_with_dict(ObjectRef obj, ObjectRef name, ObjectRef value, ObjectRef dict);
+		NODISCARD static Error_ generic_setattr(ObjectRef obj, ObjectRef name, ObjectRef value) noexcept;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

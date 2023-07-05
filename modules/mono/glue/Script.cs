@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Ism
 {
+	[Serializable]
 	public class Script : Object
 	{
 	}

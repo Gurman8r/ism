@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- zip
-cpp_project_common("Modules", "zip", "StaticLib", "%{_BUILD_BIN}")
+cpp_project("Modules", "zip", "StaticLib", "%{_BUILD_BIN}")
 
 dependson{ "assets", }
 

@@ -131,7 +131,7 @@ namespace Ism
 
 	String WindowsOS::get_cwd() const
 	{
-		return ".";
+		return "./";
 	}
 
 	Error_ WindowsOS::set_cwd(String const & path)
@@ -148,16 +148,15 @@ namespace Ism
 
 	String WindowsOS::get_env(String const & key) const
 	{
-		return "";
+		return {};
 	}
 
 	bool WindowsOS::has_env(String const & key) const
 	{
-		//WCHAR * env; size_t len;
-		//_wdupenv_s(&env, &len, (LPCWSTR)(key.widen().c_str()));
-		//ON_SCOPE_EXIT(env) { free(env); };
-		//return (bool)env;
-		return false;
+		WCHAR * env; size_t len;
+		_wdupenv_s(&env, &len, key.widen().c_str());
+		ON_SCOPE_EXIT(env) { free(env); };
+		return (bool)env;
 	}
 
 	void WindowsOS::set_env(String const & key, String const & value) const
@@ -187,7 +186,7 @@ namespace Ism
 
 	String WindowsOS::get_model_name() const
 	{
-		return ""_s;
+		return {};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -209,19 +208,19 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OS::Date WindowsOS::get_date(bool local) const
+	Date WindowsOS::get_date(bool local) const
 	{
-		return Date{};
+		return {};
 	}
 
-	OS::Time WindowsOS::get_time(bool local) const
+	Time WindowsOS::get_time(bool local) const
 	{
-		return Time{};
+		return {};
 	}
 
-	OS::TimeZoneInfo WindowsOS::get_time_zone() const
+	TimeZoneInfo WindowsOS::get_time_zone() const
 	{
-		return TimeZoneInfo{};
+		return {};
 	}
 
 	void WindowsOS::delay(Duration const & duration)
@@ -230,7 +229,7 @@ namespace Ism
 
 	Duration WindowsOS::get_ticks() const
 	{
-		return Duration();
+		return {};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -252,42 +251,66 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String WindowsOS::get_bin_path() const
+	String WindowsOS::get_bin_dir() const
 	{
-		return ".";
+		return "./";
 	}
 
-	String WindowsOS::get_cache_path() const
+	String WindowsOS::get_cache_dir() const
 	{
-		return ".";
+		return "./";
 	}
 
-	String WindowsOS::get_config_path() const
+	String WindowsOS::get_config_dir() const
 	{
-		return ".";
+		return "./";
 	}
 
-	String WindowsOS::get_data_path() const
+	String WindowsOS::get_data_dir() const
 	{
-		return ".";
+		return "./";
 	}
 
-	String WindowsOS::get_exe_path() const
+	String WindowsOS::get_downloads_dir() const
+	{
+		return "./";
+	}
+
+	String WindowsOS::get_exe_dir() const
 	{
 		WCHAR buf[4096];
 		GetModuleFileNameW(nullptr, buf, 4096);
-		//return Unicode(buf).narrow().replace_all("\\", "/");
-		return {};
+		return Unicode(buf).narrow().replace("\\", "/");
 	}
 
-	String WindowsOS::get_system_path(SystemDir_ value) const
+	String WindowsOS::get_mods_dir() const
 	{
-		return ".";
+		return "./";
 	}
 
-	String WindowsOS::get_user_path() const
+	String WindowsOS::get_profiles_dir() const
 	{
-		return ".";
+		return "./";
+	}
+
+	String WindowsOS::get_resource_dir() const
+	{
+		return "./";
+	}
+
+	String WindowsOS::get_saves_dir() const
+	{
+		return "./";
+	}
+
+	String WindowsOS::get_system_dir(SystemDir_ value) const
+	{
+		return "./";
+	}
+
+	String WindowsOS::get_user_dir() const
+	{
+		return "./";
 	}
 
 	Error_ WindowsOS::move_to_trash(String const & path)
@@ -299,7 +322,7 @@ namespace Ism
 
 	void WindowsOS::debug_break()
 	{
-		_CSTD __debugbreak();
+		__debugbreak();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

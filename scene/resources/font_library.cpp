@@ -1,6 +1,6 @@
 #include <scene/resources/font_library.hpp>
 #include <servers/text_server.hpp>
-#include <core/config/project_settings.hpp>
+#include <core/os/os.hpp>
 
 namespace Ism
 {
@@ -22,7 +22,7 @@ namespace Ism
 	RES FontFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Font> temp{}; temp.instance();
-		if (auto const error{ load_font(temp, get_project_settings()->globalize_path(path)) }) { if (r_error) { *r_error = error; } temp = nullptr; }
+		if (auto const error{ load_font(temp, get_os()->globalize_path(path)) }) { if (r_error) { *r_error = error; } temp = nullptr; }
 		else if (r_error) { *r_error = Error_OK; }
 		return temp;
 	}

@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- freetype2
-cpp_project_common("Modules", "freetype2", "Utility", "%{_BUILD_BIN}")
+cpp_project("Modules", "freetype2", "Utility", "%{_BUILD_BIN}")
 
 dependson{ "assets", }
 

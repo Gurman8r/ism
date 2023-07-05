@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- mono
-cpp_project_common("Modules", "mono", "SharedLib", "%{_BUILD_BIN}")
+cpp_project("Modules", "mono", "SharedLib", "%{_BUILD_BIN}")
 
 manifest("mono-2.0-sgen")
 
@@ -33,7 +33,7 @@ postbuildcommands{
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- ism-CS
-csharp_project_common("Engine", "ism-CS", "SharedLib", "%{_BUILD_BIN}")
+csharp_project("Engine", "ism-CS", "SharedLib", "%{_BUILD_BIN}")
 
 files{ "%{_MODULES}mono/**.cs" }
 

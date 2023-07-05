@@ -5,6 +5,7 @@
 
 #include <chrono>
 
+// duration
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -160,6 +161,12 @@ namespace Ism
 	constexpr auto operator"" _days(u64 value) noexcept { return Duration{ ratio_cast(static_cast<f32>(value), Ratio<60 * 60 * 24>{}) }; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// clock
+namespace Ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// clock base
 	using _ClockBase = std::chrono::high_resolution_clock;
@@ -179,6 +186,67 @@ namespace Ism
 		Clock(Clock &&) noexcept = delete;
 		Clock & operator=(Clock const &) = delete;
 		Clock & operator=(Clock &&) noexcept = delete;
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+}
+
+// date/time
+namespace Ism
+{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// day
+	enum Day_ {
+		Day_Sunday,
+		Day_Monday,
+		Day_Tuesday,
+		Day_Wednesday,
+		Day_Thursday,
+		Day_Friday,
+		Day_Saturday,
+		Day_MAX
+	};
+
+	// month
+	enum Month_ {
+		Month_January,
+		Month_February,
+		Month_March,
+		Month_April,
+		Month_May,
+		Month_June,
+		Month_July,
+		Month_August,
+		Month_September,
+		Month_October,
+		Month_November,
+		Month_December,
+		Month_MAX
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// date
+	struct Date {
+		i32		year	{};
+		Month_	month	{};
+		i32		day		{};
+		Day_	weekday	{};
+		bool	dst		{}; /* daylight saving time */ 
+	};
+
+	// time
+	struct Time {
+		i32		hour	{};
+		i32		min		{};
+		i32		sec		{};
+	};
+
+	// time zone info
+	struct TimeZoneInfo {
+		i32		bias	{};
+		cstring	name	{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

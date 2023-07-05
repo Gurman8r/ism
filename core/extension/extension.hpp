@@ -2,8 +2,8 @@
 #define _ISM_EXTENSION_HPP_
 
 #include <core/extension/extension_interface.hpp>
-
 #include <core/io/resource_loader.hpp>
+#include <core/io/config_file.hpp>
 
 namespace Ism
 {
@@ -17,10 +17,12 @@ namespace Ism
 		void * m_library{};
 		i32 m_level_initialized{ -1 };
 		ExtensionInitialization m_initialization{};
+		ConfigFile m_config_file;
 
 	public:
-		Extension();
-		virtual ~Extension() override;
+		Extension() noexcept {}
+		Extension(ConfigFile const & config_file);
+		virtual ~Extension() noexcept override;
 
 		Error_ open_library(String const & path, String const & entry_symbol);
 		void close_library();

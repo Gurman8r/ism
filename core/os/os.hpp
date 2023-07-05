@@ -15,12 +15,26 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	// system dir
+	enum SystemDir_ {
+		SystemDir_DCIM,
+		SystemDir_Desktop,
+		SystemDir_Documents,
+		SystemDir_Downloads,
+		SystemDir_Movies,
+		SystemDir_Music,
+		SystemDir_Pictures,
+		SystemDir_Ringtones,
+		SystemDir_MAX
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// operating system
 	class ISM_API OS
 	{
 		static OS * __singleton;
 
-		String				m_exepath{};
 		Vector<String>		m_cmdline{};
 		Vector<String>		m_user_args{};
 		Vector<String>		m_restart_args{};
@@ -31,11 +45,26 @@ namespace Ism
 		i32					m_exit_code{};
 		CompositeLogger *	m_logger{};
 
-		bool m_verbose_stdout : 1;
-		bool m_debug_stdout : 1;
-		bool m_stdout_enabled : 1;
-		bool m_stderr_enabled : 1;
-		bool m_restart_on_exit : 1;
+		String // paths
+			m_exe_dir		{ "./" },
+			m_bin_dir		{ "./bin/" },
+			m_cache_dir		{ "./cache/" },
+			m_config_dir	{ "./config/" },
+			m_data_dir		{ "./data/" },
+			m_defaults_dir	{ "./defaultconfigs/" },
+			m_downloads_dir	{ "./downloads/" },
+			m_mods_dir		{ "./mods/" },
+			m_profiles_dir	{ "./profiles/" },
+			m_resources_dir	{ "./resources/" },
+			m_saves_dir		{ "./saves/" },
+			m_user_dir		{ "./user/" };
+
+		bool // flags
+			m_debug_stdout : 1,
+			m_verbose_stdout : 1,
+			m_stdout_enabled : 1,
+			m_stderr_enabled : 1,
+			m_restart_on_exit : 1;
 
 	public:
 		OS();
@@ -88,7 +117,7 @@ namespace Ism
 
 		virtual Error_ execute(String const & path, Vector<String> const & args, String * pipe = nullptr, i32 * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) = 0;
 		virtual Error_ create_process(String const & path, Vector<String> const & args, ProcessID * child_id = nullptr) = 0;
-		virtual Error_ create_instance(Vector<String> const & args, ProcessID * child_id = nullptr) { return create_process(get_exe_path(), args, child_id); };
+		virtual Error_ create_instance(Vector<String> const & args, ProcessID * child_id = nullptr) { return create_process(get_exe_dir(), args, child_id); };
 		virtual Error_ kill(ProcessID const & pid) = 0;
 		NODISCARD virtual i32 get_pid() const = 0;
 		NODISCARD virtual bool is_process_running(ProcessID const & pid) const = 0;
@@ -109,52 +138,6 @@ namespace Ism
 		NODISCARD virtual String get_model_name() const;
 
 		NODISCARD virtual Ref<MainLoop> get_main_loop() const = 0;
-
-		enum Weekday_ {
-			Weekday_Sunday,
-			Weekday_Monday,
-			Weekday_Tuesday,
-			Weekday_Wednesday,
-			Weekday_Thursday,
-			Weekday_Friday,
-			Weekday_Saturday,
-			Weekday_MAX
-		};
-
-		enum Month_ {
-			Month_January,
-			Month_February,
-			Month_March,
-			Month_April,
-			Month_May,
-			Month_June,
-			Month_July,
-			Month_August,
-			Month_September,
-			Month_October,
-			Month_November,
-			Month_December,
-			Month_MAX
-		};
-
-		struct Date {
-			i32			year	{};
-			Month_		month	{};
-			i32			day		{};
-			Weekday_	weekday	{};
-			bool		dst		{ /* daylight saving time */ };
-		};
-
-		struct Time {
-			i32 hour{};
-			i32 min	{};
-			i32 sec	{};
-		};
-
-		struct TimeZoneInfo {
-			i32		bias{};
-			String	name{};
-		};
 
 		NODISCARD virtual Date get_date(bool local = false) const = 0;
 		NODISCARD virtual Time get_time(bool local = false) const = 0;
@@ -178,28 +161,23 @@ namespace Ism
 
 		NODISCARD virtual String get_locale() const;
 		NODISCARD String get_locale_language() const;
-
 		NODISCARD String get_safe_path(String const & path, bool allow_dir_separator = false) const;
-		NODISCARD virtual String get_bin_path() const;
-		NODISCARD virtual String get_cache_path() const;
-		NODISCARD virtual String get_config_path() const;
-		NODISCARD virtual String get_data_path() const;
-		NODISCARD virtual String get_exe_path() const;
-		NODISCARD virtual String get_resources_path() const;
-		NODISCARD virtual String get_user_path() const;
 
-		enum SystemDir_ {
-			SystemDir_DCIM,
-			SystemDir_Desktop,
-			SystemDir_Documents,
-			SystemDir_Downloads,
-			SystemDir_Movies,
-			SystemDir_Music,
-			SystemDir_Pictures,
-			SystemDir_Ringtones,
-			SystemDir_MAX
-		};
-		NODISCARD virtual String get_system_path(SystemDir_ value) const;
+		NODISCARD String localize_path(String const & path) const;
+		NODISCARD String globalize_path(String const & path) const;
+
+		NODISCARD virtual String get_bin_dir() const;
+		NODISCARD virtual String get_cache_dir() const;
+		NODISCARD virtual String get_config_dir() const;
+		NODISCARD virtual String get_data_dir() const;
+		NODISCARD virtual String get_downloads_dir() const;
+		NODISCARD virtual String get_exe_dir() const;
+		NODISCARD virtual String get_mods_dir() const;
+		NODISCARD virtual String get_profiles_dir() const;
+		NODISCARD virtual String get_resource_dir() const;
+		NODISCARD virtual String get_saves_dir() const;
+		NODISCARD virtual String get_system_dir(SystemDir_ value) const;
+		NODISCARD virtual String get_user_dir() const;
 
 		virtual Error_ move_to_trash(String const & path);
 

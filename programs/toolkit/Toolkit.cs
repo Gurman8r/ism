@@ -1,14 +1,17 @@
 using System;
-using System.Runtime.CompilerServices;
 
-namespace Demo
+namespace Toolkit
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	[Serializable]
-	public class Test : Ism.Script
+	public class Toolkit : Ism.Script
 	{
-		private void OnAwake()
+		private void OnInitialize()
+		{
+		}
+
+		private void OnFinalize()
 		{
 		}
 
@@ -20,11 +23,11 @@ namespace Demo
 		{
 		}
 
-		private void OnStart()
+		private void OnProcess(float delta_time)
 		{
 		}
 
-		private void OnUpdate()
+		private void OnPhysicsProcess(float delta_time)
 		{
 		}
 	}

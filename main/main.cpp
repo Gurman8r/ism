@@ -20,11 +20,8 @@
 #include <servers/text_server.hpp>
 #include <scene/main/scene_tree.hpp>
 
-#if TOOLS_ENABLED
 #include <editor/editor_node.hpp>
 #include <editor/register_editor_types.hpp>
-#endif
-
 #include <scene/gui/imgui.hpp>
 
 namespace Ism
@@ -48,7 +45,7 @@ namespace Ism
 	static PhysicsServer *		physics{};
 	static TextServer *			text{};
 
-	static bool					editor{};
+	static bool					editor{ true };
 	static ImGuiContext *		imgui_context{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -86,8 +83,10 @@ namespace Ism
 		physics = memnew(PS);
 		audio = memnew(AS);
 
-		//display->set_native_icon("res://icons/toolkit.ico");
-		if (Ref<Image> icon{ get_resource_loader()->load("res://icons/toolkit.png") }) { icon->flip_vertically(); display->set_icon(icon->get_pixel_data(), icon->get_width(), icon->get_height()); }
+		//display->set_native_icon("res://icons/" + get_os()->get_exe_dir().stem() + ".ico");
+		if (Ref<Image> i{ get_resource_loader()->load("res://icons/" + get_os()->get_exe_dir().stem() + ".png") }) {
+			i->flip_vertically(); display->set_icon(i->get_pixel_data(), i->get_width(), i->get_height());
+		}
 
 		register_core_singletons();
 
@@ -100,12 +99,9 @@ namespace Ism
 		get_ext()->initialize_extensions(ExtensionInitializationLevel_Scene);
 		register_scene_singletons();
 
-#if TOOLS_ENABLED
-		editor = true;
 		register_editor_types();
 		get_ext()->initialize_extensions(ExtensionInitializationLevel_Editor);
 		register_editor_singletons();
-#endif
 
 		//initialize_theme();
 
@@ -148,9 +144,7 @@ namespace Ism
 
 			Window * root{ tree->get_root() };
 
-#if TOOLS_ENABLED
 			if (editor) { root->add_child<EditorNode>(); }
-#endif
 
 			// etc...
 		}
@@ -198,10 +192,8 @@ namespace Ism
 
 		get_scripting()->finalize_languages();
 
-#if TOOLS_ENABLED
 		get_ext()->finalize_extensions(ExtensionInitializationLevel_Editor);
 		unregister_editor_types();
-#endif
 
 		get_ext()->finalize_extensions(ExtensionInitializationLevel_Scene);
 		unregister_driver_types();

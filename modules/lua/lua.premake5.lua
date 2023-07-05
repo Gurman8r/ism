@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- lua
-cpp_project_common("Modules", "lua", "SharedLib", "%{_BUILD_BIN}")
+cpp_project("Modules", "lua", "SharedLib", "%{_BUILD_BIN}")
 
 dependson{ "ism", }
 

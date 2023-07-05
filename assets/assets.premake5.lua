@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- assets
-cpp_project_common("", "assets", "Utility", "%{_BUILD_BIN}")
+cpp_project("", "assets", "Utility", "%{_BUILD_BIN}")
 
 files{ "%{_ASSETS}**.**", }
 

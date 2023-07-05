@@ -31,7 +31,6 @@ namespace Ism
 		auto const it{ m_extensions.find(path) };
 		if (it != m_extensions.end()) { return LoadStatus_AlreadyLoaded; }
 
-		
 		Ref<Extension> extension{ get_resource_loader()->load(path) };
 		if (!extension) { return LoadStatus_Failure; }
 

@@ -24,8 +24,6 @@ solution_items{
 
 -- engine
 include "ism.premake5.lua"
-
--- assets
 include "assets/assets.premake5.lua"
 
 -- modules

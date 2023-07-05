@@ -20,9 +20,9 @@ namespace Ism
 		switch (m_access_type)
 		{
 		case FileAccess_Resources: {
-			if (get_project_settings()) {
+			if (get_globals()) {
 				if (r_path.has_prefix("res://")) {
-					String resource_path{ ProjectSettings::get_singleton()->get_resources_path() };
+					String resource_path{ get_os()->get_resource_dir() };
 					if (!resource_path.empty()) {
 						return r_path.replace("res:/", resource_path);
 					}
@@ -33,7 +33,7 @@ namespace Ism
 		} break;
 		case FileAccess_User: {
 			if (r_path.has_prefix("user://")) {
-				if (String data_dir{ get_os()->get_user_path() }; !data_dir.empty()) {
+				if (String data_dir{ get_os()->get_user_dir() }; !data_dir.empty()) {
 					return r_path.replace("user:/", data_dir);
 				}
 				return r_path.replace("user://", "");

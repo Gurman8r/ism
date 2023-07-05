@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- ism
-cpp_project_common("Engine", "ism", "SharedLib", "%{_BUILD_BIN}")
+cpp_project("Engine", "ism", "SharedLib", "%{_BUILD_BIN}")
 
 manifest("ism")
 
@@ -13,7 +13,6 @@ links{ "assimp%{LIB}", "freetype", "glfw", "imgui", "IrrXML", "zip", "zlibstatic
 
 defines{
 	"DYNAMIC_BUILD_ENABLED=1",
-	"TOOLS_ENABLED=1",
 	"IMGUI_API=ISM_API_IMPORT",
 }
 

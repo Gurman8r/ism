@@ -245,7 +245,7 @@ namespace Ism
 		{
 		case Notification_Process: {
 
-			get_tree()->get_root()->set_title(String::format<64>("Ism Engine @ %.3f fps", get_tree()->get_fps().value));
+			get_tree()->get_root()->set_title(String::format<64>("%s @ %.3f fps", get_os()->get_exe_dir().stem().c_str(), get_tree()->get_fps().value));
 
 			Duration const delta_time{ get_tree()->get_delta_time() };
 

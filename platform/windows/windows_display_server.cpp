@@ -2,7 +2,7 @@
 #include <scene/main/window.hpp>
 #include <core/io/file.hpp>
 #include <core/io/image_library.hpp>
-#include <core/config/project_settings.hpp>
+#include <core/os/os.hpp>
 
 #include <glfw/glfw3.h>
 #if defined(SYSTEM_WINDOWS)
@@ -576,7 +576,7 @@ namespace Ism
 
 	void WindowsDisplayServer::set_native_icon(String const & p_filename)
 	{
-		Ref<File> f{ File::open(get_project_settings()->globalize_path(p_filename), FileMode_Read) };
+		Ref<File> f{ File::open(get_os()->globalize_path(p_filename), FileMode_Read) };
 		if (!f) {
 			CRASH("cannot open icon");
 		}

@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- glew
-cpp_project_common("Modules", "glew", "Utility", "%{_BUILD_BIN}")
+cpp_project("Modules", "glew", "Utility", "%{_BUILD_BIN}")
 
 manifest("glew32", "glew32d")
 

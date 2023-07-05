@@ -122,7 +122,7 @@ namespace Ism
 
 	void OS::set_cmdline(cstring exepath, Vector<String> const & args)
 	{
-		m_exepath = exepath;
+		m_exe_dir = exepath;
 		m_cmdline = args;
 	}
 
@@ -208,53 +208,52 @@ namespace Ism
 
 	String OS::get_safe_path(String const & path, bool allow_dir_separator) const
 	{
-		return ".";
+		return path;
 	}
 
-	String OS::get_bin_path() const
+	String OS::localize_path(String const & path) const
 	{
-		return ".";
+		return {};
 	}
 
-	String OS::get_cache_path() const
+	String OS::globalize_path(String const & path) const
 	{
-		return ".";
+		if (path.has_prefix("res://")) {
+			if (!m_resources_dir.empty()) { return path.replace("res:/", m_resources_dir); }
+			return path.replace("res://", "");
+		}
+		else if (path.has_prefix("user://")) {
+			if (String const data_dir{ get_os()->get_user_dir() }; !data_dir.empty()) { return path.replace("user:/", data_dir); }
+			return path.replace("user://", "");
+		}
+		return path;
 	}
 
-	String OS::get_config_path() const
-	{
-		return ".";
-	}
+	String OS::get_bin_dir() const { return m_bin_dir; }
 
-	String OS::get_data_path() const
-	{
-		return ".";
-	}
+	String OS::get_cache_dir() const { return m_cache_dir; }
 
-	String OS::get_exe_path() const
-	{
-		return m_exepath;
-	}
+	String OS::get_config_dir() const { return m_config_dir; }
 
-	String OS::get_resources_path() const
-	{
-		return ".";
-	}
+	String OS::get_data_dir() const { return m_data_dir; }
 
-	String OS::get_user_path() const
-	{
-		return ".";
-	}
+	String OS::get_downloads_dir() const { return m_downloads_dir; }
 
-	String OS::get_system_path(SystemDir_ value) const
-	{
-		return ".";
-	}
+	String OS::get_exe_dir() const { return m_exe_dir; }
 
-	Error_ OS::move_to_trash(String const & path)
-	{
-		return Error_Failed;
-	}
+	String OS::get_mods_dir() const { return m_mods_dir; }
+
+	String OS::get_profiles_dir() const { return m_profiles_dir; }
+
+	String OS::get_resource_dir() const { return m_resources_dir; }
+
+	String OS::get_saves_dir() const { return m_saves_dir; }
+
+	String OS::get_system_dir(SystemDir_ value) const { return "./"; }
+
+	String OS::get_user_dir() const { return m_user_dir; }
+
+	Error_ OS::move_to_trash(String const & path) { return Error_Failed; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -278,7 +277,7 @@ namespace Ism
 
 	String OS::get_processor_name() const
 	{
-		return String();
+		return {};
 	}
 
 	String OS::get_unique_id() const
@@ -297,12 +296,12 @@ namespace Ism
 
 	bool OS::is_restart_on_exit_set() const
 	{
-		return bool();
+		return false;
 	}
 
 	Vector<String> OS::get_restart_on_exit_arguments() const
 	{
-		return Vector<String>();
+		return {};
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

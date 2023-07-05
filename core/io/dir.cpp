@@ -1,7 +1,6 @@
 #include <core/io/dir.hpp>
 #include <core/io/file.hpp>
 #include <core/os/os.hpp>
-#include <core/config/project_settings.hpp>
 #include <filesystem>
 
 namespace Ism
@@ -23,8 +22,8 @@ namespace Ism
 	String Dir::_get_root_path() const
 	{
 		switch (m_access_type) {
-		case DirAccess_Resources: return get_project_settings()->get_user_path();
-		case DirAccess_User: return get_os()->get_user_path();
+		case DirAccess_Resources: return get_os()->get_user_dir();
+		case DirAccess_User: return get_os()->get_user_dir();
 		default: return "";
 		}
 	}
@@ -48,31 +47,22 @@ namespace Ism
 		switch (m_access_type)
 		{
 		case DirAccess_Resources: {
-			if (get_project_settings()) {
-				if (path.has_prefix("res://")) {
-					String resource_path{ get_project_settings()->get_resources_path() };
-					if (!resource_path.empty()) {
-						return path.replace_first("res:/", resource_path);
-					}
-					return path.replace_first("res://", "");
-				}
+			if (path.has_prefix("res://")) {
+				String const resource_path{ get_os()->get_resource_dir() };
+				if (!resource_path.empty()) { return path.replace_first("res:/", resource_path); }
+				return path.replace_first("res://", "");
 			}
 		} break;
-
 		case DirAccess_User: {
 			if (path.has_prefix("user://")) {
-				String data_dir{ OS::get_singleton()->get_user_path() };
-				if (!data_dir.empty()) {
-					return path.replace_first("user:/", data_dir);
-				}
+				String const data_dir{ OS::get_singleton()->get_user_dir() };
+				if (!data_dir.empty()) { return path.replace_first("user:/", data_dir); }
 				return path.replace_first("user://", "");
 			}
 		} break;
-
 		case DirAccess_Filesystem: {
 			return path;
 		} break;
-
 		case DirAccess_MAX: {
 			/* can't happen, but silences warning */
 		} break;
@@ -450,16 +440,16 @@ namespace Ism
 	Error_ Dir::copy_abs(String const & from, String const & to, i32 chmod_flags)
 	{
 		Ref<Dir> d{ Dir::create(DirAccess_Filesystem) };
-		String const f{ get_project_settings()->globalize_path(from) };
-		String const t{ get_project_settings()->globalize_path(to)};
+		String const f{ get_os()->globalize_path(from) };
+		String const t{ get_os()->globalize_path(to)};
 		return d->copy(f, t, chmod_flags);
 	}
 
 	Error_ Dir::rename_abs(String const & from, String const & to)
 	{
 		Ref<Dir> d{ Dir::create(DirAccess_Filesystem) };
-		String const f{ get_project_settings()->globalize_path(from) };
-		String const t{ get_project_settings()->globalize_path(to) };
+		String const f{ get_os()->globalize_path(from) };
+		String const t{ get_os()->globalize_path(to) };
 		return d->rename(f, t);
 	}
 
