@@ -24,29 +24,40 @@ newoption{
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- paths
-_SLN="%{wks.location}/"
-_CORE="%{_SLN}core/"
-_DRIVERS="%{_SLN}drivers/"
-_EDITOR="%{_SLN}editor/"
-_MAIN="%{_SLN}main/"
-_MODULES="%{_SLN}modules/"
-_PLATFORM="%{_SLN}platform/"
-_SCENE="%{_SLN}scene/"
-_SERVERS="%{_SLN}servers/"
+-- source paths
+_SLN		= "%{wks.location}/"
+_CORE		= "%{_SLN}core/"
+_DRIVERS	= "%{_SLN}drivers/"
+_EDITOR		= "%{_SLN}editor/"
+_MAIN		= "%{_SLN}main/"
+_MODULES	= "%{_SLN}modules/"
+_PLATFORM	= "%{_SLN}platform/"
+_PROGRAMS	= "%{_SLN}programs/"
+_SCENE		= "%{_SLN}scene/"
+_SERVERS	= "%{_SLN}servers/"
 
-_THIRDPARTY="%{_SLN}thirdparty/"
-_PROJECT="%{_SLN}workspace/%{_ACTION}/%{prj.name}/"
-_TEMPS="%{_SLN}temporary/%{_ACTION}/%{_TARGET_OS}/"
-_VENDOR="%{_SLN}misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}/"
+-- project paths
+_ASSETS		= "%{_SLN}assets/"
+_TEMPS		= "%{_SLN}tmp/%{_ACTION}/%{_TARGET_OS}/"
+_THIRDPARTY	= "%{_SLN}thirdparty/"
+_VENDOR		= "%{_SLN}misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}/"
+_PROJECT	= "%{_SLN}workspace/%{_ACTION}/%{prj.name}/"
 
-_BUILD="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-_BUILD_BIN="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/bin/"
-_BUILD_CFG="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/config/"
-_BUILD_DAT="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/data/"
-_BUILD_MOD="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/mods/"
-_BUILD_RES="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/resources/"
-_BUILD_USR="%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/user/"
+-- build paths
+_BUILD					= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
+_BUILD_BIN				= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/bin/"
+_BUILD_CACHE			= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/cache/"
+_BUILD_CONFIG			= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/config/"
+_BUILD_DATA				= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/data/"
+_BUILD_DEFAULTCONFIGS	= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/defaultconfigs/"
+_BUILD_DOWNLOADS		= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/downloads/"
+_BUILD_MODS				= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/mods/"
+_BUILD_PROFILES			= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/profiles/"
+_BUILD_RESOURCES		= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/resources/"
+_BUILD_SAVES			= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/saves/"
+_BUILD_USER				= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/user/"
+
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- platform specific extensions
 LIB=".a" DLL=".so" EXE=""
@@ -70,15 +81,6 @@ function cpp_project_common(_group, _project, _kind, _targetdir)
 	targetdir		(_targetdir)
 	objdir			("%{_TEMPS}")
 	location		("%{_PROJECT}")
-	prebuildcommands{
-		"{MKDIR} %{_BUILD}",
-		"{MKDIR} %{_BUILD_BIN}",
-		"{MKDIR} %{_BUILD_DAT}",
-		"{MKDIR} %{_BUILD_CFG}",
-		"{MKDIR} %{_BUILD_MOD}",
-		"{MKDIR} %{_BUILD_RES}",
-		"{MKDIR} %{_BUILD_USR}",
-	}
 end
 
 -- C# project common
@@ -114,6 +116,13 @@ function links_win32()
 	filter{ "language:C++", "system:windows", "configurations:Debug" } linkoptions{ "/NODEFAULTLIB:MSVCRT.lib", "/NODEFAULTLIB:LIBCMT.lib", "/NODEFAULTLIB:LIBCMTD.lib" }
 	filter{ "language:C++", "system:windows", "configurations:Release" } linkoptions{ "/NODEFAULTLIB:LIBCMT.lib" }
 	filter{}
+end
+
+-- mark executable
+function mark_as_executable()
+	dependson{ "ism", "lua", "mono", }
+	links{ "assimp%{LIB}", "freetype", "glfw", "imgui", "IrrXML", "ism", "mono-2.0-sgen", "zip", "zlibstatic", }
+	files{ "%{_PLATFORM}%{_TARGET_OS}/%{_TARGET_OS}_main.cpp", }
 end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

@@ -60,49 +60,22 @@ namespace Ism
 		switch (image->get_format())
 		{
 		case ImageFormat_L8: {
-			color_format = RD::DataFormat_R8_UNORM;
-			swizzle_r = RD::TextureSwizzle_R;
-			swizzle_g = RD::TextureSwizzle_R;
-			swizzle_b = RD::TextureSwizzle_R;
-			swizzle_a = RD::TextureSwizzle_One;
+			color_format = RD::DataFormat_R8_UNORM; swizzle_r = RD::TextureSwizzle_R; swizzle_g = RD::TextureSwizzle_R; swizzle_b = RD::TextureSwizzle_R; swizzle_a = RD::TextureSwizzle_One;
 		} break;
 		case ImageFormat_LA8: {
-			color_format = RD::DataFormat_R8G8_UNORM;
-			swizzle_r = RD::TextureSwizzle_R;
-			swizzle_g = RD::TextureSwizzle_R;
-			swizzle_b = RD::TextureSwizzle_R;
-			swizzle_a = RD::TextureSwizzle_G;
+			color_format = RD::DataFormat_R8G8_UNORM; swizzle_r = RD::TextureSwizzle_R; swizzle_g = RD::TextureSwizzle_R; swizzle_b = RD::TextureSwizzle_R; swizzle_a = RD::TextureSwizzle_G;
 		} break;
 		case ImageFormat_R8: {
-			color_format = RD::DataFormat_R8_UNORM;
-			swizzle_r = RD::TextureSwizzle_R;
-			swizzle_g = RD::TextureSwizzle_Zero;
-			swizzle_b = RD::TextureSwizzle_Zero;
-			swizzle_a = RD::TextureSwizzle_One;
+			color_format = RD::DataFormat_R8_UNORM; swizzle_r = RD::TextureSwizzle_R; swizzle_g = RD::TextureSwizzle_Zero; swizzle_b = RD::TextureSwizzle_Zero; swizzle_a = RD::TextureSwizzle_One;
 		} break;
 		case ImageFormat_RG8: {
-			color_format = RD::DataFormat_R8G8_UNORM;
-			swizzle_r = RD::TextureSwizzle_R;
-			swizzle_g = RD::TextureSwizzle_G;
-			swizzle_b = RD::TextureSwizzle_Zero;
-			swizzle_a = RD::TextureSwizzle_One;
+			color_format = RD::DataFormat_R8G8_UNORM; swizzle_r = RD::TextureSwizzle_R; swizzle_g = RD::TextureSwizzle_G; swizzle_b = RD::TextureSwizzle_Zero; swizzle_a = RD::TextureSwizzle_One;
 		} break;
 		case ImageFormat_RGB8: {
-			color_format = RD::DataFormat_R8G8B8_UNORM;
-			color_format_srgb = RD::DataFormat_R8G8B8_SRGB;
-			swizzle_r = RD::TextureSwizzle_R;
-			swizzle_g = RD::TextureSwizzle_G;
-			swizzle_b = RD::TextureSwizzle_B;
-			swizzle_a = RD::TextureSwizzle_One;
-
+			color_format = RD::DataFormat_R8G8B8_UNORM; color_format_srgb = RD::DataFormat_R8G8B8_SRGB; swizzle_r = RD::TextureSwizzle_R; swizzle_g = RD::TextureSwizzle_G; swizzle_b = RD::TextureSwizzle_B; swizzle_a = RD::TextureSwizzle_One;
 		} break;
 		case ImageFormat_RGBA8: {
-			color_format = RD::DataFormat_R8G8B8A8_UNORM;
-			color_format_srgb = RD::DataFormat_R8G8B8A8_SRGB;
-			swizzle_r = RD::TextureSwizzle_R;
-			swizzle_g = RD::TextureSwizzle_G;
-			swizzle_b = RD::TextureSwizzle_B;
-			swizzle_a = RD::TextureSwizzle_A;
+			color_format = RD::DataFormat_R8G8B8A8_UNORM; color_format_srgb = RD::DataFormat_R8G8B8A8_SRGB; swizzle_r = RD::TextureSwizzle_R; swizzle_g = RD::TextureSwizzle_G; swizzle_b = RD::TextureSwizzle_B; swizzle_a = RD::TextureSwizzle_A;
 		} break;
 		}
 		return m_device->texture_create(MAKE(RD::TextureCreateInfo, t) {
@@ -117,7 +90,7 @@ namespace Ism
 			t.swizzle_g = swizzle_g;
 			t.swizzle_b = swizzle_b;
 			t.swizzle_a = swizzle_a;
-		}, image->get_data());
+		}, image->get_pixels());
 	}
 
 	RID DefaultRenderingServer::texture2d_placeholder_create()

@@ -1,4 +1,5 @@
 #include <modules/mono/mono.hpp>
+#include <core/os/os.hpp>
 #include <core/config/project_settings.hpp>
 
 namespace Ism
@@ -44,7 +45,9 @@ namespace Ism
 		if (!(m_object_base = mono_class_from_name(m_img[0], "Ism", "Object"))) { return false; }
 		if (!(m_script_base = mono_class_from_name(m_img[0], "Ism", "Script"))) { return false; }
 
-		m_img.push_back(mono_assembly_get_image(m_asm.emplace_back(mono_domain_assembly_open(m_dom, "./bin/demo-CS.dll"))));
+		PRINT_LINE("");
+
+		m_img.push_back(mono_assembly_get_image(m_asm.emplace_back(mono_domain_assembly_open(m_dom, "./bin/app-CS.dll"))));
 		i32 const rows{ mono_image_get_table_rows(m_img[1], MONO_TABLE_TYPEDEF) };
 		for (i32 i{ 1 }; i < rows; ++i)
 		{
@@ -83,16 +86,16 @@ namespace Ism
 
 			printf("\n");
 
-			auto get_method = [klass](cstring t, cstring f, cstring a = "") {
-				char signature[128]; sprintf(signature, ".%s:%s(%s)", t, f, a);
-				auto const d{ mono_method_desc_new(signature, false) };
-				auto const m{ mono_method_desc_search_in_class(d, klass) };
-				mono_method_desc_free(d);
-				return m;
-			};
-			if (MonoMethod * method{ get_method(name, "SayHello") }) {
-				mono_runtime_invoke(method, nullptr, nullptr, nullptr);
-			}
+			//auto get_method = [klass](cstring t, cstring f, cstring a = "") {
+			//	char signature[128]; sprintf(signature, ".%s:%s(%s)", t, f, a);
+			//	auto const d{ mono_method_desc_new(signature, false) };
+			//	auto const m{ mono_method_desc_search_in_class(d, klass) };
+			//	mono_method_desc_free(d);
+			//	return m;
+			//};
+			//if (MonoMethod * method{ get_method(name, "SayHello") }) {
+			//	mono_runtime_invoke(method, nullptr, nullptr, nullptr);
+			//}
 		}
 
 		return true;

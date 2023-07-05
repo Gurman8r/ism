@@ -1,6 +1,7 @@
 #include <editor/editor_node.hpp>
-#include <editor/editor_filesystem.hpp>
+#include <editor/editor_assets.hpp>
 #include <editor/editor_hierarchy.hpp>
+#include <editor/editor_inspector.hpp>
 #include <editor/editor_log.hpp>
 #include <editor/editor_viewport.hpp>
 
@@ -120,20 +121,21 @@ namespace Ism
 	{
 		SINGLETON_CTOR();
 
-		m_filesystem = memnew(EditorFileSystem);
+		m_assets = memnew(EditorAssets);
 		m_hierarchy = memnew(EditorHierarchy);
-		m_log = memnew(EditorLog);
+		m_inspector = memnew(EditorInspector);
+		m_log = memnew(EditorLog); m_log->set_open(false);
 		m_viewport = memnew(EditorViewport);
 
 		camera.rid = get_gfx()->camera_create();
 		get_gfx()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
 		get_gfx()->camera_set_transform(camera.rid, camera.transform);
 
-		m_shaders["2d"] = load_resource("../assets/shaders/2d.shader");
-		m_shaders["3d"] = load_resource("../assets/shaders/3d.shader");
-		m_textures["earth_dm_2k"] = ImageTexture::create(load_resource("../assets/textures/earth/earth_dm_2k.png"));
-		m_textures["earth_sm_2k"] = ImageTexture::create(load_resource("../assets/textures/earth/earth_sm_2k.png"));
-		m_meshes["sphere32x24"] = load_resource("../assets/meshes/sphere32x24.obj");
+		m_shaders["2d"] = load_resource("res://shaders/2d.shader");
+		m_shaders["3d"] = load_resource("res://shaders/3d.shader");
+		m_textures["earth_dm_2k"] = ImageTexture::create(load_resource("res://textures/earth/earth_dm_2k.png"));
+		m_textures["earth_sm_2k"] = ImageTexture::create(load_resource("res://textures/earth/earth_sm_2k.png"));
+		m_meshes["sphere32x24"] = load_resource("res://meshes/sphere32x24.obj");
 
 		//RS::SurfaceData quad_spec{};
 		//quad_spec.primitive = RS::Primitive_Triangles;
@@ -230,9 +232,10 @@ namespace Ism
 		if (backbuffer) { get_gpu()->framebuffer_destroy(backbuffer); }
 		if (pipeline) { get_gpu()->render_pipeline_destroy(pipeline); }
 
-		memdelete(m_filesystem);
+		memdelete(m_assets);
 		memdelete(m_hierarchy);
 		memdelete(m_log);
+		memdelete(m_inspector);
 		memdelete(m_viewport);
 	}
 
@@ -318,8 +321,9 @@ namespace Ism
 
 			// imgui
 			_draw_dockspace();
-			m_filesystem->process(delta_time);
+			m_assets->process(delta_time);
 			m_hierarchy->process(delta_time);
+			m_inspector->process(delta_time);
 			m_log->process(delta_time);
 			m_viewport->process(delta_time);
 			if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
@@ -391,8 +395,9 @@ namespace Ism
 		ImGuiID right_down{ ImGui::DockBuilderSplitNode(right_up, ImGuiDir_Down, 0.2f, nullptr, &right_up) };
 		ImGui::DockBuilderDockWindow(m_viewport->get_name(), right_up);
 		ImGui::DockBuilderDockWindow(m_hierarchy->get_name(), left_up);
+		ImGui::DockBuilderDockWindow(m_inspector->get_name(), left_down);
 		ImGui::DockBuilderDockWindow(m_log->get_name(), left_down);
-		ImGui::DockBuilderDockWindow(m_filesystem->get_name(), right_down);
+		ImGui::DockBuilderDockWindow(m_assets->get_name(), right_down);
 	}
 
 	void EditorNode::_draw_menu_bar()
@@ -405,8 +410,9 @@ namespace Ism
 	
 		if (ImGui::BeginMenu("View")) {
 			if (ImGui::MenuItem("Dear ImGui Demo")) { m_show_imgui_demo = !m_show_imgui_demo; }
-			if (ImGui::MenuItem(m_filesystem->get_name(), "", m_filesystem->is_open())) { m_filesystem->toggle_open(); }
+			if (ImGui::MenuItem(m_assets->get_name(), "", m_assets->is_open())) { m_assets->toggle_open(); }
 			if (ImGui::MenuItem(m_hierarchy->get_name(), "", m_hierarchy->is_open())) { m_hierarchy->toggle_open(); }
+			if (ImGui::MenuItem(m_inspector->get_name(), "", m_inspector->is_open())) { m_inspector->toggle_open(); }
 			if (ImGui::MenuItem(m_log->get_name(), "", m_log->is_open())) { m_log->toggle_open(); }
 			if (ImGui::MenuItem(m_viewport->get_name(), "", m_viewport->is_open())) { m_viewport->toggle_open(); }
 			ImGui::EndMenu();

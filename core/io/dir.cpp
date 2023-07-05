@@ -50,7 +50,7 @@ namespace Ism
 		case DirAccess_Resources: {
 			if (get_project_settings()) {
 				if (path.has_prefix("res://")) {
-					String resource_path{ get_project_settings()->get_resource_path() };
+					String resource_path{ get_project_settings()->get_resources_path() };
 					if (!resource_path.empty()) {
 						return path.replace_first("res:/", resource_path);
 					}
@@ -60,12 +60,12 @@ namespace Ism
 		} break;
 
 		case DirAccess_User: {
-			if (path.has_prefix("usr://")) {
+			if (path.has_prefix("user://")) {
 				String data_dir{ OS::get_singleton()->get_user_path() };
 				if (!data_dir.empty()) {
-					return path.replace_first("usr:/", data_dir);
+					return path.replace_first("user:/", data_dir);
 				}
-				return path.replace_first("usr://", "");
+				return path.replace_first("user://", "");
 			}
 		} break;
 
@@ -121,8 +121,8 @@ namespace Ism
 		if (full.has_prefix("res://")) {
 			base = "res://";
 		}
-		else if (full.has_prefix("usr://")) {
-			base = "usr://";
+		else if (full.has_prefix("user://")) {
+			base = "user://";
 		}
 		else if (full.is_network_share_path()) {
 			size_t pos{ full.find("/", 2) };
@@ -380,7 +380,7 @@ namespace Ism
 		if (path.has_prefix("res://")) {
 			d = create(DirAccess_Resources);
 		}
-		else if (path.has_prefix("usr://")) {
+		else if (path.has_prefix("user://")) {
 			d = create(DirAccess_User);
 		}
 		else {
@@ -397,7 +397,7 @@ namespace Ism
 		if (d) {
 			d->m_access_type = access;
 			if (access == DirAccess_Resources) { d->change_dir("res://"); }
-			else if (access == DirAccess_User) { d->change_dir("usr://"); }
+			else if (access == DirAccess_User) { d->change_dir("user://"); }
 		}
 		return d;
 	}

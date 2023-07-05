@@ -13,11 +13,28 @@ namespace Ism
 	{
 		DEFINE_CLASS(Lexer, Object);
 
+	public:
+		enum Token_ {
+			Token_Name,
+			Token_Int,
+			Token_Float,
+			Token_Char,
+			Token_String,
+			Token_MAX
+		};
+
+		struct Token {
+			Token_ type{};
+			String text{};
+		};
+
 	protected:
 		Lexer() noexcept {}
 
 	public:
 		virtual ~Lexer() noexcept = default;
+
+
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

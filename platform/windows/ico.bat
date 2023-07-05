@@ -1,1 +1,0 @@
-magick.exe convert -background transparent "ism.png" -define icon:auto-resize=16,24,32,48,64,72,96,128,256 "ism.ico"

@@ -13,6 +13,8 @@
 #include <scene/resources/text_file.hpp>
 #include <scene/resources/texture.hpp>
 
+#include <scene/resources/sky_material.hpp>
+
 namespace Ism
 {
 	static Ref<ShaderFormatLoader> shader_loader;
@@ -29,22 +31,19 @@ namespace Ism
 
 		REGISTER_CLASS
 		(
-			SceneTree,
-			Node,
-			MissingNode,
-			Viewport,
-			Window,
-			Entity,
-	
-			Font,
-			Material,
+			SceneTree, Node, MissingNode, Entity,
+			
+			Viewport, Window,
+
+			Font, TextFile,
+
+			Shader, Material, ShaderMaterial, StandardMaterial3D,
+			
 			Mesh,
-			Shader,
-			TextFile,
-			Texture,
-			Texture2D,
-			Texture3D,
-			TextureCube
+
+			Texture, Texture2D, Texture3D, TextureCube,
+
+			SkyMaterial
 		);
 	}
 

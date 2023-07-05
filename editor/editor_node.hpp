@@ -13,8 +13,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class EditorFileSystem;
+	class EditorAssets;
 	class EditorHierarchy;
+	class EditorInspector;
 	class EditorLog;
 	class EditorViewport;
 
@@ -27,13 +28,15 @@ namespace Ism
 
 		static EditorNode * __singleton;
 
-		friend class EditorFileSystem;
+		friend class EditorAssets;
 		friend class EditorHierarchy;
 		friend class EditorLog;
+		friend class EditorInspector;
 		friend class EditorViewport;
 
-		EditorFileSystem	* m_filesystem{};
+		EditorAssets		* m_assets{};
 		EditorHierarchy		* m_hierarchy{};
+		EditorInspector		* m_inspector{};
 		EditorLog			* m_log{};
 		EditorViewport		* m_viewport{};
 

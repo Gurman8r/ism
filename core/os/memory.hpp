@@ -29,8 +29,8 @@ namespace Ism
 		(Ism::Memory::alloc_static)
 
 // memrealloc
-#define memrealloc(ptr, size_in_bytes) \
-		(Ism::Memory::realloc_static((size_in_bytes), (size), (size)))
+#define memrealloc(ptr, size) \
+		(Ism::Memory::realloc_static((ptr), (size), (size)))
 
 // memrealloc (sized)
 #define memrealloc_sized(ptr, old_size, new_size) \

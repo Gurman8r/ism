@@ -4,7 +4,7 @@ set working=%cd%\
 pushd %working%
 
 rem PATHS
-set _SOLUTION=%working%..\..\pneumatic_sdk_vs2022.sln
+set _SOLUTION=%working%..\..\ism_sdk_vs2022.sln
 set _VSTUDIO_DIR=C:\Program Files\Microsoft Visual Studio\2022\Community\
 set _VCVARS_DIR=%_VSTUDIO_DIR%VC\Auxiliary\Build\
 set _MSBUILD_DIR=%_VSTUDIO_DIR%Msbuild\Current\Bin\

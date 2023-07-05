@@ -119,9 +119,176 @@ namespace Ism
 
 	EMBED_CLASS(PackFile, t) {}
 
+	Error_ PackFile::open_internal(String const & path, FileMode_ mode)
+	{
+		return Error_();
+	}
+
+	PackFile::PackFile(String const & path, PackedData::PackedFile const & file) {}
+
+	bool PackFile::is_open() const
+	{
+		return false;
+	}
+
+	PackFile & PackFile::seek(u64 position)
+	{
+		return (*this);
+	}
+
+	PackFile & PackFile::seek_end(int64_t position)
+	{
+		return (*this);
+	}
+
+	u64 PackFile::get_position() const
+	{
+		return u64();
+	}
+
+	u64 PackFile::get_length() const
+	{
+		return u64();
+	}
+
+	bool PackFile::eof_reached() const
+	{
+		return false;
+	}
+
+	u8 PackFile::get_8() const
+	{
+		return u8();
+	}
+
+	u64 PackFile::get_buffer(u8 * data, u64 size) const
+	{
+		return u64();
+	}
+
+	void PackFile::set_big_endian(bool big_endian) noexcept
+	{
+	}
+
+	Error_ PackFile::get_error() const
+	{
+		return Error_();
+	}
+
+	PackFile & PackFile::flush()
+	{
+		return (*this);
+	}
+
+	PackFile & PackFile::put_8(u8 p_dest)
+	{
+		return (*this);
+	}
+
+	PackFile & PackFile::put_buffer(u8 const * data, u64 size)
+	{
+		return (*this);
+	}
+
+	bool PackFile::file_exists(String const & name)
+	{
+		return false;
+	}
+
+	PackFile & PackFile::close()
+	{
+		return (*this);
+	}
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	EMBED_CLASS(PackDir, t) {}
+
+	PackDir::PackDir() {}
+
+	PackedData::PackedDir * PackDir::_find_dir(String path)
+	{
+		return nullptr;
+	}
+
+	Error_ PackDir::list_dir_begin()
+	{
+		return Error_();
+	}
+
+	String PackDir::get_next()
+	{
+		return String();
+	}
+
+	bool PackDir::current_is_dir() const
+	{
+		return false;
+	}
+
+	bool PackDir::current_is_hidden() const
+	{
+		return false;
+	}
+
+	void PackDir::list_dir_end()
+	{
+	}
+
+	i32 PackDir::get_drive_count()
+	{
+		return i32();
+	}
+
+	String PackDir::get_drive(i32 drive)
+	{
+		return String();
+	}
+
+	Error_ PackDir::change_dir(String path)
+	{
+		return Error_();
+	}
+
+	String PackDir::get_current_dir(bool include_drive) const
+	{
+		return String();
+	}
+
+	bool PackDir::file_exists(String path)
+	{
+		return false;
+	}
+
+	bool PackDir::dir_exists(String path)
+	{
+		return false;
+	}
+
+	Error_ PackDir::make_dir(String path)
+	{
+		return Error_();
+	}
+
+	Error_ PackDir::rename(String from, String to)
+	{
+		return Error_();
+	}
+
+	Error_ PackDir::remove(String p_name)
+	{
+		return Error_();
+	}
+
+	u64 PackDir::get_space_left()
+	{
+		return u64();
+	}
+
+	String PackDir::get_filesystem_type() const
+	{
+		return String();
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

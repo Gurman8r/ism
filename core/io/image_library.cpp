@@ -1,4 +1,5 @@
 #include <core/io/image_library.hpp>
+#include <core/config/project_settings.hpp>
 
 #define STBI_FREE memfree
 #define STBI_MALLOC memalloc
@@ -15,9 +16,10 @@ namespace Ism
 
 	Error_ ImageFormatLoader::load_image(Ref<Image> image, String const & path)
 	{
+		static ON_SCOPE_ENTER() { set_flip_vertically_on_load(true); };
+
 		if (!image) { return Error_Failed; }
 		if (path.empty()) { return Error_Failed; }
-		static ON_SCOPE_ENTER() { stbi_set_flip_vertically_on_load(true); };
 		u8 * data{ (u8 *)stbi_load(path.c_str(), &image->m_width, &image->m_height, &image->m_depth, 0) };
 		ON_SCOPE_EXIT(&) { stbi_image_free(data); };
 		if (!data) { return Error_Failed; }
@@ -38,7 +40,7 @@ namespace Ism
 	RES ImageFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Image> temp{}; temp.instance();
-		if (auto const error{ load_image(temp, path) }) { if (r_error) { *r_error = error; } temp = nullptr; }
+		if (auto const error{ load_image(temp, get_project_settings()->globalize_path(path)) }) { if (r_error) { *r_error = error; } temp = nullptr; }
 		else if (r_error) { *r_error = Error_OK; }
 		return temp;
 	}
@@ -50,6 +52,21 @@ namespace Ism
 		out->push_back(".jpeg");
 		out->push_back(".png");
 		out->push_back(".bmp");
+	}
+
+	bool ImageFormatLoader::get_flip_vertically_on_load()
+	{
+		return stbi__vertically_flip_on_load_global;
+	}
+
+	void ImageFormatLoader::set_flip_vertically_on_load(bool value)
+	{
+		stbi__vertically_flip_on_load_global = value;
+	}
+
+	void ImageFormatLoader::toggle_flip_vertically_on_load()
+	{
+		set_flip_vertically_on_load(!get_flip_vertically_on_load());
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -185,7 +185,7 @@ namespace Ism
 		NODISCARD virtual String get_config_path() const;
 		NODISCARD virtual String get_data_path() const;
 		NODISCARD virtual String get_exe_path() const;
-		NODISCARD virtual String get_resource_path() const;
+		NODISCARD virtual String get_resources_path() const;
 		NODISCARD virtual String get_user_path() const;
 
 		enum SystemDir_ {

@@ -47,7 +47,7 @@ namespace Ism
 		m_format = ImageFormat_MAX;
 	}
 
-	void Image::flip_vertically()
+	void Image::flip_horizontally()
 	{
 		ptrdiff_t const columns{ m_width * m_depth };
 		for (ptrdiff_t y = 0; y < m_height; ++y) {
@@ -61,7 +61,7 @@ namespace Ism
 		}
 	}
 
-	void Image::flip_horizontally()
+	void Image::flip_vertically()
 	{
 		ptrdiff_t const columns{ m_width * m_depth };
 		iterator top{ m_pixels.begin() };

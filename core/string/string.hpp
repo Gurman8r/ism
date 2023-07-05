@@ -286,7 +286,7 @@ namespace Ism
 		NODISCARD self_type replace_first(self_type const & from, self_type const & to) const
 		{
 			self_type temp{ *this };
-			if (size_t i; (i = temp.m_string.find(from.m_string, i)) != npos) {
+			if (size_t i{}; (i = temp.m_string.find(from.m_string, i)) != npos) {
 				temp.m_string.replace(i, from.size(), to.m_string);
 			}
 			return temp;
@@ -431,11 +431,7 @@ namespace Ism
 
 		NODISCARD auto path_join(self_type const & value) const -> self_type { return (*this) + '/' + value; }
 
-		NODISCARD auto simplify_path() const -> self_type {
-			self_type temp{ *this };
-			/* TODO */
-			return temp;
-		}
+		NODISCARD auto simplify_path() const -> self_type { self_type temp{ *this }; /* TODO */ return temp; }
 
 		NODISCARD bool is_network_share_path() const noexcept { if constexpr (is_narrow) { return has_prefix("//") || has_prefix("\\\\"); } else { return has_prefix(L"//") || has_prefix(L"\\\\"); } }
 

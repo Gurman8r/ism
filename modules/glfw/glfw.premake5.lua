@@ -5,6 +5,8 @@ cpp_project_common("Modules", "glfw", "SharedLib", "%{_BUILD_BIN}")
 
 manifest("glfw")
 
+dependson{ "assets", }
+
 defines{ "_GLFW_BUILD_DLL", }
 
 undefines{ "__NULL_IMPORT_DESCRIPTOR", }

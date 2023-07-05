@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 workspace "ism_sdk_%{_ACTION}"
-startproject "demo"
+startproject "toolkit"
 
 configurations{ "Debug", "Release" }
 filter{ "configurations:Debug" } symbols "On" optimize "Off"
@@ -15,12 +15,18 @@ filter{}
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
+-- solution items
 solution_items{
 	"README.md",
 	"premake5.lua",
 	"premake5-system.lua",
-	"TODO.txt",
 }
+
+-- engine
+include "ism.premake5.lua"
+
+-- assets
+include "assets/assets.premake5.lua"
 
 -- modules
 include "modules/assimp/assimp.premake5.lua"
@@ -32,11 +38,9 @@ include "modules/lua/lua.premake5.lua"
 include "modules/mono/mono.premake5.lua"
 include "modules/zip/zip.premake5.lua"
 
--- engine
-include "ism.premake5.lua"
-
 -- programs
-include "demo/demo.premake5.lua"
+include "programs/demo/demo.premake5.lua"
+include "programs/toolkit/toolkit.premake5.lua"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
@@ -64,6 +68,7 @@ includedirs{
 	"%{_THIRDPARTY}lua/",
 	"%{_THIRDPARTY}zlib/",
 	"%{_THIRDPARTY}minizip/",
+	"%{_THIRDPARTY}lexertk/",
 }
 
 if _TARGET_OS=="windows" then

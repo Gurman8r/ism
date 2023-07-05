@@ -92,7 +92,9 @@ namespace Ism
 		i32 get_depth() const noexcept { return m_depth; }
 		i32 get_capacity() const noexcept { return m_width * m_height * m_depth; }
 		ImageFormat_ get_format() const noexcept { return m_format; }
-		DynamicBuffer const & get_data() const noexcept { return m_pixels; }
+
+		DynamicBuffer const & get_pixels() const noexcept { return m_pixels; }
+		u8 const * get_pixel_data() const noexcept { return m_pixels.data(); }
 
 		Color32 get_pixel(size_t index) const;
 		Color32 get_pixel(size_t x, size_t y) const noexcept { return get_pixel((x + y * m_width) * m_depth); }

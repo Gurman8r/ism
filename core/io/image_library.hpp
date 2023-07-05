@@ -15,6 +15,10 @@ namespace Ism
 		static Error_ load_image(Ref<Image> image, String const & path);
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;
 		virtual void get_recognized_extensions(Vector<String> * out) const override;
+
+		static bool get_flip_vertically_on_load();
+		static void set_flip_vertically_on_load(bool value);
+		static void toggle_flip_vertically_on_load();
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

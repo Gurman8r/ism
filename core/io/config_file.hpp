@@ -20,6 +20,7 @@ namespace Ism
 
 	public:
 		NODISCARD String get_string(String const & section, String const & name, String const & default_value = {}) const;
+		NODISCARD Vector<String> get_strings(String const & section, String const & name, String const & delim, Vector<String> const & default_value = {}) const;
 		bool set_string(String const & section, String const & name, String const & value);
 
 	public:

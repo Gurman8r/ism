@@ -5,6 +5,8 @@ cpp_project_common("Modules", "glew", "Utility", "%{_BUILD_BIN}")
 
 manifest("glew32", "glew32d")
 
+dependson{ "assets", }
+
 files{
 	"%{_MODULES}%{prj.name}/%{prj.name}.premake5.lua",
 }

@@ -9,12 +9,13 @@ namespace Ism
 {
 	enum Error_
 	{
-		Error_Failed = -1,
-		Error_OK = 0,
-		Error_Bug,
-		Error_EOF,
-		Error_AlreadyExists,
-		Error_Unavailable,
+		Error_Unknown = -1	, // unknown
+		Error_OK = 0		, // OK
+		Error_Failed		, // failed
+		Error_Bug			, // bug
+		Error_EOF			, // end of file
+		Error_AlreadyExists	, // already exists
+		Error_Unavailable	, // unavailable
 
 		// etc...
 

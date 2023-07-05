@@ -48,14 +48,15 @@ namespace Ism
 	static PhysicsServer *		physics{};
 	static TextServer *			text{};
 
-	static bool editor{ true };
-
-	static ImGuiContext * imgui_context{};
+	static bool					editor{};
+	static ImGuiContext *		imgui_context{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
 	{
+		PRINT_LINE(exepath);
+
 		Error_ error{ Error_OK };
 		Vector<String> args{ argv, argv + argc };
 
@@ -79,11 +80,14 @@ namespace Ism
 
 		get_os()->set_cmdline(exepath, args);
 
-		display = DS::create("Ism Engine", DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error);
+		display = DS::create("ism", DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error);
 		graphics = RS::create();
 		text = memnew(TS);
 		physics = memnew(PS);
 		audio = memnew(AS);
+
+		//display->set_native_icon("res://icons/toolkit.ico");
+		if (Ref<Image> icon{ get_resource_loader()->load("res://icons/toolkit.png") }) { icon->flip_vertically(); display->set_icon(icon->get_pixel_data(), icon->get_width(), icon->get_height()); }
 
 		register_core_singletons();
 
@@ -97,6 +101,7 @@ namespace Ism
 		register_scene_singletons();
 
 #if TOOLS_ENABLED
+		editor = true;
 		register_editor_types();
 		get_ext()->initialize_extensions(ExtensionInitializationLevel_Editor);
 		register_editor_singletons();

@@ -14,6 +14,7 @@
 #include <core/io/event_system.hpp>
 #include <core/io/zip.hpp>
 #include <core/io/lexer.hpp>
+#include <core/io/options.hpp>
 
 namespace Ism
 {
@@ -73,7 +74,7 @@ namespace Ism
 			
 			Image, ImageFormatLoader,
 
-			Lexer,
+			Lexer, Options,
 
 			ProjectSettings,
 			

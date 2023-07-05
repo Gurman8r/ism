@@ -99,7 +99,7 @@ namespace Ism
 		File & put_buffer(DynamicBuffer const & buffer);
 
 	public:
-		static CreateFunc get_create_func(FileAccess_ p_access);
+		static CreateFunc get_create_func(FileAccess_ access);
 		static bool exists(String const & path);
 		static u64 get_modified_time(String const & path);
 		static u32 get_unix_permissions(String const & path);

@@ -5,6 +5,8 @@ cpp_project_common("Modules", "assimp", "Utility", "%{_BUILD_BIN}")
 
 manifest("assimp")
 
+dependson{ "assets", }
+
 includedirs{ "%{_THIRDPARTY}assimp/include", }
 
 files{ "%{_MODULES}assimp/assimp.premake5.lua", }

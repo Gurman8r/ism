@@ -1,5 +1,8 @@
 #include <platform/windows/windows_display_server.hpp>
 #include <scene/main/window.hpp>
+#include <core/io/file.hpp>
+#include <core/io/image_library.hpp>
+#include <core/config/project_settings.hpp>
 
 #include <glfw/glfw3.h>
 #if defined(SYSTEM_WINDOWS)
@@ -8,6 +11,24 @@
 #	define GLFW_EXPOSE_NATIVE_WIN32
 #	include <glfw/glfw3native.h>
 #endif
+
+typedef struct {
+	BYTE bWidth; // Width, in pixels, of the image
+	BYTE bHeight; // Height, in pixels, of the image
+	BYTE bColorCount; // Number of colors in image (0 if >=8bpp)
+	BYTE bReserved; // Reserved ( must be 0)
+	WORD wPlanes; // Color Planes
+	WORD wBitCount; // Bits per pixel
+	DWORD dwBytesInRes; // How many bytes in this resource?
+	DWORD dwImageOffset; // Where in the file is this image?
+} ICONDIRENTRY, * LPICONDIRENTRY;
+
+typedef struct {
+	WORD idReserved; // Reserved (must be 0)
+	WORD idType; // Resource Type (1 for icons)
+	WORD idCount; // How many images?
+	ICONDIRENTRY idEntries[1]; // An entry for each image (idCount of 'em)
+} ICONDIR, * LPICONDIR;
 
 namespace Ism
 {
@@ -553,8 +574,12 @@ namespace Ism
 		glfwSwapBuffers(m_main_window->handle);
 	}
 
-	void WindowsDisplayServer::set_native_icon(String const & value)
+	void WindowsDisplayServer::set_native_icon(String const & p_filename)
 	{
+		Ref<File> f{ File::open(get_project_settings()->globalize_path(p_filename), FileMode_Read) };
+		if (!f) {
+			CRASH("cannot open icon");
+		}
 	}
 
 	void WindowsDisplayServer::set_icon(u8 const * data, i32 width, i32 height)

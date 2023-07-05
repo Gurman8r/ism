@@ -40,7 +40,7 @@ files{
 }
 
 postbuildcommands{
-	"{COPYFILE} %{_MODULES}lua/lua.ini %{_BUILD_CFG}",
+	"{COPYFILE} %{_MODULES}lua/lua.ini %{_BUILD_CONFIG}",
 }
 	
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

@@ -22,7 +22,7 @@ namespace Ism
 		case FileAccess_Resources: {
 			if (get_project_settings()) {
 				if (r_path.has_prefix("res://")) {
-					String resource_path{ ProjectSettings::get_singleton()->get_resource_path() };
+					String resource_path{ ProjectSettings::get_singleton()->get_resources_path() };
 					if (!resource_path.empty()) {
 						return r_path.replace("res:/", resource_path);
 					}
@@ -32,11 +32,11 @@ namespace Ism
 
 		} break;
 		case FileAccess_User: {
-			if (r_path.has_prefix("usr://")) {
+			if (r_path.has_prefix("user://")) {
 				if (String data_dir{ get_os()->get_user_path() }; !data_dir.empty()) {
-					return r_path.replace("usr:/", data_dir);
+					return r_path.replace("user:/", data_dir);
 				}
-				return r_path.replace("usr://", "");
+				return r_path.replace("user://", "");
 			}
 		} break;
 		case FileAccess_Filesystem: {
@@ -64,7 +64,7 @@ namespace Ism
 		if (path.has_prefix("res://")) {
 			file = create(FileAccess_Resources);
 		}
-		else if (path.has_prefix("usr://")) {
+		else if (path.has_prefix("user://")) {
 			file = create(FileAccess_User);
 		}
 		else {
@@ -245,7 +245,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	File::CreateFunc File::get_create_func(FileAccess_ p_access)
+	File::CreateFunc File::get_create_func(FileAccess_ access)
 	{
 		return CreateFunc();
 	}

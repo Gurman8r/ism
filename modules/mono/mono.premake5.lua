@@ -27,7 +27,7 @@ prebuildcommands{
 }
 
 postbuildcommands{
-	"{COPYFILE} %{_MODULES}mono/mono.ini %{_BUILD_CFG}",
+	"{COPYFILE} %{_MODULES}mono/mono.ini %{_BUILD_CONFIG}",
 }
 	
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

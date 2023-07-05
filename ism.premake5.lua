@@ -19,9 +19,6 @@ defines{
 
 files{
 	"%{_SLN}ism.premake5.lua",
-	"%{_SLN}engine.ini",
-	"%{_SLN}editor.ini",
-	"%{_SLN}extensions.cfg",
 
 	"%{_CORE}**.hpp",
 	"%{_CORE}**.cpp",
@@ -48,12 +45,6 @@ files{
 	
 	"%{_SERVERS}**.hpp",
 	"%{_SERVERS}**.cpp",
-}
-
-postbuildcommands{
-	"{COPYFILE} %{_SLN}engine.ini %{_BUILD_CFG}",
-	"{COPYFILE} %{_SLN}editor.ini %{_BUILD_CFG}",
-	"{COPYFILE} %{_SLN}extensions.cfg %{_BUILD_CFG}",
 }
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

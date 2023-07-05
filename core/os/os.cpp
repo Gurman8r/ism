@@ -236,7 +236,7 @@ namespace Ism
 		return m_exepath;
 	}
 
-	String OS::get_resource_path() const
+	String OS::get_resources_path() const
 	{
 		return ".";
 	}

@@ -45,8 +45,7 @@ namespace Ism
 				static FloatObject arg0; arg0 = dt.count();
 				static ListObject args{ &arg0, };
 				ObjectRef result{ call_object(callback, &args) };
-				if (result && result.cast<bool>())
-				{
+				if (result && result.cast<bool>()) {
 					should_close = true;
 				}
 			}
