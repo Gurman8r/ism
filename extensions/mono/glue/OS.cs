@@ -7,6 +7,9 @@ namespace Ism
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+		//[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		//public static extern void print(string message);
+
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	}
 }

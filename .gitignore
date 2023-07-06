@@ -1,7 +1,6 @@
 /.vs
 /build**
-/.tmp
-/.wks
+/.ism
 imgui.ini
 imgui.log
 desktop.ini
@@ -9,6 +8,7 @@ desktop.ini
 *.lastbuildstateslm
 *.sln
 *.suo
+*.csproj
 *.vcxproj
 *.filters
 *.user

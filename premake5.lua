@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- solution
-workspace("ism_sdk_%{_ACTION}")
+workspace("ism_%{_ACTION}")
 
 startproject("toolkit")
 

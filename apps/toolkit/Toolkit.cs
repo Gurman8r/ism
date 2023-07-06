@@ -2,7 +2,7 @@ using System;
 
 namespace Toolkit
 {
-	public static class Toolkit
+	sealed class Toolkit : Ism.Application
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,6 +11,10 @@ namespace Toolkit
 		}
 
 		private static void OnFinalize()
+		{
+		}
+
+		private static void OnStart()
 		{
 		}
 

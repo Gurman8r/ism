@@ -46,17 +46,17 @@ namespace Ism
 		if (!File::exists(engine_dll)) { PRINT_ERROR("could not find engine assembly"); return Error_Failed; }
 		if (Error_ const err{ load_dll(engine_dll)}) { PRINT_ERROR("failed loading engine assembly"); return err; }
 		mono_add_internal_call("Ism.Object::print", &CS_Ism_Object_print);
-		if (!(m_object_class = mono_class_from_name(m_data.get<MonoImage *>(0), "Ism", "Object"))) { return Error_Failed; }
-		if (!(m_script_class = mono_class_from_name(m_data.get<MonoImage *>(0), "Ism", "Script"))) { return Error_Failed; }
+		if (!(m_object_class = mono_class_from_name(m_dll.get<MonoImage *>(0), "Ism", "Object"))) { return Error_Failed; }
+		if (!(m_script_class = mono_class_from_name(m_dll.get<MonoImage *>(0), "Ism", "Script"))) { return Error_Failed; }
 		
 		// load app dll
 		String const app_dll{ get_os()->get_bin_dir().path_join(get_os()->get_exe_name() + "-csharp.dll") };
 		if (!File::exists(app_dll)) { PRINT_ERROR("could not find application assembly"); return Error_Failed; }
 		if (Error_ const err{ load_dll(app_dll) }) { PRINT_ERROR("failed loading engine assembly"); return err; }
-		i32 const rows{ mono_image_get_table_rows(m_data.get<MonoImage *>(1), MONO_TABLE_TYPEDEF) };
+		i32 const rows{ mono_image_get_table_rows(m_dll.get<MonoImage *>(1), MONO_TABLE_TYPEDEF) };
 		for (i32 i{ 1 }; i < rows; ++i)
 		{
-			MonoClass * klass{ mono_class_get(m_data.get<MonoImage *>(1), (i + 1) | MONO_TOKEN_TYPE_DEF) };
+			MonoClass * klass{ mono_class_get(m_dll.get<MonoImage *>(1), (i + 1) | MONO_TOKEN_TYPE_DEF) };
 			if (!mono_class_is_subclass_of(klass, m_script_class, false)) { continue; }
 			cstring const space{ mono_class_get_namespace(klass) };
 			cstring const name{ mono_class_get_name(klass) };
@@ -90,12 +90,12 @@ namespace Ism
 	Error_ Mono::load_dll(String const & path)
 	{
 		if (path.empty()) { return Error_Failed; }
-		if (m_data.contains<String>(path)) { return Error_AlreadyExists; }
+		if (m_dll.contains<String>(path)) { return Error_AlreadyExists; }
 		auto const assembly{ mono_domain_assembly_open(m_domain, path.c_str()) };
 		if (!assembly) { return Error_Failed; }
 		auto const image{ mono_assembly_get_image(assembly) };
 		if (!image) { return Error_Failed; }
-		return m_data.push_back(path, assembly, image), Error_OK;
+		return m_dll.push_back(path, assembly, image), Error_OK;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

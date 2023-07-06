@@ -2,7 +2,7 @@ using System;
 
 namespace Demo
 {
-	public static class Demo
+	sealed class Demo : Ism.Application
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,6 +11,10 @@ namespace Demo
 		}
 
 		private static void OnFinalize()
+		{
+		}
+
+		private static void OnStart()
 		{
 		}
 

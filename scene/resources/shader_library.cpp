@@ -7,6 +7,17 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	class ShaderBuilder
+	{
+	public:
+		ShaderBuilder()
+		{
+		}
+	}
+	g_shader_builder{};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	static Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData(&spec)[RD::ShaderStage_MAX])
 	{
 		RD::ShaderStage_ stage_index{ RD::ShaderStage_MAX };

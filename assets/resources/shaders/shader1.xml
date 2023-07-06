@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<shader name="3D/Default">
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+  <!--VERTEX-->
+  <vertex>
+    
+    <!--INPUT-->
+    <input>
+      <Vertex_Position i="0" type="vec4f" />
+      <Vertex_Normal i="1" type="vec4f" />
+      <Vertex_Texcoord i="2" type="vec4f" />
+      <Vertex_Tangent i="3" type="vec4f" />
+      <Vertex_Bitangent i="4" type="vec4f" />
+    </input>
+    
+    <!--OUTPUT-->
+    <output>
+      <Pixel_Position i="0" type="vec4f" />
+      <Pixel_Normal i="1" type="vec4f" />
+      <Pixel_Texcoord i="2" type="vec4f" />
+      <Pixel_Tangent i="3" type="vec4f" />
+      <Pixel_Bitangent i="4" type="vec4f" />
+    </output>
+
+    <buffer name="Material_Uniforms">
+    </buffer>
+    
+  </vertex>
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+  
+  <!--PIXEL-->
+  <pixel>
+
+    <!--INPUT-->
+    <input>
+      <Pixel_Position i="0" type="vec4f" />
+      <Pixel_Normal i="1" type="vec4f" />
+      <Pixel_Texcoord i="2" type="vec4f" />
+      <Pixel_Tangent i="3" type="vec4f" />
+      <Pixel_Bitangent i="4" type="vec4f" />
+    </input>
+
+    <!--OUTPUT-->
+    <output>
+      <Pixel_Color i="0" type="vec4f" hint="color" />
+    </output>
+    
+  </pixel>
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+  
+</shader>

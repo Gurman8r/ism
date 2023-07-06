@@ -5,38 +5,29 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef _ISM_VERSION_NAME_
+#ifndef VERSION_NAME
 #error "undefined version name"
 #endif
 
-#ifndef _ISM_VERSION_MAJOR_
+#ifndef VERSION_MAJOR
 #error "undefined version major"
 #endif
 
-#ifndef _ISM_VERSION_MINOR_
+#ifndef VERSION_MINOR
 #error "undefined version minor"
 #endif
 
-#ifndef _ISM_VERSION_PATCH_
+#ifndef VERSION_PATCH
 #error "undefined version patch"
 #endif
 
-#ifndef _ISM_VERSION_STATUS_
+#ifndef VERSION_STATUS
 #error "undefined version status"
 #endif
 
-#ifndef _ISM_VERSION_BUILD_
+#ifndef VERSION_BUILD
 #error "undefined version build"
 #endif
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#define VERSION_NAME	_ISM_VERSION_NAME_
-#define VERSION_MAJOR	_ISM_VERSION_MAJOR_
-#define VERSION_MINOR	_ISM_VERSION_MINOR_
-#define VERSION_PATCH	_ISM_VERSION_PATCH_
-#define VERSION_STATUS	_ISM_VERSION_STATUS_
-#define VERSION_BUILD	_ISM_VERSION_BUILD_
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

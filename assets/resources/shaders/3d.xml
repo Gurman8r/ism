@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<shader name="3D/Default">
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+  <!-- VERTEX -->
+  <vertex>
+
+    <!-- INPUTS -->
+    <in index="0" type="vec4" name="Vertex_Position" />
+    <in index="1" type="vec4" name="Vertex_Normal" />
+    <in index="2" type="vec4" name="Vertex_Texcoord" />
+    <in index="3" type="vec4" name="Vertex_Tangent" />
+    <in index="4" type="vec4" name="Vertex_Bitangent" />
+
+    <!-- OUTPUTS -->
+    <out index="0" type="vec4" name="Frag_Position" />
+    <out index="1" type="vec4" name="Frag_Normal" />
+    <out index="2" type="vec4" name="Frag_Texcoord" />
+    <out index="3" type="vec4" name="Frag_Tangent" />
+    <out index="4" type="vec4" name="Frag_Bitangent" />
+
+    <!-- SCENESTATE UBO -->
+    <ubo index="0" type="std140" name="SceneState_Uniforms" hint="scenestate" >
+      <u index="0" type="mat4" name="CameraProj" />
+      <u index="1" type="mat4" name="CameraView" />
+    </ubo>
+
+    <!-- RENDERPASS UBO -->
+    <ubo index="1" type="std140" name="RenderPass_Uniforms" hint="renderpass" >
+      <u index="0" type="mat4" name="Placeholder" />
+    </ubo>
+
+    <!-- TRANSFORMS UBO -->
+    <ubo index="2" type="std140" name="Transforms_Uniforms" hint="transforms" >
+      <u index="0" type="mat4" name="Transform" />
+    </ubo>
+
+    <!-- MATERIAL UBO -->
+    <ubo index="3" type="std140" name="Material_Uniforms" hint="material" >
+      <u index="0" type="vec4" name="Albedo" hint="color" />
+      <u index="1" type="float" name="Specular" />
+      <u index="2" type="float" name="Metallic" />
+    </ubo>
+
+  </vertex>
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+  <!-- PIXEL -->
+  <pixel>
+
+    <!-- INPUTS -->
+    <in index="0" type="vec4" name="Frag_Position" />
+    <in index="1" type="vec4" name="Frag_Normal" />
+    <in index="2" type="vec4" name="Frag_Texcoord" />
+    <in index="3" type="vec4" name="Frag_Tangent" />
+    <in index="4" type="vec4" name="Frag_Bitangent" />
+
+    <!-- OUTPUTS -->
+    <out index="0" type="vec4" name="Out_Color" hint="color" />
+
+    <!-- TEXTURES -->
+    <tex index="0" type="sampler2D" name="Diffuse_Map" hint="dm" />
+    <tex index="1" type="sampler2D" name="Specular_Map" hint="sm" />
+
+  </pixel>
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+</shader>

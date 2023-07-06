@@ -45,7 +45,7 @@ namespace Ism
 		friend class CSharpInstance;
 
 		MonoDomain * m_domain{};
-		Batch<String, MonoAssembly *, MonoImage *> m_data{};
+		Batch<String, MonoAssembly *, MonoImage *> m_dll{};
 
 		HashMap<String, MonoClass *> m_classes{};
 		MonoClass * m_object_class{};
@@ -64,6 +64,8 @@ namespace Ism
 		Error_ load_assemblies();
 
 		Error_ load_dll(String const & path);
+
+		Error_ reload_assemblies();
 	};
 
 	SINGLETON_WRAPPER(Mono, get_mono);

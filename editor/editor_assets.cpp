@@ -25,7 +25,7 @@ namespace Ism
 		bool open; EDITOR_PANEL_SCOPE(open);
 		if (!open) { return; }
 
-		ImGui::Text("filesystem goes here");
+		ImGui::Text("assets go here");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

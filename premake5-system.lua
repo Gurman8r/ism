@@ -53,12 +53,11 @@ _EXT		= "%{_SLN}/extensions"
 _MAIN		= "%{_SLN}/main"
 _MODULES	= "%{_SLN}/modules"
 _PLATFORM	= "%{_SLN}/platform"
+_PROJECT	= "%{_SLN}/.ism/workspace/%{_ACTION}/%{prj.name}"
 _SCENE		= "%{_SLN}/scene"
 _SERVERS	= "%{_SLN}/servers"
 _THIRDPARTY	= "%{_SLN}/thirdparty"
-
-_PROJECT	= "%{_SLN}/.wks/%{_ACTION}/%{prj.name}"
-_TEMPORARY	= "%{_SLN}/.tmp/%{_ACTION}/%{_TARGET_OS}"
+_TEMPORARY	= "%{_SLN}/.ism/temporary/%{_ACTION}/%{_TARGET_OS}"
 _VENDOR		= "%{_SLN}/misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
@@ -147,12 +146,12 @@ end
 -- version
 function version(_name, _major, _minor, _patch, _status, _build)
 	defines{
-		"_ISM_VERSION_NAME_=\"".._name.."\"",
-		"_ISM_VERSION_MAJOR_="..tostring(_major).."",
-		"_ISM_VERSION_MINOR_="..tostring(_minor).."",
-		"_ISM_VERSION_PATCH_="..tostring(_patch).."",
-		"_ISM_VERSION_STATUS_=\"".._status.."\"",
-		"_ISM_VERSION_BUILD_=\"".._build.."\"",
+		"VERSION_NAME=\"".._name.."\"",
+		"VERSION_MAJOR="..tostring(_major).."",
+		"VERSION_MINOR="..tostring(_minor).."",
+		"VERSION_PATCH="..tostring(_patch).."",
+		"VERSION_STATUS=\"".._status.."\"",
+		"VERSION_BUILD=\"".._build.."\"",
 	}
 end
 

@@ -2,7 +2,8 @@ using System;
 
 namespace Ism
 {
-	public static class Application
+	[Serializable]
+	public abstract class Application : Object
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

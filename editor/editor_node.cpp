@@ -411,12 +411,16 @@ namespace Ism
 		}
 	
 		if (ImGui::BeginMenu("View")) {
-			if (ImGui::MenuItem("Dear ImGui Demo")) { m_show_imgui_demo = !m_show_imgui_demo; }
 			if (ImGui::MenuItem(m_assets->get_name(), "", m_assets->is_open())) { m_assets->toggle_open(); }
 			if (ImGui::MenuItem(m_hierarchy->get_name(), "", m_hierarchy->is_open())) { m_hierarchy->toggle_open(); }
 			if (ImGui::MenuItem(m_inspector->get_name(), "", m_inspector->is_open())) { m_inspector->toggle_open(); }
 			if (ImGui::MenuItem(m_log->get_name(), "", m_log->is_open())) { m_log->toggle_open(); }
 			if (ImGui::MenuItem(m_viewport->get_name(), "", m_viewport->is_open())) { m_viewport->toggle_open(); }
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Help")) {
+			if (ImGui::MenuItem("Dear ImGui Demo")) { m_show_imgui_demo = !m_show_imgui_demo; }
 			ImGui::EndMenu();
 		}
 	}

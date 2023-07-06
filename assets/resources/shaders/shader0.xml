@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<shader name="3D/Default">
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+  <!-- VERTEX -->
+  <vertex>
+
+    <!-- INPUTS -->
+    <in location="0" type="vec4f" name="Vertex_Position" hint="position" />
+    <in location="1" type="vec4f" name="Vertex_Normal" hint="normal" />
+    <in location="2" type="vec4f" name="Vertex_Texcoord" hint="texcoord" />
+    <in location="3" type="vec4f" name="Vertex_Tangent" hint="tangent" />
+    <in location="4" type="vec4f" name="Vertex_Bitangent" hint="bitangent" />
+
+    <!-- OUTPUTS -->
+    <out location="0" type="vec4f" name="Frag_Position" hint="position" />
+    <out location="1" type="vec4f" name="Frag_Normal" hint="normal" />
+    <out location="2" type="vec4f" name="Frag_Texcoord" hint="texcoord" />
+    <out location="3" type="vec4f" name="Frag_Tangent" hint="tangent" />
+    <out location="4" type="vec4f" name="Frag_Bitangent" hint="bitangent" />
+
+    <!-- SCENESTATE UBO -->
+    <buf location="0" type="ubo" name="SceneState_Uniforms" hint="scenestate" >
+      <u location="0" type="mat4f" name="CameraProj" hint="projection" />
+      <u location="1" type="mat4f" name="CameraView" hint="view" />
+    </buf>
+    
+    <!-- RENDERPASS UBO -->
+    <buf location="1" type="ubo" name="RenderPass_Uniforms" hint="renderpass" >
+      <u location="0" type="mat4f" name="Placeholder" hint="placeholder" />
+    </buf>
+    
+    <!-- TRANSFORMS UBO -->
+    <buf location="2" type="ubo" name="Transforms_Uniforms" hint="transforms" >
+      <u location="0" type="mat4f" name="Transform" hint="transform" />
+    </buf>
+    
+    <!-- MATERIAL UBO -->
+    <buf location="3" type="ubo" name="Material_Uniforms" hint="material" >
+      <u location="0" type="vec4f" name="Ambient" hint="transform" />
+    </buf>
+
+  </vertex>
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+  <!-- PIXEL -->
+  <pixel>
+
+    <!-- INPUTS -->
+    <in location="0" type="vec4f" name="Frag_Position" hint="position" />
+    <in location="1" type="vec4f" name="Frag_Normal" hint="normal" />
+    <in location="2" type="vec4f" name="Frag_Texcoord" hint="texcoord" />
+    <in location="3" type="vec4f" name="Frag_Tangent" hint="tangent" />
+    <in location="4" type="vec4f" name="Frag_Bitangent" hint="bitangent" />
+
+    <!-- OUTPUTS -->
+    <out location="0" type="vec4f" name="Out_Color" hint="color" />
+
+    <!-- BUFFERS -->
+    <buf location="0" type="sampler2D" name="Diffuse_Map" hint="dm" />
+    <buf location="1" type="sampler2D" name="Specular_Map" hint="sm" />
+
+  </pixel>
+
+  <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+  
+</shader>

@@ -1,11 +1,8 @@
 @echo off
 
-set dir=.tmp
-if not exist %dir% ( mkdir %dir% )
-attrib +H %dir%
-
-set dir=.wks
-if not exist %dir% ( mkdir %dir% )
-attrib +H %dir%
+if not exist .ism ( mkdir .ism )
+if not exist .ism\temporary ( mkdir .ism\temporary )
+if not exist .ism\workspace ( mkdir .ism\workspace )
+attrib +H .ism
 
 rem pause
