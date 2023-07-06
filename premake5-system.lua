@@ -138,7 +138,7 @@ end
 
 -- link gui
 function links_gui()
-	dependson{ "freetype", "glfw", "imgui", }
+	dependson{ "freetype2", "glfw", "imgui", }
 	links{ "freetype", "glfw", "imgui", }
 end
 
