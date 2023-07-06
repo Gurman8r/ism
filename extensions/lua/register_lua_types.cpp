@@ -6,7 +6,7 @@ void my_cool_function() {}
 
 namespace Ism
 {
-	bool open_lua_extension(IsmExtensionInterfacePtr iface, IsmExtensionPtr library, IsmExtensionInitializationPtr initialization)
+	bool Ism::open_lua_extension(IsmExtensionInterfacePtr iface, IsmExtensionPtr library, IsmExtensionInitializationPtr initialization)
 	{
 		if (!iface || !library || !initialization) { return false; }
 		PRINT_INFO("opening lua");
@@ -18,13 +18,13 @@ namespace Ism
 		return true;
 	}
 
-	void initialize_lua_extension(void * user, IsmExtensionInitializationLevel level)
+	void Ism::initialize_lua_extension(void * user, IsmExtensionInitializationLevel level)
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("initializing lua");
 	}
 
-	void finalize_lua_extension(void * user, IsmExtensionInitializationLevel level)
+	void Ism::finalize_lua_extension(void * user, IsmExtensionInitializationLevel level)
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("finalizing lua");

@@ -69,9 +69,9 @@ namespace Ism
 
 	Error_ Main::setup(cstring exe_path, i32 argc, char * argv[])
 	{
-		Error_ error{};
-
 		PRINT_LINE(exe_path);
+
+		Error_ error{};
 
 		get_os()->initialize();
 		engine = memnew(Engine);

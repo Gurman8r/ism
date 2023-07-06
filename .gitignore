@@ -1,14 +1,7 @@
 /.vs
 /build**
-/bin**
-/object
-/proj
-/project
-/tmp
-/temps
-/temporary
-/workspace
-__pycache__/
+/.tmp
+/.wks
 imgui.ini
 imgui.log
 desktop.ini

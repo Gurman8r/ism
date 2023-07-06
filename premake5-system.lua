@@ -53,11 +53,12 @@ _EXT		= "%{_SLN}/extensions"
 _MAIN		= "%{_SLN}/main"
 _MODULES	= "%{_SLN}/modules"
 _PLATFORM	= "%{_SLN}/platform"
-_PROJECT	= "%{_SLN}/workspace/%{_ACTION}/%{prj.name}"
 _SCENE		= "%{_SLN}/scene"
 _SERVERS	= "%{_SLN}/servers"
 _THIRDPARTY	= "%{_SLN}/thirdparty"
-_TMP		= "%{_SLN}/tmp/%{_ACTION}/%{_TARGET_OS}"
+
+_PROJECT	= "%{_SLN}/.wks/%{_ACTION}/%{prj.name}"
+_TEMPORARY	= "%{_SLN}/.tmp/%{_ACTION}/%{_TARGET_OS}"
 _VENDOR		= "%{_SLN}/misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
@@ -90,7 +91,7 @@ function cpp_project(_group, _project, _kind, _targetdir)
 	rtti			("On")
 	targetname		("%{prj.name}")
 	targetdir		(_targetdir)
-	objdir			("%{_TMP}")
+	objdir			("%{_TEMPORARY}")
 	location		("%{_PROJECT}")
 end
 
@@ -103,7 +104,7 @@ function csharp_project(_group, _project, _kind, _targetdir)
 	framework	("4.0")
 	targetname	("%{prj.name}")
 	targetdir	(_targetdir)
-	objdir		("%{_TMP}")
+	objdir		("%{_TEMPORARY}")
 	location	("%{_PROJECT}")
 end
 
