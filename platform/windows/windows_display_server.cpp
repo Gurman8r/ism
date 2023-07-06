@@ -52,7 +52,7 @@ namespace Ism
 
 		glfwSetErrorCallback([](i32 code, cstring message)
 		{
-			get_os()->printerrf("glfw error %i: %s", code, message);
+			get_os()->err_printf("glfw error %i: %s", code, message);
 		});
 
 		glfwSetMonitorCallback([](GLFWmonitor * monitor, i32 connected)

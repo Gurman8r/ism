@@ -41,7 +41,7 @@ namespace Ism
 		NODISCARD bool are_languages_finalized() const noexcept { return m_languages_finalized; }
 	};
 
-	SINGLETON_WRAPPER(ScriptManager, get_scripting);
+	SINGLETON_WRAPPER(ScriptManager, get_scr);
 }
 
 // script language

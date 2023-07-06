@@ -9,8 +9,10 @@ namespace Ism
 	{
 		DEFINE_CLASS(ConfigFile, Resource);
 
+	public:
 		using Section = typename HashMap<String, String>;
 
+	private:
 		HashMap<String, Section> m_data{};
 
 	public:
@@ -24,10 +26,12 @@ namespace Ism
 
 	public:
 		explicit ConfigFile(String const & path) { parse(path); }
-		
 		Error_ parse(String const & path);
-
 		static Ref<ConfigFile> parse(String const & path, Error_ * r_error);
+
+	public:
+		NODISCARD bool empty() const noexcept { return m_data.empty(); }
+		NODISCARD auto size() const noexcept -> size_t { return m_data.size(); }
 
 	public:
 		bool set_string(String const & section, String const & name, String const & value);

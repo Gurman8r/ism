@@ -16,17 +16,19 @@ namespace Ism
 
 	Error_ ProjectSettings::setup(String const & exe_path, String const & main_pack)
 	{
-		if (exe_path.empty()) { return Error_Failed; }
+		if (exe_path.empty()) {
+			return Error_Failed;
+		}
 
 		String const engine_ini{ get_os()->get_config_dir().path_join("engine.ini") };
-		if (File::exists(engine_ini) && !ini_parse(engine_ini.c_str(), [](auto user, auto section, auto name, auto value) {
-			return ((ProjectSettings *)user)->set(section, name, evaluate(value)), 1;
-		}, this)) { return Error_Failed; }
+		if (File::exists(engine_ini) && !ini_parse(engine_ini.c_str(), [](auto u, auto s, auto n, auto v) { return (((ProjectSettings *)u)->set(s, n, evaluate(String(v).trim([](i32 c) { return c == ' ' || c == '\'' || c == '\"'; })))), 1; }, this)) {
+			return Error_Failed;
+		}
 
 		String const editor_ini{ get_os()->get_config_dir().path_join("editor.ini") };
-		if (File::exists(editor_ini) && !ini_parse(editor_ini.c_str(), [](auto user, auto section, auto name, auto value) {
-			return ((ProjectSettings *)user)->set(section, name, evaluate(value)), 1;
-		}, this)) { return Error_Failed; }
+		if (File::exists(editor_ini) && !ini_parse(editor_ini.c_str(), [](auto u, auto s, auto n, auto v) { return (((ProjectSettings *)u)->set(s, n, evaluate(String(v).trim([](i32 c) { return c == ' ' || c == '\'' || c == '\"'; })))), 1; }, this)) {
+			return Error_Failed;
+		}
 
 		return Error_OK;
 	}

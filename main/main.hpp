@@ -13,15 +13,15 @@ namespace Ism
 		static u64 m_frame;
 
 	public:
+		static void print_help();
+		static bool is_cmdline_tool();
+
+	public:
 		static Error_ setup(cstring exe_path, i32 argc, char * argv[]);
-
 		static bool start();
-
 		static bool iteration();
-
 		static bool is_iterating() { return m_iterating > 0; }
-
-		static void cleanup();
+		static void cleanup(bool force = false);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

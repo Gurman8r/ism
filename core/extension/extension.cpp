@@ -1,6 +1,7 @@
 #include <core/extension/extension.hpp>
 #include <core/extension/extension_manager.hpp>
 #include <core/os/os.hpp>
+#include <core/io/file.hpp>
 
 namespace Ism
 {
@@ -10,24 +11,20 @@ namespace Ism
 
 	EMBED_CLASS(Extension, t) {}
 
-	Extension::Extension() noexcept : Extension{ ConfigFile{} } {}
-
-	Extension::Extension(ConfigFile const & ini) : m_ini{ ini } {}
-
 	Extension::~Extension() noexcept { close_library(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Error_ Extension::open_library(String const & path, String const & entry_symbol)
 	{
-		if (Error_ const error{ get_os()->open_dynamic_library(path, m_library) }) {
-			return error;
+		if (Error_ const err{ get_os()->open_dynamic_library(path, m_library) }) {
+			return err;
 		}
 		
 		void * entry_func{};
-		if (Error_ const error{ get_os()->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
+		if (Error_ const err{ get_os()->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
 			get_os()->close_dynamic_library(m_library);
-			return error;
+			return err;
 		}
 
 		ExtensionInitializationFunc initialization_function{ (ExtensionInitializationFunc)entry_func };
@@ -90,14 +87,19 @@ namespace Ism
 
 	RES ExtensionFormatLoader::load(String const & path, Error_ * r_error)
 	{
-		String const stem{ path.stem() };
-		String const ini_path{ get_os()->get_config_dir().path_join(stem) };
-		ConfigFile const ini{ ini_path };
-		String const library_name{ ini.get_string("configuration", "library_name", stem) };
-		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("open_%s_library", library_name.c_str())) };
+		String const name{ path.stem() };
+
+		String const ini_path{ get_os()->get_config_dir().path_join(name) + ".ini" };
+		if (!File::exists(ini_path)) { PRINT_WARNING("extension ini not found: " + ini_path); }
+
+		ConfigFile ini{ ini_path };
+		if (ini.empty()) { PRINT_WARNING("extension ini is empty: " + ini_path); }
+		String const library_name{ ini.get_string("configuration", "library_name", name) };
+		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("Ism::open_%s_extension", name))};
 		String const dll_path{ get_os()->get_bin_dir().path_join(library_name) };
 
-		Ref<Extension> ext; ext.instance(ini);
+		Ref<Extension> ext; ext.instance();
+		ext->set_ini(std::move(ini));
 		if (Error_ const err{ ext->open_library(dll_path, entry_symbol) }) { if (r_error) { *r_error = err; } ext = nullptr; }
 		else if (r_error) { *r_error = Error_OK; }
 		return ext;

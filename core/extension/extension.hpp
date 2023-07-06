@@ -17,11 +17,10 @@ namespace Ism
 		void * m_library{};
 		i32 m_level_initialized{ -1 };
 		ExtensionInitialization m_initialization{};
-		ConfigFile m_ini;
+		ConfigFile m_ini{};
 
 	public:
-		Extension() noexcept;
-		explicit Extension(ConfigFile const & ini);
+		Extension() noexcept {}
 		virtual ~Extension() noexcept override;
 
 		Error_ open_library(String const & path, String const & entry_symbol);
@@ -35,6 +34,7 @@ namespace Ism
 
 		NODISCARD auto get_ini() noexcept -> ConfigFile & { return m_ini; }
 		NODISCARD auto get_ini() const noexcept -> ConfigFile const & { return m_ini; }
+		void set_ini(ConfigFile const & value) { m_ini = value; }
 
 	public:
 		static void initialize_interface();

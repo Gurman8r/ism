@@ -1,3 +1,4 @@
+#if TOOLS_ENABLED
 #ifndef _ISM_EDITOR_HIERARCHY_HPP_
 #define _ISM_EDITOR_HIERARCHY_HPP_
 
@@ -21,3 +22,4 @@ namespace Ism
 }
 
 #endif // !_ISM_EDITOR_HIERARCHY_HPP_
+#endif // TOOLS_ENABLED

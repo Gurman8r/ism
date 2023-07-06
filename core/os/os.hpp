@@ -34,6 +34,7 @@ namespace Ism
 	{
 		static OS * __singleton;
 
+		i32					m_exit_code{};
 		Vector<String>		m_cmdline{};
 		Vector<String>		m_user_args{};
 		Vector<String>		m_restart_args{};
@@ -41,7 +42,6 @@ namespace Ism
 		String				m_current_rendering_driver_name{};
 		String				m_current_rendering_method{};
 		i32					m_display_driver_id{};
-		i32					m_exit_code{};
 		CompositeLogger *	m_logger{};
 
 		String // paths
@@ -51,8 +51,8 @@ namespace Ism
 			m_data_dir		{ "./data" },
 			m_defaults_dir	{ "./defaultconfigs" },
 			m_downloads_dir	{ "./downloads" },
-			m_exe_dir		{ "" },
-			m_exe_path		{ "" },
+			m_exe_dir		{},
+			m_exe_path		{},
 			m_mods_dir		{ "./mods" },
 			m_profiles_dir	{ "./profiles" },
 			m_resources_dir	{ "./resources" },
@@ -99,9 +99,9 @@ namespace Ism
 
 		void printv(cstring fmt, va_list args);
 		void printf(cstring fmt, ...);
-		void printerrv(cstring fmt, va_list args);
-		void printerrf(cstring fmt, ...);
-		void printerror(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
+		void err_printv(cstring fmt, va_list args);
+		void err_printf(cstring fmt, ...);
+		void err_print(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type = ErrorHandlerType_Error);
 
 		NODISCARD virtual String get_stdin_string(bool blocking = true) = 0;
 

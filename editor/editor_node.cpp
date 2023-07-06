@@ -1,3 +1,5 @@
+#if TOOLS_ENABLED
+
 #include <editor/editor_node.hpp>
 #include <editor/editor_assets.hpp>
 #include <editor/editor_hierarchy.hpp>
@@ -421,3 +423,5 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
+
+#endif // TOOLS_ENABLED

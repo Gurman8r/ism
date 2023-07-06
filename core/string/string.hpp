@@ -359,25 +359,52 @@ namespace Ism
 
 	public:
 		template <class Fn = i32(*)(i32)
-		> NODISCARD auto trim_back(Fn fn = std::isspace) const {
+		> NODISCARD auto trim_back(Fn fn) const {
 			self_type temp{ *this };
 			while (!temp.empty() && fn(temp.back())) { temp.pop_back(); }
 			return temp;
 		}
 
 		template <class Fn = i32(*)(i32)
-		> NODISCARD auto trim_front(Fn fn = std::isspace) const {
+		> NODISCARD auto trim_front(Fn fn) const {
 			self_type temp{ *this };
 			while (!temp.empty() && fn(temp.front())) { temp.pop_front(); }
 			return temp;
 		}
 
 		template <class Fn = i32(*)(i32)
-		> NODISCARD auto trim(Fn fn = std::isspace) const {
+		> NODISCARD auto trim(Fn fn) const {
 			self_type temp{ *this };
 			while (!temp.empty() && fn(temp.back())) { temp.pop_back(); }
 			while (!temp.empty() && fn(temp.front())) { temp.pop_front(); }
 			return temp;
+		}
+
+		NODISCARD auto trim_back() const {
+			if constexpr (is_narrow) {
+				return trim_back(std::isspace);
+			}
+			else {
+				return trim_back(std::iswspace);
+			}
+		}
+
+		NODISCARD auto trim_front() const {
+			if constexpr (is_narrow) {
+				return trim_front(std::isspace);
+			}
+			else {
+				return trim_front(std::iswspace);
+			}
+		}
+
+		NODISCARD auto trim() const {
+			if constexpr (is_narrow) {
+				return trim(std::isspace);
+			}
+			else {
+				return trim(std::iswspace);
+			}
 		}
 
 	public:

@@ -1,3 +1,5 @@
+#if TOOLS_ENABLED
+
 #include <editor/editor_panel.hpp>
 
 namespace Ism
@@ -7,14 +9,16 @@ namespace Ism
 	EMBED_CLASS(EditorPanel, t) {}
 
 	EditorPanel::EditorPanel(cstring name, bool start_open, ImGuiWindowFlags flags)
-		: m_name	{ name }
+		: m_window	{}
+		, m_name	{ name }
 		, m_is_open	{ start_open }
 		, m_flags	{ flags }
-		, m_window	{}
 	{
 	}
 
-	EditorPanel::~EditorPanel() {}
+	EditorPanel::~EditorPanel()
+	{
+	}
 
 	bool EditorPanel::begin_window()
 	{
@@ -42,3 +46,5 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
+
+#endif // TOOLS_ENABLED

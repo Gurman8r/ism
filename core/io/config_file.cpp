@@ -9,15 +9,15 @@ namespace Ism
 
 	Error_ ConfigFile::parse(String const & path)
 	{
-		if (path.empty()) { return Error_Failed; }
-		else if (ini_parse(path.c_str(), [](auto user, auto section, auto name, auto value)
-		{
-			auto const fmt{ String(value).trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; }) };
-			((ConfigFile *)user)->set_string(section, name, fmt);
-			return 1;
-		
-		}, this)) { set_path(path); }
-		return Error_OK;
+		if (path.empty()) {
+			return Error_Failed;
+		}
+		else if (!ini_parse(path.c_str(), [](auto u, auto s, auto n, auto v) { return (((ConfigFile *)u)->set_string(s, n, String(v).trim([](i32 c) { return c == ' ' || c == '\'' || c == '\"'; }))), 1; }, this)) {
+			return Error_Failed;
+		}
+		else {
+			return set_path(path), Error_OK;
+		}
 	}
 
 	Ref<ConfigFile> ConfigFile::parse(String const & path, Error_ * r_error)
@@ -37,18 +37,27 @@ namespace Ism
 
 	String ConfigFile::get_string(String const & section, String const & name, String const & default_value) const
 	{
-		Section const * s; String const * v;
-		if ((s = util::getptr(m_data, section)) && (v = util::getptr(*s, name))) { return *v; }
-		else { return default_value; }
+		Section const * s;
+		String const * v;
+		if ((s = util::getptr(m_data, section)) && (v = util::getptr(*s, name))) {
+			return *v;
+		}
+		else {
+			return default_value;
+		}
 	}
 
 	Vector<String> ConfigFile::get_strings(String const & section, String const & name, String const & delim, Vector<String> const & default_value) const
 	{
-		String const s{ get_string(section, name) };
-		if (s.empty()) { return default_value; }
-		Vector<String> const v{ s.split(delim) };
-		if (v.empty()) { return default_value; }
-		return v;
+		if (String const s{ get_string(section, name) }; s.empty()) {
+			return default_value;
+		}
+		else if (Vector<String> const v{ s.split(delim) }; v.empty()) {
+			return default_value;
+		}
+		else {
+			return v;
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -87,15 +96,12 @@ namespace Ism
 
 	Vec2f ConfigFile::get_vec2f(String const & section, String const & name, Vec2f const & default_value) const
 	{
-		Vec2f temp;
+		Vec2f temp{ default_value };
 		switch (Vector<String> v{ get_strings(section, name, ",") }; v.size())
 		{
-		case 0: {
-			temp = default_value;
-		} break;
+		case 0: break;
 		case 1: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }
-			temp[1] = default_value[1];
 		} break;
 		default: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }
@@ -107,21 +113,16 @@ namespace Ism
 
 	Vec3f ConfigFile::get_vec3f(String const & section, String const & name, Vec3f const & default_value) const
 	{
-		Vec3f temp;
+		Vec3f temp{ default_value };
 		switch (Vector<String> v{ get_strings(section, name, ",") }; v.size())
 		{
-		case 0: {
-			temp = default_value;
-		} break;
+		case 0: break;
 		case 1: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }
-			temp[1] = default_value[1];
-			temp[2] = default_value[2];
 		} break;
 		case 2: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }
 			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; } else { temp[1] = default_value[1]; }
-			temp[2] = default_value[2];
 		} break;
 		default: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }
@@ -134,29 +135,21 @@ namespace Ism
 
 	Vec4f ConfigFile::get_vec4f(String const & section, String const & name, Vec4f const & default_value) const
 	{
-		Vec4f temp;
+		Vec4f temp{ default_value };
 		switch (Vector<String> v{ get_strings(section, name, ",") }; v.size())
 		{
-		case 0: {
-			temp = default_value;
-		} break;
+		case 0: break;
 		case 1: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }
-			temp[1] = default_value[1];
-			temp[2] = default_value[2];
-			temp[3] = default_value[3];
 		} break;
 		case 2: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }
 			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; } else { temp[1] = default_value[1]; }
-			temp[2] = default_value[2];
-			temp[3] = default_value[3];
 		} break;
 		case 3: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }
 			if (auto const y{ util::to_f32(v[1]) }) { temp[1] = *y; } else { temp[1] = default_value[1]; }
 			if (auto const z{ util::to_f32(v[2]) }) { temp[2] = *z; } else { temp[2] = default_value[2]; }
-			temp[3] = default_value[3];
 		} break;
 		default: {
 			if (auto const x{ util::to_f32(v[0]) }) { temp[0] = *x; } else { temp[0] = default_value[0]; }

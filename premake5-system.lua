@@ -24,47 +24,57 @@ newoption{
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- source paths
-_SLN		= "%{wks.location}/"
-_APP		= "%{_SLN}app/"
-_CORE		= "%{_SLN}core/"
-_DRIVERS	= "%{_SLN}drivers/"
-_EDITOR		= "%{_SLN}editor/"
-_EXT		= "%{_SLN}ext/"
-_MAIN		= "%{_SLN}main/"
-_MODULES	= "%{_SLN}modules/"
-_PLATFORM	= "%{_SLN}platform/"
-_SCENE		= "%{_SLN}scene/"
-_SERVERS	= "%{_SLN}servers/"
+-- configurations
+function load_configurations(_configurations)
+	configurations(_configurations)
+	filter{ "configurations:Debug" } symbols "On" optimize "Off"
+	filter{ "configurations:Release" } symbols "Off" optimize "Speed"
+	filter{}
+end
 
--- project paths
-_ASSETS		= "%{_SLN}assets/"
-_THIRDPARTY	= "%{_SLN}thirdparty/"
-_TMP		= "%{_SLN}tmp/%{_ACTION}/%{_TARGET_OS}/"
-_VENDOR		= "%{_SLN}misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}/"
-_PROJECT	= "%{_SLN}workspace/%{_ACTION}/%{prj.name}/"
-
--- build paths
-_BUILD					= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/"
-_BUILD_BIN				= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/bin/"
-_BUILD_CACHE			= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/cache/"
-_BUILD_CONFIG			= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/config/"
-_BUILD_DATA				= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/data/"
-_BUILD_DEFAULTCONFIGS	= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/defaultconfigs/"
-_BUILD_DOWNLOADS		= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/downloads/"
-_BUILD_MODS				= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/mods/"
-_BUILD_PROFILES			= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/profiles/"
-_BUILD_RESOURCES		= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/resources/"
-_BUILD_SAVES			= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/saves/"
-_BUILD_USER				= "%{_SLN}build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/user/"
+-- platforms
+function load_platforms(_platforms)
+	platforms(_platforms)
+	filter{ "platforms:*32", "platforms:*86" } architecture "x86"
+	filter{ "platforms:*64" } architecture "x86_64"
+	filter{}
+end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- platform specific extensions
-LIB=".a" DLL=".so" EXE=""
-if _TARGET_OS=="windows" then
-LIB=".lib" DLL=".dll" EXE=".exe"
-end
+-- workspace paths
+_SLN		= "%{wks.location}"
+_APP		= "%{_SLN}/apps"
+_ASSETS		= "%{_SLN}/assets"
+_CORE		= "%{_SLN}/core"
+_DRIVERS	= "%{_SLN}/drivers"
+_EDITOR		= "%{_SLN}/editor"
+_EXT		= "%{_SLN}/extensions"
+_MAIN		= "%{_SLN}/main"
+_MODULES	= "%{_SLN}/modules"
+_PLATFORM	= "%{_SLN}/platform"
+_PROJECT	= "%{_SLN}/workspace/%{_ACTION}/%{prj.name}"
+_SCENE		= "%{_SLN}/scene"
+_SERVERS	= "%{_SLN}/servers"
+_THIRDPARTY	= "%{_SLN}/thirdparty"
+_TMP		= "%{_SLN}/tmp/%{_ACTION}/%{_TARGET_OS}"
+_VENDOR		= "%{_SLN}/misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}"
+
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+
+-- _build paths
+_BUILD				= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}"
+_BUILD_BIN			= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/bin"
+_BUILD_CACHE		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/cache"
+_BUILD_CONFIG		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/config"
+_BUILD_DATA			= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/data"
+_BUILD_DEFAULTS		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/defaultconfigs"
+_BUILD_DOWNLOADS	= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/downloads"
+_BUILD_MODS			= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/mods"
+_BUILD_PROFILES		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/profiles"
+_BUILD_RESOURCES	= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/resources"
+_BUILD_SAVES		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/saves"
+_BUILD_USER			= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/user"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
@@ -99,7 +109,7 @@ end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- links win32
+-- link win32
 function links_win32()
 	filter{ "language:C++", "system:windows" } links{ "dwmapi", } buildoptions{ "/bigobj" } defines{ "_CRT_SECURE_NO_WARNINGS" } undefines{ "NDEBUG" }
 	filter{ "language:C++", "system:windows", "configurations:Debug" } linkoptions{ "/NODEFAULTLIB:MSVCRT.lib", "/NODEFAULTLIB:LIBCMT.lib", "/NODEFAULTLIB:LIBCMTD.lib" }
@@ -107,7 +117,7 @@ function links_win32()
 	filter{}
 end
 
--- links graphics
+-- link graphics
 function links_graphics()
 	filter{ "language:C++", "options:gfxapi=opengl" } links{ "opengl32" } defines{ "OPENGL_ENABLED=1" }
 	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glad" } dependson{ "glad" } links{ "glad" } defines{ "OPENGL_LOADER_GLAD=1" }
@@ -119,46 +129,119 @@ function links_graphics()
 	filter{}
 end
 
+-- link assimp
+function links_assimp()
+	dependson{ "assimp", }
+	links{ "assimp.lib", "IrrXML", "zlibstatic", }
+end
+
+-- link gui
+function links_gui()
+	dependson{ "freetype", "glfw", "imgui", }
+	links{ "freetype", "glfw", "imgui", }
+end
+
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- prepare extension
-function prepare_extension(_name)
-	dependson{ "ism" }
-	defines{ "ISM_MOD_API=ISM_API_EXPORT", }
-	links{ "ism", "zip", "glfw", "imgui", "freetype", "assimp%{LIB}", "IrrXML", "zlibstatic", }
-	files{
-		"%{_EXT}".._name.."/".._name..".premake5.lua",
-		"%{_EXT}".._name.."/".._name..".ini",
-		"%{_EXT}".._name.."/**.hpp",
-		"%{_EXT}".._name.."/**.cpp",
-	}
-	postbuildcommands{
-		"{COPYFILE} %{_EXT}".._name.."/".._name..".ini %{_BUILD_CONFIG}",
+-- version
+function version(_name, _major, _minor, _patch, _status, _build)
+	defines{
+		"_ISM_VERSION_NAME_=\"".._name.."\"",
+		"_ISM_VERSION_MAJOR_="..tostring(_major).."",
+		"_ISM_VERSION_MINOR_="..tostring(_minor).."",
+		"_ISM_VERSION_PATCH_="..tostring(_patch).."",
+		"_ISM_VERSION_STATUS_=\"".._status.."\"",
+		"_ISM_VERSION_BUILD_=\"".._build.."\"",
 	}
 end
 
--- prepare application
-function prepare_application(_name)
-	links_graphics()
-	dependson{ "ism", "lua", "mono", }
-	defines{ "MAIN_ENABLED=1", "IMGUI_API=ISM_API_IMPORT", }
-	links{ "ism", "mono-2.0-sgen", "zip", "glfw", "imgui", "freetype", "assimp%{LIB}", "IrrXML", "zlibstatic", }
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+
+-- module
+function module(_name, _major, _minor, _patch, _status, _build)
+	version(_name, _major, _minor, _patch, _status, _build)
+	dependson{ "assets", }
 	files{
-		"%{_PLATFORM}%{_TARGET_OS}/%{_TARGET_OS}_main.cpp",
-		"%{_APP}".._name.."/".._name..".premake5.lua",
-		"%{_APP}".._name.."/".._name..".ico",
-		"%{_APP}".._name.."/".._name..".rc",
+		"%{_MODULES}/".._name.."/".._name..".premake5.lua",
+		"%{_MODULES}/".._name.."/**.h",
+		"%{_MODULES}/".._name.."/**.c",
+		"%{_MODULES}/".._name.."/**.hpp",
+		"%{_MODULES}/".._name.."/**.cpp",
+		"%{_MODULES}/".._name.."/**.inl",
+		"%{_MODULES}/".._name.."/**.pch",
+	}
+end
+
+-- extension
+function extension(_name, _major, _minor, _patch, _status, _build)
+	version(_name, _major, _minor, _patch, _status, _build)
+	dependson{ "ism", }
+	links{ "ism", "zip", }
+	links_assimp()
+	links_gui()
+	defines{
+		"ISM_EXT_API=ISM_API_EXPORT",
+	}
+	files{
+		"%{_EXT}/".._name.."/".._name..".premake5.lua",
+		"%{_EXT}/".._name.."/".._name..".ini",
+		"%{_EXT}/".._name.."/**.h",
+		"%{_EXT}/".._name.."/**.c",
+		"%{_EXT}/".._name.."/**.hpp",
+		"%{_EXT}/".._name.."/**.cpp",
+		"%{_EXT}/".._name.."/**.inl",
+		"%{_EXT}/".._name.."/**.pch",
+	}
+	prebuildcommands{
+		"{TOUCH} %{_EXT}/".._name.."/".._name..".ini",
+	}
+	postbuildcommands{
+		"{COPYFILE} %{_EXT}/".._name.."/".._name..".ini %{_BUILD_CONFIG}",
+	}
+end
+
+-- application
+function application(_name, _major, _minor, _patch, _status, _build)
+	version(_name, _major, _minor, _patch, _status, _build)
+	dependson{ "ism", "lua", "mono", }
+	links{ "ism", "mono-2.0-sgen", "zip", }
+	links_graphics()
+	links_assimp()
+	links_gui()
+	defines{
+		"MAIN_ENABLED=1",
+		"IMGUI_API=ISM_API_IMPORT",
+	}
+	files{
+		"%{_PLATFORM}/%{_TARGET_OS}/%{_TARGET_OS}_main.cpp",
+		"%{_APP}/".._name.."/".._name..".premake5.lua",
+		"%{_APP}/".._name.."/".._name..".rc",
+		"%{_APP}/".._name.."/".._name..".ico",
+		"%{_APP}/".._name.."/".._name..".ini",
+		"%{_APP}/".._name.."/**.h",
+		"%{_APP}/".._name.."/**.c",
+		"%{_APP}/".._name.."/**.hpp",
+		"%{_APP}/".._name.."/**.cpp",
+		"%{_APP}/".._name.."/**.inl",
+		"%{_APP}/".._name.."/**.pch",
+	}
+	prebuildcommands{
+		"{TOUCH} %{_APP}/".._name.."/".._name..".ini",
+	}
+	postbuildcommands{
+		"{COPYFILE} %{_APP}/".._name.."/".._name..".ini %{_BUILD_CONFIG}",
 	}
 end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- binary manifest
+
 _MANIFEST={}
 
 function manifest(...)
 	local args={...}
-	for i, v in ipairs(args) do
+	for _, v in ipairs(args) do
 		table.insert(_MANIFEST, v)
 	end
 end
@@ -167,8 +250,8 @@ function generate_manifest(path)
 	local text="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
 	text=text.."<assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersion=\"1.0\">\n"
 	text=text.."<assemblyIdentity type=\"win32\" name=\"bin\" version=\"1.0.0.0\"/>\n"
-	for i, v in ipairs(_MANIFEST) do
-		text=text..string.format("\t<file name=\"%s%s\"/>\n", v, DLL)
+	for _, v in ipairs(_MANIFEST) do
+		text=text..string.format("\t<file name=\"%s.dll\"/>\n", v)
 	end
 	text=text.."</assembly>"
 	io.writefile(path, text);

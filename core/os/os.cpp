@@ -59,20 +59,20 @@ namespace Ism
 		va_end(args);
 	}
 
-	void OS::printerrv(cstring fmt, va_list args)
+	void OS::err_printv(cstring fmt, va_list args)
 	{
 		m_logger->logv(fmt, args, true);
 	}
 
-	void OS::printerrf(cstring fmt, ...)
+	void OS::err_printf(cstring fmt, ...)
 	{
 		va_list args;
 		va_start(args, fmt);
-		printerrv(fmt, args);
+		err_printv(fmt, args);
 		va_end(args);
 	}
 
-	void OS::printerror(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type)
+	void OS::err_print(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ type)
 	{
 		m_logger->log_error(func, file, line, desc, message, type);
 	}

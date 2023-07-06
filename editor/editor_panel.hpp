@@ -1,3 +1,4 @@
+#if TOOLS_ENABLED
 #ifndef _ISM_EDITOR_PANEL_HPP_
 #define _ISM_EDITOR_PANEL_HPP_
 
@@ -15,10 +16,10 @@ namespace Ism
 	{
 		DEFINE_CLASS(EditorPanel, Object);
 
+		ImGuiWindow *		m_window;
 		cstring				m_name;
 		bool				m_is_open;
 		ImGuiWindowFlags	m_flags;
-		ImGuiWindow *		m_window;
 
 	protected:
 		EditorPanel(cstring name, bool start_open = true, ImGuiWindowFlags flags = ImGuiWindowFlags_None);
@@ -29,6 +30,8 @@ namespace Ism
 		virtual void process(Duration const & delta_time) = 0;
 
 	public:
+		auto get_window() const noexcept -> ImGuiWindow * { return m_window; }
+
 		auto get_name() const noexcept -> cstring { return m_name; }
 		void set_name(cstring value) noexcept { m_name = value; }
 		
@@ -39,8 +42,6 @@ namespace Ism
 		auto get_flags() const noexcept -> ImGuiWindowFlags { return m_flags; }
 		void set_flags(ImGuiWindowFlags value) noexcept { m_flags = value; }
 
-		auto get_window() const noexcept -> ImGuiWindow * { return m_window; }
-
 	protected:
 		virtual bool begin_window();
 
@@ -49,3 +50,4 @@ namespace Ism
 }
 
 #endif // !_ISM_EDITOR_PANEL_HPP_
+#endif // TOOLS_ENABLED

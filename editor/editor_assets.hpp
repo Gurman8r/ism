@@ -1,3 +1,4 @@
+#if TOOLS_ENABLED
 #ifndef _ISM_EDITOR_FILESYSTEM_HPP_
 #define _ISM_EDITOR_FILESYSTEM_HPP_
 
@@ -20,3 +21,4 @@ namespace Ism
 }
 
 #endif // !_ISM_EDITOR_FILESYSTEM_HPP_
+#endif // TOOLS_ENABLED

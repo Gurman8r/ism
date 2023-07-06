@@ -77,7 +77,10 @@ namespace Ism
 			path += ".dll";
 		}
 
-		instance = VALIDATE(LoadLibraryA(path.c_str()));
+		if (!(instance = LoadLibraryA(path.c_str()))) {
+			PRINT_ERROR("failed loading library");
+			return Error_Failed;
+		}
 
 		//DLL_DIRECTORY_COOKIE cookie{};
 		//if (set_library_path) { cookie = AddDllDirectory((LPCWSTR)(path.root_directory().widen().c_str())); }
@@ -90,16 +93,32 @@ namespace Ism
 
 	Error_ WindowsOS::close_dynamic_library(void * instance)
 	{
-		if (!instance) { return Error_Failed; }
+		if (!instance) {
+			return Error_Failed;
+		}
+
 		FreeLibrary((HMODULE)instance);
 		return Error_OK;
 	}
 
 	Error_ WindowsOS::get_dynamic_library_symbol(void * instance, String const & name, void *& symbol, bool is_optional)
 	{
-		if (!instance || name.empty()) { return Error_Failed; }
+		if (!instance) {
+			PRINT_ERROR("dynamic library instance cannot be null");
+			return Error_Failed;
+		}
+
+		if (name.empty()) {
+			PRINT_ERROR("dynamic library name cannot be empty");
+			return Error_Failed;
+		}
+
 		symbol = GetProcAddress((HMODULE)instance, name.c_str());
-		if (!symbol && !is_optional) { return Error_Failed; }
+		if (!symbol && !is_optional) {
+			PRINT_ERROR("failed loading dynamic library symbol: " + name);
+			return Error_Failed;
+		}
+
 		return Error_OK;
 	}
 

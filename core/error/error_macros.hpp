@@ -10,9 +10,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// crash implementation
 	namespace priv
 	{
+		// crash implementation
 		ISM_API_FUNC(void) _crash(cwstring message, cwstring file, u32 line);
 	}
 
@@ -20,31 +20,19 @@ namespace Ism
 #define CRASH(m_message) \
 		(Ism::priv::_crash)(WIDE(m_message), WIDE(__FILE__), __LINE__)
 
-	// debug crash
-#if DEBUG_ENABLED
-#define DEBUG_CRASH(m_message) CRASH(m_message)
-#else
-#define DEBUG_CRASH(m_message) UNUSED(0)
-#endif
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	// crashw
+#define CRASHW(m_message) \
+		(Ism::priv::_crash)(m_message, WIDE(__FILE__), __LINE__)
 
 	// assert
 #define ASSERT(m_expr) \
 		BRANCHLESS_IF(!(m_expr), CRASH(TOSTR(m_expr)))
 
-	// debug assert
-#if DEBUG_ENABLED
-#define DEBUG_ASSERT(m_expr) ASSERT(m_expr)
-#else
-#define DEBUG_ASSERT(m_expr) UNUSED(0)
-#endif
-
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// validate implementation
 	namespace priv
 	{
+		// validate implementation
 		template <class T
 		> auto _validate(T && expr, cwstring message, cwstring file, u32 line) noexcept -> decltype(FWD(expr))
 		{
@@ -55,13 +43,6 @@ namespace Ism
 	// validate
 #define VALIDATE(m_expr) \
 		(Ism::priv::_validate)((m_expr), WIDE(TOSTR(m_expr)), WIDE(__FILE__), __LINE__)
-
-	// debug validate
-#if DEBUG_ENABLED
-#define DEBUG_VALIDATE(m_expr) VALIDATE(m_expr)
-#else
-#define DEBUG_VALIDATE(m_expr) (m_expr)
-#endif
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -74,15 +55,6 @@ namespace Ism
 			}																	\
 		} while (0)
 
-	// debug verify
-#if DEBUG_ENABLED
-#define DEBUG_VERIFY(m_expr, m_message) VERIFY(m_expr, m_message)
-#else
-#define DEBUG_VERIFY(m_expr, m_message) UNUSED(0)
-#endif
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// verify range
 #define VERIFY_RANGE(m_expr, m_min, m_max) \
 		(UNUSED((!!(( \
@@ -90,30 +62,6 @@ namespace Ism
 		((m_expr) < static_cast<decltype(m_expr)>(m_max)))) || \
 		(CRASH("range error: \'" TOSTR(m_min) "\' < \'" TOSTR(m_expr) "\' < \'" TOSTR(m_max) "\'"), 0) \
 		))
-
-	// debug verify range
-#if DEBUG_ENABLED
-#define DEBUG_VERIFY_RANGE(m_expr, m_min, m_max) VERIFY_RANGE(m_expr, m_min, m_max)
-#else
-#define DEBUG_VERIFY_RANGE(m_expr, m_min, m_max) UNUSED(0)
-#endif
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-}
-
-namespace Ism
-{
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	enum ErrorHandlerType_
-	{
-		ErrorHandlerType_Error,
-		ErrorHandlerType_Warning,
-		ErrorHandlerType_MAX
-	};
-
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
-	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, cstring m_message, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

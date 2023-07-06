@@ -1,3 +1,5 @@
+#if TOOLS_ENABLED
+
 #include <editor/editor_inspector.hpp>
 
 namespace Ism
@@ -28,3 +30,5 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
+
+#endif // TOOLS_ENABLED

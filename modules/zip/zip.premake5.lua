@@ -3,10 +3,10 @@
 -- zip
 cpp_project("Modules", "zip", "StaticLib", "%{_BUILD_BIN}")
 
-dependson{ "assets", }
+module("zip", 0, 0, 0, "alpha", "official")
 
-includedirs{ "%{_THIRDPARTY}minizip/", "%{_THIRDPARTY}zlib/", }
+includedirs{ "%{_THIRDPARTY}/minizip/", "%{_THIRDPARTY}/zlib/", }
 
-files{ "%{_MODULES}zip/zip.premake5.lua", "%{_THIRDPARTY}minizip/**.h", "%{_THIRDPARTY}minizip/**.c", "%{_THIRDPARTY}zlib/**.h", "%{_THIRDPARTY}zlib/**.c", }
+files{ "%{_THIRDPARTY}/minizip/**.h", "%{_THIRDPARTY}/minizip/**.c", "%{_THIRDPARTY}/zlib/**.h", "%{_THIRDPARTY}/zlib/**.c", }
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

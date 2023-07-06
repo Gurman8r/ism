@@ -91,7 +91,7 @@ void glCheckError(cstring expr, cstring file, u32 line)
 	} break;
 	}
 
-	get_os()->printerrf(
+	get_os()->err_printf(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -776,7 +776,7 @@ RID OpenGlRenderingDevice::shader_create(ShaderStageData const (&spec)[ShaderSta
 			glCheck(glDeleteObjectARB(obj));
 			glCheck(glDeleteProgramsARB(1, &s->handle));
 			memdelete(s);
-			get_os()->printerrf("%.*s\n", log_len, log_str);
+			get_os()->err_printf("%.*s\n", log_len, log_str);
 			return nullptr;
 		}
 
@@ -794,7 +794,7 @@ RID OpenGlRenderingDevice::shader_create(ShaderStageData const (&spec)[ShaderSta
 		glCheck(glGetInfoLogARB(s->handle, sizeof(log_str), &log_len, log_str));
 		glCheck(glDeleteProgramsARB(1, &s->handle));
 		memdelete(s);
-		get_os()->printerrf("%.*s\n", log_len, log_str);
+		get_os()->err_printf("%.*s\n", log_len, log_str);
 		return nullptr;
 	}
 

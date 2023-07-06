@@ -1,3 +1,4 @@
+#if TOOLS_ENABLED
 #ifndef _ISM_REGISTER_EDITOR_TYPES_HPP_
 #define _ISM_REGISTER_EDITOR_TYPES_HPP_
 
@@ -11,3 +12,4 @@ namespace Ism
 }
 
 #endif // !_ISM_REGISTER_EDITOR_TYPES_HPP_
+#endif // TOOLS_ENABLED

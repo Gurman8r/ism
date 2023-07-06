@@ -3,19 +3,17 @@
 -- assimp
 cpp_project("Modules", "assimp", "Utility", "%{_BUILD_BIN}")
 
+module("assimp", 0, 0, 0, "alpha", "official")
+
 manifest("assimp")
 
-dependson{ "assets", }
-
-includedirs{ "%{_THIRDPARTY}assimp/include", }
-
-files{ "%{_MODULES}assimp/assimp.premake5.lua", }
+includedirs{ "%{_THIRDPARTY}/assimp/include", }
 
 postbuildcommands{
-	"{COPYFILE} %{_VENDOR}assimp%{DLL} %{cfg.targetdir}",
-	"{COPYFILE} %{_VENDOR}assimp%{LIB} %{cfg.targetdir}",
-	"{COPYFILE} %{_VENDOR}IrrXML%{LIB} %{cfg.targetdir}",
-	"{COPYFILE} %{_VENDOR}zlibstatic%{LIB} %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/assimp.dll %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/assimp.lib %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/IrrXML.lib %{cfg.targetdir}",
+	"{COPYFILE} %{_VENDOR}/zlibstatic.lib %{cfg.targetdir}",
 }
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --

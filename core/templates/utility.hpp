@@ -33,6 +33,89 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/* ON SCOPE ENTER */
+
+namespace Ism::priv
+{
+	template <class F> struct OnScopeEnter final
+	{
+		explicit OnScopeEnter(F fn) noexcept { fn(); }
+	};
+
+	enum class OnScopeEnter_Tag {};
+
+	template <class F
+	> auto operator+(OnScopeEnter_Tag, F fn) noexcept { return OnScopeEnter<F>{ fn }; }
+}
+
+#define ON_SCOPE_ENTER(...) \
+		auto ANON(temp) = (Ism::priv::OnScopeEnter_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* ON SCOPE EXIT */
+
+namespace Ism::priv
+{
+	template <class F> struct OnScopeExit final
+	{
+		F const m_fn;
+
+		explicit OnScopeExit(F fn) noexcept : m_fn{ fn } {}
+
+		~OnScopeExit() noexcept { m_fn(); }
+	};
+
+	enum class OnScopeExit_Tag {};
+
+	template <class F
+	> auto operator+(OnScopeExit_Tag, F fn) noexcept { return OnScopeExit<F>{ fn }; }
+}
+
+#define ON_SCOPE_EXIT(...) \
+		auto ANON(temp) = (Ism::priv::OnScopeExit_Tag{}) + [##__VA_ARGS__]() noexcept -> void
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// singleton constructor helper
+#define SINGLETON_CTOR(singleton, self) \
+		ASSERT(!singleton); \
+		(singleton) = (self);
+
+// singleton destructor helper
+#define SINGLETON_DTOR(singleton, self) \
+		ASSERT((singleton) == (self)); \
+		ON_SCOPE_EXIT(&) { (singleton) = nullptr; };
+
+// singleton wrapper helper
+#define SINGLETON_WRAPPER(T, F) \
+		NODISCARD FORCE_INLINE T * F() noexcept { return T::get_singleton(); }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// return static
+#define _IMPL_RETURN_STATIC(m_type, m_var, ...) \
+		static m_type m_var{ ##__VA_ARGS__ }; \
+		return (m_var)
+
+#define RETURN_STATIC(m_type, ...) \
+		_IMPL_RETURN_STATIC(m_type, ANON(static_return), ##__VA_ARGS__)
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// map enum to array of constant values
+#define ENUM_MAPPING(m_func, m_from, m_to, ...)					\
+		static constexpr m_to _MAP_##m_from##_TO_##m_to##_[] =	\
+		{														\
+			##__VA_ARGS__										\
+		};														\
+		static constexpr m_to m_func(m_from i) noexcept			\
+		{														\
+			return _MAP_##m_from##_TO_##m_to##_[(size_t)i];		\
+		}														\
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

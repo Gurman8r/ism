@@ -54,25 +54,25 @@ namespace Ism
 		FT_Stroker stroker;
 
 		if (FT_Init_FreeType(&library)) {
-			get_os()->printerrf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
+			get_os()->err_printf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
 			return nullptr;
 		}
 
 		if (FT_New_Face(library, spec.path.c_str(), 0, &face)) {
-			get_os()->printerrf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
+			get_os()->err_printf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
 			FT_Done_FreeType(library);
 			return nullptr;
 		}
 
 		if (FT_Stroker_New(library, &stroker)) {
-			get_os()->printerrf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
+			get_os()->err_printf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
 			return nullptr;
 		}
 
 		if (FT_Select_Charmap(face, FT_ENCODING_UNICODE)) {
-			get_os()->printerrf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
+			get_os()->err_printf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
 			FT_Stroker_Done(stroker);
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
@@ -109,7 +109,7 @@ namespace Ism
 			FT_Face const face{ (FT_Face)f->font_face };
 			FT_Set_Pixel_Sizes(face, 0, character_size);
 			if (FT_Load_Char(face, character, FT_LOAD_RENDER)) {
-				get_os()->printerrf("FAILED LOADING GLYPH: %s", f->path.c_str());
+				get_os()->err_printf("FAILED LOADING GLYPH: %s", f->path.c_str());
 				return nullptr;
 			}
 
