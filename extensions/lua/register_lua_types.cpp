@@ -1,11 +1,12 @@
 #include <extensions/lua/register_lua_types.hpp>
+#include <extensions/lua/lua.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void my_cool_function() {}
-
 namespace Ism
 {
+	static Lua * lua_language;
+
 	bool Ism::open_lua_extension(IsmExtensionInterfacePtr iface, IsmExtensionPtr library, IsmExtensionInitializationPtr initialization)
 	{
 		if (!iface || !library || !initialization) { return false; }
@@ -22,12 +23,15 @@ namespace Ism
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("initializing lua");
+		lua_language = memnew(Lua); /* get_scr()->register_language(lua_language); */
 	}
 
 	void Ism::finalize_lua_extension(void * user, IsmExtensionInitializationLevel level)
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("finalizing lua");
+		/* get_scr()->unregister_language(lua_language); */ memdelete(lua_language);
+		
 	}
 }
 

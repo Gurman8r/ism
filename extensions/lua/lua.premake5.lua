@@ -5,7 +5,7 @@ cpp_project("Extensions", "lua", "SharedLib", "%{_BUILD_BIN}")
 
 extension("lua", 0, 0, 0, "alpha", "official")
 
-defines{ "LUA_BUILD_AS_DLL" }
+defines{}
 
 includedirs{ "%{_THIRDPARTY}/lua/include" }
 
