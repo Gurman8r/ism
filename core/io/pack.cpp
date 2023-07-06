@@ -8,14 +8,14 @@ namespace Ism
 
 	PackedData::PackedData()
 	{
-		SINGLETON_CTOR();
+		SINGLETON_CTOR(__singleton, this);
 		m_root = memnew(PackedDir);
 		add_package_source(memnew(PackSourcePAK));
 	}
 	
 	PackedData::~PackedData()
 	{
-		SINGLETON_DTOR();
+		SINGLETON_DTOR(__singleton, this);
 		for (size_t i{}; i < m_sources.size(); ++i) {
 			memdelete(m_sources[i]);
 		}

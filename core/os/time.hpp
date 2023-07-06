@@ -197,15 +197,15 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// day
-	enum Day_ {
-		Day_Sunday,
-		Day_Monday,
-		Day_Tuesday,
-		Day_Wednesday,
-		Day_Thursday,
-		Day_Friday,
-		Day_Saturday,
-		Day_MAX
+	enum Weekday_ {
+		Weekday_Sunday,
+		Weekday_Monday,
+		Weekday_Tuesday,
+		Weekday_Wednesday,
+		Weekday_Thursday,
+		Weekday_Friday,
+		Weekday_Saturday,
+		Weekday_MAX
 	};
 
 	// month
@@ -229,24 +229,24 @@ namespace Ism
 
 	// date
 	struct Date {
-		i32		year	{};
-		Month_	month	{};
-		i32		day		{};
-		Day_	weekday	{};
-		bool	dst		{}; /* daylight saving time */ 
+		i32			year{};
+		Month_		month{};
+		i32			day{};
+		Weekday_	weekday{};
+		bool		dst{ /* daylight saving time */ };
 	};
 
 	// time
 	struct Time {
-		i32		hour	{};
-		i32		min		{};
-		i32		sec		{};
+		i32 hour{};
+		i32 min{};
+		i32 sec{};
 	};
 
 	// time zone info
 	struct TimeZoneInfo {
-		i32		bias	{};
-		cstring	name	{};
+		i32 bias{};
+		cstring name{};
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

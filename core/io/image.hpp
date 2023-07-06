@@ -81,7 +81,7 @@ namespace Ism
 		Image() noexcept = default;
 		Image(i32 width, i32 height, ImageFormat_ format);
 		Image(i32 width, i32 height, ImageFormat_ format, DynamicBuffer const & data);
-		virtual RID get_rid() const override { return RID{}; }
+		virtual RID get_rid() const override { return nullptr; }
 
 		void clear();
 		void flip_vertically();

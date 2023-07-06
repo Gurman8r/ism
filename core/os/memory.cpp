@@ -2,13 +2,14 @@
 #include <core/os/os.hpp>
 #include <core/templates/batch.hpp>
 #include <core/error/error_macros.hpp>
+#include <iostream>
 
-#ifndef SHOW_FINAL_ALLOCATIONS
-#define SHOW_FINAL_ALLOCATIONS 1
+#ifndef SHOW_FINAL_LEAKS
+#define SHOW_FINAL_LEAKS 1
 #endif
 
-#ifndef CLEAR_FINAL_ALLOCATIONS
-#define CLEAR_FINAL_ALLOCATIONS 0
+#ifndef FREE_FINAL_LEAKS
+#define FREE_FINAL_LEAKS 0
 #endif
 
 namespace Ism
@@ -19,38 +20,44 @@ namespace Ism
 	static struct MemoryTracker final
 	{
 		size_t index{};
-
 		enum { ID_Index, ID_Size, ID_Addr, ID_Desc };
-
 		Batch<size_t, size_t, void *, cstring> records{};
 
 		~MemoryTracker()
 		{
-#if SHOW_FINAL_ALLOCATIONS
-			if (!records.empty())
-			{
-				std::cerr << "\nMEMORY LEAKS DETECTED:\n";
-
-				for (size_t i{}; i < records.size(); ++i)
+			// show final leaks
+#			if SHOW_FINAL_LEAKS
+				if (!records.empty())
 				{
-					records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
-					{
-						std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr;
-						if (desc) { std::cerr << " | desc:\"" << desc; }
-						std::cerr << "\"\n";
-					});
-				}
-#if SYSTEM_WINDOWS
-				std::system("pause");
-#endif // SYSTEM_WINDOWS
-			}
-#endif
+					std::cerr << "\nMEMORY LEAKS DETECTED:\n";
 
-#if CLEAR_FINAL_ALLOCATIONS
-			while (!records.empty()) { memfree(records.back<ID_Addr>()); }
-#else
-			ASSERT("MEMORY LEAKS DETECTED" && g_memory_tracker.records.empty());
-#endif
+					for (size_t i{}; i < records.size(); ++i)
+					{
+						records.expand_all(i, [&](size_t index, size_t size, void * addr, cstring desc)
+						{
+							std::cerr << "index:" << index << " | size:" << size << " | addr:" << addr;
+							if (desc) { std::cerr << " | desc:\"" << desc; }
+							std::cerr << "\"\n";
+						});
+					}
+
+#					if SYSTEM_WINDOWS
+						std::system("pause");
+#					endif
+				}
+#			endif
+
+			// clear final leaks
+#			if FREE_FINAL_LEAKS
+				while (!records.empty()) {
+					memfree(records.back<ID_Addr>());
+					records.pop_back();
+				}
+#			elif !SHOW_FINAL_LEAKS
+				if (!records.empty()) {
+					CRASH("MEMORY LEAKS DETECTED");
+				}
+#			endif
 		}
 	}
 	g_memory_tracker{};

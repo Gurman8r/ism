@@ -74,18 +74,18 @@ namespace Ism
 		virtual String get_processor_name() const override;
 		virtual String get_unique_id() const override;
 
-		virtual String get_bin_dir() const override;
-		virtual String get_cache_dir() const override;
-		virtual String get_config_dir() const override;
-		virtual String get_data_dir() const override;
-		virtual String get_downloads_dir() const override;
-		virtual String get_exe_dir() const override;
-		virtual String get_mods_dir() const override;
-		virtual String get_profiles_dir() const override;
-		virtual String get_resource_dir() const override;
-		virtual String get_saves_dir() const override;
-		virtual String get_system_dir(SystemDir_ value) const override;
-		virtual String get_user_dir() const override;
+		virtual String get_bin_dir() const noexcept override;
+		virtual String get_cache_dir() const noexcept override;
+		virtual String get_config_dir() const noexcept override;
+		virtual String get_data_dir() const noexcept override;
+		virtual String get_downloads_dir() const noexcept override;
+		virtual String get_exe_dir() const noexcept override;
+		virtual String get_mods_dir() const noexcept override;
+		virtual String get_profiles_dir() const noexcept override;
+		virtual String get_resource_dir() const noexcept override;
+		virtual String get_saves_dir() const noexcept override;
+		virtual String get_system_dir(SystemDir_ value) const noexcept override;
+		virtual String get_user_dir() const noexcept override;
 
 		virtual Error_ move_to_trash(String const & path) override;
 

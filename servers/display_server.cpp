@@ -12,7 +12,7 @@ namespace Ism
 
 	DisplayServer::DisplayServer(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error)
 	{
-		SINGLETON_CTOR();
+		SINGLETON_CTOR(__singleton, this);
 
 		Input::m_funcs.get_mouse_mode = []() -> Input::MouseMode_ { return get_display()->mouse_get_mode(); };
 		Input::m_funcs.set_mouse_mode = [](Input::MouseMode_ mode) { get_display()->mouse_set_mode(mode); };
@@ -24,7 +24,7 @@ namespace Ism
 
 	DisplayServer::~DisplayServer()
 	{
-		SINGLETON_DTOR();
+		SINGLETON_DTOR(__singleton, this);
 	}
 
 	DisplayServer * DisplayServer::create(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error)

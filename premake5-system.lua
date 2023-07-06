@@ -26,13 +26,14 @@ newoption{
 
 -- source paths
 _SLN		= "%{wks.location}/"
+_APP		= "%{_SLN}app/"
 _CORE		= "%{_SLN}core/"
 _DRIVERS	= "%{_SLN}drivers/"
 _EDITOR		= "%{_SLN}editor/"
+_EXT		= "%{_SLN}ext/"
 _MAIN		= "%{_SLN}main/"
 _MODULES	= "%{_SLN}modules/"
 _PLATFORM	= "%{_SLN}platform/"
-_PROGRAMS	= "%{_SLN}programs/"
 _SCENE		= "%{_SLN}scene/"
 _SERVERS	= "%{_SLN}servers/"
 
@@ -98,19 +99,7 @@ end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- graphics links
-function links_graphics()
-	filter{ "language:C++", "options:gfxapi=opengl" } links{ "opengl32" } defines{ "OPENGL_ENABLED=1" }
-	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glad" } dependson{ "glad" } links{ "glad" } defines{ "OPENGL_LOADER_GLAD=1" }
-	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew" } dependson{ "glew" } defines{ "OPENGL_LOADER_GLEW=1" }
-	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew", "configurations:Debug" } links{ "glew32d" }
-	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew", "configurations:Release" } links{ "glew32" }
-	filter{ "language:C++", "options:gfxapi=vulkan" } -- WIP --
-	filter{ "language:C++", "options:gfxapi=directx" } -- WIP --
-	filter{}
-end
-
--- windows links
+-- links win32
 function links_win32()
 	filter{ "language:C++", "system:windows" } links{ "dwmapi", } buildoptions{ "/bigobj" } defines{ "_CRT_SECURE_NO_WARNINGS" } undefines{ "NDEBUG" }
 	filter{ "language:C++", "system:windows", "configurations:Debug" } linkoptions{ "/NODEFAULTLIB:MSVCRT.lib", "/NODEFAULTLIB:LIBCMT.lib", "/NODEFAULTLIB:LIBCMTD.lib" }
@@ -118,16 +107,53 @@ function links_win32()
 	filter{}
 end
 
--- main executable
-function main_executable()
-	dependson{ "ism", "lua", "mono", }
-	defines{ "MAIN_ENABLED=1", "IMGUI_API=ISM_API_IMPORT", }
-	links{ "assimp%{LIB}", "freetype", "glfw", "imgui", "IrrXML", "ism", "mono-2.0-sgen", "zip", "zlibstatic", }
-	files{ "%{_PLATFORM}%{_TARGET_OS}/%{_TARGET_OS}_main.cpp", }
+-- links graphics
+function links_graphics()
+	filter{ "language:C++", "options:gfxapi=opengl" } links{ "opengl32" } defines{ "OPENGL_ENABLED=1" }
+	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glad" } dependson{ "glad" } links{ "glad" } defines{ "OPENGL_LOADER_GLAD=1" }
+	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew" } dependson{ "glew" } defines{ "OPENGL_LOADER_GLEW=1" }
+	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew", "configurations:Debug" } links{ "glew32d" }
+	filter{ "language:C++", "options:gfxapi=opengl", "options:glapi=glew", "configurations:Release" } links{ "glew32" }
+	filter{ "language:C++", "options:gfxapi=vulkan" } -- NYI --
+	filter{ "language:C++", "options:gfxapi=directx" } -- NYI --
+	filter{}
 end
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
+-- prepare extension
+function prepare_extension(_name)
+	dependson{ "ism" }
+	defines{ "ISM_MOD_API=ISM_API_EXPORT", }
+	links{ "ism", "zip", "glfw", "imgui", "freetype", "assimp%{LIB}", "IrrXML", "zlibstatic", }
+	files{
+		"%{_EXT}".._name.."/".._name..".premake5.lua",
+		"%{_EXT}".._name.."/".._name..".ini",
+		"%{_EXT}".._name.."/**.hpp",
+		"%{_EXT}".._name.."/**.cpp",
+	}
+	postbuildcommands{
+		"{COPYFILE} %{_EXT}".._name.."/".._name..".ini %{_BUILD_CONFIG}",
+	}
+end
+
+-- prepare application
+function prepare_application(_name)
+	links_graphics()
+	dependson{ "ism", "lua", "mono", }
+	defines{ "MAIN_ENABLED=1", "IMGUI_API=ISM_API_IMPORT", }
+	links{ "ism", "mono-2.0-sgen", "zip", "glfw", "imgui", "freetype", "assimp%{LIB}", "IrrXML", "zlibstatic", }
+	files{
+		"%{_PLATFORM}%{_TARGET_OS}/%{_TARGET_OS}_main.cpp",
+		"%{_APP}".._name.."/".._name..".premake5.lua",
+		"%{_APP}".._name.."/".._name..".ico",
+		"%{_APP}".._name.."/".._name..".rc",
+	}
+end
+
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+
+-- binary manifest
 _MANIFEST={}
 
 function manifest(...)

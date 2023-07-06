@@ -17,14 +17,14 @@ filter{}
 
 -- solution items
 solution_items{
-	"README.md",
-	"premake5.lua",
 	"premake5-system.lua",
+	"premake5.lua",
+	"README.md",
 }
 
 -- engine
-include "ism.premake5.lua"
 include "assets/assets.premake5.lua"
+include "ism.premake5.lua"
 
 -- modules
 include "modules/assimp/assimp.premake5.lua"
@@ -32,13 +32,15 @@ include "modules/freetype2/freetype2.premake5.lua"
 include "modules/glew/glew.premake5.lua"
 include "modules/glfw/glfw.premake5.lua"
 include "modules/imgui/imgui.premake5.lua"
-include "modules/lua/lua.premake5.lua"
-include "modules/mono/mono.premake5.lua"
 include "modules/zip/zip.premake5.lua"
 
--- programs
-include "programs/demo/demo.premake5.lua"
-include "programs/toolkit/toolkit.premake5.lua"
+-- extensions
+include "ext/lua/lua.premake5.lua"
+include "ext/mono/mono.premake5.lua"
+
+-- apps
+include "app/toolkit/toolkit.premake5.lua"
+include "app/demo/demo.premake5.lua"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
@@ -55,6 +57,7 @@ includedirs{
 	"%{_SLN}",
 	"%{_THIRDPARTY}",
 	"%{_THIRDPARTY}assimp/include/",
+	"%{_THIRDPARTY}cxxopts/include/",
 	"%{_THIRDPARTY}entt/src/",
 	"%{_THIRDPARTY}freetype2/include/",
 	"%{_THIRDPARTY}freetype2/include/freetype/",
@@ -62,11 +65,11 @@ includedirs{
 	"%{_THIRDPARTY}glfw/include/",
 	"%{_THIRDPARTY}imgui/",
 	"%{_THIRDPARTY}json/include/",
-	"%{_THIRDPARTY}mono/include/",
-	"%{_THIRDPARTY}lua/",
-	"%{_THIRDPARTY}zlib/",
-	"%{_THIRDPARTY}minizip/",
 	"%{_THIRDPARTY}lexertk/",
+	"%{_THIRDPARTY}lua/",
+	"%{_THIRDPARTY}minizip/",
+	"%{_THIRDPARTY}mono/include/",
+	"%{_THIRDPARTY}zlib/",
 }
 
 if _TARGET_OS=="windows" then

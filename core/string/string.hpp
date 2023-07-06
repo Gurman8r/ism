@@ -16,9 +16,22 @@ namespace Ism
 	> using _StringBase = std::basic_string<C, std::char_traits<C>, PolymorphicAllocator<C>>;
 
 	// basic string
+	template <class> class BasicString;
+
+	// string
+	using String = BasicString<char>;
+
+	// unicode (wide string)
+	using Unicode = BasicString<wchar_t>;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// basic string
 	template <class C
 	> class BasicString
 	{
+		static_assert(mpl::is_char_v<C>, "type must be a character");
+
 	public:
 		using self_type					= typename BasicString<C>;
 		using base_type					= typename _StringBase<C>;
@@ -40,45 +53,80 @@ namespace Ism
 
 		static constexpr bool is_narrow{ 1 == sizeof(C) };
 
+		using other_self_type = typename std::conditional_t<is_narrow, Unicode, String>;
+		using other_value_type = typename other_self_type::value_type;
+		using other_const_pointer = typename other_self_type::const_pointer;
+
 	public:
 		base_type m_string{};
 
 		BasicString() noexcept : m_string{} {}
-
 		explicit BasicString(allocator_type const & alloc) : m_string{ alloc } {}
-
 		explicit BasicString(base_type const & value) : m_string{ value } {}
-
 		explicit BasicString(base_type && value) : m_string{ std::move(value) } {}
 
 		BasicString(self_type const & value) : m_string{ value.m_string } {}
-
 		BasicString(self_type const & value, allocator_type const & alloc) : m_string{ value.m_string, alloc } {}
-
 		BasicString(self_type const & value, size_type const offset, allocator_type const & alloc) : m_string{ value.m_string, offset, alloc } {}
-
 		BasicString(self_type const & value, size_type const offset, size_type const count, allocator_type const & alloc) : m_string{ value.m_string, offset, count, alloc } {}
-
 		BasicString(const_pointer const data, size_type const size) : m_string{ data, size } {}
-
 		BasicString(const_pointer const data, size_type const size, allocator_type const & alloc) : m_string{ data, size, alloc } {}
-
 		BasicString(const_pointer const data) : m_string{ data } {}
-
 		BasicString(const_pointer const data, allocator_type const & alloc) : m_string{ data, alloc } {}
-
 		BasicString(size_type const count, value_type const elem, allocator_type const & alloc) : m_string{ count, elem, alloc } {}
-
 		template <class Iter, std::enable_if_t<std::_Is_iterator_v<Iter>, i32> = 0
 		> BasicString(Iter first, Iter last, allocator_type const & alloc = {}) : m_string{ first, last, alloc } {}
-		
 		BasicString(self_type && value) noexcept : m_string{ std::move(value.m_string) } {}
-
 		BasicString(self_type && value, allocator_type const & alloc) noexcept : m_string{ std::move(value.m_string), alloc } {}
-
 		BasicString(BasicStringView<value_type> const view, allocator_type const & alloc = {}) : m_string{ view.data(), view.size(), alloc } {}
-
 		BasicString(std::initializer_list<value_type> value, allocator_type const & alloc = {}) : m_string{ value, alloc } {}
+
+		BasicString(other_self_type const & value) : m_string{ value.convert().native() } {}
+		BasicString(other_self_type const & value, allocator_type const & alloc) : self_type{ value.convert().native(), alloc } {}
+		BasicString(other_self_type const & value, size_type const offset, allocator_type const & alloc) : m_string{ value.convert().native(), offset, alloc } {}
+		BasicString(other_self_type const & value, size_type const offset, size_type const count, allocator_type const & alloc) : m_string{ value.convert().native(), offset, count, alloc } {}
+		BasicString(other_const_pointer const data, size_type const size) : m_string{ other_self_type{ data, size }.convert().native() } {}
+		BasicString(other_const_pointer const data, size_type const size, allocator_type const & alloc) : m_string{ other_self_type{ data, size }.convert().native(), alloc } {}
+		BasicString(other_const_pointer const data) : m_string{ other_self_type{ data }.convert().native() } {}
+		BasicString(other_const_pointer const data, allocator_type const & alloc) : m_string{ other_self_type{ data }.convert().native(), alloc } {}
+		BasicString(size_type const count, other_value_type const elem, allocator_type const & alloc) : m_string{ count, static_cast<value_type>(elem), alloc} {}
+		BasicString(other_self_type && value) noexcept : m_string{ value.convert().native() } {}
+		BasicString(other_self_type && value, allocator_type const & alloc) noexcept : m_string{ value.convert().native(), alloc } {}
+
+	public:
+		NODISCARD auto narrow() const noexcept -> std::conditional_t<!is_narrow, String, String const &>
+		{
+			if constexpr (!is_narrow) {
+				String temp; temp.reserve(size());
+				for (auto const c : *this) { temp.push_back(static_cast<char>(c)); }
+				return temp.shrink_to_fit();
+			}
+			else {
+				return (*this);
+			}
+		}
+
+		NODISCARD auto widen() const -> std::conditional_t<is_narrow, Unicode, Unicode const &>
+		{
+			if constexpr (is_narrow) {
+				Unicode temp; temp.reserve(size());
+				for (auto const c : *this) { temp.push_back(static_cast<wchar_t>(c)); }
+				return temp.shrink_to_fit();
+			}
+			else {
+				return (*this);
+			}
+		}
+
+		NODISCARD decltype(auto) convert() const noexcept
+		{
+			if constexpr (is_narrow) {
+				return widen();
+			}
+			else {
+				return narrow();
+			}
+		}
 
 	public:
 		NODISCARD auto operator[](size_type const i) noexcept -> reference { return m_string[i]; }
@@ -234,48 +282,47 @@ namespace Ism
 		NODISCARD self_type substr(size_type const offset, size_type const count = npos) const { return self_type{ m_string.substr(offset, count) }; }
 
 		NODISCARD auto compare(self_type const & value) const noexcept { if (this == std::addressof(value)) { return 0; } return m_string.compare(value.m_string); }
-
+		
 		NODISCARD bool equal_to(self_type const & value) const noexcept { return (this == std::addressof(value)) || m_string._Equal(value.m_string); }
-
+		
 		NODISCARD size_type find(value_type const value, size_type const offset = 0) const { return m_string.find(value, offset); }
 		
 		NODISCARD size_type find(self_type const & value, size_type const offset = 0) const { return m_string.find(value.m_string, offset); }
-
+		
 		NODISCARD size_type rfind(value_type const value, size_type const offset = 0) const { return m_string.rfind(value, offset); }
 		
 		NODISCARD size_type rfind(self_type const & value, size_type const offset = 0) const { return m_string.rfind(value.m_string, offset); }
-
+		
 		NODISCARD size_type find_first_of(value_type const value, size_type const offset = 0) const { return m_string.find_first_of(value, offset); }
 		
 		NODISCARD size_type find_first_of(self_type const & value, size_type const offset = 0) const { return m_string.find_first_of(value.m_string, offset); }
-
+		
 		NODISCARD size_type find_first_not_of(value_type const value, size_type const offset = 0) const { return m_string.find_first_not_of(value, offset); }
 		
 		NODISCARD size_type find_first_not_of(self_type const & value, size_type const offset = 0) const { return m_string.find_first_not_of(value.m_string, offset); }
-
+		
 		NODISCARD size_type find_last_of(value_type const value, size_type const offset = 0) const { return m_string.find_last_of(value, offset); }
 		
 		NODISCARD size_type find_last_of(self_type const & value, size_type const offset = 0) const { return m_string.find_last_of(value.m_string, offset); }
-
+		
 		NODISCARD size_type find_last_not_of(value_type const value, size_type const offset = 0) const { return m_string.find_last_not_of(value, offset); }
 		
 		NODISCARD size_type find_last_not_of(self_type const & value, size_type const offset = 0) const { return m_string.find_last_not_of(value.m_string, offset); }
-
+		
 		NODISCARD bool contains(value_type const value) const noexcept { return m_string.find(value) != npos; }
 		
 		NODISCARD bool contains(self_type const & value) const noexcept { return m_string.find(value.m_string) != npos; }
-
-		NODISCARD bool has_prefix(value_type const a) const noexcept { return !empty() && front() == a; }
 		
-		NODISCARD bool has_prefix(self_type const & a) const noexcept { return (a.size() <= size()) && (a == substr(0, a.size())); }
-
-		NODISCARD bool has_suffix(value_type const a) const noexcept { return !empty() && back() == a; }
+		NODISCARD bool begins_with(value_type const value) const noexcept { return !empty() && front() == value; }
 		
-		NODISCARD bool has_suffix(self_type const & a) const noexcept { return (a.size() <= size()) && (a == substr(size() - a.size(), a.size())); }
-
+		NODISCARD bool begins_with(self_type const & value) const noexcept { return (value.size() <= size()) && (value == substr(0, value.size())); }
+		
+		NODISCARD bool ends_with(value_type const value) const noexcept { return !empty() && back() == value; }
+		
+		NODISCARD bool ends_with(self_type const & value) const noexcept { return (value.size() <= size()) && (value == substr(size() - value.size(), value.size())); }
+		
 	public:
-		NODISCARD self_type replace(self_type const & from, self_type const & to) const
-		{
+		NODISCARD self_type replace(self_type const & from, self_type const & to) const {
 			self_type temp{ *this };
 			for (size_t i{}; (i = temp.m_string.find(from.m_string, i)) != npos; i += to.size()) {
 				temp.m_string.replace(i, from.size(), to.m_string);
@@ -283,8 +330,7 @@ namespace Ism
 			return temp;
 		}
 
-		NODISCARD self_type replace_first(self_type const & from, self_type const & to) const
-		{
+		NODISCARD self_type replace_first(self_type const & from, self_type const & to) const {
 			self_type temp{ *this };
 			if (size_t i{}; (i = temp.m_string.find(from.m_string, i)) != npos) {
 				temp.m_string.replace(i, from.size(), to.m_string);
@@ -293,28 +339,6 @@ namespace Ism
 		}
 
 	public:
-		NODISCARD auto narrow() const noexcept -> std::conditional_t<is_narrow, BasicString<char> const &, BasicString<char>> {
-			if constexpr (is_narrow) {
-				return (*this);
-			}
-			else {
-				BasicString<char> temp; temp.reserve(size());
-				for (auto const c : *this) { temp.push_back(static_cast<char>(c)); }
-				return temp;
-			}
-		}
-
-		NODISCARD auto widen() const -> std::conditional_t<!is_narrow, BasicString<wchar_t> const &, BasicString<wchar_t>> {
-			if constexpr (!is_narrow) {
-				return (*this);
-			}
-			else {
-				BasicString<wchar_t> temp; temp.reserve(size());
-				for (auto const c : *this) { temp.push_back(static_cast<wchar_t>(c)); }
-				return temp;
-			}
-		}
-
 		NODISCARD auto uppercase() const {
 			self_type temp; temp.reserve(size());
 			for (auto const c : *this) {
@@ -368,7 +392,7 @@ namespace Ism
 			return v;
 		}
 
-		NODISCARD static auto split(self_type s, cstring delimiter) {
+		NODISCARD static auto split(self_type s, const_pointer delimiter) {
 			Vector<self_type> v{};
 			size_type i{};
 			while ((i = s.find(delimiter)) != npos) {
@@ -391,9 +415,9 @@ namespace Ism
 		}
 
 		NODISCARD auto split(value_type const delimiter) const noexcept { return split(*this, delimiter); }
-
-		NODISCARD auto split(value_type const * delimiter) const noexcept { return split(*this, delimiter); }
-
+		
+		NODISCARD auto split(const_pointer delimiter) const noexcept { return split(*this, delimiter); }
+		
 		NODISCARD auto split(self_type const & delimiter) const noexcept { return split(*this, delimiter); }
 
 	public:
@@ -429,11 +453,84 @@ namespace Ism
 		
 		NODISCARD bool has_extension() const noexcept { return !util::parse_extension(view()).empty(); }
 
-		NODISCARD auto path_join(self_type const & value) const -> self_type { return (*this) + '/' + value; }
+		NODISCARD auto path_join(self_type const & value) const -> self_type { return (*this) + (C)'/' + value; }
 
-		NODISCARD auto simplify_path() const -> self_type { self_type temp{ *this }; /* TODO */ return temp; }
+		NODISCARD bool is_network_share_path() const noexcept { return begins_with("//") || begins_with("\\\\"); }
 
-		NODISCARD bool is_network_share_path() const noexcept { if constexpr (is_narrow) { return has_prefix("//") || has_prefix("\\\\"); } else { return has_prefix(L"//") || has_prefix(L"\\\\"); } }
+		NODISCARD bool is_absolute_path() const noexcept {
+			if (size() > 1) { return front() == (C)'/' || front() == (C)'\\' || find(":/") != npos || find(":\\") != npos; }
+			else if (size() == 1) { return front() == (C)'/' || front() == (C)'\\'; }
+			else { return false; }
+		}
+
+		NODISCARD auto simplify_path() const -> self_type
+		{
+			String s{ narrow() }, drive{};
+
+			bool found{};
+
+			// check if we have a special path (like res://) or a protocol identifier
+			if (size_t p{ s.find("://") }; p != npos)
+			{
+				bool only_chars{ true };
+
+				for (size_t i{}; i < p; ++i) {
+					if (!std::isalnum(s[i])) {
+						only_chars = false;
+						break;
+					}
+				}
+
+				if (only_chars) {
+					found = true;
+					drive = s.substr(0, p + 3);
+					s = s.substr(p + 3);
+				}
+			}
+
+			if (!found) {
+				// network path, beginning with // or \\.
+				if (is_network_share_path()) { drive = s.substr(0, 2); s = s.substr(2); }
+				// absolute path
+				else if (s.begins_with("/") || s.begins_with("\\")) { drive = s.substr(0, 1); s = s.substr(1); }
+				// windows-style drive path, like C:/ or C:
+				else {
+					size_t p{ s.find(":/") };
+					if (p == npos) { p = s.find(":\\"); }
+					if (p != npos && p < s.find("/")) { drive = s.substr(0, p + 2); s = s.substr(p + 2); }
+				}
+			}
+
+			s = s.replace("\\", "/");
+			while (true) { // in case of using 2 or more slash
+				String compare{ s.replace("//", "/") };
+				if (s == compare) { break; }
+				else { s = compare; }
+			}
+
+			Vector<String> dirs{ s.split("/") };
+			for (size_t i{}; i < dirs.size(); ++i) {
+				String d{ dirs[i] };
+				if (d == ".") { dirs.erase(dirs.begin() + i); i--; }
+				else if (d == "..") {
+					if (i == 0) { dirs.erase(dirs.begin() + i); i--; }
+					else { dirs.erase(dirs.begin() + i); dirs.erase(dirs.begin() + i - 1); i -= 2; }
+				}
+			}
+
+			s = "";
+			for (size_t i{}; i < dirs.size(); ++i) {
+				if (i > 0) { s += "/"; }
+				s += dirs[i];
+			}
+
+			if constexpr (is_narrow) {
+				return drive + s;
+			}
+			else {
+				return (drive + s).widen();
+			}
+		}
 
 	public:
 		template <size_type buffer_size = 0
@@ -495,14 +592,6 @@ namespace Ism
 			return s;
 		}
 	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// string
-	using String = BasicString<char>;
-
-	// unicode (wide string)
-	using Unicode = BasicString<wchar_t>;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

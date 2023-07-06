@@ -3,7 +3,6 @@
 
 #include <core/io/logger.hpp>
 #include <core/os/main_loop.hpp>
-#include <iostream>
 
 namespace Ism
 {
@@ -46,18 +45,19 @@ namespace Ism
 		CompositeLogger *	m_logger{};
 
 		String // paths
-			m_exe_dir		{ "./" },
-			m_bin_dir		{ "./bin/" },
-			m_cache_dir		{ "./cache/" },
-			m_config_dir	{ "./config/" },
-			m_data_dir		{ "./data/" },
-			m_defaults_dir	{ "./defaultconfigs/" },
-			m_downloads_dir	{ "./downloads/" },
-			m_mods_dir		{ "./mods/" },
-			m_profiles_dir	{ "./profiles/" },
-			m_resources_dir	{ "./resources/" },
-			m_saves_dir		{ "./saves/" },
-			m_user_dir		{ "./user/" };
+			m_bin_dir		{ "./bin" },
+			m_cache_dir		{ "./cache" },
+			m_config_dir	{ "./config" },
+			m_data_dir		{ "./data" },
+			m_defaults_dir	{ "./defaultconfigs" },
+			m_downloads_dir	{ "./downloads" },
+			m_exe_dir		{ "" },
+			m_exe_path		{ "" },
+			m_mods_dir		{ "./mods" },
+			m_profiles_dir	{ "./profiles" },
+			m_resources_dir	{ "./resources" },
+			m_saves_dir		{ "./saves" },
+			m_user_dir		{ "./user" };
 
 		bool // flags
 			m_debug_stdout : 1,
@@ -85,7 +85,7 @@ namespace Ism
 		virtual void initialize_joysticks() = 0;
 		virtual void finalize() = 0;
 		virtual void finalize_core() = 0;
-		virtual void set_cmdline(cstring exepath, Vector<String> const & args);
+		virtual void set_cmdline(cstring exe_path, Vector<String> const & args);
 		virtual void set_main_loop(Ref<MainLoop> value) = 0;
 		virtual void delete_main_loop() = 0;
 
@@ -166,18 +166,20 @@ namespace Ism
 		NODISCARD String localize_path(String const & path) const;
 		NODISCARD String globalize_path(String const & path) const;
 
-		NODISCARD virtual String get_bin_dir() const;
-		NODISCARD virtual String get_cache_dir() const;
-		NODISCARD virtual String get_config_dir() const;
-		NODISCARD virtual String get_data_dir() const;
-		NODISCARD virtual String get_downloads_dir() const;
-		NODISCARD virtual String get_exe_dir() const;
-		NODISCARD virtual String get_mods_dir() const;
-		NODISCARD virtual String get_profiles_dir() const;
-		NODISCARD virtual String get_resource_dir() const;
-		NODISCARD virtual String get_saves_dir() const;
-		NODISCARD virtual String get_system_dir(SystemDir_ value) const;
-		NODISCARD virtual String get_user_dir() const;
+		NODISCARD virtual String get_bin_dir() const noexcept;
+		NODISCARD virtual String get_cache_dir() const noexcept;
+		NODISCARD virtual String get_config_dir() const noexcept;
+		NODISCARD virtual String get_data_dir() const noexcept;
+		NODISCARD virtual String get_downloads_dir() const noexcept;
+		NODISCARD virtual String get_exe_dir() const noexcept;
+		NODISCARD virtual String get_exe_name() const noexcept { return get_exe_path().stem(); }
+		NODISCARD virtual String get_exe_path() const noexcept;
+		NODISCARD virtual String get_mods_dir() const noexcept;
+		NODISCARD virtual String get_profiles_dir() const noexcept;
+		NODISCARD virtual String get_resource_dir() const noexcept;
+		NODISCARD virtual String get_saves_dir() const noexcept;
+		NODISCARD virtual String get_system_dir(SystemDir_ value) const noexcept;
+		NODISCARD virtual String get_user_dir() const noexcept;
 
 		virtual Error_ move_to_trash(String const & path);
 

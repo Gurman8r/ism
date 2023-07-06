@@ -13,7 +13,7 @@ namespace Ism
 		static u64 m_frame;
 
 	public:
-		static Error_ setup(cstring exepath, i32 argc, char * argv[]);
+		static Error_ setup(cstring exe_path, i32 argc, char * argv[]);
 
 		static bool start();
 

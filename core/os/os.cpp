@@ -8,7 +8,7 @@ namespace Ism
 
 	OS::OS()
 	{
-		SINGLETON_CTOR();
+		SINGLETON_CTOR(__singleton, this);
 
 		m_stdout_enabled = m_stderr_enabled = true;
 
@@ -19,7 +19,7 @@ namespace Ism
 
 	OS::~OS()
 	{
-		SINGLETON_DTOR();
+		SINGLETON_DTOR(__singleton, this);
 
 		memdelete(m_logger);
 	}
@@ -120,9 +120,10 @@ namespace Ism
 		return m_cmdline;
 	}
 
-	void OS::set_cmdline(cstring exepath, Vector<String> const & args)
+	void OS::set_cmdline(cstring exe_path, Vector<String> const & args)
 	{
-		m_exe_dir = exepath;
+		m_exe_path = exe_path;
+		m_exe_dir = m_exe_path.parent_path();
 		m_cmdline = args;
 	}
 
@@ -181,17 +182,17 @@ namespace Ism
 
 	u64 OS::get_static_memory_usage() const
 	{
-		return {};
+		return 0;
 	}
 
 	u64 OS::get_static_memory_peak_usage() const
 	{
-		return {};
+		return 0;
 	}
 
 	u64 OS::get_free_static_memory() const
 	{
-		return {};
+		return 0;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -218,44 +219,51 @@ namespace Ism
 
 	String OS::globalize_path(String const & path) const
 	{
-		if (path.has_prefix("res://")) {
+		if (path.begins_with("res://")) {
 			if (!m_resources_dir.empty()) { return path.replace("res:/", m_resources_dir); }
 			return path.replace("res://", "");
 		}
-		else if (path.has_prefix("user://")) {
+		else if (path.begins_with("user://")) {
 			if (String const data_dir{ get_os()->get_user_dir() }; !data_dir.empty()) { return path.replace("user:/", data_dir); }
 			return path.replace("user://", "");
 		}
 		return path;
 	}
 
-	String OS::get_bin_dir() const { return m_bin_dir; }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String OS::get_cache_dir() const { return m_cache_dir; }
+	String OS::get_bin_dir() const noexcept { return m_bin_dir; }
 
-	String OS::get_config_dir() const { return m_config_dir; }
+	String OS::get_cache_dir() const noexcept { return m_cache_dir; }
 
-	String OS::get_data_dir() const { return m_data_dir; }
+	String OS::get_config_dir() const noexcept { return m_config_dir; }
 
-	String OS::get_downloads_dir() const { return m_downloads_dir; }
+	String OS::get_data_dir() const noexcept { return m_data_dir; }
 
-	String OS::get_exe_dir() const { return m_exe_dir; }
+	String OS::get_downloads_dir() const noexcept { return m_downloads_dir; }
 
-	String OS::get_mods_dir() const { return m_mods_dir; }
+	String OS::get_exe_dir() const noexcept { return m_exe_dir; }
 
-	String OS::get_profiles_dir() const { return m_profiles_dir; }
+	String OS::get_exe_path() const noexcept { return m_exe_path; }
 
-	String OS::get_resource_dir() const { return m_resources_dir; }
+	String OS::get_mods_dir() const noexcept { return m_mods_dir; }
 
-	String OS::get_saves_dir() const { return m_saves_dir; }
+	String OS::get_profiles_dir() const noexcept { return m_profiles_dir; }
 
-	String OS::get_system_dir(SystemDir_ value) const { return "./"; }
+	String OS::get_resource_dir() const noexcept { return m_resources_dir; }
 
-	String OS::get_user_dir() const { return m_user_dir; }
+	String OS::get_saves_dir() const noexcept { return m_saves_dir; }
 
-	Error_ OS::move_to_trash(String const & path) { return Error_Failed; }
+	String OS::get_system_dir(SystemDir_ value) const noexcept { return "."; }
+
+	String OS::get_user_dir() const noexcept { return m_user_dir; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	Error_ OS::move_to_trash(String const & path)
+	{
+		return Error_Unavailable;
+	}
 
 	void OS::debug_break()
 	{
@@ -268,6 +276,7 @@ namespace Ism
 
 	void OS::set_exit_code(i32 value)
 	{
+		m_exit_code = value;
 	}
 
 	i32 OS::get_processor_count() const

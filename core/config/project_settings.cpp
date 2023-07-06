@@ -1,4 +1,5 @@
 #include <core/config/project_settings.hpp>
+#include <core/io/file.hpp>
 #include <core/os/os.hpp>
 #include <core/object/eval.hpp>
 #include <inih/INIReader.h>
@@ -13,12 +14,20 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ ProjectSettings::setup(String const & exepath, String const & main_pack)
+	Error_ ProjectSettings::setup(String const & exe_path, String const & main_pack)
 	{
-		if (exepath.empty()) { return Error_Failed; }
-		if (m_ini) { m_ini = nullptr; } m_ini = memnew(ConfigFile);
-		if (Error_ const err{ m_ini->parse(get_os()->get_config_dir() + "engine.ini") }) { return err; }
-		if (Error_ const err{ m_ini->parse(get_os()->get_config_dir() + "editor.ini") }) { return err; }
+		if (exe_path.empty()) { return Error_Failed; }
+
+		String const engine_ini{ get_os()->get_config_dir().path_join("engine.ini") };
+		if (File::exists(engine_ini) && !ini_parse(engine_ini.c_str(), [](auto user, auto section, auto name, auto value) {
+			return ((ProjectSettings *)user)->set(section, name, evaluate(value)), 1;
+		}, this)) { return Error_Failed; }
+
+		String const editor_ini{ get_os()->get_config_dir().path_join("editor.ini") };
+		if (File::exists(editor_ini) && !ini_parse(editor_ini.c_str(), [](auto user, auto section, auto name, auto value) {
+			return ((ProjectSettings *)user)->set(section, name, evaluate(value)), 1;
+		}, this)) { return Error_Failed; }
+
 		return Error_OK;
 	}
 

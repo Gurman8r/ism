@@ -16,12 +16,12 @@ namespace Ism
 
 	ExtensionManager::ExtensionManager()
 	{
-		SINGLETON_CTOR();
+		SINGLETON_CTOR(__singleton, this);
 	}
 
 	ExtensionManager::~ExtensionManager()
 	{
-		SINGLETON_DTOR();
+		SINGLETON_DTOR(__singleton, this);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -99,7 +99,10 @@ namespace Ism
 	void ExtensionManager::load_extensions()
 	{
 		auto f{ File::open(Extension::get_extension_list_config_file(), FileMode_Read) };
-		if (!f) { return; }
+		if (!f) {
+			PRINT_ERROR("could not locate extension list config file");
+			return;
+		}
 		while (String line{ f->get_line().trim() }) {
 			load_extension(line);
 		}

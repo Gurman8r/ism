@@ -16,9 +16,9 @@ namespace Ism
 
 	TextServer * TextServer::__singleton{};
 
-	TextServer::TextServer() { SINGLETON_CTOR(); }
+	TextServer::TextServer() { SINGLETON_CTOR(__singleton, this); }
 
-	TextServer::~TextServer() { SINGLETON_DTOR(); }
+	TextServer::~TextServer() { SINGLETON_DTOR(__singleton, this); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

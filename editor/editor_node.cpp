@@ -119,7 +119,7 @@ namespace Ism
 
 	EditorNode::EditorNode()
 	{
-		SINGLETON_CTOR();
+		SINGLETON_CTOR(__singleton, this);
 
 		m_assets = memnew(EditorAssets);
 		m_hierarchy = memnew(EditorHierarchy);
@@ -214,7 +214,7 @@ namespace Ism
 
 	EditorNode::~EditorNode()
 	{
-		SINGLETON_DTOR();
+		SINGLETON_DTOR(__singleton, this);
 
 		if (camera.rid) { get_gfx()->camera_destroy(camera.rid); camera.rid = nullptr; }
 
@@ -245,7 +245,7 @@ namespace Ism
 		{
 		case Notification_Process: {
 
-			get_tree()->get_root()->set_title(String::format<64>("%s @ %.3f fps", get_os()->get_exe_dir().stem().c_str(), get_tree()->get_fps().value));
+			get_tree()->get_root()->set_title(String::format<64>("%s @ %.3f fps", get_os()->get_exe_name().c_str(), get_tree()->get_fps().value));
 
 			Duration const delta_time{ get_tree()->get_delta_time() };
 

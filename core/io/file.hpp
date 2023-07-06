@@ -40,6 +40,16 @@ namespace Ism
 		bool m_big_endian{};
 		FileAccess_ m_access_type{};
 
+	public:
+		template <class C = char, class = std::enable_if_t<mpl::is_char_v<C>>
+		> static constexpr C delimiter{ static_cast<C>(
+#			if SYSTEM_WINDOWS
+				'\\'
+#			else
+				'/'
+#			endif
+		) };
+
 	protected:
 		NODISCARD virtual String fix_path(String const & path) const;
 		virtual Error_ open_internal(String const & path, FileMode_ mode) = 0;

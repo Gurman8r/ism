@@ -130,20 +130,14 @@ namespace Ism::priv
 // singleton helpers
 
 // singleton constructor helper
-#define SINGLETON_CTOR2(singleton, self) \
+#define SINGLETON_CTOR(singleton, self) \
 		ASSERT(!singleton); \
 		(singleton) = (self);
 
-#define SINGLETON_CTOR() \
-		SINGLETON_CTOR2(__singleton, this)
-
 // singleton destructor helper
-#define SINGLETON_DTOR2(singleton, self) \
+#define SINGLETON_DTOR(singleton, self) \
 		ASSERT((singleton) == (self)); \
-		ON_SCOPE_EXIT() { (singleton) = nullptr; };
-
-#define SINGLETON_DTOR() \
-		SINGLETON_DTOR2(__singleton, this)
+		ON_SCOPE_EXIT(&) { (singleton) = nullptr; };
 
 // singleton wrapper helper
 #define SINGLETON_WRAPPER(T, F) \

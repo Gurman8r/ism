@@ -17,9 +17,9 @@ namespace Ism
 
 	ResourceLoader * ResourceLoader::__singleton{};
 
-	ResourceLoader::ResourceLoader() { SINGLETON_CTOR(); }
+	ResourceLoader::ResourceLoader() { SINGLETON_CTOR(__singleton, this); }
 
-	ResourceLoader::~ResourceLoader() { SINGLETON_DTOR(); }
+	ResourceLoader::~ResourceLoader() { SINGLETON_DTOR(__singleton, this); }
 	
 	RES ResourceLoader::_load(String const & path, Error_ * r_error)
 	{

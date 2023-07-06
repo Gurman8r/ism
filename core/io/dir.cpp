@@ -47,14 +47,14 @@ namespace Ism
 		switch (m_access_type)
 		{
 		case DirAccess_Resources: {
-			if (path.has_prefix("res://")) {
+			if (path.begins_with("res://")) {
 				String const resource_path{ get_os()->get_resource_dir() };
 				if (!resource_path.empty()) { return path.replace_first("res:/", resource_path); }
 				return path.replace_first("res://", "");
 			}
 		} break;
 		case DirAccess_User: {
-			if (path.has_prefix("user://")) {
+			if (path.begins_with("user://")) {
 				String const data_dir{ OS::get_singleton()->get_user_dir() };
 				if (!data_dir.empty()) { return path.replace_first("user:/", data_dir); }
 				return path.replace_first("user://", "");
@@ -77,7 +77,7 @@ namespace Ism
 		String const path{ get_current_dir().lowercase() };
 		for (i32 i{}; i < get_drive_count(); ++i) {
 			String const drive{ get_drive(i).lowercase() };
-			if (path.has_prefix(drive)) {
+			if (path.begins_with(drive)) {
 				return i;
 			}
 		}
@@ -108,10 +108,10 @@ namespace Ism
 
 		String base{};
 
-		if (full.has_prefix("res://")) {
+		if (full.begins_with("res://")) {
 			base = "res://";
 		}
-		else if (full.has_prefix("user://")) {
+		else if (full.begins_with("user://")) {
 			base = "user://";
 		}
 		else if (full.is_network_share_path()) {
@@ -121,7 +121,7 @@ namespace Ism
 			ASSERT(-1 < pos);
 			base = full.substr(0, pos + 1);
 		}
-		else if (full.has_prefix("/")) {
+		else if (full.begins_with("/")) {
 			base = "/";
 		}
 		else if (full.contains(":/")) {
@@ -303,7 +303,7 @@ namespace Ism
 			}
 		}
 
-		if (!to.has_suffix("/")) {
+		if (!to.ends_with("/")) {
 			to = to + "/";
 		}
 
@@ -367,10 +367,10 @@ namespace Ism
 	Ref<Dir> Dir::create_for_path(String const & path)
 	{
 		Ref<Dir> d;
-		if (path.has_prefix("res://")) {
+		if (path.begins_with("res://")) {
 			d = create(DirAccess_Resources);
 		}
-		else if (path.has_prefix("user://")) {
+		else if (path.begins_with("user://")) {
 			d = create(DirAccess_User);
 		}
 		else {

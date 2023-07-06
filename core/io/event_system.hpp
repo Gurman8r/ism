@@ -212,8 +212,8 @@ private:
 		i32 m_next_index{};
 
 	public:
-		EventBus() noexcept { SINGLETON_CTOR(); }
-		virtual ~EventBus() noexcept override { SINGLETON_DTOR(); }
+		EventBus() noexcept { SINGLETON_CTOR(__singleton, this); }
+		virtual ~EventBus() noexcept override { SINGLETON_DTOR(__singleton, this); }
 		FORCE_INLINE static EventBus * get_singleton() noexcept { return __singleton; }
 
 	public:

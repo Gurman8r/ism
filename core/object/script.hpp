@@ -23,8 +23,8 @@ namespace Ism
 		bool m_languages_finalized{};
 
 	public:
-		ScriptManager() noexcept { SINGLETON_CTOR(); }
-		virtual ~ScriptManager() noexcept override { SINGLETON_DTOR(); }
+		ScriptManager() noexcept { SINGLETON_CTOR(__singleton, this); }
+		virtual ~ScriptManager() noexcept override { SINGLETON_DTOR(__singleton, this); }
 		FORCE_INLINE static ScriptManager * get_singleton() noexcept { return __singleton; }
 
 		NODISCARD bool is_scripting_enabled() const noexcept { return m_scripting_enabled; }

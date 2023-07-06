@@ -8,9 +8,9 @@ namespace Ism
 
 	AudioServer * AudioServer::__singleton{};
 
-	AudioServer::AudioServer() { SINGLETON_CTOR(); }
+	AudioServer::AudioServer() { SINGLETON_CTOR(__singleton, this); }
 
-	AudioServer::~AudioServer() { SINGLETON_DTOR(); }
+	AudioServer::~AudioServer() { SINGLETON_DTOR(__singleton, this); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

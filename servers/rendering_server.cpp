@@ -11,9 +11,9 @@ namespace Ism
 
 	RenderingServer::CreateFunc RenderingServer::__create_func{ []() { return (RenderingServer *)memnew(DefaultRenderingServer); } };
 
-	RenderingServer::RenderingServer() { SINGLETON_CTOR(); }
+	RenderingServer::RenderingServer() { SINGLETON_CTOR(__singleton, this); }
 
-	RenderingServer::~RenderingServer() { SINGLETON_DTOR(); }
+	RenderingServer::~RenderingServer() { SINGLETON_DTOR(__singleton, this); }
 
 	RenderingServer * RenderingServer::create()
 	{

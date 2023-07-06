@@ -21,6 +21,16 @@ namespace Ism
 		bool m_include_navigational{};
 		bool m_include_hidden{};
 
+	public:
+		template <class C = char, class = std::enable_if_t<mpl::is_char_v<C>>
+		> static constexpr C delimiter{ static_cast<C>(
+#			if SYSTEM_WINDOWS
+				'\\'
+#			else
+				'/'
+#			endif
+		) };
+
 	protected:
 		using CreateFunc = Ref<Dir>(*)();
 		static CreateFunc __create_func[DirAccess_MAX];
@@ -28,9 +38,8 @@ namespace Ism
 		Error_ _copy_dir(Ref<Dir> & from, String const & to, i32 chmod_flags, bool copy_links);
 		String _get_root_path() const;
 		virtual String _get_root_string() const;
-
 		DirAccess_ get_access_type() const;
-		String fix_path(String path) const;
+		virtual String fix_path(String path) const;
 
 		template <class T
 		> static Ref<Dir> _create_builtin() {

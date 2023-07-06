@@ -8,9 +8,9 @@ namespace Ism
 
 	PhysicsServer * PhysicsServer::__singleton{};
 
-	PhysicsServer::PhysicsServer() { SINGLETON_CTOR(); }
+	PhysicsServer::PhysicsServer() { SINGLETON_CTOR(__singleton, this); }
 
-	PhysicsServer::~PhysicsServer() { SINGLETON_DTOR(); }
+	PhysicsServer::~PhysicsServer() { SINGLETON_DTOR(__singleton, this); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

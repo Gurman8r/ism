@@ -10,9 +10,11 @@ namespace Ism
 
 	EMBED_CLASS(Extension, t) {}
 
-	Extension::Extension(ConfigFile const & config_file) : m_config_file{ config_file } {}
+	Extension::Extension() noexcept : Extension{ ConfigFile{} } {}
 
-	Extension::~Extension() { close_library(); }
+	Extension::Extension(ConfigFile const & ini) : m_ini{ ini } {}
+
+	Extension::~Extension() noexcept { close_library(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -79,7 +81,7 @@ namespace Ism
 
 	String Extension::get_extension_list_config_file()
 	{
-		return get_os()->get_config_dir() + "extensions.cfg";
+		return get_os()->get_config_dir().path_join("extensions.cfg"_s);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -89,15 +91,15 @@ namespace Ism
 	RES ExtensionFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		String const stem{ path.stem() };
-		String const ini_path{ get_os()->get_config_dir() + stem };
+		String const ini_path{ get_os()->get_config_dir().path_join(stem) };
 		ConfigFile const ini{ ini_path };
 		String const library_name{ ini.get_string("configuration", "library_name", stem) };
 		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("open_%s_library", library_name.c_str())) };
-		String const dll_path{ get_os()->get_bin_dir() + library_name };
+		String const dll_path{ get_os()->get_bin_dir().path_join(library_name) };
 
 		Ref<Extension> ext; ext.instance(ini);
-		if (ext->open_library(dll_path, entry_symbol)) { ext = nullptr; }
-		if (r_error) { *r_error = Error_OK; }
+		if (Error_ const err{ ext->open_library(dll_path, entry_symbol) }) { if (r_error) { *r_error = err; } ext = nullptr; }
+		else if (r_error) { *r_error = Error_OK; }
 		return ext;
 	}
 

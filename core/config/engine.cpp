@@ -7,7 +7,7 @@ namespace Ism
 
 	Engine::Engine() noexcept
 	{
-		SINGLETON_CTOR();
+		SINGLETON_CTOR(__singleton, this);
 
 
 
@@ -23,6 +23,6 @@ namespace Ism
 
 	Engine::~Engine() noexcept
 	{
-		SINGLETON_DTOR();
+		SINGLETON_DTOR(__singleton, this);
 	}
 }

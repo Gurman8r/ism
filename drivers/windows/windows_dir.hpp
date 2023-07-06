@@ -20,6 +20,9 @@ namespace Ism
 		bool m_cisdir{};
 		bool m_cishidden{};
 
+	protected:
+		virtual String fix_path(String path) const override;
+
 	public:
 		WindowsDir();
 		virtual ~WindowsDir() override;

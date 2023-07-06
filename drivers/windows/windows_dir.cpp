@@ -107,7 +107,7 @@ namespace Ism
 		if (!base.empty()) {
 			GetCurrentDirectoryW(2048, real_current_dir_name);
 			String new_dir = Unicode(real_current_dir_name).narrow().replace("\\", "/");
-			if (!new_dir.has_prefix(base)) {
+			if (!new_dir.begins_with(base)) {
 				worked = false;
 			}
 		}
@@ -135,12 +135,6 @@ namespace Ism
 		bool success;
 		i32 err;
 
-		if (!path.has_prefix("//") || path.has_prefix("\\\\")) {
-			path = "\\\\?\\" + path;
-			// Add "\\?\" to the path to extend max. path length past 248, if it's not a network share UNC path.
-			// See https://msdn.microsoft.com/en-us/library/windows/desktop/aa363855(v=vs.85).aspx
-		}
-
 		success = CreateDirectoryW((LPCWSTR)path.widen().c_str(), nullptr);
 		err = GetLastError();
 
@@ -160,7 +154,7 @@ namespace Ism
 		String base = _get_root_path();
 		if (!base.empty()) {
 			String bd = m_path.replace("\\", "/");
-			if (bd.has_prefix("/")) {
+			if (bd.begins_with("/")) {
 				return _get_root_string() + bd.substr(1, bd.size());
 			}
 			else {
@@ -298,6 +292,14 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	EMBED_CLASS(WindowsDir, t) {}
+
+	String WindowsDir::fix_path(String path) const {
+		String r_path{ Dir::fix_path(path) };
+		if (r_path.is_absolute_path() && !r_path.is_network_share_path() && r_path.size() > MAX_PATH) {
+			r_path = "\\\\?\\" + r_path.replace("/", "\\");
+		}
+		return r_path;
+	}
 
 	WindowsDir::WindowsDir()
 	{

@@ -39,7 +39,7 @@ namespace Ism
 		// if (is_path_invalid(path)) { return 0; }
 
 		String file{ fix_path(path) };
-		if (file.has_suffix("/") && file != "/") { file = file.substr(0, file.size() - 1); }
+		if (file.ends_with("/") && file != "/") { file = file.substr(0, file.size() - 1); }
 
 		struct _stat st;
 

@@ -15,8 +15,8 @@ namespace Ism
 		static Input * __singleton;
 
 	public:
-		Input() noexcept { SINGLETON_CTOR(); }
-		virtual ~Input() noexcept override { SINGLETON_DTOR(); }
+		Input() noexcept { SINGLETON_CTOR(__singleton, this); }
+		virtual ~Input() noexcept override { SINGLETON_DTOR(__singleton, this); }
 		FORCE_INLINE static Input * get_singleton() noexcept { return __singleton; }
 
 	public:

@@ -21,7 +21,7 @@ namespace Ism
 		{
 		case FileAccess_Resources: {
 			if (get_globals()) {
-				if (r_path.has_prefix("res://")) {
+				if (r_path.begins_with("res://")) {
 					String resource_path{ get_os()->get_resource_dir() };
 					if (!resource_path.empty()) {
 						return r_path.replace("res:/", resource_path);
@@ -32,7 +32,7 @@ namespace Ism
 
 		} break;
 		case FileAccess_User: {
-			if (r_path.has_prefix("user://")) {
+			if (r_path.begins_with("user://")) {
 				if (String data_dir{ get_os()->get_user_dir() }; !data_dir.empty()) {
 					return r_path.replace("user:/", data_dir);
 				}
@@ -61,10 +61,10 @@ namespace Ism
 	Ref<File> File::create_for_path(String const & path)
 	{
 		Ref<File> file;
-		if (path.has_prefix("res://")) {
+		if (path.begins_with("res://")) {
 			file = create(FileAccess_Resources);
 		}
-		else if (path.has_prefix("user://")) {
+		else if (path.begins_with("user://")) {
 			file = create(FileAccess_User);
 		}
 		else {

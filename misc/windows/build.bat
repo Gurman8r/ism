@@ -12,6 +12,7 @@ set _MSBUILD_DIR=%_VSTUDIO_DIR%Msbuild\Current\Bin\
 rem OPTIONS
 set _PLATFORM=%1
 set _CONFIGURATION=%2
+set _TOOLSET=%3
 
 rem DISPLAY INFORMATION
 echo SOLUTION PATH: %_SOLUTION%
@@ -19,17 +20,23 @@ echo VCVARS PATH:   %_VCVARS_DIR%
 echo MSBUILD PATH:  %_MSBUILD_DIR%
 echo PLATFORM:      %_PLATFORM%
 echo CONFIGURATION: %_CONFIGURATION%
+echo TOOLSET:       %_TOOLSET%
 echo
 
 rem SETUP ENVIRONMENT
 cd %_VCVARS_DIR%
-if %_PLATFORM% == "x32" 	( call "vcvarsall.bat" x86 )
+
+rem 32-bit
 if %_PLATFORM% == "x86" 	( call "vcvarsall.bat" x86 )
-if %_PLATFORM% == "x64" 	( call "vcvarsall.bat" x64 )
+if %_PLATFORM% == "x32" 	( call "vcvarsall.bat" x86 )
 if %_PLATFORM% == "Win32" 	( call "vcvarsall.bat" x86 )
+
+rem 64-bit
+if %_PLATFORM% == "x86_64" 	( call "vcvarsall.bat" x64 )
+if %_PLATFORM% == "x64" 	( call "vcvarsall.bat" x64 )
 if %_PLATFORM% == "Win64" 	( call "vcvarsall.bat" x64 )
 
 rem RUN BUILD
 cd %_MSBUILD_DIR%
-call msbuild.exe %_SOLUTION% /p:PlatformTarget=%_PLATFORM% /p:Configuration=%_CONFIGURATION%
+call msbuild.exe %_SOLUTION% /p:PlatformTarget=%_PLATFORM% /p:Configuration=%_CONFIGURATION% /p:PlatformToolset=%_TOOLSET%
 pause

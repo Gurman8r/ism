@@ -50,9 +50,9 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ Main::setup(cstring exepath, i32 argc, char * argv[])
+	Error_ Main::setup(cstring exe_path, i32 argc, char * argv[])
 	{
-		PRINT_LINE(exepath);
+		PRINT_LINE(exe_path);
 
 		Error_ error{ Error_OK };
 		Vector<String> args{ argv, argv + argc };
@@ -71,22 +71,22 @@ namespace Ism
 		if (!(zip_archive = get_zip_archive())) { zip_archive = memnew(ZipArchive); }
 		packed_data->add_package_source(zip_archive);
 
-		settings->setup(exepath);
+		settings->setup(exe_path);
 
 		register_core_extensions();
 
-		get_os()->set_cmdline(exepath, args);
+		get_os()->set_cmdline(exe_path, args);
 
-		display = DS::create("ism", DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error);
+		String const exe_name{ get_os()->get_exe_name() };
+
+		display = DS::create(exe_name, DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error);
 		graphics = RS::create();
 		text = memnew(TS);
 		physics = memnew(PS);
 		audio = memnew(AS);
 
-		//display->set_native_icon("res://icons/" + get_os()->get_exe_dir().stem() + ".ico");
-		if (Ref<Image> i{ get_resource_loader()->load("res://icons/" + get_os()->get_exe_dir().stem() + ".png") }) {
-			i->flip_vertically(); display->set_icon(i->get_pixel_data(), i->get_width(), i->get_height());
-		}
+		//display->set_native_icon("res://icons/" + exe_name + ".ico");
+		if (Ref<Image> i{ get_resource_loader()->load("res://icons/" + exe_name + ".png") }) { i->flip_vertically(); display->set_icon(i->get_pixel_data(), i->get_width(), i->get_height()); }
 
 		register_core_singletons();
 

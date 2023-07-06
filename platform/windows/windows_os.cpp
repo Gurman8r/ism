@@ -3,6 +3,7 @@
 #include <drivers/windows/windows_dir.hpp>
 #include <drivers/windows/windows_file.hpp>
 #include <main/main.hpp>
+#include <iostream>
 
 namespace Ism
 {
@@ -131,7 +132,7 @@ namespace Ism
 
 	String WindowsOS::get_cwd() const
 	{
-		return "./";
+		return ".";
 	}
 
 	Error_ WindowsOS::set_cwd(String const & path)
@@ -251,74 +252,74 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String WindowsOS::get_bin_dir() const
+	String WindowsOS::get_bin_dir() const noexcept
 	{
-		return "./";
+		return OS::get_bin_dir();
 	}
 
-	String WindowsOS::get_cache_dir() const
+	String WindowsOS::get_cache_dir() const noexcept
 	{
-		return "./";
+		return OS::get_cache_dir();
 	}
 
-	String WindowsOS::get_config_dir() const
+	String WindowsOS::get_config_dir() const noexcept
 	{
-		return "./";
+		return OS::get_config_dir();
 	}
 
-	String WindowsOS::get_data_dir() const
+	String WindowsOS::get_data_dir() const noexcept
 	{
-		return "./";
+		return OS::get_data_dir();
 	}
 
-	String WindowsOS::get_downloads_dir() const
+	String WindowsOS::get_downloads_dir() const noexcept
 	{
-		return "./";
+		return OS::get_downloads_dir();
 	}
 
-	String WindowsOS::get_exe_dir() const
+	String WindowsOS::get_exe_dir() const noexcept
 	{
 		WCHAR buf[4096];
 		GetModuleFileNameW(nullptr, buf, 4096);
 		return Unicode(buf).narrow().replace("\\", "/");
 	}
 
-	String WindowsOS::get_mods_dir() const
+	String WindowsOS::get_mods_dir() const noexcept
 	{
-		return "./";
+		return OS::get_mods_dir();
 	}
 
-	String WindowsOS::get_profiles_dir() const
+	String WindowsOS::get_profiles_dir() const noexcept
 	{
-		return "./";
+		return OS::get_profiles_dir();
 	}
 
-	String WindowsOS::get_resource_dir() const
+	String WindowsOS::get_resource_dir() const noexcept
 	{
-		return "./";
+		return OS::get_resource_dir();
 	}
 
-	String WindowsOS::get_saves_dir() const
+	String WindowsOS::get_saves_dir() const noexcept
 	{
-		return "./";
+		return OS::get_saves_dir();
 	}
 
-	String WindowsOS::get_system_dir(SystemDir_ value) const
+	String WindowsOS::get_system_dir(SystemDir_ value) const noexcept
 	{
-		return "./";
+		return OS::get_system_dir(value);
 	}
 
-	String WindowsOS::get_user_dir() const
+	String WindowsOS::get_user_dir() const noexcept
 	{
-		return "./";
+		return OS::get_user_dir();
 	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	Error_ WindowsOS::move_to_trash(String const & path)
 	{
 		return Error_Failed;
 	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	void WindowsOS::debug_break()
 	{
