@@ -17,7 +17,7 @@ namespace Ism
 		static bool is_cmdline_tool();
 
 	public:
-		static Error_ setup(cstring exe_path, i32 argc, char * argv[]);
+		static Error_ setup(cstring exec_path, i32 argc, char * argv[]);
 		static bool start();
 		static bool iteration();
 		static bool is_iterating() { return m_iterating > 0; }

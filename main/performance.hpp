@@ -36,7 +36,7 @@ namespace Ism
 	public:
 		Performance();
 		virtual ~Performance() override;
-		FORCE_INLINE static Performance * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(Performance, __singleton);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -34,7 +34,7 @@ namespace Ism
 	{
 		static OS * __singleton;
 
-		i32					m_exit_code{};
+		String				m_exec_path{};
 		Vector<String>		m_cmdline{};
 		Vector<String>		m_user_args{};
 		Vector<String>		m_restart_args{};
@@ -43,21 +43,7 @@ namespace Ism
 		String				m_current_rendering_method{};
 		i32					m_display_driver_id{};
 		CompositeLogger *	m_logger{};
-
-		String // paths
-			m_bin_dir		{ "./bin" },
-			m_cache_dir		{ "./cache" },
-			m_config_dir	{ "./config" },
-			m_data_dir		{ "./data" },
-			m_defaults_dir	{ "./defaultconfigs" },
-			m_downloads_dir	{ "./downloads" },
-			m_exe_dir		{},
-			m_exe_path		{},
-			m_mods_dir		{ "./mods" },
-			m_profiles_dir	{ "./profiles" },
-			m_resources_dir	{ "./resources" },
-			m_saves_dir		{ "./saves" },
-			m_user_dir		{ "./user" };
+		i32					m_exit_code{};
 
 		bool // flags
 			m_debug_stdout : 1,
@@ -69,7 +55,7 @@ namespace Ism
 	public:
 		OS();
 		virtual ~OS();
-		FORCE_INLINE static OS * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(OS, __singleton);
 
 	protected:
 		friend class Main;
@@ -85,7 +71,7 @@ namespace Ism
 		virtual void initialize_joysticks() = 0;
 		virtual void finalize() = 0;
 		virtual void finalize_core() = 0;
-		virtual void set_cmdline(cstring exe_path, Vector<String> const & args);
+		virtual void set_cmdline(cstring exec_path, Vector<String> const & args);
 		virtual void set_main_loop(Ref<MainLoop> value) = 0;
 		virtual void delete_main_loop() = 0;
 
@@ -96,6 +82,8 @@ namespace Ism
 		NODISCARD String get_current_rendering_method() const { return m_current_rendering_method; }
 		NODISCARD i32 get_display_driver_id() const { return m_display_driver_id; }
 		NODISCARD virtual Vector<String> get_video_adapter_driver_info() const = 0;
+
+		NODISCARD CompositeLogger * get_logger() const noexcept { return m_logger; }
 
 		void printv(cstring fmt, va_list args);
 		void printf(cstring fmt, ...);
@@ -117,7 +105,7 @@ namespace Ism
 
 		virtual Error_ execute(String const & path, Vector<String> const & args, String * pipe = nullptr, i32 * exitcode = nullptr, bool read_stderr = false, Mutex * pipe_mutex = nullptr) = 0;
 		virtual Error_ create_process(String const & path, Vector<String> const & args, ProcessID * child_id = nullptr) = 0;
-		virtual Error_ create_instance(Vector<String> const & args, ProcessID * child_id = nullptr) { return create_process(get_exe_dir(), args, child_id); };
+		virtual Error_ create_instance(Vector<String> const & args, ProcessID * child_id = nullptr) { return create_process(get_exec_path(), args, child_id); };
 		virtual Error_ kill(ProcessID const & pid) = 0;
 		NODISCARD virtual i32 get_pid() const = 0;
 		NODISCARD virtual bool is_process_running(ProcessID const & pid) const = 0;
@@ -163,23 +151,13 @@ namespace Ism
 		NODISCARD String get_locale_language() const;
 		NODISCARD String get_safe_path(String const & path, bool allow_dir_separator = false) const;
 
-		NODISCARD String localize_path(String const & path) const;
-		NODISCARD String globalize_path(String const & path) const;
-
-		NODISCARD virtual String get_bin_dir() const noexcept;
-		NODISCARD virtual String get_cache_dir() const noexcept;
-		NODISCARD virtual String get_config_dir() const noexcept;
-		NODISCARD virtual String get_data_dir() const noexcept;
-		NODISCARD virtual String get_downloads_dir() const noexcept;
-		NODISCARD virtual String get_exe_dir() const noexcept;
-		NODISCARD virtual String get_exe_name() const noexcept { return get_exe_path().stem(); }
-		NODISCARD virtual String get_exe_path() const noexcept;
-		NODISCARD virtual String get_mods_dir() const noexcept;
-		NODISCARD virtual String get_profiles_dir() const noexcept;
-		NODISCARD virtual String get_resource_dir() const noexcept;
-		NODISCARD virtual String get_saves_dir() const noexcept;
-		NODISCARD virtual String get_system_dir(SystemDir_ value) const noexcept;
-		NODISCARD virtual String get_user_dir() const noexcept;
+		NODISCARD virtual String get_cache_path() const noexcept;
+		NODISCARD virtual String get_config_path() const noexcept;
+		NODISCARD virtual String get_data_path() const noexcept;
+		NODISCARD virtual String get_exec_path() const noexcept;
+		NODISCARD virtual String get_resource_path() const noexcept;
+		NODISCARD virtual String get_system_path(SystemDir_ value) const noexcept;
+		NODISCARD virtual String get_user_path() const noexcept;
 
 		virtual Error_ move_to_trash(String const & path);
 

@@ -1,7 +1,7 @@
 #include <core/io/dir.hpp>
-#include <core/io/file.hpp>
 #include <core/os/os.hpp>
-#include <filesystem>
+#include <core/config/project_settings.hpp>
+#include <core/io/file.hpp>
 
 namespace Ism
 {
@@ -15,15 +15,11 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	String Dir::_get_root_path() const
 	{
 		switch (m_access_type) {
-		case DirAccess_Resources: return get_os()->get_user_dir();
-		case DirAccess_User: return get_os()->get_user_dir();
+		case DirAccess_Resources: return get_globals()->get_resource_path();
+		case DirAccess_User: return get_os()->get_user_path();
 		default: return "";
 		}
 	}
@@ -48,14 +44,14 @@ namespace Ism
 		{
 		case DirAccess_Resources: {
 			if (path.begins_with("res://")) {
-				String const resource_path{ get_os()->get_resource_dir() };
+				String const resource_path{ get_os()->get_resource_path() };
 				if (!resource_path.empty()) { return path.replace_first("res:/", resource_path); }
 				return path.replace_first("res://", "");
 			}
 		} break;
 		case DirAccess_User: {
 			if (path.begins_with("user://")) {
-				String const data_dir{ OS::get_singleton()->get_user_dir() };
+				String const data_dir{ OS::get_singleton()->get_user_path() };
 				if (!data_dir.empty()) { return path.replace_first("user:/", data_dir); }
 				return path.replace_first("user://", "");
 			}
@@ -440,16 +436,16 @@ namespace Ism
 	Error_ Dir::copy_abs(String const & from, String const & to, i32 chmod_flags)
 	{
 		Ref<Dir> d{ Dir::create(DirAccess_Filesystem) };
-		String const f{ get_os()->globalize_path(from) };
-		String const t{ get_os()->globalize_path(to)};
+		String const f{ get_globals()->globalize_path(from) };
+		String const t{ get_globals()->globalize_path(to)};
 		return d->copy(f, t, chmod_flags);
 	}
 
 	Error_ Dir::rename_abs(String const & from, String const & to)
 	{
 		Ref<Dir> d{ Dir::create(DirAccess_Filesystem) };
-		String const f{ get_os()->globalize_path(from) };
-		String const t{ get_os()->globalize_path(to) };
+		String const f{ get_globals()->globalize_path(from) };
+		String const t{ get_globals()->globalize_path(to) };
 		return d->rename(f, t);
 	}
 

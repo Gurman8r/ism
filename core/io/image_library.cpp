@@ -1,5 +1,5 @@
 #include <core/io/image_library.hpp>
-#include <core/os/os.hpp>
+#include <core/config/project_settings.hpp>
 
 #define STBI_FREE memfree
 #define STBI_MALLOC memalloc
@@ -40,7 +40,10 @@ namespace Ism
 	RES ImageFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Image> temp{}; temp.instance();
-		if (auto const error{ load_image(temp, get_os()->globalize_path(path)) }) { if (r_error) { *r_error = error; } temp = nullptr; }
+		if (Error_ const err{ load_image(temp, get_globals()->globalize_path(path)) }) {
+			if (r_error) { *r_error = err; }
+			temp = nullptr;
+		}
 		else if (r_error) { *r_error = Error_OK; }
 		return temp;
 	}

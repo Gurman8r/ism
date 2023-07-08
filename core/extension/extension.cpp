@@ -1,6 +1,7 @@
 #include <core/extension/extension.hpp>
-#include <core/extension/extension_manager.hpp>
 #include <core/os/os.hpp>
+#include <core/config/project_settings.hpp>
+#include <core/extension/extension_manager.hpp>
 #include <core/io/file.hpp>
 
 namespace Ism
@@ -78,7 +79,7 @@ namespace Ism
 
 	String Extension::get_extension_list_config_file()
 	{
-		return get_os()->get_config_dir().path_join("extensions.cfg"_s);
+		return get_globals()->get_config_path().path_join("extensions.cfg"_s);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -89,14 +90,14 @@ namespace Ism
 	{
 		String const name{ path.stem() };
 
-		String const ini_path{ get_os()->get_config_dir().path_join(name) + ".ini" };
+		String const ini_path{ get_globals()->get_config_path().path_join(name) + ".ini" };
 		if (!File::exists(ini_path)) { PRINT_WARNING("extension ini not found: " + ini_path); }
 
 		ConfigFile ini{ ini_path };
 		if (ini.empty()) { PRINT_WARNING("extension ini is empty: " + ini_path); }
 		String const library_name{ ini.get_string("configuration", "library_name", name) };
 		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("Ism::open_%s_extension", name))};
-		String const dll_path{ get_os()->get_bin_dir().path_join(library_name) };
+		String const dll_path{ get_globals()->get_bin_path().path_join(library_name) };
 
 		Ref<Extension> ext; ext.instance();
 		ext->set_ini(std::move(ini));

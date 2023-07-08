@@ -19,7 +19,7 @@ namespace Ism
 	public:
 		PhysicsServer();
 		virtual ~PhysicsServer() override;
-		FORCE_INLINE static PhysicsServer * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(PhysicsServer, __singleton);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

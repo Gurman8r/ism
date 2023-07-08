@@ -12,7 +12,7 @@ namespace Ism
 	public:
 		Engine() noexcept;
 		~Engine() noexcept;
-		FORCE_INLINE static Engine * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(Engine, __singleton);
 
 	public:
 

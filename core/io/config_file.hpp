@@ -11,6 +11,7 @@ namespace Ism
 
 	public:
 		using Section = typename HashMap<String, String>;
+		using Callback = typename bool(*)(void * user, cstring section, cstring name, cstring value);
 
 	private:
 		HashMap<String, Section> m_data{};
@@ -28,6 +29,7 @@ namespace Ism
 		explicit ConfigFile(String const & path) { parse(path); }
 		Error_ parse(String const & path);
 		static Ref<ConfigFile> parse(String const & path, Error_ * r_error);
+		static Error_ parse(String const & path, Callback fn, void * user);
 
 	public:
 		NODISCARD bool empty() const noexcept { return m_data.empty(); }

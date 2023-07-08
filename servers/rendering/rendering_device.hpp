@@ -19,7 +19,7 @@ namespace Ism
 	public:
 		RenderingDevice() noexcept { __singleton = this; }
 		virtual ~RenderingDevice() noexcept override = default;
-		FORCE_INLINE static RenderingDevice * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(RenderingDevice, __singleton);
 
 	public:
 		virtual void initialize() = 0;

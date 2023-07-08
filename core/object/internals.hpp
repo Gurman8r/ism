@@ -19,7 +19,7 @@ namespace Ism
 	public:
 		Internals();
 		~Internals();
-		FORCE_INLINE static Internals * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(Internals, __singleton);
 
 	public:
 		template <class First, class ... Rest

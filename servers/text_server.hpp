@@ -66,7 +66,7 @@ namespace Ism
 	public:
 		TextServer();
 		virtual ~TextServer() override;
-		FORCE_INLINE static TextServer * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(TextServer, __singleton);
 
 	public:
 		/* FONT API */

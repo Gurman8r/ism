@@ -10,18 +10,27 @@ namespace Ism
 	CSharpLanguage::CSharpLanguage() { SINGLETON_CTOR(__singleton, this); }
 	CSharpLanguage::~CSharpLanguage() { SINGLETON_DTOR(__singleton, this); }
 
-	void CSharpLanguage::initialize()
+	Error_ CSharpLanguage::initialize()
 	{
 		if (!(m_mono = get_mono())) { m_mono = memnew(Mono); }
 
-		ASSERT(m_mono->initialize());
+		m_mono->initialize();
+
+		return Error_OK;
 	}
 
-	void CSharpLanguage::finalize()
+	Error_ CSharpLanguage::finalize()
 	{
-		ASSERT(m_mono->finalize());
+		m_mono->finalize();
 
 		if (m_mono) { memdelete(m_mono); m_mono = nullptr; }
+
+		return Error_OK;
+	}
+
+	Script * CSharpLanguage::new_scipt()
+	{
+		return memnew(CSharpScript);
 	}
 
 	void CSharpLanguage::reload_assemblies(bool soft_reload)
@@ -32,7 +41,7 @@ namespace Ism
 
 	EMBED_CLASS(CSharpScript, t) {}
 
-	CSharpScript::CSharpScript() : m_language{ get_csharp() }
+	CSharpScript::CSharpScript() : m_language{ get_cs_language() }
 	{
 	}
 
@@ -49,24 +58,14 @@ namespace Ism
 		return nullptr;
 	}
 
-	void CSharpScript::get_field_names(Vector<String> * out) const
-	{
-		if (!out) { return; }
-	}
-
-	void CSharpScript::get_method_names(Vector<String> * out) const
-	{
-		if (!out) { return; }
-	}
-
-	void CSharpScript::get_property_names(Vector<String> * out) const
-	{
-		if (!out) { return; }
-	}
-
 	Error_ CSharpScript::reload(bool keep_state)
 	{
 		return Error_OK;
+	}
+
+	bool CSharpScript::has_method(String const & method) const
+	{
+		return false;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

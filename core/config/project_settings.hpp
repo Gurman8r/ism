@@ -15,15 +15,34 @@ namespace Ism
 
 		HashMap<String, HashMap<String, ObjectRef>> m_data{};
 
+		mutable String
+			m_bin_path{},
+			m_config_path{},
+			m_mods_path{},
+			m_project_path{},
+			m_resource_path{};
+
 	public:
 		ProjectSettings() noexcept { SINGLETON_CTOR(__singleton, this); }
 		virtual ~ProjectSettings() noexcept override { SINGLETON_DTOR(__singleton, this); }
-		FORCE_INLINE static ProjectSettings * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(ProjectSettings, __singleton);
 
 	public:
-		Error_ setup(String const & exe_path, String const & main_pack = {});
+		Error_ setup(String const & exec_path, String const & main_pack = {});
+
+	public:
 		NODISCARD ObjectRef get(String const & section, String const & name) const;
 		Error_ set(String const & section, String const & name, ObjectRef const & value);
+
+	public:
+		NODISCARD String localize_path(String const & path) const;
+		NODISCARD String globalize_path(String const & path) const noexcept;
+
+		NODISCARD String get_project_path() const noexcept;
+		NODISCARD String get_bin_path() const noexcept;
+		NODISCARD String get_config_path() const noexcept;
+		NODISCARD String get_mods_path() const noexcept;
+		NODISCARD String get_resource_path() const noexcept;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

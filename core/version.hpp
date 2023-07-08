@@ -1,7 +1,7 @@
 #ifndef _ISM_VERSION_HPP_
 #define _ISM_VERSION_HPP_
 
-#include <core/preprocessor.hpp>
+#include "./preprocessor.hpp"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

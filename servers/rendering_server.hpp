@@ -23,7 +23,7 @@ namespace Ism
 
 	public:
 		virtual ~RenderingServer() override;
-		FORCE_INLINE static RenderingServer * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(RenderingServer, __singleton);
 		static RenderingServer * create();
 
 		virtual void initialize() = 0;

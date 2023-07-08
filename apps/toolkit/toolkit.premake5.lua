@@ -10,7 +10,7 @@ dependson{ "toolkit-csharp" }
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- toolkit-csharp
-csharp_project("Editor", "toolkit-csharp", "SharedLib", "%{_BUILD_BIN}")
+csharp_project("Editor", "toolkit-csharp", "SharedLib", "%{_BUILD}/bin")
 
 dependson{ "ism-csharp" }
 

@@ -20,7 +20,7 @@ namespace Ism
 	public:
 		ExtensionManager();
 		virtual ~ExtensionManager() override;
-		FORCE_INLINE static ExtensionManager * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(ExtensionManager, __singleton);
 
 	public:
 		enum LoadStatus_ {
@@ -43,7 +43,7 @@ namespace Ism
 		void finalize_extensions(ExtensionInitializationLevel_ level);
 	};
 
-	SINGLETON_WRAPPER(ExtensionManager, get_ext)
+	SINGLETON_WRAPPER(ExtensionManager, get_ext);
 }
 
 #endif // !_ISM_EXTENSION_MANAGER_HPP_

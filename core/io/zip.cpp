@@ -92,7 +92,7 @@ namespace Ism
 	unzFile ZipArchive::get_file_handle(String const & path) const
 	{
 		ASSERT(file_exists(path));
-		ZippedFile file{ *util::getptr(m_files, path) };
+		ZipFile file{ *util::getptr(m_files, path) };
 
 		zlib_filefunc_def io;
 		memset(&io, 0, sizeof(io));
@@ -145,7 +145,7 @@ namespace Ism
 		i32 err{ unzGetGlobalInfo64(zfile, &gi) };
 		ASSERT(err == UNZ_OK);
 		
-		ZippedPackage pkg{ package_path, zfile };
+		ZipPackage pkg{ package_path, zfile };
 		m_packages.push_back(pkg);
 		i32 pkg_num{ (i32)m_packages.size() - 1 };
 		
@@ -157,13 +157,13 @@ namespace Ism
 			err = unzGetCurrentFileInfo64(zfile, &info, filename_inzip, sizeof(filename_inzip), nullptr, 0, nullptr, 0);
 			if (err != UNZ_OK) { continue; }
 		
-			ZippedFile f{ pkg_num };
+			ZipFile f{ pkg_num };
 			unzGetFilePos(zfile, &f.file_pos);
 		
 			String const path{ "res://" + String{filename_inzip} };
 			m_files[path] = f;
 
-			get_packed_data()->add_path(package_path, path, 1, 0, path.hash_code(), this, replace_files, false);
+			PackedData::get_singleton()->add_path(package_path, path, 1, 0, path.hash_code(), this, replace_files, false);
 		
 			if ((i + 1) < gi.number_entry) {
 				unzGoToNextFile(zfile);
@@ -175,90 +175,90 @@ namespace Ism
 
 	Ref<File> ZipArchive::get_file(String const & path, PackedData::PackedFile * file)
 	{
-		return memnew(ZipFile(path, *file));
+		return memnew(ZippedFile(path, *file));
 	}
 }
 
 namespace Ism
 {
-	EMBED_CLASS(ZipFile, t) {}
+	EMBED_CLASS(ZippedFile, t) {}
 
-	ZipFile::ZipFile(String const & path, PackedData::PackedFile const & file)
+	ZippedFile::ZippedFile(String const & path, PackedData::PackedFile const & file)
 	{
 		open_internal(path, FileMode_Read);
 	}
 
-	ZipFile::~ZipFile()
+	ZippedFile::~ZippedFile()
 	{
 		close();
 	}
 
-	Error_ ZipFile::open_internal(String const & path, FileMode_ mode)
+	Error_ ZippedFile::open_internal(String const & path, FileMode_ mode)
 	{
-		m_zfile = VALIDATE(get_zip_archive())->get_file_handle(path);
+		m_zfile = VALIDATE(ZipArchive::get_singleton())->get_file_handle(path);
 		ASSERT(m_zfile);
 		ASSERT(UNZ_OK == unzGetCurrentFileInfo64(m_zfile, &m_info, nullptr, 0, nullptr, 0, nullptr, 0));
 		return Error_OK;
 	}
 
-	ZipFile & ZipFile::close()
+	ZippedFile & ZippedFile::close()
 	{
 		if (m_zfile) {
-			VALIDATE(get_zip_archive())->close_handle(m_zfile);
+			VALIDATE(ZipArchive::get_singleton())->close_handle(m_zfile);
 			m_zfile = nullptr;
 		}
 		return (*this);
 	}
 
-	ZipFile & ZipFile::flush()
+	ZippedFile & ZippedFile::flush()
 	{
 		CRASH("this should never be called");
 		return (*this);
 	}
 
-	bool ZipFile::file_exists(String const & path)
+	bool ZippedFile::file_exists(String const & path)
 	{
 		return false;
 	}
 
-	bool ZipFile::is_open() const
+	bool ZippedFile::is_open() const
 	{
 		return m_zfile;
 	}
 
-	ZipFile & ZipFile::seek(u64 position)
+	ZippedFile & ZippedFile::seek(u64 position)
 	{
 		ASSERT(m_zfile);
 		unzSeekCurrentFile(m_zfile, (i32)position);
 		return (*this);
 	}
 
-	ZipFile & ZipFile::seek_end(i64 position)
+	ZippedFile & ZippedFile::seek_end(i64 position)
 	{
 		ASSERT(m_zfile);
 		unzSeekCurrentFile(m_zfile, (i32)(get_length() + position));
 		return (*this);
 	}
 
-	u64 ZipFile::get_position() const
+	u64 ZippedFile::get_position() const
 	{
 		ASSERT(m_zfile);
 		return unztell(m_zfile);
 	}
 
-	u64 ZipFile::get_length() const
+	u64 ZippedFile::get_length() const
 	{
 		ASSERT(m_zfile);
 		return m_info.uncompressed_size;
 	}
 
-	bool ZipFile::eof_reached() const
+	bool ZippedFile::eof_reached() const
 	{
 		ASSERT(m_zfile);
 		return m_eof;
 	}
 
-	Error_ ZipFile::get_error() const
+	Error_ ZippedFile::get_error() const
 	{
 		if (!m_zfile) {
 			return Error_Failed;
@@ -269,24 +269,24 @@ namespace Ism
 		return Error_OK;
 	}
 
-	String ZipFile::get_path() const
+	String ZippedFile::get_path() const
 	{
 		return String();
 	}
 
-	String ZipFile::get_path_abs() const
+	String ZippedFile::get_path_abs() const
 	{
 		return String();
 	}
 
-	u8 ZipFile::get_8() const
+	u8 ZippedFile::get_8() const
 	{
 		u8 temp{};
 		get_buffer(&temp, 1);
 		return temp;
 	}
 
-	size_t ZipFile::get_buffer(u8 * data, size_t const size) const
+	size_t ZippedFile::get_buffer(u8 * data, size_t const size) const
 	{
 		ASSERT(data && size);
 		ASSERT(m_zfile);
@@ -303,7 +303,7 @@ namespace Ism
 		return (size_t)read;
 	}
 
-	ZipFile & ZipFile::put_8(u8 value)
+	ZippedFile & ZippedFile::put_8(u8 value)
 	{
 		CRASH("this should never be called");
 		return (*this);

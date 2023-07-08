@@ -2,7 +2,6 @@
 #include <core/os/os.hpp>
 #include <core/config/project_settings.hpp>
 #include <core/io/file.hpp>
-#include <core/io/resource_loader.hpp>
 
 namespace Ism
 {
@@ -31,7 +30,7 @@ namespace Ism
 		auto const it{ m_extensions.find(path) };
 		if (it != m_extensions.end()) { return LoadStatus_AlreadyLoaded; }
 
-		Ref<Extension> extension{ get_resource_loader()->load(path) };
+		Ref<Extension> extension{ ResourceLoader::load(path) };
 		if (!extension) { return LoadStatus_Failure; }
 
 		if (m_level >= 0) {

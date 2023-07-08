@@ -22,7 +22,7 @@ namespace Ism
 		case FileAccess_Resources: {
 			if (get_globals()) {
 				if (r_path.begins_with("res://")) {
-					String resource_path{ get_os()->get_resource_dir() };
+					String resource_path{ get_os()->get_resource_path() };
 					if (!resource_path.empty()) {
 						return r_path.replace("res:/", resource_path);
 					}
@@ -33,7 +33,7 @@ namespace Ism
 		} break;
 		case FileAccess_User: {
 			if (r_path.begins_with("user://")) {
-				if (String data_dir{ get_os()->get_user_dir() }; !data_dir.empty()) {
+				if (String data_dir{ get_os()->get_user_path() }; !data_dir.empty()) {
 					return r_path.replace("user:/", data_dir);
 				}
 				return r_path.replace("user://", "");
@@ -79,7 +79,7 @@ namespace Ism
 	{
 		Ref<File> file{};
 		
-		if (PackedData * pack; (mode != FileMode_Write) && (pack = get_packed_data()) && pack->is_enabled() && (file = pack->try_open_path(path))) {
+		if (PackedData * pack; (mode != FileMode_Write) && (pack = PackedData::get_singleton()) && pack->is_enabled() && (file = pack->try_open_path(path))) {
 			if (r_error) { *r_error = Error_OK; }
 			return file;
 		}
@@ -252,12 +252,12 @@ namespace Ism
 
 	bool File::exists(String const & path)
 	{
-		return (get_packed_data() && get_packed_data()->has_path(path)) || open(path, FileMode_Read).is_valid();
+		return (PackedData::get_singleton() && PackedData::get_singleton()->has_path(path)) || open(path, FileMode_Read).is_valid();
 	}
 
 	u64 File::get_modified_time(String const & path)
 	{
-		if (get_packed_data() && get_packed_data()->is_enabled() && (get_packed_data()->has_path(path) || get_packed_data()->has_dir(path))) {
+		if (PackedData::get_singleton() && PackedData::get_singleton()->is_enabled() && (PackedData::get_singleton()->has_path(path) || PackedData::get_singleton()->has_dir(path))) {
 			return 0;
 		}
 
@@ -272,7 +272,7 @@ namespace Ism
 
 	u32 File::get_unix_permissions(String const & path)
 	{
-		if (get_packed_data() && get_packed_data()->is_enabled() && (get_packed_data()->has_path(path) || get_packed_data()->has_dir(path))) {
+		if (PackedData::get_singleton() && PackedData::get_singleton()->is_enabled() && (PackedData::get_singleton()->has_path(path) || PackedData::get_singleton()->has_dir(path))) {
 			return 0;
 		}
 
@@ -287,7 +287,7 @@ namespace Ism
 
 	Error_ File::set_unix_permissions(String const & path, u32 permissions)
 	{
-		if (get_packed_data() && get_packed_data()->is_enabled() && (get_packed_data()->has_path(path) || get_packed_data()->has_dir(path))) {
+		if (PackedData::get_singleton() && PackedData::get_singleton()->is_enabled() && (PackedData::get_singleton()->has_path(path) || PackedData::get_singleton()->has_dir(path))) {
 			return Error_Unavailable;
 		}
 

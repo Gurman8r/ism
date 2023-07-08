@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- freetype2
-cpp_project("Modules", "freetype2", "Utility", "%{_BUILD_BIN}")
+cpp_project("Modules", "freetype2", "Utility", "%{_BUILD}/bin")
 
 module("freetype2", 0, 0, 0, "alpha", "official")
 

@@ -1,5 +1,5 @@
 #include <scene/resources/material_library.hpp>
-#include <core/os/os.hpp>
+#include <core/config/project_settings.hpp>
 
 namespace Ism
 {
@@ -17,7 +17,10 @@ namespace Ism
 	RES MaterialFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Material> temp{}; //temp.instance();
-		if (auto const error{ load_material(temp, get_os()->globalize_path(path)) }) { if (r_error) { *r_error = error; } temp = nullptr; }
+		if (Error_ const err{ load_material(temp, get_globals()->globalize_path(path)) }) {
+			if (r_error) { *r_error = err; }
+			temp = nullptr;
+		}
 		else if (r_error) { *r_error = Error_OK; }
 		return temp;
 	}

@@ -34,6 +34,8 @@ namespace Ism
 			}
 		}
 
+		m_is_focused = (open && m_window) && ImGui::IsWindowFocused();
+
 		return open;
 	}
 

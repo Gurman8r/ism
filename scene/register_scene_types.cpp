@@ -24,10 +24,10 @@ namespace Ism
 
 	void register_scene_types()
 	{
-		font_loader.instance(); get_resource_loader()->add(font_loader);
-		material_loader.instance(); get_resource_loader()->add(material_loader);
-		mesh_loader.instance(); get_resource_loader()->add(mesh_loader);
-		shader_loader.instance(); get_resource_loader()->add(shader_loader);
+		font_loader.instance(); ResourceLoader::add_resource_format_loader(font_loader);
+		material_loader.instance(); ResourceLoader::add_resource_format_loader(material_loader);
+		mesh_loader.instance(); ResourceLoader::add_resource_format_loader(mesh_loader);
+		shader_loader.instance(); ResourceLoader::add_resource_format_loader(shader_loader);
 
 		REGISTER_CLASS
 		(
@@ -53,9 +53,9 @@ namespace Ism
 	
 	void unregister_scene_types()
 	{
-		get_resource_loader()->remove(font_loader); font_loader = nullptr;
-		get_resource_loader()->remove(mesh_loader); mesh_loader = nullptr;
-		get_resource_loader()->remove(material_loader); material_loader = nullptr;
-		get_resource_loader()->remove(shader_loader); shader_loader = nullptr;
+		ResourceLoader::remove_resource_format_loader(font_loader); font_loader = nullptr;
+		ResourceLoader::remove_resource_format_loader(mesh_loader); mesh_loader = nullptr;
+		ResourceLoader::remove_resource_format_loader(material_loader); material_loader = nullptr;
+		ResourceLoader::remove_resource_format_loader(shader_loader); shader_loader = nullptr;
 	}
 }

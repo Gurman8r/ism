@@ -30,17 +30,19 @@ namespace Ism
 	public:
 		CSharpLanguage();
 		virtual ~CSharpLanguage() override;
-		FORCE_INLINE static CSharpLanguage * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(CSharpLanguage, __singleton);
 
 		virtual String get_name() const override { return "mono"; }
 
-		virtual void initialize() override;
-		virtual void finalize() override;
+		virtual Error_ initialize() override;
+		virtual Error_ finalize() override;
+
+		virtual Script * new_scipt() override;
 
 		void reload_assemblies(bool soft_reload);
 	};
 
-	SINGLETON_WRAPPER(CSharpLanguage, get_csharp);
+	SINGLETON_WRAPPER(CSharpLanguage, get_cs_language);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -58,16 +60,19 @@ namespace Ism
 		explicit CSharpScript(String const & path);
 		virtual ~CSharpScript() override;
 
+	public:
+		virtual bool can_instantiate() const override { return true; }
 		virtual Ref<ScriptInstance> instance_create(Object * self) override;
-
-		virtual void get_field_names(Vector<String> * out) const override;
-		virtual void get_method_names(Vector<String> * out) const override;
-		virtual void get_property_names(Vector<String> * out) const override;
 		
 		virtual bool has_source_code() const override { return !m_source.empty(); }
 		virtual String get_source_code() const override { return m_source; }
 		virtual void set_source_code(String const & value) override { if (m_source != value) { m_source = value; m_changed = true; } }
 		virtual Error_ reload(bool keep_state = false) override;
+
+		virtual bool has_method(String const & method) const override;
+
+		virtual bool is_tool() const override { return false; }
+		virtual bool is_valid() const override { return false; }
 
 		virtual ScriptLanguage * get_language() const override { return m_language; }
 	};
@@ -95,6 +100,10 @@ namespace Ism
 		virtual Ref<Script> get_script() const override { return m_script; }
 		virtual ScriptLanguage * get_language() { return m_language; }
 		virtual Object * get_owner() override { return m_owner; }
+
+		virtual bool get_constants(Vector<ObjectRef> * out) const override { return true; }
+		virtual bool get_properties(Vector<PropertyRef> * out) const override { return true; }
+		virtual bool get_functions(Vector<FunctionRef> * out) const override { return true; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

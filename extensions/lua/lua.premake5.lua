@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- lua
-cpp_project("Extensions", "lua", "SharedLib", "%{_BUILD_BIN}")
+cpp_project("Extensions", "lua", "SharedLib", "%{_BUILD}/bin")
 
 extension("lua", 0, 0, 0, "alpha", "official")
 

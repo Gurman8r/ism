@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- assimp
-cpp_project("Modules", "assimp", "Utility", "%{_BUILD_BIN}")
+cpp_project("Modules", "assimp", "Utility", "%{_BUILD}/bin")
 
 module("assimp", 0, 0, 0, "alpha", "official")
 

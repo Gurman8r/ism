@@ -1,16 +1,18 @@
 #if TOOLS_ENABLED
 
+#include <scene/gui/imgui.hpp>
+#include <core/math/face3.hpp>
+#include <core/math/transform.hpp>
+#include <core/io/resource_loader.hpp>
+
+// panels
 #include <editor/editor_node.hpp>
 #include <editor/editor_assets.hpp>
 #include <editor/editor_hierarchy.hpp>
 #include <editor/editor_inspector.hpp>
 #include <editor/editor_log.hpp>
+#include <editor/editor_terminal.hpp>
 #include <editor/editor_viewport.hpp>
-
-#include <scene/gui/imgui.hpp>
-#include <core/math/face3.hpp>
-#include <core/math/transform.hpp>
-#include <core/io/resource_loader.hpp>
 
 namespace Ism
 {
@@ -127,17 +129,18 @@ namespace Ism
 		m_hierarchy = memnew(EditorHierarchy);
 		m_inspector = memnew(EditorInspector);
 		m_log = memnew(EditorLog); m_log->set_open(false);
+		m_terminal = memnew(EditorTerminal);
 		m_viewport = memnew(EditorViewport);
 
 		camera.rid = get_gfx()->camera_create();
 		get_gfx()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
 		get_gfx()->camera_set_transform(camera.rid, camera.transform);
 
-		m_shaders["2d"] = load_resource("res://shaders/2d.shader");
-		m_shaders["3d"] = load_resource("res://shaders/3d.shader");
-		m_textures["earth_dm_2k"] = ImageTexture::create(load_resource("res://textures/earth/earth_dm_2k.png"));
-		m_textures["earth_sm_2k"] = ImageTexture::create(load_resource("res://textures/earth/earth_sm_2k.png"));
-		m_meshes["sphere32x24"] = load_resource("res://meshes/sphere32x24.obj");
+		m_shaders["2d"] = ResourceLoader::load("res://shaders/2d.shader");
+		m_shaders["3d"] = ResourceLoader::load("res://shaders/3d.shader");
+		m_textures["earth_dm_2k"] = ImageTexture::create(ResourceLoader::load("res://textures/earth/earth_dm_2k.png"));
+		m_textures["earth_sm_2k"] = ImageTexture::create(ResourceLoader::load("res://textures/earth/earth_sm_2k.png"));
+		m_meshes["sphere32x24"] = ResourceLoader::load("res://meshes/sphere32x24.obj");
 
 		//RS::SurfaceData quad_spec{};
 		//quad_spec.primitive = RS::Primitive_Triangles;
@@ -236,8 +239,9 @@ namespace Ism
 
 		memdelete(m_assets);
 		memdelete(m_hierarchy);
-		memdelete(m_log);
 		memdelete(m_inspector);
+		memdelete(m_log);
+		memdelete(m_terminal);
 		memdelete(m_viewport);
 	}
 
@@ -247,19 +251,22 @@ namespace Ism
 		{
 		case Notification_Process: {
 
-			get_tree()->get_root()->set_title(String::format<64>("%s @ %.3f fps", get_os()->get_exe_name().c_str(), get_tree()->get_fps().value));
+			get_tree()->get_root()->set_title(String::format<64>("%s @ %.3f fps", get_os()->get_exec_path().stem().c_str(), get_tree()->get_fps().value));
 
 			Duration const delta_time{ get_tree()->get_delta_time() };
 
-			f32 const camera_move_speed{ 10.f * delta_time };
-			if (get_input()->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_move_speed); }
-			else if (get_input()->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_move_speed); }
-			if (get_input()->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_move_speed); }
-			else if (get_input()->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_move_speed); }
-			if (get_input()->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_move_speed); }
-			else if (get_input()->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_move_speed); }
+			if (m_viewport->get_window())
+			{
+				if (m_viewport->is_focused()) {
+					f32 const camera_move_speed{ 10.f * delta_time };
+					if (get_input()->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_move_speed); }
+					else if (get_input()->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_move_speed); }
+					if (get_input()->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_move_speed); }
+					else if (get_input()->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_move_speed); }
+					if (get_input()->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_move_speed); }
+					else if (get_input()->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_move_speed); }
+				}
 
-			if (m_viewport->get_window()) {
 				if (Vec2 const res{ m_viewport->get_window()->InnerRect.GetWidth(), m_viewport->get_window()->InnerRect.GetHeight() }
 				; screen_resolution != res) {
 					screen_resolution = res;
@@ -267,15 +274,15 @@ namespace Ism
 					get_gfx()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
 					get_gpu()->framebuffer_set_size(framebuffer, (i32)screen_resolution[0], (i32)screen_resolution[1]);
 				}
+
+				if (m_viewport->m_is_dragging_view) {
+					Vec2 const drag{ get_input()->get_mouse_delta() * (f32)delta_time };
+					camera.yaw += drag[0];
+					camera.pitch = constrain(camera.pitch + drag[1], -89.f, 89.f);
+				}
 			}
 
-			if (m_viewport->m_is_dragging_view) {
-				Vec2 const drag{ get_input()->get_mouse_delta() * (f32)delta_time };
-				camera.yaw += drag[0];
-				camera.pitch = constrain(camera.pitch + drag[1], -89.f, 89.f);
-			}
 			camera.transform.set_rotation(camera.pitch, camera.yaw, camera.roll);
-
 			get_gfx()->camera_set_transform(camera.rid, camera.transform);
 			m_viewport->m_camera = camera.rid;
 			m_viewport->m_camera_proj = camera.projection;
@@ -327,6 +334,7 @@ namespace Ism
 			m_hierarchy->process(delta_time);
 			m_inspector->process(delta_time);
 			m_log->process(delta_time);
+			m_terminal->process(delta_time);
 			m_viewport->process(delta_time);
 			if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
 
@@ -390,8 +398,10 @@ namespace Ism
 
 	void EditorNode::_build_dockspace()
 	{
-		ImGuiID const dockspace_id{ ImGui::GetID("##EditorDockSpace") };
-		ImGuiID right_up{ dockspace_id };
+		ImGuiID const dockspace{ ImGui::GetID("##EditorDockSpace") };
+
+#if 0
+		ImGuiID right_up{ dockspace };
 		ImGuiID left_up{ ImGui::DockBuilderSplitNode(right_up, ImGuiDir_Left, 0.2f, nullptr, &right_up) };
 		ImGuiID left_down{ ImGui::DockBuilderSplitNode(left_up, ImGuiDir_Down, 0.5f, nullptr, &left_up) };
 		ImGuiID right_down{ ImGui::DockBuilderSplitNode(right_up, ImGuiDir_Down, 0.2f, nullptr, &right_up) };
@@ -400,6 +410,24 @@ namespace Ism
 		ImGui::DockBuilderDockWindow(m_inspector->get_name(), left_down);
 		ImGui::DockBuilderDockWindow(m_log->get_name(), left_down);
 		ImGui::DockBuilderDockWindow(m_assets->get_name(), right_down);
+		ImGui::DockBuilderDockWindow(m_terminal->get_name(), right_down);
+#else
+
+		ImGuiID col0_row0{ dockspace };
+		ImGuiID col1_row0{ ImGui::DockBuilderSplitNode(col0_row0, ImGuiDir_Right, 0.4f, nullptr, &col0_row0) };
+		ImGuiID col2_row0{ ImGui::DockBuilderSplitNode(col1_row0, ImGuiDir_Right, 0.5f, nullptr, &col1_row0) };
+
+		ImGuiID col0_row1{ ImGui::DockBuilderSplitNode(col0_row0, ImGuiDir_Down, 0.4f, nullptr, &col0_row0) };
+		ImGuiID col1_row1{ ImGui::DockBuilderSplitNode(col1_row0, ImGuiDir_Down, 0.4f, nullptr, &col1_row0) };
+		ImGuiID col2_row1{ ImGui::DockBuilderSplitNode(col1_row1, ImGuiDir_Down, 0.4f, nullptr, &col1_row1) };
+
+		ImGui::DockBuilderDockWindow(m_viewport->get_name(), col0_row0);
+		ImGui::DockBuilderDockWindow(m_hierarchy->get_name(), col1_row0);
+		ImGui::DockBuilderDockWindow(m_inspector->get_name(), col2_row0);
+		ImGui::DockBuilderDockWindow(m_log->get_name(), col1_row1);
+		ImGui::DockBuilderDockWindow(m_assets->get_name(), col1_row1);
+		ImGui::DockBuilderDockWindow(m_terminal->get_name(), col0_row1);
+#endif
 	}
 
 	void EditorNode::_draw_menu_bar()
@@ -415,6 +443,7 @@ namespace Ism
 			if (ImGui::MenuItem(m_hierarchy->get_name(), "", m_hierarchy->is_open())) { m_hierarchy->toggle_open(); }
 			if (ImGui::MenuItem(m_inspector->get_name(), "", m_inspector->is_open())) { m_inspector->toggle_open(); }
 			if (ImGui::MenuItem(m_log->get_name(), "", m_log->is_open())) { m_log->toggle_open(); }
+			if (ImGui::MenuItem(m_terminal->get_name(), "", m_terminal->is_open())) { m_terminal->toggle_open(); }
 			if (ImGui::MenuItem(m_viewport->get_name(), "", m_viewport->is_open())) { m_viewport->toggle_open(); }
 			ImGui::EndMenu();
 		}

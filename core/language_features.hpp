@@ -1,6 +1,7 @@
 #ifndef _ISM_LANGUAGE_FEATURES_HPP_
 #define _ISM_LANGUAGE_FEATURES_HPP_
 
+#include <core/preprocessor.hpp>
 #include <core/version.hpp>
 #include <cstddef>
 
@@ -320,6 +321,7 @@
 #	pragma warning(disable: 26812)	//	unscoped enum
 #	pragma warning(disable: 28251)	//	inconsistent annotations
 #	pragma warning(disable: 33101)	//	unchecked tolower bound for enum type used as index
+//#	pragma warning(disable: 65552)	//	consider moving big function stack to heap
 #endif
 
 #endif //	!_ISM_LANGUAGE_FEATURES_HPP_

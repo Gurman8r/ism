@@ -28,8 +28,8 @@ namespace Ism
 		virtual ~MainLoop() noexcept override {}
 
 		virtual void initialize();
-		virtual bool process(Duration const & dt);
 		virtual void finalize();
+		virtual bool process(Duration const & dt);
 
 		void set_startup_script(ObjectRef const & value) { m_script = value; }
 	};

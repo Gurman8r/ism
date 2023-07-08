@@ -2,7 +2,7 @@ using System;
 
 namespace Toolkit
 {
-	sealed class Toolkit : Ism.Application
+	sealed class Toolkit : Ism.MainLoop
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -11,10 +11,6 @@ namespace Toolkit
 		}
 
 		private static void OnFinalize()
-		{
-		}
-
-		private static void OnStart()
 		{
 		}
 

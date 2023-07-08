@@ -17,7 +17,7 @@ namespace Ism
 	public:
 		Input() noexcept { SINGLETON_CTOR(__singleton, this); }
 		virtual ~Input() noexcept override { SINGLETON_DTOR(__singleton, this); }
-		FORCE_INLINE static Input * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(Input, __singleton);
 
 	public:
 		enum Action_ : u8

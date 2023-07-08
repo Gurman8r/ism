@@ -5,12 +5,12 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Ism::printv(cstring fmt, va_list args)
+	void Ism::_printv(cstring fmt, va_list args)
 	{
 		get_os()->printv(fmt, args);
 	}
 
-	void Ism::printf(cstring fmt, ...)
+	void Ism::_printf(cstring fmt, ...)
 	{
 		va_list args;
 		va_start(args, fmt);
@@ -20,12 +20,12 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Ism::err_printv(cstring fmt, va_list args)
+	void Ism::_err_printv(cstring fmt, va_list args)
 	{
 		get_os()->err_printv(fmt, args);
 	}
 
-	void Ism::err_printf(cstring fmt, ...)
+	void Ism::_err_printf(cstring fmt, ...)
 	{
 		va_list args;
 		va_start(args, fmt);
@@ -35,27 +35,27 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Ism::print(String const & s)
+	void Ism::_print(String const & s)
 	{
 		PRINTF("%.*s", s.size(), s.data());
 	}
 
-	void Ism::print_line(String const & s)
+	void Ism::_print_line(String const & s)
 	{
 		PRINTF("%.*s\n", s.size(), s.data());
 	}
 
-	void Ism::print_info(String const & s)
+	void Ism::_print_info(String const & s)
 	{
 		PRINTF("[INFO] %.*s\n", s.size(), s.data());
 	}
 
-	void Ism::print_warning(String const & s)
+	void Ism::_print_warning(String const & s)
 	{
 		PRINTF("[WARN] %.*s\n", s.size(), s.data());
 	}
 
-	void Ism::print_error(String const & s)
+	void Ism::_print_error(String const & s)
 	{
 		ERR_PRINTF("[ERROR] %.*s\n", s.size(), s.data());
 	}

@@ -19,7 +19,7 @@ namespace Ism
 	public:
 		AudioServer();
 		virtual ~AudioServer() override;
-		FORCE_INLINE static AudioServer * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(AudioServer, __singleton);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

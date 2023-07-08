@@ -1,4 +1,5 @@
 #include <platform/windows/windows_display_server.hpp>
+#include <core/config/project_settings.hpp>
 #include <scene/main/window.hpp>
 #include <core/io/file.hpp>
 #include <core/io/image_library.hpp>
@@ -574,12 +575,21 @@ namespace Ism
 		glfwSwapBuffers(m_main_window->handle);
 	}
 
-	void WindowsDisplayServer::set_native_icon(String const & p_filename)
+	void WindowsDisplayServer::set_native_icon(String const & path)
 	{
-		Ref<File> f{ File::open(get_os()->globalize_path(p_filename), FileMode_Read) };
-		if (!f) {
-			CRASH("cannot open icon");
+		if (path.extension() != ".ico") {
+			if (Ref<Image> i{ ResourceLoader::load(path) }) {
+				i->flip_vertically();
+				set_icon(i->get_pixel_data(), i->get_width(), i->get_height());
+			}
+			return;
 		}
+
+
+		//Ref<File> f{ File::open(get_globals()->globalize_path(p_filename), FileMode_Read) };
+		//if (!f) {
+		//	CRASH("cannot open icon");
+		//}
 	}
 
 	void WindowsDisplayServer::set_icon(u8 const * data, i32 width, i32 height)

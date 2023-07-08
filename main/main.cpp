@@ -49,10 +49,11 @@ namespace Ism
 	static PhysicsServer *		physics{};
 	static TextServer *			text{};
 
-	static cxxopts::ParseResult	options{};
-	static bool					cmdline{};
-	static bool					editor{ true };
-	static ImGuiContext *		gui{};
+	static cxxopts::ParseResult options;
+	static bool cmdline{};
+	static bool editor{ true };
+
+	static ImGuiContext * imgui{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -67,9 +68,9 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Error_ Main::setup(cstring exe_path, i32 argc, char * argv[])
+	Error_ Main::setup(cstring exec_path, i32 argc, char * argv[])
 	{
-		PRINT_LINE(exe_path);
+		PRINT_LINE(exec_path);
 
 		Error_ error{};
 
@@ -83,38 +84,32 @@ namespace Ism
 		settings = memnew(ProjectSettings);
 		register_core_settings();
 
-		if (!(packed_data = get_packed_data())) { packed_data = memnew(PackedData); }
-		if (!(zip_archive = get_zip_archive())) { zip_archive = memnew(ZipArchive); }
+		if (!(packed_data = PackedData::get_singleton())) { packed_data = memnew(PackedData); }
+		if (!(zip_archive = ZipArchive::get_singleton())) { zip_archive = memnew(ZipArchive); }
 		packed_data->add_package_source(zip_archive);
 
 		Vector<String> args{ argv, argv + argc };
-
-		static cxxopts::Options options_parser{ exe_path, VERSION_FULL_NAME };
+		cxxopts::Options options_parser{ exec_path, VERSION_FULL_NAME };
 		options_parser.add_options()
-			("d,debug", "enable debugging")
-			("c,cmdline", "enable cmdline")
-			("e,editor", "enable editor")
-			("i,integer", "integer param", cxxopts::value<int>())
-			("f,file", "file name", cxxopts::value<std::string>())
-			("v,verbose", "Verbose output", cxxopts::value<bool>()->default_value("false"))
+			("e,editor", "enable editor", cxxopts::value<bool>()->default_value("false"))
+			("c,cmdline", "enable command line", cxxopts::value<bool>()->default_value("false"))
+			("s,script", "main script", cxxopts::value<std::string>())
 			;
-		options = options_parser.parse(argc, argv);
-		
-		if (options.count("c")) {
-			cmdline = true;
-		}
-		if (options.count("e")) {
-			editor = true;
-		}
 
-		settings->setup(exe_path);
+		options = options_parser.parse(argc, argv);
+		if (options.count("c")) { cmdline = true; }
+		if (options.count("e")) { editor = true; }
+
+		settings->setup(exec_path);
 		register_core_extensions();
-		get_os()->set_cmdline(exe_path, args);
+		get_os()->set_cmdline(exec_path, args);
 
 		// display server
-		if (display = DS::create(get_os()->get_exe_name(), DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error); error != Error_OK) { /* error */ }
-		//display->set_native_icon("res://icons/" + get_os()->get_exe_name() + ".ico");
-		if (Ref<Image> i{ get_resource_loader()->load("res://icons/" + get_os()->get_exe_name() + ".png") }) { i->flip_vertically(); display->set_icon(i->get_pixel_data(), i->get_width(), i->get_height()); }
+		display = DS::create(get_os()->get_exec_path().stem(), DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error); 
+		if (error != Error_OK) {
+			CRASH("failed creating display server");
+		}
+		display->set_native_icon("res://icons/" + get_os()->get_exec_path().stem() + ".png");
 		
 		// rendering server
 		graphics = RS::create();
@@ -151,7 +146,7 @@ namespace Ism
 	
 		get_scr()->initialize_languages();
 	
-		gui = VALIDATE(ImGui_Initialize());
+		imgui = VALIDATE(ImGui_Initialize());
 
 		return Error_OK;
 	}
@@ -168,9 +163,13 @@ namespace Ism
 
 		TypeRef main_loop_type{};
 
-		if (script) { /* TODO: load main loop from script */ }
+		if (script) {
+			// TODO: load main loop from script
+		}
 
-		if (!main_loop && !main_loop_type) { main_loop_type = typeof<SceneTree>(); }
+		if (!main_loop && !main_loop_type) {
+			main_loop_type = typeof<SceneTree>();
+		}
 
 		if (!main_loop) {
 			ASSERT(TypeRef::check_(main_loop_type));
@@ -212,13 +211,13 @@ namespace Ism
 
 		input->iteration(delta_time);
 
-		ImGui_BeginFrame(gui);
+		ImGui_BeginFrame(imgui);
 		if (get_os()->get_main_loop()->process(delta_time)) { should_close = true; }
 		ImGui::Render();
 		get_gpu()->draw_list_begin_for_screen();
-		ImGui_RenderDrawData(&gui->Viewports[0]->DrawDataP);
+		ImGui_RenderDrawData(&imgui->Viewports[0]->DrawDataP);
 		get_gpu()->draw_list_end();
-		ImGui_EndFrame(gui);
+		ImGui_EndFrame(imgui);
 	
 		return should_close;
 	}
@@ -228,7 +227,7 @@ namespace Ism
 		//remove_custom_loaders();
 		//remove_custom_savers();
 
-		ImGui_Finalize(gui);
+		ImGui_Finalize(imgui);
 
 		get_os()->delete_main_loop();
 

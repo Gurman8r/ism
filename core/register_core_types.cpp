@@ -36,8 +36,8 @@ namespace Ism
 		extensions = memnew(ExtensionManager);
 		scripts = memnew(ScriptManager);
 
-		extension_format_loader.instance(); get_resource_loader()->add(extension_format_loader);
-		image_format_loader.instance(); get_resource_loader()->add(image_format_loader);
+		extension_format_loader.instance(); ResourceLoader::add_resource_format_loader(extension_format_loader);
+		image_format_loader.instance(); ResourceLoader::add_resource_format_loader(image_format_loader);
 
 		REGISTER_CLASS
 		(
@@ -64,7 +64,7 @@ namespace Ism
 
 			Extension, ExtensionFormatLoader, ExtensionManager,
 
-			Dir, File, PackFile, ZipFile,
+			Dir, File, PackFile, ZippedFile,
 
 			Event, EventListener, DummyListener, EventDelegate<Event>, EventBus,
 
@@ -107,8 +107,8 @@ namespace Ism
 
 	void unregister_core_types()
 	{
-		get_resource_loader()->remove(image_format_loader); image_format_loader = nullptr;
-		get_resource_loader()->remove(extension_format_loader); extension_format_loader = nullptr;
+		ResourceLoader::remove_resource_format_loader(image_format_loader); image_format_loader = nullptr;
+		ResourceLoader::remove_resource_format_loader(extension_format_loader); extension_format_loader = nullptr;
 
 		memdelete(loader);
 		memdelete(saver);

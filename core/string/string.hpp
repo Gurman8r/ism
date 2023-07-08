@@ -6,6 +6,7 @@
 #include <core/templates/vector.hpp>
 #include <string>
 #include <cwctype>
+#include <locale>
 
 namespace Ism
 {
@@ -54,6 +55,7 @@ namespace Ism
 		static constexpr bool is_narrow{ 1 == sizeof(C) };
 
 		using other_self_type = typename std::conditional_t<is_narrow, Unicode, String>;
+		using other_base_type = typename other_self_type::base_type;
 		using other_value_type = typename other_self_type::value_type;
 		using other_const_pointer = typename other_self_type::const_pointer;
 
@@ -82,7 +84,7 @@ namespace Ism
 		BasicString(std::initializer_list<value_type> value, allocator_type const & alloc = {}) : m_string{ value, alloc } {}
 
 		BasicString(other_self_type const & value) : m_string{ value.convert().native() } {}
-		BasicString(other_self_type const & value, allocator_type const & alloc) : self_type{ value.convert().native(), alloc } {}
+		BasicString(other_self_type const & value, allocator_type const & alloc) : m_string{ value.convert().native(), alloc } {}
 		BasicString(other_self_type const & value, size_type const offset, allocator_type const & alloc) : m_string{ value.convert().native(), offset, alloc } {}
 		BasicString(other_self_type const & value, size_type const offset, size_type const count, allocator_type const & alloc) : m_string{ value.convert().native(), offset, count, alloc } {}
 		BasicString(other_const_pointer const data, size_type const size) : m_string{ other_self_type{ data, size }.convert().native() } {}
@@ -97,9 +99,11 @@ namespace Ism
 		NODISCARD auto narrow() const noexcept -> std::conditional_t<!is_narrow, String, String const &>
 		{
 			if constexpr (!is_narrow) {
-				String temp; temp.reserve(size());
-				for (auto const c : *this) { temp.push_back(static_cast<char>(c)); }
-				return temp.shrink_to_fit();
+				String s; s.reserve(size());
+				for (auto const c : *this) {
+					s.push_back(static_cast<char>(c));
+				}
+				return s;
 			}
 			else {
 				return (*this);
@@ -109,9 +113,11 @@ namespace Ism
 		NODISCARD auto widen() const -> std::conditional_t<is_narrow, Unicode, Unicode const &>
 		{
 			if constexpr (is_narrow) {
-				Unicode temp; temp.reserve(size());
-				for (auto const c : *this) { temp.push_back(static_cast<wchar_t>(c)); }
-				return temp.shrink_to_fit();
+				Unicode s; s.reserve(size());
+				for (auto const c : *this) {
+					s.push_back(static_cast<wchar_t>(c));
+				}
+				return s;
 			}
 			else {
 				return (*this);

@@ -43,7 +43,7 @@ namespace Ism
 	public:
 		SceneTree();
 		virtual ~SceneTree() override;
-		FORCE_INLINE static SceneTree * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(SceneTree, __singleton);
 
 	public:
 		virtual void initialize() override;

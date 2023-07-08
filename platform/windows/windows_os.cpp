@@ -2,6 +2,7 @@
 #include <platform/windows/windows_display_server.hpp>
 #include <drivers/windows/windows_dir.hpp>
 #include <drivers/windows/windows_file.hpp>
+#include <core/config/project_settings.hpp>
 #include <main/main.hpp>
 #include <iostream>
 
@@ -168,7 +169,10 @@ namespace Ism
 
 	String WindowsOS::get_env(String const & key) const
 	{
-		return {};
+		WCHAR env[0x7fff]; // MSDN says 32767 char is the maximum
+		return (GetEnvironmentVariableW(key.widen().c_str(), env, 0x7fff) > 0)
+			? Unicode(env).narrow()
+			: String{};
 	}
 
 	bool WindowsOS::has_env(String const & key) const
@@ -181,10 +185,21 @@ namespace Ism
 
 	void WindowsOS::set_env(String const & key, String const & value) const
 	{
+		if (key.empty() || key.contains("=")) {
+			CRASH("environment variable name cannot be empty or include \'=\'");
+		}
+		if (key.size() + value.size() + 2 > 32767) {
+			CRASH("environment variable cannot exceed 32767 characters");
+		}
+		SetEnvironmentVariableW(key.widen().c_str(), value.widen().c_str());
 	}
 
 	void WindowsOS::unset_env(String const & key) const
 	{
+		if (key.empty() || key.contains("=")) {
+			CRASH("environment variable name cannot be empty or include \'=\'");
+		}
+		SetEnvironmentVariableW(key.widen().c_str(), nullptr); // Null to delete.
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -271,66 +286,56 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	String WindowsOS::get_bin_dir() const noexcept
+	String WindowsOS::get_cache_path() const noexcept
 	{
-		return OS::get_bin_dir();
+		static String cache_path_cache;
+		if (cache_path_cache.empty()) {
+			if (has_env("LOCALAPPDATA")) {
+				cache_path_cache = get_env("LOCALAPPDATA").replace("\\", "/");
+			}
+			if (cache_path_cache.empty() && has_env("TEMP")) {
+				cache_path_cache = get_env("TEMP").replace("\\", "/");
+			}
+			if (cache_path_cache.empty()) {
+				cache_path_cache = get_config_path();
+			}
+		}
+		return cache_path_cache;
 	}
 
-	String WindowsOS::get_cache_dir() const noexcept
+	String WindowsOS::get_config_path() const noexcept
 	{
-		return OS::get_cache_dir();
+		if (has_env("APPDATA")) {
+			return get_env("APPDATA").replace("\\", "/");
+		}
+		return ".";
 	}
 
-	String WindowsOS::get_config_dir() const noexcept
+	String WindowsOS::get_data_path() const noexcept
 	{
-		return OS::get_config_dir();
+		return get_config_path();
 	}
 
-	String WindowsOS::get_data_dir() const noexcept
-	{
-		return OS::get_data_dir();
-	}
-
-	String WindowsOS::get_downloads_dir() const noexcept
-	{
-		return OS::get_downloads_dir();
-	}
-
-	String WindowsOS::get_exe_dir() const noexcept
+	String WindowsOS::get_exec_path() const noexcept
 	{
 		WCHAR buf[4096];
 		GetModuleFileNameW(nullptr, buf, 4096);
 		return Unicode(buf).narrow().replace("\\", "/");
 	}
 
-	String WindowsOS::get_mods_dir() const noexcept
+	String WindowsOS::get_resource_path() const noexcept
 	{
-		return OS::get_mods_dir();
+		return get_globals()->get_resource_path();
 	}
 
-	String WindowsOS::get_profiles_dir() const noexcept
+	String WindowsOS::get_system_path(SystemDir_ value) const noexcept
 	{
-		return OS::get_profiles_dir();
+		return OS::get_system_path(value);
 	}
 
-	String WindowsOS::get_resource_dir() const noexcept
+	String WindowsOS::get_user_path() const noexcept
 	{
-		return OS::get_resource_dir();
-	}
-
-	String WindowsOS::get_saves_dir() const noexcept
-	{
-		return OS::get_saves_dir();
-	}
-
-	String WindowsOS::get_system_dir(SystemDir_ value) const noexcept
-	{
-		return OS::get_system_dir(value);
-	}
-
-	String WindowsOS::get_user_dir() const noexcept
-	{
-		return OS::get_user_dir();
+		return OS::get_user_path();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -50,8 +50,7 @@ namespace Ism
 
 	void CompositeLogger::logv(cstring fmt, va_list args, bool is_error)
 	{
-		for (size_t i{}; i < m_loggers.size(); ++i)
-		{
+		for (size_t i{}; i < m_loggers.size(); ++i) {
 			va_list args_copy;
 			va_copy(args_copy, args);
 			m_loggers[i]->logv(fmt, args_copy, is_error);
@@ -59,12 +58,30 @@ namespace Ism
 		}
 	}
 
-	void CompositeLogger::add_logger(Logger * value)
+	bool CompositeLogger::add_logger(Logger * value)
 	{
-		if (value)
-		{
-			m_loggers.push_back(value);
+		if (!value) {
+			return false;
 		}
+		if (auto const it{ std::find(m_loggers.begin(), m_loggers.end(), value) }
+		; it == m_loggers.end()) {
+			m_loggers.push_back(value);
+			return true;
+		}
+		return false;
+	}
+
+	bool CompositeLogger::remove_logger(Logger * value)
+	{
+		if (!value) {
+			return false;
+		}
+		if (auto const it{ std::find(m_loggers.begin(), m_loggers.end(), value) }
+		; it != m_loggers.end()) {
+			m_loggers.erase(it);
+			return true;
+		}
+		return false;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

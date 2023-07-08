@@ -16,24 +16,23 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	ResourceLoader * ResourceLoader::__singleton{};
-
-	ResourceLoader::ResourceLoader() { SINGLETON_CTOR(__singleton, this); }
-
-	ResourceLoader::~ResourceLoader() { SINGLETON_DTOR(__singleton, this); }
 	
 	RES ResourceLoader::_load(String const & path, Error_ * r_error)
 	{
+		auto & loaders{ get_singleton()->m_loaders };
+
+		bool found{};
 		RES result{};
-		for (size_t i{}; i < m_loaders.size(); ++i)
-		{
-			if (!m_loaders[i]->recognize_path(path)) {
-				continue;
-			}
-			if (result = m_loaders[i]->load(path, r_error)) {
-				break;
-			}
+		for (size_t i{}; i < loaders.size(); ++i) {
+			if (!loaders[i]->recognize_path(path)) { continue; }
+			found = true;
+			if (result = loaders[i]->load(path, r_error)) { break; }
 		}
-		return result;
+		if (result) {
+			return result;
+		}
+
+		return nullptr;
 	}
 	
 	RES ResourceLoader::load(String const & path, Error_ * r_error)
@@ -41,17 +40,21 @@ namespace Ism
 		return _load(path, r_error);
 	}
 
-	bool ResourceLoader::add(Ref<ResourceFormatLoader> format)
+	bool ResourceLoader::add_resource_format_loader(Ref<ResourceFormatLoader> format)
 	{
-		if (m_loaders.contains(format)) { return false; }
-		m_loaders.push_back(format);
+		auto & loaders{ get_singleton()->m_loaders };
+		if (loaders.contains(format)) {
+			return false;
+		}
+		loaders.push_back(format);
 		return true;
 	}
 
-	bool ResourceLoader::remove(Ref<ResourceFormatLoader> format)
+	bool ResourceLoader::remove_resource_format_loader(Ref<ResourceFormatLoader> format)
 	{
-		if (auto const it{ m_loaders.find(format) }; it != m_loaders.end()) {
-			m_loaders.erase(it);
+		auto & loaders{ get_singleton()->m_loaders };
+		if (auto const it{ loaders.find(format) }; it != loaders.end()) {
+			loaders.erase(it);
 			return true;
 		}
 		return false;

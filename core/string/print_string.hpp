@@ -3,43 +3,43 @@
 
 #include <core/string/string.hpp>
 
-#define PRINTV			(Ism::printv)
-#define PRINTF			(Ism::printf)
+#define PRINTV			(Ism::_printv)
+#define PRINTF			(Ism::_printf)
 
-#define ERR_PRINTV		(Ism::err_printv)
-#define ERR_PRINTF		(Ism::err_printf)
+#define ERR_PRINTV		(Ism::_err_printv)
+#define ERR_PRINTF		(Ism::_err_printf)
 
-#define PRINT			(Ism::print)
-#define PRINT_LINE		(Ism::print_line)
-#define PRINT_INFO		(Ism::print_info)
-#define PRINT_WARNING	(Ism::print_warning)
-#define PRINT_ERROR		(Ism::print_error)
+#define PRINT			(Ism::_print)
+#define PRINT_LINE		(Ism::_print_line)
+#define PRINT_INFO		(Ism::_print_info)
+#define PRINT_WARNING	(Ism::_print_warning)
+#define PRINT_ERROR		(Ism::_print_error)
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(void) printv(cstring fmt, va_list args);
+	ISM_API_FUNC(void) _printv(cstring fmt, va_list args);
 
-	ISM_API_FUNC(void) printf(cstring fmt, ...);
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	ISM_API_FUNC(void) err_printv(cstring fmt, va_list args);
-	
-	ISM_API_FUNC(void) err_printf(cstring fmt, ...);
+	ISM_API_FUNC(void) _printf(cstring fmt, ...);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	ISM_API_FUNC(void) print(String const & s);
+	ISM_API_FUNC(void) _err_printv(cstring fmt, va_list args);
 	
-	ISM_API_FUNC(void) print_line(String const & s);
+	ISM_API_FUNC(void) _err_printf(cstring fmt, ...);
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	ISM_API_FUNC(void) _print(String const & s);
 	
-	ISM_API_FUNC(void) print_info(String const & s);
+	ISM_API_FUNC(void) _print_line(String const & s);
 	
-	ISM_API_FUNC(void) print_warning(String const & s);
+	ISM_API_FUNC(void) _print_info(String const & s);
 	
-	ISM_API_FUNC(void) print_error(String const & s);
+	ISM_API_FUNC(void) _print_warning(String const & s);
+	
+	ISM_API_FUNC(void) _print_error(String const & s);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

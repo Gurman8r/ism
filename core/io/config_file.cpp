@@ -12,7 +12,9 @@ namespace Ism
 		if (path.empty()) {
 			return Error_Failed;
 		}
-		else if (!ini_parse(path.c_str(), [](auto u, auto s, auto n, auto v) { return (((ConfigFile *)u)->set_string(s, n, String(v).trim([](i32 c) { return c == ' ' || c == '\'' || c == '\"'; }))), 1; }, this)) {
+		else if (parse(path, [](auto u, auto s, auto n, auto v) {
+			return (((ConfigFile *)u)->set_string(s, n, String(v).trim([](i32 c) { return c == ' ' || c == '\'' || c == '\"'; }))), true;
+		}, this)) {
 			return Error_Failed;
 		}
 		else {
@@ -23,9 +25,17 @@ namespace Ism
 	Ref<ConfigFile> ConfigFile::parse(String const & path, Error_ * r_error)
 	{
 		Ref<ConfigFile> cfg; cfg.instance();
-		if (Error_ const err{ cfg->parse(path) }) { if (r_error) { *r_error = Error_Failed; } cfg = nullptr; }
+		if (Error_ const err{ cfg->parse(path) }) {
+			if (r_error) { *r_error = Error_Failed; }
+			cfg = nullptr;
+		}
 		else if (r_error) { *r_error = Error_OK; }
 		return cfg;
+	}
+
+	Error_ ConfigFile::parse(String const & path, Callback fn, void * user)
+	{
+		return ini_parse(path.c_str(), (ini_handler)fn, user) ? Error_Failed : Error_OK;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

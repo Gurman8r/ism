@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- mono
-cpp_project("Extensions", "mono", "SharedLib", "%{_BUILD_BIN}")
+cpp_project("Extensions", "mono", "SharedLib", "%{_BUILD}/bin")
 
 extension("mono", 0, 0, 0, "alpha", "official")
 
@@ -22,7 +22,7 @@ prebuildcommands{
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- ism-csharp
-csharp_project("Engine", "ism-csharp", "SharedLib", "%{_BUILD_BIN}")
+csharp_project("Engine", "ism-csharp", "SharedLib", "%{_BUILD}/bin")
 
 files{ "%{_EXT}/mono/**.cs" }
 

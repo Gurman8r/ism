@@ -78,16 +78,27 @@ namespace Ism::priv
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // singleton constructor helper
-#define SINGLETON_CTOR(singleton, self) \
-		ASSERT(!singleton); \
-		(singleton) = (self);
+#define SINGLETON_CTOR(singleton, self)		\
+		do {								\
+			ASSERT((singleton) == nullptr); \
+			(singleton) = (self);			\
+		} while (0);
+		
 
 // singleton destructor helper
-#define SINGLETON_DTOR(singleton, self) \
-		ASSERT((singleton) == (self)); \
-		ON_SCOPE_EXIT(&) { (singleton) = nullptr; };
+#define SINGLETON_DTOR(singleton, self)		\
+		do {								\
+			ASSERT((singleton) == (self));	\
+		} while (0);						\
+		ON_SCOPE_EXIT() {					\
+			(singleton) = nullptr;			\
+		};
 
-// singleton wrapper helper
+// generate singleton getter
+#define SINGLETON_GETTER(T, singleton) \
+		NODISCARD FORCE_INLINE static T * get_singleton() noexcept { return (singleton); }
+
+// generate singleton wrapper
 #define SINGLETON_WRAPPER(T, F) \
 		NODISCARD FORCE_INLINE T * F() noexcept { return T::get_singleton(); }
 

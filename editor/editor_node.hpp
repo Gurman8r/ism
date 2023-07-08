@@ -18,6 +18,7 @@ namespace Ism
 	class EditorHierarchy;
 	class EditorInspector;
 	class EditorLog;
+	class EditorTerminal;
 	class EditorViewport;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -39,6 +40,7 @@ namespace Ism
 		EditorHierarchy		* m_hierarchy{};
 		EditorInspector		* m_inspector{};
 		EditorLog			* m_log{};
+		EditorTerminal		* m_terminal{};
 		EditorViewport		* m_viewport{};
 
 		bool m_show_main_menu_bar{ true };
@@ -54,8 +56,7 @@ namespace Ism
 	public:
 		EditorNode();
 		virtual ~EditorNode() override;
-		FORCE_INLINE static EditorNode * get_singleton() noexcept { return __singleton; }
-#define EDITOR (Ism::EditorNode::get_singleton())
+		SINGLETON_GETTER(EditorNode, __singleton);
 
 	protected:
 		void _notification(Notification_ id);

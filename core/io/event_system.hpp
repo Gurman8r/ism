@@ -214,7 +214,7 @@ private:
 	public:
 		EventBus() noexcept { SINGLETON_CTOR(__singleton, this); }
 		virtual ~EventBus() noexcept override { SINGLETON_DTOR(__singleton, this); }
-		FORCE_INLINE static EventBus * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(EventBus, __singleton);
 
 	public:
 		void fire_event(Event const & value) noexcept

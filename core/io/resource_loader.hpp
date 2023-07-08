@@ -5,6 +5,8 @@
 
 namespace Ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API ResourceFormatLoader : public Object
 	{
 		DEFINE_CLASS(ResourceFormatLoader, Object);
@@ -15,10 +17,9 @@ namespace Ism
 		NODISCARD virtual void get_recognized_extensions(Vector<String> * out) const = 0;
 		NODISCARD virtual bool recognize_path(String const & path, String const & hint = {}) const;
 	};
-}
 
-namespace Ism
-{
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API ResourceLoader
 	{
 		static ResourceLoader * __singleton;
@@ -26,20 +27,24 @@ namespace Ism
 		Vector<Ref<ResourceFormatLoader>> m_loaders{};
 
 	public:
-		ResourceLoader();
-		~ResourceLoader();
-		FORCE_INLINE static ResourceLoader * get_singleton() noexcept { return __singleton; }
+		ResourceLoader() noexcept { SINGLETON_CTOR(__singleton, this); }
+		~ResourceLoader() noexcept { SINGLETON_DTOR(__singleton, this); }
+		SINGLETON_GETTER(ResourceLoader, __singleton);
 
 	protected:
-		RES _load(String const & path, Error_ * r_error = nullptr);
+		static RES _load(String const & path, Error_ * r_error = nullptr);
 
 	public:
-		RES load(String const & path, Error_ * r_error = nullptr);
-		bool add(Ref<ResourceFormatLoader> format);
-		bool remove(Ref<ResourceFormatLoader> format);
+		static RES load(String const & path, Error_ * r_error = nullptr);
+
+		template <class T
+		> static Ref<T> load(String const & path, Error_ * r_error = nullptr) noexcept { return load(path, r_error); }
+
+		static bool add_resource_format_loader(Ref<ResourceFormatLoader> format);
+		static bool remove_resource_format_loader(Ref<ResourceFormatLoader> format);
 	};
 
-	SINGLETON_WRAPPER(ResourceLoader, get_resource_loader);
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 #endif // !_ISM_RESOURCE_LOADER_HPP_

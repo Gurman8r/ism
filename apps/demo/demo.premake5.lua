@@ -10,7 +10,7 @@ dependson{ "demo-csharp" }
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- demo-csharp
-csharp_project("Demo", "demo-csharp", "SharedLib", "%{_BUILD_BIN}")
+csharp_project("Demo", "demo-csharp", "SharedLib", "%{_BUILD}/bin")
 
 dependson{ "ism-csharp" }
 

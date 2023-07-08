@@ -2,7 +2,7 @@ using System;
 
 namespace Demo
 {
-	sealed class Demo : Ism.Application
+	sealed class Demo : Ism.MainLoop
 	{
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

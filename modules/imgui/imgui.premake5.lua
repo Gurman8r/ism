@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- imgui
-cpp_project("Modules", "imgui", "SharedLib", "%{_BUILD_BIN}")
+cpp_project("Modules", "imgui", "SharedLib", "%{_BUILD}/bin")
 
 links_graphics()
 

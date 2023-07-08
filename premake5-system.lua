@@ -5,11 +5,15 @@ include "./misc/premake5_solution_items.lua"
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 newoption{
+	trigger		= "tools",
+	description	= "tools enabled",
+}
+
+newoption{
 	trigger		= "gfxapi",
 	value		= "api",
 	description	= "graphics api",
 	default		= "opengl",
-	category	= "Build Options",
 	allowed		= { { "opengl", "OpenGL" }, { "vulkan", "Vulkan" }, { "directx", "DirectX" }, }
 }
 
@@ -18,9 +22,29 @@ newoption{
 	value		= "api",
 	description	= "opengl loader",
 	default		= "glew",
-	category	= "Build Options",
 	allowed		= { { "glew", "GLEW" }, { "glad", "GLAD" }, }
 }
+
+-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
+
+-- paths
+_SLN		= "%{wks.location}"
+_APP		= "%{_SLN}/apps"
+_ASSETS		= "%{_SLN}/assets"
+_BUILD		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}"
+_CORE		= "%{_SLN}/core"
+_DRIVERS	= "%{_SLN}/drivers"
+_EDITOR		= "%{_SLN}/editor"
+_EXT		= "%{_SLN}/extensions"
+_MAIN		= "%{_SLN}/main"
+_MOD		= "%{_SLN}/modules"
+_PLATFORM	= "%{_SLN}/platform"
+_PROJECT	= "%{_SLN}/.ism/workspace/%{_ACTION}/%{prj.name}"
+_SCENE		= "%{_SLN}/scene"
+_SERVERS	= "%{_SLN}/servers"
+_THIRDPARTY	= "%{_SLN}/thirdparty"
+_TEMPORARY	= "%{_SLN}/.ism/temporary/%{_ACTION}/%{_TARGET_OS}"
+_VENDOR		= "%{_SLN}/misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
@@ -39,42 +63,6 @@ function load_platforms(_platforms)
 	filter{ "platforms:*64" } architecture "x86_64"
 	filter{}
 end
-
--- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
-
--- workspace paths
-_SLN		= "%{wks.location}"
-_APP		= "%{_SLN}/apps"
-_ASSETS		= "%{_SLN}/assets"
-_CORE		= "%{_SLN}/core"
-_DRIVERS	= "%{_SLN}/drivers"
-_EDITOR		= "%{_SLN}/editor"
-_EXT		= "%{_SLN}/extensions"
-_MAIN		= "%{_SLN}/main"
-_MODULES	= "%{_SLN}/modules"
-_PLATFORM	= "%{_SLN}/platform"
-_PROJECT	= "%{_SLN}/.ism/workspace/%{_ACTION}/%{prj.name}"
-_SCENE		= "%{_SLN}/scene"
-_SERVERS	= "%{_SLN}/servers"
-_THIRDPARTY	= "%{_SLN}/thirdparty"
-_TEMPORARY	= "%{_SLN}/.ism/temporary/%{_ACTION}/%{_TARGET_OS}"
-_VENDOR		= "%{_SLN}/misc/%{_TARGET_OS}/vendor/%{cfg.platform}/%{cfg.buildcfg}"
-
--- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
-
--- _build paths
-_BUILD				= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}"
-_BUILD_BIN			= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/bin"
-_BUILD_CACHE		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/cache"
-_BUILD_CONFIG		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/config"
-_BUILD_DATA			= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/data"
-_BUILD_DEFAULTS		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/defaultconfigs"
-_BUILD_DOWNLOADS	= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/downloads"
-_BUILD_MODS			= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/mods"
-_BUILD_PROFILES		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/profiles"
-_BUILD_RESOURCES	= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/resources"
-_BUILD_SAVES		= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/saves"
-_BUILD_USER			= "%{_SLN}/build_%{_TARGET_OS}_%{cfg.platform}_%{cfg.buildcfg}/user"
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
@@ -160,15 +148,14 @@ end
 -- module
 function module(_name, _major, _minor, _patch, _status, _build)
 	version(_name, _major, _minor, _patch, _status, _build)
-	dependson{ "assets", }
 	files{
-		"%{_MODULES}/".._name.."/".._name..".premake5.lua",
-		"%{_MODULES}/".._name.."/**.h",
-		"%{_MODULES}/".._name.."/**.c",
-		"%{_MODULES}/".._name.."/**.hpp",
-		"%{_MODULES}/".._name.."/**.cpp",
-		"%{_MODULES}/".._name.."/**.inl",
-		"%{_MODULES}/".._name.."/**.pch",
+		"%{_MOD}/".._name.."/".._name..".premake5.lua",
+		"%{_MOD}/".._name.."/**.h",
+		"%{_MOD}/".._name.."/**.c",
+		"%{_MOD}/".._name.."/**.hpp",
+		"%{_MOD}/".._name.."/**.cpp",
+		"%{_MOD}/".._name.."/**.inl",
+		"%{_MOD}/".._name.."/**.pch",
 	}
 end
 
@@ -180,23 +167,17 @@ function extension(_name, _major, _minor, _patch, _status, _build)
 	links_assimp()
 	links_gui()
 	defines{
+		"MAIN_ENABLED=0",
 		"ISM_EXT_API=ISM_API_EXPORT",
 	}
 	files{
 		"%{_EXT}/".._name.."/".._name..".premake5.lua",
-		"%{_EXT}/".._name.."/".._name..".ini",
 		"%{_EXT}/".._name.."/**.h",
 		"%{_EXT}/".._name.."/**.c",
 		"%{_EXT}/".._name.."/**.hpp",
 		"%{_EXT}/".._name.."/**.cpp",
 		"%{_EXT}/".._name.."/**.inl",
 		"%{_EXT}/".._name.."/**.pch",
-	}
-	prebuildcommands{
-		"{TOUCH} %{_EXT}/".._name.."/".._name..".ini",
-	}
-	postbuildcommands{
-		"{COPYFILE} %{_EXT}/".._name.."/".._name..".ini %{_BUILD_CONFIG}",
 	}
 end
 
@@ -213,23 +194,16 @@ function application(_name, _major, _minor, _patch, _status, _build)
 		"IMGUI_API=ISM_API_IMPORT",
 	}
 	files{
-		"%{_PLATFORM}/%{_TARGET_OS}/%{_TARGET_OS}_main.cpp",
 		"%{_APP}/".._name.."/".._name..".premake5.lua",
 		"%{_APP}/".._name.."/".._name..".rc",
 		"%{_APP}/".._name.."/".._name..".ico",
-		"%{_APP}/".._name.."/".._name..".ini",
 		"%{_APP}/".._name.."/**.h",
 		"%{_APP}/".._name.."/**.c",
 		"%{_APP}/".._name.."/**.hpp",
 		"%{_APP}/".._name.."/**.cpp",
 		"%{_APP}/".._name.."/**.inl",
 		"%{_APP}/".._name.."/**.pch",
-	}
-	prebuildcommands{
-		"{TOUCH} %{_APP}/".._name.."/".._name..".ini",
-	}
-	postbuildcommands{
-		"{COPYFILE} %{_APP}/".._name.."/".._name..".ini %{_BUILD_CONFIG}",
+		"%{_PLATFORM}/%{_TARGET_OS}/%{_TARGET_OS}_main.cpp",
 	}
 end
 
@@ -240,7 +214,7 @@ end
 _MANIFEST={}
 
 function manifest(...)
-	local args={...}
+	local args = { ... }
 	for _, v in ipairs(args) do
 		table.insert(_MANIFEST, v)
 	end

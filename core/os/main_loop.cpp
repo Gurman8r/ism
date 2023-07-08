@@ -32,6 +32,19 @@ namespace Ism
 		}
 	}
 
+	void MainLoop::finalize()
+	{
+		STR_IDENTIFIER(_finalize);
+
+		if (m_script)
+		{
+			if (ObjectRef callback{ getattr(m_script, &ID__finalize) })
+			{
+				call_object(callback);
+			}
+		}
+	}
+
 	bool MainLoop::process(Duration const & dt)
 	{
 		STR_IDENTIFIER(_process);
@@ -52,19 +65,6 @@ namespace Ism
 		}
 
 		return should_close;
-	}
-
-	void MainLoop::finalize()
-	{
-		STR_IDENTIFIER(_finalize);
-
-		if (m_script)
-		{
-			if (ObjectRef callback{ getattr(m_script, &ID__finalize) })
-			{
-				call_object(callback);
-			}
-		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

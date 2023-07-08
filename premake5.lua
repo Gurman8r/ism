@@ -17,9 +17,6 @@ solution_items{
 
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
--- engine
-include "ism.premake5.lua"
-
 -- modules
 include "modules/assimp/assimp.premake5.lua"
 include "modules/freetype2/freetype2.premake5.lua"
@@ -28,11 +25,15 @@ include "modules/glfw/glfw.premake5.lua"
 include "modules/imgui/imgui.premake5.lua"
 include "modules/zip/zip.premake5.lua"
 
+-- engine
+include "ism.premake5.lua"
+include "assets/assets.premake5.lua"
+
 -- extensions
 include "extensions/lua/lua.premake5.lua"
 include "extensions/mono/mono.premake5.lua"
 
--- apps
+-- applications
 include "apps/toolkit/toolkit.premake5.lua"
 include "apps/demo/demo.premake5.lua"
 
@@ -45,7 +46,7 @@ debugdir "%{_BUILD}"
 
 debugenvs{ "%{_BUILD}" }
 
-libdirs{ "%{_BUILD_BIN}", }
+libdirs{ "%{_BUILD}/bin", }
 
 includedirs{
 	"%{_SLN}",

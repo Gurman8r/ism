@@ -49,7 +49,7 @@ namespace Ism
 	public:
 		PackedData();
 		~PackedData();
-		FORCE_INLINE static PackedData * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(PackedData, __singleton);
 
 		NODISCARD bool is_enabled() const { return m_enabled; }
 		void set_enabled(bool enabled) { m_enabled = enabled; }
@@ -64,8 +64,6 @@ namespace Ism
 		NODISCARD Ref<Dir> try_open_dir(String const & path);
 		NODISCARD bool has_dir(String const & path);
 	};
-
-	SINGLETON_WRAPPER(PackedData, get_packed_data);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

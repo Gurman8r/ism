@@ -19,6 +19,7 @@ namespace Ism
 		ImGuiWindow *		m_window;
 		cstring				m_name;
 		bool				m_is_open;
+		bool				m_is_focused;
 		ImGuiWindowFlags	m_flags;
 
 	protected:
@@ -38,6 +39,8 @@ namespace Ism
 		bool is_open() const noexcept { return m_is_open; }
 		void set_open(bool value) noexcept { m_is_open = value; }
 		void toggle_open() noexcept { m_is_open = !m_is_open; }
+
+		bool is_focused() const noexcept { return m_is_focused; }
 
 		auto get_flags() const noexcept -> ImGuiWindowFlags { return m_flags; }
 		void set_flags(ImGuiWindowFlags value) noexcept { m_flags = value; }

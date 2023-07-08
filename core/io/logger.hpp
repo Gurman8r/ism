@@ -43,7 +43,9 @@ namespace Ism
 
 		virtual void logv(cstring fmt, va_list args, bool is_error = false) override;
 
-		void add_logger(Logger * value);
+		bool add_logger(Logger * value);
+
+		bool remove_logger(Logger * value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

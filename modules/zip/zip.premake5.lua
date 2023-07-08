@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- zip
-cpp_project("Modules", "zip", "StaticLib", "%{_BUILD_BIN}")
+cpp_project("Modules", "zip", "StaticLib", "%{_BUILD}/bin")
 
 module("zip", 0, 0, 0, "alpha", "official")
 

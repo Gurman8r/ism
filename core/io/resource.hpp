@@ -7,7 +7,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OPAQUE_TYPE(RID);
+	OPAQUE_TYPE(RID); // Resource ID
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -21,7 +21,7 @@ namespace Ism
 		String m_path_cache{};
 
 	protected:
-		Resource() noexcept {}
+		Resource() noexcept;
 
 	public:
 		virtual ~Resource() noexcept override = default;
@@ -41,12 +41,6 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	using RES = Ref<Resource>;
-	
-	NODISCARD ISM_API_FUNC(RES) load_resource(String const & path);
-	template <class T> NODISCARD Ref<T> load_resource(String const & path) noexcept { return load_resource(path); }
-
-	ISM_API_FUNC(Error_) save_resource(RES const & res, String const & path);
-	template <class T> Error_ save_resource(Ref<T> const & res, String const & path) noexcept { return save_resource(res, path); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

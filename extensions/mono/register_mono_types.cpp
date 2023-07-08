@@ -24,7 +24,7 @@ namespace Ism
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("initializing mono");
-		cs_loader.instance(); get_resource_loader()->add(cs_loader);
+		cs_loader.instance(); ResourceLoader::add_resource_format_loader(cs_loader);
 		REGISTER_CLASS(CSharpLanguage, CSharpScript, CSharpInstance);
 		cs_language = memnew(CSharpLanguage); get_scr()->register_language(cs_language);
 	}
@@ -35,7 +35,7 @@ namespace Ism
 		PRINT_INFO("finalizing mono");
 		get_scr()->unregister_language(cs_language); memdelete(cs_language);
 		UNREGISTER_CLASS(CSharpLanguage, CSharpScript, CSharpInstance);
-		get_resource_loader()->remove(cs_loader); cs_loader = nullptr;
+		ResourceLoader::remove_resource_format_loader(cs_loader); cs_loader = nullptr;
 	}
 }
 

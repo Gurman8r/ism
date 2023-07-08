@@ -1,7 +1,7 @@
 -- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * --
 
 -- glfw
-cpp_project("Modules", "glfw", "SharedLib", "%{_BUILD_BIN}")
+cpp_project("Modules", "glfw", "SharedLib", "%{_BUILD}/bin")
 
 links_graphics()
 

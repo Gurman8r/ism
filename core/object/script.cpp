@@ -14,6 +14,17 @@ namespace Ism
 		}
 	}
 	
+	ScriptLanguage * ScriptManager::get_language(String const & name)
+	{
+		auto const id{ name.hash_code() };
+		for (size_t i{}; i < m_languages.size(); ++i) {
+			if (m_languages[i]->get_name().hash_code() == id) {
+				return m_languages[i];
+			}
+		}
+		return nullptr;
+	}
+
 	Error_ ScriptManager::register_language(ScriptLanguage * language)
 	{
 		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); })};
@@ -103,17 +114,17 @@ namespace Ism
 	{
 	}
 
-	bool PlaceholderScriptInstance::get_constants(HashMap<String, ObjectRef> * out) const
+	bool PlaceholderScriptInstance::get_constants(Vector<ObjectRef> * out) const
 	{
 		return false;
 	}
 
-	bool PlaceholderScriptInstance::get_properties(HashMap<String, PropertyRef> * out) const
+	bool PlaceholderScriptInstance::get_properties(Vector<PropertyRef> * out) const
 	{
 		return false;
 	}
 
-	bool PlaceholderScriptInstance::get_functions(HashMap<String, FunctionRef> * out) const
+	bool PlaceholderScriptInstance::get_functions(Vector<FunctionRef> * out) const
 	{
 		return false;
 	}

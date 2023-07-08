@@ -66,7 +66,7 @@ namespace Ism
 
 	public:
 		virtual ~DisplayServer() override;
-		FORCE_INLINE static DisplayServer * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(DisplayServer, __singleton);
 		static DisplayServer * create(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
 
 	public:

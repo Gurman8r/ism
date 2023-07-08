@@ -56,16 +56,13 @@ namespace Ism
 	public:
 		Mono() noexcept { SINGLETON_CTOR(__singleton, this); }
 		~Mono() noexcept { SINGLETON_DTOR(__singleton, this); }
-		FORCE_INLINE static Mono * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(Mono, __singleton);
 
-		bool initialize();
-		bool finalize();
+		Error_ initialize();
+		Error_ finalize();
 
 		Error_ load_assemblies();
-
 		Error_ load_dll(String const & path);
-
-		Error_ reload_assemblies();
 	};
 
 	SINGLETON_WRAPPER(Mono, get_mono);

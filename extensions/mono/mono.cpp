@@ -1,5 +1,6 @@
 #include <extensions/mono/mono.hpp>
 #include <core/os/os.hpp>
+#include <core/config/project_settings.hpp>
 #include <core/io/file.hpp>
 
 namespace Ism
@@ -14,7 +15,7 @@ namespace Ism
 
 	Mono * Mono::__singleton{};
 
-	bool Mono::initialize()
+	Error_ Mono::initialize()
 	{
 		String const lib_dir{ "C:\\Program Files\\Mono\\lib" };
 		String const etc_dir{ "C:\\Program Files\\Mono\\etc" };
@@ -22,27 +23,27 @@ namespace Ism
 
 		if (!(m_domain = mono_jit_init(VERSION_FULL_NAME))) {
 			PRINT_ERROR("failed initializing mono jit");
-			return false;
+			return Error_Failed;
 		}
 
-		if (load_assemblies() != Error_OK) {
+		if (auto const err{ load_assemblies() }; err != Error_OK) {
 			PRINT_ERROR("failed loading csharp assemblies");
-			return false;
+			return err;
 		}
 
-		return true;
+		return Error_OK;
 	}
 
-	bool Mono::finalize()
+	Error_ Mono::finalize()
 	{
 		if (m_domain) { mono_jit_cleanup(m_domain); m_domain = nullptr; }
-		return true;
+		return Error_OK;
 	}
 
 	Error_ Mono::load_assemblies()
 	{
 		// load engine dll
-		String const engine_dll{ get_os()->get_bin_dir().path_join("ism-csharp.dll") };
+		String const engine_dll{ get_globals()->get_bin_path().path_join("ism-csharp.dll") };
 		if (!File::exists(engine_dll)) { PRINT_ERROR("could not find engine assembly"); return Error_Failed; }
 		if (Error_ const err{ load_dll(engine_dll)}) { PRINT_ERROR("failed loading engine assembly"); return err; }
 		mono_add_internal_call("Ism.Object::print", &CS_Ism_Object_print);
@@ -50,7 +51,7 @@ namespace Ism
 		if (!(m_script_class = mono_class_from_name(m_dll.get<MonoImage *>(0), "Ism", "Script"))) { return Error_Failed; }
 		
 		// load app dll
-		String const app_dll{ get_os()->get_bin_dir().path_join(get_os()->get_exe_name() + "-csharp.dll") };
+		String const app_dll{ get_globals()->get_bin_path().path_join(get_os()->get_exec_path().stem() + "-csharp.dll")};
 		if (!File::exists(app_dll)) { PRINT_ERROR("could not find application assembly"); return Error_Failed; }
 		if (Error_ const err{ load_dll(app_dll) }) { PRINT_ERROR("failed loading engine assembly"); return err; }
 		i32 const rows{ mono_image_get_table_rows(m_dll.get<MonoImage *>(1), MONO_TABLE_TYPEDEF) };

@@ -25,13 +25,14 @@ namespace Ism
 	public:
 		ScriptManager() noexcept { SINGLETON_CTOR(__singleton, this); }
 		virtual ~ScriptManager() noexcept override { SINGLETON_DTOR(__singleton, this); }
-		FORCE_INLINE static ScriptManager * get_singleton() noexcept { return __singleton; }
+		SINGLETON_GETTER(ScriptManager, __singleton);
 
 		NODISCARD bool is_scripting_enabled() const noexcept { return m_scripting_enabled; }
 		void set_scripting_enabled(bool enabled);
 
 		NODISCARD size_t get_language_count() const noexcept { return m_languages.size(); }
 		NODISCARD ScriptLanguage * get_language(size_t index) noexcept { return m_languages[index]; }
+		NODISCARD ScriptLanguage * get_language(String const & name);
 
 		Error_ register_language(ScriptLanguage * language);
 		Error_ unregister_language(ScriptLanguage const * language);
@@ -57,8 +58,10 @@ namespace Ism
 
 		NODISCARD virtual String get_name() const = 0;
 
-		virtual void initialize() = 0;
-		virtual void finalize() = 0;
+		virtual Error_ initialize() = 0;
+		virtual Error_ finalize() = 0;
+
+		virtual Script * new_scipt() = 0;
 	};
 }
 
@@ -74,18 +77,26 @@ namespace Ism
 		explicit Script(String const & path);
 		virtual ~Script() override;
 
+	public:
+		virtual bool can_instantiate() const = 0;
 		virtual Ref<ScriptInstance> instance_create(Object * self) = 0;
-
-		virtual void get_field_names(Vector<String> * out) const = 0;
-		virtual void get_method_names(Vector<String> * out) const = 0;
-		virtual void get_property_names(Vector<String> * out) const = 0;
 		
 		virtual bool has_source_code() const = 0;
 		virtual String get_source_code() const = 0;
 		virtual void set_source_code(String const & code) = 0;
 		virtual Error_ reload(bool keep_state = false) = 0;
+
+		virtual bool has_method(String const & method) const = 0;
 		
+		virtual bool is_tool() const = 0;
+		virtual bool is_valid() const = 0;
+
 		virtual ScriptLanguage * get_language() const = 0;
+
+		virtual void get_constants(HashMap<String, ObjectRef> * constants) {}
+		virtual void get_members(HashSet<String> * members) {}
+
+		virtual bool is_placeholder_fallback_enabled() const { return false; }
 	};
 }
 
@@ -99,16 +110,16 @@ namespace Ism
 	public:
 		virtual ~ScriptInstance();
 
-		virtual bool get_constants(HashMap<String, ObjectRef> * out) const = 0;
-		virtual bool get_properties(HashMap<String, PropertyRef> * out) const = 0;
-		virtual bool get_functions(HashMap<String, FunctionRef> * out) const = 0;
-
 		virtual void notification(i32 notification) = 0;
 
 		virtual bool is_placeholder() const { return false; }
 		virtual Ref<Script> get_script() const = 0;
 		virtual ScriptLanguage * get_language() = 0;
 		virtual Object * get_owner() = 0;
+
+		virtual bool get_constants(Vector<ObjectRef> * out) const = 0;
+		virtual bool get_properties(Vector<PropertyRef> * out) const = 0;
+		virtual bool get_functions(Vector<FunctionRef> * out) const = 0;
 	};
 }
 
@@ -127,16 +138,16 @@ namespace Ism
 		PlaceholderScriptInstance(ScriptLanguage * language, Ref<Script> script, Object * owner);
 		virtual ~PlaceholderScriptInstance() override;
 
-		virtual bool get_constants(HashMap<String, ObjectRef> * out) const;
-		virtual bool get_properties(HashMap<String, PropertyRef> * out) const;
-		virtual bool get_functions(HashMap<String, FunctionRef> * out) const;
-
 		virtual void notification(i32 notification) override {}
 		
 		virtual bool is_placeholder() const override { return true; }
 		virtual Ref<Script> get_script() const override { return m_script; }
 		virtual ScriptLanguage * get_language() { return m_language; }
 		virtual Object * get_owner() override { return m_owner; }
+
+		virtual bool get_constants(Vector<ObjectRef> * out) const override;
+		virtual bool get_properties(Vector<PropertyRef> * out) const override;
+		virtual bool get_functions(Vector<FunctionRef> * out) const override;
 	};
 }
 
