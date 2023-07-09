@@ -9,7 +9,7 @@ namespace Ism
 
 	class ISM_API SkyMaterial : public Material
 	{
-		DEFINE_CLASS(SkyMaterial, Material);
+		OBJECT_CLASS(SkyMaterial, Material);
 
 		friend class MaterialFormatLoader;
 

@@ -9,7 +9,7 @@ namespace Ism
 	// list object
 	class ISM_API ListObject : public Object
 	{
-		DEFINE_CLASS(ListObject, Object);
+		OBJECT_CLASS(ListObject, Object);
 
 		friend class ListRef;
 

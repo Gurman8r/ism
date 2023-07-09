@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API ColliderComponent : public Component
 	{
-		DEFINE_CLASS(ColliderComponent, Component);
+		OBJECT_CLASS(ColliderComponent, Component);
 
 	public:
 		ColliderComponent();

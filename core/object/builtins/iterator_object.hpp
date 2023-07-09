@@ -10,7 +10,7 @@ namespace Ism
 	// iterator object
 	class IteratorObject : public Object
 	{
-		DEFINE_CLASS(IteratorObject, Object);
+		OBJECT_CLASS(IteratorObject, Object);
 
 		friend class IteratorRef;
 

@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API TransformComponent : public Component
 	{
-		DEFINE_CLASS(TransformComponent, Component);
+		OBJECT_CLASS(TransformComponent, Component);
 
 	public:
 		TransformComponent();

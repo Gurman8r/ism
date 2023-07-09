@@ -12,7 +12,7 @@ namespace Ism
 	// input map
 	class ISM_API InputMap : public Object
 	{
-		DEFINE_CLASS(InputMap, Object);
+		OBJECT_CLASS(InputMap, Object);
 
 		friend class Input;
 

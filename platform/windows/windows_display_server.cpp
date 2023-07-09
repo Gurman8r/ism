@@ -578,7 +578,7 @@ namespace Ism
 	void WindowsDisplayServer::set_native_icon(String const & path)
 	{
 		if (path.extension() != ".ico") {
-			if (Ref<Image> i{ ResourceLoader::load(path) }) {
+			if (Ref<Image> i{ load_resource(path) }) {
 				i->flip_vertically();
 				set_icon(i->get_pixel_data(), i->get_width(), i->get_height());
 			}

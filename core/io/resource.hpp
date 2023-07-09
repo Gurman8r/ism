@@ -14,7 +14,7 @@ namespace Ism
 	// resource
 	class ISM_API Resource : public Object
 	{
-		DEFINE_CLASS(Resource, Object);
+		OBJECT_CLASS(Resource, Object);
 
 		i32 m_subindex{};
 		String m_name{};

@@ -9,7 +9,7 @@ namespace Ism
 	// property object
 	class ISM_API PropertyObject : public Object
 	{
-		DEFINE_CLASS(PropertyObject, Object);
+		OBJECT_CLASS(PropertyObject, Object);
 
 		friend class PropertyRef;
 

@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API CameraBehavior : public Behavior
 	{
-		DEFINE_CLASS(CameraBehavior, Behavior);
+		OBJECT_CLASS(CameraBehavior, Behavior);
 
 	public:
 		CameraBehavior();

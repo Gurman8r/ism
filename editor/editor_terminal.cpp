@@ -12,9 +12,8 @@ namespace Ism
 
 	EditorTerminal::EditorTerminal() : EditorPanel{ "Terminal##Editor" }
 	{
-		m_logger = memnew(EditorTerminalLogger);
-		m_logger->m_terminal = this;
-		get_os()->get_logger()->add_logger(m_logger);
+		get_os()->get_logger()->add_logger(m_logger = memnew(EditorTerminalLogger(this)));
+
 		m_script = get_scr()->get_language("lua")->new_scipt();
 
 		m_commands.push_back("HELP");
@@ -27,6 +26,7 @@ namespace Ism
 	EditorTerminal::~EditorTerminal()
 	{
 		if (m_script) { memdelete(m_script); m_script = nullptr; }
+
 		get_os()->get_logger()->remove_logger(m_logger);
 		if (m_logger) { memdelete(m_logger); m_logger = nullptr; }
 	}

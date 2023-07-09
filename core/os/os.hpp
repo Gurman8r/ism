@@ -55,7 +55,7 @@ namespace Ism
 	public:
 		OS();
 		virtual ~OS();
-		SINGLETON_GETTER(OS, __singleton);
+		SINGLETON_GETTER(OS);
 
 	protected:
 		friend class Main;

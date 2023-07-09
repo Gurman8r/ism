@@ -10,7 +10,7 @@ namespace Ism
 
 	class ImageFormatLoader : public ResourceFormatLoader
 	{
-		DEFINE_CLASS(ImageFormatLoader, ResourceFormatLoader);
+		OBJECT_CLASS(ImageFormatLoader, ResourceFormatLoader);
 	public:
 		static Error_ load_image(Ref<Image> image, String const & path);
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;

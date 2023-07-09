@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API RendererComponent : public Component
 	{
-		DEFINE_CLASS(RendererComponent, Component);
+		OBJECT_CLASS(RendererComponent, Component);
 
 	public:
 		RendererComponent();

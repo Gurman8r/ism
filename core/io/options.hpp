@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API Options : public Object
 	{
-		DEFINE_CLASS(Options, Object);
+		OBJECT_CLASS(Options, Object);
 
 		String
 			m_trigger	{},

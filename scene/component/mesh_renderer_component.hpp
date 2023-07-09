@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API MeshRendererComponent : public RendererComponent
 	{
-		DEFINE_CLASS(MeshRendererComponent, RendererComponent);
+		OBJECT_CLASS(MeshRendererComponent, RendererComponent);
 
 	public:
 		MeshRendererComponent();

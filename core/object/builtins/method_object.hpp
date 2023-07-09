@@ -9,7 +9,7 @@ namespace Ism
 	// method object
 	class ISM_API MethodObject : public FunctionObject
 	{
-		DEFINE_CLASS(MethodObject, FunctionObject);
+		OBJECT_CLASS(MethodObject, FunctionObject);
 
 		friend class MethodRef;
 

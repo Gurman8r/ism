@@ -14,7 +14,7 @@ namespace Ism
 	// base class for editor windows
 	class ISM_API EditorPanel : public Object
 	{
-		DEFINE_CLASS(EditorPanel, Object);
+		OBJECT_CLASS(EditorPanel, Object);
 
 		ImGuiWindow *		m_window;
 		cstring				m_name;

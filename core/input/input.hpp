@@ -10,14 +10,14 @@ namespace Ism
 	// input
 	class ISM_API Input : public Object
 	{
-		DEFINE_CLASS(Input, Object);
+		OBJECT_CLASS(Input, Object);
 
 		static Input * __singleton;
 
 	public:
-		Input() noexcept { SINGLETON_CTOR(__singleton, this); }
-		virtual ~Input() noexcept override { SINGLETON_DTOR(__singleton, this); }
-		SINGLETON_GETTER(Input, __singleton);
+		Input() noexcept { SINGLETON_CTOR(); }
+		virtual ~Input() noexcept override { SINGLETON_DTOR(); }
+		SINGLETON_GETTER(Input);
 
 	public:
 		enum Action_ : u8

@@ -7,7 +7,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // define class
-#define DEFINE_CLASS(m_class, m_inherits)											\
+#define OBJECT_CLASS(m_class, m_inherits)											\
 public:																				\
 	using base_type = typename m_inherits;											\
 																					\

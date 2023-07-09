@@ -3,84 +3,105 @@
 // script server
 namespace Ism
 {
-	EMBED_CLASS(ScriptManager, t) {}
+	EMBED_CLASS(ScriptServer, t) {}
 
-	ScriptManager * ScriptManager::__singleton{};
+	ScriptServer * ScriptServer::__singleton{};
 
-	void ScriptManager::set_scripting_enabled(bool enabled)
+	ScriptServer::ScriptServer() noexcept
+	{
+		SINGLETON_CTOR();
+		m_scripting_enabled = true;
+		m_reload_scripts_on_save = false;
+		m_languages_finalized = false;
+	}
+
+	ScriptServer::~ScriptServer() noexcept
+	{
+		SINGLETON_DTOR();
+		ASSERT(m_languages.empty());
+	}
+
+	bool ScriptServer::is_scripting_enabled() const noexcept
+	{
+		return m_scripting_enabled;
+	}
+
+	void ScriptServer::set_scripting_enabled(bool enabled)
 	{
 		if (m_scripting_enabled != enabled) {
 			m_scripting_enabled = enabled;
 		}
 	}
-	
-	ScriptLanguage * ScriptManager::get_language(String const & name)
+
+	size_t ScriptServer::get_language_count() const noexcept
 	{
-		auto const id{ name.hash_code() };
-		for (size_t i{}; i < m_languages.size(); ++i) {
-			if (m_languages[i]->get_name().hash_code() == id) {
-				return m_languages[i];
-			}
+		return m_languages.size();
+	}
+
+	ScriptLanguage * ScriptServer::get_language(size_t index) const noexcept
+	{
+		ASSERT(index < get_language_count());
+		return m_languages[index];
+	}
+	
+	ScriptLanguage * ScriptServer::get_language(String const & name) const noexcept
+	{
+		if (auto const it{ m_languages.find_if([id = name.hash_code()](auto e) noexcept {
+			return e && e->get_name().hash_code() == id;
+		}) }; it != m_languages.end()) {
+			return *it;
 		}
-		return nullptr;
+		else {
+			return nullptr;
+		}
 	}
 
-	Error_ ScriptManager::register_language(ScriptLanguage * language)
+	Error_ ScriptServer::register_language(ScriptLanguage * language)
 	{
-		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); })};
-		if (it != m_languages.end()) { return Error_Failed; }
-		m_languages.push_back(language);
-		return Error_OK;
+		if (!language) {
+			return Error_Failed;
+		}
+		else if (get_language_count() >= MAX_LANGUAGES) {
+			return Error_Failed;
+		}
+		else if (m_languages.contains(language)) {
+			return Error_Failed;
+		}
+		else {
+			return m_languages.push_back(language), Error_OK;
+		}
 	}
 	
-	Error_ ScriptManager::unregister_language(ScriptLanguage const * language)
+	Error_ ScriptServer::unregister_language(ScriptLanguage * language)
 	{
-		auto const it{ std::find_if(m_languages.begin(), m_languages.end(), [language](auto const e) { return (e == language) || (e->get_name() == language->get_name()); }) };
-		if (it == m_languages.end()) { return Error_Failed; }
-		m_languages.erase(it);
-		return Error_OK;
+		if (!language) {
+			return Error_Failed;
+		}
+		else if (auto const it{ m_languages.find(language) }; it == m_languages.end()) {
+			return Error_Failed;
+		}
+		else {
+			return m_languages.erase(it), Error_OK;
+		}
 	}
 
-	void ScriptManager::initialize_languages()
+	void ScriptServer::initialize_languages()
 	{
 		for (auto const e : m_languages) {
 			e->initialize();
 		}
 	}
 
-	void ScriptManager::finalize_languages()
+	void ScriptServer::finalize_languages()
 	{
 		for (auto const e : m_languages) {
 			e->finalize();
 		}
 	}
-}
 
-// script
-namespace Ism
-{
-	EMBED_CLASS(Script, t, TypeFlags_IsAbstract) {}
-
-	Script::Script()
+	bool ScriptServer::are_languages_finalized() const noexcept
 	{
-	}
-
-	Script::Script(String const & path)
-	{
-	}
-
-	Script::~Script()
-	{
-	}
-}
-
-// script instance
-namespace Ism
-{
-	EMBED_CLASS(ScriptInstance, t, TypeFlags_IsAbstract) {}
-
-	ScriptInstance::~ScriptInstance()
-	{
+		return m_languages_finalized;
 	}
 }
 
@@ -89,13 +110,31 @@ namespace Ism
 {
 	EMBED_CLASS(ScriptLanguage, t, TypeFlags_IsAbstract) {}
 
-	ScriptLanguage::ScriptLanguage()
-	{
-	}
+	ScriptLanguage::ScriptLanguage() {}
 
-	ScriptLanguage::~ScriptLanguage()
+	ScriptLanguage::~ScriptLanguage() {}
+
+	void ScriptLanguage::get_core_type_words(Vector<String> * words) const
 	{
 	}
+}
+
+// script
+namespace Ism
+{
+	EMBED_CLASS(Script, t, TypeFlags_IsAbstract) {}
+
+	Script::Script() {}
+
+	Script::~Script() {}
+}
+
+// script instance
+namespace Ism
+{
+	EMBED_CLASS(ScriptInstance, t, TypeFlags_IsAbstract) {}
+
+	ScriptInstance::~ScriptInstance() {}
 }
 
 // placeholder script instance
@@ -110,22 +149,5 @@ namespace Ism
 	{
 	}
 
-	PlaceholderScriptInstance::~PlaceholderScriptInstance()
-	{
-	}
-
-	bool PlaceholderScriptInstance::get_constants(Vector<ObjectRef> * out) const
-	{
-		return false;
-	}
-
-	bool PlaceholderScriptInstance::get_properties(Vector<PropertyRef> * out) const
-	{
-		return false;
-	}
-
-	bool PlaceholderScriptInstance::get_functions(Vector<FunctionRef> * out) const
-	{
-		return false;
-	}
+	PlaceholderScriptInstance::~PlaceholderScriptInstance() {}
 }

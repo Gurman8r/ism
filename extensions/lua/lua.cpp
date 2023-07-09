@@ -4,74 +4,38 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Lua * Lua::__singleton{};
-
-	Error_ Lua::initialize()
-	{
-		static const struct luaL_Reg lib[] =
-		{
-			{ "print", [](lua_State * L) {
-				for (int32_t i = 1, imax = lua_gettop(L); i <= imax; ++i)
-					PRINT(lua_tostring(L, i));
-				return EXIT_SUCCESS;
-			} },
-			{/* SENTINAL */}
-		};
-
-		if (!(m_L = luaL_newstate())) {
-			PRINT_ERROR("failed creating lua state");
-			return Error_Failed;
-		}
-		luaL_openlibs(m_L);
-		lua_getglobal(m_L, "_G");
-		luaL_setfuncs(m_L, lib, 0);
-		lua_pop(m_L, 1);
-		return Error_OK;
-	}
-
-	Error_ Lua::finalize()
-	{
-		if (m_L) { lua_close(m_L); m_L = nullptr; }
-		return Error_OK;
-	}
-
-	i32 Lua::do_string(cstring text)
-	{
-		return luaL_dostring(m_L, text);
-	}
-
-	i32 Lua::do_string(String const & text)
-	{
-		return luaL_dostring(m_L, text.c_str());
-	}
-
-	i32 Lua::do_file(String const & path)
-	{
-		return luaL_dofile(m_L, path.c_str());
-	}
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	EMBED_CLASS(LuaLanguage, t) {}
 
 	LuaLanguage * LuaLanguage::__singleton{};
 
 	Error_ LuaLanguage::initialize()
 	{
-		if (!(m_lua = get_lua())) { m_lua = memnew(Lua); }
+		if (!(m_context = get_lua())) { m_context = memnew(LuaContext); }
 
-		m_lua->initialize();
+		m_context->initialize();
 
 		return Error_OK;
 	}
 
 	Error_ LuaLanguage::finalize()
 	{
-		m_lua->finalize();
+		m_context->finalize();
 
-		if (m_lua) { memdelete(m_lua); m_lua = nullptr; }
+		if (m_context) { memdelete(m_context); m_context = nullptr; }
 
 		return Error_OK;
+	}
+
+	void LuaLanguage::get_reserved_words(Vector<String> * words) const
+	{
+	}
+
+	void LuaLanguage::get_comment_delimiters(Vector<String> * delimiters) const
+	{
+	}
+
+	void LuaLanguage::get_string_delimiters(Vector<String> * delimiters) const
+	{
 	}
 
 	Script * LuaLanguage::new_scipt()
@@ -83,16 +47,17 @@ namespace Ism
 
 	EMBED_CLASS(LuaScript, t) {}
 
-	LuaScript::LuaScript() : m_language{ get_lua_language() }
-	{
-	}
-
-	LuaScript::LuaScript(String const & path)
+	LuaScript::LuaScript() : Script{}, m_language { get_lua_language() }
 	{
 	}
 
 	LuaScript::~LuaScript()
 	{
+	}
+
+	bool LuaScript::can_instantiate() const
+	{
+		return false;
 	}
 
 	Ref<ScriptInstance> LuaScript::instance_create(Object * self)
@@ -131,6 +96,16 @@ namespace Ism
 
 	LuaInstance::~LuaInstance()
 	{
+	}
+
+	bool LuaInstance::get(String const & name, ObjectRef & value) const
+	{
+		return false;
+	}
+
+	bool LuaInstance::set(String const & name, ObjectRef const & value)
+	{
+		return false;
 	}
 
 	void LuaInstance::notification(i32 notification)

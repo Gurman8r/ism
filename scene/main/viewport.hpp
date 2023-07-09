@@ -11,7 +11,7 @@ namespace Ism
 	// viewport texture
 	class ViewportTexture : public Texture2D
 	{
-		DEFINE_CLASS(ViewportTexture, Texture2D);
+		OBJECT_CLASS(ViewportTexture, Texture2D);
 
 	public:
 		ViewportTexture();
@@ -29,7 +29,7 @@ namespace Ism
 	// viewport
 	class ISM_API Viewport : public Node
 	{
-		DEFINE_CLASS(Viewport, Node);
+		OBJECT_CLASS(Viewport, Node);
 
 		friend class Window;
 

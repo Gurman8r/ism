@@ -11,7 +11,7 @@ namespace Ism
 
 	class ISM_API Lexer : public Object
 	{
-		DEFINE_CLASS(Lexer, Object);
+		OBJECT_CLASS(Lexer, Object);
 
 	public:
 		enum Token_ {

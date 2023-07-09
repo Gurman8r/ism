@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API Font : public Resource
 	{
-		DEFINE_CLASS(Font, Resource);
+		OBJECT_CLASS(Font, Resource);
 
 		friend class FontFormatLoader;
 

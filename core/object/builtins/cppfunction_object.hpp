@@ -9,7 +9,7 @@ namespace Ism
 	// cppfunction object
 	class ISM_API CppFunctionObject : public FunctionObject
 	{
-		DEFINE_CLASS(CppFunctionObject, FunctionObject);
+		OBJECT_CLASS(CppFunctionObject, FunctionObject);
 
 		friend class CppFunctionRef;
 

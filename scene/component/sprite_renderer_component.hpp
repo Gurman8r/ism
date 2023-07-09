@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API SpriteRendererComponent : public RendererComponent
 	{
-		DEFINE_CLASS(SpriteRendererComponent, RendererComponent);
+		OBJECT_CLASS(SpriteRendererComponent, RendererComponent);
 
 	public:
 		SpriteRendererComponent();

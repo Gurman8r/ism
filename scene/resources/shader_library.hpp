@@ -9,7 +9,7 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ShaderFormatLoader : public ResourceFormatLoader {
-		DEFINE_CLASS(ShaderFormatLoader, ResourceFormatLoader);
+		OBJECT_CLASS(ShaderFormatLoader, ResourceFormatLoader);
 	public:
 		static Error_ load_shader(Ref<Shader> shader, String const & path);
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;

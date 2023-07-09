@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API RigidbodyComponent : public Component
 	{
-		DEFINE_CLASS(RigidbodyComponent, Component);
+		OBJECT_CLASS(RigidbodyComponent, Component);
 
 	public:
 		RigidbodyComponent();

@@ -1,10 +1,10 @@
 #ifndef _ISM_CSHARP_HPP_
 #define _ISM_CSHARP_HPP_
 
-#include <extensions/mono/mono.hpp>
 #include <core/object/script.hpp>
 #include <core/io/resource_loader.hpp>
 #include <core/io/resource_saver.hpp>
+#include <extensions/mono/mono_context.hpp>
 
 namespace Ism
 {
@@ -18,38 +18,42 @@ namespace Ism
 	// csharp language
 	class ISM_EXT_API CSharpLanguage : public ScriptLanguage
 	{
-		DEFINE_CLASS(CSharpLanguage, ScriptLanguage);
+		OBJECT_CLASS(CSharpLanguage, ScriptLanguage);
 
 		static CSharpLanguage * __singleton;
 
 		friend class CSharpScript;
 		friend class CSharpInstance;
 
-		Mono * m_mono{};
+		MonoContext * m_context{};
 
 	public:
 		CSharpLanguage();
 		virtual ~CSharpLanguage() override;
-		SINGLETON_GETTER(CSharpLanguage, __singleton);
+		SINGLETON_GETTER(CSharpLanguage);
 
 		virtual String get_name() const override { return "mono"; }
 
 		virtual Error_ initialize() override;
 		virtual Error_ finalize() override;
 
+		virtual void get_reserved_words(Vector<String> * words) const override;
+		virtual void get_comment_delimiters(Vector<String> * delimiters) const override;
+		virtual void get_string_delimiters(Vector<String> * delimiters) const override;
+		virtual bool has_named_classes() const { return true; }
 		virtual Script * new_scipt() override;
 
 		void reload_assemblies(bool soft_reload);
 	};
 
-	SINGLETON_WRAPPER(CSharpLanguage, get_cs_language);
+	SINGLETON_WRAPPER(CSharpLanguage, get_csharp_language);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// csharp script
 	class ISM_EXT_API CSharpScript : public Script
 	{
-		DEFINE_CLASS(CSharpScript, Script);
+		OBJECT_CLASS(CSharpScript, Script);
 
 		ScriptLanguage * const m_language{};
 		String m_source{};
@@ -57,11 +61,9 @@ namespace Ism
 
 	public:
 		CSharpScript();
-		explicit CSharpScript(String const & path);
 		virtual ~CSharpScript() override;
 
-	public:
-		virtual bool can_instantiate() const override { return true; }
+		virtual bool can_instantiate() const override;
 		virtual Ref<ScriptInstance> instance_create(Object * self) override;
 		
 		virtual bool has_source_code() const override { return !m_source.empty(); }
@@ -82,35 +84,37 @@ namespace Ism
 	// csharp instance
 	class ISM_EXT_API CSharpInstance : public ScriptInstance
 	{
-		DEFINE_CLASS(CSharpInstance, ScriptInstance);
+		OBJECT_CLASS(CSharpInstance, ScriptInstance);
 
 		ScriptLanguage * const m_language{};
 		Ref<Script> m_script{};
 		Object * m_owner{};
-
 		MonoObject * m_handle{};
 
 	public:
 		CSharpInstance(Ref<Script> script, Object * owner);
 		virtual ~CSharpInstance() override;
 
-		virtual void notification(i32 notification) override;
-
 		virtual bool is_placeholder() const override { return false; }
 		virtual Ref<Script> get_script() const override { return m_script; }
 		virtual ScriptLanguage * get_language() { return m_language; }
 		virtual Object * get_owner() override { return m_owner; }
 
+		virtual bool get(String const & name, ObjectRef & value) const override;
+		virtual bool set(String const & name, ObjectRef const & value) override;
+
 		virtual bool get_constants(Vector<ObjectRef> * out) const override { return true; }
 		virtual bool get_properties(Vector<PropertyRef> * out) const override { return true; }
 		virtual bool get_functions(Vector<FunctionRef> * out) const override { return true; }
+
+		virtual void notification(i32 notification) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// csharp script loader
 	class ISM_EXT_API CSharpScriptFormatLoader : public ResourceFormatLoader {
-		DEFINE_CLASS(CSharpScriptFormatLoader, ResourceFormatLoader);
+		OBJECT_CLASS(CSharpScriptFormatLoader, ResourceFormatLoader);
 	public:
 		virtual RES load(String const & path, Error_ * error = nullptr) override;
 		virtual void get_recognized_extensions(Vector<String> * out) const override;

@@ -24,7 +24,7 @@ namespace Ism
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("initializing lua");
-		lua_loader.instance(); ResourceLoader::add_resource_format_loader(lua_loader);
+		lua_loader.instance(); get_loaders()->add_resource_format_loader(lua_loader);
 		REGISTER_CLASS(LuaLanguage, LuaScript, LuaInstance);
 		lua_language = memnew(LuaLanguage); get_scr()->register_language(lua_language);
 	}
@@ -35,7 +35,7 @@ namespace Ism
 		PRINT_INFO("finalizing lua");
 		get_scr()->unregister_language(lua_language); memdelete(lua_language);
 		UNREGISTER_CLASS(LuaLanguage, LuaScript, LuaInstance);
-		ResourceLoader::remove_resource_format_loader(lua_loader); lua_loader = nullptr;
+		get_loaders()->remove_resource_format_loader(lua_loader); lua_loader = nullptr;
 	}
 }
 

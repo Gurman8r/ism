@@ -4,12 +4,7 @@
 #include <core/object/script.hpp>
 #include <core/io/resource_loader.hpp>
 #include <core/io/resource_saver.hpp>
-
-extern "C" {
-#include <lua/lua.h>
-#include <lua/lualib.h>
-#include <lua/lauxlib.h>
-}
+#include <extensions/lua/lua_context.hpp>
 
 namespace Ism
 {
@@ -20,52 +15,32 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// lua
-	class ISM_EXT_API Lua
-	{
-		static Lua * __singleton;
-
-		lua_State * m_L{};
-
-	public:
-		Lua() noexcept { SINGLETON_CTOR(__singleton, this); }
-		~Lua() noexcept { SINGLETON_DTOR(__singleton, this); }
-		SINGLETON_GETTER(Lua, __singleton);
-		NODISCARD lua_State * operator * () const { return m_L; }
-
-		Error_ initialize();
-		Error_ finalize();
-
-		i32 do_string(cstring text);
-		i32 do_string(String const & text);
-		i32 do_file(String const & path);
-	};
-
-	SINGLETON_WRAPPER(Lua, get_lua);
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// lua language
 	class ISM_EXT_API LuaLanguage : public ScriptLanguage
 	{
-		DEFINE_CLASS(LuaLanguage, ScriptLanguage);
+		OBJECT_CLASS(LuaLanguage, ScriptLanguage);
 
 		static LuaLanguage * __singleton;
 
 		friend class LuaScript;
 		friend class LuaInstance;
 
-		Lua * m_lua{};
+		LuaContext * m_context{};
 
 	public:
-		LuaLanguage()noexcept { SINGLETON_CTOR(__singleton, this); }
-		virtual ~LuaLanguage() noexcept override { SINGLETON_DTOR(__singleton, this); }
-		SINGLETON_GETTER(LuaLanguage, __singleton);
+		LuaLanguage()noexcept { SINGLETON_CTOR(); }
+		virtual ~LuaLanguage() noexcept override { SINGLETON_DTOR(); }
+		SINGLETON_GETTER(LuaLanguage);
 
 		virtual String get_name() const override { return "lua"; }
 
 		virtual Error_ initialize() override;
 		virtual Error_ finalize() override;
+
+		virtual void get_reserved_words(Vector<String> * words) const override;
+		virtual void get_comment_delimiters(Vector<String> * delimiters) const override;
+		virtual void get_string_delimiters(Vector<String> * delimiters) const override;
+		virtual bool has_named_classes() const { return false; }
 
 		virtual Script * new_scipt() override;
 	};
@@ -77,7 +52,7 @@ namespace Ism
 	// lua script
 	class ISM_EXT_API LuaScript : public Script
 	{
-		DEFINE_CLASS(LuaScript, Script);
+		OBJECT_CLASS(LuaScript, Script);
 
 		ScriptLanguage * const m_language{};
 		String m_source{};
@@ -85,11 +60,9 @@ namespace Ism
 
 	public:
 		LuaScript();
-		explicit LuaScript(String const & path);
 		virtual ~LuaScript() override;
 
-	public:
-		virtual bool can_instantiate() const override { return true; }
+		virtual bool can_instantiate() const override;
 		virtual Ref<ScriptInstance> instance_create(Object * self) override;
 
 		virtual bool has_source_code() const override { return !m_source.empty(); }
@@ -110,7 +83,7 @@ namespace Ism
 	// lua instance
 	class ISM_EXT_API LuaInstance : public ScriptInstance
 	{
-		DEFINE_CLASS(LuaInstance, ScriptInstance);
+		OBJECT_CLASS(LuaInstance, ScriptInstance);
 
 		ScriptLanguage * const m_language{};
 		Ref<Script> m_script{};
@@ -120,23 +93,26 @@ namespace Ism
 		LuaInstance(Ref<Script> script, Object * owner);
 		virtual ~LuaInstance() override;
 
-		virtual void notification(i32 notification) override;
-
 		virtual bool is_placeholder() const override { return false; }
 		virtual Ref<Script> get_script() const override { return m_script; }
 		virtual ScriptLanguage * get_language() { return m_language; }
 		virtual Object * get_owner() override { return m_owner; }
 
+		virtual bool get(String const & name, ObjectRef & value) const override;
+		virtual bool set(String const & name, ObjectRef const & value) override;
+
 		virtual bool get_constants(Vector<ObjectRef> * out) const override { return true; }
 		virtual bool get_properties(Vector<PropertyRef> * out) const override { return true; }
 		virtual bool get_functions(Vector<FunctionRef> * out) const override { return true; }
+
+		virtual void notification(i32 notification) override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// lua script loader
 	class ISM_EXT_API LuaScriptFormatLoader : public ResourceFormatLoader {
-		DEFINE_CLASS(LuaScriptFormatLoader, ResourceFormatLoader);
+		OBJECT_CLASS(LuaScriptFormatLoader, ResourceFormatLoader);
 	public:
 		virtual RES load(String const & path, Error_ * error = nullptr) override;
 		virtual void get_recognized_extensions(Vector<String> * out) const override;

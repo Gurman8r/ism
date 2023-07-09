@@ -9,7 +9,7 @@ namespace Ism
 
 	class ISM_API ResourceFormatLoader : public Object
 	{
-		DEFINE_CLASS(ResourceFormatLoader, Object);
+		OBJECT_CLASS(ResourceFormatLoader, Object);
 		friend class ResourceLoader;
 	public:
 		virtual ~ResourceFormatLoader() noexcept override = default;
@@ -20,29 +20,37 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API ResourceLoader
+	class ISM_API ResourceLoader final : public Object
 	{
+		OBJECT_CLASS(ResourceLoader, Object);
+
 		static ResourceLoader * __singleton;
 
 		Vector<Ref<ResourceFormatLoader>> m_loaders{};
 
 	public:
-		ResourceLoader() noexcept { SINGLETON_CTOR(__singleton, this); }
-		~ResourceLoader() noexcept { SINGLETON_DTOR(__singleton, this); }
-		SINGLETON_GETTER(ResourceLoader, __singleton);
-
-	protected:
-		static RES _load(String const & path, Error_ * r_error = nullptr);
+		ResourceLoader() noexcept { SINGLETON_CTOR(); }
+		~ResourceLoader() noexcept { SINGLETON_DTOR(); }
+		SINGLETON_GETTER(ResourceLoader);
 
 	public:
-		static RES load(String const & path, Error_ * r_error = nullptr);
+		NODISCARD RES load(String const & path, Error_ * r_error = nullptr);
 
 		template <class T
-		> static Ref<T> load(String const & path, Error_ * r_error = nullptr) noexcept { return load(path, r_error); }
+		> NODISCARD Ref<T> load(String const & path, Error_ * r_error = nullptr) noexcept { return load(path, r_error); }
 
-		static bool add_resource_format_loader(Ref<ResourceFormatLoader> format);
-		static bool remove_resource_format_loader(Ref<ResourceFormatLoader> format);
+		bool add_resource_format_loader(Ref<ResourceFormatLoader> format);
+		bool remove_resource_format_loader(Ref<ResourceFormatLoader> format);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	SINGLETON_WRAPPER(ResourceLoader, get_loaders);
+
+	NODISCARD inline RES load_resource(String const & path, Error_ * r_error = nullptr) noexcept { return get_loaders()->load(path, r_error); }
+
+	template <class T
+	> NODISCARD Ref<T> load_resource(String const & path, Error_ * r_error = nullptr) noexcept { return get_loaders()->load<T>(path, r_error); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

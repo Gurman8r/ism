@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API ResourcePreloader : public Node
 	{
-		DEFINE_CLASS(ResourcePreloader, Node);
+		OBJECT_CLASS(ResourcePreloader, Node);
 
 	public:
 		ResourcePreloader();

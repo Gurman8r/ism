@@ -9,7 +9,7 @@ namespace Ism
 
 	class ISM_API ProjectSettings : public Object
 	{
-		DEFINE_CLASS(ProjectSettings, Object);
+		OBJECT_CLASS(ProjectSettings, Object);
 
 		static ProjectSettings * __singleton;
 
@@ -23,9 +23,9 @@ namespace Ism
 			m_resource_path{};
 
 	public:
-		ProjectSettings() noexcept { SINGLETON_CTOR(__singleton, this); }
-		virtual ~ProjectSettings() noexcept override { SINGLETON_DTOR(__singleton, this); }
-		SINGLETON_GETTER(ProjectSettings, __singleton);
+		ProjectSettings() noexcept { SINGLETON_CTOR(); }
+		virtual ~ProjectSettings() noexcept override { SINGLETON_DTOR(); }
+		SINGLETON_GETTER(ProjectSettings);
 
 	public:
 		Error_ setup(String const & exec_path, String const & main_pack = {});

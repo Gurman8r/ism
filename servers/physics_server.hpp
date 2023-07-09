@@ -12,14 +12,14 @@ namespace Ism
 	// audio server - PLACEHOLDER
 	class PhysicsServer : public Object
 	{
-		DEFINE_CLASS(PhysicsServer, Object);
+		OBJECT_CLASS(PhysicsServer, Object);
 
 		static PhysicsServer * __singleton;
 
 	public:
 		PhysicsServer();
 		virtual ~PhysicsServer() override;
-		SINGLETON_GETTER(PhysicsServer, __singleton);
+		SINGLETON_GETTER(PhysicsServer);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

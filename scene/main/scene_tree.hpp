@@ -25,7 +25,7 @@ namespace Ism
 	// scene tree
 	class ISM_API SceneTree : public MainLoop
 	{
-		DEFINE_CLASS(SceneTree, MainLoop);
+		OBJECT_CLASS(SceneTree, MainLoop);
 
 		friend class Main;
 		friend class Node;
@@ -43,7 +43,7 @@ namespace Ism
 	public:
 		SceneTree();
 		virtual ~SceneTree() override;
-		SINGLETON_GETTER(SceneTree, __singleton);
+		SINGLETON_GETTER(SceneTree);
 
 	public:
 		virtual void initialize() override;

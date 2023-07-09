@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API Behavior : public Component
 	{
-		DEFINE_CLASS(Behavior, Component);
+		OBJECT_CLASS(Behavior, Component);
 
 		bool m_enabled{ true };
 

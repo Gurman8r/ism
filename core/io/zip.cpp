@@ -66,11 +66,11 @@ namespace Ism
 {
 	ZipArchive * ZipArchive::__singleton{};
 
-	ZipArchive::ZipArchive() { SINGLETON_CTOR(__singleton, this); }
+	ZipArchive::ZipArchive() { SINGLETON_CTOR(); }
 
 	ZipArchive::~ZipArchive()
 	{
-		SINGLETON_DTOR(__singleton, this);
+		SINGLETON_DTOR();
 		for (size_t i{}; i < m_packages.size(); ++i) {
 			unzClose(m_packages[i].m_zfile);
 		}

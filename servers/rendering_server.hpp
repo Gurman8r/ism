@@ -12,7 +12,7 @@ namespace Ism
 	// high-level graphics api
 	class ISM_API RenderingServer : public Object
 	{
-		DEFINE_CLASS(RenderingServer, Object);
+		OBJECT_CLASS(RenderingServer, Object);
 
 		static RenderingServer * __singleton;
 
@@ -23,7 +23,7 @@ namespace Ism
 
 	public:
 		virtual ~RenderingServer() override;
-		SINGLETON_GETTER(RenderingServer, __singleton);
+		SINGLETON_GETTER(RenderingServer);
 		static RenderingServer * create();
 
 		virtual void initialize() = 0;

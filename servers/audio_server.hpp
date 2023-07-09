@@ -12,14 +12,14 @@ namespace Ism
 	// audio server - PLACEHOLDER
 	class AudioServer : public Object
 	{
-		DEFINE_CLASS(AudioServer, Object);
+		OBJECT_CLASS(AudioServer, Object);
 
 		static AudioServer * __singleton;
 
 	public:
 		AudioServer();
 		virtual ~AudioServer() override;
-		SINGLETON_GETTER(AudioServer, __singleton);
+		SINGLETON_GETTER(AudioServer);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

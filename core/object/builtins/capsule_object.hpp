@@ -9,7 +9,7 @@ namespace Ism
 	// capsule object
 	class ISM_API CapsuleObject : public Object
 	{
-		DEFINE_CLASS(CapsuleObject, Object);
+		OBJECT_CLASS(CapsuleObject, Object);
 
 		friend class CapsuleRef;
 

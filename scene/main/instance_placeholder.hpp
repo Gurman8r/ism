@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API InstancePlaceholder : public Node
 	{
-		DEFINE_CLASS(InstancePlaceholder, Node);
+		OBJECT_CLASS(InstancePlaceholder, Node);
 
 	public:
 		InstancePlaceholder();

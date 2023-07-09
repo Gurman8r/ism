@@ -11,7 +11,7 @@ namespace Ism
 
 	class ISM_API WindowsFile : public File
 	{
-		DEFINE_CLASS(WindowsFile, File);
+		OBJECT_CLASS(WindowsFile, File);
 
 		FILE * m_file{};
 		FileMode_ m_mode{};

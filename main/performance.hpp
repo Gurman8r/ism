@@ -29,14 +29,14 @@ namespace Ism
 
 	class ISM_API Performance : public Object
 	{
-		DEFINE_CLASS(Performance, Object);
+		OBJECT_CLASS(Performance, Object);
 
 		static Performance * __singleton;
 
 	public:
 		Performance();
 		virtual ~Performance() override;
-		SINGLETON_GETTER(Performance, __singleton);
+		SINGLETON_GETTER(Performance);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

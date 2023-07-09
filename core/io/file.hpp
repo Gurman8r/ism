@@ -35,7 +35,7 @@ namespace Ism
 	// file access
 	class ISM_API File : public Object
 	{
-		DEFINE_CLASS(File, Object);
+		OBJECT_CLASS(File, Object);
 
 		bool m_big_endian{};
 		FileAccess_ m_access_type{};

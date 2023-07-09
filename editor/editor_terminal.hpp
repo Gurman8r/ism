@@ -11,7 +11,7 @@ namespace Ism
 	// log component of the main editor
 	class ISM_API EditorTerminal : public EditorPanel
 	{
-		DEFINE_CLASS(EditorTerminal, EditorPanel);
+		OBJECT_CLASS(EditorTerminal, EditorPanel);
 
 		Array<char, 256>	m_input{};
 		Vector<String>		m_items{};
@@ -42,10 +42,9 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API EditorTerminalLogger : public Logger {
-		friend class EditorTerminal;
 		EditorTerminal * m_terminal{};
 	public:
-		virtual ~EditorTerminalLogger() noexcept override = default;
+		EditorTerminalLogger(EditorTerminal * terminal) noexcept : m_terminal{ terminal } {}
 		virtual void logv(cstring fmt, va_list args, bool is_error = false) override;
 	};
 

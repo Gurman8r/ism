@@ -45,7 +45,7 @@ namespace Ism
 	// zipped file
 	class ISM_API ZippedFile : public File
 	{
-		DEFINE_CLASS(ZippedFile, File);
+		OBJECT_CLASS(ZippedFile, File);
 
 		unzFile			m_zfile{};
 		unz_file_info64	m_info{};

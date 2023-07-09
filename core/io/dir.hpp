@@ -14,7 +14,7 @@ namespace Ism
 
 	class ISM_API Dir : public Object
 	{
-		DEFINE_CLASS(Dir, Object);
+		OBJECT_CLASS(Dir, Object);
 
 		static Error_ __last_dir_open_error;
 		DirAccess_ m_access_type{};

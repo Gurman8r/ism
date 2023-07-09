@@ -26,7 +26,7 @@ namespace Ism
 	// event
 	class ISM_API Event : public Object
 	{
-		DEFINE_CLASS(Event, Object);
+		OBJECT_CLASS(Event, Object);
 
 	protected:
 		Event() noexcept = default;
@@ -52,7 +52,7 @@ namespace Ism
 private:																		\
 	static_assert(std::is_base_of_v<Ism::Event, m_inherits>);					\
 																				\
-	DEFINE_CLASS(m_class, m_inherits);											\
+	OBJECT_CLASS(m_class, m_inherits);											\
 																				\
 public:																			\
 	enum : Ism::EventID { ID = m_class::get_class_name_static().hash_code() };		\
@@ -66,7 +66,7 @@ private:
 	// listener
 	class ISM_API EventListener : public Object
 	{
-		DEFINE_CLASS(EventListener, Object);
+		OBJECT_CLASS(EventListener, Object);
 
 		friend struct Less<EventListener *>;
 
@@ -98,7 +98,7 @@ private:
 	// dummy listener
 	class ISM_API DummyListener final : public EventListener
 	{
-		DEFINE_CLASS(DummyListener, EventListener);
+		OBJECT_CLASS(DummyListener, EventListener);
 
 		std::function<void(Event const &)> m_callback{};
 
@@ -124,7 +124,7 @@ private:
 	// delegate base
 	template <> class ISM_API EventDelegate<Event> : public EventListener
 	{
-		DEFINE_CLASS(EventDelegate<Event>, EventListener);
+		OBJECT_CLASS(EventDelegate<Event>, EventListener);
 
 	public:
 		enum : EventID { ID = Event::ID };
@@ -199,7 +199,7 @@ private:
 	// bus
 	class ISM_API EventBus : public Object
 	{
-		DEFINE_CLASS(EventBus, Object);
+		OBJECT_CLASS(EventBus, Object);
 
 		static EventBus * __singleton;
 
@@ -212,9 +212,9 @@ private:
 		i32 m_next_index{};
 
 	public:
-		EventBus() noexcept { SINGLETON_CTOR(__singleton, this); }
-		virtual ~EventBus() noexcept override { SINGLETON_DTOR(__singleton, this); }
-		SINGLETON_GETTER(EventBus, __singleton);
+		EventBus() noexcept { SINGLETON_CTOR(); }
+		virtual ~EventBus() noexcept override { SINGLETON_DTOR(); }
+		SINGLETON_GETTER(EventBus);
 
 	public:
 		void fire_event(Event const & value) noexcept

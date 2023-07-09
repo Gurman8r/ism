@@ -9,7 +9,7 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class FontFormatLoader : public ResourceFormatLoader {
-		DEFINE_CLASS(FontFormatLoader, ResourceFormatLoader);
+		OBJECT_CLASS(FontFormatLoader, ResourceFormatLoader);
 	public:
 		static Error_ load_font(Ref<Font> font, String const & path);
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;

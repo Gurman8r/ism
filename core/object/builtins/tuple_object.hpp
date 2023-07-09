@@ -10,7 +10,7 @@ namespace Ism
 	// tuple object
 	class TupleObject : public Object
 	{
-		DEFINE_CLASS(TupleObject, Object);
+		OBJECT_CLASS(TupleObject, Object);
 
 		friend class TupleRef;
 

@@ -11,7 +11,7 @@ namespace Ism
 
 	class ISM_API Extension : public Resource
 	{
-		DEFINE_CLASS(Extension, Resource);
+		OBJECT_CLASS(Extension, Resource);
 
 		String m_library_path{};
 		void * m_library{};
@@ -44,7 +44,7 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API ExtensionFormatLoader : public ResourceFormatLoader {
-		DEFINE_CLASS(ExtensionFormatLoader, ResourceFormatLoader);
+		OBJECT_CLASS(ExtensionFormatLoader, ResourceFormatLoader);
 	public:
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;
 		virtual void get_recognized_extensions(Vector<String> * out) const override;

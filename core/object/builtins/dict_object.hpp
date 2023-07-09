@@ -9,7 +9,7 @@ namespace Ism
 	// dict object
 	class ISM_API DictObject : public Object
 	{
-		DEFINE_CLASS(DictObject, Object);
+		OBJECT_CLASS(DictObject, Object);
 
 		friend class DictRef;
 

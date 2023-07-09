@@ -15,19 +15,20 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	EMBED_CLASS(ResourceSaver, t) {}
+
 	ResourceSaver * ResourceSaver::__singleton{};
 
 	Error_ ResourceSaver::save(RES const & value, String const & path, i32 flags)
 	{
-		auto & savers{ get_singleton()->m_savers };
 		Error_ error{};
-		for (size_t i{}; i < savers.size(); ++i)
+		for (size_t i{}; i < m_savers.size(); ++i)
 		{
-			if (!savers[i]->recognize_path(path)) {
+			if (!m_savers[i]->recognize_path(path)) {
 				continue;
 			}
 
-			if ((error = savers[i]->save(value, path, flags)) == Error_OK) {
+			if ((error = m_savers[i]->save(value, path, flags)) == Error_OK) {
 				return Error_OK;
 			}
 		}
@@ -36,19 +37,17 @@ namespace Ism
 
 	bool ResourceSaver::add_resource_format_saver(Ref<ResourceFormatSaver> format)
 	{
-		auto & savers{ get_singleton()->m_savers };
-		if (savers.contains(format)) {
+		if (m_savers.contains(format)) {
 			return false;
 		}
-		savers.push_back(format);
+		m_savers.push_back(format);
 		return true;
 	}
 
 	bool ResourceSaver::remove_resource_format_saver(Ref<ResourceFormatSaver> format)
 	{
-		auto & savers{ get_singleton()->m_savers };
-		if (auto const it{ savers.find(format) }; it != savers.end()) {
-			savers.erase(it);
+		if (auto const it{ m_savers.find(format) }; it != m_savers.end()) {
+			m_savers.erase(it);
 			return true;
 		}
 		return false;

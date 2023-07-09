@@ -9,7 +9,7 @@ namespace Ism
 
 	class ISM_API WindowsDir : public Dir
 	{
-		DEFINE_CLASS(WindowsDir, Dir);
+		OBJECT_CLASS(WindowsDir, Dir);
 
 		enum { MAX_DRIVES = 26 };
 

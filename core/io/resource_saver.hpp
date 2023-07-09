@@ -9,7 +9,7 @@ namespace Ism
 
 	class ISM_API ResourceFormatSaver : public Object
 	{
-		DEFINE_CLASS(ResourceFormatSaver, Object);
+		OBJECT_CLASS(ResourceFormatSaver, Object);
 		friend class ResourceSaver;
 	public:
 		virtual ~ResourceFormatSaver() noexcept override = default;
@@ -33,23 +33,37 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API ResourceSaver
+	class ISM_API ResourceSaver final : public Object
 	{
+		OBJECT_CLASS(ResourceSaver, Object);
+
 		static ResourceSaver * __singleton;
 
 		Vector<Ref<ResourceFormatSaver>> m_savers{};
 
 	public:
-		ResourceSaver() noexcept { SINGLETON_CTOR(__singleton, this); }
-		~ResourceSaver() noexcept { SINGLETON_DTOR(__singleton, this); }
-		SINGLETON_GETTER(ResourceSaver, __singleton);
+		ResourceSaver() noexcept { SINGLETON_CTOR(); }
+		~ResourceSaver() noexcept { SINGLETON_DTOR(); }
+		SINGLETON_GETTER(ResourceSaver);
 
 	public:
-		static Error_ save(RES const & value, String const & path, i32 flags = 0);
+		Error_ save(RES const & value, String const & path, i32 flags = 0);
 
-		static bool add_resource_format_saver(Ref<ResourceFormatSaver> format);
-		static bool remove_resource_format_saver(Ref<ResourceFormatSaver> format);
+		template <class T
+		> Error_ save(Ref<T> const & value, String const & path, i32 flags = 0) noexcept { return save(value, path, flags); }
+
+		bool add_resource_format_saver(Ref<ResourceFormatSaver> format);
+		bool remove_resource_format_saver(Ref<ResourceFormatSaver> format);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	SINGLETON_WRAPPER(ResourceSaver, get_savers);
+
+	inline Error_ save_resource(RES const & value, String const & path, i32 flags = 0) noexcept { return get_savers()->save(value, path, flags); }
+
+	template <class T
+	> Error_ save_resource(Ref<T> const & value, String const & path, i32 flags = 0) noexcept { return get_savers()->save<T>(value, path, flags); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

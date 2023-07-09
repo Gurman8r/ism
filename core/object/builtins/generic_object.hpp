@@ -10,7 +10,7 @@ namespace Ism
 	// generic object
 	class GenericTypeObject : public Object
 	{
-		DEFINE_CLASS(GenericTypeObject, Object);
+		OBJECT_CLASS(GenericTypeObject, Object);
 
 		friend class GenericTypeRef;
 

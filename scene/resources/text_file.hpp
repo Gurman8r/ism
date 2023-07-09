@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API TextFile : public Resource
 	{
-		DEFINE_CLASS(TextFile, Resource);
+		OBJECT_CLASS(TextFile, Resource);
 
 		String m_text{};
 

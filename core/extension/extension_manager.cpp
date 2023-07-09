@@ -15,12 +15,12 @@ namespace Ism
 
 	ExtensionManager::ExtensionManager()
 	{
-		SINGLETON_CTOR(__singleton, this);
+		SINGLETON_CTOR();
 	}
 
 	ExtensionManager::~ExtensionManager()
 	{
-		SINGLETON_DTOR(__singleton, this);
+		SINGLETON_DTOR();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -30,7 +30,7 @@ namespace Ism
 		auto const it{ m_extensions.find(path) };
 		if (it != m_extensions.end()) { return LoadStatus_AlreadyLoaded; }
 
-		Ref<Extension> extension{ ResourceLoader::load(path) };
+		Ref<Extension> extension{ load_resource(path) };
 		if (!extension) { return LoadStatus_Failure; }
 
 		if (m_level >= 0) {

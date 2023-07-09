@@ -9,7 +9,7 @@ namespace Ism
 	// string object
 	class ISM_API StringObject : public Object
 	{
-		DEFINE_CLASS(StringObject, Object);
+		OBJECT_CLASS(StringObject, Object);
 
 		friend class StringRef;
 

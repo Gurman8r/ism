@@ -16,7 +16,7 @@ namespace Ism
 
 	class ISM_API Shader : public Resource
 	{
-		DEFINE_CLASS(Shader, Resource);
+		OBJECT_CLASS(Shader, Resource);
 
 		friend class ShaderFormatLoader;
 

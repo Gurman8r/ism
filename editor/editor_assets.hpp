@@ -9,7 +9,7 @@ namespace Ism
 	// filesystem component of the main editor
 	class ISM_API EditorAssets : public EditorPanel
 	{
-		DEFINE_CLASS(EditorAssets, EditorPanel);
+		OBJECT_CLASS(EditorAssets, EditorPanel);
 
 	public:
 		EditorAssets();

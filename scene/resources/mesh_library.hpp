@@ -9,7 +9,7 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class MeshFormatLoader : public ResourceFormatLoader {
-		DEFINE_CLASS(MeshFormatLoader, ResourceFormatLoader);
+		OBJECT_CLASS(MeshFormatLoader, ResourceFormatLoader);
 	public:
 		static Error_ load_mesh(Ref<Mesh> mesh, String const & path);
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;

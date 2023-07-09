@@ -9,7 +9,7 @@ namespace Ism
 	// function object
 	class ISM_API FunctionObject : public Object
 	{
-		DEFINE_CLASS(FunctionObject, Object);
+		OBJECT_CLASS(FunctionObject, Object);
 
 		friend class FunctionRef;
 

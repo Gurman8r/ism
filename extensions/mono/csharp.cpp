@@ -7,25 +7,33 @@ namespace Ism
 	EMBED_CLASS(CSharpLanguage, t) {}
 
 	CSharpLanguage * CSharpLanguage::__singleton{};
-	CSharpLanguage::CSharpLanguage() { SINGLETON_CTOR(__singleton, this); }
-	CSharpLanguage::~CSharpLanguage() { SINGLETON_DTOR(__singleton, this); }
+	CSharpLanguage::CSharpLanguage() { SINGLETON_CTOR(); }
+	CSharpLanguage::~CSharpLanguage() { SINGLETON_DTOR(); }
 
 	Error_ CSharpLanguage::initialize()
 	{
-		if (!(m_mono = get_mono())) { m_mono = memnew(Mono); }
-
-		m_mono->initialize();
-
+		if (!(m_context = get_mono())) { m_context = memnew(MonoContext); }
+		m_context->initialize();
 		return Error_OK;
 	}
 
 	Error_ CSharpLanguage::finalize()
 	{
-		m_mono->finalize();
-
-		if (m_mono) { memdelete(m_mono); m_mono = nullptr; }
-
+		m_context->finalize();
+		if (m_context) { memdelete(m_context); m_context = nullptr; }
 		return Error_OK;
+	}
+
+	void CSharpLanguage::get_reserved_words(Vector<String> * words) const
+	{
+	}
+
+	void CSharpLanguage::get_comment_delimiters(Vector<String> * delimiters) const
+	{
+	}
+
+	void CSharpLanguage::get_string_delimiters(Vector<String> * delimiters) const
+	{
 	}
 
 	Script * CSharpLanguage::new_scipt()
@@ -41,16 +49,17 @@ namespace Ism
 
 	EMBED_CLASS(CSharpScript, t) {}
 
-	CSharpScript::CSharpScript() : m_language{ get_cs_language() }
-	{
-	}
-
-	CSharpScript::CSharpScript(String const & path)
+	CSharpScript::CSharpScript() : Script{}, m_language{ get_csharp_language() }
 	{
 	}
 
 	CSharpScript::~CSharpScript()
 	{
+	}
+
+	bool CSharpScript::can_instantiate() const
+	{
+		return false;
 	}
 
 	Ref<ScriptInstance> CSharpScript::instance_create(Object * self)
@@ -81,6 +90,16 @@ namespace Ism
 
 	CSharpInstance::~CSharpInstance()
 	{
+	}
+
+	bool CSharpInstance::get(String const & name, ObjectRef & value) const
+	{
+		return false;
+	}
+
+	bool CSharpInstance::set(String const & name, ObjectRef const & value)
+	{
+		return false;
 	}
 
 	void CSharpInstance::notification(i32 notification)

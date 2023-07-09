@@ -9,7 +9,7 @@ namespace Ism
 
 	class ISM_API Entity : public Node
 	{
-		DEFINE_CLASS(Entity, Node);
+		OBJECT_CLASS(Entity, Node);
 
 	protected:
 		friend class SceneTree;

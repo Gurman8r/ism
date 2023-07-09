@@ -23,10 +23,10 @@ namespace Ism
 	static ResourceSaver *		saver{};
 
 	static ExtensionManager *	extensions{};
-	static ScriptManager *		scripts{};
+	static ScriptServer *		scripts{};
 
-	static Ref<ExtensionFormatLoader> extension_format_loader{};
-	static Ref<ImageFormatLoader> image_format_loader{};
+	static Ref<ExtensionFormatLoader> extension_format_loader;
+	static Ref<ImageFormatLoader> image_format_loader;
 
 	void register_core_types()
 	{
@@ -34,10 +34,10 @@ namespace Ism
 		loader = memnew(ResourceLoader);
 		saver = memnew(ResourceSaver);
 		extensions = memnew(ExtensionManager);
-		scripts = memnew(ScriptManager);
+		scripts = memnew(ScriptServer);
 
-		extension_format_loader.instance(); ResourceLoader::add_resource_format_loader(extension_format_loader);
-		image_format_loader.instance(); ResourceLoader::add_resource_format_loader(image_format_loader);
+		extension_format_loader.instance(); loader->add_resource_format_loader(extension_format_loader);
+		image_format_loader.instance(); loader->add_resource_format_loader(image_format_loader);
 
 		REGISTER_CLASS
 		(
@@ -58,9 +58,9 @@ namespace Ism
 			ModuleObject,
 			GenericTypeObject,
 
-			Resource,
+			Resource, ResourceLoader, ResourceSaver,
 
-			ScriptManager, Script, ScriptInstance, ScriptLanguage, PlaceholderScriptInstance,
+			Script, ScriptServer, ScriptInstance, ScriptLanguage, PlaceholderScriptInstance,
 
 			Extension, ExtensionFormatLoader, ExtensionManager,
 
@@ -107,8 +107,8 @@ namespace Ism
 
 	void unregister_core_types()
 	{
-		ResourceLoader::remove_resource_format_loader(image_format_loader); image_format_loader = nullptr;
-		ResourceLoader::remove_resource_format_loader(extension_format_loader); extension_format_loader = nullptr;
+		loader->remove_resource_format_loader(image_format_loader); image_format_loader = nullptr;
+		loader->remove_resource_format_loader(extension_format_loader); extension_format_loader = nullptr;
 
 		memdelete(loader);
 		memdelete(saver);

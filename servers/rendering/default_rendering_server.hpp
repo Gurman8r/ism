@@ -11,7 +11,7 @@ namespace Ism
 
 	class ISM_API DefaultRenderingServer : public RenderingServer
 	{
-		DEFINE_CLASS(DefaultRenderingServer, RenderingServer);
+		OBJECT_CLASS(DefaultRenderingServer, RenderingServer);
 
 	protected:
 		RenderingDevice * m_device{};

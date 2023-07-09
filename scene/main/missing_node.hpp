@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API MissingNode : public Node
 	{
-		DEFINE_CLASS(MissingNode, Node);
+		OBJECT_CLASS(MissingNode, Node);
 
 	public:
 		MissingNode();

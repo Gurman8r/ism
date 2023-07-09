@@ -10,7 +10,7 @@ namespace Ism
 
 	class ISM_API Material : public Resource
 	{
-		DEFINE_CLASS(Material, Resource);
+		OBJECT_CLASS(Material, Resource);
 
 		friend class MaterialFormatLoader;
 
@@ -30,7 +30,7 @@ namespace Ism
 
 	class ISM_API ShaderMaterial : public Material
 	{
-		DEFINE_CLASS(ShaderMaterial, Material);
+		OBJECT_CLASS(ShaderMaterial, Material);
 
 		friend class MaterialFormatLoader;
 
@@ -53,7 +53,7 @@ namespace Ism
 
 	class ISM_API StandardMaterial3D : public Material
 	{
-		DEFINE_CLASS(StandardMaterial3D, Material);
+		OBJECT_CLASS(StandardMaterial3D, Material);
 
 		friend class MaterialFormatLoader;
 

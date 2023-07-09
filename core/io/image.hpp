@@ -64,7 +64,7 @@ namespace Ism
 
 	class ISM_API Image : public Resource
 	{
-		DEFINE_CLASS(Image, Resource);
+		OBJECT_CLASS(Image, Resource);
 
 		friend class ImageFormatLoader;
 

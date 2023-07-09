@@ -9,7 +9,7 @@ namespace Ism
 	// viewport component of the main editor
 	class ISM_API EditorViewport : public EditorPanel
 	{
-		DEFINE_CLASS(EditorViewport, EditorPanel);
+		OBJECT_CLASS(EditorViewport, EditorPanel);
 
 		friend class EditorNode;
 

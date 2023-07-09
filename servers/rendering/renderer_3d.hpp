@@ -10,7 +10,7 @@ namespace Ism
 	// scene renderer
 	class ISM_API Renderer3D : public Object
 	{
-		DEFINE_CLASS(Renderer3D, Object);
+		OBJECT_CLASS(Renderer3D, Object);
 
 		friend class DefaultRenderingServer;
 

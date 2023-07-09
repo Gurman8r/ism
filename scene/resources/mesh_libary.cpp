@@ -76,7 +76,7 @@ namespace Ism
 			for (u32 i = 0; i < material->GetTextureCount(type); ++i) {
 				aiString path;
 				if (material->GetTexture(type, i, &path) != aiReturn_SUCCESS) { continue; }
-				textures.push_back(ImageTexture::create(ResourceLoader::load(path.C_Str())));
+				textures.push_back(ImageTexture::create(load_resource(path.C_Str())));
 			}
 		};
 		_load_material_texture(aiTextureType_DIFFUSE, "dm"); // diffuse

@@ -12,7 +12,7 @@ namespace Ism
 	// display server
 	class ISM_API DisplayServer : public Object
 	{
-		DEFINE_CLASS(DisplayServer, Object);
+		OBJECT_CLASS(DisplayServer, Object);
 
 		static DisplayServer * __singleton;
 
@@ -66,7 +66,7 @@ namespace Ism
 
 	public:
 		virtual ~DisplayServer() override;
-		SINGLETON_GETTER(DisplayServer, __singleton);
+		SINGLETON_GETTER(DisplayServer);
 		static DisplayServer * create(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
 
 	public:

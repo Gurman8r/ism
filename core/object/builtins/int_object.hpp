@@ -14,7 +14,7 @@ namespace Ism
 	// int object
 	class ISM_API IntObject : public Object
 	{
-		DEFINE_CLASS(IntObject, Object);
+		OBJECT_CLASS(IntObject, Object);
 
 		friend class IntRef;
 

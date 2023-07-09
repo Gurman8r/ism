@@ -9,7 +9,7 @@ namespace Ism
 	// float object
 	class ISM_API FloatObject : public Object
 	{
-		DEFINE_CLASS(FloatObject, Object);
+		OBJECT_CLASS(FloatObject, Object);
 
 		friend class FloatRef;
 

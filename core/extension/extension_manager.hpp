@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API ExtensionManager : public Object
 	{
-		DEFINE_CLASS(ExtensionManager, Object);
+		OBJECT_CLASS(ExtensionManager, Object);
 
 		static ExtensionManager * __singleton;
 
@@ -20,7 +20,7 @@ namespace Ism
 	public:
 		ExtensionManager();
 		virtual ~ExtensionManager() override;
-		SINGLETON_GETTER(ExtensionManager, __singleton);
+		SINGLETON_GETTER(ExtensionManager);
 
 	public:
 		enum LoadStatus_ {

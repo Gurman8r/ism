@@ -9,7 +9,7 @@ namespace Ism
 	// log component of the main editor
 	class ISM_API EditorInspector : public EditorPanel
 	{
-		DEFINE_CLASS(EditorInspector, EditorPanel);
+		OBJECT_CLASS(EditorInspector, EditorPanel);
 
 	public:
 		EditorInspector();

@@ -123,7 +123,7 @@ namespace Ism
 
 	EditorNode::EditorNode()
 	{
-		SINGLETON_CTOR(__singleton, this);
+		SINGLETON_CTOR();
 
 		m_assets = memnew(EditorAssets);
 		m_hierarchy = memnew(EditorHierarchy);
@@ -136,11 +136,11 @@ namespace Ism
 		get_gfx()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
 		get_gfx()->camera_set_transform(camera.rid, camera.transform);
 
-		m_shaders["2d"] = ResourceLoader::load("res://shaders/2d.shader");
-		m_shaders["3d"] = ResourceLoader::load("res://shaders/3d.shader");
-		m_textures["earth_dm_2k"] = ImageTexture::create(ResourceLoader::load("res://textures/earth/earth_dm_2k.png"));
-		m_textures["earth_sm_2k"] = ImageTexture::create(ResourceLoader::load("res://textures/earth/earth_sm_2k.png"));
-		m_meshes["sphere32x24"] = ResourceLoader::load("res://meshes/sphere32x24.obj");
+		m_shaders["2d"] = load_resource("res://shaders/2d.shader");
+		m_shaders["3d"] = load_resource("res://shaders/3d.shader");
+		m_textures["earth_dm_2k"] = ImageTexture::create(load_resource("res://textures/earth/earth_dm_2k.png"));
+		m_textures["earth_sm_2k"] = ImageTexture::create(load_resource("res://textures/earth/earth_sm_2k.png"));
+		m_meshes["sphere32x24"] = load_resource("res://meshes/sphere32x24.obj");
 
 		//RS::SurfaceData quad_spec{};
 		//quad_spec.primitive = RS::Primitive_Triangles;
@@ -219,7 +219,7 @@ namespace Ism
 
 	EditorNode::~EditorNode()
 	{
-		SINGLETON_DTOR(__singleton, this);
+		SINGLETON_DTOR();
 
 		if (camera.rid) { get_gfx()->camera_destroy(camera.rid); camera.rid = nullptr; }
 
@@ -251,7 +251,11 @@ namespace Ism
 		{
 		case Notification_Process: {
 
-			get_tree()->get_root()->set_title(String::format<64>("%s @ %.3f fps", get_os()->get_exec_path().stem().c_str(), get_tree()->get_fps().value));
+			get_tree()->get_root()->set_title(String::format<128>(
+				"%s @ %.3f fps",
+				get_os()->get_exec_path().stem().c_str(),
+				get_tree()->get_fps().value
+			));
 
 			Duration const delta_time{ get_tree()->get_delta_time() };
 

@@ -9,7 +9,7 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class MaterialFormatLoader : public ResourceFormatLoader {
-		DEFINE_CLASS(MaterialFormatLoader, ResourceFormatLoader);
+		OBJECT_CLASS(MaterialFormatLoader, ResourceFormatLoader);
 	public:
 		static Error_ load_material(Ref<Material> material, String const & path);
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;

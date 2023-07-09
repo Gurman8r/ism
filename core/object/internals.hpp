@@ -19,7 +19,7 @@ namespace Ism
 	public:
 		Internals();
 		~Internals();
-		SINGLETON_GETTER(Internals, __singleton);
+		SINGLETON_GETTER(Internals);
 
 	public:
 		template <class First, class ... Rest

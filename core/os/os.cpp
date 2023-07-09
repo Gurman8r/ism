@@ -9,7 +9,7 @@ namespace Ism
 
 	OS::OS()
 	{
-		SINGLETON_CTOR(__singleton, this);
+		SINGLETON_CTOR();
 
 		m_stdout_enabled = m_stderr_enabled = true;
 
@@ -20,7 +20,7 @@ namespace Ism
 
 	OS::~OS()
 	{
-		SINGLETON_DTOR(__singleton, this);
+		SINGLETON_DTOR();
 
 		memdelete(m_logger);
 	}

@@ -7,7 +7,7 @@ namespace Ism
 {
 	class ISM_API ConfigFile : public Resource
 	{
-		DEFINE_CLASS(ConfigFile, Resource);
+		OBJECT_CLASS(ConfigFile, Resource);
 
 	public:
 		using Section = typename HashMap<String, String>;

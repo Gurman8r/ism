@@ -49,7 +49,7 @@ namespace Ism
 	public:
 		PackedData();
 		~PackedData();
-		SINGLETON_GETTER(PackedData, __singleton);
+		SINGLETON_GETTER(PackedData);
 
 		NODISCARD bool is_enabled() const { return m_enabled; }
 		void set_enabled(bool enabled) { m_enabled = enabled; }
@@ -87,7 +87,7 @@ namespace Ism
 	// pack file
 	class ISM_API PackFile : public File
 	{
-		DEFINE_CLASS(PackFile, File);
+		OBJECT_CLASS(PackFile, File);
 
 		PackedData::PackedFile m_pf{};
 		mutable u64 m_pos{};
@@ -125,7 +125,7 @@ namespace Ism
 	// pack dir
 	class ISM_API PackDir : public Dir
 	{
-		DEFINE_CLASS(PackDir, Dir);
+		OBJECT_CLASS(PackDir, Dir);
 
 		PackedData::PackedDir * m_current{};
 		Vector<String> m_list_dirs{};

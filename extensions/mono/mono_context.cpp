@@ -1,4 +1,4 @@
-#include <extensions/mono/mono.hpp>
+#include <extensions/mono/mono_context.hpp>
 #include <core/os/os.hpp>
 #include <core/config/project_settings.hpp>
 #include <core/io/file.hpp>
@@ -7,15 +7,35 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	template <class Fn = void(*)(MonoClass *)
+	> void for_mono_class_interfaces(MonoClass * klass, Fn fn) { void * it{}; while (MonoClass * e{ mono_class_get_interfaces(klass, &it) }) { fn(e); } }
+
+	template <class Fn = void(*)(MonoClass *)
+	> void for_mono_class_nested_types(MonoClass * klass, Fn fn) { void * it{}; while (MonoClass * e{ mono_class_get_nested_types(klass, &it) }) { fn(e); } }
+
+	template <class Fn = void(*)(MonoClassField *)
+	> void for_mono_class_fields(MonoClass * klass, Fn fn) { void * it{}; while (MonoClassField * e{ mono_class_get_fields(klass, &it) }) { fn(e); } }
+
+	template <class Fn = void(*)(MonoMethod *)
+	> void for_mono_class_methods(MonoClass * klass, Fn fn) { void * it{}; while (MonoMethod * e{ mono_class_get_methods(klass, &it) }) { fn(e); } }
+
+	template <class Fn = void(*)(MonoProperty *)
+	> void for_mono_class_properties(MonoClass * klass, Fn fn) { void * it{}; while (MonoProperty * e{ mono_class_get_properties(klass, &it) }) { fn(e); } }
+
+	template <class Fn = void(*)(MonoProperty *)
+	> void for_mono_class_events(MonoClass * klass, Fn fn) { void * it{}; while (MonoEvent * e{ mono_class_get_events(klass, &it) }) { fn(e); } }
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	inline void CS_Ism_Object_print(MonoString * message) {
 		PRINT_LINE(mono_string_to_utf8(message));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Mono * Mono::__singleton{};
+	MonoContext * MonoContext::__singleton{};
 
-	Error_ Mono::initialize()
+	Error_ MonoContext::initialize()
 	{
 		String const lib_dir{ "C:\\Program Files\\Mono\\lib" };
 		String const etc_dir{ "C:\\Program Files\\Mono\\etc" };
@@ -34,13 +54,13 @@ namespace Ism
 		return Error_OK;
 	}
 
-	Error_ Mono::finalize()
+	Error_ MonoContext::finalize()
 	{
 		if (m_domain) { mono_jit_cleanup(m_domain); m_domain = nullptr; }
 		return Error_OK;
 	}
 
-	Error_ Mono::load_assemblies()
+	Error_ MonoContext::load_assemblies()
 	{
 		// load engine dll
 		String const engine_dll{ get_globals()->get_bin_path().path_join("ism-csharp.dll") };
@@ -88,7 +108,7 @@ namespace Ism
 		return Error_OK;
 	}
 
-	Error_ Mono::load_dll(String const & path)
+	Error_ MonoContext::load_dll(String const & path)
 	{
 		if (path.empty()) { return Error_Failed; }
 		if (m_dll.contains<String>(path)) { return Error_AlreadyExists; }

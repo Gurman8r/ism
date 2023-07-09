@@ -9,7 +9,7 @@ namespace Ism
 	// module object
 	class ISM_API ModuleObject : public Object
 	{
-		DEFINE_CLASS(ModuleObject, Object);
+		OBJECT_CLASS(ModuleObject, Object);
 
 		friend class ModuleRef;
 
