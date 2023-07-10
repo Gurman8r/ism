@@ -1,12 +1,16 @@
 #ifndef _ISM_DEFAULT_RENDERING_SERVER_HPP_
 #define _ISM_DEFAULT_RENDERING_SERVER_HPP_
 
-#include <servers/rendering/renderer_storage.hpp>
-#include <servers/rendering/renderer_2d.hpp>
-#include <servers/rendering/renderer_3d.hpp>
+#include <servers/rendering_server.hpp>
 
 namespace Ism
 {
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	class RendererStorage;
+	class RendererCanvasRenderer;
+	class RendererSceneRenderer;
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	class ISM_API DefaultRenderingServer : public RenderingServer
@@ -16,8 +20,8 @@ namespace Ism
 	protected:
 		RenderingDevice * m_device{};
 		RendererStorage * m_storage{};
-		Renderer2D * m_canvas{};
-		Renderer3D * m_scene{};
+		RendererCanvasRenderer * m_canvas{};
+		RendererSceneRenderer * m_scene{};
 
 	public:
 		DefaultRenderingServer();

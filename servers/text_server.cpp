@@ -12,9 +12,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(TextServer, t) {}
+	OBJECT_EMBED(TextServer, t) {}
 
-	TextServer * TextServer::__singleton{};
+	SINGLETON_EMBED(TextServer);
 
 	TextServer::TextServer() { SINGLETON_CTOR(); }
 
@@ -22,13 +22,13 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Glyph, t) {}
+	OBJECT_EMBED(Glyph, t) {}
 
 	Glyph::Glyph(DynamicBuffer const & buffer, IntRect const & bounds, u32 advance)
 		: m_bounds{ bounds }
 		, m_advance{ advance }
 	{
-		m_texture = get_gpu()->texture_create(MAKE(RD::TextureCreateInfo, t) {
+		m_texture = rendering_device()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 			t.color_format = RD::DataFormat_R8_UNORM;
 			t.width = bounds.width();
 			t.height = bounds.height();
@@ -37,12 +37,12 @@ namespace Ism
 
 	Glyph::~Glyph()
 	{
-		if (m_texture) { get_gpu()->texture_destroy(m_texture); m_texture = nullptr; }
+		if (m_texture) { rendering_server()->texture_destroy(m_texture); m_texture = nullptr; }
 	}
 
 	Ref<Image> Glyph::get_data() const
 	{
-		return m_texture ? get_gfx()->texture2d_get_data(m_texture) : nullptr;
+		return m_texture ? rendering_server()->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -54,25 +54,25 @@ namespace Ism
 		FT_Stroker stroker;
 
 		if (FT_Init_FreeType(&library)) {
-			get_os()->err_printf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
+			os()->err_printf("FAILED LOADING FONT LIBRARY: %s", spec.path.c_str());
 			return nullptr;
 		}
 
 		if (FT_New_Face(library, spec.path.c_str(), 0, &face)) {
-			get_os()->err_printf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
+			os()->err_printf("FAILED LOADING FONT FACE: %s", spec.path.c_str());
 			FT_Done_FreeType(library);
 			return nullptr;
 		}
 
 		if (FT_Stroker_New(library, &stroker)) {
-			get_os()->err_printf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
+			os()->err_printf("FAILED LOADING FONT STROKER: %s", spec.path.c_str());
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
 			return nullptr;
 		}
 
 		if (FT_Select_Charmap(face, FT_ENCODING_UNICODE)) {
-			get_os()->err_printf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
+			os()->err_printf("FAILED SELECTING FONT CHARMAP: %s", spec.path.c_str());
 			FT_Stroker_Done(stroker);
 			FT_Done_Face(face);
 			FT_Done_FreeType(library);
@@ -109,7 +109,7 @@ namespace Ism
 			FT_Face const face{ (FT_Face)f->font_face };
 			FT_Set_Pixel_Sizes(face, 0, character_size);
 			if (FT_Load_Char(face, character, FT_LOAD_RENDER)) {
-				get_os()->err_printf("FAILED LOADING GLYPH: %s", f->path.c_str());
+				os()->err_printf("FAILED LOADING GLYPH: %s", f->path.c_str());
 				return nullptr;
 			}
 

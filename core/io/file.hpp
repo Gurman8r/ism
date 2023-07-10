@@ -40,16 +40,6 @@ namespace Ism
 		bool m_big_endian{};
 		FileAccess_ m_access_type{};
 
-	public:
-		template <class C = char, class = std::enable_if_t<mpl::is_char_v<C>>
-		> static constexpr C delimiter{ static_cast<C>(
-#			if SYSTEM_WINDOWS
-				'\\'
-#			else
-				'/'
-#			endif
-		) };
-
 	protected:
 		NODISCARD virtual String fix_path(String const & path) const;
 		virtual Error_ open_internal(String const & path, FileMode_ mode) = 0;
@@ -114,6 +104,24 @@ namespace Ism
 		static u64 get_modified_time(String const & path);
 		static u32 get_unix_permissions(String const & path);
 		static Error_ set_unix_permissions(String const & path, u32 permissions);
+
+	public:
+		File & printv(cstring fmt, va_list args)
+		{
+			char s[4096];
+			if (auto const n{ std::vsnprintf(s, sizeof(s), fmt, args) }
+			; 0 < n) { put_buffer((u8 const *)s, (size_t)n); }
+			return (*this);
+		}
+
+		File & printf(cstring fmt, ...)
+		{
+			va_list args;
+			va_start(args, fmt);
+			printv(fmt, args);
+			va_end(args);
+			return (*this);
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

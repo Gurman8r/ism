@@ -43,7 +43,7 @@ namespace Ism
 			return hasher ? hasher(self) : Hasher<intptr_t>{}((intptr_t)self);
 		}
 
-		auto rich_compare(ObjectAPI const & o) const
+		auto compare(ObjectAPI const & o) const
 		{
 			if (Object * const self{ derived().ptr() }, * other{ o.derived().ptr() }
 			; self == other)
@@ -52,7 +52,7 @@ namespace Ism
 			}
 			else if (!self || !other)
 			{
-				return compare((intptr_t)self, (intptr_t)other);
+				return Ism::compare((intptr_t)self, (intptr_t)other);
 			}
 			else if (CmpFunc cmp{ typeof(self)->tp_cmp })
 			{
@@ -60,42 +60,30 @@ namespace Ism
 			}
 			else
 			{
-				return compare(self->hash_code(), other->hash_code());
+				return Ism::compare(self->hash_code(), other->hash_code());
 			}
 		}
-
-		bool equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) == 0; }
-		
-		bool not_equal_to(ObjectAPI const & other) const noexcept { return rich_compare(other) != 0; }
-		
-		bool less(ObjectAPI const & other) const noexcept { return rich_compare(other) < 0; }
-		
-		bool less_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) <= 0; }
-		
-		bool greater(ObjectAPI const & other) const noexcept { return rich_compare(other) > 0; }
-		
-		bool greater_equal(ObjectAPI const & other) const noexcept { return rich_compare(other) >= 0; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> bool operator==(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.equal_to(b); }
+	> bool operator==(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.compare(b) == 0; }
 
 	template <class T
-	> bool operator!=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.not_equal_to(b); }
+	> bool operator!=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.compare(b) != 0; }
 
 	template <class T
-	> bool operator<(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less(b); }
+	> bool operator<(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.compare(b) < 0; }
 
 	template <class T
-	> bool operator<=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.less_equal(b); }
+	> bool operator<=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.compare(b) <= 0; }
 
 	template <class T
-	> bool operator>(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater(b); }
+	> bool operator>(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.compare(b) > 0; }
 
 	template <class T
-	> bool operator>=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.greater_equal(b); }
+	> bool operator>=(ObjectAPI<T> const & a, ObjectAPI<T> const & b) { return a.compare(b) >= 0; }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -106,32 +94,32 @@ namespace Ism
 
 	template <class T> struct EqualTo<ObjectAPI<T>>
 	{
-		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.equal_to(b); }
+		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.compare(b) == 0; }
 	};
 
 	template <class T> struct NotEqualTo<ObjectAPI<T>>
 	{
-		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.not_equal_to(b); }
+		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.compare(b) != 0; }
 	};
 
 	template <class T> struct Less<ObjectAPI<T>>
 	{
-		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.less(b); }
+		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.compare(b) < 0; }
 	};
 
 	template <class T> struct Greater<ObjectAPI<T>>
 	{
-		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.greater(b); }
+		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.compare(b) > 0; }
 	};
 
 	template <class T> struct LessEqual<ObjectAPI<T>>
 	{
-		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.less_equal(b); }
+		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.compare(b) <= 0; }
 	};
 
 	template <class T> struct GreaterEqual<ObjectAPI<T>>
 	{
-		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.greater_equal(b); }
+		template <class A, class B> bool operator()(A const & a, B const & b) const { return a.compare(b) >= 0; }
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

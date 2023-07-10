@@ -33,7 +33,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	MonoContext * MonoContext::__singleton{};
+	SINGLETON_EMBED(MonoContext);
 
 	Error_ MonoContext::initialize()
 	{
@@ -46,7 +46,7 @@ namespace Ism
 			return Error_Failed;
 		}
 
-		if (auto const err{ load_assemblies() }; err != Error_OK) {
+		if (Error_ const err{ load_assemblies() }) {
 			PRINT_ERROR("failed loading csharp assemblies");
 			return err;
 		}
@@ -63,15 +63,17 @@ namespace Ism
 	Error_ MonoContext::load_assemblies()
 	{
 		// load engine dll
-		String const engine_dll{ get_globals()->get_bin_path().path_join("ism-csharp.dll") };
+		String const engine_dll{ globals()->get_bin_path().path_join("ism-csharp.dll") };
 		if (!File::exists(engine_dll)) { PRINT_ERROR("could not find engine assembly"); return Error_Failed; }
 		if (Error_ const err{ load_dll(engine_dll)}) { PRINT_ERROR("failed loading engine assembly"); return err; }
+
 		mono_add_internal_call("Ism.Object::print", &CS_Ism_Object_print);
 		if (!(m_object_class = mono_class_from_name(m_dll.get<MonoImage *>(0), "Ism", "Object"))) { return Error_Failed; }
 		if (!(m_script_class = mono_class_from_name(m_dll.get<MonoImage *>(0), "Ism", "Script"))) { return Error_Failed; }
+		if (!(m_loop_class = mono_class_from_name(m_dll.get<MonoImage *>(0), "Ism", "MainLoop"))) { return Error_Failed; }
 		
 		// load app dll
-		String const app_dll{ get_globals()->get_bin_path().path_join(get_os()->get_exec_path().stem() + "-csharp.dll")};
+		String const app_dll{ globals()->get_bin_path().path_join(os()->get_exec_path().stem() + "-csharp.dll")};
 		if (!File::exists(app_dll)) { PRINT_ERROR("could not find application assembly"); return Error_Failed; }
 		if (Error_ const err{ load_dll(app_dll) }) { PRINT_ERROR("failed loading engine assembly"); return err; }
 		i32 const rows{ mono_image_get_table_rows(m_dll.get<MonoImage *>(1), MONO_TABLE_TYPEDEF) };

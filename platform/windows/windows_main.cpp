@@ -11,7 +11,7 @@ int _main()
 {
 	using namespace Ism;
 
-	WindowsOS os{ (HINSTANCE)nullptr };
+	WindowsOS _os{ (HINSTANCE)nullptr };
 
 	switch (Main::setup(__argv[0], __argc, __argv)) {
 	case Error_OK: break;
@@ -22,11 +22,11 @@ int _main()
 	} break;
 	}
 
-	if (Main::start()) { os.run(); }
+	if (Main::start()) { _os.run(); }
 
 	Main::cleanup();
 
-	return os.get_exit_code();
+	return _os.get_exit_code();
 }
 
 int main(int argc, char * argv[])

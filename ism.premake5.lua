@@ -15,8 +15,8 @@ links_assimp()
 links_gui()
 
 defines{
-	"DYNAMIC_BUILD_ENABLED=1",
 	"TOOLS_ENABLED=1",
+	"ISM_DYNAMIC=1",
 	"IMGUI_API=ISM_API_IMPORT",
 }
 

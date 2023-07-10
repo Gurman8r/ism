@@ -4,7 +4,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	PackedData * PackedData::__singleton{};
+	SINGLETON_EMBED(PackedData);
 
 	PackedData::PackedData()
 	{
@@ -117,7 +117,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(PackFile, t) {}
+	OBJECT_EMBED(PackFile, t) {}
 
 	Error_ PackFile::open_internal(String const & path, FileMode_ mode)
 	{
@@ -202,7 +202,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(PackDir, t) {}
+	OBJECT_EMBED(PackDir, t) {}
 
 	PackDir::PackDir() {}
 

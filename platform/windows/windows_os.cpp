@@ -44,9 +44,9 @@ namespace Ism
 		if (!m_main_loop) { return; }
 		m_main_loop->initialize();
 		while (true) {
-			get_display()->poll_events();
+			display_server()->poll_events();
 			if (Main::iteration()) { break; }
-			get_display()->swap_buffers();
+			display_server()->swap_buffers();
 		}
 		m_main_loop->finalize();
 	}
@@ -325,7 +325,7 @@ namespace Ism
 
 	String WindowsOS::get_resource_path() const noexcept
 	{
-		return get_globals()->get_resource_path();
+		return globals()->get_resource_path();
 	}
 
 	String WindowsOS::get_system_path(SystemDir_ value) const noexcept

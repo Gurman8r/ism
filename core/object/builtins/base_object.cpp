@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Object, t, TypeFlags_IsAbstract)
+	OBJECT_EMBED(Object, t, TypeFlags_IsAbstract)
 	{
 		t.tp_getattro = (GetAttrOFunc)&Object::generic_getattr;
 
@@ -29,7 +29,7 @@ namespace Ism
 	void Object::initialize_class()
 	{
 		static ON_SCOPE_ENTER(&) {
-			get_internals()->add_class(&__type_static);
+			internals()->add_class(&__type_static);
 			ASSERT(__type_static.tp_bind);
 			ASSERT(__type_static.tp_bind(&__type_static));
 		};

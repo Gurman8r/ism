@@ -14,19 +14,18 @@ namespace Ism
 	{
 		OBJECT_CLASS(PhysicsServer, Object);
 
-		static PhysicsServer * __singleton;
+		SINGLETON_CLASS(PhysicsServer);
 
 	public:
 		PhysicsServer();
 		virtual ~PhysicsServer() override;
-		SINGLETON_GETTER(PhysicsServer);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	using PS = PhysicsServer;
 
-	SINGLETON_WRAPPER(PS, get_physics);
+	SINGLETON_WRAPPER(PhysicsServer, physics_server);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

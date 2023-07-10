@@ -9,11 +9,11 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Input * Input::__singleton{};
+	SINGLETON_EMBED(Input);
 
 	Input::Funcs Input::m_funcs{};
 
-	EMBED_CLASS(Input, t) {}
+	OBJECT_EMBED(Input, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -414,7 +414,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Input::iteration(Duration const delta_time)
+	void Input::iteration(Duration const & delta_time)
 	{
 		/* UPDATE MOUSE */
 

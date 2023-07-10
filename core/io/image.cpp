@@ -4,7 +4,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Image, t) {}
+	OBJECT_EMBED(Image, t) {}
 
 	Image::Image(i32 width, i32 height, ImageFormat_ format)
 	{

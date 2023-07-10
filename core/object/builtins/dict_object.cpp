@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DictObject, t)
+	OBJECT_EMBED(DictObject, t)
 	{
 		t.tp_len = (LenFunc)[](ObjectRef self) -> ssize_t { return (ssize_t)DictRef(self).size(); };
 

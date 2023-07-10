@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	OS * OS::__singleton{};
+	SINGLETON_EMBED(OS);
 
 	OS::OS()
 	{
@@ -236,7 +236,7 @@ namespace Ism
 
 	String OS::get_resource_path() const noexcept
 	{
-		return get_globals()->get_resource_path();
+		return globals()->get_resource_path();
 	}
 
 	String OS::get_system_path(SystemDir_ value) const noexcept

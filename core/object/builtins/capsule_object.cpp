@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(CapsuleObject, t)
+	OBJECT_EMBED(CapsuleObject, t)
 	{
 	}
 

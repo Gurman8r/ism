@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(TransformComponent, t) {}
+	OBJECT_EMBED(TransformComponent, t) {}
 
 	TransformComponent::TransformComponent()
 	{

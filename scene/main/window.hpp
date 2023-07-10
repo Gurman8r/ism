@@ -12,7 +12,7 @@ namespace Ism
 	{
 		OBJECT_CLASS(Window, Viewport);
 
-		DS::WindowID m_window{};
+		DS::WindowID m_window{ DS::MAIN_WINDOW_ID };
 
 	public:
 		Window();

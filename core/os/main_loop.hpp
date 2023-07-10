@@ -7,6 +7,17 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	enum : Notification_ {
+		Notification_MemoryWarning = 2001,
+		Notification_Crash,
+		Notification_ApplicationResumed,
+		Notification_ApplicationPaused,
+		Notification_ApplicationFocusIn,
+		Notification_ApplicationFocusOut,
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class ISM_API MainLoop : public Object
 	{
 		OBJECT_CLASS(MainLoop, Object);
@@ -14,24 +25,21 @@ namespace Ism
 		ObjectRef m_script{};
 
 	public:
-		enum : Notification_
-		{
-			Notification_MemoryWarning = 2001,
-			Notification_Crash,
-			Notification_ApplicationResumed,
-			Notification_ApplicationPaused,
-			Notification_ApplicationFocusIn,
-			Notification_ApplicationFocusOut,
-		};
+		
 
 		MainLoop() noexcept {}
 		virtual ~MainLoop() noexcept override {}
 
 		virtual void initialize();
-		virtual void finalize();
+		virtual bool physics_process(Duration const & dt);
 		virtual bool process(Duration const & dt);
+		virtual void finalize();
 
-		void set_startup_script(ObjectRef const & value) { m_script = value; }
+		void set_startup_script(ObjectRef const & value) noexcept {
+			if (m_script != value) {
+				m_script = value;
+			}
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -4,18 +4,13 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Performance, t) {}
+	OBJECT_EMBED(Performance, t) {}
 
-	Performance * Performance::__singleton{};
+	SINGLETON_EMBED(Performance);
 
-	Performance::Performance()
-	{
-		__singleton = this;
-	}
+	Performance::Performance() { SINGLETON_CTOR(); }
 
-	Performance::~Performance()
-	{
-	}
+	Performance::~Performance() { SINGLETON_DTOR(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

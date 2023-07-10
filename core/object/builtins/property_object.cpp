@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(PropertyObject, t, TypeFlags_MethodDescriptor)
+	OBJECT_EMBED(PropertyObject, t, TypeFlags_MethodDescriptor)
 	{
 		t.tp_descr_get = (DescrGetFunc)[](ObjectRef self, ObjectRef obj, ObjectRef cls) -> ObjectRef
 		{

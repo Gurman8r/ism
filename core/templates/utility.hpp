@@ -11,6 +11,75 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// opaque type
+#define OPAQUE_TYPE(m_name) \
+		struct CAT(__, m_name) { int unused; }; \
+		using m_name = CAT(__, m_name) *;
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// strong typedef
+#define STRONG_TYPEDEF(m_to, m_from)																					\
+		class m_to final {																								\
+		private:																										\
+			m_from value;																								\
+		public:																											\
+			inline m_to() = default;																					\
+			inline m_to(m_to const & other) = default;																	\
+			inline m_to(m_to && other) = default;																		\
+			inline m_to & operator=(m_to const & other) = default;														\
+			inline m_to & operator=(m_to && other) = default;															\
+			inline constexpr explicit m_to(m_from other) noexcept : value{ other } {}									\
+			inline constexpr m_to & operator=(m_from other) noexcept { value = other; return (*this); }					\
+			inline constexpr operator m_from const & () const noexcept { return value; }								\
+			inline constexpr operator m_from & () noexcept { return value; }											\
+			inline constexpr decltype(auto) operator==(m_to const & other) noexcept { return value == other.value; }	\
+			inline constexpr decltype(auto) operator!=(m_to const & other) noexcept { return value != other.value; }	\
+			inline constexpr decltype(auto) operator<(m_to const & other) noexcept { return value < other.value; }		\
+			inline constexpr decltype(auto) operator>(m_to const & other) noexcept { return value > other.value; }		\
+			inline constexpr decltype(auto) operator<=(m_to const & other) noexcept { return value <= other.value; }	\
+			inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
+		}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// anonymous variable name
+#if defined(__COUNTER__)
+#	define ANON(m_expr) CAT(_, CAT(m_expr, CAT(_, CAT(__COUNTER__, _))))
+#elif defined(__LINE__)
+#	define ANON(m_expr) CAT(_, CAT(m_expr, CAT(_, CAT(__LINE__, _))))
+#else
+#	define ANON(m_expr) CAT(_, CAT(m_expr, _))
+#endif
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// compare
+#define CMP(a, b) \
+		(((a) != (b)) ? (((a) < (b)) ? -1 : 1) : 0)
+
+// minimum
+#define MIN(a, b) \
+		((a) < (b) ? (a) : (b))
+
+// maximum
+#define MAX(a, b) \
+		((a) < (b) ? (b) : (a))
+
+// unused expression
+#define UNUSED(expr) \
+		((void)(expr))
+
+// branchless if statement
+#define BRANCHLESS_IF(m_condition, m_expr) \
+		(UNUSED((!(m_condition)) || ((m_expr), 0)))
+
+// size of static array
+#define ARRAY_SIZE(arr) \
+		(sizeof(arr) / sizeof(*arr))
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // round down size m_size to be a multiple of m_alignment, where m_alignment is a power of 2
 #define SIZE_ROUND_DOWN(m_size, m_alignment) \
 		((size_t)(m_size) & ~(size_t)((m_alignment) - 1))
@@ -77,28 +146,50 @@ namespace Ism::priv
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-// singleton constructor helper
-#define SINGLETON_CTOR()					\
-		do {								\
-			ASSERT(__singleton == nullptr); \
-			__singleton = this;				\
-		} while (0);
-		
-
-// singleton destructor helper
-#define SINGLETON_DTOR()					\
-		do {								\
-			ASSERT(__singleton == this);	\
-		} while (0);						\
-		ON_SCOPE_EXIT() {					\
-			__singleton = nullptr;			\
-		};
-
-// generate singleton getter
+// singleton getter
 #define SINGLETON_GETTER(T) \
 		NODISCARD FORCE_INLINE static T * get_singleton() noexcept { return __singleton; }
 
-// generate singleton wrapper
+// singleton setter
+#define SINGLETON_SETTER(T) \
+		NODISCARD FORCE_INLINE static void set_singleton(T * value) noexcept { __singleton = value; }
+
+// singleton checkers
+#define SINGLETON_CHECKERS(T) \
+		NODISCARD FORCE_INLINE static bool has_singleton(T * value) noexcept { return __singleton == value; }
+
+// singleton class
+#define SINGLETON_CLASS(T)		\
+private:						\
+		static T * __singleton;	\
+		SINGLETON_SETTER(T);	\
+public:							\
+		SINGLETON_GETTER(T);	\
+		SINGLETON_CHECKERS(T);	\
+private:
+
+// singleton embed
+#define SINGLETON_EMBED(T) \
+		T * T::__singleton{}
+
+// singleton constructor
+#define SINGLETON_CTOR()					\
+		do {								\
+			ASSERT(has_singleton(nullptr));	\
+			set_singleton(this);			\
+		} while (0);
+
+
+// singleton destructor
+#define SINGLETON_DTOR()					\
+		do {								\
+			ASSERT(has_singleton(this));	\
+		} while (0);						\
+		ON_SCOPE_EXIT(&) {					\
+			set_singleton(nullptr);			\
+		};
+
+// singleton wrapper
 #define SINGLETON_WRAPPER(T, F) \
 		NODISCARD FORCE_INLINE T * F() noexcept { return T::get_singleton(); }
 

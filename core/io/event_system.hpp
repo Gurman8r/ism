@@ -201,7 +201,7 @@ private:
 	{
 		OBJECT_CLASS(EventBus, Object);
 
-		static EventBus * __singleton;
+		SINGLETON_CLASS(EventBus);
 
 		FlatMap<EventID, FlatSet<EventListener *>> m_listeners{};
 		FlatMap<EventID, Ref<EventDelegate<Event>>> m_delegates{};
@@ -214,7 +214,6 @@ private:
 	public:
 		EventBus() noexcept { SINGLETON_CTOR(); }
 		virtual ~EventBus() noexcept override { SINGLETON_DTOR(); }
-		SINGLETON_GETTER(EventBus);
 
 	public:
 		void fire_event(Event const & value) noexcept

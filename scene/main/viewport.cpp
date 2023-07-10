@@ -1,11 +1,12 @@
 #include <scene/main/viewport.hpp>
+#include <scene/component/camera_behavior.hpp>
 
 // viewport texture
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ViewportTexture, t) {}
+	OBJECT_EMBED(ViewportTexture, t) {}
 
 	ViewportTexture::ViewportTexture()
 	{
@@ -53,7 +54,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Viewport, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(Viewport, t, TypeFlags_IsAbstract) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

@@ -6,7 +6,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorHierarchy, t) {}
+	OBJECT_EMBED(EditorHierarchy, t) {}
 
 	EditorHierarchy::EditorHierarchy() : EditorPanel{ "Hierarchy##Editor" }
 	{

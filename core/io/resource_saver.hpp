@@ -37,20 +37,21 @@ namespace Ism
 	{
 		OBJECT_CLASS(ResourceSaver, Object);
 
-		static ResourceSaver * __singleton;
+		SINGLETON_CLASS(ResourceSaver);
 
 		Vector<Ref<ResourceFormatSaver>> m_savers{};
 
 	public:
 		ResourceSaver() noexcept { SINGLETON_CTOR(); }
 		~ResourceSaver() noexcept { SINGLETON_DTOR(); }
-		SINGLETON_GETTER(ResourceSaver);
 
 	public:
 		Error_ save(RES const & value, String const & path, i32 flags = 0);
 
 		template <class T
-		> Error_ save(Ref<T> const & value, String const & path, i32 flags = 0) noexcept { return save(value, path, flags); }
+		> Error_ save(Ref<T> const & value, String const & path, i32 flags = 0) noexcept {
+			return save(value, path, flags);
+		}
 
 		bool add_resource_format_saver(Ref<ResourceFormatSaver> format);
 		bool remove_resource_format_saver(Ref<ResourceFormatSaver> format);
@@ -58,12 +59,16 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SINGLETON_WRAPPER(ResourceSaver, get_savers);
+	SINGLETON_WRAPPER(ResourceSaver, resource_saver);
 
-	inline Error_ save_resource(RES const & value, String const & path, i32 flags = 0) noexcept { return get_savers()->save(value, path, flags); }
+	inline Error_ save_resource(RES const & value, String const & path, i32 flags = 0) noexcept {
+		return VALIDATE(resource_saver())->save(value, path, flags);
+	}
 
 	template <class T
-	> Error_ save_resource(Ref<T> const & value, String const & path, i32 flags = 0) noexcept { return get_savers()->save<T>(value, path, flags); }
+	> Error_ save_resource(Ref<T> const & value, String const & path, i32 flags = 0) noexcept {
+		return VALIDATE(resource_saver())->save<T>(value, path, flags);
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

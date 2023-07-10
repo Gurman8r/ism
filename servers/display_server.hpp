@@ -14,7 +14,7 @@ namespace Ism
 	{
 		OBJECT_CLASS(DisplayServer, Object);
 
-		static DisplayServer * __singleton;
+		SINGLETON_CLASS(DisplayServer);
 
 	public:
 		using WindowID = i32;
@@ -66,7 +66,7 @@ namespace Ism
 
 	public:
 		virtual ~DisplayServer() override;
-		SINGLETON_GETTER(DisplayServer);
+
 		static DisplayServer * create(String const & title, WindowMode_ mode, Vec2i const & position, Vec2i const & size, i32 screen, Error_ & error);
 
 	public:
@@ -156,7 +156,7 @@ namespace Ism
 
 	using DS = DisplayServer;
 
-	SINGLETON_WRAPPER(DS, get_display);
+	SINGLETON_WRAPPER(DisplayServer, display_server);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(InstancePlaceholder, t) {}
+	OBJECT_EMBED(InstancePlaceholder, t) {}
 
 	InstancePlaceholder::InstancePlaceholder() {}
 

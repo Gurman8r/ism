@@ -14,7 +14,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(WindowsFile, t) {}
+	OBJECT_EMBED(WindowsFile, t) {}
 
 	WindowsFile::~WindowsFile() noexcept { WindowsFile::close(); }
 

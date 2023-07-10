@@ -4,7 +4,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	LuaContext * LuaContext::__singleton{};
+	SINGLETON_EMBED(LuaContext);
 
 	Error_ LuaContext::initialize()
 	{

@@ -4,7 +4,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Event, t, TypeFlags_IsAbstract)
+	OBJECT_EMBED(Event, t, TypeFlags_IsAbstract)
 	{
 		t.tp_bind = BIND_CLASS(Event, klass)
 		{
@@ -19,7 +19,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EventListener, t, TypeFlags_IsAbstract)
+	OBJECT_EMBED(EventListener, t, TypeFlags_IsAbstract)
 	{
 		t.tp_bind = BIND_CLASS(EventListener, klass)
 		{
@@ -31,17 +31,17 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DummyListener, t) {}
+	OBJECT_EMBED(DummyListener, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EventDelegate<Event>, t) {}
+	OBJECT_EMBED(EventDelegate<Event>, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EventBus * EventBus::__singleton{};
+	SINGLETON_EMBED(EventBus);
 
-	EMBED_CLASS(EventBus, t) {}
+	OBJECT_EMBED(EventBus, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

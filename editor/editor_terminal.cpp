@@ -8,13 +8,13 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorTerminal, t) {}
+	OBJECT_EMBED(EditorTerminal, t) {}
 
 	EditorTerminal::EditorTerminal() : EditorPanel{ "Terminal##Editor" }
 	{
-		get_os()->get_logger()->add_logger(m_logger = memnew(EditorTerminalLogger(this)));
+		os()->get_logger()->add_logger(m_logger = memnew(EditorTerminalLogger(this)));
 
-		m_script = get_scr()->get_language("lua")->new_scipt();
+		m_script = script_server()->get_language("lua")->new_scipt();
 
 		m_commands.push_back("HELP");
 		m_commands.push_back("HISTORY");
@@ -27,7 +27,7 @@ namespace Ism
 	{
 		if (m_script) { memdelete(m_script); m_script = nullptr; }
 
-		get_os()->get_logger()->remove_logger(m_logger);
+		os()->get_logger()->remove_logger(m_logger);
 		if (m_logger) { memdelete(m_logger); m_logger = nullptr; }
 	}
 
@@ -35,7 +35,7 @@ namespace Ism
 	{
 		if (!is_open()) { return; }
 		ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };
-		ImGui::SetNextWindowPos(main_viewport->GetWorkPos() + Vec2{ 32, 32 }, ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowPos(main_viewport->GetWorkPos() + ImVec2(32, 32), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize({ 320.f, 180.f }, ImGuiCond_FirstUseEver);
 		bool open; EDITOR_PANEL_SCOPE(open);
 		if (!open) { return; }
@@ -67,25 +67,22 @@ namespace Ism
 
 		// reserve enough left-over height for 1 separator + 1 input text
 		f32 const footer_height_to_reserve{ ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing() };
-		ImGui::BeginChild("ScrollingRegion", Vec2{ 0, -footer_height_to_reserve }, false, ImGuiWindowFlags_HorizontalScrollbar);
+		ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
 		if (ImGui::BeginPopupContextWindow()) {
 			if (ImGui::Selectable("clear")) {
 				clear();
 			}
 			ImGui::EndPopup();
 		}
-
-		ImGui::PushStyleVar(ImGuiStyleVarType_ItemSpacing, Vec2{ 4, 1 }); // tighten spacing
+		ImGui::PushStyleVar(ImGuiStyleVarType_ItemSpacing, ImVec2(4, 1)); // tighten spacing
 		if (copy_to_clipboard) {
 			ImGui::LogToClipboard();
 		}
-
 		for (size_t i{}; i < m_items.size(); ++i) {
 			cstring item{ m_items[i].c_str() };
 			if (!m_filter.PassFilter(item)) { continue; }
 			ImGui::TextUnformatted(item);
 		}
-
 		if (copy_to_clipboard) {
 			ImGui::LogFinish();
 		}
@@ -132,19 +129,22 @@ namespace Ism
 		va_end(args);
 	}
 
-	void EditorTerminal::execute(String const & command_line)
+	void EditorTerminal::execute(String const & line)
 	{
-		this->printf("# %.*s\n", command_line.size(), command_line.data());
+		this->printf("# %.*s\n", line.size(), line.data());
+		
+		// history
 		m_history_pos = -1;
 		for (ssize_t i{ (ssize_t)m_history.size() - 1 }; i >= 0; i--) {
-			if (m_history[(size_t)i] == command_line) {
+			if (m_history[(size_t)i] == line) {
 				m_history.erase(m_history.begin() + i);
 				break;
 			}
 		}
-		m_history.push_back(command_line);
+		m_history.push_back(line);
 
-		m_script->set_source_code(command_line);
+		// execute
+		m_script->set_source_code(line);
 		m_script->reload();
 
 		m_scroll_to_bottom = true;

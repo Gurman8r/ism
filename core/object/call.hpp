@@ -10,76 +10,56 @@ namespace Ism
 
 	inline ObjectRef call_object(ObjectRef callable)
 	{
-		if (!callable) { return nullptr; }
-		else
-		{
-			TypeRef type{ typeof(callable) };
-
-			if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) })
-			{
-				return vcall(callable, nullptr, 0);
-			}
-			else if (BinaryFunc tcall{ type->tp_call })
-			{
-				return tcall(callable, nullptr);
-			}
-			else
-			{
-				return nullptr;
-			}
+		if (TypeRef type{ typeof(callable) }; !type) {
+			return nullptr;
+		}
+		else if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) }) {
+			return vcall(callable, nullptr, 0);
+		}
+		else if (BinaryFunc tcall{ type->tp_call }) {
+			return tcall(callable, nullptr);
+		}
+		else {
+			return nullptr;
 		}
 	}
 
 	inline ObjectRef call_object(ObjectRef callable, ListRef args)
 	{
-		if (!callable) { return nullptr; }
-		else
+		if (TypeRef type{ typeof(callable) }; !type) {
+			return nullptr;
+		}
+		else if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) })
 		{
-			TypeRef type{ typeof(callable) };
-
-			if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) })
-			{
-				if (args)
-				{
-					return vcall(callable, args.data(), args.size());
-				}
-				else
-				{
-					return vcall(callable, nullptr, 0);
-				}
+			if (args) {
+				return vcall(callable, args.data(), args.size());
 			}
-			else if (BinaryFunc tcall{ type->tp_call })
-			{
-				return tcall(callable, args);
+			else {
+				return vcall(callable, nullptr, 0);
 			}
-			else
-			{
-				return nullptr;
-			}
+		}
+		else if (BinaryFunc tcall{ type->tp_call }) {
+			return tcall(callable, args);
+		}
+		else {
+			return nullptr;
 		}
 	}
 
 	inline ObjectRef call_object(ObjectRef callable, ObjectRef const * argv, size_t argc)
 	{
-		if (!callable) { return nullptr; }
-		else
-		{
-			TypeRef type{ typeof(callable) };
-
-			if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) })
-			{
-				return vcall(callable, argv, argc);
-			}
-			else if (BinaryFunc tcall{ type->tp_call })
-			{
-				ListObject args{ argv, argv + argc };
-
-				return tcall(callable, &args);
-			}
-			else
-			{
-				return nullptr;
-			}
+		if (TypeRef type{ typeof(callable) }; !type) {
+			return nullptr;
+		}
+		else if (VectorCallFunc vcall{ get_vectorcall_func(type, callable) }) {
+			return vcall(callable, argv, argc);
+		}
+		else if (BinaryFunc tcall{ type->tp_call }) {
+			ListObject args{ argv, argv + argc };
+			return tcall(callable, &args);
+		}
+		else {
+			return nullptr;
 		}
 	}
 

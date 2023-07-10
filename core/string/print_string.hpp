@@ -52,6 +52,18 @@ namespace Ism
 	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
 	ISM_API_FUNC(void) _err_print_error(cstring func, cstring file, u32 line, cstring desc, cstring m_message, ErrorHandlerType_ log_type = ErrorHandlerType_Error);
 
+#define ERR_PRINT_ERROR(m_desc) \
+		(Ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), Ism::ErrorHandlerType_Error))
+
+#define ERR_PRINT_ERROR_MSG(m_desc, m_message) \
+		(Ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), (m_message), Ism::ErrorHandlerType_Error))
+
+#define ERR_PRINT_WARNING(m_desc) \
+		(Ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), Ism::ErrorHandlerType_Warning))
+
+#define ERR_PRINT_WARNING_MSG(m_desc, m_message) \
+		(Ism::_err_print_error(__PRETTY_FUNCTION__, __FILE__, __LINE__, (m_desc), (m_message), Ism::ErrorHandlerType_Error))
+
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 

@@ -13,17 +13,22 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// lua
+	class LuaLanguage;
+	class LuaScript;
+	class LuaInstance;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// lua context
 	class ISM_EXT_API LuaContext
 	{
-		static LuaContext * __singleton;
+		SINGLETON_CLASS(LuaContext);
 
 		lua_State * m_L{};
 
 	public:
 		LuaContext() noexcept { SINGLETON_CTOR(); }
 		~LuaContext() noexcept { SINGLETON_DTOR(); }
-		SINGLETON_GETTER(LuaContext);
 		NODISCARD lua_State * operator * () const { return m_L; }
 
 		Error_ initialize();
@@ -34,7 +39,11 @@ namespace Ism
 		i32 do_file(String const & path);
 	};
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	SINGLETON_WRAPPER(LuaContext, get_lua);
+
+	NODISCARD inline lua_State * get_luaL() noexcept { return (**get_lua()); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

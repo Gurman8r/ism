@@ -61,12 +61,11 @@ namespace Ism
 	{
 		OBJECT_CLASS(TextServer, Object);
 
-		static TextServer * __singleton;
+		SINGLETON_CLASS(TextServer);
 
 	public:
 		TextServer();
 		virtual ~TextServer() override;
-		SINGLETON_GETTER(TextServer);
 
 	public:
 		/* FONT API */
@@ -107,7 +106,7 @@ namespace Ism
 
 	using TS = TextServer;
 
-	SINGLETON_WRAPPER(TS, get_ts);
+	SINGLETON_WRAPPER(TextServer, text_server);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

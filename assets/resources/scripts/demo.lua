@@ -1,18 +1,15 @@
 -- demo.lua
 
-Demo = Ism.Script{}
+local Demo = Ism.MainLoop{ name="Demo" }
 
-function Demo.new(args)
+function Demo.initialize(self)
 end
 
-function Demo.initialize(this)
+function Demo.physics_process(self, dt)
 end
 
-function Demo.finalize(this)
+function Demo.process(self, dt)
 end
 
-function Demo.notification(this, id)
-end
-
-function Demo.process(this, dt)
+function Demo.finalize(self)
 end

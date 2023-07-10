@@ -10,7 +10,7 @@ namespace Ism
 
 	static ExtensionInterface extension_interface{};
 
-	EMBED_CLASS(Extension, t) {}
+	OBJECT_EMBED(Extension, t) {}
 
 	Extension::~Extension() noexcept { close_library(); }
 
@@ -18,13 +18,13 @@ namespace Ism
 
 	Error_ Extension::open_library(String const & path, String const & entry_symbol)
 	{
-		if (Error_ const err{ get_os()->open_dynamic_library(path, m_library) }) {
+		if (Error_ const err{ os()->open_dynamic_library(path, m_library) }) {
 			return err;
 		}
 		
 		void * entry_func{};
-		if (Error_ const err{ get_os()->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
-			get_os()->close_dynamic_library(m_library);
+		if (Error_ const err{ os()->get_dynamic_library_symbol(m_library, entry_symbol, entry_func, false) }) {
+			os()->close_dynamic_library(m_library);
 			return err;
 		}
 
@@ -41,7 +41,7 @@ namespace Ism
 	void Extension::close_library()
 	{
 		if (m_library) {
-			get_os()->close_dynamic_library(m_library);
+			os()->close_dynamic_library(m_library);
 			m_library = nullptr;
 		}
 	}
@@ -79,25 +79,25 @@ namespace Ism
 
 	String Extension::get_extension_list_config_file()
 	{
-		return get_globals()->get_config_path().path_join("extensions.cfg"_s);
+		return globals()->get_config_path().path_join("extensions.cfg"_s);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ExtensionFormatLoader, t) {}
+	OBJECT_EMBED(ExtensionFormatLoader, t) {}
 
 	RES ExtensionFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		String const name{ path.stem() };
 
-		String const ini_path{ get_globals()->get_config_path().path_join(name) + ".ini" };
+		String const ini_path{ globals()->get_config_path().path_join(name) + ".ini" };
 		if (!File::exists(ini_path)) { PRINT_WARNING("extension ini not found: " + ini_path); }
 
 		ConfigFile ini{ ini_path };
 		if (ini.empty()) { PRINT_WARNING("extension ini is empty: " + ini_path); }
 		String const library_name{ ini.get_string("configuration", "library_name", name) };
 		String const entry_symbol{ ini.get_string("configuration", "entry_symbol", String::format("Ism::open_%s_extension", name))};
-		String const dll_path{ get_globals()->get_bin_path().path_join(library_name) };
+		String const dll_path{ globals()->get_bin_path().path_join(library_name) };
 
 		Ref<Extension> ext; ext.instance();
 		ext->set_ini(std::move(ini));
@@ -106,11 +106,11 @@ namespace Ism
 		return ext;
 	}
 
-	void ExtensionFormatLoader::get_recognized_extensions(Vector<String> * out) const
+	void ExtensionFormatLoader::get_recognized_extensions(Vector<String> * r_out) const
 	{
-		if (!out) { return; }
-		out->push_back("");
-		out->push_back(".dll");
+		if (!r_out) { return; }
+		r_out->push_back("");
+		r_out->push_back(".dll");
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

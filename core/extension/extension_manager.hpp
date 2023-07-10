@@ -5,11 +5,11 @@
 
 namespace Ism
 {
-	class ISM_API ExtensionManager : public Object
+	class ISM_API ExtensionManager final : public Object
 	{
 		OBJECT_CLASS(ExtensionManager, Object);
 
-		static ExtensionManager * __singleton;
+		SINGLETON_CLASS(ExtensionManager);
 
 		String m_config_file_path{};
 
@@ -20,7 +20,6 @@ namespace Ism
 	public:
 		ExtensionManager();
 		virtual ~ExtensionManager() override;
-		SINGLETON_GETTER(ExtensionManager);
 
 	public:
 		enum LoadStatus_ {
@@ -43,7 +42,7 @@ namespace Ism
 		void finalize_extensions(ExtensionInitializationLevel_ level);
 	};
 
-	SINGLETON_WRAPPER(ExtensionManager, get_ext);
+	SINGLETON_WRAPPER(ExtensionManager, extension_manager);
 }
 
 #endif // !_ISM_EXTENSION_MANAGER_HPP_

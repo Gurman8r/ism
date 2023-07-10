@@ -6,7 +6,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorLog, t) {}
+	OBJECT_EMBED(EditorLog, t) {}
 
 	EditorLog::EditorLog() : EditorPanel{ "Log##Editor" }
 	{

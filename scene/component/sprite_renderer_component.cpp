@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(SpriteRendererComponent, t) {}
+	OBJECT_EMBED(SpriteRendererComponent, t) {}
 
 	SpriteRendererComponent::SpriteRendererComponent()
 	{

@@ -14,7 +14,8 @@ dependson{ "glfw", }
 links{ "glfw", }
 
 defines{
-	"IMGUI_API=__declspec(dllexport)",
+	"IMGUI_USER_CONFIG=<scene/gui/imconfig.hpp>",
+	"IMGUI_API=ISM_API_EXPORT",
 	"IMGUI_IMPL_OPENGL_LOADER_GLEW",
 }
 
@@ -26,6 +27,8 @@ includedirs{
 }
 
 files{
+	"%{_SCENE}/gui/imconfig.hpp",
+
 	"%{_THIRDPARTY}/imgui/*.h",
 	"%{_THIRDPARTY}/imgui/*.cpp",
 

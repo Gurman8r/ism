@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(ResourcePreloader, t) {}
+	OBJECT_EMBED(ResourcePreloader, t) {}
 
 	ResourcePreloader::ResourcePreloader() {}
 

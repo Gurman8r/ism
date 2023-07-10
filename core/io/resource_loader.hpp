@@ -24,14 +24,13 @@ namespace Ism
 	{
 		OBJECT_CLASS(ResourceLoader, Object);
 
-		static ResourceLoader * __singleton;
+		SINGLETON_CLASS(ResourceLoader);
 
 		Vector<Ref<ResourceFormatLoader>> m_loaders{};
 
 	public:
 		ResourceLoader() noexcept { SINGLETON_CTOR(); }
 		~ResourceLoader() noexcept { SINGLETON_DTOR(); }
-		SINGLETON_GETTER(ResourceLoader);
 
 	public:
 		NODISCARD RES load(String const & path, Error_ * r_error = nullptr);
@@ -45,12 +44,16 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SINGLETON_WRAPPER(ResourceLoader, get_loaders);
+	SINGLETON_WRAPPER(ResourceLoader, resource_loader);
 
-	NODISCARD inline RES load_resource(String const & path, Error_ * r_error = nullptr) noexcept { return get_loaders()->load(path, r_error); }
+	NODISCARD inline RES load_resource(String const & path, Error_ * r_error = nullptr) noexcept {
+		return VALIDATE(resource_loader())->load(path, r_error);
+	}
 
 	template <class T
-	> NODISCARD Ref<T> load_resource(String const & path, Error_ * r_error = nullptr) noexcept { return get_loaders()->load<T>(path, r_error); }
+	> NODISCARD Ref<T> load_resource(String const & path, Error_ * r_error = nullptr) noexcept {
+		return VALIDATE(resource_loader())->load<T>(path, r_error);
+	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

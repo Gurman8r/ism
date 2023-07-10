@@ -139,7 +139,8 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class T> StringRef repr(Ref<T> const & o) noexcept
+	template <class T
+	> NODISCARD StringRef repr(Ref<T> const & o) noexcept
 	{
 		if (!o) { return nullptr; }
 
@@ -151,15 +152,9 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// "__x__"
-	inline bool is_dunder_name(ObjectRef name)
+	NODISCARD inline bool is_dunder_name(ObjectRef name) noexcept
 	{
-		if (!StringRef::check_(name)) { return false; }
-
-		String const & s{ StringRef(name) };
-
-		size_t const n{ s.size() };
-
-		return (n >= 5) && (s[0] == '_') && (s[1] == '_') && (s[n - 2] == '_') && (s[n - 1] == '_');
+		return StringRef::check_(name) && util::is_dunder_name(***StringRef(name));
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

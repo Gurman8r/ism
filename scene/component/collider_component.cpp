@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(ColliderComponent, t) {}
+	OBJECT_EMBED(ColliderComponent, t) {}
 
 	ColliderComponent::ColliderComponent()
 	{

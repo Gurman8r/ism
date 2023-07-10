@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(Behavior, t) {}
+	OBJECT_EMBED(Behavior, t) {}
 
 	Behavior::Behavior()
 	{

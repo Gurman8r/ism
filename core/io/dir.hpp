@@ -21,16 +21,6 @@ namespace Ism
 		bool m_include_navigational{};
 		bool m_include_hidden{};
 
-	public:
-		template <class C = char, class = std::enable_if_t<mpl::is_char_v<C>>
-		> static constexpr C delimiter{ static_cast<C>(
-#			if SYSTEM_WINDOWS
-				'\\'
-#			else
-				'/'
-#			endif
-		) };
-
 	protected:
 		using CreateFunc = Ref<Dir>(*)();
 		static CreateFunc __create_func[DirAccess_MAX];

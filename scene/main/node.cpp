@@ -6,7 +6,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Node, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(Node, t, TypeFlags_IsAbstract) {}
 
 	i32 Node::__orphan_node_count{};
 
@@ -40,11 +40,11 @@ namespace Ism
 		}
 	}
 
-	void Node::_process(Duration const delta_time)
+	void Node::_process(Duration const & delta_time)
 	{
 	}
 
-	void Node::_physics_process(Duration const delta_time)
+	void Node::_physics_process(Duration const & delta_time)
 	{
 	}
 

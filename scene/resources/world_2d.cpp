@@ -2,5 +2,13 @@
 
 namespace Ism
 {
+	OBJECT_EMBED(World2D, t) {}
 
+	World2D::World2D()
+	{
+	}
+
+	World2D::~World2D()
+	{
+	}
 }

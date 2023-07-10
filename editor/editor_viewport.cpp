@@ -7,7 +7,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorViewport, t) {}
+	OBJECT_EMBED(EditorViewport, t) {}
 
 	EditorViewport::EditorViewport()
 		: EditorPanel{ "Viewport##Editor", true, ImGuiWindowFlags_NoScrollbar }
@@ -37,7 +37,7 @@ namespace Ism
 		ImRect const view_rect{ window->InnerRect };
 
 		if (ImGui::ItemAdd(view_rect, NULL)) {
-			void * texture_handle{ get_gpu()->texture_get_handle(m_main_texture) };
+			void * texture_handle{ rendering_device()->texture_get_handle(m_main_texture) };
 			window->DrawList->AddImage(texture_handle, view_rect.Min, view_rect.Max, { 0, 1 }, { 1, 0 });
 		}
 

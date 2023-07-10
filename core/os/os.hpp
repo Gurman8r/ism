@@ -32,7 +32,7 @@ namespace Ism
 	// operating system
 	class ISM_API OS
 	{
-		static OS * __singleton;
+		SINGLETON_CLASS(OS);
 
 		String				m_exec_path{};
 		Vector<String>		m_cmdline{};
@@ -55,7 +55,6 @@ namespace Ism
 	public:
 		OS();
 		virtual ~OS();
-		SINGLETON_GETTER(OS);
 
 	protected:
 		friend class Main;
@@ -185,7 +184,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SINGLETON_WRAPPER(OS, get_os);
+	SINGLETON_WRAPPER(OS, os);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

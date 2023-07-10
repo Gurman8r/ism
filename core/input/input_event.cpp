@@ -4,7 +4,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(InputEvent, t) {}
+	OBJECT_EMBED(InputEvent, t) {}
 
 	InputEvent::InputEvent() noexcept {}
 

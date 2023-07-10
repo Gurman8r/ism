@@ -7,9 +7,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ExtensionManager, t) {}
+	OBJECT_EMBED(ExtensionManager, t) {}
 
-	ExtensionManager * ExtensionManager::__singleton{};
+	SINGLETON_EMBED(ExtensionManager);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

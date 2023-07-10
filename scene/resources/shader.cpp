@@ -4,11 +4,14 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Shader, t) {}
+	OBJECT_EMBED(Shader, t) {}
 
 	Shader::~Shader()
 	{
-		if (m_shader) { get_gpu()->shader_destroy(m_shader); m_shader = nullptr; }
+		if (m_shader) {
+			rendering_device()->shader_destroy(m_shader);
+			m_shader = nullptr;
+		}
 	}
 
 	String Shader::get_code() const

@@ -14,6 +14,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	class EditorPanel;
 	class EditorAssets;
 	class EditorHierarchy;
 	class EditorInspector;
@@ -21,27 +22,33 @@ namespace Ism
 	class EditorTerminal;
 	class EditorViewport;
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 	// main editor
 	class ISM_API EditorNode : public Node
 	{
 		OBJECT_CLASS(EditorNode, Node);
 
-		static EditorNode * __singleton;
+		SINGLETON_CLASS(EditorNode);
 
+		friend class EditorPanel;
 		friend class EditorAssets;
 		friend class EditorHierarchy;
-		friend class EditorLog;
 		friend class EditorInspector;
+		friend class EditorLog;
+		friend class EditorTerminal;
 		friend class EditorViewport;
 
-		EditorAssets		* m_assets{};
-		EditorHierarchy		* m_hierarchy{};
-		EditorInspector		* m_inspector{};
-		EditorLog			* m_log{};
-		EditorTerminal		* m_terminal{};
-		EditorViewport		* m_viewport{};
+		Vector<EditorPanel *>	m_panels{};
+		EditorAssets *			m_assets{};
+		EditorHierarchy *		m_hierarchy{};
+		EditorInspector *		m_inspector{};
+		EditorLog *				m_log{};
+		EditorTerminal *		m_terminal{};
+		EditorViewport *		m_viewport{};
+
+		template <class T> void init_panel(T *& p, bool start_open = true) noexcept {
+			p = (T *)m_panels.emplace_back(memnew(T));
+			p->set_open(start_open);
+		}
 
 		bool m_show_main_menu_bar{ true };
 		bool m_show_imgui_demo{};
@@ -56,7 +63,6 @@ namespace Ism
 	public:
 		EditorNode();
 		virtual ~EditorNode() override;
-		SINGLETON_GETTER(EditorNode);
 
 	protected:
 		void _notification(Notification_ id);
@@ -69,7 +75,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SINGLETON_WRAPPER(EditorNode, get_editor_node);
+	SINGLETON_WRAPPER(EditorNode, editor_node);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

@@ -8,18 +8,13 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// renderer storage
-	class ISM_API RendererStorage : public Object
+	class ISM_API RendererStorage
 	{
-		OBJECT_CLASS(RendererStorage, Object);
-
-		friend class DefaultRenderingServer;
-
+	private:
 		RenderingDevice * const m_device;
 
-	protected:
-		explicit RendererStorage(RenderingDevice * device);
-
 	public:
+		explicit RendererStorage(RenderingDevice * device);
 		virtual ~RendererStorage();
 
 	public:

@@ -11,15 +11,12 @@ namespace Ism
 	// low-level graphics api
 	class ISM_API RenderingDevice : public Object
 	{
+		SINGLETON_CLASS(RenderingDevice);
 		OBJECT_CLASS(RenderingDevice, Object);
 
-	private:
-		static RenderingDevice * __singleton;
-
 	public:
-		RenderingDevice() noexcept { __singleton = this; }
-		virtual ~RenderingDevice() noexcept override = default;
-		SINGLETON_GETTER(RenderingDevice);
+		RenderingDevice() noexcept;
+		virtual ~RenderingDevice() noexcept override;
 
 	public:
 		virtual void initialize() = 0;
@@ -780,7 +777,7 @@ namespace Ism
 
 	using RD = RenderingDevice;
 
-	SINGLETON_WRAPPER(RD, get_gpu);
+	SINGLETON_WRAPPER(RenderingDevice, rendering_device);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

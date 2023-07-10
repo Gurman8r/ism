@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
+	OBJECT_EMBED(FunctionObject, t, TypeFlags_HaveVectorCall | TypeFlags_MethodDescriptor)
 	{
 		t.tp_dictoffset = offsetof(FunctionObject, m_dict);
 

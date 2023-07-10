@@ -8,19 +8,24 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// canvas renderer
-	class ISM_API Renderer2D : public Object
+	class ISM_API RendererCanvasRenderer
 	{
-		OBJECT_CLASS(Renderer2D, Object);
-		
-		friend class DefaultRenderingServer;
-
+	private:
 		RenderingDevice * const m_device;
 		RendererStorage * const m_storage;
 
-	public:
-		Renderer2D(RenderingDevice * device, RendererStorage * storage);
+		struct SceneState
+		{
+			struct UBO
+			{
+			}
+			ubo{};
+		}
+		m_scene_state{};
 
-		virtual ~Renderer2D() override;
+	public:
+		RendererCanvasRenderer(RenderingDevice * device, RendererStorage * storage);
+		~RendererCanvasRenderer();
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

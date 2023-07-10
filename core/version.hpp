@@ -1,32 +1,32 @@
 #ifndef _ISM_VERSION_HPP_
 #define _ISM_VERSION_HPP_
 
-#include "./preprocessor.hpp"
+#include "core/preprocessor.hpp"
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #ifndef VERSION_NAME
-#error "undefined version name"
+#error "version name is undefined"
 #endif
 
 #ifndef VERSION_MAJOR
-#error "undefined version major"
+#error "version major is undefined"
 #endif
 
 #ifndef VERSION_MINOR
-#error "undefined version minor"
+#error "version minor is undefined"
 #endif
 
 #ifndef VERSION_PATCH
-#error "undefined version patch"
+#error "version patch is undefined"
 #endif
 
 #ifndef VERSION_STATUS
-#error "undefined version status"
+#error "version status is undefined"
 #endif
 
 #ifndef VERSION_BUILD
-#error "undefined version build"
+#error "version build is undefined"
 #endif
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -1,5 +1,5 @@
 #include <extensions/mono/register_mono_types.hpp>
-#include <extensions/mono/csharp.hpp>
+#include <extensions/mono/csharp_script.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -24,18 +24,18 @@ namespace Ism
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("initializing mono");
-		cs_loader.instance(); get_loaders()->add_resource_format_loader(cs_loader);
+		resource_loader()->add_resource_format_loader(cs_loader.instance());
 		REGISTER_CLASS(CSharpLanguage, CSharpScript, CSharpInstance);
-		cs_language = memnew(CSharpLanguage); get_scr()->register_language(cs_language);
+		cs_language = memnew(CSharpLanguage); script_server()->register_language(cs_language);
 	}
 
 	void Ism::finalize_mono_extension(void * user, IsmExtensionInitializationLevel level)
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("finalizing mono");
-		get_scr()->unregister_language(cs_language); memdelete(cs_language);
+		script_server()->unregister_language(cs_language); memdelete(cs_language);
 		UNREGISTER_CLASS(CSharpLanguage, CSharpScript, CSharpInstance);
-		get_loaders()->remove_resource_format_loader(cs_loader); cs_loader = nullptr;
+		resource_loader()->remove_resource_format_loader(cs_loader); cs_loader = nullptr;
 	}
 }
 

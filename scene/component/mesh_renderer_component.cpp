@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(MeshRendererComponent, t) {}
+	OBJECT_EMBED(MeshRendererComponent, t) {}
 
 	MeshRendererComponent::MeshRendererComponent()
 	{

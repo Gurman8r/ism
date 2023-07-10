@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(Rigidbody2DComponent, t) {}
+	OBJECT_EMBED(Rigidbody2DComponent, t) {}
 
 	Rigidbody2DComponent::Rigidbody2DComponent()
 	{

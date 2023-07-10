@@ -14,8 +14,6 @@ namespace Ism
 	public:
 		using base_type = typename Object;
 
-		using typename base_type::Notification_;
-
 	private:
 		friend class TypeRef;
 		friend class Internals;
@@ -67,7 +65,7 @@ namespace Ism
 			tp_del = (DelFunc)memdelete<T>;
 			tp_bind = (BindClassFunc)[](TypeRef t) -> TypeRef { return t; };
 			tp_hash = (HashFunc)[](ObjectRef o) -> size_t { return Hasher<intptr_t>{}((intptr_t)*o); };
-			tp_cmp = (CmpFunc)[](ObjectRef a, ObjectRef b) -> i32 { return compare((intptr_t)*a, (intptr_t)*b); };
+			tp_cmp = (CmpFunc)[](ObjectRef a, ObjectRef b) -> i32 { return Ism::compare((intptr_t)*a, (intptr_t)*b); };
 
 			if constexpr (std::is_default_constructible_v<T>) {
 				tp_new = (NewFunc)[](TypeRef, ObjectRef) -> ObjectRef { return memnew(T); };

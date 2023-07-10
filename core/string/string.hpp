@@ -1,9 +1,9 @@
 #ifndef _ISM_STRING_HPP_
 #define _ISM_STRING_HPP_
 
-#include <core/templates/optional.hpp>
 #include <core/string/string_view.hpp>
 #include <core/templates/vector.hpp>
+#include <core/templates/optional.hpp>
 #include <string>
 #include <cwctype>
 #include <locale>
@@ -664,9 +664,9 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	template <class C> NODISCARD bool operator==(BasicString<C> const & a, BasicString<C> const & b) noexcept { return a.equal_to(b); }
+	template <class C> NODISCARD bool operator==(BasicString<C> const & a, BasicString<C> const & b) noexcept { return a.compare(b) == 0; }
 
-	template <class C> NODISCARD bool operator==(BasicString<C> const & a, C const * const b) { return a.equal_to(b); }
+	template <class C> NODISCARD bool operator==(BasicString<C> const & a, C const * const b) { return a.compare(b) == 0; }
 
 	template <class C> NODISCARD bool operator==(C const * const a, BasicString<C> const & b) { return b.equal_to(a); }
 
@@ -857,6 +857,54 @@ namespace Ism::util
 	inline String to_string(bool value) noexcept
 	{
 		return value ? "true"_s : "false"_s;
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class C = char
+	> NODISCARD bool is_squote(BasicString<C> const & value)
+	{
+		auto const s{ value.trim() };
+		return (s.size() >= 2) && (s.front() == (C)'\'') && (s.back() == (C)'\'');
+	}
+
+	template <class C = char
+	> NODISCARD bool is_dquote(BasicString<C> const & value)
+	{
+		auto const s{ value.trim() };
+		return (s.size() >= 2) && (s.front() == (C)'\"') && (s.back() == (C)'\"');
+	}
+
+	template <class C = char, bool require_match = false
+	> NODISCARD bool is_quote(BasicString<C> const & value)
+	{
+		auto const s{ value.trim() };
+		if constexpr (!require_match)
+		{
+			return (s.size() >= 2)
+				&& ((s.front() == (C)'\'' || s.front() == (C)'\"')
+				&& (s.back() == (C)'\'' || s.back() == (C)'\"'));
+		}
+		else
+		{
+			return (s.size() >= 2)
+				&& ((s.front() == (C)'\'' && s.back() == (C)'\'')
+				|| (s.front() == (C)'\"' && s.back() == (C)'\"'));
+		}
+	}
+
+	template <class C = char
+	> NODISCARD bool is_quote(BasicString<C> const & value, bool require_match)
+	{
+		return requires_match ? is_quote<C, true>(value) : is_quote<C, false>(value);
+	}
+
+	template <class C = char
+	> NODISCARD bool is_dunder_name(BasicString<C> const & value)
+	{
+		auto const s{ value.trim() };
+		auto const n{ s.size() };
+		return (n >= 5) && (s[0] == '_') && (s[1] == '_') && (s[n - 2] == '_') && (s[n - 1] == '_');
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

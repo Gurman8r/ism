@@ -48,7 +48,9 @@ namespace Ism
 	// Mat2
 	using Mat2b = TMat2x2<u8>;
 	using Mat2i = TMat2x2<i32>;
+	using Mat2l = TMat2x2<i64>;
 	using Mat2u = TMat2x2<u32>;
+	using Mat2ul = TMat2x2<u64>;
 	using Mat2f = TMat2x2<f32>;
 	using Mat2d = TMat2x2<f64>;
 	using Mat2s = TMat2x2<size_t>;
@@ -59,7 +61,9 @@ namespace Ism
 	// Mat3
 	using Mat3b = TMat3x3<u8>;
 	using Mat3i = TMat3x3<i32>;
+	using Mat3l = TMat3x3<i64>;
 	using Mat3u = TMat3x3<u32>;
+	using Mat3ul = TMat3x3<u64>;
 	using Mat3f = TMat3x3<f32>;
 	using Mat3d = TMat3x3<f64>;
 	using Mat3s = TMat3x3<size_t>;
@@ -70,7 +74,9 @@ namespace Ism
 	// Mat4
 	using Mat4b = TMat4x4<u8>;
 	using Mat4i = TMat4x4<i32>;
+	using Mat4l = TMat4x4<i64>;
 	using Mat4u = TMat4x4<u32>;
+	using Mat4ul = TMat4x4<u64>;
 	using Mat4f = TMat4x4<f32>;
 	using Mat4d = TMat4x4<f64>;
 	using Mat4s = TMat4x4<size_t>;
@@ -81,7 +87,9 @@ namespace Ism
 	// Vec2
 	using Vec2b = TVec2<u8>;
 	using Vec2i = TVec2<i32>;
+	using Vec2l = TVec2<i64>;
 	using Vec2u = TVec2<u32>;
+	using Vec2ul = TVec2<u64>;
 	using Vec2f = TVec2<f32>;
 	using Vec2d = TVec2<f64>;
 	using Vec2s = TVec2<size_t>;
@@ -92,7 +100,9 @@ namespace Ism
 	// Vec3
 	using Vec3b = TVec3<u8>;
 	using Vec3i = TVec3<i32>;
+	using Vec3l = TVec3<i64>;
 	using Vec3u = TVec3<u32>;
+	using Vec3ul = TVec3<u64>;
 	using Vec3f = TVec3<f32>;
 	using Vec3d = TVec3<f64>;
 	using Vec3s = TVec3<size_t>;
@@ -103,7 +113,9 @@ namespace Ism
 	// Vec4
 	using Vec4b = TVec4<u8>;
 	using Vec4i = TVec4<i32>;
+	using Vec4l = TVec4<i64>;
 	using Vec4u = TVec4<u32>;
+	using Vec4ul = TVec4<u64>;
 	using Vec4f = TVec4<f32>;
 	using Vec4d = TVec4<f64>;
 	using Vec4s = TVec4<size_t>;

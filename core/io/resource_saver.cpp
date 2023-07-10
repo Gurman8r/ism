@@ -4,7 +4,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ResourceFormatSaver, t) {}
+	OBJECT_EMBED(ResourceFormatSaver, t) {}
 
 	bool ResourceFormatSaver::recognize_path(String const & path, String const & hint) const
 	{
@@ -15,9 +15,9 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ResourceSaver, t) {}
+	OBJECT_EMBED(ResourceSaver, t) {}
 
-	ResourceSaver * ResourceSaver::__singleton{};
+	SINGLETON_EMBED(ResourceSaver);
 
 	Error_ ResourceSaver::save(RES const & value, String const & path, i32 flags)
 	{

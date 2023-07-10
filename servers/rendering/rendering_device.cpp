@@ -4,9 +4,13 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	RD * RD::__singleton{};
+	SINGLETON_EMBED(RenderingDevice);
 
-	EMBED_CLASS(RenderingDevice, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(RenderingDevice, t, TypeFlags_IsAbstract) {}
+
+	RenderingDevice::RenderingDevice() noexcept { SINGLETON_CTOR(); }
+
+	RenderingDevice::~RenderingDevice() noexcept { SINGLETON_DTOR(); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

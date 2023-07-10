@@ -1,5 +1,5 @@
 #include <extensions/lua/register_lua_types.hpp>
-#include <extensions/lua/lua.hpp>
+#include <extensions/lua/lua_script.hpp>
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -24,18 +24,18 @@ namespace Ism
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("initializing lua");
-		lua_loader.instance(); get_loaders()->add_resource_format_loader(lua_loader);
+		resource_loader()->add_resource_format_loader(lua_loader.instance());
 		REGISTER_CLASS(LuaLanguage, LuaScript, LuaInstance);
-		lua_language = memnew(LuaLanguage); get_scr()->register_language(lua_language);
+		lua_language = memnew(LuaLanguage); script_server()->register_language(lua_language);
 	}
 
 	void Ism::finalize_lua_extension(void * user, IsmExtensionInitializationLevel level)
 	{
 		if (level != ExtensionInitializationLevel_Scene) { return; }
 		PRINT_INFO("finalizing lua");
-		get_scr()->unregister_language(lua_language); memdelete(lua_language);
+		script_server()->unregister_language(lua_language); memdelete(lua_language);
 		UNREGISTER_CLASS(LuaLanguage, LuaScript, LuaInstance);
-		get_loaders()->remove_resource_format_loader(lua_loader); lua_loader = nullptr;
+		resource_loader()->remove_resource_format_loader(lua_loader); lua_loader = nullptr;
 	}
 }
 

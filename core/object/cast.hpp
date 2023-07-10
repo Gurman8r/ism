@@ -4,8 +4,9 @@
 #include <core/object/builtins/base_object.hpp>
 #include <core/object/builtins/type_object.hpp>
 #include <core/object/builtins/int_object.hpp>
-#include <core/object/builtins/float_object.hpp>
 #include <core/object/builtins/iterator_object.hpp>
+#include <core/object/builtins/float_object.hpp>
+#include <core/object/builtins/array_object.hpp>
 #include <core/object/builtins/string_object.hpp>
 #include <core/object/builtins/tuple_object.hpp>
 #include <core/object/builtins/list_object.hpp>
@@ -14,7 +15,7 @@
 #include <core/object/builtins/function_object.hpp>
 #include <core/object/builtins/method_object.hpp>
 #include <core/object/builtins/property_object.hpp>
-#include <core/object/builtins/generic_object.hpp>
+#include <core/object/builtins/generic_type_object.hpp>
 
 namespace Ism::priv
 {
@@ -25,12 +26,12 @@ namespace Ism::priv
 	{
 		LoaderLifeSupport() noexcept
 		{
-			get_internals()->get_loader_stack().push_back(nullptr);
+			internals()->get_loader_stack().push_back(nullptr);
 		}
 
 		~LoaderLifeSupport() noexcept
 		{
-			Vector<ObjectRef> & stack{ get_internals()->get_loader_stack() };
+			Vector<ObjectRef> & stack{ internals()->get_loader_stack() };
 			ASSERT(!stack.empty());
 			ObjectRef & ptr{ stack.back() };
 			stack.pop_back();
@@ -39,7 +40,7 @@ namespace Ism::priv
 
 		static void add(ObjectRef const & value) noexcept
 		{
-			Vector<ObjectRef> & stack{ get_internals()->get_loader_stack()};
+			Vector<ObjectRef> & stack{ internals()->get_loader_stack()};
 			ASSERT(!stack.empty());
 			ListRef & list{ (ListRef &)stack.back() };
 			if (!list) { list = ListRef::new_(); }
@@ -397,63 +398,6 @@ public:																							\
 	template <class T> struct TypeCaster<T, std::enable_if_t<is_base_object_v<T>>> : ObjectCaster<T> {};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	// NOT FULLY WORKING!!!
-	template <class Return, class ... Args
-	> struct TypeCaster<std::function<Return(Args...)>>
-	{
-		using type = std::function<Return(Args...)>;
-		using retval_type = std::conditional_t<std::is_same_v<Return, void>, mpl::void_type, Return>;
-		using function_type = Return(*)(Args...);
-
-	public:
-		bool load(ObjectRef const & src, bool convert)
-		{
-			if (!src && !convert) {
-				return false;
-			}
-			else if (!src && convert) {
-				return true;
-			}
-			else if (!FunctionRef::check_(src)) {
-				return false;
-			}
-			else {
-				auto func{ (FunctionRef)src };
-				if (CppFunctionRef cfunc{ func.cpp_function() }) {
-					auto rec{ cfunc->get_function_record() };
-					while (rec != nullptr) {
-						if (rec->is_stateless && rtti::same_type(typeid(function_type), *reinterpret_cast<std::type_info const *>(rec->data[1]))) {
-							struct capture { function_type f; };
-							value = ((capture *)&rec->data)->f;
-							return true;
-						}
-						rec = rec->next;
-					}
-				}
-				value = std::move(func);
-				return true;
-			}
-		}
-
-		template <class Func
-		> static ObjectRef cast(Func && src, ReturnValuePolicy_ policy, ObjectRef const &)
-		{
-			if (!src) {
-				return nullptr;
-			}
-			else if (auto result{ src.template target<function_type>() }) {
-				return CppFunctionRef({ *result, policy });
-			}
-			else {
-				return CppFunctionRef({ FWD(src), policy });
-			}
-		}
-
-		TYPE_CASTER_COMMON(type, "function");
-	};
-
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
 // cast
@@ -562,11 +506,14 @@ namespace Ism
 
 	// api -> c++
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-	> T cast(ObjectRef const & o) { return cast_op<T>(load_type<T>(o)); }
+	> NODISCARD auto cast(ObjectRef const & o) -> T
+	{
+		return cast_op<T>(load_type<T>(o));
+	}
 
 	// api -> api
 	template <class T, class O, std::enable_if_t<is_object_api_v<T> && is_object_api_v<O>, int> = 0
-	> T cast(O && o) noexcept
+	> NODISCARD auto cast(O && o) noexcept -> T
 	{
 		if constexpr (is_base_object_v<T>)
 		{
@@ -580,18 +527,16 @@ namespace Ism
 
 	// c++ -> api
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-	> ObjectRef cast(T && o, ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference, ObjectRef const & parent = {})
+	> NODISCARD auto cast(T && o, ReturnValuePolicy_ policy = ReturnValuePolicy_AutomaticReference, ObjectRef const & parent = {}) -> ObjectRef
 	{
-		if (policy == ReturnValuePolicy_Automatic)
-		{
+		if (policy == ReturnValuePolicy_Automatic) {
 			policy = (std::is_pointer_v<std::remove_reference_t<T>>
 				? ReturnValuePolicy_TakeOwnership
 				: (std::is_lvalue_reference_v<T>
 					? ReturnValuePolicy_Copy
 					: ReturnValuePolicy_Move));
 		}
-		else if (policy == ReturnValuePolicy_AutomaticReference)
-		{
+		else if (policy == ReturnValuePolicy_AutomaticReference) {
 			policy = (std::is_pointer_v<std::remove_reference_t<T>>
 				? ReturnValuePolicy_Reference
 				: (std::is_lvalue_reference_v<T>
@@ -604,23 +549,23 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T
-	> auto move(ObjectRef && o) -> std::enable_if_t<!move_never_v<T>, T>
+	> NODISCARD auto move(ObjectRef && o) -> std::enable_if_t<!move_never_v<T>, T>
 	{
 		if (o && o->get_ref_count() > 1) {
-			CRASH("Unable to cast instance to C++ rvalue: instance has multiple references (compile in debug mode for details)");
+			CRASH("could not cast instance to c++ rvalue because instance has multiple references");
 		}
 		T ret{ std::move(load_type<T>(o).operator T & ()) };
 		return ret;
 	}
 
 	template <class T
-	> auto cast(ObjectRef && o) -> std::enable_if_t<move_always_v<T>, T>
+	> NODISCARD auto cast(ObjectRef && o) -> std::enable_if_t<move_always_v<T>, T>
 	{
 		return move<T>(std::move(o));
 	}
 
 	template <class T
-	> auto cast(ObjectRef && o) -> std::enable_if_t<move_if_unreferenced_v<T>, T>
+	> NODISCARD auto cast(ObjectRef && o) -> std::enable_if_t<move_if_unreferenced_v<T>, T>
 	{
 		if (o && o->has_references())
 		{
@@ -633,7 +578,7 @@ namespace Ism
 	}
 
 	template <class T
-	> auto cast(ObjectRef && o) -> std::enable_if_t<move_never_v<T>, T>
+	> NODISCARD auto cast(ObjectRef && o) -> std::enable_if_t<move_never_v<T>, T>
 	{
 		return cast<T>(o);
 	}
@@ -642,7 +587,7 @@ namespace Ism
 
 	// object or cast
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int>
-	> ObjectRef object_or_cast(T && o)
+	> NODISCARD ObjectRef object_or_cast(T && o) noexcept
 	{
 		return Ism::cast(FWD(o));
 	}

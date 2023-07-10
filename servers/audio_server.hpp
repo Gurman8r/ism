@@ -14,19 +14,18 @@ namespace Ism
 	{
 		OBJECT_CLASS(AudioServer, Object);
 
-		static AudioServer * __singleton;
+		SINGLETON_CLASS(AudioServer);
 
 	public:
 		AudioServer();
 		virtual ~AudioServer() override;
-		SINGLETON_GETTER(AudioServer);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	using AS = AudioServer;
 
-	SINGLETON_WRAPPER(AS, get_audio);
+	SINGLETON_WRAPPER(AudioServer, audio_server);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

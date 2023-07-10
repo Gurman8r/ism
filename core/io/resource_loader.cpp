@@ -4,7 +4,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ResourceFormatLoader, t) {}
+	OBJECT_EMBED(ResourceFormatLoader, t) {}
 
 	bool ResourceFormatLoader::recognize_path(String const & path, String const & hint) const
 	{
@@ -15,9 +15,9 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ResourceLoader, t) {}
+	OBJECT_EMBED(ResourceLoader, t) {}
 
-	ResourceLoader * ResourceLoader::__singleton{};
+	SINGLETON_EMBED(ResourceLoader);
 	
 	RES ResourceLoader::load(String const & path, Error_ * r_error)
 	{

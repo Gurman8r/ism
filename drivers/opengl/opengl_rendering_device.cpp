@@ -91,7 +91,7 @@ void glCheckError(cstring expr, cstring file, u32 line)
 	} break;
 	}
 
-	get_os()->err_printf(
+	os()->err_printf(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -324,7 +324,7 @@ ENUM_MAPPING(TO_GL, BlendOperation_, u32,
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-EMBED_CLASS(OpenGlRenderingDevice, t) {}
+OBJECT_EMBED(OpenGlRenderingDevice, t) {}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -776,7 +776,7 @@ RID OpenGlRenderingDevice::shader_create(ShaderStageData const (&spec)[ShaderSta
 			glCheck(glDeleteObjectARB(obj));
 			glCheck(glDeleteProgramsARB(1, &s->handle));
 			memdelete(s);
-			get_os()->err_printf("%.*s\n", log_len, log_str);
+			os()->err_printf("%.*s\n", log_len, log_str);
 			return nullptr;
 		}
 
@@ -794,7 +794,7 @@ RID OpenGlRenderingDevice::shader_create(ShaderStageData const (&spec)[ShaderSta
 		glCheck(glGetInfoLogARB(s->handle, sizeof(log_str), &log_len, log_str));
 		glCheck(glDeleteProgramsARB(1, &s->handle));
 		memdelete(s);
-		get_os()->err_printf("%.*s\n", log_len, log_str);
+		os()->err_printf("%.*s\n", log_len, log_str);
 		return nullptr;
 	}
 
@@ -992,7 +992,7 @@ RD::DrawListID OpenGlRenderingDevice::draw_list_begin_for_screen(DS::WindowID wi
 	DrawListID const draw_list{ m_draw_list.size() };
 	_DrawList & dl{ m_draw_list.emplace_back(_DrawList{}) };
 
-	Vec2i const size{ get_display()->window_get_size(window) };
+	Vec2i const size{ display_server()->window_get_size(window) };
 	glCheck(glViewport(0, 0, size[0], size[1]));
 	glCheck(glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]));
 	glCheck(glClear(GL_COLOR_BUFFER_BIT));

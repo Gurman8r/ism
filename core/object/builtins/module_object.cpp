@@ -5,9 +5,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ModuleObject, t)
+	OBJECT_EMBED(ModuleObject, t)
 	{
-		t.tp_dictoffset = offsetof(ModuleObject, m_dict);
+		//t.tp_dictoffset = offsetof(ModuleObject, m_dict);
 
 		t.tp_getattro = (GetAttrOFunc)&ModuleObject::module_getattro;
 

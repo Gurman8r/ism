@@ -12,12 +12,11 @@ namespace Ism
 	{
 		OBJECT_CLASS(Input, Object);
 
-		static Input * __singleton;
+		SINGLETON_CLASS(Input);
 
 	public:
 		Input() noexcept { SINGLETON_CTOR(); }
 		virtual ~Input() noexcept override { SINGLETON_DTOR(); }
-		SINGLETON_GETTER(Input);
 
 	public:
 		enum Action_ : u8
@@ -281,7 +280,7 @@ namespace Ism
 		static constexpr bool is_valid_mouse_position(Vec2 const * value = nullptr) noexcept
 		{
 			constexpr f32 mouse_invalid{ -256000.f };
-			Vec2 const p{ value ? *value : __singleton->m_mouse_position };
+			Vec2 const p{ value ? *value : get_singleton()->m_mouse_position};
 			return p[0] >= mouse_invalid && p[1] >= mouse_invalid;
 		}
 
@@ -425,12 +424,12 @@ namespace Ism
 		void set_custom_cursor_image(RES const & cursor, CursorShape_ shape = CursorShape_Arrow, Vec2 const & hotspot = {});
 
 	public:
-		void iteration(Duration const delta_time);
+		void iteration(Duration const & delta_time);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SINGLETON_WRAPPER(Input, get_input);
+	SINGLETON_WRAPPER(Input, input);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

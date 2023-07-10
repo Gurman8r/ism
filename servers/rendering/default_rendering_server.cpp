@@ -1,24 +1,27 @@
 #include <servers/rendering/default_rendering_server.hpp>
+#include <servers/rendering/renderer_storage.hpp>
+#include <servers/rendering/renderer_canvas_renderer.hpp>
+#include <servers/rendering/renderer_scene_renderer.hpp>
 
 #if OPENGL_ENABLED
 #include <drivers/opengl/opengl_rendering_device.hpp>
-#define RENDERING_DEVICE_DEFAULT OpenGlRenderingDevice
+#define DefaultRenderingDevice OpenGlRenderingDevice
 #endif
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(DefaultRenderingServer, t) {}
+	OBJECT_EMBED(DefaultRenderingServer, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	DefaultRenderingServer::DefaultRenderingServer()
-		: RenderingServer	{}
-		, m_device			{ memnew(RENDERING_DEVICE_DEFAULT()) }
-		, m_storage			{ memnew(RendererStorage(m_device)) }
-		, m_canvas			{ memnew(Renderer2D(m_device, m_storage)) }
-		, m_scene			{ memnew(Renderer3D(m_device, m_storage)) }
+		: RenderingServer{}
+		, m_device	{ memnew(DefaultRenderingDevice()) }
+		, m_storage	{ memnew(RendererStorage(m_device)) }
+		, m_canvas	{ memnew(RendererCanvasRenderer(m_device, m_storage)) }
+		, m_scene	{ memnew(RendererSceneRenderer(m_device, m_storage)) }
 	{
 	}
 
@@ -34,10 +37,12 @@ namespace Ism
 
 	void DefaultRenderingServer::initialize()
 	{
+		m_scene->initialize();
 	}
 
 	void DefaultRenderingServer::finalize()
 	{
+		m_scene->finalize();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -104,7 +109,7 @@ namespace Ism
 
 		DynamicBuffer data{ m_device->texture_get_data(texture) };
 
-		Ref<Image> image;
+		Ref<Image> image{};
 
 		return image;
 	}
@@ -123,7 +128,7 @@ namespace Ism
 
 	RID DefaultRenderingServer::shader_create()
 	{
-		return RID();
+		return m_device->shader_create();
 	}
 
 	RID DefaultRenderingServer::shader_placeholder_create()
@@ -133,6 +138,7 @@ namespace Ism
 
 	void DefaultRenderingServer::shader_destroy(RID shader)
 	{
+		m_device->shader_destroy(shader);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

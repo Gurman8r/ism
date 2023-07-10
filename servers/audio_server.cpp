@@ -4,9 +4,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(AudioServer, t) {}
+	OBJECT_EMBED(AudioServer, t) {}
 
-	AudioServer * AudioServer::__singleton{};
+	SINGLETON_EMBED(AudioServer);
 
 	AudioServer::AudioServer() { SINGLETON_CTOR(); }
 

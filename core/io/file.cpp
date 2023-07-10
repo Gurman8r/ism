@@ -8,7 +8,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(File, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(File, t, TypeFlags_IsAbstract) {}
 
 	File::CreateFunc File::__create_func[FileAccess_MAX]{};
 
@@ -20,9 +20,9 @@ namespace Ism
 		switch (m_access_type)
 		{
 		case FileAccess_Resources: {
-			if (get_globals()) {
+			if (globals()) {
 				if (r_path.begins_with("res://")) {
-					String resource_path{ get_os()->get_resource_path() };
+					String resource_path{ os()->get_resource_path() };
 					if (!resource_path.empty()) {
 						return r_path.replace("res:/", resource_path);
 					}
@@ -33,7 +33,7 @@ namespace Ism
 		} break;
 		case FileAccess_User: {
 			if (r_path.begins_with("user://")) {
-				if (String data_dir{ get_os()->get_user_path() }; !data_dir.empty()) {
+				if (String data_dir{ os()->get_user_path() }; !data_dir.empty()) {
 					return r_path.replace("user:/", data_dir);
 				}
 				return r_path.replace("user://", "");

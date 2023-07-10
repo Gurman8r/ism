@@ -14,7 +14,7 @@ namespace Ism
 	{
 		OBJECT_CLASS(RenderingServer, Object);
 
-		static RenderingServer * __singleton;
+		SINGLETON_CLASS(RenderingServer);
 
 	protected:
 		using CreateFunc = RenderingServer * (*)();
@@ -23,7 +23,6 @@ namespace Ism
 
 	public:
 		virtual ~RenderingServer() override;
-		SINGLETON_GETTER(RenderingServer);
 		static RenderingServer * create();
 
 		virtual void initialize() = 0;
@@ -118,7 +117,7 @@ namespace Ism
 
 	using RS = RenderingServer;
 
-	SINGLETON_WRAPPER(RS, get_gfx);
+	SINGLETON_WRAPPER(RenderingServer, rendering_server);
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

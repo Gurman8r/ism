@@ -46,7 +46,7 @@ namespace Ism
 		for (i32 i{}; i < RD::ShaderStage_MAX; ++i) {
 			spec[i].shader_stage = (RD::ShaderStage_)i;
 			if (!spec[i].code.empty() && spec[i].code.back() != '\0') { spec[i].code << '\0'; }
-			//get_os()->printf("%.*s\n", spec[i].code.size(), spec[i].code.data());
+			//os()->printf("%.*s\n", spec[i].code.size(), spec[i].code.data());
 		}
 
 		return Error_OK;
@@ -54,7 +54,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ShaderFormatLoader, t) {}
+	OBJECT_EMBED(ShaderFormatLoader, t) {}
 
 	Error_ ShaderFormatLoader::load_shader(Ref<Shader> shader, String const & path)
 	{
@@ -67,10 +67,10 @@ namespace Ism
 		switch (path.extension().hash_code())
 		{
 		case ".shader"_hash: {
-			if (shader->m_shader) { get_gpu()->shader_destroy(shader->m_shader); }
+			if (shader->m_shader) { rendering_server()->shader_destroy(shader->m_shader); }
 			RD::ShaderStageData spec[RD::ShaderStage_MAX]{};
 			if (auto const error{ load_shader_default(file, spec) }; error != Error_OK) { return error; }
-			shader->m_shader = get_gpu()->shader_create(spec);
+			shader->m_shader = rendering_device()->shader_create(spec);
 			if (!shader->m_shader) { return Error_Failed; }
 			return Error_OK;
 		} break;
@@ -82,7 +82,7 @@ namespace Ism
 	RES ShaderFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Shader> temp{}; temp.instance();
-		if (Error_ const err{ load_shader(temp, get_globals()->globalize_path(path)) }) {
+		if (Error_ const err{ load_shader(temp, globals()->globalize_path(path)) }) {
 			if (r_error) { *r_error = err; }
 			temp = nullptr;
 		}

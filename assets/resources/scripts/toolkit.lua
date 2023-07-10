@@ -1,12 +1,12 @@
 -- toolkit.lua
 
-ToolKit = Ism.MainLoop{}
+local Toolkit = Ism.MainLoop{ name="Toolkit" }
 
-function ToolKit.initialize(this)
+function Toolkit.initialize(self)
 end
 
-function ToolKit.finalize(this)
+function Toolkit.process(self, dt)
 end
 
-function ToolKit.process(this, dt)
+function Toolkit.finalize(self)
 end

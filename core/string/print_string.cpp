@@ -7,7 +7,7 @@ namespace Ism
 
 	void Ism::_printv(cstring fmt, va_list args)
 	{
-		get_os()->printv(fmt, args);
+		os()->printv(fmt, args);
 	}
 
 	void Ism::_printf(cstring fmt, ...)
@@ -22,7 +22,7 @@ namespace Ism
 
 	void Ism::_err_printv(cstring fmt, va_list args)
 	{
-		get_os()->err_printv(fmt, args);
+		os()->err_printv(fmt, args);
 	}
 
 	void Ism::_err_printf(cstring fmt, ...)
@@ -64,12 +64,12 @@ namespace Ism
 
 	void Ism::_err_print_error(cstring func, cstring file, u32 line, cstring desc, ErrorHandlerType_ log_type)
 	{
-		get_os()->err_print(func, file, line, desc, "", log_type);
+		os()->err_print(func, file, line, desc, "", log_type);
 	}
 
 	void Ism::_err_print_error(cstring func, cstring file, u32 line, cstring desc, cstring message, ErrorHandlerType_ log_type)
 	{
-		get_os()->err_print(func, file, line, desc, message, log_type);
+		os()->err_print(func, file, line, desc, message, log_type);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -19,6 +19,8 @@ namespace Ism
 	// package manager
 	class ISM_API PackedData
 	{
+		SINGLETON_CLASS(PackedData);
+
 	public:
 		using PathID = size_t;
 
@@ -40,7 +42,6 @@ namespace Ism
 		};
 
 	private:
-		static PackedData * __singleton;
 		bool m_enabled{ true };
 		HashMap<String, PackedFile> m_files{};
 		Vector<PackSource *> m_sources{};
@@ -49,7 +50,6 @@ namespace Ism
 	public:
 		PackedData();
 		~PackedData();
-		SINGLETON_GETTER(PackedData);
 
 		NODISCARD bool is_enabled() const { return m_enabled; }
 		void set_enabled(bool enabled) { m_enabled = enabled; }

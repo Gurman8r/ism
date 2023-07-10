@@ -61,38 +61,4 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// opaque type
-#define OPAQUE_TYPE(m_name) \
-		struct CAT(__, m_name) { int unused; }; \
-		using m_name = CAT(__, m_name) *;
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-// strong typedef
-#define STRONG_TYPEDEF(m_to, m_from)																					\
-		class m_to final {																								\
-		private:																										\
-			m_from value;																								\
-		public:																											\
-			inline m_to() = default;																					\
-			inline m_to(m_to const & other) = default;																	\
-			inline m_to(m_to && other) = default;																		\
-			inline m_to & operator=(m_to const & other) = default;														\
-			inline m_to & operator=(m_to && other) = default;															\
-			inline constexpr explicit m_to(m_from other) noexcept : value{ other } {}									\
-			inline constexpr m_to & operator=(m_from other) noexcept { value = other; return (*this); }					\
-			inline constexpr operator m_from const & () const noexcept { return value; }								\
-			inline constexpr operator m_from & () noexcept { return value; }											\
-			inline constexpr decltype(auto) operator==(m_to const & other) noexcept { return value == other.value; }	\
-			inline constexpr decltype(auto) operator!=(m_to const & other) noexcept { return value != other.value; }	\
-			inline constexpr decltype(auto) operator<(m_to const & other) noexcept { return value < other.value; }		\
-			inline constexpr decltype(auto) operator>(m_to const & other) noexcept { return value > other.value; }		\
-			inline constexpr decltype(auto) operator<=(m_to const & other) noexcept { return value <= other.value; }	\
-			inline constexpr decltype(auto) operator>=(m_to const & other) noexcept { return value >= other.value; }	\
-		}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 #endif // !_ISM_TYPEDEFS_HPP_

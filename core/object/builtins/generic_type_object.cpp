@@ -1,11 +1,11 @@
-#include <core/object/builtins/generic_object.hpp>
+#include <core/object/builtins/generic_type_object.hpp>
 #include <core/object/class.hpp>
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(GenericTypeObject, t)
+	OBJECT_EMBED(GenericTypeObject, t)
 	{
 		t.tp_cmp = (CmpFunc)[](ObjectRef self, ObjectRef other) -> i32
 		{

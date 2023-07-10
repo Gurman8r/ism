@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(CppFunctionObject, t)
+	OBJECT_EMBED(CppFunctionObject, t)
 	{
 		t.tp_dictoffset = offsetof(CppFunctionObject, m_dict);
 
@@ -18,7 +18,7 @@ namespace Ism
 
 		t.tp_bind = BIND_CLASS(CppFunctionObject, klass)
 		{
-			// manually add this first because it's used by CLASS_
+			// manually add this first because it's used by BIND_CLASS
 			klass.add_object("__name__", PropertyRef({
 				CppFunctionRef({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(klass) }),
 				CppFunctionRef({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(klass) }),

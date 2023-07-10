@@ -12,6 +12,8 @@ namespace Ism
 	// zip archive
 	class ISM_API ZipArchive : public PackSource
 	{
+		SINGLETON_CLASS(ZipArchive);
+
 	public:
 		struct ZipFile {
 			i32 package{ -1 };
@@ -24,14 +26,12 @@ namespace Ism
 		};
 		
 	private:
-		static ZipArchive * __singleton;
 		Vector<ZipPackage> m_packages{};
 		HashMap<String, ZipFile> m_files{};
 
 	public:
 		ZipArchive();
 		~ZipArchive();
-		static ZipArchive * get_singleton();
 
 		void close_handle(unzFile file) const;
 		NODISCARD unzFile get_file_handle(String const & path) const;

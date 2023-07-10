@@ -7,7 +7,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Dir, t, TypeFlags_IsAbstract) {};
+	OBJECT_EMBED(Dir, t, TypeFlags_IsAbstract) {};
 
 	Error_ Dir::__last_dir_open_error{ Error_OK };
 
@@ -18,8 +18,8 @@ namespace Ism
 	String Dir::_get_root_path() const
 	{
 		switch (m_access_type) {
-		case DirAccess_Resources: return get_globals()->get_resource_path();
-		case DirAccess_User: return get_os()->get_user_path();
+		case DirAccess_Resources: return globals()->get_resource_path();
+		case DirAccess_User: return os()->get_user_path();
 		default: return "";
 		}
 	}
@@ -44,7 +44,7 @@ namespace Ism
 		{
 		case DirAccess_Resources: {
 			if (path.begins_with("res://")) {
-				String const resource_path{ get_os()->get_resource_path() };
+				String const resource_path{ os()->get_resource_path() };
 				if (!resource_path.empty()) { return path.replace_first("res:/", resource_path); }
 				return path.replace_first("res://", "");
 			}
@@ -436,16 +436,16 @@ namespace Ism
 	Error_ Dir::copy_abs(String const & from, String const & to, i32 chmod_flags)
 	{
 		Ref<Dir> d{ Dir::create(DirAccess_Filesystem) };
-		String const f{ get_globals()->globalize_path(from) };
-		String const t{ get_globals()->globalize_path(to)};
+		String const f{ globals()->globalize_path(from) };
+		String const t{ globals()->globalize_path(to)};
 		return d->copy(f, t, chmod_flags);
 	}
 
 	Error_ Dir::rename_abs(String const & from, String const & to)
 	{
 		Ref<Dir> d{ Dir::create(DirAccess_Filesystem) };
-		String const f{ get_globals()->globalize_path(from) };
-		String const t{ get_globals()->globalize_path(to) };
+		String const f{ globals()->globalize_path(from) };
+		String const t{ globals()->globalize_path(to) };
 		return d->rename(f, t);
 	}
 

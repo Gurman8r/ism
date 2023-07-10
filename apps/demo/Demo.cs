@@ -4,28 +4,20 @@ namespace Demo
 {
 	sealed class Demo : Ism.MainLoop
 	{
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-		private static void OnInitialize()
+		private void initialize()
 		{
 		}
 
-		private static void OnFinalize()
+		private void physics_process(float delta_time)
 		{
 		}
 
-		private static void OnStart()
+		private void process(float delta_time)
 		{
 		}
 
-		private static void OnProcess(float delta_time)
+		private void finalize()
 		{
 		}
-
-		private static void OnPhysicsProcess(float delta_time)
-		{
-		}
-
-		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 	}
 }

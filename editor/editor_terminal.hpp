@@ -34,9 +34,7 @@ namespace Ism
 		void printv(cstring fmt, va_list args);
 		void printf(cstring fmt, ...);
 		void execute(String const & command_line);
-
-	protected:
-		virtual i32 text_edit_callback(ImGuiInputTextCallbackData * data);
+		i32 text_edit_callback(ImGuiInputTextCallbackData * data);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

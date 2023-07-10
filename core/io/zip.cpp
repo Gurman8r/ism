@@ -64,7 +64,7 @@ namespace Ism
 
 namespace Ism
 {
-	ZipArchive * ZipArchive::__singleton{};
+	SINGLETON_EMBED(ZipArchive);
 
 	ZipArchive::ZipArchive() { SINGLETON_CTOR(); }
 
@@ -75,11 +75,6 @@ namespace Ism
 			unzClose(m_packages[i].m_zfile);
 		}
 		m_packages.clear();
-	}
-
-	ZipArchive * ZipArchive::get_singleton()
-	{
-		return BRANCHLESS_IF((!__singleton), (__singleton = memnew(ZipArchive))), __singleton;
 	}
 
 	void ZipArchive::close_handle(unzFile file) const
@@ -181,7 +176,7 @@ namespace Ism
 
 namespace Ism
 {
-	EMBED_CLASS(ZippedFile, t) {}
+	OBJECT_EMBED(ZippedFile, t) {}
 
 	ZippedFile::ZippedFile(String const & path, PackedData::PackedFile const & file)
 	{

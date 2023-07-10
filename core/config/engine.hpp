@@ -7,18 +7,17 @@ namespace Ism
 {
 	class Engine final
 	{
-		static Engine * __singleton;
+		SINGLETON_CLASS(Engine);
 
 	public:
 		Engine() noexcept;
 		~Engine() noexcept;
-		SINGLETON_GETTER(Engine);
 
 	public:
 
 	};
 
-	SINGLETON_WRAPPER(Engine, get_engine);
+	SINGLETON_WRAPPER(Engine, engine);
 }
 
 #endif // !_ISM_ENGINE_HPP_

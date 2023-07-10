@@ -1,6 +1,7 @@
 #ifndef _ISM_PROJECT_SETTINGS_HPP_
 #define _ISM_PROJECT_SETTINGS_HPP_
 
+#include <core/object/var.hpp>
 #include <core/io/config_file.hpp>
 
 namespace Ism
@@ -11,9 +12,9 @@ namespace Ism
 	{
 		OBJECT_CLASS(ProjectSettings, Object);
 
-		static ProjectSettings * __singleton;
+		SINGLETON_CLASS(ProjectSettings);
 
-		HashMap<String, HashMap<String, ObjectRef>> m_data{};
+		HashMap<String, Var> m_data{};
 
 		mutable String
 			m_bin_path{},
@@ -25,29 +26,32 @@ namespace Ism
 	public:
 		ProjectSettings() noexcept { SINGLETON_CTOR(); }
 		virtual ~ProjectSettings() noexcept override { SINGLETON_DTOR(); }
-		SINGLETON_GETTER(ProjectSettings);
 
 	public:
 		Error_ setup(String const & exec_path, String const & main_pack = {});
 
-	public:
-		NODISCARD ObjectRef get(String const & section, String const & name) const;
-		Error_ set(String const & section, String const & name, ObjectRef const & value);
+		NODISCARD Var get(String const & path) const;
+		Error_ set(String const & path, Var const & value);
 
-	public:
 		NODISCARD String localize_path(String const & path) const;
-		NODISCARD String globalize_path(String const & path) const noexcept;
+		NODISCARD String globalize_path(String const & path) const;
 
-		NODISCARD String get_project_path() const noexcept;
 		NODISCARD String get_bin_path() const noexcept;
 		NODISCARD String get_config_path() const noexcept;
 		NODISCARD String get_mods_path() const noexcept;
+		NODISCARD String get_project_path() const noexcept;
 		NODISCARD String get_resource_path() const noexcept;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SINGLETON_WRAPPER(ProjectSettings, get_globals);
+	SINGLETON_WRAPPER(ProjectSettings, globals);
+
+#define GLOBAL_GET(path) \
+		(Ism::globals()->get((path)))
+
+#define GLOBAL_SET(path, value) \
+		(Ism::globals()->set((path), (value)))
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 }

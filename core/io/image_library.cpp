@@ -12,7 +12,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ImageFormatLoader, t) {}
+	OBJECT_EMBED(ImageFormatLoader, t) {}
 
 	Error_ ImageFormatLoader::load_image(Ref<Image> image, String const & path)
 	{
@@ -40,7 +40,7 @@ namespace Ism
 	RES ImageFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Image> temp{}; temp.instance();
-		if (Error_ const err{ load_image(temp, get_globals()->globalize_path(path)) }) {
+		if (Error_ const err{ load_image(temp, globals()->globalize_path(path)) }) {
 			if (r_error) { *r_error = err; }
 			temp = nullptr;
 		}
@@ -48,13 +48,13 @@ namespace Ism
 		return temp;
 	}
 
-	void ImageFormatLoader::get_recognized_extensions(Vector<String> * out) const
+	void ImageFormatLoader::get_recognized_extensions(Vector<String> * r_out) const
 	{
-		if (!out) { return; }
-		out->push_back(".jpg");
-		out->push_back(".jpeg");
-		out->push_back(".png");
-		out->push_back(".bmp");
+		if (!r_out) { return; }
+		r_out->push_back(".jpg");
+		r_out->push_back(".jpeg");
+		r_out->push_back(".png");
+		r_out->push_back(".bmp");
 	}
 
 	bool ImageFormatLoader::get_flip_vertically_on_load()

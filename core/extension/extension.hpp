@@ -47,7 +47,7 @@ namespace Ism
 		OBJECT_CLASS(ExtensionFormatLoader, ResourceFormatLoader);
 	public:
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;
-		virtual void get_recognized_extensions(Vector<String> * out) const override;
+		virtual void get_recognized_extensions(Vector<String> * r_out) const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

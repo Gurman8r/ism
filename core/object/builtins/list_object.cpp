@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ListObject, t)
+	OBJECT_EMBED(ListObject, t)
 	{
 		t.tp_len = (LenFunc)[](ObjectRef self) -> ssize_t { return (ssize_t)ListRef(self).size(); };
 

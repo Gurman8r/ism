@@ -31,12 +31,11 @@ namespace Ism
 	{
 		OBJECT_CLASS(Performance, Object);
 
-		static Performance * __singleton;
+		SINGLETON_CLASS(Performance);
 
 	public:
 		Performance();
 		virtual ~Performance() override;
-		SINGLETON_GETTER(Performance);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

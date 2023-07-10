@@ -3,7 +3,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(Component, t) {}
+	OBJECT_EMBED(Component, t) {}
 
 	Component::Component()
 	{

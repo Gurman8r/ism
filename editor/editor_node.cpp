@@ -28,11 +28,8 @@ namespace Ism
 
 	static RID uniform_buffers[MAX_UNIFORMS]{};
 	static RID uniform_sets[MAX_UNIFORMS]{};
-	static RID material{};
 	static RID pipeline{};
-	static RID framebuffer{}, backbuffer{};
-	static RID render_target{};
-	static RID viewport{};
+	static RID framebuffer{};
 
 	static Vec2 screen_resolution{};
 
@@ -57,7 +54,7 @@ namespace Ism
 
 	static void _setup_pipeline(RID const shader)
 	{
-		pipeline = get_gpu()->render_pipeline_create
+		pipeline = rendering_device()->render_pipeline_create
 		(
 			shader,
 			RD::RenderPrimitive_Triangles,
@@ -115,9 +112,9 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EditorNode * EditorNode::__singleton{};
+	SINGLETON_EMBED(EditorNode);
 
-	EMBED_CLASS(EditorNode, t) {}
+	OBJECT_EMBED(EditorNode, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -125,16 +122,16 @@ namespace Ism
 	{
 		SINGLETON_CTOR();
 
-		m_assets = memnew(EditorAssets);
-		m_hierarchy = memnew(EditorHierarchy);
-		m_inspector = memnew(EditorInspector);
-		m_log = memnew(EditorLog); m_log->set_open(false);
-		m_terminal = memnew(EditorTerminal);
-		m_viewport = memnew(EditorViewport);
+		init_panel(m_assets);
+		init_panel(m_hierarchy);
+		init_panel(m_inspector);
+		init_panel(m_log, false);
+		init_panel(m_terminal);
+		init_panel(m_viewport);
 
-		camera.rid = get_gfx()->camera_create();
-		get_gfx()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
-		get_gfx()->camera_set_transform(camera.rid, camera.transform);
+		camera.rid = rendering_server()->camera_create();
+		rendering_server()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
+		rendering_server()->camera_set_transform(camera.rid, camera.transform);
 
 		m_shaders["2d"] = load_resource("res://shaders/2d.shader");
 		m_shaders["3d"] = load_resource("res://shaders/3d.shader");
@@ -142,78 +139,43 @@ namespace Ism
 		m_textures["earth_sm_2k"] = ImageTexture::create(load_resource("res://textures/earth/earth_sm_2k.png"));
 		m_meshes["sphere32x24"] = load_resource("res://meshes/sphere32x24.obj");
 
-		//RS::SurfaceData quad_spec{};
-		//quad_spec.primitive = RS::Primitive_Triangles;
-		//quad_spec.vertex_data
-		//	<< Vec4{ -1, -1 } << Vec4{} << Vec4{ 0, 0 } << Vec4{} << Vec4{}
-		//	<< Vec4{ 1, -1 } << Vec4{} << Vec4{ 1, 0 } << Vec4{} << Vec4{}
-		//	<< Vec4{ 1, 1 } << Vec4{} << Vec4{ 1, 1 } << Vec4{} << Vec4{};
-		//quad_spec.vertex_data
-		//	<< Vec4{ 1, 1 } << Vec4{} << Vec4{ 1, 1 } << Vec4{} << Vec4{}
-		//	<< Vec4{ 1, -1 } << Vec4{} << Vec4{ 1, 0 } << Vec4{} << Vec4{}
-		//	<< Vec4{ -1, -1 } << Vec4{} << Vec4{ 0, 0 } << Vec4{} << Vec4{}
-		//	<< Vec4{ -1, 1 } << Vec4{} << Vec4{ 0, 1 } << Vec4{} << Vec4{};
-		//quad_spec.vertex_data
-		//	<< Vec4{ -1, 1 } << Vec4{} << Vec4{ 0, 1 } << Vec4{} << Vec4{}
-		//	<< Vec4{ -1, -1 } << Vec4{} << Vec4{ 0, 0 } << Vec4{} << Vec4{}
-		//	<< Vec4{ 1, -1 } << Vec4{} << Vec4{ 1, 0 } << Vec4{} << Vec4{}
-		//	<< Vec4{ -1, 1 } << Vec4{} << Vec4{ 0, 1 } << Vec4{} << Vec4{}
-		//	<< Vec4{ 1, -1 } << Vec4{} << Vec4{ 1, 0 } << Vec4{} << Vec4{}
-		//	<< Vec4{ 1, 1 } << Vec4{} << Vec4{ 1, 1 } << Vec4{} << Vec4{};
-		//quad_spec.vertex_count = quad_spec.vertex_data.size() / sizeof(f32);
-		//quad_spec.index_data << 0u << 1u << 2u;
-		//quad_spec.index_count = quad_spec.index_data.size() / sizeof(u32);
-		//m_meshes["quad"].instance(quad_spec);
-
 		RID const shader{ m_shaders["3d"]->get_rid() };
 		_setup_pipeline(shader);
 
-		uniform_buffers[SCENE_STATE_UNIFORMS] = get_gpu()->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
-		uniform_sets[SCENE_STATE_UNIFORMS] = get_gpu()->uniform_set_create({
+		uniform_buffers[SCENE_STATE_UNIFORMS] = rendering_device()->uniform_buffer_create(sizeof(RD::Std140<Mat4, Mat4>));
+		uniform_sets[SCENE_STATE_UNIFORMS] = rendering_device()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, SCENE_STATE_UNIFORMS, { uniform_buffers[SCENE_STATE_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[RENDER_PASS_UNIFORMS] = get_gpu()->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
-		uniform_sets[RENDER_PASS_UNIFORMS] = get_gpu()->uniform_set_create({
+		uniform_buffers[RENDER_PASS_UNIFORMS] = rendering_device()->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+		uniform_sets[RENDER_PASS_UNIFORMS] = rendering_device()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, RENDER_PASS_UNIFORMS, { uniform_buffers[RENDER_PASS_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[TRANSFORMS_UNIFORMS] = get_gpu()->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
-		uniform_sets[TRANSFORMS_UNIFORMS] = get_gpu()->uniform_set_create({
+		uniform_buffers[TRANSFORMS_UNIFORMS] = rendering_device()->uniform_buffer_create(sizeof(RD::Std140<Mat4>));
+		uniform_sets[TRANSFORMS_UNIFORMS] = rendering_device()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, TRANSFORMS_UNIFORMS, { uniform_buffers[TRANSFORMS_UNIFORMS] } },
 		}, shader);
 
-		uniform_buffers[MATERIAL_UNIFORMS] = get_gpu()->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, f32>));
-		uniform_sets[MATERIAL_UNIFORMS] = get_gpu()->uniform_set_create({
+		uniform_buffers[MATERIAL_UNIFORMS] = rendering_device()->uniform_buffer_create(sizeof(RD::Std140<Vec4, Vec4, Vec4, f32>));
+		uniform_sets[MATERIAL_UNIFORMS] = rendering_device()->uniform_set_create({
 			{ RD::UniformType_UniformBuffer, MATERIAL_UNIFORMS, { uniform_buffers[MATERIAL_UNIFORMS] } },
 			{ RD::UniformType_Texture, 0, { m_textures["earth_dm_2k"]->get_rid() } },
 			{ RD::UniformType_Texture, 1, { m_textures["earth_sm_2k"]->get_rid() } },
 		}, shader);
 	
-		// material (WIP)
-		material = get_gfx()->material_create();
-		get_gfx()->material_set_shader(material, shader);
-		get_gfx()->material_update(material, {
-			{ "Ambient", Vec4{ 0.8f, 0.4f, 0.2f, 1.0f } },
-			{ "Diffuse", Vec4{ 0.5f, 0.5f, 0.5f, 1.0f } },
-			{ "Specular", Vec4{ 1.0f, 1.0f, 1.0f, 1.0f } },
-			{ "Shininess", 32.f },
-			{ "Diffuse_Map", m_textures["earth_dm_2k"]->get_rid() },
-			{ "Specular_Map", m_textures["earth_sm_2k"]->get_rid() },
-		});
-	
 		// framebuffers
 		Vector<RID> fb_textures{
-			get_gpu()->texture_create(MAKE(RD::TextureCreateInfo, t) {
+			rendering_device()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 				t.color_format = RD::DataFormat_R8G8B8_UNORM;
 				t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_ColorAttachment;
 			}),
-			get_gpu()->texture_create(MAKE(RD::TextureCreateInfo, t) {
+			rendering_device()->texture_create(MAKE(RD::TextureCreateInfo, t) {
 				t.color_format = RD::DataFormat_D24_UNORM_S8_UINT;
 				t.usage_flags = RD::TextureFlags_Sampling | RD::TextureFlags_CanCopyFrom | RD::TextureFlags_DepthStencilAttachment;
 			}),
 		};
-		framebuffer = get_gpu()->framebuffer_create(fb_textures);
+		framebuffer = rendering_device()->framebuffer_create(fb_textures);
 		m_viewport->m_main_texture = fb_textures[0];
 	}
 
@@ -221,28 +183,20 @@ namespace Ism
 	{
 		SINGLETON_DTOR();
 
-		if (camera.rid) { get_gfx()->camera_destroy(camera.rid); camera.rid = nullptr; }
-
-		if (material) { get_gfx()->material_destroy(material); }
+		if (camera.rid) { rendering_server()->camera_destroy(camera.rid); camera.rid = nullptr; }
 
 		for (size_t i{}; i < ARRAY_SIZE(uniform_buffers); ++i) {
-			if (uniform_buffers[i]) { get_gpu()->buffer_destroy(uniform_buffers[i]); }
+			if (uniform_buffers[i]) { rendering_device()->buffer_destroy(uniform_buffers[i]); }
 		}
 
 		for (size_t i{}; i < ARRAY_SIZE(uniform_sets); ++i) {
-			if (uniform_sets[i]) { get_gpu()->uniform_set_destroy(uniform_sets[i]); }
+			if (uniform_sets[i]) { rendering_device()->uniform_set_destroy(uniform_sets[i]); }
 		}
 
-		if (framebuffer) { get_gpu()->framebuffer_destroy(framebuffer); }
-		if (backbuffer) { get_gpu()->framebuffer_destroy(backbuffer); }
-		if (pipeline) { get_gpu()->render_pipeline_destroy(pipeline); }
+		if (framebuffer) { rendering_device()->framebuffer_destroy(framebuffer); }
+		if (pipeline) { rendering_device()->render_pipeline_destroy(pipeline); }
 
-		memdelete(m_assets);
-		memdelete(m_hierarchy);
-		memdelete(m_inspector);
-		memdelete(m_log);
-		memdelete(m_terminal);
-		memdelete(m_viewport);
+		while (!m_panels.empty()) { memdelete(m_panels.back()); m_panels.pop_back(); }
 	}
 
 	void EditorNode::_notification(Notification_ id)
@@ -251,9 +205,9 @@ namespace Ism
 		{
 		case Notification_Process: {
 
-			get_tree()->get_root()->set_title(String::format<128>(
+			get_tree()->get_root()->set_title(String::format<32>(
 				"%s @ %.3f fps",
-				get_os()->get_exec_path().stem().c_str(),
+				VERSION_NAME,
 				get_tree()->get_fps().value
 			));
 
@@ -263,31 +217,31 @@ namespace Ism
 			{
 				if (m_viewport->is_focused()) {
 					f32 const camera_move_speed{ 10.f * delta_time };
-					if (get_input()->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_move_speed); }
-					else if (get_input()->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_move_speed); }
-					if (get_input()->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_move_speed); }
-					else if (get_input()->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_move_speed); }
-					if (get_input()->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_move_speed); }
-					else if (get_input()->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_move_speed); }
+					if (input()->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_move_speed); }
+					else if (input()->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_move_speed); }
+					if (input()->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_move_speed); }
+					else if (input()->is_key_down(Input::Key_S)) { camera.transform.translate(-camera.transform.front() * camera_move_speed); }
+					if (input()->is_key_down(Input::Key_D)) { camera.transform.translate(camera.transform.right() * camera_move_speed); }
+					else if (input()->is_key_down(Input::Key_A)) { camera.transform.translate(-camera.transform.right() * camera_move_speed); }
 				}
 
 				if (Vec2 const res{ m_viewport->get_window()->InnerRect.GetWidth(), m_viewport->get_window()->InnerRect.GetHeight() }
 				; screen_resolution != res) {
 					screen_resolution = res;
 					camera.projection = perspective(camera.fov, screen_resolution[0] / screen_resolution[1], camera.znear, camera.zfar);
-					get_gfx()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
-					get_gpu()->framebuffer_set_size(framebuffer, (i32)screen_resolution[0], (i32)screen_resolution[1]);
+					rendering_server()->camera_set_perspective(camera.rid, camera.fov, camera.znear, camera.zfar);
+					rendering_device()->framebuffer_set_size(framebuffer, (i32)screen_resolution[0], (i32)screen_resolution[1]);
 				}
 
 				if (m_viewport->m_is_dragging_view) {
-					Vec2 const drag{ get_input()->get_mouse_delta() * (f32)delta_time };
+					Vec2 const drag{ input()->get_mouse_delta() * (f32)delta_time };
 					camera.yaw += drag[0];
 					camera.pitch = constrain(camera.pitch + drag[1], -89.f, 89.f);
 				}
 			}
 
 			camera.transform.set_rotation(camera.pitch, camera.yaw, camera.roll);
-			get_gfx()->camera_set_transform(camera.rid, camera.transform);
+			rendering_server()->camera_set_transform(camera.rid, camera.transform);
 			m_viewport->m_camera = camera.rid;
 			m_viewport->m_camera_proj = camera.projection;
 			m_viewport->m_camera_view = camera.transform;
@@ -296,51 +250,50 @@ namespace Ism
 				RD::Std140<Mat4, Mat4> scene_state_ubo;
 				scene_state_ubo.set<0>(camera.projection); // camera projection
 				scene_state_ubo.set<1>(camera.transform); // camera view
-				get_gpu()->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
+				rendering_device()->buffer_update(uniform_buffers[SCENE_STATE_UNIFORMS], 0, scene_state_ubo, sizeof(scene_state_ubo));
 
 				RD::Std140<Mat4> render_pass_ubo;
 				render_pass_ubo.set<0>(identity_v<Mat4>); // placeholder
-				get_gpu()->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
+				rendering_device()->buffer_update(uniform_buffers[RENDER_PASS_UNIFORMS], 0, render_pass_ubo, sizeof(render_pass_ubo));
 
 				RD::Std140<Mat4> transforms_ubo;
 				transforms_ubo.set<0>(transform[0]); // model transform
-				get_gpu()->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
+				rendering_device()->buffer_update(uniform_buffers[TRANSFORMS_UNIFORMS], 0, transforms_ubo, sizeof(transforms_ubo));
 
 				RD::Std140<Vec4, Vec4, Vec4, f32> material_ubo;
 				material_ubo.set<0>({ 0.8f, 0.4f, 0.2f, 1.0f }); // ambient
 				material_ubo.set<1>({ 0.5f, 0.5f, 0.5f, 1.0f }); // diffuse
 				material_ubo.set<2>({ 1.0f, 1.0f, 1.0f, 1.0f }); // specular
 				material_ubo.set<3>(32.f); // shininess
-				get_gpu()->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
+				rendering_device()->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
 
 				static Vector<Color> clear_colors{ Colors::magenta };
 				clear_colors[0] = rotate_hue(clear_colors[0], 10.f * delta_time);
 
-				RD::DrawListID const draw_list{ get_gpu()->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
-				get_gpu()->draw_list_bind_pipeline(draw_list, pipeline);
-				get_gpu()->draw_list_bind_uniform_set(draw_list, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
-				get_gpu()->draw_list_bind_uniform_set(draw_list, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
-				get_gpu()->draw_list_bind_uniform_set(draw_list, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
-				get_gpu()->draw_list_bind_uniform_set(draw_list, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
+				RD::DrawListID const draw_list{ rendering_device()->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
+				rendering_device()->draw_list_bind_pipeline(draw_list, pipeline);
+				rendering_device()->draw_list_bind_uniform_set(draw_list, uniform_sets[SCENE_STATE_UNIFORMS], SCENE_STATE_UNIFORMS);
+				rendering_device()->draw_list_bind_uniform_set(draw_list, uniform_sets[RENDER_PASS_UNIFORMS], RENDER_PASS_UNIFORMS);
+				rendering_device()->draw_list_bind_uniform_set(draw_list, uniform_sets[TRANSFORMS_UNIFORMS], TRANSFORMS_UNIFORMS);
+				rendering_device()->draw_list_bind_uniform_set(draw_list, uniform_sets[MATERIAL_UNIFORMS], MATERIAL_UNIFORMS);
 				static Mesh * mesh{ *m_meshes["sphere32x24"] };
 				for (size_t i{}; i < mesh->get_surface_count(); ++i) {
-					get_gpu()->draw_list_bind_vertex_array(draw_list, mesh->surface_get_vertex_array(i));
+					rendering_device()->draw_list_bind_vertex_array(draw_list, mesh->surface_get_vertex_array(i));
 					RID const ia{ mesh->surface_get_index_array(i) };
-					get_gpu()->draw_list_bind_index_array(draw_list, ia);
-					get_gpu()->draw_list_draw(draw_list, ia != nullptr, 1, 0);
+					rendering_device()->draw_list_bind_index_array(draw_list, ia);
+					rendering_device()->draw_list_draw(draw_list, ia != nullptr, 1, 0);
 				}
-				get_gpu()->draw_list_end();
+				rendering_device()->draw_list_end();
 			}
 
 			// imgui
 			_draw_dockspace();
-			m_assets->process(delta_time);
-			m_hierarchy->process(delta_time);
-			m_inspector->process(delta_time);
-			m_log->process(delta_time);
-			m_terminal->process(delta_time);
-			m_viewport->process(delta_time);
-			if (m_show_imgui_demo) { ImGui::ShowDemoWindow(&m_show_imgui_demo); }
+			for (auto const panel : m_panels) {
+				panel->process(delta_time);
+			}
+			if (m_show_imgui_demo) {
+				ImGui::ShowDemoWindow(&m_show_imgui_demo);
+			}
 
 		} break;
 		}

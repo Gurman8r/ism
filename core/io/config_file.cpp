@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ConfigFile, t) {}
+	OBJECT_EMBED(ConfigFile, t) {}
 
 	Error_ ConfigFile::parse(String const & path)
 	{

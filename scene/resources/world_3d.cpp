@@ -2,5 +2,13 @@
 
 namespace Ism
 {
+	OBJECT_EMBED(World3D, t) {}
 
+	World3D::World3D()
+	{
+	}
+
+	World3D::~World3D()
+	{
+	}
 }

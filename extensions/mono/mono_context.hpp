@@ -16,9 +16,16 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	class CSharpLanguage;
+	class CSharpScript;
+	class CSharpInstance;
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// mono contex
 	class ISM_EXT_API MonoContext
 	{
-		static MonoContext * __singleton;
+		SINGLETON_CLASS(MonoContext);
 
 		friend class CSharpLanguage;
 		friend class CSharpScript;
@@ -30,13 +37,13 @@ namespace Ism
 		HashMap<String, MonoClass *> m_classes{};
 		MonoClass * m_object_class{};
 		MonoClass * m_script_class{};
+		MonoClass * m_loop_class{};
 		MonoClass * m_component_class{};
 		MonoClass * m_behavior_class{};
 
 	public:
 		MonoContext() noexcept { SINGLETON_CTOR(); }
 		~MonoContext() noexcept { SINGLETON_DTOR(); }
-		SINGLETON_GETTER(MonoContext);
 
 		Error_ initialize();
 		Error_ finalize();
@@ -44,6 +51,8 @@ namespace Ism
 		Error_ load_assemblies();
 		Error_ load_dll(String const & path);
 	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	SINGLETON_WRAPPER(MonoContext, get_mono);
 

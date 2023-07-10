@@ -35,7 +35,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(WindowsDisplayServer, t) {}
+	OBJECT_EMBED(WindowsDisplayServer, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -53,7 +53,7 @@ namespace Ism
 
 		glfwSetErrorCallback([](i32 code, cstring message)
 		{
-			get_os()->err_printf("glfw error %i: %s", code, message);
+			os()->err_printf("glfw error %i: %s", code, message);
 		});
 
 		glfwSetMonitorCallback([](GLFWmonitor * monitor, i32 connected)
@@ -63,7 +63,7 @@ namespace Ism
 
 		glfwSetJoystickCallback([](i32 device, i32 connected)
 		{
-			get_input()->joy_connection_changed(device, connected == GLFW_CONNECTED, glfwGetJoystickName(device), glfwGetJoystickGUID(device));
+			input()->joy_connection_changed(device, connected == GLFW_CONNECTED, glfwGetJoystickName(device), glfwGetJoystickGUID(device));
 		});
 
 		// cursors
@@ -135,49 +135,49 @@ namespace Ism
 		glfwSetCharCallback(w.handle, [](GLFWwindow *, u32 codepoint) {});
 		
 		glfwSetKeyCallback(w.handle, [](GLFWwindow *, i32 key, i32, i32 action, i32) {
-			get_input()->set_key(key, (Input::Action_)action);
+			input()->set_key(key, (Input::Action_)action);
 		});
 
 		glfwSetMouseButtonCallback(w.handle, [](GLFWwindow *, i32 button, i32 action, i32) {
-			get_input()->set_mouse_button(button, (Input::Action_)action);
+			input()->set_mouse_button(button, (Input::Action_)action);
 		});
 
 		glfwSetCursorPosCallback(w.handle, [](GLFWwindow *, f64 x, f64 y) {
-			get_input()->set_mouse_position({ (f32)x, (f32)y });
+			input()->set_mouse_position({ (f32)x, (f32)y });
 		});
 
 		glfwSetScrollCallback(w.handle, [](GLFWwindow *, f64 x, f64 y) {
-			get_input()->set_mouse_wheel({ (f32)x, (f32)y });
+			input()->set_mouse_wheel({ (f32)x, (f32)y });
 		});
 
 		glfwSetCursorEnterCallback(w.handle, [](GLFWwindow *, i32 entered) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
-				tree->get_root()->propagate_notification(entered ? Node::Notification_WM_MouseEnter : Node::Notification_WM_MouseExit);
+				tree->get_root()->propagate_notification(entered ? Notification_WM_MouseEnter : Notification_WM_MouseExit);
 			}
 		});
 
 		glfwSetWindowCloseCallback(w.handle, [](GLFWwindow *) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
-				tree->get_root()->propagate_notification(Node::Notification_WM_CloseRequest);
+				tree->get_root()->propagate_notification(Notification_WM_CloseRequest);
 				tree->quit();
 			}
 		});
 
 		glfwSetWindowFocusCallback(w.handle, [](GLFWwindow *, i32 focused) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
-				tree->get_root()->propagate_notification(focused ? Node::Notification_WM_FocusIn : Node::Notification_WM_FocusOut);
+				tree->get_root()->propagate_notification(focused ? Notification_WM_FocusIn : Notification_WM_FocusOut);
 			}
 		});
 
 		glfwSetWindowContentScaleCallback(w.handle, [](GLFWwindow *, f32 x, f32 y) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
-				tree->get_root()->propagate_notification(Node::Notification_WM_ScaleChanged);
+				tree->get_root()->propagate_notification(Notification_WM_ScaleChanged);
 			}
 		});
 
 		glfwSetWindowSizeCallback(w.handle, [](GLFWwindow *, i32 w, i32 h) {
 			if (auto const tree{ SceneTree::get_singleton() }) {
-				tree->get_root()->propagate_notification(Node::Notification_WM_SizeChanged);
+				tree->get_root()->propagate_notification(Notification_WM_SizeChanged);
 			}
 		});
 
@@ -556,14 +556,14 @@ namespace Ism
 			f32 const * axes{ glfwGetJoystickAxes(device, &num_axes) };
 			num_axes = MIN(num_axes, Input::JoyAxis_MAX);
 			for (i32 axis = 0; axis < num_axes; ++axis) {
-				get_input()->set_joy_axis(device, axis, axes[axis]);
+				input()->set_joy_axis(device, axis, axes[axis]);
 			}
 
 			i32 num_buttons;
 			u8 const * buttons{ glfwGetJoystickButtons(device, &num_buttons) };
 			num_buttons = MIN(num_buttons, Input::JoyButton_MAX);
 			for (i32 i{}; i < num_buttons; ++i) {
-				get_input()->set_joy_button(device, i, (Input::Action_)buttons[i]);
+				input()->set_joy_button(device, i, (Input::Action_)buttons[i]);
 			}
 		}
 	}
@@ -586,7 +586,7 @@ namespace Ism
 		}
 
 
-		//Ref<File> f{ File::open(get_globals()->globalize_path(p_filename), FileMode_Read) };
+		//Ref<File> f{ File::open(globals()->globalize_path(p_filename), FileMode_Read) };
 		//if (!f) {
 		//	CRASH("cannot open icon");
 		//}

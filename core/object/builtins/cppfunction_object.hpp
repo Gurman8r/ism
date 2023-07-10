@@ -170,4 +170,62 @@ namespace Ism
 	}
 }
 
+namespace Ism
+{
+	// NOT FULLY WORKING!!!
+	template <class Return, class ... Args
+	> struct TypeCaster<std::function<Return(Args...)>>
+	{
+		using type = std::function<Return(Args...)>;
+		using retval_type = std::conditional_t<std::is_same_v<Return, void>, mpl::void_type, Return>;
+		using function_type = Return(*)(Args...);
+
+	public:
+		bool load(ObjectRef const & src, bool convert)
+		{
+			if (!src && !convert) {
+				return false;
+			}
+			else if (!src && convert) {
+				return true;
+			}
+			else if (!FunctionRef::check_(src)) {
+				return false;
+			}
+			else {
+				auto func{ (FunctionRef)src };
+				if (CppFunctionRef cfunc{ func.cpp_function() }) {
+					auto rec{ cfunc->get_function_record() };
+					while (rec != nullptr) {
+						if (rec->is_stateless && rtti::same_type(typeid(function_type), *reinterpret_cast<std::type_info const *>(rec->data[1]))) {
+							struct capture { function_type f; };
+							value = ((capture *)&rec->data)->f;
+							return true;
+						}
+						rec = rec->next;
+					}
+				}
+				value = std::move(func);
+				return true;
+			}
+		}
+
+		template <class Func
+		> static ObjectRef cast(Func && src, ReturnValuePolicy_ policy, ObjectRef const &)
+		{
+			if (!src) {
+				return nullptr;
+			}
+			else if (auto result{ src.template target<function_type>() }) {
+				return CppFunctionRef({ *result, policy });
+			}
+			else {
+				return CppFunctionRef({ FWD(src), policy });
+			}
+		}
+
+		TYPE_CASTER_COMMON(type, "function");
+	};
+}
+
 #endif // !_ISM_CPPFUNCTION_OBJECT_HPP_

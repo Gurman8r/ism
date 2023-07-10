@@ -3,9 +3,9 @@
 // script server
 namespace Ism
 {
-	EMBED_CLASS(ScriptServer, t) {}
+	OBJECT_EMBED(ScriptServer, t) {}
 
-	ScriptServer * ScriptServer::__singleton{};
+	SINGLETON_EMBED(ScriptServer);
 
 	ScriptServer::ScriptServer() noexcept
 	{
@@ -108,11 +108,11 @@ namespace Ism
 // script language
 namespace Ism
 {
-	EMBED_CLASS(ScriptLanguage, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(ScriptLanguage, t, TypeFlags_IsAbstract) {}
 
-	ScriptLanguage::ScriptLanguage() {}
-
-	ScriptLanguage::~ScriptLanguage() {}
+	ScriptLanguage::~ScriptLanguage() noexcept
+	{
+	}
 
 	void ScriptLanguage::get_core_type_words(Vector<String> * words) const
 	{
@@ -122,32 +122,36 @@ namespace Ism
 // script
 namespace Ism
 {
-	EMBED_CLASS(Script, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(Script, t, TypeFlags_IsAbstract) {}
 
-	Script::Script() {}
-
-	Script::~Script() {}
+	Script::~Script()  noexcept
+	{
+	}
 }
 
 // script instance
 namespace Ism
 {
-	EMBED_CLASS(ScriptInstance, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(ScriptInstance, t, TypeFlags_IsAbstract) {}
 
-	ScriptInstance::~ScriptInstance() {}
+	ScriptInstance::~ScriptInstance() noexcept
+	{
+	}
 }
 
 // placeholder script instance
 namespace Ism
 {
-	EMBED_CLASS(PlaceholderScriptInstance, t) {}
+	OBJECT_EMBED(PlaceholderScriptInstance, t) {}
 
-	PlaceholderScriptInstance::PlaceholderScriptInstance(ScriptLanguage * language, Ref<Script> script, Object * owner)
-		: m_owner{ owner }
+	PlaceholderScriptInstance::PlaceholderScriptInstance(ScriptLanguage * language, Ref<Script> const & script, Object * owner) noexcept
+		: m_language{ language }
 		, m_script{ script }
-		, m_language{ language }
+		, m_owner{ owner }
 	{
 	}
 
-	PlaceholderScriptInstance::~PlaceholderScriptInstance() {}
+	PlaceholderScriptInstance::~PlaceholderScriptInstance() noexcept
+	{
+	}
 }

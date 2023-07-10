@@ -8,21 +8,12 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	// scene renderer
-	class ISM_API Renderer3D : public Object
+	class ISM_API RendererSceneRenderer
 	{
-		OBJECT_CLASS(Renderer3D, Object);
-
-		friend class DefaultRenderingServer;
-
+	private:
 		RenderingDevice * const m_device;
 		RendererStorage * const m_storage;
 
-	public:
-		Renderer3D(RenderingDevice * device, RendererStorage * storage);
-
-		virtual ~Renderer3D() override;
-
-	public:
 		struct SceneState
 		{
 			struct UBO
@@ -38,8 +29,6 @@ namespace Ism
 
 				f32 znear{};
 				f32 zfar{};
-				
-				f32 time{};
 
 				// etc...
 			}
@@ -47,6 +36,17 @@ namespace Ism
 		}
 		m_scene_state{};
 
+		RID m_shader{};
+		RID m_pipeline{};
+
+	public:
+		RendererSceneRenderer(RenderingDevice * device, RendererStorage * storage);
+		~RendererSceneRenderer();
+
+		void initialize();
+		void finalize();
+
+		void update_shader(RID shader);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

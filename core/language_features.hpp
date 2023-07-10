@@ -1,7 +1,6 @@
 #ifndef _ISM_LANGUAGE_FEATURES_HPP_
 #define _ISM_LANGUAGE_FEATURES_HPP_
 
-#include <core/preprocessor.hpp>
 #include <core/version.hpp>
 #include <cstddef>
 
@@ -12,10 +11,10 @@
 #ifndef DEBUG_ENABLED
 #if _DEBUG
 //	Debug
-#	define DEBUG_ENABLED true
+#	define DEBUG_ENABLED 1
 #else
 //	Release
-#	define DEBUG_ENABLED false
+#	define DEBUG_ENABLED 0
 #endif
 #endif
 
@@ -72,7 +71,7 @@
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-//	OPERATING get_os()
+//	OPERATING os()
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #if _WIN32 || _WIN64 || WIN32 || WIN64 || __MINGW32__ || __MINGW64__
@@ -255,11 +254,11 @@
 //	API
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if STATIC_BUILD_ENABLED && DYNAMIC_BUILD_ENABLED
-#	error "static and dynamic build are mutually exclusive"
+#if ISM_STATIC && ISM_DYNAMIC
+#	error "static and dynamic build options are mutually exclusive"
 #endif
 
-#if STATIC_BUILD_ENABLED
+#if ISM_STATIC
 #	define ISM_API_EXPORT
 #	define ISM_API_IMPORT
 
@@ -277,7 +276,7 @@
 #endif
 
 #ifndef ISM_API
-#	if DYNAMIC_BUILD_ENABLED
+#	if ISM_DYNAMIC
 #		define ISM_API ISM_API_EXPORT
 #	else
 #		define ISM_API ISM_API_IMPORT
@@ -285,7 +284,6 @@
 #endif
 
 #define ISM_API_FUNC(rtype) ISM_API rtype
-
 #define ISM_API_DATA(rtype) ISM_API extern rtype
 
 
@@ -321,7 +319,6 @@
 #	pragma warning(disable: 26812)	//	unscoped enum
 #	pragma warning(disable: 28251)	//	inconsistent annotations
 #	pragma warning(disable: 33101)	//	unchecked tolower bound for enum type used as index
-//#	pragma warning(disable: 65552)	//	consider moving big function stack to heap
 #endif
 
 #endif //	!_ISM_LANGUAGE_FEATURES_HPP_

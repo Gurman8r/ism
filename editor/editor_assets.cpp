@@ -6,7 +6,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(EditorAssets, t) {}
+	OBJECT_EMBED(EditorAssets, t) {}
 
 	EditorAssets::EditorAssets() : EditorPanel{ "Assets##Editor" }
 	{

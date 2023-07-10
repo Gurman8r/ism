@@ -81,7 +81,7 @@ namespace Ism
 	template <class Name = cstring
 	> ModuleRef create_extension_module(Name && name) noexcept
 	{
-		DictRef modules{ get_internals()->get_module_dict() };
+		DictRef modules{ internals()->get_module_dict() };
 		StringRef str_name{ FWD_OBJ(name) };
 		if (modules.contains(str_name)) { return nullptr; }
 		return modules[str_name] = ModuleRef({ str_name });
@@ -90,15 +90,15 @@ namespace Ism
 	template <class Name = cstring
 	> ModuleRef import_module(Name && name) noexcept
 	{
-		DictRef modules{ get_internals()->get_module_dict() };
+		DictRef modules{ internals()->get_module_dict() };
 		StringRef str_name{ FWD_OBJ(name) };
 		return modules.lookup(name);
 	}
 
-	inline DictRef globals() noexcept
+	inline DictRef module_globals() noexcept
 	{
-		STR_IDENTIFIER(__main__);
-		STR_IDENTIFIER(__dict__);
+		STRING_IDENTIFIER(__main__);
+		STRING_IDENTIFIER(__dict__);
 		ModuleRef m{ import_module(&ID___main__) };
 		if (!m) { return nullptr; }
 		return getattr(m, &ID___dict__);

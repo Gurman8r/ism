@@ -4,11 +4,11 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Texture, t) {}
+	OBJECT_EMBED(Texture, t) {}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Texture2D, t) {}
+	OBJECT_EMBED(Texture2D, t) {}
 
 	Vec2i Texture2D::get_size() const
 	{
@@ -27,7 +27,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ImageTexture, t) {}
+	OBJECT_EMBED(ImageTexture, t) {}
 
 	ImageTexture::ImageTexture(Ref<Image> const & image)
 	{
@@ -35,12 +35,12 @@ namespace Ism
 		if (!m_image_cache) { CRASH("failed loading texture"); }
 		m_width = m_image_cache->get_width();
 		m_height = m_image_cache->get_height();
-		m_texture = get_gfx()->texture2d_create(m_image_cache);
+		m_texture = rendering_server()->texture2d_create(m_image_cache);
 	}
 
 	ImageTexture::~ImageTexture()
 	{
-		if (m_texture) { get_gpu()->texture_destroy(m_texture); m_texture = nullptr; }
+		if (m_texture) { rendering_server()->texture_destroy(m_texture); m_texture = nullptr; }
 	}
 
 	Ref<ImageTexture> ImageTexture::create(Ref<Image> const & image)
@@ -73,7 +73,7 @@ namespace Ism
 
 	Ref<Image> ImageTexture::get_data() const
 	{
-		return m_texture ? get_gfx()->texture2d_get_data(m_texture) : nullptr;
+		return m_texture ? rendering_server()->texture2d_get_data(m_texture) : nullptr;
 	}
 
 	void ImageTexture::update(Ref<Image> const & image, bool immediate)
@@ -82,7 +82,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Texture3D, t) {}
+	OBJECT_EMBED(Texture3D, t) {}
 
 	Texture3D::Texture3D() {}
 
@@ -95,7 +95,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(TextureCube, t) {}
+	OBJECT_EMBED(TextureCube, t) {}
 
 	TextureCube::TextureCube() {}
 

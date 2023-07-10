@@ -4,7 +4,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Entity, t) {}
+	OBJECT_EMBED(Entity, t) {}
 
 	Entity::Entity()
 	{

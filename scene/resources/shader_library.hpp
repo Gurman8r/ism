@@ -13,7 +13,7 @@ namespace Ism
 	public:
 		static Error_ load_shader(Ref<Shader> shader, String const & path);
 		virtual RES load(String const & path, Error_ * r_error = nullptr) override;
-		virtual void get_recognized_extensions(Vector<String> * out) const override;
+		virtual void get_recognized_extensions(Vector<String> * r_out) const override;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

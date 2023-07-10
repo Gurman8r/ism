@@ -11,8 +11,6 @@
 public:																				\
 	using base_type = typename m_inherits;											\
 																					\
-	using typename base_type::Notification_;										\
-																					\
 private:																			\
 	friend class Ism::Internals;													\
 	friend class Ism::_EmbedClassHelper<m_class>;									\
@@ -27,7 +25,7 @@ protected:																			\
 	{																				\
 		static ON_SCOPE_ENTER(&)													\
 		{																			\
-			Ism::get_internals()->add_class(&m_class::__type_static);				\
+			Ism::internals()->add_class(&m_class::__type_static);					\
 																					\
 			if (m_class::__type_static.tp_bind) {									\
 				ASSERT(m_class::__type_static.tp_bind(&m_class::__type_static));	\
@@ -84,7 +82,7 @@ private:
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // class embedding utility
-#define EMBED_CLASS(m_class, m_var, ...)											\
+#define OBJECT_EMBED(m_class, m_var, ...)											\
 																					\
 	/* implement embedding helper */												\
 	template <> class Ism::_EmbedClassHelper<m_class> final							\
@@ -120,17 +118,20 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	using Notification_ = typename i32;
+
+	enum : Notification_ {
+		Notification_PostInitialize = 1,
+		Notification_PreDelete = 2,
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	// base object
 	class ISM_API Object : public ObjectAPI<Object>
 	{
 	public:
 		using base_type = typename void;
-
-		using Notification_ = typename i32;
-		enum : Notification_ {
-			Notification_PostInitialize	= 1,
-			Notification_PreDelete		= 2,
-		};
 
 	private:
 		friend class ObjectRef;
@@ -254,47 +255,61 @@ namespace Ism
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
-	> auto object_or_cast(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
+	> NODISCARD auto object_or_cast(T && o) noexcept -> decltype(FWD(o)) { return FWD(o); }
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-	> ObjectRef object_or_cast(T && o);
+	> NODISCARD ObjectRef object_or_cast(T && o) noexcept;
 
 	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
-	> inline ObjectRef object_or_cast(T const * o) { return Ref<T>{ (T *)o }; }
+	> NODISCARD inline ObjectRef object_or_cast(T const * o) noexcept { return Ref<T>{ (T *)o }; }
 
-	inline ObjectRef object_or_cast(cstring s) { return object_or_cast(String{ s }); }
+	NODISCARD inline ObjectRef object_or_cast(cstring s) noexcept { return object_or_cast(String{ s }); }
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
-	> TypeRef typeof() noexcept { return T::get_type_static(); }
-
-	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
-	> TypeRef typeof(T && o) noexcept { return VALIDATE(FWD(o))->get_type(); }
+	> NODISCARD TypeRef typeof() noexcept { return T::get_type_static(); }
 
 	template <class T, std::enable_if_t<!is_object_api_v<T>, int> = 0
-	> TypeRef typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }
+	> NODISCARD TypeRef typeof(T && o) noexcept { return typeof(FWD_OBJ(o)); }
 
-	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
-	> TypeRef super() noexcept
+	template <class T, std::enable_if_t<is_object_api_v<T>, int> = 0
+	> NODISCARD TypeRef typeof(T && o) noexcept
 	{
-		if constexpr (std::is_void_v<T::base_type>) { return nullptr; }
+		if constexpr (std::is_pointer_v<std::decay_t<decltype(o)>>) {
+			return (o != nullptr) ? o->get_type() : nullptr;
+		}
+		else if constexpr (is_ref_v<std::decay_t<decltype(o)>>) {
+			return o.is_valid() ? o->get_type() : nullptr;
+		}
+		else {
+			return o.get_type();
+		}
+	}
 
-		else { return typeof<T::base_type>(); }
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	template <class T, std::enable_if_t<is_base_object_v<T>, int> = 0
+	> NODISCARD TypeRef super() noexcept
+	{
+		if constexpr (std::is_void_v<T::base_type>) {
+			return nullptr;
+		}
+		else {
+			return typeof<T::base_type>();
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	template <class T, class O = ObjectRef, std::enable_if_t<is_object_api_v<T>, int> = 0
-	> bool isinstance(O && obj) noexcept
+	> NODISCARD bool isinstance(O && obj) noexcept
 	{
 		return isinstance(FWD_OBJ(obj), typeof<T>());
 	}
 
 	template <class A = ObjectRef, class B = ObjectRef
-	> bool isinstance(A const & obj, B const & type)
+	> NODISCARD bool isinstance(A const & obj, B const & type)
 	{
 		return typeof(obj).is_subtype(TypeRef::check_(type) ? (TypeRef)type : typeof(type));
 	}
@@ -303,7 +318,7 @@ namespace Ism
 
 	// getattr
 	template <class Index = ObjectRef
-	> ObjectRef getattr(ObjectRef const & obj, Index && index)
+	> NODISCARD ObjectRef getattr(ObjectRef const & obj, Index && index)
 	{
 		if (!obj) { return nullptr; }
 
@@ -329,7 +344,7 @@ namespace Ism
 
 	// getattr (default)
 	template <class Index = ObjectRef, class Value = ObjectRef
-	> ObjectRef getattr(ObjectRef const & obj, Index && index, Value && defval)
+	> NODISCARD ObjectRef getattr(ObjectRef const & obj, Index && index, Value && defval)
 	{
 		if (!obj)
 		{
@@ -373,7 +388,7 @@ namespace Ism
 
 	// hasattr
 	template <class Index = ObjectRef
-	> bool hasattr(ObjectRef const & obj, Index && index)
+	> NODISCARD bool hasattr(ObjectRef const & obj, Index && index)
 	{
 		if (!obj) { return false; }
 
@@ -405,9 +420,9 @@ namespace Ism
 
 	// getitem
 	template <class Index = ObjectRef
-	> ObjectRef getitem(ObjectRef const & obj, Index && index)
+	> NODISCARD ObjectRef getitem(ObjectRef const & obj, Index && index)
 	{
-		STR_IDENTIFIER(__getitem__);
+		STRING_IDENTIFIER(__getitem__);
 
 		if (!obj) { return nullptr; }
 
@@ -424,7 +439,7 @@ namespace Ism
 	template <class Index = ObjectRef, class Value = ObjectRef
 	> Error_ setitem(ObjectRef const & obj, Index && index, Value && value)
 	{
-		STR_IDENTIFIER(__setitem__);
+		STRING_IDENTIFIER(__setitem__);
 
 		if (!obj) { return Error_Failed; }
 

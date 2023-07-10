@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(CameraBehavior, t) {}
+	OBJECT_EMBED(CameraBehavior, t) {}
 
 	CameraBehavior::CameraBehavior()
 	{

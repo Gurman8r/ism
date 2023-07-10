@@ -13,6 +13,7 @@ namespace Ism
 	> class NOVTABLE Ref : public _Ref_Tag, public ObjectAPI<Ref<T>>
 	{
 	public:
+		using self_type		= typename Ref<T>;
 		using value_type	= typename T;
 		using pointer		= typename value_type *;
 		using const_pointer	= typename value_type const *;
@@ -25,46 +26,45 @@ namespace Ism
 
 		Ref(pointer value) { if (value) { ref_pointer(value); } }
 
-		Ref(Ref const & value) { ref(value); }
+		Ref(self_type const & value) { ref(value); }
 
 		template <class U
 		> Ref(Ref<U> const & value) { reset(value); }
 
 		Ref(value_type && value) noexcept { instance(std::move(value)); }
 
-		Ref & operator=(nullptr_t) { return unref(), (*this); }
+		self_type & operator=(nullptr_t) { return unref(), (*this); }
 
-		Ref & operator=(Ref const & value) { return reset(value), (*this); }
+		self_type & operator=(self_type const & value) { return reset(value), (*this); }
 
 		template <class U
-		> Ref & operator=(Ref<U> const & value) { return reset(value), (*this); }
+		> self_type & operator=(Ref<U> const & value) { return reset(value), (*this); }
 
-		Ref & operator=(value_type && value) noexcept { return instance(std::move(value)), (*this); }
+		self_type & operator=(value_type && value) noexcept { return instance(std::move(value)), (*this); }
 
 	public:
 		template <class ... Args
-		> static auto new_(Args && ... args) { return Ref<value_type>{ value_type{ FWD(args)... } }; }
+		> NODISCARD static auto new_(Args && ... args) { return self_type{}.instance(FWD(args)...); }
 
-		static constexpr auto get_class_name_static() noexcept { return value_type::get_class_name_static(); }
+		NODISCARD static constexpr auto get_class_name_static() noexcept { return value_type::get_class_name_static(); }
 
-		static auto get_type_static() noexcept { return value_type::get_type_static(); }
+		NODISCARD static auto get_type_static() noexcept { return value_type::get_type_static(); }
 
-		template <class U> U cast() const &;
+		template <class U> NODISCARD U cast() const &;
 
-		template <class U> U cast() &&;
+		template <class U> NODISCARD U cast() &&;
 
 	public:
 		template <class U = value_type, class ... Args, std::enable_if_t<std::is_base_of_v<value_type, U>, int> = 0
-		> void instance(Args && ... args)
+		> self_type & instance(Args && ... args)
 		{
-			if constexpr (std::is_constructible_v<U, Args...>)
-			{
+			if constexpr (std::is_constructible_v<U, Args...>) {
 				ref(memnew(U(FWD(args)...)));
 			}
-			else
-			{
+			else {
 				ref(memnew(U{ FWD(args)... }));
 			}
+			return (*this);
 		}
 
 		void unref()
@@ -75,70 +75,89 @@ namespace Ism
 			m_ptr = nullptr;
 		}
 
-		void reset(Ref const & value)
+		void reset(self_type const & value)
 		{
 			ref(value);
 		}
 
-		template <class U> void reset(U * value)
+		template <class U
+		> void reset(U * value)
 		{
-			if (m_ptr == value) { return; }
+			if (m_ptr == value) {
+				return;
+			}
 			unref();
-			pointer r{ dynamic_cast<pointer>(value) };
-			if (r) { ref_pointer(r); }
+			if (pointer r{ dynamic_cast<pointer>(value) }) {
+				ref_pointer(r);
+			}
 		}
 
-		template <class U> void reset(Ref<U> const & value)
+		template <class U
+		> void reset(Ref<U> const & value)
 		{
 			Object * other{ static_cast<Object *>(value.ptr()) };
-			if (!other) { unref(); return; }
-			Ref r;
+			if (!other) {
+				unref();
+				return;
+			}
+			self_type r;
 			r.m_ptr = dynamic_cast<pointer>(other);
 			ref(r);
 			r.m_ptr = nullptr;
 		}
 
+		NODISCARD pointer release() noexcept
+		{
+			return std::exchange(m_ptr, nullptr);
+		}
+
 	public:
-		operator bool() const noexcept { return m_ptr != nullptr; }
+		NODISCARD operator bool() const noexcept { return m_ptr != nullptr; }
 		
-		bool is_null() const noexcept { return m_ptr == nullptr; }
+		NODISCARD bool is_null() const noexcept { return m_ptr == nullptr; }
 		
-		bool is_valid() const noexcept { return m_ptr != nullptr; }
+		NODISCARD bool is_valid() const noexcept { return m_ptr != nullptr; }
 		
-		auto ptr() const noexcept { return (pointer)m_ptr; }
+		NODISCARD auto ptr() const noexcept { return (pointer)m_ptr; }
 
-		auto operator*() noexcept { return m_ptr; }
+		NODISCARD auto operator*() noexcept { return m_ptr; }
 		
-		auto operator*() const noexcept { return m_ptr; }
+		NODISCARD auto operator*() const noexcept { return m_ptr; }
 
-		auto operator->() noexcept { return m_ptr; }
+		NODISCARD auto operator->() noexcept { return m_ptr; }
 		
-		auto operator->() const noexcept { return m_ptr; }
+		NODISCARD auto operator->() const noexcept { return m_ptr; }
 
-		template <class U> friend bool operator==(Ref const & a, U const * b) noexcept { return (void *)a.m_ptr == (void *)b; }
+		template <class U> NODISCARD friend bool operator==(self_type const & a, U const * b) noexcept { return (void *)a.m_ptr == (void *)b; }
 		
-		template <class U> friend bool operator!=(Ref const & a, U const * b) noexcept { return (void *)a.m_ptr != (void *)b; }
+		template <class U> NODISCARD friend bool operator!=(self_type const & a, U const * b) noexcept { return (void *)a.m_ptr != (void *)b; }
 
-		template <class U> friend bool operator==(U const * a, Ref const & b) noexcept { return (void *)a == (void *)b.m_ptr; }
+		template <class U> NODISCARD friend bool operator==(U const * a, self_type const & b) noexcept { return (void *)a == (void *)b.m_ptr; }
 		
-		template <class U> friend bool operator!=(U const * a, Ref const & b) noexcept { return (void *)a != (void *)b.m_ptr; }
+		template <class U> NODISCARD friend bool operator!=(U const * a, self_type const & b) noexcept { return (void *)a != (void *)b.m_ptr; }
 
 	protected:
 		pointer m_ptr{};
 
-		void ref(Ref const & value)
+		void ref(self_type const & value)
 		{
-			if (value.m_ptr == m_ptr) { return; }
+			if (value.m_ptr == m_ptr) {
+				return;
+			}
 			unref();
 			m_ptr = value.m_ptr;
-			if (m_ptr) { m_ptr->inc_ref(); }
+			if (m_ptr) {
+				m_ptr->inc_ref();
+			}
 		}
 
 		void ref_pointer(pointer value)
 		{
 			ASSERT("invalid ref pointer" && value);
 
-			if (value->init_ref()) { m_ptr = value; }
+			if (value->init_ref()) {
+				m_ptr = value;
+			}
 		}
 	};
 

@@ -19,7 +19,6 @@ namespace Ism
 		class NameView : public StringView {
 		public:
 			using StringView::StringView;
-			using StringView::operator=;
 		};
 
 		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

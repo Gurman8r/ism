@@ -291,7 +291,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(WindowsDir, t) {}
+	OBJECT_EMBED(WindowsDir, t) {}
 
 	String WindowsDir::fix_path(String path) const {
 		String r_path{ Dir::fix_path(path) };

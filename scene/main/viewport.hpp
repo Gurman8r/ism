@@ -8,11 +8,14 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	// viewport texture
-	class ViewportTexture : public Texture2D
-	{
-		OBJECT_CLASS(ViewportTexture, Texture2D);
+	class CameraBehavior;
+	class Window;
 
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	// viewport texture
+	class ViewportTexture : public Texture2D {
+		OBJECT_CLASS(ViewportTexture, Texture2D);
 	public:
 		ViewportTexture();
 		virtual ~ViewportTexture() override;
@@ -33,7 +36,50 @@ namespace Ism
 
 		friend class Window;
 
+		Viewport * m_parent{};
+		Viewport * m_gui_parent{};
+
+		CameraBehavior * m_main_camera{};
+
 		RID m_viewport{};
+		RID m_current_canvas{};
+		RID m_subwindow_canvas{};
+
+		RID m_texture_rid{};
+		Ref<ViewportTexture> m_default_texture{};
+		Set<ViewportTexture *> m_viewport_textures{};
+
+		enum SubWindowDrag_ {
+			SubWindowDrag_Disabled,
+			SubWindowDrag_Move,
+			SubWindowDrag_Clost,
+			SubWindowDrag_Resize,
+		};
+
+		enum SubWindowResize_ {
+			SubWindowResize_Disabled,
+			SubWindowResize_TopLeft,
+			SubWindowResize_Top,
+			SubWindowResize_TopRight,
+			SubWindowResize_Left,
+			SubWindowResize_Right,
+			SubWindowResize_BottomLeft,
+			SubWindowResize_Bottom,
+			SubWindowResize_BottomRight,
+			SubWindowResize_MAX
+		};
+
+		struct SubWindow
+		{
+			Window * window{};
+			RID canvas_item{};
+		};
+
+		struct GUI
+		{
+			Vector<SubWindow> subwindows{};
+		}
+		m_gui{};
 
 	public:
 		Viewport();

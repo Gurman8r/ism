@@ -1,14 +1,14 @@
 #include <core/object/eval.hpp>
-#include <core/object/class.hpp>
 
 namespace Ism
 {
-	ObjectRef evaluate(String text)
+	Var evaluate(String text)
 	{
-		if ((text = text.trim([](char c) { return c == ' ' || c == '\'' || c == '\"'; })).empty()) { return nullptr; }
-		else if (auto const o{ util::to_i64(text) }) { return IntRef(*o); }
-		else if (auto const o{ util::to_f64(text) }) { return FloatRef(*o); }
-		else if (auto const o{ util::to_bool(text) }) { return BoolRef(*o); }
-		else { return StringRef(text); }
+		if ((text = text.trim()).empty()) { return nullptr; }
+		else if (util::is_quote(text)) { return text.trim([](auto c) { return c == '\'' || c == '\"'; }); }
+		else if (auto const o{ util::to_i64(text) }) { return *o; }
+		else if (auto const o{ util::to_f64(text) }) { return *o; }
+		else if (auto const o{ util::to_bool(text) }) { return *o; }
+		else { return text; }
 	}
 }

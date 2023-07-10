@@ -8,7 +8,7 @@ namespace Ism
 	void TypeObject::initialize_class()
 	{
 		static ON_SCOPE_ENTER(&) {
-			get_internals()->add_class(&__type_static);
+			internals()->add_class(&__type_static);
 			ASSERT(__type_static.tp_bind);
 			ASSERT(__type_static.tp_bind(&__type_static));
 		};
@@ -61,7 +61,7 @@ namespace Ism
 		{/*SENTINAL*/}
 	};
 
-	EMBED_CLASS(TypeObject, t, TypeFlags_HaveVectorCall)
+	OBJECT_EMBED(TypeObject, t, TypeFlags_HaveVectorCall)
 	{
 		t.tp_dictoffset = offsetof(TypeObject, tp_dict);
 
@@ -216,7 +216,9 @@ namespace Ism
 		{
 			for (TypeRef const & base : (ListRef &)tp_mro)
 			{
-				if (value.is(base)) { return true; }
+				if (value.is(base)) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -226,8 +228,9 @@ namespace Ism
 
 			do {
 
-				if (base == value) { return true; }
-
+				if (base == value) {
+					return true;
+				}
 				base = base->tp_base.ptr();
 
 			} while (base);
@@ -315,8 +318,8 @@ namespace Ism
 
 		if (!tp_cmp && !tp_hash)
 		{
-			STR_IDENTIFIER(__eq__);
-			STR_IDENTIFIER(__hash__);
+			STRING_IDENTIFIER(__eq__);
+			STRING_IDENTIFIER(__hash__);
 			if (DictRef dict{ tp_dict }; dict && !dict.contains(&ID___eq__) && !dict.contains(&ID___hash__))
 			{
 				tp_cmp = base->tp_cmp;
@@ -386,7 +389,7 @@ namespace Ism
 
 		case "__new__"_hash: {
 			tp_new = (NewFunc)[](TypeRef type, ObjectRef args) -> ObjectRef {
-				STR_IDENTIFIER(__new__);
+				STRING_IDENTIFIER(__new__);
 				if (ObjectRef f{ type.lookup(&ID___new__) }) { return call_object(f, args); }
 				return nullptr;
 			};
@@ -394,7 +397,7 @@ namespace Ism
 
 		case "__del__"_hash: {
 			tp_del = (DelFunc)[](Object * obj) -> void {
-				STR_IDENTIFIER(__del__);
+				STRING_IDENTIFIER(__del__);
 				if (ObjectRef f{ typeof(obj).lookup(&ID___del__) }) { /* TODO */ }
 			};
 		} break;
@@ -403,7 +406,7 @@ namespace Ism
 
 		case "__call__"_hash: {
 			tp_call = (BinaryFunc)[](ObjectRef self, ObjectRef args) -> ObjectRef {
-				STR_IDENTIFIER(__call__);
+				STRING_IDENTIFIER(__call__);
 				if (ObjectRef f{ typeof(self).lookup(&ID___call__) }) { return call_object(f, args); }
 				return nullptr;
 			};
@@ -411,7 +414,7 @@ namespace Ism
 
 		case "__hash__"_hash: {
 			tp_hash = (HashFunc)[](ObjectRef self) -> size_t {
-				STR_IDENTIFIER(__hash__);
+				STRING_IDENTIFIER(__hash__);
 				if (ObjectRef f{ typeof(self).lookup(&ID___hash__) }) { return call_object(f, self).cast<size_t>(); }
 				return 0;
 			};
@@ -419,7 +422,7 @@ namespace Ism
 
 		case "__len__"_hash: {
 			tp_len = (LenFunc)[](ObjectRef self) -> ssize_t {
-				STR_IDENTIFIER(__len__);
+				STRING_IDENTIFIER(__len__);
 				if (ObjectRef f{ typeof(self).lookup(&ID___len__) }) { return call_object(f, self).cast<ssize_t>(); }
 				return -1;
 			};
@@ -427,7 +430,7 @@ namespace Ism
 
 		case "__repr__"_hash: {
 			tp_repr = (ReprFunc)[](ObjectRef self) -> StringRef {
-				STR_IDENTIFIER(__repr__);
+				STRING_IDENTIFIER(__repr__);
 				if (ObjectRef f{ typeof(self).lookup(&ID___repr__) }) { return call_object(f, self); }
 				return nullptr;
 			};
@@ -435,7 +438,7 @@ namespace Ism
 
 		case "__str__"_hash: {
 			tp_str = (ReprFunc)[](ObjectRef self) -> StringRef {
-				STR_IDENTIFIER(__str__);
+				STRING_IDENTIFIER(__str__);
 				if (ObjectRef f{ typeof(self).lookup(&ID___str__) }) { return call_object(f, self); }
 				return nullptr;
 			};
@@ -443,7 +446,7 @@ namespace Ism
 
 		case "__get__"_hash: {
 			tp_descr_get = (DescrGetFunc)[](ObjectRef self, ObjectRef obj, ObjectRef type) -> ObjectRef {
-				STR_IDENTIFIER(__get__);
+				STRING_IDENTIFIER(__get__);
 				if (ObjectRef f{ typeof(self).lookup(&ID___get__) }) { /* TODO */ }
 				return nullptr;
 			};
@@ -451,7 +454,7 @@ namespace Ism
 
 		case "__set__"_hash: {
 			tp_descr_set = (DescrSetFunc)[](ObjectRef self, ObjectRef obj, ObjectRef type) -> Error_ {
-				STR_IDENTIFIER(__set__);
+				STRING_IDENTIFIER(__set__);
 				if (ObjectRef f{ typeof(self).lookup(&ID___set__) }) { /* TODO */ }
 				return Error_Failed;
 			};

@@ -1,19 +1,14 @@
 #include <main/main.hpp>
-#include <cxxopts.hpp>
-
-#include <core/register_core_types.hpp>
-#include <drivers/register_driver_types.hpp>
-#include <scene/register_scene_types.hpp>
-#include <servers/register_server_types.hpp>
-
-#include <core/io/resource_loader.hpp>
-#include <core/io/resource_saver.hpp>
-#include <core/io/zip.hpp>
 
 #include <core/config/engine.hpp>
 #include <core/config/project_settings.hpp>
+
+#include <core/io/resource_loader.hpp>
+#include <core/io/resource_saver.hpp>
+
 #include <core/extension/extension_manager.hpp>
 #include <core/object/script.hpp>
+#include <core/io/zip.hpp>
 
 #include <servers/audio_server.hpp>
 #include <servers/physics_server.hpp>
@@ -26,7 +21,12 @@
 #include <editor/register_editor_types.hpp>
 #endif
 
-#include <scene/gui/imgui.hpp>
+#include <core/register_core_types.hpp>
+#include <drivers/register_driver_types.hpp>
+#include <scene/register_scene_types.hpp>
+#include <servers/register_server_types.hpp>
+
+#include <cxxopts.hpp>
 
 namespace Ism
 {
@@ -35,25 +35,23 @@ namespace Ism
 	i32 Main::m_iterating{};
 	u64 Main::m_frame{};
 
-	static Engine *				engine{};
-	static Performance *		performance{};
-	static Input *				input{};
-	static ProjectSettings *	settings{};
+	static Engine *				_engine{};
+	static Performance *		_perf{};
+	static Input *				_input{};
+	static ProjectSettings *	_globals{};
 
-	static PackedData *			packed_data{};
-	static ZipArchive *			zip_archive{};
+	static PackedData *			_packed_data{};
+	static ZipArchive *			_zip_archive{};
 
-	static AudioServer *		audio{};
-	static DisplayServer *		display{};
-	static RenderingServer *	graphics{};
-	static PhysicsServer *		physics{};
-	static TextServer *			text{};
+	static AudioServer *		_audio_server{};
+	static DisplayServer *		_display_server{};
+	static RenderingServer *	_rendering_server{};
+	static PhysicsServer *		_physics_server{};
+	static TextServer *			_text_server{};
 
 	static cxxopts::ParseResult options;
 	static bool cmdline{};
 	static bool editor{ true };
-
-	static ImGuiContext * imgui{};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -74,19 +72,19 @@ namespace Ism
 
 		Error_ error{};
 
-		get_os()->initialize();
-		engine = memnew(Engine);
+		os()->initialize();
+		_engine = memnew(Engine);
 		register_core_types();
 		register_core_driver_types();
 
-		performance = memnew(Performance);
-		input = memnew(Input);
-		settings = memnew(ProjectSettings);
+		_perf = memnew(Performance);
+		_input = memnew(Input);
+		_globals = memnew(ProjectSettings);
 		register_core_settings();
 
-		if (!(packed_data = PackedData::get_singleton())) { packed_data = memnew(PackedData); }
-		if (!(zip_archive = ZipArchive::get_singleton())) { zip_archive = memnew(ZipArchive); }
-		packed_data->add_package_source(zip_archive);
+		if (!(_packed_data = PackedData::get_singleton())) { _packed_data = memnew(PackedData); }
+		if (!(_zip_archive = ZipArchive::get_singleton())) { _zip_archive = memnew(ZipArchive); }
+		_packed_data->add_package_source(_zip_archive);
 
 		Vector<String> args{ argv, argv + argc };
 		cxxopts::Options options_parser{ exec_path, VERSION_FULL_NAME };
@@ -95,48 +93,48 @@ namespace Ism
 			("c,cmdline", "enable command line", cxxopts::value<bool>()->default_value("false"))
 			("s,script", "main script", cxxopts::value<std::string>())
 			;
-
 		options = options_parser.parse(argc, argv);
 		if (options.count("c")) { cmdline = true; }
 		if (options.count("e")) { editor = true; }
 
-		settings->setup(exec_path);
+		_globals->setup(exec_path);
 		register_core_extensions();
-		get_os()->set_cmdline(exec_path, args);
+		os()->set_cmdline(exec_path, args);
 
 		// display server
-		display = DS::create(get_os()->get_exec_path().stem(), DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error); 
+		_display_server = DS::create(os()->get_exec_path().stem(), DS::WindowMode_Maximized, { 0, 0 }, { 1280, 720 }, 0, error); 
 		if (error != Error_OK) {
-			CRASH("failed creating display server");
+			CRASH("failed creating _display_server server");
 		}
-		display->set_native_icon("res://icons/" + get_os()->get_exec_path().stem() + ".png");
+		_display_server->set_native_icon("res://icons/" + os()->get_exec_path().stem() + ".png");
 		
 		// rendering server
-		graphics = RS::create();
+		_rendering_server = RS::create();
+		_rendering_server->initialize();
 		
 		// text server
-		text = memnew(TS);
+		_text_server = memnew(TS);
 		
 		// physics server
-		physics = memnew(PS);
+		_physics_server = memnew(PS);
 		
 		// audio server
-		audio = memnew(AS);
+		_audio_server = memnew(AS);
 
 		register_core_singletons();
 
 		register_server_types();
-		get_ext()->initialize_extensions(ExtensionInitializationLevel_Servers);
+		extension_manager()->initialize_extensions(ExtensionInitializationLevel_Servers);
 		register_server_singletons();
 
 		register_scene_types();
 		register_driver_types();
-		get_ext()->initialize_extensions(ExtensionInitializationLevel_Scene);
+		extension_manager()->initialize_extensions(ExtensionInitializationLevel_Scene);
 		register_scene_singletons();
 
 #if TOOLS_ENABLED
 		register_editor_types();
-		get_ext()->initialize_extensions(ExtensionInitializationLevel_Editor);
+		extension_manager()->initialize_extensions(ExtensionInitializationLevel_Editor);
 		register_editor_singletons();
 #endif
 
@@ -144,10 +142,8 @@ namespace Ism
 
 		//initialize_physics();
 	
-		get_scr()->initialize_languages();
+		script_server()->initialize_languages();
 	
-		imgui = VALIDATE(ImGui_Initialize());
-
 		return Error_OK;
 	}
 
@@ -190,7 +186,7 @@ namespace Ism
 			// etc...
 		}
 	
-		get_os()->set_main_loop(main_loop);
+		os()->set_main_loop(main_loop);
 
 		return true;
 	}
@@ -207,17 +203,11 @@ namespace Ism
 
 		bool should_close{ false };
 
-		// TODO: physics stuff goes here
+		// TODO: _physics_server stuff goes here
 
-		input->iteration(delta_time);
+		_input->iteration(delta_time);
 
-		ImGui_BeginFrame(imgui);
-		if (get_os()->get_main_loop()->process(delta_time)) { should_close = true; }
-		ImGui::Render();
-		get_gpu()->draw_list_begin_for_screen();
-		ImGui_RenderDrawData(&imgui->Viewports[0]->DrawDataP);
-		get_gpu()->draw_list_end();
-		ImGui_EndFrame(imgui);
+		if (os()->get_main_loop()->process(delta_time)) { should_close = true; }
 	
 		return should_close;
 	}
@@ -227,44 +217,42 @@ namespace Ism
 		//remove_custom_loaders();
 		//remove_custom_savers();
 
-		ImGui_Finalize(imgui);
+		os()->delete_main_loop();
 
-		get_os()->delete_main_loop();
-
-		get_scr()->finalize_languages();
+		script_server()->finalize_languages();
 
 #if TOOLS_ENABLED
-		get_ext()->finalize_extensions(ExtensionInitializationLevel_Editor);
+		extension_manager()->finalize_extensions(ExtensionInitializationLevel_Editor);
 		unregister_editor_types();
 #endif
 
-		get_ext()->finalize_extensions(ExtensionInitializationLevel_Scene);
+		extension_manager()->finalize_extensions(ExtensionInitializationLevel_Scene);
 		unregister_driver_types();
 		unregister_scene_types();
 
 		//finalize_theme();
 
-		get_ext()->finalize_extensions(ExtensionInitializationLevel_Servers);
+		extension_manager()->finalize_extensions(ExtensionInitializationLevel_Servers);
 		unregister_server_types();
 
-		memdelete(audio);
-		get_os()->finalize();
-		graphics->finalize();
-		memdelete(graphics);
-		memdelete(display);
-		memdelete(physics);
-		memdelete(text);
+		memdelete(_audio_server);
+		os()->finalize();
+		_rendering_server->finalize();
+		memdelete(_rendering_server);
+		memdelete(_display_server);
+		memdelete(_physics_server);
+		memdelete(_text_server);
 
-		memdelete(packed_data);
-		memdelete(input);
-		memdelete(settings);
-		memdelete(performance);
+		memdelete(_packed_data);
+		memdelete(_input);
+		memdelete(_globals);
+		memdelete(_perf);
 
 		unregister_core_driver_types();
 		unregister_core_extensions();
 		unregister_core_types();
-		memdelete(engine);
-		get_os()->finalize_core();
+		memdelete(_engine);
+		os()->finalize_core();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

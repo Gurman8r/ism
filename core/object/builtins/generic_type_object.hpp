@@ -1,5 +1,5 @@
-#ifndef _ISM_GENERIC_OBJECT_HPP_
-#define _ISM_GENERIC_OBJECT_HPP_
+#ifndef _ISM_GENERIC_TYPE_OBJECT_HPP_
+#define _ISM_GENERIC_TYPE_OBJECT_HPP_
 
 // NYI / PLACEHOLDER
 
@@ -32,4 +32,4 @@ namespace Ism
 	};
 }
 
-#endif // !_ISM_GENERIC_OBJECT_HPP_
+#endif // !_ISM_GENERIC_TYPE_OBJECT_HPP_

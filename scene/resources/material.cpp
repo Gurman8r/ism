@@ -5,21 +5,21 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(Material, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(Material, t, TypeFlags_IsAbstract) {}
 
 	Material::Material()
 	{
-		m_material = get_gfx()->material_create();
+		m_material = rendering_server()->material_create();
 	}
 
 	Material::~Material()
 	{
-		if (m_material) { get_gfx()->material_destroy(m_material); m_material = nullptr; }
+		if (m_material) { rendering_server()->material_destroy(m_material); m_material = nullptr; }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(ShaderMaterial, t) {}
+	OBJECT_EMBED(ShaderMaterial, t) {}
 
 	ShaderMaterial::ShaderMaterial() : Material{}
 	{
@@ -39,22 +39,22 @@ namespace Ism
 	{
 		if (m_shader == value) { return; }
 		m_shader = value;
-		get_gfx()->material_set_shader(get_rid(), get_shader_rid());
+		rendering_server()->material_set_shader(get_rid(), get_shader_rid());
 	}
 
 	Var ShaderMaterial::get_shader_param(String const & key) const
 	{
-		return get_gfx()->material_get_param(get_rid(), key);
+		return rendering_server()->material_get_param(get_rid(), key);
 	}
 
 	void ShaderMaterial::set_shader_param(String const & key, Var const & value)
 	{
-		get_gfx()->material_set_param(get_rid(), key, value);
+		rendering_server()->material_set_param(get_rid(), key, value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(StandardMaterial3D, t) {}
+	OBJECT_EMBED(StandardMaterial3D, t) {}
 
 	StandardMaterial3D::StandardMaterial3D() : Material{}
 	{
@@ -78,19 +78,19 @@ namespace Ism
 	void StandardMaterial3D::set_albedo(Color const & value)
 	{
 		m_params.albedo = value;
-		get_gfx()->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
+		rendering_server()->material_set_param(get_rid(), parameter_names[Param_Albedo], (Vec4)value);
 	}
 
 	void StandardMaterial3D::set_specular(f32 value)
 	{
 		m_params.specular = value;
-		get_gfx()->material_set_param(get_rid(), parameter_names[Param_Specular], value);
+		rendering_server()->material_set_param(get_rid(), parameter_names[Param_Specular], value);
 	}
 
 	void StandardMaterial3D::set_metallic(f32 value)
 	{
 		m_params.metallic = value;
-		get_gfx()->material_set_param(get_rid(), parameter_names[Param_Metallic], value);
+		rendering_server()->material_set_param(get_rid(), parameter_names[Param_Metallic], value);
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

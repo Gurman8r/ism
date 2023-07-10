@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(IntObject, t)
+	OBJECT_EMBED(IntObject, t)
 	{
 		t.tp_hash = (HashFunc)[](ObjectRef self) -> size_t { return Hasher<i64>()(***(IntRef &)self); };
 

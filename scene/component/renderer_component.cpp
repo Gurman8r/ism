@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	EMBED_CLASS(RendererComponent, t) {}
+	OBJECT_EMBED(RendererComponent, t) {}
 
 	RendererComponent::RendererComponent()
 	{

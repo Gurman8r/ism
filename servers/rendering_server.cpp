@@ -5,9 +5,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(RenderingServer, t, TypeFlags_IsAbstract) {}
+	OBJECT_EMBED(RenderingServer, t, TypeFlags_IsAbstract) {}
 
-	RenderingServer * RenderingServer::__singleton{};
+	SINGLETON_EMBED(RenderingServer);
 
 	RenderingServer::CreateFunc RenderingServer::__create_func{ []() { return (RenderingServer *)memnew(DefaultRenderingServer); } };
 

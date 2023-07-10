@@ -22,10 +22,12 @@
 #define MAX_ARGUMENTS 24
 #endif
 
+// forward object
 #define FWD_OBJ(expr) \
 	(Ism::object_or_cast(FWD(expr)))
 
-#define STR_IDENTIFIER(m_name) \
+// string identifier
+#define STRING_IDENTIFIER(m_name) \
 	static Ism::StringObject CAT(ID_, m_name) { TOSTR(m_name) }
 
 namespace Ism
@@ -150,8 +152,10 @@ namespace Ism
 		TypeFlags_IsAbstract		= 1 << 4,
 		TypeFlags_IsFinal			= 1 << 5,
 
-		TypeFlags_Int_Subclass		= 1 << 24,
-		TypeFlags_Float_Subclass	= 1 << 25,
+		TypeFlags_Int_Subclass		= 1 << 22,
+		TypeFlags_Float_Subclass	= 1 << 23,
+		TypeFlags_Array_Subclass	= 1 << 24,
+		TypeFlags_Iterator_Subclass	= 1 << 25,
 		TypeFlags_Str_Subclass		= 1 << 26,
 		TypeFlags_Tuple_Subclass	= 1 << 27,
 		TypeFlags_List_Subclass		= 1 << 28,

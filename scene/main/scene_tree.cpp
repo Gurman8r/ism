@@ -1,14 +1,26 @@
 #include <scene/main/scene_tree.hpp>
 #include <scene/main/missing_node.hpp>
 #include <scene/main/window.hpp>
+#include <scene/gui/imgui.hpp>
+#include <scene/resources/world_2d.hpp>
+#include <scene/resources/world_3d.hpp>
+
+// components
+#include <scene/component/camera_behavior.hpp>
+#include <scene/component/collider_component.hpp>
+#include <scene/component/mesh_renderer_component.hpp>
+#include <scene/component/rigidbody_component.hpp>
+#include <scene/component/rigidbody2d_component.hpp>
+#include <scene/component/sprite_renderer_component.hpp>
+#include <scene/component/transform_component.hpp>
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	SceneTree * SceneTree::__singleton{};
+	SINGLETON_EMBED(SceneTree);
 
-	EMBED_CLASS(SceneTree, t)
+	OBJECT_EMBED(SceneTree, t)
 	{
 		t.tp_bind = BIND_CLASS(SceneTree, klass)
 		{
@@ -24,16 +36,18 @@ namespace Ism
 
 	SceneTree::SceneTree()
 	{
-		if (__singleton == nullptr) { __singleton = this; }
+		if (has_singleton(nullptr)) { set_singleton(this); }
 
 		m_root = memnew(Window);
+		m_root->set_name("root");
+		m_root->set_title("");
 	}
 
 	SceneTree::~SceneTree()
 	{
 		memdelete(m_root);
 
-		if (__singleton == this) { __singleton = nullptr; }
+		if (has_singleton(this)) { set_singleton(nullptr); }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -43,6 +57,10 @@ namespace Ism
 		m_initialized = true;
 		m_root->set_tree(this);
 		base_type::initialize();
+
+		if (has_singleton(this) && !ImGui::GetCurrentContext()) {
+			m_imgui = VALIDATE(ImGui_Initialize());
+		}
 	}
 
 	bool SceneTree::process(Duration const & dt)
@@ -51,16 +69,33 @@ namespace Ism
 		m_fps_tracker.update(dt);
 		m_delta_time = dt;
 
-		m_root->propagate_notification(Node::Notification_Internal_Process);
-		m_root->propagate_notification(Node::Notification_Process);
+		if (m_imgui) {
+			ImGui_BeginFrame(m_imgui);
+		}
+
+		m_root->propagate_notification(Notification_Internal_Process);
+		m_root->propagate_notification(Notification_Process);
+
+		if (m_imgui) {
+			ImGui::Render();
+			rendering_device()->draw_list_begin_for_screen();
+			ImGui_RenderDrawData(&m_imgui->Viewports[0]->DrawDataP);
+			rendering_device()->draw_list_end();
+			ImGui_EndFrame(m_imgui);
+		}
 
 		return m_should_close;
 	}
 
 	void SceneTree::finalize()
 	{
-		base_type::finalize();
 		m_initialized = false;
+		base_type::finalize();
+
+		if (m_imgui) {
+			ImGui_Finalize(m_imgui);
+			m_imgui = nullptr;
+		}
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

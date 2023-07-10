@@ -2,7 +2,7 @@
 
 namespace Ism
 {
-	Engine * Engine::__singleton{};
+	SINGLETON_EMBED(Engine);
 
 	Engine::Engine() noexcept
 	{

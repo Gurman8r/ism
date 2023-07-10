@@ -7,6 +7,37 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	enum : Notification_
+	{
+		Notification_EnterTree = 10,
+		Notification_ExitTree,
+		Notification_Paused,
+		Notification_Unpaused,
+		Notification_Ready,
+		Notification_Process,
+		Notification_PhysicsProcess,
+		Notification_Parented,
+		Notification_Unparented,
+		Notification_Instanced,
+		Notification_DragBegin,
+		Notification_DragEnd,
+		Notification_PathChanged,
+		Notification_Internal_Process,
+		Notification_Internal_PhysicsProcess,
+		Notification_PostEnterTree,
+
+		Notification_WM_MouseEnter = 1001,
+		Notification_WM_MouseExit,
+		Notification_WM_FocusIn,
+		Notification_WM_FocusOut,
+		Notification_WM_CloseRequest,
+		Notification_WM_GoBackRequest,
+		Notification_WM_SizeChanged,
+		Notification_WM_ScaleChanged,
+	};
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	class SceneTree;
 
 	// node
@@ -28,42 +59,6 @@ namespace Ism
 			ProcessMode_Disabled,
 		};
 
-		enum : Notification_
-		{
-			Notification_EnterTree = 10,
-			Notification_ExitTree,
-			Notification_Paused,
-			Notification_Unpaused,
-			Notification_Ready,
-			Notification_Process,
-			Notification_PhysicsProcess,
-			Notification_Parented,
-			Notification_Unparented,
-			Notification_Instanced,
-			Notification_DragBegin,
-			Notification_DragEnd,
-			Notification_PathChanged,
-			Notification_Internal_Process,
-			Notification_Internal_PhysicsProcess,
-			Notification_PostEnterTree,
-
-			Notification_WM_MouseEnter = 1001,
-			Notification_WM_MouseExit,
-			Notification_WM_FocusIn,
-			Notification_WM_FocusOut,
-			Notification_WM_CloseRequest,
-			Notification_WM_GoBackRequest,
-			Notification_WM_SizeChanged,
-			Notification_WM_ScaleChanged,
-
-			Notification_MemoryWarning = MainLoop::Notification_MemoryWarning,
-			Notification_Crash = MainLoop::Notification_Crash,
-			Notification_ApplicationResumed	 = MainLoop::Notification_ApplicationResumed,
-			Notification_ApplicationPaused	 = MainLoop::Notification_ApplicationPaused,
-			Notification_ApplicationFocusIn	 = MainLoop::Notification_ApplicationFocusIn,
-			Notification_ApplicationFocusOut = MainLoop::Notification_ApplicationFocusOut,
-		};
-
 	protected:
 		struct Data
 		{
@@ -77,8 +72,8 @@ namespace Ism
 
 		void _notification(Notification_ id);
 
-		virtual void _process(Duration const delta_time);
-		virtual void _physics_process(Duration const delta_time);
+		virtual void _process(Duration const & delta_time);
+		virtual void _physics_process(Duration const & delta_time);
 		virtual void _enter_tree();
 		virtual void _exit_tree();
 		virtual void _ready();

@@ -5,7 +5,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Internals * Internals::__singleton{};
+	SINGLETON_EMBED(Internals);
 
 	Internals::Internals()
 	{

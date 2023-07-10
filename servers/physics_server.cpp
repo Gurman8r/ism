@@ -4,9 +4,9 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	EMBED_CLASS(PhysicsServer, t) {}
+	OBJECT_EMBED(PhysicsServer, t) {}
 
-	PhysicsServer * PhysicsServer::__singleton{};
+	SINGLETON_EMBED(PhysicsServer);
 
 	PhysicsServer::PhysicsServer() { SINGLETON_CTOR(); }
 
