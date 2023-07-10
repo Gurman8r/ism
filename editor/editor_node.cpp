@@ -305,7 +305,7 @@ namespace Ism
 	{
 		static bool opt_fullscreen{ true };
 		static bool opt_padding{ false };
-		static ImGuiDockNodeFlags dockspace_flags{ ImGuiDockNodeFlags_None };
+		static ImGuiDockNodeFlags dockspace_flags{ ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_AutoHideTabBar };
 	
 		ImGuiWindowFlags window_flags{ ImGuiWindowFlags_NoDocking };
 		if (m_show_main_menu_bar) { window_flags |= ImGuiWindowFlags_MenuBar; }
@@ -357,26 +357,13 @@ namespace Ism
 	{
 		ImGuiID const dockspace{ ImGui::GetID("##EditorDockSpace") };
 
-#if 0
-		ImGuiID right_up{ dockspace };
-		ImGuiID left_up{ ImGui::DockBuilderSplitNode(right_up, ImGuiDir_Left, 0.2f, nullptr, &right_up) };
-		ImGuiID left_down{ ImGui::DockBuilderSplitNode(left_up, ImGuiDir_Down, 0.5f, nullptr, &left_up) };
-		ImGuiID right_down{ ImGui::DockBuilderSplitNode(right_up, ImGuiDir_Down, 0.2f, nullptr, &right_up) };
-		ImGui::DockBuilderDockWindow(m_viewport->get_name(), right_up);
-		ImGui::DockBuilderDockWindow(m_hierarchy->get_name(), left_up);
-		ImGui::DockBuilderDockWindow(m_inspector->get_name(), left_down);
-		ImGui::DockBuilderDockWindow(m_log->get_name(), left_down);
-		ImGui::DockBuilderDockWindow(m_assets->get_name(), right_down);
-		ImGui::DockBuilderDockWindow(m_terminal->get_name(), right_down);
-#else
-
 		ImGuiID col0_row0{ dockspace };
 		ImGuiID col1_row0{ ImGui::DockBuilderSplitNode(col0_row0, ImGuiDir_Right, 0.4f, nullptr, &col0_row0) };
 		ImGuiID col2_row0{ ImGui::DockBuilderSplitNode(col1_row0, ImGuiDir_Right, 0.5f, nullptr, &col1_row0) };
 
-		ImGuiID col0_row1{ ImGui::DockBuilderSplitNode(col0_row0, ImGuiDir_Down, 0.4f, nullptr, &col0_row0) };
-		ImGuiID col1_row1{ ImGui::DockBuilderSplitNode(col1_row0, ImGuiDir_Down, 0.4f, nullptr, &col1_row0) };
-		ImGuiID col2_row1{ ImGui::DockBuilderSplitNode(col1_row1, ImGuiDir_Down, 0.4f, nullptr, &col1_row1) };
+		ImGuiID col0_row1{ ImGui::DockBuilderSplitNode(col0_row0, ImGuiDir_Down, 0.25f, nullptr, &col0_row0) };
+		ImGuiID col1_row1{ ImGui::DockBuilderSplitNode(col1_row0, ImGuiDir_Down, 0.5f, nullptr, &col1_row0) };
+		ImGuiID col2_row1{ ImGui::DockBuilderSplitNode(col1_row1, ImGuiDir_Down, 0.5f, nullptr, &col1_row1) };
 
 		ImGui::DockBuilderDockWindow(m_viewport->get_name(), col0_row0);
 		ImGui::DockBuilderDockWindow(m_hierarchy->get_name(), col1_row0);
@@ -384,7 +371,6 @@ namespace Ism
 		ImGui::DockBuilderDockWindow(m_log->get_name(), col1_row1);
 		ImGui::DockBuilderDockWindow(m_assets->get_name(), col1_row1);
 		ImGui::DockBuilderDockWindow(m_terminal->get_name(), col0_row1);
-#endif
 	}
 
 	void EditorNode::_draw_menu_bar()
