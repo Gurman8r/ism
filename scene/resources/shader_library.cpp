@@ -1,6 +1,7 @@
 #include <scene/resources/shader_library.hpp>
 #include <servers/rendering_server.hpp>
 #include <core/config/project_settings.hpp>
+#include <core/io/file.hpp>
 #include <fstream>
 
 namespace Ism
@@ -18,27 +19,32 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	static Error_ load_shader_default(std::ifstream & file, RD::ShaderStageData(&spec)[RD::ShaderStage_MAX])
+	static Error_ load_shader_default(Ref<File> & file, RD::ShaderStageData(&spec)[RD::ShaderStage_MAX])
 	{
 		RD::ShaderStage_ stage_index{ RD::ShaderStage_MAX };
 
-		String line;
-		while (std::getline(file, line.native()))
+		while (String line{ file->get_line() })
 		{
-			bool should_write{ true };
-			if (line.erase_duplicates(' ').empty()) { continue; }
-			else if (line.front() == '#') {
-				switch (line.hash_code()) {
-				case "#pragma shader vertex"_hash: { stage_index = RD::ShaderStage_Vertex; should_write = false; } break;
-				case "#pragma shader pixel"_hash: { stage_index = RD::ShaderStage_Fragment; should_write = false; } break;
-				case "#pragma shader geometry"_hash: { stage_index = RD::ShaderStage_Geometry; should_write = false; } break;
-				case "#pragma shader tess_ctrl"_hash: { stage_index = RD::ShaderStage_TesselationControl; should_write = false; } break;
-				case "#pragma shader tess_eval"_hash: { stage_index = RD::ShaderStage_TesselationEvaluation; should_write = false; } break;
-				case "#pragma shader compute"_hash: { stage_index = RD::ShaderStage_Compute; should_write = false; } break;
+			bool write{};
+			auto it{ line.begin() };
+			while ((it != line.end() - 1) && std::isspace(*it)) { ++it; }
+			if (*it == '#') {
+				String pragma{ it, line.end() };
+				pragma = pragma.trim_back().erase_duplicates(' ');
+				switch (pragma.hash_code()) {
+				default: { write = true; } break;
+				case "#pragma shader vertex"_hash: { stage_index = RD::ShaderStage_Vertex; } break;
+				case "#pragma shader pixel"_hash: { stage_index = RD::ShaderStage_Fragment; } break;
+				case "#pragma shader geometry"_hash: { stage_index = RD::ShaderStage_Geometry; } break;
+				case "#pragma shader tess_ctrl"_hash: { stage_index = RD::ShaderStage_TesselationControl; } break;
+				case "#pragma shader tess_eval"_hash: { stage_index = RD::ShaderStage_TesselationEvaluation; } break;
+				case "#pragma shader compute"_hash: { stage_index = RD::ShaderStage_Compute; } break;
 				}
 			}
-			if (should_write && stage_index != RD::ShaderStage_MAX)
-			{
+			else {
+				write = true;
+			}
+			if (write && stage_index != RD::ShaderStage_MAX) {
 				spec[stage_index].code.printf("%.*s\n", line.size(), line.data());
 			}
 		}
@@ -46,7 +52,7 @@ namespace Ism
 		for (i32 i{}; i < RD::ShaderStage_MAX; ++i) {
 			spec[i].shader_stage = (RD::ShaderStage_)i;
 			if (!spec[i].code.empty() && spec[i].code.back() != '\0') { spec[i].code << '\0'; }
-			//os()->printf("%.*s\n", spec[i].code.size(), spec[i].code.data());
+			//PRINTF("%.*s\n", spec[i].code.size(), spec[i].code.data());
 		}
 
 		return Error_OK;
@@ -58,11 +64,18 @@ namespace Ism
 
 	Error_ ShaderFormatLoader::load_shader(Ref<Shader> shader, String const & path)
 	{
-		if (!shader) { return Error_Failed; }
-		if (path.empty()) { return Error_Failed; }
-		std::ifstream file{ path.c_str() };
-		ON_SCOPE_EXIT(&) { file.close(); };
-		if (!file) { return Error_Failed; }
+		if (!shader) {
+			return Error_Failed;
+		}
+
+		if (!File::exists(path)) {
+			return Error_Failed;
+		}
+
+		Ref<File> file{ File::open(path, FileMode_Read) };
+		if (!file) {
+			return Error_Failed;
+		}
 
 		switch (path.extension().hash_code())
 		{
@@ -82,7 +95,7 @@ namespace Ism
 	RES ShaderFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Shader> temp{}; temp.instance();
-		if (Error_ const err{ load_shader(temp, globals()->globalize_path(path)) }) {
+		if (Error_ const err{ load_shader(temp, path) }) {
 			if (r_error) { *r_error = err; }
 			temp = nullptr;
 		}

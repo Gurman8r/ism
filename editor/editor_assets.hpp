@@ -16,7 +16,7 @@ namespace Ism
 
 		virtual ~EditorAssets();
 
-		virtual void process(Duration const & delta_time) override;
+		virtual void process(Duration const & dt) override;
 	};
 }
 

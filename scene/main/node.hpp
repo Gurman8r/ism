@@ -72,39 +72,47 @@ namespace Ism
 
 		void _notification(Notification_ id);
 
-		virtual void _process(Duration const & delta_time);
-		virtual void _physics_process(Duration const & delta_time);
+		virtual void _process(Duration const & dt);
+		virtual void _physics_process(Duration const & dt);
 		virtual void _enter_tree();
 		virtual void _exit_tree();
 		virtual void _ready();
 		virtual void _input(InputEvent const & input_event);
 
 	public:
-		String get_name() const;
+		NODISCARD String get_name() const;
 		void set_name(String const & name);
 
-		SceneTree * get_tree() const;
+		NODISCARD SceneTree * get_tree() const;
 		bool set_tree(SceneTree * tree);
 
-		Node * get_parent() const;
+		NODISCARD Node * get_parent() const;
 		bool set_parent(Node * parent);
 
-		Node * get_sibling(size_t const index) const;
-		size_t get_sibling_index() const;
+		NODISCARD Node * get_sibling(size_t const index) const;
+		NODISCARD size_t get_sibling_index() const;
 		void set_sibling_index(size_t const index);
 
-		Node * get_child(size_t const index) const;
-		size_t get_child_count() const;
+		NODISCARD Node * get_child(size_t const index) const;
 
-		template <class T, class ... Args
-		> T * add_child(Args && ... args) noexcept { return (T *)add_child((Node *)memnew(T(args...))); }
+		template <class T, std::enable_if_t<std::is_base_of_v<Node, T>, int> = 0
+		> NODISCARD T * get_child(size_t const index) const { return dynamic_cast<T *>(get_child(index)); }
+		
+		NODISCARD size_t get_child_count() const;
+
 		Node * add_child(Node * child);
+
+		template <class T, class ... Args, std::enable_if_t<std::is_base_of_v<Node, T>, int> = 0
+		> T * add_child(Args && ... args) noexcept { return (T *)add_child((Node *)memnew(T(args...))); }
+
 		void destroy_child(size_t const index);
 		
-		bool is_child_of(Node const * parent, bool recursive = false) const;
-		bool is_parent_of(Node const * child, bool recursive = false) const;
+		NODISCARD bool is_child_of(Node const * parent, bool recursive = false) const;
+		NODISCARD bool is_parent_of(Node const * child, bool recursive = false) const;
 
-		FORCE_INLINE Viewport * get_viewport() const { return m_data.viewport; }
+		NODISCARD Window * get_root() const;
+
+		NODISCARD Viewport * get_viewport() const { return m_data.viewport; }
 
 		void propagate_notification(i32 id, bool reverse = false);
 

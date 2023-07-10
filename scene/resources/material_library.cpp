@@ -17,7 +17,7 @@ namespace Ism
 	RES MaterialFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Material> temp{}; //temp.instance();
-		if (Error_ const err{ load_material(temp, globals()->globalize_path(path)) }) {
+		if (Error_ const err{ load_material(temp, path) }) {
 			if (r_error) { *r_error = err; }
 			temp = nullptr;
 		}

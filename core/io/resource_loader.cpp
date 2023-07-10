@@ -1,4 +1,5 @@
 #include <core/io/resource_loader.hpp>
+#include <core/config/project_settings.hpp>
 
 namespace Ism
 {
@@ -21,17 +22,23 @@ namespace Ism
 	
 	RES ResourceLoader::load(String const & path, Error_ * r_error)
 	{
+		String const gpath{ globals()->globalize_path(path).replace('\\', '/') };
+
 		bool found{};
 		RES result{};
-		for (size_t i{}; i < m_loaders.size(); ++i) {
-			if (!m_loaders[i]->recognize_path(path)) { continue; }
+		for (size_t i{}; i < m_loaders.size(); ++i)
+		{
+			if (!m_loaders[i]->recognize_path(gpath)) {
+				continue;
+			}
 			found = true;
-			if (result = m_loaders[i]->load(path, r_error)) { break; }
+			if (result = m_loaders[i]->load(gpath, r_error)) {
+				break;
+			}
 		}
 		if (result) {
 			return result;
 		}
-
 		return nullptr;
 	}
 

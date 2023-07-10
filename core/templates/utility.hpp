@@ -156,6 +156,7 @@ namespace Ism::priv
 
 // singleton checkers
 #define SINGLETON_CHECKERS(T) \
+		NODISCARD FORCE_INLINE bool is_singleton() const noexcept { return __singleton == this; } \
 		NODISCARD FORCE_INLINE static bool has_singleton(T * value) noexcept { return __singleton == value; }
 
 // singleton class
@@ -183,7 +184,7 @@ private:
 // singleton destructor
 #define SINGLETON_DTOR()					\
 		do {								\
-			ASSERT(has_singleton(this));	\
+			ASSERT(is_singleton());			\
 		} while (0);						\
 		ON_SCOPE_EXIT(&) {					\
 			set_singleton(nullptr);			\

@@ -18,7 +18,7 @@ namespace Ism
 			else { return compare((intptr_t)*self, (intptr_t)*other); }
 		};
 
-		t.tp_bind = BIND_CLASS(ListObject, klass)
+		t.tp_bind = CLASS_(ListObject, klass)
 		{
 			return klass
 				.def("__contains__", &ListObject::contains<ObjectRef const &>)

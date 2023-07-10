@@ -26,10 +26,8 @@ namespace Ism
 
 		virtual ~Glyph();
 
-		Glyph & swap(Glyph & other) noexcept
-		{
-			if (this != std::addressof(other))
-			{
+		Glyph & swap(Glyph & other) noexcept {
+			if (!is(other)) {
 				util::swap(m_texture, other.m_texture);
 				util::swap(m_bounds, other.m_bounds);
 				util::swap(m_advance, other.m_advance);

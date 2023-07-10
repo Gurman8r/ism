@@ -40,7 +40,7 @@ namespace Ism
 	RES ImageFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Image> temp{}; temp.instance();
-		if (Error_ const err{ load_image(temp, globals()->globalize_path(path)) }) {
+		if (Error_ const err{ load_image(temp, path) }) {
 			if (r_error) { *r_error = err; }
 			temp = nullptr;
 		}

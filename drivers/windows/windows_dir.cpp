@@ -106,7 +106,7 @@ namespace Ism
 		String base = _get_root_path();
 		if (!base.empty()) {
 			GetCurrentDirectoryW(2048, real_current_dir_name);
-			String new_dir = Unicode(real_current_dir_name).narrow().replace("\\", "/");
+			String new_dir = Unicode(real_current_dir_name).narrow().replace('\\', '/');
 			if (!new_dir.begins_with(base)) {
 				worked = false;
 			}
@@ -115,7 +115,7 @@ namespace Ism
 		if (worked) {
 			GetCurrentDirectoryW(2048, real_current_dir_name);
 			m_path = Unicode(real_current_dir_name).narrow();
-			m_path = m_path.replace("\\", "/");
+			m_path = m_path.replace('\\', '/');
 		}
 
 		SetCurrentDirectoryW((LPCWSTR)(prev_dir.widen().c_str()));
@@ -153,7 +153,7 @@ namespace Ism
 	{
 		String base = _get_root_path();
 		if (!base.empty()) {
-			String bd = m_path.replace("\\", "/");
+			String bd = m_path.replace('\\', '/');
 			if (bd.begins_with("/")) {
 				return _get_root_string() + bd.substr(1, bd.size());
 			}

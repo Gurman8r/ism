@@ -414,7 +414,7 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	void Input::iteration(Duration const & delta_time)
+	void Input::iteration(Duration const & dt)
 	{
 		/* UPDATE MOUSE */
 
@@ -440,7 +440,7 @@ namespace Ism
 		for (i32 i{}; i < MouseButton_MAX; ++i)
 		{
 			m_mouse_button_time_prev[i] = m_mouse_button_time[i];
-			m_mouse_button_time[i] = m_mouse_button[i] ? (m_mouse_button_time[i] < 0.f ? 0.f : m_mouse_button_time[i] + delta_time) : -1.f;
+			m_mouse_button_time[i] = m_mouse_button[i] ? (m_mouse_button_time[i] < 0.f ? 0.f : m_mouse_button_time[i] + dt) : -1.f;
 
 			bit_write(m_mouse_click[i], Click_Released, !m_mouse_button[i] && m_mouse_button_time[i] >= 0.f);
 			bit_write(m_mouse_click[i], Click_Clicked, m_mouse_button[i] && m_mouse_button_time[i] < 0.f);
@@ -448,7 +448,7 @@ namespace Ism
 
 			if (bit_read(m_mouse_click[i], Click_Clicked))
 			{
-				if (delta_time - m_mouse_click_time[i] > m_mouse_double_click_time[i])
+				if (dt - m_mouse_click_time[i] > m_mouse_double_click_time[i])
 				{
 					Vec2 const click_delta{ is_valid_mouse_position(&m_mouse_position) ? (m_mouse_position - m_mouse_click_position[i]) : Vec2{} };
 					f32 const click_dist{ length(click_delta) };
@@ -459,7 +459,7 @@ namespace Ism
 				}
 				else
 				{
-					m_mouse_click_time[i] = delta_time;
+					m_mouse_click_time[i] = dt;
 				}
 
 				m_mouse_click_position[i] = m_mouse_position;
@@ -490,7 +490,7 @@ namespace Ism
 		for (i32 i{}; i < Key_MAX; ++i)
 		{
 			m_key_time_prev[i] = m_key_time[i];
-			m_key_time[i] = m_key[i] ? (m_key_time[i] < 0.f ? 0.f : m_key_time[i] + delta_time) : -1.f;
+			m_key_time[i] = m_key[i] ? (m_key_time[i] < 0.f ? 0.f : m_key_time[i] + dt) : -1.f;
 		}
 
 		/* UPDATE JOYSTICKS */
@@ -504,7 +504,7 @@ namespace Ism
 			for (i32 i{}; i < JoyButton_MAX; ++i)
 			{
 				m_joy_button_time_prev[j][i] = m_joy_button_time[j][i];
-				m_joy_button_time[j][i] = m_joy_button[j][i] ? (m_joy_button_time[j][i] < 0.f ? 0.f : m_joy_button_time[j][i] + delta_time) : -1.f;
+				m_joy_button_time[j][i] = m_joy_button[j][i] ? (m_joy_button_time[j][i] < 0.f ? 0.f : m_joy_button_time[j][i] + dt) : -1.f;
 			}
 		}
 
@@ -513,7 +513,7 @@ namespace Ism
 		for (i32 i{}; i < NavInput_MAX; ++i)
 		{
 			m_nav_input_time_prev[i] = m_nav_input_time[i];
-			m_nav_input_time[i] = m_nav_input[i] ? (m_nav_input_time[i] < 0.f ? 0.f : m_nav_input_time[i] + delta_time) : -1.f;
+			m_nav_input_time[i] = m_nav_input[i] ? (m_nav_input_time[i] < 0.f ? 0.f : m_nav_input_time[i] + dt) : -1.f;
 		}
 	}
 

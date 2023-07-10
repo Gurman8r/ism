@@ -17,10 +17,10 @@ namespace Ism
 		switch (value)
 		{
 		case Notification_Process: {
-			_process(get_tree()->get_delta_time());
+			_process(get_tree()->get_delta());
 		} break;
 		case Notification_PhysicsProcess: {
-			_physics_process(get_tree()->get_delta_time());
+			_physics_process(get_tree()->get_delta());
 		} break;
 		case Notification_EnterTree: {
 			_enter_tree();
@@ -40,11 +40,11 @@ namespace Ism
 		}
 	}
 
-	void Node::_process(Duration const & delta_time)
+	void Node::_process(Duration const & dt)
 	{
 	}
 
-	void Node::_physics_process(Duration const & delta_time)
+	void Node::_physics_process(Duration const & dt)
 	{
 	}
 
@@ -195,6 +195,11 @@ namespace Ism
 			}
 		}
 		return false;
+	}
+
+	Window * Node::get_root() const
+	{
+		return VALIDATE(m_data.tree)->get_root();
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

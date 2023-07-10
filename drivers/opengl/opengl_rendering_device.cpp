@@ -91,7 +91,7 @@ void glCheckError(cstring expr, cstring file, u32 line)
 	} break;
 	}
 
-	os()->err_printf(
+	PRINTF(
 		"\nAn internal OpenGL call failed in \"%s\" (%u) \n"
 		"Code: %u\n"
 		"Expression: %s\n"
@@ -776,7 +776,7 @@ RID OpenGlRenderingDevice::shader_create(ShaderStageData const (&spec)[ShaderSta
 			glCheck(glDeleteObjectARB(obj));
 			glCheck(glDeleteProgramsARB(1, &s->handle));
 			memdelete(s);
-			os()->err_printf("%.*s\n", log_len, log_str);
+			PRINTF("%.*s\n", log_len, log_str);
 			return nullptr;
 		}
 
@@ -794,7 +794,7 @@ RID OpenGlRenderingDevice::shader_create(ShaderStageData const (&spec)[ShaderSta
 		glCheck(glGetInfoLogARB(s->handle, sizeof(log_str), &log_len, log_str));
 		glCheck(glDeleteProgramsARB(1, &s->handle));
 		memdelete(s);
-		os()->err_printf("%.*s\n", log_len, log_str);
+		PRINTF("%.*s\n", log_len, log_str);
 		return nullptr;
 	}
 
@@ -815,11 +815,6 @@ String OpenGlRenderingDevice::shader_get_code(RID shader)
 
 void OpenGlRenderingDevice::shader_set_code(RID shader, String const & value)
 {
-}
-
-i32 OpenGlRenderingDevice::shader_get_uniform_location(RID shader, String const & name)
-{
-	return -1;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

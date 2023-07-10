@@ -424,7 +424,7 @@ namespace Ism
 		void set_custom_cursor_image(RES const & cursor, CursorShape_ shape = CursorShape_Arrow, Vec2 const & hotspot = {});
 
 	public:
-		void iteration(Duration const & delta_time);
+		void iteration(Duration const & dt);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

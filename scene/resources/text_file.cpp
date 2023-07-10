@@ -8,7 +8,7 @@ namespace Ism
 
 	OBJECT_EMBED(TextFile, t)
 	{
-		t.tp_bind = BIND_CLASS(TextFile, klass)
+		t.tp_bind = CLASS_(TextFile, klass)
 		{
 			return klass
 				.def("get_text", &TextFile::get_text)

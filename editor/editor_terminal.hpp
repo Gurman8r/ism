@@ -28,7 +28,7 @@ namespace Ism
 	public:
 		EditorTerminal();
 		virtual ~EditorTerminal();
-		virtual void process(Duration const & delta_time) override;
+		virtual void process(Duration const & dt) override;
 
 		void clear();
 		void printv(cstring fmt, va_list args);

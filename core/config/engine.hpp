@@ -9,12 +9,13 @@ namespace Ism
 	{
 		SINGLETON_CLASS(Engine);
 
-	public:
-		Engine() noexcept;
-		~Engine() noexcept;
+		bool m_is_editor_hint : 1;
 
 	public:
+		Engine();
+		~Engine();
 
+		NODISCARD bool is_editor_hint() const noexcept { return m_is_editor_hint; }
 	};
 
 	SINGLETON_WRAPPER(Engine, engine);

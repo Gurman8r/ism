@@ -40,6 +40,13 @@ namespace Ism
 
 	public:
 		/* SHADER */
+		enum ShaderMode_ {
+			ShaderMode_CanvasItem,
+			ShaderMode_Spatial,
+			ShaderMode_Particles,
+			ShaderMode_Sky,
+			ShaderMode_MAX
+		};
 		virtual RID shader_create() = 0;
 		virtual RID shader_placeholder_create() = 0;
 		virtual void shader_destroy(RID shader) = 0;

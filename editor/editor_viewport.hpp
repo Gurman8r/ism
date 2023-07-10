@@ -32,7 +32,7 @@ namespace Ism
 
 		virtual ~EditorViewport();
 
-		virtual void process(Duration const & delta_time) override;
+		virtual void process(Duration const & dt) override;
 	};
 }
 

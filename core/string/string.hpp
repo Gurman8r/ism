@@ -328,10 +328,31 @@ namespace Ism
 		NODISCARD bool ends_with(self_type const & value) const noexcept { return (value.size() <= size()) && (value == substr(size() - value.size(), value.size())); }
 		
 	public:
+		NODISCARD self_type replace(value_type const & from, value_type const & to) const {
+			self_type temp{ *this };
+			for (value_type & c : temp) {
+				if (c == from) {
+					c = to;
+				}
+			}
+			return temp;
+		}
+
 		NODISCARD self_type replace(self_type const & from, self_type const & to) const {
 			self_type temp{ *this };
 			for (size_t i{}; (i = temp.m_string.find(from.m_string, i)) != npos; i += to.size()) {
 				temp.m_string.replace(i, from.size(), to.m_string);
+			}
+			return temp;
+		}
+
+		NODISCARD self_type replace_first(value_type const & from, value_type const & to) const {
+			self_type temp{ *this };
+			for (value_type & c : temp) {
+				if (c == from) {
+					c = to;
+					break;
+				}
 			}
 			return temp;
 		}
@@ -534,7 +555,7 @@ namespace Ism
 				}
 			}
 
-			s = s.replace("\\", "/");
+			s = s.replace('\\', '/');
 			while (true) { // in case of using 2 or more slash
 				String compare{ s.replace("//", "/") };
 				if (s == compare) { break; }

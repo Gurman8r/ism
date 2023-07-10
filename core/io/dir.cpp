@@ -100,7 +100,7 @@ namespace Ism
 			full = path;
 		}
 
-		full = full.replace("\\", "/");
+		full = full.replace('\\', '/');
 
 		String base{};
 

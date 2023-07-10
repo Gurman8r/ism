@@ -90,7 +90,7 @@ namespace Ism
 			return fn ? fn(self, args) : nullptr;
 		};
 
-		t.tp_bind = BIND_CLASS(TypeObject, klass)
+		t.tp_bind = CLASS_(TypeObject, klass)
 		{
 			return klass
 				.def_static("__instancecheck__", [](ObjectRef const & obj, ObjectRef const & type) { return isinstance(obj, type); })

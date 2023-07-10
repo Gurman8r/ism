@@ -26,25 +26,13 @@ namespace Ism
 		m_mods_path = m_project_path.path_join("mods");
 		m_resource_path = m_project_path.path_join("resources");
 
-		//if (String const os_resource_path{ os()->get_resource_path() }
-		//; !os_resource_path.empty()) {
-		//	m_resource_path = os_resource_path;
-		//	if (!m_resource_path.empty() && m_resource_path.back() == '/') {
-		//		m_resource_path = m_resource_path.pop_back();
-		//	}
-		//}
-
 		// engine settings
 		String const engine_ini{ m_config_path.path_join("engine.ini") };
 		if (!File::exists(engine_ini)) {
 			PRINT_ERROR("could not locate engine settings");
-			return Error_Failed;
 		}
-		if (auto const err{ ConfigFile::parse(engine_ini, [](auto u, auto s, auto n, auto v) {
-			//return (((ProjectSettings *)u)->set(s, n, evaluate(String(v).trim()))), true;
-			//String(s).path_join(n);
-			//((ProjectSettings *)u)->set(String(s).path_join(n), Var{});
-
+		else if (auto const err{ ConfigFile::parse(engine_ini, [](auto u, auto s, auto n, auto v) {
+			//return (((ProjectSettings *)u)->set(String(s).path_join(n), evaluate(String(v).trim()))), true;
 			return true;
 		}, this) }) {
 			PRINT_ERROR("could not parse engine settings");
@@ -56,10 +44,9 @@ namespace Ism
 		String const editor_ini{ m_config_path.path_join("editor.ini") };
 		if (!File::exists(editor_ini)) {
 			PRINT_ERROR("could not locate editor settings");
-			return Error_Failed;
 		}
-		if (auto const err{ ConfigFile::parse(editor_ini, [](auto u, auto s, auto n, auto v) {
-			//return (((ProjectSettings *)u)->set(s, n, evaluate(String(v).trim()))), true;
+		else if (auto const err{ ConfigFile::parse(editor_ini, [](auto u, auto s, auto n, auto v) {
+			//return (((ProjectSettings *)u)->set(String(s).path_join(n), evaluate(String(v).trim()))), true;
 			return true;
 		}, this) }) {
 			PRINT_ERROR("could not parse editor settings");
@@ -72,21 +59,21 @@ namespace Ism
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	Var ProjectSettings::get(String const & path) const
+	Optional<Var> ProjectSettings::get(String const & path) const
 	{
-		if (auto const value{ util::getptr(m_data, path) }) {
-			return *value;
+		if (auto const v{ util::getptr(m_data, path) }) {
+			return *v;
 		}
 		else {
-			return nullptr;
+			return nullopt;
 		}
 	}
 
-	Error_ ProjectSettings::set(String const & path, Var const & value)
+	Error_ ProjectSettings::set(String const & path, Optional<Var> const & value)
 	{
 		// add
 		if (value) {
-			return (m_data[path] = value), Error_OK;
+			return (m_data[path] = *value), Error_OK;
 		}
 		// remove
 		else if (auto const it{ m_data.find(path) }; it != m_data.end()) {
@@ -123,11 +110,11 @@ namespace Ism
 		}
 		
 		Ref<Dir> dir{ Dir::create(DirAccess_Filesystem) };
-		String path{ p_path.replace("\\", "/").simplify_path() };
+		String path{ p_path.replace('\\', '/').simplify_path() };
 		if (dir->change_dir(path) == Error_OK)
 		{
 			String cwd{ dir->get_current_dir() };
-			cwd = cwd.replace("\\", "/");
+			cwd = cwd.replace('\\', '/');
 			// Ensure that we end with a '/'.
 			// This is important to ensure that we do not wrongly localize the resource path
 			// in an absolute path that just happens to contain this string but points to a

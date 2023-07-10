@@ -2,6 +2,7 @@
 #define _ISM_RENDERER_SCENE_RENDERER_HPP_
 
 #include <servers/rendering/renderer_storage.hpp>
+#include <servers/rendering/shader_language.hpp>
 
 namespace Ism
 {
@@ -13,6 +14,13 @@ namespace Ism
 	private:
 		RenderingDevice * const m_device;
 		RendererStorage * const m_storage;
+
+		enum {
+			SCENE_STATE_UNIFORM_SET,
+			RENDER_PASS_UNIFORM_SET,
+			TRANSFORMS_UNIFORM_SET,
+			MATERIAL_UNIFORM_SET,
+		};
 
 		struct SceneState
 		{
@@ -35,6 +43,16 @@ namespace Ism
 			ubo{};
 		}
 		m_scene_state{};
+
+		struct RenderPass
+		{
+			struct UBO
+			{
+
+			}
+			ubo{};
+		}
+		m_render_pass{};
 
 		RID m_shader{};
 		RID m_pipeline{};

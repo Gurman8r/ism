@@ -6,13 +6,13 @@ namespace Ism
 
 	OBJECT_EMBED(MainLoop, t)
 	{
-		t.tp_bind = BIND_CLASS(MainLoop, klass)
+		t.tp_bind = CLASS_(MainLoop, klass)
 		{
 			return klass
 				.def("initialize", &MainLoop::initialize)
 				.def("process", &MainLoop::process)
 				.def("finalize", &MainLoop::finalize)
-				.def("set_startup_script", &MainLoop::set_startup_script)
+				.def("set_initialize_script", &MainLoop::set_initialize_script)
 				;
 		};
 	}
@@ -21,60 +21,27 @@ namespace Ism
 
 	void MainLoop::initialize()
 	{
-		STRING_IDENTIFIER(initialize);
-
-		if (ObjectRef fn; m_script && (fn = getattr(m_script, &ID_initialize)))
-		{
-			call_object(fn);
-		}
+		_initialize();
 	}
 
 	bool MainLoop::physics_process(Duration const & dt)
 	{
-		STRING_IDENTIFIER(physics_process);
-
-		bool should_close{};
-
-		if (ObjectRef fn; m_script && (fn = getattr(m_script, &ID_physics_process)))
-		{
-			static FloatObject arg0; arg0 = dt.count();
-			static ListObject args{ &arg0, };
-			ObjectRef result{ call_object(fn, &args) };
-			if (result && result.cast<bool>()) {
-				should_close = true;
-			}
-		}
-
-		return should_close;
+		return _physics_process(dt);
 	}
 
 	bool MainLoop::process(Duration const & dt)
 	{
-		STRING_IDENTIFIER(process);
-
-		bool should_close{};
-
-		if (ObjectRef fn; m_script && (fn = getattr(m_script, &ID_process)))
-		{
-			static FloatObject arg0; arg0 = dt.count();
-			static ListObject args{ &arg0, };
-			ObjectRef result{ call_object(fn, &args) };
-			if (result && result.cast<bool>()) {
-				should_close = true;
-			}
-		}
-
-		return should_close;
+		return _process(dt);
 	}
 
 	void MainLoop::finalize()
 	{
-		STRING_IDENTIFIER(finalize);
+		_finalize();
+	}
 
-		if (ObjectRef fn; m_script && (fn = getattr(m_script, &ID_finalize)))
-		{
-			call_object(fn);
-		}
+	void MainLoop::set_initialize_script(Ref<Script> const & value)
+	{
+		m_script = value;
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -6,7 +6,7 @@ namespace Ism
 
 	OBJECT_EMBED(Event, t, TypeFlags_IsAbstract)
 	{
-		t.tp_bind = BIND_CLASS(Event, klass)
+		t.tp_bind = CLASS_(Event, klass)
 		{
 			return klass
 				.def("get_event_id", &Event::get_event_id)
@@ -21,7 +21,7 @@ namespace Ism
 
 	OBJECT_EMBED(EventListener, t, TypeFlags_IsAbstract)
 	{
-		t.tp_bind = BIND_CLASS(EventListener, klass)
+		t.tp_bind = CLASS_(EventListener, klass)
 		{
 			return klass
 				.def("handle_event", &EventListener::handle_event)

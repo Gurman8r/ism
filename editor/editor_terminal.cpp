@@ -31,7 +31,7 @@ namespace Ism
 		if (m_logger) { memdelete(m_logger); m_logger = nullptr; }
 	}
 
-	void EditorTerminal::process(Duration const & delta_time)
+	void EditorTerminal::process(Duration const & dt)
 	{
 		if (!is_open()) { return; }
 		ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };

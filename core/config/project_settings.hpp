@@ -27,11 +27,10 @@ namespace Ism
 		ProjectSettings() noexcept { SINGLETON_CTOR(); }
 		virtual ~ProjectSettings() noexcept override { SINGLETON_DTOR(); }
 
-	public:
 		Error_ setup(String const & exec_path, String const & main_pack = {});
 
-		NODISCARD Var get(String const & path) const;
-		Error_ set(String const & path, Var const & value);
+		NODISCARD Optional<Var> get(String const & path) const;
+		Error_ set(String const & path, Optional<Var> const & value);
 
 		NODISCARD String localize_path(String const & path) const;
 		NODISCARD String globalize_path(String const & path) const;
@@ -47,9 +46,11 @@ namespace Ism
 
 	SINGLETON_WRAPPER(ProjectSettings, globals);
 
+	// get global
 #define GLOBAL_GET(path) \
 		(Ism::globals()->get((path)))
 
+	// set global
 #define GLOBAL_SET(path, value) \
 		(Ism::globals()->set((path), (value)))
 

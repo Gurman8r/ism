@@ -22,7 +22,7 @@ namespace Ism
 	{
 	}
 
-	void EditorViewport::process(Duration const & delta_time)
+	void EditorViewport::process(Duration const & dt)
 	{
 		if (!is_open()) { return; }
 		ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };
@@ -34,6 +34,7 @@ namespace Ism
 		if (!open) { return; }
 
 		ImGuiWindow * const window{ get_window() };
+		if (!window) { return; }
 		ImRect const view_rect{ window->InnerRect };
 
 		if (ImGui::ItemAdd(view_rect, NULL)) {

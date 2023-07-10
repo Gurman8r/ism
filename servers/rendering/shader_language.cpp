@@ -4,6 +4,10 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	ShaderLanguage::ShaderLanguage() {}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	void ShaderLanguageGLSL::load_tokens(Vector<String> & v) const
 	{
 		v.resize(Token_MAX, String{});

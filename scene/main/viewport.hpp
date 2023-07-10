@@ -8,7 +8,7 @@ namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class CameraBehavior;
+	class Camera;
 	class Window;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -39,7 +39,7 @@ namespace Ism
 		Viewport * m_parent{};
 		Viewport * m_gui_parent{};
 
-		CameraBehavior * m_main_camera{};
+		Camera * m_main_camera{};
 
 		RID m_viewport{};
 		RID m_current_canvas{};
@@ -69,14 +69,12 @@ namespace Ism
 			SubWindowResize_MAX
 		};
 
-		struct SubWindow
-		{
+		struct SubWindow {
 			Window * window{};
 			RID canvas_item{};
 		};
 
-		struct GUI
-		{
+		struct GUI {
 			Vector<SubWindow> subwindows{};
 		}
 		m_gui{};

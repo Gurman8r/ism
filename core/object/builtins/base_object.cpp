@@ -11,7 +11,7 @@ namespace Ism
 
 		t.tp_setattro = (SetAttrOFunc)&Object::generic_setattr;
 
-		t.tp_bind = BIND_CLASS(Object, klass)
+		t.tp_bind = CLASS_(Object, klass)
 		{
 			return klass
 				.def("init_ref", &Object::init_ref)

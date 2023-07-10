@@ -23,7 +23,7 @@ namespace Ism
 		virtual ~Material();
 		virtual RID get_rid() const override { return m_material; }
 		virtual RID get_shader_rid() const = 0;
-		virtual ShaderMode_ get_shader_mode() const = 0;
+		virtual RS::ShaderMode_ get_shader_mode() const = 0;
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -40,7 +40,7 @@ namespace Ism
 		ShaderMaterial();
 		virtual ~ShaderMaterial() override;
 		virtual RID get_shader_rid() const override;
-		virtual ShaderMode_ get_shader_mode() const override;
+		virtual RS::ShaderMode_ get_shader_mode() const override;
 
 	public:
 		Ref<Shader> get_shader() const;
@@ -61,7 +61,7 @@ namespace Ism
 		StandardMaterial3D();
 		virtual ~StandardMaterial3D() override;
 		virtual RID get_shader_rid() const override;
-		virtual ShaderMode_ get_shader_mode() const override;
+		virtual RS::ShaderMode_ get_shader_mode() const override;
 
 	public:
 		enum Param_

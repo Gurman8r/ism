@@ -16,7 +16,7 @@ namespace Ism
 
 	String File::fix_path(String const & path) const
 	{
-		String const r_path{ path.replace("\\", "/") };
+		String const r_path{ path.replace('\\', '/') };
 		switch (m_access_type)
 		{
 		case FileAccess_Resources: {

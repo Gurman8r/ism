@@ -12,9 +12,6 @@ namespace Ism
 		mutable Vector<String> m_tokens;
 
 	public:
-		virtual ~ShaderLanguage() noexcept = default;
-
-	public:
 		enum Token_ : size_t
 		{
 			Token_Void,
@@ -27,16 +24,6 @@ namespace Ism
 			Token_MAX
 		};
 
-		virtual void load_tokens(Vector<String> & v) const = 0;
-
-		String const & get_token(Token_ i) const noexcept {
-			ASSERT(i < Token_MAX);
-			if (m_tokens.empty()) { load_tokens(m_tokens); }
-			ASSERT(i < m_tokens.size());
-			return m_tokens[i];
-		}
-
-	public:
 		struct BaseNode
 		{
 		};
@@ -50,15 +37,24 @@ namespace Ism
 				VarType_ type{ VarType_MAX };
 			};
 		};
+
+	public:
+		ShaderLanguage();
+		virtual ~ShaderLanguage() noexcept = default;
+
+		virtual void load_tokens(Vector<String> & v) const {}
+		String const & get_token(Token_ i) const noexcept {
+			ASSERT(i < Token_MAX);
+			if (m_tokens.empty()) { load_tokens(m_tokens); }
+			ASSERT(i < m_tokens.size());
+			return m_tokens[i];
+		}
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-	class ISM_API ShaderLanguageGLSL : public ShaderLanguage
-	{
+	class ISM_API ShaderLanguageGLSL : public ShaderLanguage {
 	public:
-		virtual ~ShaderLanguageGLSL() noexcept override = default;
-
 		virtual void load_tokens(Vector<String> & v) const override;
 	};
 

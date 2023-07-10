@@ -16,9 +16,9 @@ namespace Ism
 			return !obj ? self : (ObjectRef)MethodRef({ self, obj });
 		};
 
-		t.tp_bind = BIND_CLASS(CppFunctionObject, klass)
+		t.tp_bind = CLASS_(CppFunctionObject, klass)
 		{
-			// manually add this first because it's used by BIND_CLASS
+			// manually add this first because it's used by CLASS_
 			klass.add_object("__name__", PropertyRef({
 				CppFunctionRef({ [](CppFunctionObject const & self) -> String const & { return self->name; }, attr::is_method(klass) }),
 				CppFunctionRef({ [](CppFunctionObject & self, String const & value) { self->name = value; }, attr::is_method(klass) }),

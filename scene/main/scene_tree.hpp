@@ -36,8 +36,8 @@ namespace Ism
 		
 		bool			m_initialized : 1, m_should_close : 1;
 		Clock			m_main_timer{};
-		Duration		m_delta_time{};
-		FPS_Tracker		m_fps_tracker{};
+		Duration		m_dt{};
+		FPS_Tracker		m_fps{};
 		Window *		m_root{};
 		EntityRegistry	m_ecs{};
 		ImGuiContext *	m_imgui{};
@@ -48,10 +48,10 @@ namespace Ism
 
 	public:
 		auto get_root() const noexcept -> Window * { return m_root; }
-		auto get_delta_time() const noexcept -> Duration { return m_delta_time; }
-		auto get_elapsed_time() const noexcept -> Duration { return m_main_timer.get_time(); }
-		auto get_fps() const noexcept -> FPS_Tracker const & { return m_fps_tracker; }
-		auto get_ecs() const noexcept -> EntityRegistry * { return (EntityRegistry *)&m_ecs; }
+		auto get_delta() const noexcept -> Duration { return m_dt; }
+		auto get_time() const noexcept -> Duration { return m_main_timer.get_time(); }
+		auto get_fps() const noexcept -> FPS_Tracker const & { return m_fps; }
+		auto get_ecs() const noexcept -> EntityRegistry & { return (EntityRegistry &)m_ecs; }
 		auto get_imgui() const noexcept -> ImGuiContext * { return m_imgui; }
 
 	public:
@@ -63,6 +63,8 @@ namespace Ism
 
 	protected:
 		template <class T> void on_component_added(class Entity &, T &) {}
+
+		void _notification(Notification_ id);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

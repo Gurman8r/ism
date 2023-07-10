@@ -1,4 +1,5 @@
 #include <core/io/resource_saver.hpp>
+#include <core/config/project_settings.hpp>
 
 namespace Ism
 {
@@ -21,14 +22,16 @@ namespace Ism
 
 	Error_ ResourceSaver::save(RES const & value, String const & path, i32 flags)
 	{
+		String const gpath{ globals()->globalize_path(path).replace('\\', '/') };
+
 		Error_ error{};
 		for (size_t i{}; i < m_savers.size(); ++i)
 		{
-			if (!m_savers[i]->recognize_path(path)) {
+			if (!m_savers[i]->recognize_path(gpath)) {
 				continue;
 			}
 
-			if ((error = m_savers[i]->save(value, path, flags)) == Error_OK) {
+			if ((error = m_savers[i]->save(value, gpath, flags)) == Error_OK) {
 				return Error_OK;
 			}
 		}

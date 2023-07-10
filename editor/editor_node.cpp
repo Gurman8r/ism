@@ -33,7 +33,7 @@ namespace Ism
 
 	static Vec2 screen_resolution{};
 
-	static struct Camera
+	static struct CameraData
 	{
 		RID rid{};
 
@@ -211,12 +211,12 @@ namespace Ism
 				get_tree()->get_fps().value
 			));
 
-			Duration const delta_time{ get_tree()->get_delta_time() };
+			Duration const dt{ get_tree()->get_delta() };
 
 			if (m_viewport->get_window())
 			{
 				if (m_viewport->is_focused()) {
-					f32 const camera_move_speed{ 10.f * delta_time };
+					f32 const camera_move_speed{ 10.f * dt };
 					if (input()->is_key_down(Input::Key_Q)) { camera.transform.translate(-up_v<Vec3> * camera_move_speed); }
 					else if (input()->is_key_down(Input::Key_Z)) { camera.transform.translate(up_v<Vec3> * camera_move_speed); }
 					if (input()->is_key_down(Input::Key_W)) { camera.transform.translate(camera.transform.front() * camera_move_speed); }
@@ -234,7 +234,7 @@ namespace Ism
 				}
 
 				if (m_viewport->m_is_dragging_view) {
-					Vec2 const drag{ input()->get_mouse_delta() * (f32)delta_time };
+					Vec2 const drag{ input()->get_mouse_delta() * (f32)dt };
 					camera.yaw += drag[0];
 					camera.pitch = constrain(camera.pitch + drag[1], -89.f, 89.f);
 				}
@@ -268,7 +268,7 @@ namespace Ism
 				rendering_device()->buffer_update(uniform_buffers[MATERIAL_UNIFORMS], 0, material_ubo, sizeof(material_ubo));
 
 				static Vector<Color> clear_colors{ Colors::magenta };
-				clear_colors[0] = rotate_hue(clear_colors[0], 10.f * delta_time);
+				clear_colors[0] = rotate_hue(clear_colors[0], 10.f * dt);
 
 				RD::DrawListID const draw_list{ rendering_device()->draw_list_begin(framebuffer, RD::InitialAction_Clear, RD::FinalAction_Read, RD::InitialAction_Keep, RD::FinalAction_Discard, clear_colors) };
 				rendering_device()->draw_list_bind_pipeline(draw_list, pipeline);
@@ -289,7 +289,7 @@ namespace Ism
 			// imgui
 			_draw_dockspace();
 			for (auto const panel : m_panels) {
-				panel->process(delta_time);
+				panel->process(dt);
 			}
 			if (m_show_imgui_demo) {
 				ImGui::ShowDemoWindow(&m_show_imgui_demo);

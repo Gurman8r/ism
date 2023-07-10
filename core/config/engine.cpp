@@ -4,12 +4,12 @@ namespace Ism
 {
 	SINGLETON_EMBED(Engine);
 
-	Engine::Engine() noexcept
+	Engine::Engine()
 	{
 		SINGLETON_CTOR();
 	}
 
-	Engine::~Engine() noexcept
+	Engine::~Engine()
 	{
 		SINGLETON_DTOR();
 	}

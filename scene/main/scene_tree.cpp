@@ -1,7 +1,9 @@
 #include <scene/main/scene_tree.hpp>
-#include <scene/main/missing_node.hpp>
-#include <scene/main/window.hpp>
+#include <core/config/engine.hpp>
 #include <scene/gui/imgui.hpp>
+
+#include <scene/main/window.hpp>
+#include <scene/main/missing_node.hpp>
 #include <scene/resources/world_2d.hpp>
 #include <scene/resources/world_3d.hpp>
 
@@ -22,7 +24,7 @@ namespace Ism
 
 	OBJECT_EMBED(SceneTree, t)
 	{
-		t.tp_bind = BIND_CLASS(SceneTree, klass)
+		t.tp_bind = CLASS_(SceneTree, klass)
 		{
 			return klass
 				.def("initialize", &SceneTree::initialize)
@@ -40,14 +42,16 @@ namespace Ism
 
 		m_root = memnew(Window);
 		m_root->set_name("root");
-		m_root->set_title("");
+		//m_root->set_title("");
+
+		if (is_singleton() && !ImGui::GetCurrentContext()) {
+			m_imgui = VALIDATE(ImGui_Initialize());
+		}
 	}
 
 	SceneTree::~SceneTree()
 	{
-		memdelete(m_root);
-
-		if (has_singleton(this)) { set_singleton(nullptr); }
+		if (is_singleton()) { set_singleton(nullptr); }
 	}
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -56,18 +60,17 @@ namespace Ism
 	{
 		m_initialized = true;
 		m_root->set_tree(this);
-		base_type::initialize();
-
-		if (has_singleton(this) && !ImGui::GetCurrentContext()) {
-			m_imgui = VALIDATE(ImGui_Initialize());
-		}
+		MainLoop::initialize();
 	}
 
 	bool SceneTree::process(Duration const & dt)
 	{
-		base_type::process(dt);
-		m_fps_tracker.update(dt);
-		m_delta_time = dt;
+		if (MainLoop::process(dt)) {
+			m_should_close = true;
+		}
+
+		m_dt = dt;
+		m_fps.update(dt);
 
 		if (m_imgui) {
 			ImGui_BeginFrame(m_imgui);
@@ -90,11 +93,44 @@ namespace Ism
 	void SceneTree::finalize()
 	{
 		m_initialized = false;
-		base_type::finalize();
+
+		MainLoop::finalize();
 
 		if (m_imgui) {
 			ImGui_Finalize(m_imgui);
 			m_imgui = nullptr;
+		}
+
+		if (m_root) {
+			m_root->set_tree(nullptr);
+			//m_root->_propagate_after_exit_tree();
+			memdelete(m_root);
+			m_root = nullptr;
+		}
+	}
+
+	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+	void SceneTree::_notification(Notification_ id)
+	{
+		switch (id)
+		{
+		case Notification_TranslationChanged: {
+			if (!engine()->is_editor_hint()) {
+				get_root()->propagate_notification(id);
+			}
+		} break;
+
+		case Notification_OS_MemoryWarning:
+		case Notification_OS_IME_Update:
+		case Notification_WM_About:
+		case Notification_Crash:
+		case Notification_ApplicationResumed:
+		case Notification_ApplicationPaused:
+		case Notification_ApplicationFocusOut:
+		case Notification_ApplicationFocusIn: {
+			get_root()->propagate_notification(id);
+		} break;
 		}
 	}
 

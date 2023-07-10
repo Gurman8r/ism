@@ -28,7 +28,7 @@ namespace Ism
 	public:
 		virtual ~EditorPanel();
 
-		virtual void process(Duration const & delta_time) = 0;
+		virtual void process(Duration const & dt) = 0;
 
 	public:
 		auto get_window() const noexcept -> ImGuiWindow * { return m_window; }

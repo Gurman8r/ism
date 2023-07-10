@@ -31,7 +31,7 @@ namespace Ism
 
 	RID ShaderMaterial::get_shader_rid() const { return m_shader ? m_shader->get_rid() : nullptr; }
 
-	ShaderMode_ ShaderMaterial::get_shader_mode() const { return m_shader->get_mode(); }
+	RS::ShaderMode_ ShaderMaterial::get_shader_mode() const { return m_shader->get_mode(); }
 
 	Ref<Shader> ShaderMaterial::get_shader() const { return m_shader; }
 
@@ -69,7 +69,10 @@ namespace Ism
 		return nullptr;
 	}
 
-	ShaderMode_ StandardMaterial3D::get_shader_mode() const { return ShaderMode_MAX; }
+	RS::ShaderMode_ StandardMaterial3D::get_shader_mode() const
+	{
+		return RS::ShaderMode_MAX;
+	}
 
 	void StandardMaterial3D::_update_shader()
 	{

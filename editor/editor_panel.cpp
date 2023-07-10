@@ -24,8 +24,11 @@ namespace Ism
 	{
 		ImGui::PushID(this);
 		bool const open{ ImGui::Begin(m_name, &m_is_open, m_flags) };
-		m_window = (open && !m_window) ? ImGui::GetCurrentContext()->CurrentWindow : nullptr;
-		m_is_focused = (open && m_window) && ImGui::IsWindowFocused();
+
+		m_window = open ? ImGui::GetCurrentContext()->CurrentWindow : nullptr;
+
+		m_is_focused = m_window && ImGui::IsWindowFocused();
+
 		return open;
 	}
 

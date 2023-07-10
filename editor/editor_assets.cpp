@@ -16,7 +16,7 @@ namespace Ism
 	{
 	}
 
-	void EditorAssets::process(Duration const & delta_time)
+	void EditorAssets::process(Duration const & dt)
 	{
 		if (!is_open()) { return; }
 		ImGuiViewport * const main_viewport{ ImGui::GetMainViewport() };

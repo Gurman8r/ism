@@ -291,10 +291,10 @@ namespace Ism
 		static String cache_path_cache;
 		if (cache_path_cache.empty()) {
 			if (has_env("LOCALAPPDATA")) {
-				cache_path_cache = get_env("LOCALAPPDATA").replace("\\", "/");
+				cache_path_cache = get_env("LOCALAPPDATA").replace('\\', '/');
 			}
 			if (cache_path_cache.empty() && has_env("TEMP")) {
-				cache_path_cache = get_env("TEMP").replace("\\", "/");
+				cache_path_cache = get_env("TEMP").replace('\\', '/');
 			}
 			if (cache_path_cache.empty()) {
 				cache_path_cache = get_config_path();
@@ -306,7 +306,7 @@ namespace Ism
 	String WindowsOS::get_config_path() const noexcept
 	{
 		if (has_env("APPDATA")) {
-			return get_env("APPDATA").replace("\\", "/");
+			return get_env("APPDATA").replace('\\', '/');
 		}
 		return ".";
 	}
@@ -320,7 +320,7 @@ namespace Ism
 	{
 		WCHAR buf[4096];
 		GetModuleFileNameW(nullptr, buf, 4096);
-		return Unicode(buf).narrow().replace("\\", "/");
+		return Unicode(buf).narrow().replace('\\', '/');
 	}
 
 	String WindowsOS::get_resource_path() const noexcept

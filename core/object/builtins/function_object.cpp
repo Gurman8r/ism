@@ -11,7 +11,7 @@ namespace Ism
 
 		t.tp_vectorcalloffset = offsetof(FunctionObject, m_vectorcall);
 
-		t.tp_bind = BIND_CLASS(FunctionObject, klass)
+		t.tp_bind = CLASS_(FunctionObject, klass)
 		{
 			return klass
 				.def_readwrite("__dict__", &FunctionObject::m_dict)

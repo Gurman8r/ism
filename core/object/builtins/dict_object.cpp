@@ -9,7 +9,7 @@ namespace Ism
 	{
 		t.tp_len = (LenFunc)[](ObjectRef self) -> ssize_t { return (ssize_t)DictRef(self).size(); };
 
-		t.tp_bind = BIND_CLASS(DictObject, klass)
+		t.tp_bind = CLASS_(DictObject, klass)
 		{
 			return klass
 				.def("__contains__", &DictObject::contains<ObjectRef const &>)

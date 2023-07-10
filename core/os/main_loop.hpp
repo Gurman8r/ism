@@ -1,19 +1,23 @@
 #ifndef _ISM_MAIN_LOOP_HPP_
 #define _ISM_MAIN_LOOP_HPP_
 
-#include <core/object/class.hpp>
+#include <core/object/script.hpp>
 
 namespace Ism
 {
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	enum : Notification_ {
-		Notification_MemoryWarning = 2001,
+		Notification_OS_MemoryWarning = 2001,
+		Notification_TranslationChanged,
+		Notification_OS_IME_Update,
+		Notification_WM_About,
 		Notification_Crash,
 		Notification_ApplicationResumed,
 		Notification_ApplicationPaused,
 		Notification_ApplicationFocusIn,
 		Notification_ApplicationFocusOut,
+		Notification_TextServerChanged,
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -22,11 +26,14 @@ namespace Ism
 	{
 		OBJECT_CLASS(MainLoop, Object);
 
-		ObjectRef m_script{};
+		Ref<Script> m_script{};
+
+		virtual void _initialize() {}
+		virtual bool _physics_process(Duration const & dt) { return false; }
+		virtual bool _process(Duration const & dt) { return false; }
+		virtual void _finalize() {}
 
 	public:
-		
-
 		MainLoop() noexcept {}
 		virtual ~MainLoop() noexcept override {}
 
@@ -35,11 +42,7 @@ namespace Ism
 		virtual bool process(Duration const & dt);
 		virtual void finalize();
 
-		void set_startup_script(ObjectRef const & value) noexcept {
-			if (m_script != value) {
-				m_script = value;
-			}
-		}
+		void set_initialize_script(Ref<Script> const & value);
 	};
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

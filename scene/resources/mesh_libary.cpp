@@ -142,7 +142,7 @@ namespace Ism
 	RES MeshFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Mesh> temp{}; temp.instance();
-		if (auto const error{ load_mesh(temp, globals()->globalize_path(path)) }) {
+		if (auto const error{ load_mesh(temp, path) }) {
 			if (r_error) { *r_error = error; }
 			temp = nullptr;
 		}

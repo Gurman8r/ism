@@ -28,7 +28,7 @@ namespace Ism
 			}
 		};
 
-		t.tp_bind = BIND_CLASS(ModuleObject, klass)
+		t.tp_bind = CLASS_(ModuleObject, klass)
 		{
 			return klass
 				.def("__contains__", [](ModuleObject const & self, ObjectRef const & value) { return self.m_dict.contains(value); })

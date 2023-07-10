@@ -22,7 +22,7 @@ namespace Ism
 	RES FontFormatLoader::load(String const & path, Error_ * r_error)
 	{
 		Ref<Font> temp{}; temp.instance();
-		if (Error_ const err{ load_font(temp, globals()->globalize_path(path)) }) {
+		if (Error_ const err{ load_font(temp, path) }) {
 			if (r_error) { *r_error = err; }
 			temp = nullptr;
 		}

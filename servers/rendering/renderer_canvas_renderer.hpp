@@ -2,6 +2,7 @@
 #define _ISM_RENDERER_CANVAS_RENDERER_HPP_
 
 #include <servers/rendering/renderer_storage.hpp>
+#include <servers/rendering/shader_language.hpp>
 
 namespace Ism
 {
@@ -14,14 +15,15 @@ namespace Ism
 		RenderingDevice * const m_device;
 		RendererStorage * const m_storage;
 
-		struct SceneState
-		{
-			struct UBO
-			{
-			}
-			ubo{};
-		}
-		m_scene_state{};
+		enum {
+			BASE_UNIFORM_SET,
+			MATERIAL_UNIFORM_SET,
+			TRANSFORMS_UNIFORM_SET,
+			CANVAS_TEXTURE_UNIFORM_SET,
+		};
+
+		RID m_shader{};
+		RID m_pipeline{};
 
 	public:
 		RendererCanvasRenderer(RenderingDevice * device, RendererStorage * storage);

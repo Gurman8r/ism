@@ -18,7 +18,7 @@ int _main()
 	/* TODO: additional error checking goes here */
 	case Error_Failed:
 	default: {
-		CRASH("An error occurred during setup and program was unable to start.");
+		CRASH("an error occurred during setup and program was unable to start");
 	} break;
 	}
 

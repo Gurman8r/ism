@@ -196,8 +196,8 @@ namespace Ism
 		++m_iterating; ON_SCOPE_EXIT(&) { --m_iterating; };
 
 		Clock const loop_timer{};
-		static Duration delta_time{ 16_ms };
-		ON_SCOPE_EXIT(&) { delta_time = loop_timer.get_time(); };
+		static Duration dt{ 16_ms };
+		ON_SCOPE_EXIT(&) { dt = loop_timer.get_time(); };
 
 		++m_frame;
 
@@ -205,9 +205,9 @@ namespace Ism
 
 		// TODO: _physics_server stuff goes here
 
-		_input->iteration(delta_time);
+		_input->iteration(dt);
 
-		if (os()->get_main_loop()->process(delta_time)) { should_close = true; }
+		if (os()->get_main_loop()->process(dt)) { should_close = true; }
 	
 		return should_close;
 	}
